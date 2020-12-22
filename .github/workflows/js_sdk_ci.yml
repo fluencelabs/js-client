@@ -2,7 +2,7 @@ name: Node.js CI
 
 defaults:
   run:
-    working-directory: ./client/fluence-js
+    working-directory: .
 
 on:
   push:
