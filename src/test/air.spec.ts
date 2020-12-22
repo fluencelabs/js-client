@@ -4,14 +4,15 @@ import {build} from "../particle";
 import {ServiceMultiple} from "../service";
 import {registerService} from "../globalState";
 import {expect} from "chai";
+import {SecurityTetraplet} from "../securityTetraplet";
 
-function registerPromiseService<T>(serviceId: string, fnName: string, f: (args: any[]) => T): Promise<T> {
+function registerPromiseService<T>(serviceId: string, fnName: string, f: (args: any[]) => T): Promise<[T, SecurityTetraplet[][]]> {
     let service = new ServiceMultiple(serviceId);
     registerService(service);
 
     return new Promise((resolve, reject) => {
-        service.registerFunction(fnName, (args: any[]) => {
-            resolve(f(args))
+        service.registerFunction(fnName, (args: any[], tetraplets: SecurityTetraplet[][]) => {
+            resolve([f(args), tetraplets])
 
             return {result: f(args)}
         })
@@ -33,7 +34,8 @@ describe("== AIR suite", () => {
 
         await client.executeParticle(particle);
 
-        expect(await checkPromise).to.be.equal(client.selfPeerIdStr)
+        let args = (await checkPromise)[0]
+        expect(args).to.be.equal(client.selfPeerIdStr)
     })
 
     it("call local function", async function () {
@@ -51,7 +53,8 @@ describe("== AIR suite", () => {
 
         await client.executeParticle(particle);
 
-        expect(await checkPromise).to.be.equal(arg)
+        let args = (await checkPromise)[0]
+        expect(args).to.be.equal(arg)
     })
 
     it("check particle arguments", async function () {
@@ -72,7 +75,8 @@ describe("== AIR suite", () => {
 
         await client.executeParticle(particle);
 
-        expect(await checkPromise).to.be.equal(value)
+        let args = (await checkPromise)[0]
+        expect(args).to.be.equal(value)
     })
 
     it("check chain of services work properly", async function () {
@@ -106,10 +110,14 @@ describe("== AIR suite", () => {
 
         await client.executeParticle(particle);
 
-        expect(await checkPromise1).to.be.equal(arg1)
-        expect(await checkPromise2).to.be.equal(arg2)
+        let args1 = (await checkPromise1)[0]
+        expect(args1).to.be.equal(arg1)
 
-        expect(await checkPromise3).to.be.deep.equal([{result: arg1}, {result: arg2}])
+        let args2 = (await checkPromise2)[0]
+        expect(args2).to.be.equal(arg2)
+
+        let args3 = (await checkPromise3)[0]
+        expect(args3).to.be.deep.equal([{result: arg1}, {result: arg2}])
     })
 })
 

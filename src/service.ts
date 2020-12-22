@@ -15,6 +15,7 @@
  */
 
 import {getService} from "./globalState";
+import {SecurityTetraplet} from "./securityTetraplet";
 
 export interface CallServiceResult {
     ret_code: number,
@@ -23,7 +24,7 @@ export interface CallServiceResult {
 
 export abstract class Service {
     serviceId: string;
-    abstract call(fnName: string, args: any[]): CallServiceResult
+    abstract call(fnName: string, args: any[], tetraplets: SecurityTetraplet[][]): CallServiceResult
 }
 
 /**
@@ -32,16 +33,16 @@ export abstract class Service {
 export class ServiceOne implements Service {
 
     serviceId: string;
-    fn: (fnName: string, args: any[]) => object
+    fn: (fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => object
 
     constructor(serviceId: string, fn: (fnName: string, args: any[]) => object) {
         this.serviceId = serviceId;
         this.fn = fn;
     }
 
-    call(fnName: string, args: any[]): CallServiceResult {
+    call(fnName: string, args: any[], tetraplets: SecurityTetraplet[][]): CallServiceResult {
         try {
-            let result = this.fn(fnName, args)
+            let result = this.fn(fnName, args, tetraplets)
             return {
                 ret_code: 0,
                 result: JSON.stringify(result)
@@ -62,21 +63,21 @@ export class ServiceOne implements Service {
 export class ServiceMultiple implements Service {
 
     serviceId: string;
-    functions: Map<string, (args: any[]) => object> = new Map();
+    functions: Map<string, (args: any[], tetraplets: SecurityTetraplet[][]) => object> = new Map();
 
     constructor(serviceId: string) {
         this.serviceId = serviceId;
     }
 
-    registerFunction(fnName: string, fn: (args: any[]) => object) {
+    registerFunction(fnName: string, fn: (args: any[], tetraplets: SecurityTetraplet[][]) => object) {
         this.functions.set(fnName, fn);
     }
 
-    call(fnName: string, args: any[]): CallServiceResult {
+    call(fnName: string, args: any[], tetraplets: SecurityTetraplet[][]): CallServiceResult {
         let fn = this.functions.get(fnName)
         if (fn) {
             try {
-                let result = fn(args)
+                let result = fn(args, tetraplets)
                 return {
                     ret_code: 0,
                     result: JSON.stringify(result)
@@ -98,15 +99,18 @@ export class ServiceMultiple implements Service {
     }
 }
 
-export function service(service_id: string, fn_name: string, args: string): CallServiceResult {
+export function service(service_id: string, fn_name: string, args: string, tetraplets: string): CallServiceResult {
     try {
         let argsObject = JSON.parse(args)
         if (!Array.isArray(argsObject)) {
             throw new Error("args is not an array")
         }
+
+        let tetrapletsObject: SecurityTetraplet[][] = JSON.parse(tetraplets)
+
         let service = getService(service_id)
         if (service) {
-            return service.call(fn_name, argsObject)
+            return service.call(fn_name, argsObject, tetrapletsObject)
         } else {
             return {
                 result: JSON.stringify(`Error. There is no service: ${service_id}`),
