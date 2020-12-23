@@ -24,6 +24,15 @@ export interface CallServiceResult {
 
 export abstract class Service {
     serviceId: string;
+
+    /**
+     * Calls the function from local client
+     * @param fnName - name of the function to call
+     * @param args - arguments to be passed to the function
+     * @param tetraplets - array of arrays of tetraplets. First index corresponds to argument number.
+     * If the argument is not an array the second array will always contain exactly one element.
+     * If the argument is an array the second index will correspond to the index of element in argument's array
+     */
     abstract call(fnName: string, args: any[], tetraplets: SecurityTetraplet[][]): CallServiceResult;
 }
 
@@ -34,11 +43,19 @@ export class ServiceOne implements Service {
     serviceId: string;
     fn: (fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => object;
 
-    constructor(serviceId: string, fn: (fnName: string, args: any[]) => object) {
+    constructor(serviceId: string, fn: (fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => object) {
         this.serviceId = serviceId;
         this.fn = fn;
     }
 
+    /**
+     * Calls the function from local client
+     * @param fnName - name of the function to call
+     * @param args - arguments to be passed to the function
+     * @param tetraplets - array of arrays of tetraplets. First index corresponds to argument number.
+     * If the argument is not an array the second array will always contain exactly one element.
+     * If the argument is an array the second index will correspond to the index of element in argument's array
+     */
     call(fnName: string, args: any[], tetraplets: SecurityTetraplet[][]): CallServiceResult {
         try {
             let result = this.fn(fnName, args, tetraplets);
@@ -66,10 +83,28 @@ export class ServiceMultiple implements Service {
         this.serviceId = serviceId;
     }
 
+    /**
+     * Registers a callback function into Aquamarine
+     * @param fnName - the function name to be registered
+     * @param fn - callback function which will be called from Aquamarine.
+     * The callback function has the following parameters:
+     * args - arguments to be passed to the function
+     * tetraplets - array of arrays of tetraplets. First index corresponds to argument number.
+     * If the argument is not an array the second array will always contain exactly one element.
+     * If the argument is an array the second index will correspond to the index of element in argument's array
+     */
     registerFunction(fnName: string, fn: (args: any[], tetraplets: SecurityTetraplet[][]) => object) {
         this.functions.set(fnName, fn);
     }
 
+    /**
+     * Calls the function from local client
+     * @param fnName - name of the function to call
+     * @param args - arguments to be passed to the function
+     * @param tetraplets - array of arrays of tetraplets. First index corresponds to argument number.
+     * If the argument is not an array the second array will always contain exactly one element.
+     * If the argument is an array the second index will correspond to the index of element in argument's array
+     */
     call(fnName: string, args: any[], tetraplets: SecurityTetraplet[][]): CallServiceResult {
         let fn = this.functions.get(fnName);
         if (fn) {
