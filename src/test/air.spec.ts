@@ -82,17 +82,17 @@ describe('== AIR suite', () => {
     });
 
     it('check tetraplet json_path', async function () {
-        let makeDataPromise = registerPromiseService('make_data', 'make_data', (args) => {
+        let makeDataPromise = registerPromiseService('make_data_service', 'make_data', (args) => {
             field: 42;
         });
-        let getDataPromise = registerPromiseService('get_data', 'get_data', (args) => args[0]);
+        let getDataPromise = registerPromiseService('get_data_service', 'get_data', (args) => args[0]);
 
         let client = await Fluence.local();
 
         let script = `
         (seq
-            (call %init_peer_id% ("make_data" "make_data") [] result)
-            (call %init_peer_id% ("get_data" "get_data") [result.$.field])
+            (call %init_peer_id% ("make_data_service" "make_data") [] result)
+            (call %init_peer_id% ("get_data_service" "get_data") [result.$.field])
         )`;
 
         let particle = await build(client.selfPeerId, script, new Map());
@@ -102,6 +102,8 @@ describe('== AIR suite', () => {
         await makeDataPromise;
         let [args, tetraplets] = await getDataPromise;
         let { triplet, json_path } = tetraplets[0][0];
+        expect(triplet.function_name).to.be.equal('make_data');
+        expect(triplet.service_id).to.be.equal('make_data_service');
         expect(json_path).to.be.equal('$.field');
     });
 
