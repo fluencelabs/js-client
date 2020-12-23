@@ -56,7 +56,7 @@ describe('== AIR suite', () => {
 
         await client.executeParticle(particle);
 
-        let args = (await checkPromise)[0];
+        let [args, tetraplets] = await checkPromise;
         expect(args).to.be.equal(arg);
     });
 
@@ -77,8 +77,32 @@ describe('== AIR suite', () => {
 
         await client.executeParticle(particle);
 
-        let args = (await checkPromise)[0];
+        let [args, tetraplets] = await checkPromise;
         expect(args).to.be.equal(value);
+    });
+
+    it('check tetraplet jsonPath', async function () {
+        let makeDataPromise = registerPromiseService('make_data', 'make_data', (args) => {
+            field: 42;
+        });
+        let getDataPromise = registerPromiseService('get_data', 'get_data', (args) => args[0]);
+
+        let client = await Fluence.local();
+
+        let script = `
+        (seq
+            (call %init_peer_id% ("make_data" "make_data") [] result)
+            (call %init_peer_id% ("get_data" "get_data") [result.$.field])
+        )`;
+
+        let particle = await build(client.selfPeerId, script, new Map());
+
+        await client.executeParticle(particle);
+
+        await makeDataPromise;
+        let [args, tetraplets] = await getDataPromise;
+        let { triplet, json_path } = tetraplets[0][0];
+        expect(json_path).to.be.equal('$.field');
     });
 
     it('check chain of services work properly', async function () {

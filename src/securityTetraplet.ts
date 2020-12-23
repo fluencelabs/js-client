@@ -20,6 +20,7 @@ export interface ResolvedTriplet {
     function_name: string;
 }
 
-export interface SecurityTetraplet extends ResolvedTriplet {
+export interface SecurityTetraplet {
+    triplet: ResolvedTriplet;
     json_path: string;
 }
