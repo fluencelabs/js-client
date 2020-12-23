@@ -81,7 +81,7 @@ describe('== AIR suite', () => {
         expect(args).to.be.equal(value);
     });
 
-    it('check tetraplet jsonPath', async function () {
+    it('check tetraplet json_path', async function () {
         let makeDataPromise = registerPromiseService('make_data', 'make_data', (args) => {
             field: 42;
         });
