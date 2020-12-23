@@ -81,7 +81,7 @@ describe('== AIR suite', () => {
         expect(args).to.be.equal(value);
     });
 
-    it('check tetraplet json_path', async function () {
+    it('check security tetraplet', async function () {
         let makeDataPromise = registerPromiseService('make_data_service', 'make_data', (args) => {
             field: 42;
         });
@@ -101,10 +101,13 @@ describe('== AIR suite', () => {
 
         await makeDataPromise;
         let [args, tetraplets] = await getDataPromise;
-        let { triplet, json_path } = tetraplets[0][0];
-        expect(triplet.function_name).to.be.equal('make_data');
-        expect(triplet.service_id).to.be.equal('make_data_service');
-        expect(json_path).to.be.equal('$.field');
+        let tetraplet = tetraplets[0][0];
+
+        expect(tetraplet).to.contain({
+            service_id: 'make_data_service',
+            function_name: 'make_data',
+            json_path: '$.field',
+        });
     });
 
     it('check chain of services work properly', async function () {
