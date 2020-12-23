@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-export interface ModuleConfig {
-    name: string;
-    mem_pages_count?: number;
-    logger_enabled?: boolean;
-    wasi?: Wasi;
-    mounted_binaries?: object;
+export interface ResolvedTriplet {
+    peer_pk: string;
+    service_id: string;
+    function_name: string;
 }
 
-export interface Wasi {
-    envs?: object;
-    preopened_files?: string[];
-    mapped_dirs?: object;
+export interface SecurityTetraplet extends ResolvedTriplet {
+    json_path: string;
 }

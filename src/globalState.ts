@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Service} from "./service";
-import {Particle} from "./particle";
+import { Service } from './service';
+import { Particle } from './particle';
 
 // TODO put state with wasm file in each created FluenceClient
 let services: Map<string, Service> = new Map();
@@ -39,13 +39,13 @@ export function popParticle(): Particle | undefined {
 }
 
 export function registerService(service: Service) {
-    services.set(service.serviceId, service)
+    services.set(service.serviceId, service);
 }
 
 export function deleteService(serviceId: string): boolean {
-    return services.delete(serviceId)
+    return services.delete(serviceId);
 }
 
 export function getService(serviceId: string): Service | undefined {
-    return services.get(serviceId)
+    return services.get(serviceId);
 }

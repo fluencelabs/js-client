@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import {FluenceClient} from "../fluenceClient";
-import {Certificate, certificateFromString, certificateToString} from "./certificate";
+import { FluenceClient } from '../fluenceClient';
+import { Certificate, certificateFromString, certificateToString } from './certificate';
 import * as log from 'loglevel';
 
 // TODO update after 'aquamarine' implemented
 // The client to interact with the Fluence trust graph API
 export class TrustGraph {
-
     client: FluenceClient;
 
     constructor(client: FluenceClient) {
@@ -42,11 +41,13 @@ export class TrustGraph {
         let response: any = {};
 
         if (response.reason) {
-            throw Error(response.reason)
+            throw Error(response.reason);
         } else if (response.status) {
-            return response.status
+            return response.status;
         } else {
-            throw Error(`Unexpected response: ${response}. Should be 'status' field for a success response or 'reason' field for an error.`)
+            throw Error(
+                `Unexpected response: ${response}. Should be 'status' field for a success response or 'reason' field for an error.`,
+            );
         }
     }
 
@@ -57,16 +58,16 @@ export class TrustGraph {
             peer_id: peerId
         });*/
 
-        let certificatesRaw = resp.certificates
+        let certificatesRaw = resp.certificates;
 
         if (!(certificatesRaw && Array.isArray(certificatesRaw))) {
-            log.error(Array.isArray(certificatesRaw))
-            throw Error("Unexpected. Certificates should be presented in the response as an array.")
+            log.error(Array.isArray(certificatesRaw));
+            throw Error('Unexpected. Certificates should be presented in the response as an array.');
         }
 
         let certs = [];
         for (let cert of certificatesRaw) {
-            certs.push(await certificateFromString(cert))
+            certs.push(await certificateFromString(cert));
         }
 
         return certs;

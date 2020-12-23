@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-import Websockets from "libp2p-websockets";
-import Mplex from "libp2p-mplex";
-import SECIO from "libp2p-secio";
-import Peer from "libp2p";
-import {decode, encode} from "it-length-prefixed";
-import pipe from "it-pipe";
-import Multiaddr from "multiaddr";
-import PeerId from "peer-id";
+import Websockets from 'libp2p-websockets';
+import Mplex from 'libp2p-mplex';
+import SECIO from 'libp2p-secio';
+import Peer from 'libp2p';
+import { decode, encode } from 'it-length-prefixed';
+import pipe from 'it-pipe';
+import Multiaddr from 'multiaddr';
+import PeerId from 'peer-id';
 import * as log from 'loglevel';
-import {build, parseParticle, Particle, stringifyParticle} from "./particle";
+import { build, parseParticle, Particle, stringifyParticle } from './particle';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
 enum Status {
-    Initializing = "Initializing",
-    Connected = "Connected",
-    Disconnected = "Disconnected"
+    Initializing = 'Initializing',
+    Connected = 'Connected',
+    Disconnected = 'Disconnected',
 }
 
 export class FluenceConnection {
-
     private readonly selfPeerId: PeerId;
     private node: LibP2p;
     private readonly address: Multiaddr;
@@ -59,7 +58,7 @@ export class FluenceConnection {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
                 connEncryption: [SECIO],
-                peerDiscovery: []
+                peerDiscovery: [],
             },
         });
 
@@ -67,7 +66,7 @@ export class FluenceConnection {
     }
 
     isConnected() {
-        return this.status === Status.Connected
+        return this.status === Status.Connected;
     }
 
     // connection status. If `Disconnected`, it cannot be reconnected
@@ -77,29 +76,25 @@ export class FluenceConnection {
         if (this.status === Status.Initializing) {
             await this.node.start();
 
-            log.debug("dialing to the node with address: " + this.node.peerId.toB58String());
+            log.debug('dialing to the node with address: ' + this.node.peerId.toB58String());
 
             await this.node.dial(this.address);
 
             let _this = this;
 
-            this.node.handle([PROTOCOL_NAME], async ({connection, stream}) => {
-                pipe(
-                    stream.source,
-                    decode(),
-                    async function (source: AsyncIterable<string>) {
-                        for await (const msg of source) {
-                            try {
-                                let particle = parseParticle(msg);
-                                log.debug("Particle is received:");
-                                log.debug(JSON.stringify(particle, undefined, 2));
-                                _this.handleCall(particle);
-                            } catch(e) {
-                                log.error("error on handling a new incoming message: " + e);
-                            }
+            this.node.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+                pipe(stream.source, decode(), async function (source: AsyncIterable<string>) {
+                    for await (const msg of source) {
+                        try {
+                            let particle = parseParticle(msg);
+                            log.debug('Particle is received:');
+                            log.debug(JSON.stringify(particle, undefined, 2));
+                            _this.handleCall(particle);
+                        } catch (e) {
+                            log.error('error on handling a new incoming message: ' + e);
                         }
                     }
-                )
+                });
             });
 
             this.status = Status.Connected;
@@ -110,7 +105,7 @@ export class FluenceConnection {
 
     private checkConnectedOrThrow() {
         if (this.status !== Status.Connected) {
-            throw Error(`connection is in ${this.status} state`)
+            throw Error(`connection is in ${this.status} state`);
         }
     }
 
@@ -120,17 +115,20 @@ export class FluenceConnection {
     }
 
     async buildParticle(script: string, data: Map<string, any>, ttl?: number): Promise<Particle> {
-        return build(this.selfPeerId, script, data, ttl)
+        return build(this.selfPeerId, script, data, ttl);
     }
 
     async sendParticle(particle: Particle): Promise<void> {
         this.checkConnectedOrThrow();
 
         let particleStr = stringifyParticle(particle);
-        log.debug("send particle: \n" + JSON.stringify(particle, undefined, 2));
+        log.debug('send particle: \n' + JSON.stringify(particle, undefined, 2));
 
         // create outgoing substream
-        const conn = await this.node.dialProtocol(this.address, PROTOCOL_NAME) as {stream: Stream; protocol: string};
+        const conn = (await this.node.dialProtocol(this.address, PROTOCOL_NAME)) as {
+            stream: Stream;
+            protocol: string;
+        };
 
         pipe(
             [Buffer.from(particleStr, 'utf8')],

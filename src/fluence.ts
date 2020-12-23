@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import * as PeerId from "peer-id";
-import Multiaddr from "multiaddr"
-import {FluenceClient} from "./fluenceClient";
-import * as log from "loglevel";
-import {LogLevelDesc} from "loglevel";
-import {parseAstClosure} from "./stepper";
+import * as PeerId from 'peer-id';
+import Multiaddr from 'multiaddr';
+import { FluenceClient } from './fluenceClient';
+import * as log from 'loglevel';
+import { LogLevelDesc } from 'loglevel';
+import { parseAstClosure } from './stepper';
 
-log.setLevel('info')
+log.setLevel('info');
 
 export default class Fluence {
-
     static setLogLevel(level: LogLevelDesc): void {
         log.setLevel(level);
     }
@@ -33,7 +32,7 @@ export default class Fluence {
      * Generates new peer id with Ed25519 private key.
      */
     static async generatePeerId(): Promise<PeerId> {
-        return await PeerId.create({keyType: "Ed25519"});
+        return await PeerId.create({ keyType: 'Ed25519' });
     }
 
     /**
@@ -43,10 +42,10 @@ export default class Fluence {
      */
     static async local(peerId?: PeerId): Promise<FluenceClient> {
         if (!peerId) {
-            peerId = await Fluence.generatePeerId()
+            peerId = await Fluence.generatePeerId();
         }
 
-        let client =  new FluenceClient(peerId);
+        let client = new FluenceClient(peerId);
         await client.instantiateInterpreter();
 
         return client;
@@ -69,7 +68,7 @@ export default class Fluence {
     /// NOTE & TODO: interpreter is instantiated every time, make it a lazy constant?
     static async parseAIR(script: string): Promise<string> {
         let closure = await parseAstClosure();
-        return closure(script)
+        return closure(script);
     }
 }
 
@@ -79,6 +78,6 @@ declare global {
     }
 }
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
     window.Fluence = Fluence;
 }
