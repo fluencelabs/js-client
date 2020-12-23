@@ -15,13 +15,12 @@
  */
 
 export interface ResolvedTriplet {
-    peer_pk: string,
-    service_id: string,
-    function_name: string
+    peer_pk: string;
+    service_id: string;
+    function_name: string;
 }
 
-
 export interface SecurityTetraplet {
-    triplet: ResolvedTriplet,
-    json_path: string
+    triplet: ResolvedTriplet;
+    json_path: string;
 }
