@@ -15,31 +15,31 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import PeerId from "peer-id";
-import {encode} from "bs58";
-import {addData} from "./dataStorage";
+import PeerId from 'peer-id';
+import { encode } from 'bs58';
+import { addData } from './dataStorage';
 
 const DEFAULT_TTL = 7000;
 
 export interface Particle {
-    id: string,
-    init_peer_id: string,
-    timestamp: number,
-    ttl: number,
-    script: string,
+    id: string;
+    init_peer_id: string;
+    timestamp: number;
+    ttl: number;
+    script: string;
     // sign upper fields
-    signature: string,
-    data: any
+    signature: string;
+    data: any;
 }
 
 function wrapScript(selfPeerId: string, script: string, fields: string[]): string {
     fields.forEach((v) => {
-       script = `
+        script = `
 (seq
     (call %init_peer_id% ("" "load") ["${v}"] ${v})
     ${script}
 )
-                 `
+                 `;
     });
 
     return script;
@@ -47,14 +47,14 @@ function wrapScript(selfPeerId: string, script: string, fields: string[]): strin
 
 export async function build(peerId: PeerId, script: string, data: Map<string, any>, ttl?: number): Promise<Particle> {
     let id = genUUID();
-    let currentTime = (new Date()).getTime();
+    let currentTime = new Date().getTime();
 
     if (ttl === undefined) {
-        ttl = DEFAULT_TTL
+        ttl = DEFAULT_TTL;
     }
 
     addData(id, data, ttl);
-    script = wrapScript(peerId.toB58String(), script, Array.from(data.keys()))
+    script = wrapScript(peerId.toB58String(), script, Array.from(data.keys()));
 
     let particle: Particle = {
         id: id,
@@ -62,9 +62,9 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
         timestamp: currentTime,
         ttl: ttl,
         script: script,
-        signature: "",
-        data: []
-    }
+        signature: '',
+        data: [],
+    };
 
     particle.signature = await signParticle(peerId, particle);
 
@@ -75,15 +75,14 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
  * Copies a particle and stringify it.
  */
 export function stringifyParticle(call: Particle): string {
-    let obj: any = {...call};
-    obj.action = "Particle"
+    let obj: any = { ...call };
+    obj.action = 'Particle';
 
     // delete it after signatures will be implemented on nodes
-    obj.signature = []
+    obj.signature = [];
 
-    return JSON.stringify(obj)
+    return JSON.stringify(obj);
 }
-
 
 export function parseParticle(str: string): Particle {
     let json = JSON.parse(str);
@@ -95,8 +94,8 @@ export function parseParticle(str: string): Particle {
         ttl: json.ttl,
         script: json.script,
         signature: json.signature,
-        data: json.data
-    }
+        data: json.data,
+    };
 }
 
 export function canonicalBytes(particle: Particle) {
@@ -119,12 +118,11 @@ export function canonicalBytes(particle: Particle) {
 /**
  * Sign a particle with a private key from peerId.
  */
-export async function signParticle(peerId: PeerId,
-                                   particle: Particle): Promise<string> {
+export async function signParticle(peerId: PeerId, particle: Particle): Promise<string> {
     let bufToSign = canonicalBytes(particle);
 
-    let signature = await peerId.privKey.sign(bufToSign)
-    return encode(signature)
+    let signature = await peerId.privKey.sign(bufToSign);
+    return encode(signature);
 }
 
 export function genUUID() {

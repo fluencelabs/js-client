@@ -14,24 +14,29 @@
  * limitations under the License.
  */
 
-import * as PeerId from "peer-id";
-import {decode, encode} from "bs58"
+import * as PeerId from 'peer-id';
+import { decode, encode } from 'bs58';
 import crypto from 'libp2p-crypto';
 const ed25519 = crypto.keys.supportedKeys.ed25519;
 
 // One element in chain of trust in a certificate.
 export interface Trust {
-    issuedFor: PeerId,
-    expiresAt: number,
-    signature: string,
-    issuedAt: number
+    issuedFor: PeerId;
+    expiresAt: number;
+    signature: string;
+    issuedAt: number;
 }
 
 export function trustToString(trust: Trust): string {
-    return `${encode(trust.issuedFor.pubKey.marshal())}\n${trust.signature}\n${trust.expiresAt}\n${trust.issuedAt}`
+    return `${encode(trust.issuedFor.pubKey.marshal())}\n${trust.signature}\n${trust.expiresAt}\n${trust.issuedAt}`;
 }
 
-export async function trustFromString(issuedFor: string, signature: string, expiresAt: string, issuedAt: string): Promise<Trust> {
+export async function trustFromString(
+    issuedFor: string,
+    signature: string,
+    expiresAt: string,
+    issuedAt: string,
+): Promise<Trust> {
     let pubKey = ed25519.unmarshalEd25519PublicKey(decode(issuedFor));
     let peerId = await PeerId.createFromPubKey(pubKey.bytes);
 
@@ -39,11 +44,16 @@ export async function trustFromString(issuedFor: string, signature: string, expi
         issuedFor: peerId,
         signature: signature,
         expiresAt: parseInt(expiresAt),
-        issuedAt: parseInt(issuedAt)
-    }
+        issuedAt: parseInt(issuedAt),
+    };
 }
 
-export async function createTrust(forPk: PeerId, issuedBy: PeerId, expiresAt: number, issuedAt: number): Promise<Trust> {
+export async function createTrust(
+    forPk: PeerId,
+    issuedBy: PeerId,
+    expiresAt: number,
+    issuedAt: number,
+): Promise<Trust> {
     let bytes = toSignMessage(forPk, expiresAt, issuedAt);
     let signature = await issuedBy.privKey.sign(Buffer.from(bytes));
     let signatureStr = encode(signature);
@@ -52,7 +62,7 @@ export async function createTrust(forPk: PeerId, issuedBy: PeerId, expiresAt: nu
         issuedFor: forPk,
         expiresAt: expiresAt,
         signature: signatureStr,
-        issuedAt: issuedAt
+        issuedAt: issuedAt,
     };
 }
 
@@ -64,7 +74,7 @@ function toSignMessage(pk: PeerId, expiresAt: number, issuedAt: number): Uint8Ar
     bytes.set(numToArray(expiresAt), 32);
     bytes.set(numToArray(issuedAt), 40);
 
-    return bytes
+    return bytes;
 }
 
 function numToArray(n: number): number[] {
@@ -72,7 +82,7 @@ function numToArray(n: number): number[] {
 
     for (let index = 0; index < byteArray.length; index++) {
         let byte = n & 0xff;
-        byteArray [index] = byte;
+        byteArray[index] = byte;
         n = (n - byte) / 256;
     }
 

@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-import * as PeerId from "peer-id";
-import {keys} from "libp2p-crypto";
-import {Certificate, issueRoot} from "./certificate";
+import * as PeerId from 'peer-id';
+import { keys } from 'libp2p-crypto';
+import { Certificate, issueRoot } from './certificate';
 
 /**
  * Generate root certificate with one of the Fluence trusted key for one day.
  */
 export async function nodeRootCert(issuedFor: PeerId): Promise<Certificate> {
+    // prettier-ignore
     let seed = [46, 188, 245, 171, 145, 73, 40, 24, 52, 233, 215, 163, 54, 26, 31, 221, 159, 179, 126, 106, 27, 199, 189, 194, 80, 133, 235, 42, 42, 247, 80, 201];
 
-    let privateK = await keys.generateKeyPairFromSeed("Ed25519", Uint8Array.from(seed), 256);
+    let privateK = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seed), 256);
     let peerId = await PeerId.createFromPrivKey(privateK.bytes);
 
     let issuedAt = new Date();

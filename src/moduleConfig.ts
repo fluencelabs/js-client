@@ -15,15 +15,15 @@
  */
 
 export interface ModuleConfig {
-    name: string,
-    mem_pages_count?: number,
-    logger_enabled?: boolean,
-    wasi?: Wasi,
-    mounted_binaries?: object
+    name: string;
+    mem_pages_count?: number;
+    logger_enabled?: boolean;
+    wasi?: Wasi;
+    mounted_binaries?: object;
 }
 
 export interface Wasi {
-    envs?: object,
-    preopened_files?: string[],
-    mapped_dirs?: object,
+    envs?: object;
+    preopened_files?: string[];
+    mapped_dirs?: object;
 }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Particle} from "./particle";
-import log from "loglevel";
+import { Particle } from './particle';
+import log from 'loglevel';
 
 export class Subscriptions {
     private subscriptions: Map<string, Particle> = new Map();
@@ -31,9 +31,9 @@ export class Subscriptions {
     subscribe(particle: Particle, ttl: number) {
         let _this = this;
         setTimeout(() => {
-            _this.subscriptions.delete(particle.id)
-            log.info(`Particle with id ${particle.id} deleted by timeout`)
-        }, ttl)
+            _this.subscriptions.delete(particle.id);
+            log.info(`Particle with id ${particle.id} deleted by timeout`);
+        }, ttl);
         this.subscriptions.set(particle.id, particle);
     }
 
@@ -47,10 +47,10 @@ export class Subscriptions {
     }
 
     get(id: string): Particle | undefined {
-        return this.subscriptions.get(id)
+        return this.subscriptions.get(id);
     }
 
     hasSubscription(particle: Particle): boolean {
-        return this.subscriptions.has(particle.id)
+        return this.subscriptions.has(particle.id);
     }
 }

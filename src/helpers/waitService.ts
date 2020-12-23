@@ -1,15 +1,15 @@
 /**
  * Creates service that will wait for a response from external peers.
  */
-import {genUUID} from "../particle";
-import log from "loglevel";
-import {ServiceMultiple} from "../service";
-import {deleteService, registerService} from "../globalState";
-import {delay} from "../utils";
+import { genUUID } from '../particle';
+import log from 'loglevel';
+import { ServiceMultiple } from '../service';
+import { deleteService, registerService } from '../globalState';
+import { delay } from '../utils';
 
 interface NamedPromise<T> {
-    promise: Promise<T>,
-    name: string
+    promise: Promise<T>;
+    name: string;
 }
 
 /**
@@ -19,28 +19,28 @@ interface NamedPromise<T> {
  * @param ttl
  */
 export function waitResult(ttl: number): NamedPromise<any[]> {
-    return waitService(genUUID(), (args: any[]) => args, ttl)
+    return waitService(genUUID(), (args: any[]) => args, ttl);
 }
 
 export function waitService<T>(functionName: string, func: (args: any[]) => T, ttl: number): NamedPromise<T> {
     let serviceName = `${functionName}-${genUUID()}`;
-    log.info(`Create waiting service '${serviceName}'`)
-    let service = new ServiceMultiple(serviceName)
-    registerService(service)
+    log.info(`Create waiting service '${serviceName}'`);
+    let service = new ServiceMultiple(serviceName);
+    registerService(service);
 
     let promise: Promise<T> = new Promise(function (resolve) {
-        service.registerFunction("", (args: any[]) => {
-            resolve(func(args))
-            return {}
-        })
-    })
+        service.registerFunction('', (args: any[]) => {
+            resolve(func(args));
+            return {};
+        });
+    });
 
-    let timeout = delay<T>(ttl, "Timeout on waiting " + serviceName)
+    let timeout = delay<T>(ttl, 'Timeout on waiting ' + serviceName);
 
     return {
         name: serviceName,
         promise: Promise.race([promise, timeout]).finally(() => {
-            deleteService(serviceName)
-        })
-    }
+            deleteService(serviceName);
+        }),
+    };
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import * as PeerId from "peer-id";
-import {decode, encode} from "bs58"
-import {keys} from "libp2p-crypto";
+import * as PeerId from 'peer-id';
+import { decode, encode } from 'bs58';
+import { keys } from 'libp2p-crypto';
 
 /**
  * @param seed 32 bytes
@@ -24,11 +24,11 @@ import {keys} from "libp2p-crypto";
 export async function seedToPeerId(seed: string): Promise<PeerId> {
     let seedArr = decode(seed);
 
-    let privateK = await keys.generateKeyPairFromSeed("Ed25519", Uint8Array.from(seedArr), 256);
+    let privateK = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
     return await PeerId.createFromPrivKey(privateK.bytes);
 }
 
 export function peerIdToSeed(peerId: PeerId): string {
-    let seedBuf = peerId.privKey.marshal().subarray(0, 32)
-    return encode(seedBuf)
+    let seedBuf = peerId.privKey.marshal().subarray(0, 32);
+    return encode(seedBuf);
 }
