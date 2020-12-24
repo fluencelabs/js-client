@@ -33,6 +33,9 @@ export interface Particle {
     data: number[];
 }
 
+/**
+ * Represents particle action to send to a node
+ */
 interface ParticleAction {
     action: 'Particle'
     id: string;
