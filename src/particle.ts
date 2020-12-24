@@ -87,7 +87,7 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
 }
 
 /**
- * Copies a particle and stringify it.
+ * Creates an action to send to a node.
  */
 export function toAction(particle: Particle): ParticleAction {
     return {
@@ -97,7 +97,7 @@ export function toAction(particle: Particle): ParticleAction {
         timestamp: particle.timestamp,
         ttl: particle.ttl,
         script: particle.script,
-        // TODO: delete it after signatures will be implemented on nodes
+        // TODO: copy signature from a particle after signatures will be implemented on nodes
         signature: [],
         data: fromByteArray(Buffer.from(particle.data))
     };
