@@ -86,13 +86,7 @@ export class FluenceClient {
 
                     if (log.getLevel() <= INFO_LOG_LEVEL) {
                         log.info('inner interpreter outcome:');
-                        let so = { ...stepperOutcome };
-                        try {
-                            so.data = JSON.parse(Buffer.from(so.data).toString('utf8'));
-                            log.info(so);
-                        } catch (e) {
-                            log.info('cannot parse StepperOutcome data as JSON: ', e);
-                        }
+                        log.info(stepperOutcome)
                     }
 
                     // update data after aquamarine execution
