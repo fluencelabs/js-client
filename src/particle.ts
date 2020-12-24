@@ -30,7 +30,7 @@ export interface Particle {
     script: string;
     // sign upper fields
     signature: string;
-    data: number[];
+    data: Uint8Array;
 }
 
 /**
@@ -78,7 +78,7 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
         ttl: ttl,
         script: script,
         signature: '',
-        data: [],
+        data: Buffer.from([]),
     };
 
     particle.signature = await signParticle(peerId, particle);
@@ -99,7 +99,7 @@ export function toAction(particle: Particle): ParticleAction {
         script: particle.script,
         // TODO: copy signature from a particle after signatures will be implemented on nodes
         signature: [],
-        data: fromByteArray(Buffer.from(particle.data))
+        data: fromByteArray(particle.data)
     };
 }
 

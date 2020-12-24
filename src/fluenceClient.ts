@@ -66,7 +66,7 @@ export class FluenceClient {
                     log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
                 } else {
                     // if there is no subscription yet, previous data is empty
-                    let prevData: number[] = [];
+                    let prevData: Uint8Array = Buffer.from([]);
                     let prevParticle = this.subscriptions.get(particle.id);
                     if (prevParticle) {
                         prevData = prevParticle.data;
@@ -79,8 +79,8 @@ export class FluenceClient {
                     let stepperOutcomeStr = this.interpreter(
                         particle.init_peer_id,
                         particle.script,
-                        JSON.stringify(prevData),
-                        JSON.stringify(particle.data),
+                        prevData,
+                        particle.data,
                     );
                     let stepperOutcome: StepperOutcome = JSON.parse(stepperOutcomeStr);
 

@@ -16,6 +16,6 @@
 
 export interface StepperOutcome {
     ret_code: number;
-    data: number[];
+    data: Uint8Array;
     next_peer_pks: string[];
 }
