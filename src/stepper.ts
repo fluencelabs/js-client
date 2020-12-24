@@ -31,7 +31,7 @@ type ImportObject = {
     './aquamarine_client_bg.js': {
         // fn call_service_impl(service_id: String, fn_name: String, args: String, security_tetraplets: String) -> String;
         // prettier-ignore
-        __wbg_callserviceimpl_7d3cf77a2722659e: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any, ) => void;
+        __wbg_callserviceimpl_94e62d12c5d03766: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any, ) => void;
         __wbg_getcurrentpeeridimpl_154ce1848a306ff5: (arg0: any) => void;
         __wbindgen_throw: (arg: any) => void;
     };
@@ -124,7 +124,7 @@ function newImportObject(cfg: HostImportsConfig, peerId: PeerId): ImportObject {
         // If so, an error with a new name will be occurred after wasm initialization.
         './aquamarine_client_bg.js': {
             // prettier-ignore
-            __wbg_callserviceimpl_7d3cf77a2722659e: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any) => {
+            __wbg_callserviceimpl_94e62d12c5d03766: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any) => {
                 let wasm = cfg.exports;
                 try {
                     let serviceId = getStringFromWasm0(wasm, arg1, arg2);
@@ -158,7 +158,7 @@ function newLogImport(cfg: HostImportsConfig): ImportObject {
     return {
         host: log_import(cfg),
         './aquamarine_client_bg.js': {
-            __wbg_callserviceimpl_7d3cf77a2722659e: (_) => {},
+            __wbg_callserviceimpl_94e62d12c5d03766: (_) => {},
             __wbg_getcurrentpeeridimpl_154ce1848a306ff5: (_) => {},
             __wbindgen_throw: (_) => {},
         },

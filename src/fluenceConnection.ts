@@ -76,7 +76,7 @@ export class FluenceConnection {
         if (this.status === Status.Initializing) {
             await this.node.start();
 
-            log.debug('dialing to the node with address: ' + this.node.peerId.toB58String());
+            log.debug(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
 
             await this.node.dial(this.address);
 
