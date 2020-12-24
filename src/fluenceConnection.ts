@@ -39,11 +39,11 @@ export class FluenceConnection {
     private readonly address: Multiaddr;
     readonly nodePeerId: PeerId;
     private readonly selfPeerIdStr: string;
-    private readonly handleCall: (call: Particle) => void;
+    private readonly handleParticle: (call: Particle) => void;
 
-    constructor(multiaddr: Multiaddr, hostPeerId: PeerId, selfPeerId: PeerId, handleCall: (call: Particle) => void) {
+    constructor(multiaddr: Multiaddr, hostPeerId: PeerId, selfPeerId: PeerId, handleParticle: (call: Particle) => void) {
         this.selfPeerId = selfPeerId;
-        this.handleCall = handleCall;
+        this.handleParticle = handleParticle;
         this.selfPeerIdStr = selfPeerId.toB58String();
         this.address = multiaddr;
         this.nodePeerId = hostPeerId;
@@ -89,7 +89,7 @@ export class FluenceConnection {
                             let particle = parseParticle(msg);
                             log.debug('Particle is received:');
                             log.debug(JSON.stringify(particle, undefined, 2));
-                            _this.handleCall(particle);
+                            _this.handleParticle(particle);
                         } catch (e) {
                             log.error('error on handling a new incoming message: ' + e);
                         }
