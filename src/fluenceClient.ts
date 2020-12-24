@@ -66,7 +66,7 @@ export class FluenceClient {
                     log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
                 } else {
                     // if there is no subscription yet, previous data is empty
-                    let prevData = [];
+                    let prevData: number[] = [];
                     let prevParticle = this.subscriptions.get(particle.id);
                     if (prevParticle) {
                         prevData = prevParticle.data;
@@ -131,7 +131,7 @@ export class FluenceClient {
         let _this = this;
 
         return async (particle: Particle) => {
-            let data = particle.data;
+            let data: any = particle.data;
             let error: any = data['protocol!error'];
             if (error !== undefined) {
                 log.error('error in external particle: ');

@@ -15,6 +15,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+import { fromByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import { addData } from './dataStorage';
@@ -29,7 +30,18 @@ export interface Particle {
     script: string;
     // sign upper fields
     signature: string;
-    data: any;
+    data: number[];
+}
+
+interface ParticleAction {
+    action: 'Particle'
+    id: string;
+    init_peer_id: string;
+    timestamp: number;
+    ttl: number;
+    script: string;
+    signature: number[];
+    data: string;
 }
 
 function wrapScript(selfPeerId: string, script: string, fields: string[]): string {
@@ -74,14 +86,18 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
 /**
  * Copies a particle and stringify it.
  */
-export function stringifyParticle(call: Particle): string {
-    let obj: any = { ...call };
-    obj.action = 'Particle';
-
-    // delete it after signatures will be implemented on nodes
-    obj.signature = [];
-
-    return JSON.stringify(obj);
+export function toAction(particle: Particle): ParticleAction {
+    return {
+        action: "Particle",
+        id: particle.id,
+        init_peer_id: particle.init_peer_id,
+        timestamp: particle.timestamp,
+        ttl: particle.ttl,
+        script: particle.script,
+        // TODO: delete it after signatures will be implemented on nodes
+        signature: [],
+        data: fromByteArray(Buffer.from(particle.data))
+    };
 }
 
 export function parseParticle(str: string): Particle {
