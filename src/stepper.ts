@@ -26,7 +26,7 @@ import Instance = WebAssembly.Instance;
 import Exports = WebAssembly.Exports;
 import ExportValue = WebAssembly.ExportValue;
 
-export type InterpreterInvoke = (init_user_id: string, script: string, prev_data: string, data: string) => string;
+export type InterpreterInvoke = (init_user_id: string, script: string, prev_data: Uint8Array, data: Uint8Array) => string;
 type ImportObject = {
     './aquamarine_client_bg.js': {
         // fn call_service_impl(service_id: String, fn_name: String, args: String, security_tetraplets: String) -> String;
@@ -173,7 +173,7 @@ export async function instantiateInterpreter(peerId: PeerId): Promise<Interprete
     });
     let instance = await interpreterInstance(cfg);
 
-    return (init_user_id: string, script: string, prev_data: string, data: string) => {
+    return (init_user_id: string, script: string, prev_data: Uint8Array, data: Uint8Array) => {
         let logLevel = log.getLevel();
         let logLevelStr = 'info';
         if (logLevel === 0) {

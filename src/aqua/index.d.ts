@@ -9,7 +9,7 @@
  * @param {string} log_level
  * @returns {string}
  */
-export function invoke(wasm: any, init_user_id: string, aqua: string, prev_data: string, data: string, log_level: string): string;
+export function invoke(wasm: any, init_user_id: string, aqua: string, prev_data: Uint8Array, data: Uint8Array, log_level: string): string;
 export function ast(wasm: any, script: string): string;
 export function return_current_peer_id(wasm: any, peerId: string, arg0: any): void;
 export function return_call_service_result(wasm: any, ret: string, arg0: any): void;

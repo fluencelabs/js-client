@@ -91,6 +91,14 @@ cachedTextDecoder.decode();
 export function getStringFromWasm0(wasm, ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory0(wasm).subarray(ptr, ptr + len));
 }
+
+function passArray8ToWasm0(wasm, arg, malloc) {
+    const ptr = malloc(arg.length * 1);
+    getUint8Memory0(wasm).set(arg, ptr / 1);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
 /**
  * @param {any} wasm
  * @param {string} init_user_id
@@ -106,9 +114,9 @@ export function invoke(wasm, init_user_id, aqua, prev_data, data, log_level) {
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(wasm, aqua, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len1 = WASM_VECTOR_LEN;
-        var ptr2 = passStringToWasm0(wasm, prev_data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var ptr2 = passArray8ToWasm0(wasm, prev_data, wasm.__wbindgen_malloc);
         var len2 = WASM_VECTOR_LEN;
-        var ptr3 = passStringToWasm0(wasm, data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var ptr3 = passArray8ToWasm0(wasm, data, wasm.__wbindgen_malloc);
         var len3 = WASM_VECTOR_LEN;
         var ptr4 = passStringToWasm0(wasm, log_level, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len4 = WASM_VECTOR_LEN;
