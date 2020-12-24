@@ -15,7 +15,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { fromByteArray } from 'base64-js';
+import {fromByteArray, toByteArray} from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import { addData } from './dataStorage';
@@ -113,7 +113,7 @@ export function parseParticle(str: string): Particle {
         ttl: json.ttl,
         script: json.script,
         signature: json.signature,
-        data: json.data,
+        data: toByteArray(json.data),
     };
 }
 
