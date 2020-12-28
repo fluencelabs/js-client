@@ -1,4 +1,7 @@
 # Fluence browser client
+
+[![npm version](https://badge.fury.io/js/fluence.svg)](https://badge.fury.io/js/fluence)
+
 Browser client for the Fluence network based on the js-libp2p.
 
 ## How to build
