@@ -55,14 +55,14 @@ jobs:
           # take local version
           LOCAL_VERSION="$(cat package.json | jq -r .version)"
           # set prerelease part on local version
-          LOCAL_PRERELEASE_VERSION="$(semver --increment prerelease --preid "$SANITIZED_BRANCH" "$LOCAL_VERSION")"
+          LOCAL_PRERELEASE_VERSION="$(semver --increment prerelease --preid "$SANITIZED_BRANCH" "${LOCAL_VERSION}-0")" # added '-0' here to avoid semver erroneously increment patch octet. Any suffix works, '-0' is chosen deliberately.
 
           # take the highest version
           MAX_VERSION="$(semver "$LOCAL_PRERELEASE_VERSION" "$PRERELEASE_NPM_VERSION" | tail -n1)"
 
           # save info to env
           echo "FINAL_VERSION=$MAX_VERSION" | tee -a $GITHUB_ENV
-          echo "PKG_NAME=$PKG_NAME" | tee -a $GITHUB_ENV"
+          echo "PKG_NAME=$PKG_NAME" | tee -a $GITHUB_ENV
 
       ### Set version
       - name: Set version to ${{ env.FINAL_VERSION }}
