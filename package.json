@@ -12,7 +12,7 @@
     "start": "webpack-dev-server -p",
     "build": "webpack --mode production"
   },
-  "repository": "https://github.com/fluencelabs/fluence",
+  "repository": "https://github.com/fluencelabs/fluence-js",
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
