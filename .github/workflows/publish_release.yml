@@ -1,0 +1,71 @@
+name: "publish-release"
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  npm-publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      ### Calculate FINAL_VERSION
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get --yes --force-yes install jq
+
+      - name: Get version from npm and increment
+        run: |
+          set -x
+          yarn global add semver
+          PATH="$(yarn global bin):$PATH"
+
+          # take npm version and increment it
+          PKG_NAME="$(cat package.json | jq -r .name)"
+          NPM_VERSION="$(yarn info --silent "$PKG_NAME" version || true)"
+          NEXT_NPM_VERSION="$(semver --increment patch "$NPM_VERSION")"
+
+          # take local version
+          LOCAL_VERSION="$(cat package.json | jq -r .version)"
+
+          # take maximum of the local and NEXT_NPM versions
+          MAX_VERSION="$(semver "$LOCAL_VERSION" "$NEXT_NPM_VERSION" "0.0.0" | tail -n1)"
+
+          # save info to env
+          echo "FINAL_VERSION=$MAX_VERSION" | tee -a $GITHUB_ENV
+          echo "PKG_NAME=$PKG_NAME" | tee -a $GITHUB_ENV"
+
+      ### Set version
+      - name: Set version to ${{ env.FINAL_VERSION }}
+        run: yarn version --new-version ${{ env.FINAL_VERSION }} --no-git-tag-version
+
+      ### Publish to NPM registry
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      ### Create a pre-release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.FINAL_VERSION }}
+          release_name: Fluence Network ${{ env.FINAL_VERSION }}
+          body: |
+            [${{ env.FINAL_VERSION }} @ NPM registry](https://www.npmjs.com/package/${{ env.PKG_NAME }}/v/${{ env.FINAL_VERSION }})
+          draft: false
+          prerelease: false
