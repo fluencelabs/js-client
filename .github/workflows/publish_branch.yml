@@ -1,0 +1,93 @@
+name: "publish-release"
+
+on:
+  push:
+
+jobs:
+  npm-publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      ### Extract branch name
+      - name: Extract branch name
+        if: github.event_name != 'pull_request'
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+        id: extract_branch
+
+      - name: Extract branch name
+        if: github.event_name == 'pull_request'
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      ### Calculate FINAL_VERSION
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get --yes --force-yes install jq
+
+      - name: Get version from npm and increment
+        run: |
+          set -x
+          yarn global add semver
+          PATH="$(yarn global bin):$PATH"
+
+          # take npm version and increment it
+          PKG_NAME="$(cat package.json | jq -r .name)"
+
+          # sanitize branch name so it can be used as a semver suffix (replace [^0-9a-zA-Z-] with hyphen)
+          SANITIZED_BRANCH="$(echo -n "${{ env.BRANCH_NAME }}" | tr -C '[:alnum:]-' -)"
+
+          # take all versions from npm and replace single quotes with double quotes
+          NPM_VERSIONS=$(yarn info --silent fluence versions | tr \' \")
+          # take only versions that contain branch name
+          NPM_VERSIONS_FILTERED=$(echo $NPM_VERSIONS | jq -r '.[] | select(contains("$SANITIZED_BRANCH"))')
+          # flatten into a single line
+          NPM_VERSIONS_FLATTENED=$(echo $NPM_VERSIONS_FILTERED | awk '{print}' ORS=' ')
+          # sort versions according to semver, take highest (last)
+          LAST_NPM_VERSION="$(semver -p $(echo $NPM_VERSIONS_FLATTENED) | tail -n1)"
+          # increment prerelease part of the version
+          PRERELEASE_NPM_VERSION="$(semver --increment prerelease --preid "$SANITIZED_BRANCH" "$LAST_NPM_VERSION")"
+
+          # take local version
+          LOCAL_VERSION="$(cat package.json | jq -r .version)"
+          # set prerelease part on local version
+          LOCAL_PRERELEASE_VERSION="$(semver --increment prerelease --preid "$SANITIZED_BRANCH" "$LOCAL_VERSION")"
+
+          # take the highest version
+          MAX_VERSION="$(semver "$LOCAL_PRERELEASE_VERSION" "$PRERELEASE_NPM_VERSION" | tail -n1)"
+
+          # save info to env
+          echo "FINAL_VERSION=$MAX_VERSION" | tee -a $GITHUB_ENV
+          echo "PKG_NAME=$PKG_NAME" | tee -a $GITHUB_ENV"
+
+      ### Set version
+      - name: Set version to ${{ env.FINAL_VERSION }}
+        run: yarn version --new-version ${{ env.FINAL_VERSION }} --no-git-tag-version
+
+      ### Publish to NPM registry
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      ### Create a pre-release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.FINAL_VERSION }}
+          release_name: Fluence Network ${{ env.FINAL_VERSION }}
+          body: |
+            [${{ env.FINAL_VERSION }} @ NPM registry](https://www.npmjs.com/package/${{ env.PKG_NAME }}/v/${{ env.FINAL_VERSION }})
+          draft: false
+          prerelease: false
