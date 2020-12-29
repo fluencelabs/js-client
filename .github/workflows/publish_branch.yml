@@ -31,7 +31,6 @@ jobs:
 
       - name: Get version from npm and increment
         run: |
-          set -x
           yarn global add semver
           PATH="$(yarn global bin):$PATH"
 
