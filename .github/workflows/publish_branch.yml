@@ -42,7 +42,7 @@ jobs:
           SANITIZED_BRANCH="$(echo -n "${{ env.BRANCH_NAME }}" | tr -C '[:alnum:]-' -)"
 
           # take all versions from npm and replace single quotes with double quotes
-          NPM_VERSIONS=$(yarn info --silent "$PKG_NAME" versions | tr \' \")
+          NPM_VERSIONS=$(yarn info --silent "$PKG_NAME" versions | tr \' \" || echo '["0.0.0"]')
           # take only versions that contain branch name
           NPM_VERSIONS_FILTERED=$(echo $NPM_VERSIONS | jq -r ".[] | select(contains(\"$SANITIZED_BRANCH\"))")
           # flatten into a single line
