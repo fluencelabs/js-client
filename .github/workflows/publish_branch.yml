@@ -71,10 +71,12 @@ jobs:
       ### Publish to NPM registry
       - uses: actions/setup-node@v1
         with:
-          node-version: '14'
+          node-version: '15'
           registry-url: 'https://registry.npmjs.org'
 
       - run: cat package.json
+
+      - run: npm run build
 
       - run: npm publish --access public
         env:
