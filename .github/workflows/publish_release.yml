@@ -23,7 +23,6 @@ jobs:
 
       - name: Get version from npm and increment
         run: |
-          set -x
           yarn global add semver
           PATH="$(yarn global bin):$PATH"
 
@@ -40,7 +39,7 @@ jobs:
 
           # save info to env
           echo "FINAL_VERSION=$MAX_VERSION" | tee -a $GITHUB_ENV
-          echo "PKG_NAME=$PKG_NAME" | tee -a $GITHUB_ENV"
+          echo "PKG_NAME=$PKG_NAME" | tee -a $GITHUB_ENV
 
       ### Set version
       - name: Set version to ${{ env.FINAL_VERSION }}
@@ -59,7 +58,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      ### Create a pre-release
+      ### Create a release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
