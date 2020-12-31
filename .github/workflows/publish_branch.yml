@@ -2,6 +2,8 @@ name: "publish-branch"
 
 on:
   push:
+    branches-ignore:
+      - master
 
 jobs:
   npm-publish:
