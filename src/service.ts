@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { getService } from './globalState';
 import { SecurityTetraplet } from './securityTetraplet';
+import { ServiceRegistry } from './ServiceRegistry';
 
 export interface CallServiceResult {
     ret_code: number;
@@ -130,7 +130,13 @@ export class ServiceMultiple implements Service {
     }
 }
 
-export function service(service_id: string, fn_name: string, args: string, tetraplets: string): CallServiceResult {
+export function service(
+    registry: ServiceRegistry,
+    service_id: string,
+    fn_name: string,
+    args: string,
+    tetraplets: string,
+): CallServiceResult {
     try {
         let argsObject = JSON.parse(args);
         if (!Array.isArray(argsObject)) {
@@ -139,7 +145,7 @@ export function service(service_id: string, fn_name: string, args: string, tetra
 
         let tetrapletsObject: SecurityTetraplet[][] = JSON.parse(tetraplets);
 
-        let service = getService(service_id);
+        let service = registry.getService(service_id);
         if (service) {
             return service.call(fn_name, argsObject, tetrapletsObject);
         } else {

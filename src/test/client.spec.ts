@@ -9,8 +9,8 @@ import { nodeRootCert } from '../trust/misc';
 import { peerIdToSeed, seedToPeerId } from '../seed';
 import { build } from '../particle';
 import { Service, ServiceOne } from '../service';
-import { registerService } from '../globalState';
 import { waitResult } from '../helpers/waitService';
+import { ServiceRegistry } from '../ServiceRegistry';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -47,19 +47,22 @@ describe('Typescript usage suite', () => {
     });
 
     it.skip('', async function () {
+        const registry = new ServiceRegistry();
+
         let pid = await Fluence.generatePeerId();
         let cl = await Fluence.connect(
             '/ip4/138.197.177.2/tcp/9001/ws/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
             pid,
+            registry,
         );
 
         let service = new ServiceOne('test', (fnName: string, args: any[]) => {
             console.log('called: ' + args);
             return {};
         });
-        registerService(service);
+        registry.registerService(service);
 
-        let namedPromise = waitResult(30000);
+        let namedPromise = waitResult(registry, 30000);
 
         let script = `
             (seq (
@@ -74,7 +77,7 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        let particle = await build(pid, script, data, 30000);
+        let particle = await build(registry, pid, script, data, 30000);
 
         await cl.sendParticle(particle);
 
