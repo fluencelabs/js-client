@@ -68,13 +68,7 @@ export default class Fluence {
         peerId?: PeerId,
         registry?: ServiceRegistry,
     ): Promise<FluenceClient> {
-        let client: FluenceClient;
-        if (registry) {
-            client = new FluenceClient(peerId, registry);
-        } else {
-            client = new FluenceClient(peerId);
-        }
-
+        const client = await this.local(peerId, registry);
         await client.connect(multiaddr);
         return client;
     }
