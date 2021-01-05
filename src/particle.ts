@@ -15,10 +15,10 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import {fromByteArray, toByteArray} from 'base64-js';
+import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
-import { addData } from './dataStorage';
+import { ServiceRegistry } from './ServiceRegistry';
 
 const DEFAULT_TTL = 7000;
 
@@ -37,7 +37,7 @@ export interface Particle {
  * Represents particle action to send to a node
  */
 interface ParticleAction {
-    action: 'Particle'
+    action: 'Particle';
     id: string;
     init_peer_id: string;
     timestamp: number;
@@ -60,7 +60,13 @@ function wrapScript(selfPeerId: string, script: string, fields: string[]): strin
     return script;
 }
 
-export async function build(peerId: PeerId, script: string, data: Map<string, any>, ttl?: number): Promise<Particle> {
+export async function build(
+    registry: ServiceRegistry,
+    peerId: PeerId,
+    script: string,
+    data: Map<string, any>,
+    ttl?: number,
+): Promise<Particle> {
     let id = genUUID();
     let currentTime = new Date().getTime();
 
@@ -68,7 +74,7 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
         ttl = DEFAULT_TTL;
     }
 
-    addData(id, data, ttl);
+    registry.addData(id, data, ttl);
     script = wrapScript(peerId.toB58String(), script, Array.from(data.keys()));
 
     let particle: Particle = {
@@ -91,7 +97,7 @@ export async function build(peerId: PeerId, script: string, data: Map<string, an
  */
 export function toAction(particle: Particle): ParticleAction {
     return {
-        action: "Particle",
+        action: 'Particle',
         id: particle.id,
         init_peer_id: particle.init_peer_id,
         timestamp: particle.timestamp,
@@ -99,7 +105,7 @@ export function toAction(particle: Particle): ParticleAction {
         script: particle.script,
         // TODO: copy signature from a particle after signatures will be implemented on nodes
         signature: [],
-        data: fromByteArray(particle.data)
+        data: fromByteArray(particle.data),
     };
 }
 

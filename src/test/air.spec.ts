@@ -2,17 +2,18 @@ import 'mocha';
 import Fluence from '../fluence';
 import { build } from '../particle';
 import { ServiceMultiple } from '../service';
-import { registerService } from '../globalState';
 import { expect } from 'chai';
 import { SecurityTetraplet } from '../securityTetraplet';
+import { ServiceRegistry } from '../ServiceRegistry';
 
 function registerPromiseService<T>(
+    registry: ServiceRegistry,
     serviceId: string,
     fnName: string,
     f: (args: any[]) => T,
 ): Promise<[T, SecurityTetraplet[][]]> {
     let service = new ServiceMultiple(serviceId);
-    registerService(service);
+    registry.registerService(service);
 
     return new Promise((resolve, reject) => {
         service.registerFunction(fnName, (args: any[], tetraplets: SecurityTetraplet[][]) => {
@@ -25,15 +26,16 @@ function registerPromiseService<T>(
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
+        const registry = new ServiceRegistry();
         let serviceId = 'init_peer';
         let fnName = 'id';
-        let checkPromise = registerPromiseService(serviceId, fnName, (args) => args[0]);
+        let checkPromise = registerPromiseService(registry, serviceId, fnName, (args) => args[0]);
 
-        let client = await Fluence.local();
+        let client = await Fluence.local(undefined, registry);
 
         let script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
 
-        let particle = await build(client.selfPeerId, script, new Map());
+        let particle = await build(registry, client.selfPeerId, script, new Map());
 
         await client.executeParticle(particle);
 
@@ -42,17 +44,18 @@ describe('== AIR suite', () => {
     });
 
     it('call local function', async function () {
+        const registry = new ServiceRegistry();
         let serviceId = 'console';
         let fnName = 'log';
-        let checkPromise = registerPromiseService(serviceId, fnName, (args) => args[0]);
+        let checkPromise = registerPromiseService(registry, serviceId, fnName, (args) => args[0]);
 
-        let client = await Fluence.local();
+        let client = await Fluence.local(undefined, registry);
 
         let arg = 'hello';
         let script = `(call %init_peer_id% ("${serviceId}" "${fnName}") ["${arg}"])`;
 
         // Wrap script into particle, so it can be executed by local WASM runtime
-        let particle = await build(client.selfPeerId, script, new Map());
+        let particle = await build(registry, client.selfPeerId, script, new Map());
 
         await client.executeParticle(particle);
 
@@ -61,11 +64,12 @@ describe('== AIR suite', () => {
     });
 
     it('check particle arguments', async function () {
+        const registry = new ServiceRegistry();
         let serviceId = 'check';
         let fnName = 'args';
-        let checkPromise = registerPromiseService(serviceId, fnName, (args) => args[0]);
+        let checkPromise = registerPromiseService(registry, serviceId, fnName, (args) => args[0]);
 
-        let client = await Fluence.local();
+        let client = await Fluence.local(undefined, registry);
 
         let arg = 'arg1';
         let value = 'hello';
@@ -73,7 +77,7 @@ describe('== AIR suite', () => {
 
         let data = new Map();
         data.set('arg1', value);
-        let particle = await build(client.selfPeerId, script, data);
+        let particle = await build(registry, client.selfPeerId, script, data);
 
         await client.executeParticle(particle);
 
@@ -82,12 +86,14 @@ describe('== AIR suite', () => {
     });
 
     it('check security tetraplet', async function () {
-        let makeDataPromise = registerPromiseService('make_data_service', 'make_data', (args) => {
+        const registry = new ServiceRegistry();
+
+        let makeDataPromise = registerPromiseService(registry, 'make_data_service', 'make_data', (args) => {
             field: 42;
         });
-        let getDataPromise = registerPromiseService('get_data_service', 'get_data', (args) => args[0]);
+        let getDataPromise = registerPromiseService(registry, 'get_data_service', 'get_data', (args) => args[0]);
 
-        let client = await Fluence.local();
+        let client = await Fluence.local(undefined, registry);
 
         let script = `
         (seq
@@ -95,7 +101,7 @@ describe('== AIR suite', () => {
             (call %init_peer_id% ("get_data_service" "get_data") [result.$.field])
         )`;
 
-        let particle = await build(client.selfPeerId, script, new Map());
+        let particle = await build(registry, client.selfPeerId, script, new Map());
 
         await client.executeParticle(particle);
 
@@ -111,20 +117,22 @@ describe('== AIR suite', () => {
     });
 
     it('check chain of services work properly', async function () {
+        const registry = new ServiceRegistry();
+
         this.timeout(5000);
         let serviceId1 = 'check1';
         let fnName1 = 'fn1';
-        let checkPromise1 = registerPromiseService(serviceId1, fnName1, (args) => args[0]);
+        let checkPromise1 = registerPromiseService(registry, serviceId1, fnName1, (args) => args[0]);
 
         let serviceId2 = 'check2';
         let fnName2 = 'fn2';
-        let checkPromise2 = registerPromiseService(serviceId2, fnName2, (args) => args[0]);
+        let checkPromise2 = registerPromiseService(registry, serviceId2, fnName2, (args) => args[0]);
 
         let serviceId3 = 'check3';
         let fnName3 = 'fn3';
-        let checkPromise3 = registerPromiseService(serviceId3, fnName3, (args) => args);
+        let checkPromise3 = registerPromiseService(registry, serviceId3, fnName3, (args) => args);
 
-        let client = await Fluence.local();
+        let client = await Fluence.local(undefined, registry);
 
         let arg1 = 'arg1';
         let arg2 = 'arg2';
@@ -137,7 +145,7 @@ describe('== AIR suite', () => {
                        (call %init_peer_id% ("${serviceId3}" "${fnName3}") [result1 result2]))
         `;
 
-        let particle = await build(client.selfPeerId, script, new Map());
+        let particle = await build(registry, client.selfPeerId, script, new Map());
 
         await client.executeParticle(particle);
 

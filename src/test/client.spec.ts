@@ -9,8 +9,8 @@ import { nodeRootCert } from '../trust/misc';
 import { peerIdToSeed, seedToPeerId } from '../seed';
 import { build } from '../particle';
 import { Service, ServiceOne } from '../service';
-import { registerService } from '../globalState';
 import { waitResult } from '../helpers/waitService';
+import { ServiceRegistry } from '../ServiceRegistry';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -41,31 +41,37 @@ describe('Typescript usage suite', () => {
     });
 
     // delete `.skip` and run `npm run test` to check service's and certificate's api with Fluence nodes
-    it.skip('test certs', async function () {
+    it.skip('should perform tests on certs', async function () {
         this.timeout(15000);
         await testCerts();
     });
 
-    it.skip('', async function () {
+    it.skip('should make a call through the network', async function () {
+        const registry = new ServiceRegistry();
+
         let pid = await Fluence.generatePeerId();
         let cl = await Fluence.connect(
-            '/ip4/138.197.177.2/tcp/9001/ws/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
             pid,
+            registry,
         );
 
         let service = new ServiceOne('test', (fnName: string, args: any[]) => {
             console.log('called: ' + args);
             return {};
         });
-        registerService(service);
+        registry.registerService(service);
 
-        let namedPromise = waitResult(30000);
+        let namedPromise = waitResult(registry, 30000);
 
         let script = `
-            (seq (
-                (call ( "${pid.toB58String()}" ("test" "test") (a b c d) result))
-                (call ( "${pid.toB58String()}" ("${namedPromise.name}" "") (d c b a) void[]))
-            ))
+            (seq 
+                (call "${cl.connection.nodePeerId.toB58String()}" ("op" "identity") [])
+                (seq
+                    (call "${pid.toB58String()}" ("test" "test") [a b c d] result)
+                    (call "${pid.toB58String()}" ("${namedPromise.name}" "") [d c b a])
+                )
+            )
         `;
 
         let data: Map<string, any> = new Map();
@@ -74,12 +80,52 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        let particle = await build(pid, script, data, 30000);
+        let particle = await build(registry, pid, script, data, 30000);
 
         await cl.sendParticle(particle);
 
         let res = await namedPromise.promise;
-        expect(res).to.be.equal(['some d', 'some c', 'some b', 'some a']);
+        expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
+    });
+
+    it.skip('two clients should work inside the same time browser', async function () {
+        const registry1 = new ServiceRegistry();
+        const pid1 = await Fluence.generatePeerId();
+        const client1 = await Fluence.connect(
+            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+            pid1,
+            registry1,
+        );
+
+        const registry2 = new ServiceRegistry();
+        const pid2 = await Fluence.generatePeerId();
+        const client2 = await Fluence.connect(
+            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+            pid2,
+            registry2,
+        );
+
+        let namedPromise = waitResult(registry2, 30000);
+
+        let script = `
+            (seq 
+                (call "${client1.connection.nodePeerId.toB58String()}" ("op" "identity") [])
+                (call "${pid2.toB58String()}" ("${namedPromise.name}" "") [d c b a])
+            )
+        `;
+
+        let data: Map<string, any> = new Map();
+        data.set('a', 'some a');
+        data.set('b', 'some b');
+        data.set('c', 'some c');
+        data.set('d', 'some d');
+
+        let particle = await build(registry1, pid1, script, data, 30000);
+
+        await client1.sendParticle(particle);
+
+        let res = await namedPromise.promise;
+        expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
     });
 });
 

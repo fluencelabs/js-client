@@ -23,7 +23,7 @@ import pipe from 'it-pipe';
 import Multiaddr from 'multiaddr';
 import PeerId from 'peer-id';
 import * as log from 'loglevel';
-import { build, parseParticle, Particle, toAction } from './particle';
+import { parseParticle, Particle, toAction } from './particle';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
@@ -41,7 +41,12 @@ export class FluenceConnection {
     private readonly selfPeerIdStr: string;
     private readonly handleParticle: (call: Particle) => void;
 
-    constructor(multiaddr: Multiaddr, hostPeerId: PeerId, selfPeerId: PeerId, handleParticle: (call: Particle) => void) {
+    constructor(
+        multiaddr: Multiaddr,
+        hostPeerId: PeerId,
+        selfPeerId: PeerId,
+        handleParticle: (call: Particle) => void,
+    ) {
         this.selfPeerId = selfPeerId;
         this.handleParticle = handleParticle;
         this.selfPeerIdStr = selfPeerId.toB58String();
@@ -114,14 +119,10 @@ export class FluenceConnection {
         this.status = Status.Disconnected;
     }
 
-    async buildParticle(script: string, data: Map<string, any>, ttl?: number): Promise<Particle> {
-        return build(this.selfPeerId, script, data, ttl);
-    }
-
     async sendParticle(particle: Particle): Promise<void> {
         this.checkConnectedOrThrow();
 
-        let action = toAction(particle)
+        let action = toAction(particle);
         let particleStr = JSON.stringify(action);
         log.debug('send particle: \n' + JSON.stringify(action, undefined, 2));
 

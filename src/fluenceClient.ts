@@ -20,11 +20,11 @@ import * as PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
 import { FluenceConnection } from './fluenceConnection';
 import { Subscriptions } from './subscriptions';
-import { enqueueParticle, getCurrentParticleId, popParticle, setCurrentParticleId } from './globalState';
 import { instantiateInterpreter, InterpreterInvoke } from './stepper';
 import log from 'loglevel';
 import { waitService } from './helpers/waitService';
 import { ModuleConfig } from './moduleConfig';
+import { ServiceRegistry } from './ServiceRegistry';
 
 const bs58 = require('bs58');
 
@@ -37,12 +37,14 @@ export class FluenceClient {
     private nodePeerIdStr: string;
     private subscriptions = new Subscriptions();
     private interpreter: InterpreterInvoke = undefined;
+    private registry: ServiceRegistry;
 
     connection: FluenceConnection;
 
-    constructor(selfPeerId: PeerId) {
+    constructor(selfPeerId: PeerId, registry?: ServiceRegistry) {
         this.selfPeerId = selfPeerId;
         this.selfPeerIdStr = selfPeerId.toB58String();
+        this.registry = registry || new ServiceRegistry();
     }
 
     /**
@@ -50,15 +52,18 @@ export class FluenceClient {
      */
     private async handleParticle(particle: Particle): Promise<void> {
         // if a current particle is processing, add new particle to the queue
-        if (getCurrentParticleId() !== undefined && getCurrentParticleId() !== particle.id) {
-            enqueueParticle(particle);
+        if (
+            this.registry.getCurrentParticleId() !== undefined &&
+            this.registry.getCurrentParticleId() !== particle.id
+        ) {
+            this.registry.enqueueParticle(particle);
         } else {
             if (this.interpreter === undefined) {
                 throw new Error("Undefined. Interpreter is not initialized. Use 'Fluence.connect' to create a client.");
             }
             // start particle processing if queue is empty
             try {
-                setCurrentParticleId(particle.id);
+                this.registry.setCurrentParticleId(particle.id);
                 // check if a particle is relevant
                 let now = Date.now();
                 let actualTtl = particle.timestamp + particle.ttl - now;
@@ -86,7 +91,7 @@ export class FluenceClient {
 
                     if (log.getLevel() <= INFO_LOG_LEVEL) {
                         log.info('inner interpreter outcome:');
-                        log.info(stepperOutcome)
+                        log.info(stepperOutcome);
                     }
 
                     // update data after aquamarine execution
@@ -104,15 +109,15 @@ export class FluenceClient {
                 }
             } finally {
                 // get last particle from the queue
-                let nextParticle = popParticle();
+                let nextParticle = this.registry.popParticle();
                 // start the processing of a new particle if it exists
                 if (nextParticle) {
                     // update current particle
-                    setCurrentParticleId(nextParticle.id);
+                    this.registry.setCurrentParticleId(nextParticle.id);
                     await this.handleParticle(nextParticle);
                 } else {
                     // wait for a new call (do nothing) if there is no new particle in a queue
-                    setCurrentParticleId(undefined);
+                    this.registry.setCurrentParticleId(undefined);
                 }
             }
         }
@@ -146,7 +151,7 @@ export class FluenceClient {
      * Instantiate WebAssembly with AIR interpreter to execute AIR scripts
      */
     async instantiateInterpreter() {
-        this.interpreter = await instantiateInterpreter(this.selfPeerId);
+        this.interpreter = await instantiateInterpreter(this.registry, this.selfPeerId);
     }
 
     /**
@@ -212,7 +217,7 @@ export class FluenceClient {
 
         let serviceCall = call(nodeId);
 
-        let namedPromise = waitService(name, handleResponse, ttl);
+        let namedPromise = waitService(this.registry, name, handleResponse, ttl);
 
         let script = `(seq
             ${this.nodeIdentityCall()}
@@ -226,7 +231,7 @@ export class FluenceClient {
         )
         `;
 
-        let particle = await build(this.selfPeerId, script, data, ttl);
+        let particle = await build(this.registry, this.selfPeerId, script, data, ttl);
         await this.sendParticle(particle);
 
         return namedPromise.promise;
