@@ -1,7 +1,7 @@
 {
-  "name": "fluence",
-  "version": "0.7.108",
-  "description": "the browser js-libp2p client for the Fluence network",
+  "name": "@fluencelabs/fluence",
+  "version": "0.8.0",
+  "description": "JS SDK for the Fluence network",
   "main": "./dist/fluence.js",
   "typings": "./dist/fluence.d.ts",
   "scripts": {
@@ -12,7 +12,7 @@
     "start": "webpack-dev-server -p",
     "build": "webpack --mode production"
   },
-  "repository": "https://github.com/fluencelabs/fluence",
+  "repository": "https://github.com/fluencelabs/fluence-js",
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
