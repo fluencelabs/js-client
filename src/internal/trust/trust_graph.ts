@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { FluenceClient } from '../fluenceClient';
 import { Certificate, certificateFromString, certificateToString } from './certificate';
 import * as log from 'loglevel';
+import { FluenceClient } from 'src/FluenceClient';
 
 // TODO update after 'aquamarine' implemented
 // The client to interact with the Fluence trust graph API

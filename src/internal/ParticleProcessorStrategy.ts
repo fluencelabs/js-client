@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-export interface ModuleConfig {
-    name: string;
-    mem_pages_count?: number;
-    logger_enabled?: boolean;
-    wasi?: Wasi;
-    mounted_binaries?: object;
-}
+import { ParticleHandler } from './commonTypes';
+import { Particle } from './particle';
 
-export interface Wasi {
-    envs?: object;
-    preopened_files?: string[];
-    mapped_dirs?: object;
+export abstract class ParticleProcessorStrategy {
+    abstract particleHandler: ParticleHandler;
+    abstract sendParticleFurther: (particle: Particle) => void;
+
+    onParticleTimeout?: (particle: Particle) => void;
+    onLocalParticleRecieved?: (particle: Particle) => void;
+    onExternalParticleRecieved?: (article: Particle) => void;
+    onStepperExecuting?: (article: Particle) => void;
+    onStepperExecuted?: (article: Particle) => void;
 }

@@ -32,3 +32,7 @@ export function peerIdToSeed(peerId: PeerId): string {
     let seedBuf = peerId.privKey.marshal().subarray(0, 32);
     return encode(seedBuf);
 }
+
+export async function generatePeerId(): Promise<PeerId> {
+    return await PeerId.create({ keyType: 'Ed25519' });
+}

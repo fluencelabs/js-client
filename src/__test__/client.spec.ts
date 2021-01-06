@@ -2,15 +2,15 @@ import { expect } from 'chai';
 
 import 'mocha';
 import { encode } from 'bs58';
-import Fluence from '../fluence';
-import { certificateFromString, certificateToString, issue } from '../trust/certificate';
-import { TrustGraph } from '../trust/trust_graph';
-import { nodeRootCert } from '../trust/misc';
+import Fluence from '../../fluence';
+import { certificateFromString, certificateToString, issue } from '../../trust/certificate';
+import { TrustGraph } from '../../trust/trust_graph';
+import { nodeRootCert } from '../../trust/misc';
 import { peerIdToSeed, seedToPeerId } from '../seed';
 import { build } from '../particle';
-import { Service, ServiceOne } from '../service';
-import { waitResult } from '../helpers/waitService';
-import { ServiceRegistry } from '../ServiceRegistry';
+import { Service, ServiceOne } from '../../service';
+import { waitResult } from '../../helpers/waitService';
+import { ServiceRegistry } from '../../ServiceRegistry';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {

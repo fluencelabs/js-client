@@ -18,7 +18,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
-import { ServiceRegistry } from './ServiceRegistry';
 
 const DEFAULT_TTL = 7000;
 
@@ -60,13 +59,7 @@ function wrapScript(selfPeerId: string, script: string, fields: string[]): strin
     return script;
 }
 
-export async function build(
-    registry: ServiceRegistry,
-    peerId: PeerId,
-    script: string,
-    data: Map<string, any>,
-    ttl?: number,
-): Promise<Particle> {
+export async function build(peerId: PeerId, script: string, data: Map<string, any>, ttl?: number): Promise<Particle> {
     let id = genUUID();
     let currentTime = new Date().getTime();
 
@@ -74,7 +67,6 @@ export async function build(
         ttl = DEFAULT_TTL;
     }
 
-    registry.addData(id, data, ttl);
     script = wrapScript(peerId.toB58String(), script, Array.from(data.keys()));
 
     let particle: Particle = {

@@ -14,8 +14,5 @@
  * limitations under the License.
  */
 
-export function delay<T>(ms: number, error: string): Promise<T> {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => reject(new Error(error)), ms);
-    });
-}
+export * from './internal/peerIdUtils';
+export * from './FluenceClient';

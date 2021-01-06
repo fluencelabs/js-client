@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import Fluence from '../fluence';
+import Fluence from '../../src_old/fluence';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
