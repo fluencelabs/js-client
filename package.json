@@ -2,8 +2,8 @@
   "name": "@fluencelabs/fluence",
   "version": "0.8.0",
   "description": "JS SDK for the Fluence network",
-  "main": "./dist/fluence.js",
-  "typings": "./dist/fluence.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "test": "mocha --timeout 10000 -r esm -r ts-node/register src/**/*.spec.ts",
     "test-ts": "ts-mocha --timeout 10000 -r esm -p tsconfig.json src/**/*.spec.ts",

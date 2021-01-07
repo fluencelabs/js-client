@@ -44,6 +44,12 @@ export abstract class FluenceClientBase {
         await this.processor.destroy();
     }
 
+    // HACK:: this is only needed to fix tests.
+    // Particle processor should be tested instead
+    async local(): Promise<void> {
+        await this.processor.init();
+    }
+
     /**
      * Establish a connection to the node. If the connection is already established, disconnect and reregister all services in a new connection.
      *
@@ -74,7 +80,7 @@ export abstract class FluenceClientBase {
         this.connection = connection;
     }
 
-    async sendScript(script: string, data: Map<string, any>, ttl?: number): Promise<string> {
+    async sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string> {
         const particle = await build(this.selfPeerId, script, data, ttl);
         this.processor.executeLocalParticle(particle);
         return particle.id;

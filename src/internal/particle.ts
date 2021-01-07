@@ -59,9 +59,13 @@ function wrapScript(selfPeerId: string, script: string, fields: string[]): strin
     return script;
 }
 
-export async function build(peerId: PeerId, script: string, data: Map<string, any>, ttl?: number): Promise<Particle> {
+export async function build(peerId: PeerId, script: string, data?: Map<string, any>, ttl?: number): Promise<Particle> {
     let id = genUUID();
     let currentTime = new Date().getTime();
+
+    if (data === undefined) {
+        data = new Map();
+    }
 
     if (ttl === undefined) {
         ttl = DEFAULT_TTL;
