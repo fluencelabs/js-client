@@ -243,3 +243,10 @@ export async function parseAstClosure(): Promise<(script: string) => string> {
         return aqua.ast(instance.exports, script);
     };
 }
+
+/// Parses script and returns AST in JSON format
+/// NOTE & TODO: interpreter is instantiated every time, make it a lazy constant?
+export async function parseAIR(script: string): Promise<string> {
+    let closure = await parseAstClosure();
+    return closure(script);
+}

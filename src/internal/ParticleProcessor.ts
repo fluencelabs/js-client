@@ -83,7 +83,7 @@ export class ParticleProcessor {
         let self = this;
         setTimeout(() => {
             self.subscriptions.delete(particle.id);
-            self.strategy?.onParticleTimeout(particle);
+            self.strategy?.onParticleTimeout(particle, Date.now());
         }, ttl);
         this.subscriptions.set(particle.id, particle);
     }
@@ -123,7 +123,7 @@ export class ParticleProcessor {
                 let now = Date.now();
                 let actualTtl = particle.timestamp + particle.ttl - now;
                 if (actualTtl <= 0) {
-                    this.strategy?.onParticleTimeout(particle);
+                    this.strategy?.onParticleTimeout(particle, now);
                 } else {
                     // if there is no subscription yet, previous data is empty
                     let prevData: Uint8Array = Buffer.from([]);
@@ -147,7 +147,7 @@ export class ParticleProcessor {
 
                     // update data after aquamarine execution
                     let newParticle: Particle = { ...particle, data: stepperOutcome.data };
-                    this.strategy.onStepperExecuted(newParticle);
+                    this.strategy.onStepperExecuted(stepperOutcome);
 
                     this.updateSubscription(newParticle);
 

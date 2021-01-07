@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { build, Particle } from './particle';
+import { build } from './particle';
 import * as PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
 import { FluenceConnection } from './FluenceConnection';
@@ -31,12 +31,12 @@ export abstract class FluenceClientBase {
         return this.connection?.isConnected();
     }
 
-    private connection: FluenceConnection;
-    private processor: ParticleProcessor;
+    protected connection: FluenceConnection;
+    protected processor: ParticleProcessor;
+    protected abstract strategy: ParticleProcessorStrategy;
 
-    constructor(strategy: ParticleProcessorStrategy, selfPeerId: PeerId) {
+    constructor(selfPeerId: PeerId) {
         this.selfPeerId = selfPeerId;
-        this.processor = new ParticleProcessor(strategy, selfPeerId);
     }
 
     async disconnect(): Promise<void> {
@@ -76,7 +76,7 @@ export abstract class FluenceClientBase {
 
     async sendScript(script: string, data: Map<string, any>, ttl?: number): Promise<string> {
         const particle = await build(this.selfPeerId, script, data, ttl);
-        await this.processor.executeLocalParticle(particle);
+        this.processor.executeLocalParticle(particle);
         return particle.id;
     }
 }

@@ -1,10 +1,7 @@
 import 'mocha';
-import Fluence from '../fluence';
-import { build } from '../particle';
-import { ServiceMultiple } from '../service';
+import { build } from '../internal/particle';
 import { expect } from 'chai';
-import { SecurityTetraplet } from '../securityTetraplet';
-import { ServiceRegistry } from '../ServiceRegistry';
+import { SecurityTetraplet } from '../internal/commonTypes';
 
 function registerPromiseService<T>(
     registry: ServiceRegistry,

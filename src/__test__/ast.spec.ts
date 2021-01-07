@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import 'mocha';
-import Fluence from '../../src_old/fluence';
+import { parseAIR } from '../internal/stepper';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
-        let ast = await Fluence.parseAIR(`
+        let ast = await parseAIR(`
             (call node ("service" "function") [1 2 3 arg] output)
         `);
 

@@ -2,15 +2,11 @@ import { expect } from 'chai';
 
 import 'mocha';
 import { encode } from 'bs58';
-import Fluence from '../../fluence';
-import { certificateFromString, certificateToString, issue } from '../../trust/certificate';
-import { TrustGraph } from '../../trust/trust_graph';
-import { nodeRootCert } from '../../trust/misc';
-import { peerIdToSeed, seedToPeerId } from '../seed';
-import { build } from '../particle';
-import { Service, ServiceOne } from '../../service';
-import { waitResult } from '../../helpers/waitService';
-import { ServiceRegistry } from '../../ServiceRegistry';
+import { certificateFromString, certificateToString, issue } from '../internal/trust/certificate';
+import { TrustGraph } from '../internal/trust/trust_graph';
+import { nodeRootCert } from '../internal/trust/misc';
+import { generatePeerId, peerIdToSeed, seedToPeerId } from '../internal/peerIdUtils';
+import { build } from '../internal/particle';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -49,7 +45,7 @@ describe('Typescript usage suite', () => {
     it.skip('should make a call through the network', async function () {
         const registry = new ServiceRegistry();
 
-        let pid = await Fluence.generatePeerId();
+        let pid = await generatePeerId();
         let cl = await Fluence.connect(
             '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
             pid,

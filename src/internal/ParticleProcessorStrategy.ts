@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { ParticleHandler } from './commonTypes';
+import { ParticleHandler, StepperOutcome } from './commonTypes';
 import { Particle } from './particle';
 
-export abstract class ParticleProcessorStrategy {
-    abstract particleHandler: ParticleHandler;
-    abstract sendParticleFurther: (particle: Particle) => void;
+export interface ParticleProcessorStrategy {
+    particleHandler: ParticleHandler;
+    sendParticleFurther: (particle: Particle) => void;
 
-    onParticleTimeout?: (particle: Particle) => void;
+    onParticleTimeout?: (particle: Particle, now: number) => void;
     onLocalParticleRecieved?: (particle: Particle) => void;
-    onExternalParticleRecieved?: (article: Particle) => void;
-    onStepperExecuting?: (article: Particle) => void;
-    onStepperExecuted?: (article: Particle) => void;
+    onExternalParticleRecieved?: (particle: Particle) => void;
+    onStepperExecuting?: (particle: Particle) => void;
+    onStepperExecuted?: (stepperOutcome: StepperOutcome) => void;
 }
