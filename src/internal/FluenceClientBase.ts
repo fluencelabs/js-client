@@ -21,6 +21,7 @@ import { FluenceConnection } from './FluenceConnection';
 
 import { ParticleProcessor } from './ParticleProcessor';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
+import log from 'loglevel';
 
 export abstract class FluenceClientBase {
     readonly selfPeerId: PeerId;
@@ -82,7 +83,9 @@ export abstract class FluenceClientBase {
 
     async sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string> {
         const particle = await build(this.selfPeerId, script, data, ttl);
-        this.processor.executeLocalParticle(particle);
+        this.processor.executeLocalParticle(particle).catch((err) => {
+            log.error('particle processing failed: ' + err);
+        });
         return particle.id;
     }
 }

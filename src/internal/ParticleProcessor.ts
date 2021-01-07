@@ -36,7 +36,7 @@ export class ParticleProcessor {
     }
 
     async init() {
-        this.instantiateInterpreter();
+        await this.instantiateInterpreter();
     }
 
     async destroy() {
@@ -114,7 +114,7 @@ export class ParticleProcessor {
             this.enqueueParticle(particle);
         } else {
             if (this.interpreter === undefined) {
-                throw new Error("Undefined. Interpreter is not initialized. Use 'Fluence.connect' to create a client.");
+                throw new Error('Undefined. Interpreter is not initialized');
             }
             // start particle processing if queue is empty
             try {

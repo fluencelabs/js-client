@@ -19,6 +19,7 @@ import PeerId from 'peer-id';
 import { SecurityTetraplet, StepperOutcome } from './internal/commonTypes';
 import { FluenceClientBase } from './internal/FluenceClientBase';
 import { Particle } from './internal/particle';
+import { ParticleProcessor } from './internal/ParticleProcessor';
 import { ParticleProcessorStrategy } from './internal/ParticleProcessorStrategy';
 
 const INFO_LOG_LEVEL = 2;
@@ -33,6 +34,7 @@ export class FluenceClient extends FluenceClientBase {
 
     constructor(selfPeerId: PeerId) {
         super(selfPeerId);
+        this.processor = new ParticleProcessor(this.strategy, selfPeerId);
     }
 
     async fetch<T>(script: string, data: Map<string, any>, ttl?: number): Promise<T> {
