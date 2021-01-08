@@ -5,9 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const production = (process.env.NODE_ENV === 'production');
 
 const config = {
-    entry: {
-        app: ['./src/FluenceClient.ts', './src/internal/peerIdUtils.ts', './src/index.ts']
-    },
+    entry: './src/index.ts',
     module: {
         rules: [
             {
