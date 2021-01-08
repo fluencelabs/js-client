@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
+import { injectDataIntoParticle } from './ParticleProcessor';
 
 const DEFAULT_TTL = 7000;
 
@@ -46,11 +47,11 @@ interface ParticleAction {
     data: string;
 }
 
-function wrapScript(selfPeerId: string, script: string, fields: string[]): string {
+function wrapWithVariableInjectionScript(script: string, fields: string[]): string {
     fields.forEach((v) => {
         script = `
 (seq
-    (call %init_peer_id% ("" "load") ["${v}"] ${v})
+    (call %init_peer_id% ("@magic" "load") ["${v}"] ${v})
     ${script}
 )
                  `;
@@ -71,7 +72,8 @@ export async function build(peerId: PeerId, script: string, data?: Map<string, a
         ttl = DEFAULT_TTL;
     }
 
-    script = wrapScript(peerId.toB58String(), script, Array.from(data.keys()));
+    injectDataIntoParticle(id, data, ttl);
+    script = wrapWithVariableInjectionScript(script, Array.from(data.keys()));
 
     let particle: Particle = {
         id: id,

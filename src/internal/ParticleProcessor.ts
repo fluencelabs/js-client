@@ -17,9 +17,42 @@
 import { Particle } from './particle';
 import * as PeerId from 'peer-id';
 import { instantiateInterpreter, InterpreterInvoke } from './stepper';
-import { StepperOutcome } from './commonTypes';
+import { ParticleHandler, SecurityTetraplet, StepperOutcome } from './commonTypes';
 import log from 'loglevel';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
+
+// HACK:: make an api for aqua stepper to accept variables in an easy way!
+let magicParticleStorage: Map<string, Map<string, any>> = new Map();
+
+// HACK:: make an api for aqua stepper to accept variables in an easy way!
+export function injectDataIntoParticle(particleId: string, data: Map<string, any>, ttl: number) {
+    magicParticleStorage.set(particleId, data);
+    setTimeout(() => {
+        log.debug(`data for ${particleId} is deleted`);
+        magicParticleStorage.delete(particleId);
+    }, ttl);
+}
+
+// HACK:: make an api for aqua stepper to accept variables in an easy way!
+const wrapWithDataInjectionHandling = (
+    handler: ParticleHandler,
+    getCurrentParticleId: () => string,
+): ParticleHandler => {
+    return (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
+        if (serviceId === '@magic' && fnName === 'load') {
+            const current = getCurrentParticleId();
+            const data = magicParticleStorage.get(current);
+
+            const res = data ? args[0] : {};
+            return {
+                ret_code: 0,
+                result: JSON.stringify(res),
+            };
+        }
+
+        return handler(serviceId, fnName, args, tetraplets);
+    };
+};
 
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
@@ -192,6 +225,12 @@ export class ParticleProcessor {
      * Instantiate WebAssembly with AIR interpreter to execute AIR scripts
      */
     async instantiateInterpreter() {
-        this.interpreter = await instantiateInterpreter(this.strategy.particleHandler, this.peerId);
+        this.interpreter = await instantiateInterpreter(
+            wrapWithDataInjectionHandling(
+                this.strategy.particleHandler.bind(this),
+                this.getCurrentParticleId.bind(this),
+            ),
+            this.peerId,
+        );
     }
 }
