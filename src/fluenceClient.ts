@@ -87,6 +87,7 @@ export class FluenceClient extends FluenceClientBase {
                 const executingParticle = this.fetchParticles.get(fnName);
                 if (executingParticle) {
                     executingParticle.resolve(args);
+                    this.fetchParticles.delete(fnName);
                 }
             }
 
