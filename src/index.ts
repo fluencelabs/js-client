@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export * from './internal/peerIdUtils';
-export * from './FluenceClient';
+export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUtils';
+export { FluenceClient } from './FluenceClient';
