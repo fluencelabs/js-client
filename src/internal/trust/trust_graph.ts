@@ -16,16 +16,13 @@
 
 import { Certificate, certificateFromString, certificateToString } from './certificate';
 import * as log from 'loglevel';
-import { FluenceClient } from 'src/FluenceClient';
 
 // TODO update after 'aquamarine' implemented
 // The client to interact with the Fluence trust graph API
 export class TrustGraph {
-    client: FluenceClient;
+    //client: FluenceClient;
 
-    constructor(client: FluenceClient) {
-        this.client = client;
-    }
+    constructor() {}
 
     // Publish certificate to Fluence network. It will be published in Kademlia neighbourhood by `peerId` key.
     async publishCertificates(peerId: string, certs: Certificate[]) {
