@@ -1,13 +1,6 @@
 import 'mocha';
-import { FluenceClient, generatePeerId } from '..';
 import { expect } from 'chai';
-
-const local = async () => {
-    const peerId = await generatePeerId();
-    const client = new FluenceClient(peerId);
-    await client.local();
-    return client;
-};
+import { createLocalClient } from './util';
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
@@ -15,7 +8,7 @@ describe('== AIR suite', () => {
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
 
-        const client = await local();
+        const client = await createLocalClient();
 
         let res;
         client.registerCallback(serviceId, fnName, (args, _) => {
@@ -36,7 +29,7 @@ describe('== AIR suite', () => {
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
 
-        const client = await local();
+        const client = await createLocalClient();
 
         let res;
         client.registerCallback(serviceId, fnName, (args, _) => {
@@ -58,7 +51,7 @@ describe('== AIR suite', () => {
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
 
-        const client = await local();
+        const client = await createLocalClient();
 
         let res;
         client.registerCallback(serviceId, fnName, (args, _) => {
@@ -83,7 +76,7 @@ describe('== AIR suite', () => {
         const getDataServiceId = 'get_data_service';
         const getDataFnName = 'get_data';
 
-        const client = await local();
+        const client = await createLocalClient();
 
         client.registerCallback(makeDataServiceId, makeDataFnName, (args, _) => {
             return {
@@ -119,7 +112,7 @@ describe('== AIR suite', () => {
     it('check chain of services work properly', async function () {
         this.timeout(5000);
         // arrange
-        const client = await local();
+        const client = await createLocalClient();
 
         const serviceId1 = 'check1';
         const fnName1 = 'fn1';
