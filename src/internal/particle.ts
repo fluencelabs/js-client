@@ -51,7 +51,7 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
     fields.forEach((v) => {
         script = `
 (seq
-    (call %init_peer_id% ("@magic" "load") ["${v}"] ${v})
+    (call %init_peer_id% ("__magic" "load") ["${v}"] ${v})
     ${script}
 )
                  `;

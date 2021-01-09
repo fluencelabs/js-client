@@ -26,6 +26,7 @@ let magicParticleStorage: Map<string, Map<string, any>> = new Map();
 
 // HACK:: make an api for aqua stepper to accept variables in an easy way!
 export function injectDataIntoParticle(particleId: string, data: Map<string, any>, ttl: number) {
+    log.debug(`setting data for ${particleId}`, data);
     magicParticleStorage.set(particleId, data);
     setTimeout(() => {
         log.debug(`data for ${particleId} is deleted`);
@@ -39,11 +40,11 @@ const wrapWithDataInjectionHandling = (
     getCurrentParticleId: () => string,
 ): ParticleHandler => {
     return (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
-        if (serviceId === '@magic' && fnName === 'load') {
+        if (serviceId === '__magic' && fnName === 'load') {
             const current = getCurrentParticleId();
             const data = magicParticleStorage.get(current);
 
-            const res = data ? args[0] : {};
+            const res = data ? data.get(args[0]) : {};
             return {
                 ret_code: 0,
                 result: JSON.stringify(res),

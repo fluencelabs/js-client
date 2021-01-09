@@ -24,7 +24,7 @@ import { ParticleProcessorStrategy } from './internal/ParticleProcessorStrategy'
 
 const INFO_LOG_LEVEL = 2;
 
-const fetchCallbackServiceName = '@callback';
+const fetchCallbackServiceName = '__callback';
 
 export class FluenceClient extends FluenceClientBase {
     private eventSubscribers: Map<string, Function[]> = new Map();
