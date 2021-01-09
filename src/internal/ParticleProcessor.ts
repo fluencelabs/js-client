@@ -79,7 +79,9 @@ export class ParticleProcessor {
 
     async executeLocalParticle(particle: Particle) {
         this.strategy?.onLocalParticleRecieved(particle);
-        await this.handleParticle(particle);
+        await this.handleParticle(particle).catch((err) => {
+            log.error('particle processing failed: ' + err);
+        });
     }
 
     async executeExternalParticle(particle: Particle) {

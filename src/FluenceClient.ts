@@ -18,13 +18,37 @@ import log from 'loglevel';
 import PeerId from 'peer-id';
 import { SecurityTetraplet, StepperOutcome } from './internal/commonTypes';
 import { FluenceClientBase } from './internal/FluenceClientBase';
-import { Particle } from './internal/particle';
+import { build, Particle } from './internal/particle';
 import { ParticleProcessor } from './internal/ParticleProcessor';
 import { ParticleProcessorStrategy } from './internal/ParticleProcessorStrategy';
 
 const INFO_LOG_LEVEL = 2;
 
 const fetchCallbackServiceName = '__callback';
+const selfRelayVarName = '__relay';
+
+const wrapRelayBasedCall = (script: string) => {
+    return `
+    (seq
+        (call ${selfRelayVarName} ("op" "identity") [])
+        ${script}
+    )
+    `;
+};
+
+const wrapFetchCall = (script: string, particleId: string, resultArgNames: string[]) => {
+    script = wrapRelayBasedCall(script);
+    // TODO: sanitize
+    const resultTogether = resultArgNames.join(' ');
+    return `
+    (seq
+        ${script}
+        (seq
+            (call ${selfRelayVarName} ("op" "identity") [])
+            (call %init_peer_id%  ("${fetchCallbackServiceName}" "${particleId}") [${resultTogether}])
+        )
+    )`;
+};
 
 export class FluenceClient extends FluenceClientBase {
     private eventSubscribers: Map<string, Function[]> = new Map();
@@ -37,8 +61,25 @@ export class FluenceClient extends FluenceClientBase {
         this.processor = new ParticleProcessor(this.strategy, selfPeerId);
     }
 
-    async fetch<T>(script: string, data: Map<string, any>, ttl?: number): Promise<T> {
+    async fetch<T>(script: string, resultArgNames: string[], data?: Map<string, any>, ttl?: number): Promise<T> {
+        data = this.addRelayToArgs(data);
+        const particle = await build(this.selfPeerId, script, data, ttl);
+        script = wrapFetchCall(script, particle.id, resultArgNames);
+
+        this.processor.executeLocalParticle(particle);
+
+        return new Promise<T>((resolve, reject) => {
+            this.fetchParticles.set(particle.id, { resolve, reject });
+        });
+    }
+
+    // TODO:: better naming probably?
+    async fireAndForget<T>(script: string, data?: Map<string, any>, ttl?: number): Promise<T> {
+        data = this.addRelayToArgs(data);
+        script = wrapRelayBasedCall(script);
+
         const particleId = await this.sendScript(script, data, ttl);
+
         return new Promise<T>((resolve, reject) => {
             this.fetchParticles.set(particleId, { resolve, reject });
         });
@@ -180,5 +221,17 @@ export class FluenceClient extends FluenceClientBase {
                 sub(event);
             }
         }
+    }
+
+    private addRelayToArgs(data: Map<string, any>) {
+        if (data === undefined) {
+            data = new Map();
+        }
+
+        if (!data.has(selfRelayVarName)) {
+            data.set(selfRelayVarName, this.relayPeerID.toB58String);
+        }
+
+        return data;
     }
 }
