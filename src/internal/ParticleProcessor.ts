@@ -189,7 +189,7 @@ export class ParticleProcessor {
 
                     // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
                     if (stepperOutcome.next_peer_pks.length > 0) {
-                        this.strategy.sendParticleFurther(particle);
+                        this.strategy.sendParticleFurther(newParticle);
                     }
                 }
             } finally {
