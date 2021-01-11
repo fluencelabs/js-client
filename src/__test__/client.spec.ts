@@ -163,7 +163,7 @@ describe('Typescript usage suite', () => {
         let script = `
             (seq
                 (call "${client1.relayPeerID.toB58String()}" ("op" "identity") [])
-                (call "${pid2.toB58String()}" (test" "test") [a b c d])
+                (call "${pid2.toB58String()}" ("test" "test") [a b c d])
             )
         `;
 
@@ -177,6 +177,43 @@ describe('Typescript usage suite', () => {
 
         let res = await resMakingPromise;
         expect(res).to.deep.equal(['some a', 'some b', 'some c', 'some d']);
+    });
+
+    it.skip('event registration should work', async function () {
+        // arrange
+        const pid1 = await generatePeerId();
+        const client1 = new FluenceClient(pid1);
+        await client1.connect(
+            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+        );
+
+        const pid2 = await generatePeerId();
+        const client2 = new FluenceClient(pid2);
+        await client2.connect(
+            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+        );
+
+        client2.registerEvent('event_stream', 'test');
+        const resMakingPromise = new Promise((resolve) => {
+            client2.subscribe('event_stream', resolve);
+        });
+
+        // act
+        let script = `
+            (call "${pid2.toB58String()}" ("event_stream" "test") [hello])
+        `;
+
+        let data: Map<string, any> = new Map();
+        data.set('hello', 'world');
+
+        await client1.fireAndForget(script, data);
+
+        // assert
+        let res = await resMakingPromise;
+        expect(res).to.deep.equal({
+            type: 'test',
+            args: ['world'],
+        });
     });
 });
 

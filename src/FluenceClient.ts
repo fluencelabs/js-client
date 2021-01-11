@@ -107,7 +107,7 @@ export class FluenceClient extends FluenceClientBase {
         this.eventValidators.delete(`${channel}/${eventName}`);
     }
 
-    subscribe(channel: string, handler: Function) {
+    subscribe<T>(channel: string, handler: (T) => void) {
         if (!this.eventSubscribers.get(channel)) {
             this.eventSubscribers.set(channel, []);
         }
