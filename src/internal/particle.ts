@@ -60,8 +60,14 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
     return script;
 }
 
-export async function build(peerId: PeerId, script: string, data?: Map<string, any>, ttl?: number): Promise<Particle> {
-    let id = genUUID();
+export async function build(
+    peerId: PeerId,
+    script: string,
+    data?: Map<string, any>,
+    ttl?: number,
+    customId?: string,
+): Promise<Particle> {
+    const id = customId ?? genUUID();
     let currentTime = new Date().getTime();
 
     if (data === undefined) {

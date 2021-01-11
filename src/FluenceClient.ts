@@ -18,11 +18,9 @@ import log from 'loglevel';
 import PeerId from 'peer-id';
 import { SecurityTetraplet, StepperOutcome } from './internal/commonTypes';
 import { FluenceClientBase } from './internal/FluenceClientBase';
-import { build, Particle } from './internal/particle';
+import { build, genUUID, Particle } from './internal/particle';
 import { ParticleProcessor } from './internal/ParticleProcessor';
 import { ParticleProcessorStrategy } from './internal/ParticleProcessorStrategy';
-
-const INFO_LOG_LEVEL = 2;
 
 const fetchCallbackServiceName = '__callback';
 const selfRelayVarName = '__relay';
@@ -37,10 +35,9 @@ const wrapRelayBasedCall = (script: string) => {
 };
 
 const wrapFetchCall = (script: string, particleId: string, resultArgNames: string[]) => {
-    script = wrapRelayBasedCall(script);
     // TODO: sanitize
     const resultTogether = resultArgNames.join(' ');
-    return `
+    let res = `
     (seq
         ${script}
         (seq
@@ -48,6 +45,7 @@ const wrapFetchCall = (script: string, particleId: string, resultArgNames: strin
             (call %init_peer_id%  ("${fetchCallbackServiceName}" "${particleId}") [${resultTogether}])
         )
     )`;
+    return wrapRelayBasedCall(res);
 };
 
 export class FluenceClient extends FluenceClientBase {
@@ -63,26 +61,22 @@ export class FluenceClient extends FluenceClientBase {
 
     async fetch<T>(script: string, resultArgNames: string[], data?: Map<string, any>, ttl?: number): Promise<T> {
         data = this.addRelayToArgs(data);
-        const particle = await build(this.selfPeerId, script, data, ttl);
-        script = wrapFetchCall(script, particle.id, resultArgNames);
-
-        this.processor.executeLocalParticle(particle);
+        const callBackId = genUUID();
+        script = wrapFetchCall(script, callBackId, resultArgNames);
+        const particle = await build(this.selfPeerId, script, data, ttl, callBackId);
 
         return new Promise<T>((resolve, reject) => {
-            this.fetchParticles.set(particle.id, { resolve, reject });
+            this.fetchParticles.set(callBackId, { resolve, reject });
+            this.processor.executeLocalParticle(particle);
         });
     }
 
     // TODO:: better naming probably?
-    async fireAndForget<T>(script: string, data?: Map<string, any>, ttl?: number): Promise<T> {
+    async fireAndForget(script: string, data?: Map<string, any>, ttl?: number) {
         data = this.addRelayToArgs(data);
         script = wrapRelayBasedCall(script);
 
-        const particleId = await this.sendScript(script, data, ttl);
-
-        return new Promise<T>((resolve, reject) => {
-            this.fetchParticles.set(particleId, { resolve, reject });
-        });
+        await this.sendScript(script, data, ttl);
     }
 
     registerEvent(
@@ -125,11 +119,19 @@ export class FluenceClient extends FluenceClientBase {
         particleHandler: (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
             // async fetch model handling
             if (serviceId === fetchCallbackServiceName) {
-                const executingParticle = this.fetchParticles.get(fnName);
-                if (executingParticle) {
-                    executingParticle.resolve(args);
-                    this.fetchParticles.delete(fnName);
+                const executingParticlePromiseFns = this.fetchParticles.get(fnName);
+                if (executingParticlePromiseFns) {
+                    // don't block
+                    setImmediate(() => {
+                        this.fetchParticles.delete(fnName);
+                        executingParticlePromiseFns.resolve(args);
+                    });
                 }
+
+                return {
+                    ret_code: 0,
+                    result: JSON.stringify({}),
+                };
             }
 
             // event model handling
@@ -183,7 +185,7 @@ export class FluenceClient extends FluenceClientBase {
             }
 
             return {
-                ret_code: 0,
+                ret_code: 1,
                 result: `Error. There is no service: ${serviceId}`,
             };
         },
@@ -197,20 +199,18 @@ export class FluenceClient extends FluenceClientBase {
         },
 
         onParticleTimeout: (particle: Particle, now: number) => {
+            log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
             const executingParticle = this.fetchParticles.get(particle.id);
             if (executingParticle) {
                 executingParticle.reject(new Error(`particle ${particle.id} timed out`));
             }
-            log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
         },
         onLocalParticleRecieved: (particle: Particle) => {},
         onExternalParticleRecieved: (particle: Particle) => {},
         onStepperExecuting: (particle: Particle) => {},
         onStepperExecuted: (stepperOutcome: StepperOutcome) => {
-            if (log.getLevel() <= INFO_LOG_LEVEL) {
-                log.info('inner interpreter outcome:');
-                log.info(stepperOutcome);
-            }
+            log.info('inner interpreter outcome:');
+            log.info(stepperOutcome);
         },
     };
 
@@ -229,7 +229,7 @@ export class FluenceClient extends FluenceClientBase {
         }
 
         if (!data.has(selfRelayVarName)) {
-            data.set(selfRelayVarName, this.relayPeerID.toB58String);
+            data.set(selfRelayVarName, this.relayPeerID.toB58String());
         }
 
         return data;

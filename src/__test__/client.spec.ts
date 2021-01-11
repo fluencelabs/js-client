@@ -87,6 +87,38 @@ describe('Typescript usage suite', () => {
         expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
     });
 
+    it.skip('fireAndForget should work', async function () {
+        this.timeout(30000);
+        // arrange
+        const client = await createConnectedClient(
+            '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+        );
+
+        let resMakingPromise = new Promise((resolve) => {
+            client.registerCallback('test', 'reverse_args', (args, _) => {
+                resolve([...args].reverse());
+                return {};
+            });
+        });
+
+        // act
+        let script = `
+        (call "${client.selfPeerId.toB58String()}" ("test" "reverse_args") [a b c d])
+        `;
+
+        let data: Map<string, any> = new Map();
+        data.set('a', 'some a');
+        data.set('b', 'some b');
+        data.set('c', 'some c');
+        data.set('d', 'some d');
+
+        await client.fireAndForget(script, data);
+
+        // assert
+        const res = await resMakingPromise;
+        expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
+    });
+
     it.skip('fetch should work', async function () {
         this.timeout(30000);
         // arrange
@@ -96,13 +128,15 @@ describe('Typescript usage suite', () => {
 
         // act
         let script = `
-        (call %init_peer_id% ("op" "identity") [] result)
+        (call "${client.relayPeerID.toB58String()}" ("op" "identify") [] result)
         `;
+        const data = new Map();
+        data.set('__relay', client.relayPeerID.toB58String());
 
-        const res = await client.fetch(script, ['result']);
+        const [res] = await client.fetch(script, ['result'], data);
 
         // assert
-        expect(res).to.be.not.undefined;
+        expect(res.external_addresses).to.be.not.undefined;
     });
 
     it.skip('two clients should work inside the same time browser', async function () {
