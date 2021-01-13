@@ -48,8 +48,15 @@ const wrapFetchCall = (script: string, particleId: string, resultArgNames: strin
     return wrapRelayBasedCall(res);
 };
 
+export interface FluenceEvent {
+    type: string;
+    args: any[];
+}
+
+export type FluenceEventHandler = (event: FluenceEvent) => void;
+
 export class FluenceClient extends FluenceClientBase {
-    private eventSubscribers: Map<string, Function[]> = new Map();
+    private eventSubscribers: Map<string, FluenceEventHandler[]> = new Map();
     private eventValidators: Map<string, Function> = new Map();
     private callbacks: Map<string, Function> = new Map();
     private fetchParticles: Map<string, { resolve: Function; reject: Function }> = new Map();
@@ -107,7 +114,7 @@ export class FluenceClient extends FluenceClientBase {
         this.eventValidators.delete(`${channel}/${eventName}`);
     }
 
-    subscribe<T>(channel: string, handler: (T) => void) {
+    subscribe(channel: string, handler: FluenceEventHandler) {
         if (!this.eventSubscribers.get(channel)) {
             this.eventSubscribers.set(channel, []);
         }
@@ -214,7 +221,7 @@ export class FluenceClient extends FluenceClientBase {
         },
     };
 
-    private pushEvent(channel: string, event: any) {
+    private pushEvent(channel: string, event: FluenceEvent) {
         const subs = this.eventSubscribers.get(channel);
         if (subs) {
             for (let sub of subs) {
