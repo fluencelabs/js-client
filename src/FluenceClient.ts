@@ -18,7 +18,7 @@ import log from 'loglevel';
 import PeerId from 'peer-id';
 import { SecurityTetraplet, StepperOutcome } from './internal/commonTypes';
 import { FluenceClientBase } from './internal/FluenceClientBase';
-import { build, genUUID, Particle } from './internal/particle';
+import { build, genUUID, ParticleDto } from './internal/particle';
 import { ParticleProcessor } from './internal/ParticleProcessor';
 import { ParticleProcessorStrategy } from './internal/ParticleProcessorStrategy';
 
@@ -124,6 +124,14 @@ export class FluenceClient extends FluenceClientBase {
 
     protected strategy: ParticleProcessorStrategy = {
         particleHandler: (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
+            // missing built-in op
+            if (serviceId === 'op' && fnName === 'identity') {
+                return {
+                    ret_code: 0,
+                    result: JSON.stringify(args),
+                };
+            }
+
             // async fetch model handling
             if (serviceId === fetchCallbackServiceName) {
                 const executingParticlePromiseFns = this.fetchParticles.get(fnName);
@@ -197,7 +205,7 @@ export class FluenceClient extends FluenceClientBase {
             };
         },
 
-        sendParticleFurther: async (particle: Particle) => {
+        sendParticleFurther: async (particle: ParticleDto) => {
             try {
                 await this.connection.sendParticle(particle);
             } catch (reason) {
@@ -205,16 +213,16 @@ export class FluenceClient extends FluenceClientBase {
             }
         },
 
-        onParticleTimeout: (particle: Particle, now: number) => {
+        onParticleTimeout: (particle: ParticleDto, now: number) => {
             log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
             const executingParticle = this.fetchParticles.get(particle.id);
             if (executingParticle) {
                 executingParticle.reject(new Error(`particle ${particle.id} timed out`));
             }
         },
-        onLocalParticleRecieved: (particle: Particle) => {},
-        onExternalParticleRecieved: (particle: Particle) => {},
-        onStepperExecuting: (particle: Particle) => {},
+        onLocalParticleRecieved: (particle: ParticleDto) => {},
+        onExternalParticleRecieved: (particle: ParticleDto) => {},
+        onStepperExecuting: (particle: ParticleDto) => {},
         onStepperExecuted: (stepperOutcome: StepperOutcome) => {
             log.info('inner interpreter outcome:');
             log.info(stepperOutcome);

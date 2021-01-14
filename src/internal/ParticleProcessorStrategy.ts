@@ -15,15 +15,15 @@
  */
 
 import { ParticleHandler, StepperOutcome } from './commonTypes';
-import { Particle } from './particle';
+import { ParticleDto } from './particle';
 
 export interface ParticleProcessorStrategy {
     particleHandler: ParticleHandler;
-    sendParticleFurther: (particle: Particle) => void;
+    sendParticleFurther: (particle: ParticleDto) => void;
 
-    onParticleTimeout?: (particle: Particle, now: number) => void;
-    onLocalParticleRecieved?: (particle: Particle) => void;
-    onExternalParticleRecieved?: (particle: Particle) => void;
-    onStepperExecuting?: (particle: Particle) => void;
+    onParticleTimeout?: (particle: ParticleDto, now: number) => void;
+    onLocalParticleRecieved?: (particle: ParticleDto) => void;
+    onExternalParticleRecieved?: (particle: ParticleDto) => void;
+    onStepperExecuting?: (particle: ParticleDto) => void;
     onStepperExecuted?: (stepperOutcome: StepperOutcome) => void;
 }

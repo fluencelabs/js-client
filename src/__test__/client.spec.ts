@@ -9,6 +9,8 @@ import { generatePeerId, peerIdToSeed, seedToPeerId } from '../internal/peerIdUt
 import { FluenceClient } from '../FluenceClient';
 import { createConnectedClient, createLocalClient } from './util';
 import log from 'loglevel';
+import { createClient } from '../api';
+import Multiaddr from 'multiaddr';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -42,6 +44,105 @@ describe('Typescript usage suite', () => {
     it.skip('should perform tests on certs', async function () {
         this.timeout(15000);
         await testCerts();
+    });
+
+    describe('should make connection to network', async function () {
+        this.timeout(30000);
+
+        const testProcedure = async (client: FluenceClient) => {
+            let resMakingPromise = new Promise((resolve) => {
+                client.registerCallback('test', 'test', (args, _) => {
+                    resolve(args);
+                    return {};
+                });
+            });
+
+            let script = `
+                (seq
+                    (call "${client.relayPeerID.toB58String()}" ("op" "identity") [])
+                    (call "${client.selfPeerId.toB58String()}" ("test" "test") [hello])
+                )
+            `;
+
+            let data: Map<string, any> = new Map();
+            data.set('hello', 'world');
+
+            await client.sendScript(script, data);
+
+            const res = await resMakingPromise;
+            return res;
+        };
+
+        it('address as string', async function () {
+            // arrange
+            const addr =
+                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+
+            // act
+            const client = await createClient(addr);
+
+            // assert
+            const res = await testProcedure(client);
+            expect(res).to.deep.equal(['world']);
+        });
+
+        it('address as multiaddr', async function () {
+            // arrange
+            const addr = new Multiaddr(
+                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+            );
+
+            // act
+            const client = await createClient(addr);
+
+            // assert
+            const res = await testProcedure(client);
+            expect(res).to.deep.equal(['world']);
+        });
+
+        it('address as node', async function () {
+            // arrange
+            const addr = {
+                multiaddr:
+                    '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+                peerId: '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+            };
+
+            // act
+            const client = await createClient(addr);
+
+            // assert
+            const res = await testProcedure(client);
+            expect(res).to.deep.equal(['world']);
+        });
+
+        it('peerid as peer id', async function () {
+            // arrange
+            const addr =
+                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+            const pid = await generatePeerId();
+
+            // act
+            const client = await createClient(addr, pid);
+
+            // assert
+            const res = await testProcedure(client);
+            expect(res).to.deep.equal(['world']);
+        });
+
+        it('peerid as see', async function () {
+            // arrange
+            const addr =
+                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+            const pid = peerIdToSeed(await generatePeerId());
+
+            // act
+            const client = await createClient(addr, pid);
+
+            // assert
+            const res = await testProcedure(client);
+            expect(res).to.deep.equal(['world']);
+        });
     });
 
     it.skip('should make a call through the network', async function () {
