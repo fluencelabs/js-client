@@ -83,3 +83,11 @@ export const subscribeToEvent = (
         unregisterServiceFunction(client, serviceId, fnName);
     };
 };
+
+export const sendParticleAsFetch = async <T>(
+    client: FluenceClient,
+    particle: Particle,
+    resultArgNames: string[],
+): Promise<T> => {
+    return await client.fetch(particle.script, resultArgNames, particle.data, particle.ttl);
+};
