@@ -1,6 +1,6 @@
 import { FluenceClient } from './FluenceClient';
 import { SecurityTetraplet } from './internal/commonTypes';
-import { Particle } from './internal/particle';
+import { genUUID, Particle } from './internal/particle';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
@@ -87,7 +87,25 @@ export const subscribeToEvent = (
 export const sendParticleAsFetch = async <T>(
     client: FluenceClient,
     particle: Particle,
-    resultArgNames: string[],
+    callbackFnName: string,
+    callbackServiceId: string = '_callback',
 ): Promise<T> => {
-    return await client.fetch(particle.script, resultArgNames, particle.data, particle.ttl);
+    const serviceId = callbackServiceId;
+    const fnName = callbackFnName;
+
+    let promise: Promise<T> = new Promise(function (resolve, reject) {
+        const unsub = subscribeToEvent(client, serviceId, fnName, (args: any[], _) => {
+            unsub();
+            resolve(args as any);
+        });
+
+        setTimeout(() => {
+            unsub();
+            reject(new Error(`callback for ${callbackServiceId}/${callbackFnName} timed out after ${particle.ttl}`));
+        }, particle.ttl);
+    });
+
+    sendParticle(client, particle);
+
+    return promise;
 };
