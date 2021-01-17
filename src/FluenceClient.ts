@@ -70,7 +70,7 @@ export class FluenceClient extends FluenceClientBase {
         data = this.addRelayToArgs(data);
         const callBackId = genUUID();
         script = wrapFetchCall(script, callBackId, resultArgNames);
-        const particle = await build(this.selfPeerId, script, data, ttl, callBackId);
+        const particle = await build(this.selfPeerIdFull, script, data, ttl, callBackId);
 
         return new Promise<T>((resolve, reject) => {
             this.fetchParticles.set(callBackId, { resolve, reject });
@@ -244,7 +244,7 @@ export class FluenceClient extends FluenceClientBase {
         }
 
         if (!data.has(selfRelayVarName)) {
-            data.set(selfRelayVarName, this.relayPeerID.toB58String());
+            data.set(selfRelayVarName, this.relayPeerId);
         }
 
         return data;

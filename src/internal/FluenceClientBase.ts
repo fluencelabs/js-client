@@ -22,12 +22,19 @@ import { FluenceConnection } from './FluenceConnection';
 import { ParticleProcessor } from './ParticleProcessor';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
 import log from 'loglevel';
+import { PeerIdB58 } from './commonTypes';
 
 export abstract class FluenceClientBase {
-    readonly selfPeerId: PeerId;
-    get relayPeerID(): PeerId {
-        return this.connection?.nodePeerId;
+    readonly selfPeerIdFull: PeerId;
+
+    get relayPeerId(): PeerIdB58 {
+        return this.connection?.nodePeerId.toB58String();
     }
+
+    get selfPeerId(): PeerIdB58 {
+        return this.selfPeerIdFull.toB58String();
+    }
+
     get isConnected(): boolean {
         return this.connection?.isConnected();
     }
@@ -36,8 +43,8 @@ export abstract class FluenceClientBase {
     protected processor: ParticleProcessor;
     protected abstract strategy: ParticleProcessorStrategy;
 
-    constructor(selfPeerId: PeerId) {
-        this.selfPeerId = selfPeerId;
+    constructor(selfPeerIdFull: PeerId) {
+        this.selfPeerIdFull = selfPeerIdFull;
     }
 
     async disconnect(): Promise<void> {
@@ -72,7 +79,7 @@ export abstract class FluenceClientBase {
         const connection = new FluenceConnection(
             multiaddr,
             node,
-            this.selfPeerId,
+            this.selfPeerIdFull,
             this.processor.executeExternalParticle.bind(this.processor),
         );
         await connection.connect();
@@ -82,7 +89,7 @@ export abstract class FluenceClientBase {
     }
 
     async sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string> {
-        const particle = await build(this.selfPeerId, script, data, ttl);
+        const particle = await build(this.selfPeerIdFull, script, data, ttl);
         this.processor.executeLocalParticle(particle);
         return particle.id;
     }

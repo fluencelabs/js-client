@@ -41,3 +41,5 @@ export interface ResolvedTriplet {
 export interface SecurityTetraplet extends ResolvedTriplet {
     json_path: string;
 }
+
+export type PeerIdB58 = string;
