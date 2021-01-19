@@ -46,7 +46,7 @@ describe('Typescript usage suite', () => {
         await testCerts();
     });
 
-    describe('should make connection to network', async function () {
+    describe.skip('should make connection to network', async function () {
         this.timeout(30000);
 
         const testProcedure = async (client: FluenceClient) => {
