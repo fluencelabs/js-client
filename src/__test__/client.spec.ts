@@ -59,8 +59,8 @@ describe('Typescript usage suite', () => {
 
             let script = `
                 (seq
-                    (call "${client.relayPeerID.toB58String()}" ("op" "identity") [])
-                    (call "${client.selfPeerId.toB58String()}" ("test" "test") [hello])
+                    (call "${client.relayPeerId}" ("op" "identity") [])
+                    (call "${client.selfPeerId}" ("test" "test") [hello])
                 )
             `;
 
@@ -167,10 +167,10 @@ describe('Typescript usage suite', () => {
         // act
         let script = `
             (seq
-                (call "${client.relayPeerID.toB58String()}" ("op" "identity") [])
+                (call "${client.relayPeerId}" ("op" "identity") [])
                 (seq
-                    (call "${client.selfPeerId.toB58String()}" ("test" "test") [a b c d] result)
-                    (call "${client.selfPeerId.toB58String()}" ("test" "reverse_args") [a b c d])
+                    (call "${client.selfPeerId}" ("test" "test") [a b c d] result)
+                    (call "${client.selfPeerId}" ("test" "reverse_args") [a b c d])
                 )
             )
         `;
@@ -204,7 +204,7 @@ describe('Typescript usage suite', () => {
 
         // act
         let script = `
-        (call "${client.selfPeerId.toB58String()}" ("test" "reverse_args") [a b c d])
+        (call "${client.selfPeerId}" ("test" "reverse_args") [a b c d])
         `;
 
         let data: Map<string, any> = new Map();
@@ -229,10 +229,10 @@ describe('Typescript usage suite', () => {
 
         // act
         let script = `
-        (call "${client.relayPeerID.toB58String()}" ("op" "identify") [] result)
+        (call "${client.relayPeerId}" ("op" "identify") [] result)
         `;
         const data = new Map();
-        data.set('__relay', client.relayPeerID.toB58String());
+        data.set('__relay', client.relayPeerId);
 
         const [res] = await client.fetch(script, ['result'], data);
 
@@ -263,7 +263,7 @@ describe('Typescript usage suite', () => {
 
         let script = `
             (seq
-                (call "${client1.relayPeerID.toB58String()}" ("op" "identity") [])
+                (call "${client1.relayPeerId}" ("op" "identity") [])
                 (call "${pid2.toB58String()}" ("test" "test") [a b c d])
             )
         `;

@@ -21,7 +21,7 @@ describe('== AIR suite', () => {
         await client.sendScript(script);
 
         // assert
-        expect(res).to.be.equal(client.selfPeerId.toB58String());
+        expect(res).to.be.equal(client.selfPeerId);
     });
 
     it('call local function', async function () {
