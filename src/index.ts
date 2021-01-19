@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-export interface ResolvedTriplet {
-    peer_pk: string;
-    service_id: string;
-    function_name: string;
-}
-
-export interface SecurityTetraplet extends ResolvedTriplet {
-    json_path: string;
-}
+export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUtils';
+export { FluenceClient } from './FluenceClient';
+export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
+export * from './api';
+export { Particle } from './internal/particle';

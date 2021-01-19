@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-export function delay<T>(ms: number, error: string): Promise<T> {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => reject(new Error(error)), ms);
-    });
+import { ParticleHandler, StepperOutcome } from './commonTypes';
+import { ParticleDto } from './particle';
+
+export interface ParticleProcessorStrategy {
+    particleHandler: ParticleHandler;
+    sendParticleFurther: (particle: ParticleDto) => void;
+
+    onParticleTimeout?: (particle: ParticleDto, now: number) => void;
+    onLocalParticleRecieved?: (particle: ParticleDto) => void;
+    onExternalParticleRecieved?: (particle: ParticleDto) => void;
+    onStepperExecuting?: (particle: ParticleDto) => void;
+    onStepperExecuted?: (stepperOutcome: StepperOutcome) => void;
 }

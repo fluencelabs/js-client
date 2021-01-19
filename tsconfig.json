@@ -13,14 +13,14 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "pretty": true,
-    "target": "esnext",
+    "target": "ES5",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
     "esModuleInterop": true,
     "declarationMap": true,
     "strict": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "alwaysStrict": true,
     "noImplicitThis": true,
     "strictNullChecks": false
@@ -29,7 +29,7 @@
     "node_modules",
     "dist",
     "bundle",
-    "src/test"
+    "src/__test__"
   ],
   "include": ["src/**/*"]
 }

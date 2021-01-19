@@ -2,4 +2,4 @@
 --require @babel/register
 
 
-src/test/**/*.spec.ts
+src/__test__/**/*.spec.ts
