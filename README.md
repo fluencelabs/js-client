@@ -1,6 +1,6 @@
 # Fluence browser client
 
-[![npm version](https://badge.fury.io/js/%40fluencelabs%2Ffluence.svg)](https://badge.fury.io/js/%40fluencelabs%2Ffluence)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/fluence)](https://www.npmjs.com/package/@fluencelabs/fluence)
 
 Browser client for the Fluence network based on the js-libp2p.
 
@@ -12,12 +12,12 @@ With `npm` installed building could be done as follows:
 npm install fluence
 ```
 
-## Example 
+## Example
 
 Shows how to register and call new service in Fluence network.
 
-
 Generate new peer ids for clients.
+
 ```typescript
 let peerId1 = await Fluence.generatePeerId();
 let peerId2 = await Fluence.generatePeerId();
@@ -26,6 +26,12 @@ let peerId2 = await Fluence.generatePeerId();
 Establish connections to predefined nodes.
 
 ```typescript
-let client1 = await Fluence.connect("/dns4/134.209.186.43/tcp/9003/ws/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb", peerId1);
-let client2 = await Fluence.connect("/ip4/134.209.186.43/tcp/9002/ws/p2p/12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er", peerId2);
+let client1 = await Fluence.connect(
+    '/dns4/134.209.186.43/tcp/9003/ws/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb',
+    peerId1,
+);
+let client2 = await Fluence.connect(
+    '/ip4/134.209.186.43/tcp/9002/ws/p2p/12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er',
+    peerId2,
+);
 ```
