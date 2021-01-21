@@ -2,7 +2,21 @@
 
 [![npm](https://img.shields.io/npm/v/@fluencelabs/fluence)](https://www.npmjs.com/package/@fluencelabs/fluence)
 
-Official SDK for building web-based applications for [Fluence network](https://fluence.network/) 
+Official SDK for building web-based applications for Fluence
+
+## About Fluence
+
+Fluence is an open application platform where apps can build on each other, share data and users
+
+|         Layer         |                                                               Tech                                                                |              Scale               |               State               |                                                   Based on                                                    |
+| :-------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------: | :-------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
+|       Execution       |                                             [FCE](https://github.com/fluencelabs/fce)                                             |           Single peer            | Disk, network, external processes | Wasm, [IT](https://github.com/fluencelabs/interface-types), [Wasmer\*](https://github.com/fluencelabs/wasmer) |
+|      Composition      |                                      [Aquamarine](https://github.com/fluencelabs/aquamarine)                                      |          Involved peers          |      Results and signatures       |                                                 ⇅, π-calculus                                                 |
+|       Topology        | [TrustGraph](https://github.com/fluencelabs/fluence/tree/master/trust-graph), [DHT\*](https://github.com/fluencelabs/rust-libp2p) | Distributed with Kademlia\* algo |    Actual state of the network    |                                [libp2p](https://github.com/libp2p/rust-libp2p)                                |
+| Security & Accounting |                                                            Blockchain                                                             |          Whole network           |        Licenses & payments        |                                                  substrate?                                                   |
+
+<img alt="aquamarine scheme" align="center" src="doc/stack.png"/>
+
 
 ## Installation
 
@@ -20,18 +34,30 @@ yarn add @fluencelabs/fluence
 
 ## Getting started
 
-Initialize client
+Pick a node to connect to the Fluence network. The easiest way to do so is by using [fluence-network-environment](https://github.com/fluencelabs/fluence-network-environment) package
 
 ```typescript
-const relayNode = '/dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+import { dev } from '@fluencelabs/fluence-network-environment';
 
-let clinet: FluenceClient;
+export const relayNode = dev[0];
+```
 
-createClient(relayNode);
-	.then((c) => {
-		client = c;
-    })
-	.catch((err) => console.log('Client initialization failed', err));
+Initialize client
+
+
+```typescript
+import { createClient, FluenceClient } from '@fluencelabs/fluence';
+
+const client = await createClient(relayNode);
+```
+
+Add response service function calls
+
+```typescript
+subscribeToEvent(client, 'helloService', 'helloFunction', (args) => {
+    const [networkInfo] = args;
+    console.log(networkInfo);
+});
 ```
 
 Make a particle
@@ -39,19 +65,11 @@ Make a particle
 ```typescript
 const particle = new Particle(`
     (seq
-        (call myRelay ("op" "identity") [])
-        (call userlistNode (userlist "join") [user])
+        (call myRelay ("op" "identify") [] result)
+        (call %init_peer_id% ("helloService" "helloFunction") [result])
     )`,
     {
         myRelay: client.relayPeerId,
-        myPeerId: client.selfPeerId,
-        user: {
-            name: 'john',
-            peer_id: client.selfPeerId,
-            relay_id: client.relayPeerId,
-        },
-        userlist: '03edcc81-7777-4234-b048-36305d8d65e2',
-        userlistNode: '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
     },
 );
 ```
@@ -62,59 +80,26 @@ Send it to the network
 await sendParticle(client, particle);
 ```
 
-Respond service function calls
+Observe the result in browser console
 
-```typescript
-subscribeToEvent(client, 'helloService', 'helloWorld', (args) => {
-    const [message] = args as [string];
-    console.log(message);
-});
+```json
+{
+    "external_addresses": [ "/ip4/1.2.3.4/tcp/7777", "/dns4/dev.fluence.dev/tcp/19002" ]
+}
 ```
 
 ## Documentation
 
-Detailed guide:  [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
+SDK Reference: [readme.io](https://fluence-labs.readme.io/docs/js-sdk)
+
+Detailed guide on building applications:  [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
 
 Sample applications:
 
 * [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
 * [Other demos](https://github.com/fluencelabs/aqua-demo): (Chat app,  Social feed app, Blog platform app)
 
-Further documentation on Fluence: [readme.io](https://fluence-labs.readme.io/docs)
-
-## API
-
-### createClient
-
-TBD
-
-### sendParticle
-
-TBD
-
-### sendParticleAsFetch
-
-TBD
-
-### registerServiceFunction
-
-TBD
-
-### unregisterServiceFunction
-
-TBD
-
-### subscribeToEvent
-
-TBD
-
-### FluenceClient
-
-TBD
-
-### Particle
-
-TBD
+About [Fluence](https://fluence.network/) 
 
 ## Developing
 
