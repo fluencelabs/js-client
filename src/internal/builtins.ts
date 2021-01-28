@@ -61,7 +61,9 @@ const requestResponse = async <T>(
 };
 
 /**
- * Get all available modules hosted on a connected relay.
+ * Get all available modules hosted on a connected relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @returns { Array<string> } - list of available modules on the connected relay
  */
 export const getModules = async (client: FluenceClient): Promise<string[]> => {
     const particle = new Particle(
@@ -81,11 +83,11 @@ export const getModules = async (client: FluenceClient): Promise<string[]> => {
 };
 
 /**
- * Send a script to add module to a relay. Waiting for a response from a relay.
- * @param client
- * @param name
- * @param moduleBase64
- * @param config
+ * Send a script to add module to a relay. Waiting for a response from a relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param { string } name - Name of the uploaded module
+ * @param { string } moduleBase64 - Base64 content of the module
+ * @param { ModuleConfig } config - Module config
  */
 export const uploadModule = async (
     client: FluenceClient,
@@ -124,7 +126,14 @@ export const uploadModule = async (
 };
 
 /**
- * Send a script to add module to a relay. Waiting for a response from a relay.
+ * Send a script to add module to a relay. Waiting for a response from a relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param { string } name - Name of the blueprint
+ * @param { Array<string> } dependencies - Array of it's dependencies
+ * @param {[string]} blueprintId - Optional blueprint ID
+ * @param {[string]} nodeId - Optional node peer id to deploy blueprint to
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { string } - Created blueprint ID
  */
 export const addBlueprint = async (
     client: FluenceClient,
@@ -153,7 +162,12 @@ export const addBlueprint = async (
 };
 
 /**
- * Send a script to create a service to a relay. Waiting for a response from a relay.
+ * Send a script to create a service on the connected relay. Waiting for a response from the relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {string} blueprintId - The blueprint of the service
+ * @param {[string]} nodeId - Optional node peer id to deploy service to
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { string } - Created service ID
  */
 export const createService = async (
     client: FluenceClient,
@@ -180,7 +194,11 @@ export const createService = async (
 };
 
 /**
- * Get all available blueprints hosted on a connected relay.
+ * Get all available blueprints hosted on a connected relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} nodeId - Optional node peer id to get available blueprints from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { Array<string> } - List of available blueprints
  */
 export const getBlueprints = async (client: FluenceClient, nodeId: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'blueprints';
@@ -199,7 +217,7 @@ export const getBlueprints = async (client: FluenceClient, nodeId: string, ttl?:
 };
 
 /**
- * Add a provider to DHT network to neighborhood around a key.
+ * Add a provider to DHT network to neighborhood around a key. @deprecated prefer using raw Particles instead
  */
 export const addProvider = async (
     client: FluenceClient,
@@ -226,7 +244,11 @@ export const addProvider = async (
 };
 
 /**
- * Get a provider from DHT network from neighborhood around a key..
+ * Get a provider from DHT network from neighborhood around a key. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} nodeId - Optional node peer id to get providers from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { Array<object> } - List of providers
  */
 export const getProviders = async (client: FluenceClient, key: Buffer, nodeId?: string, ttl?: number): Promise<any> => {
     key = bs58.encode(key) as any;
@@ -241,7 +263,11 @@ export const getProviders = async (client: FluenceClient, key: Buffer, nodeId?: 
 };
 
 /**
- * Get relays neighborhood
+ * Get relays neighborhood. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} nodeId - Optional node peer id to get neighborhood from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { Array<string> } - List of peer ids of neighbors of the node
  */
 export const neighborhood = async (client: FluenceClient, node: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'neighborhood';
