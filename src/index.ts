@@ -19,4 +19,4 @@ export { FluenceClient } from './FluenceClient';
 export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
 export * from './api';
 export { Particle } from './internal/particle';
-export * from "./helpers/builtin"
+export * from './internal/builtins';
