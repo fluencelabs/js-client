@@ -21,7 +21,6 @@ import { FluenceConnection } from './FluenceConnection';
 
 import { ParticleProcessor } from './ParticleProcessor';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
-import log from 'loglevel';
 import { PeerIdB58 } from './commonTypes';
 
 export abstract class FluenceClientBase {

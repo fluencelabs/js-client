@@ -15,8 +15,8 @@
  */
 
 import bs58 from 'bs58';
-import { sendParticleAsFetch } from 'src/api';
-import { Particle } from 'src/internal/particle';
+import { sendParticleAsFetch } from '../api';
+import { Particle } from './particle';
 import { FluenceClient } from '../FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 

@@ -4,6 +4,7 @@ import { genUUID, Particle } from './internal/particle';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
+import { FluenceClientImpl } from './internal/FluenceClientImpl';
 
 type Node = {
     peerId: string;
@@ -31,7 +32,7 @@ export const createClient = async (
         peerId = await seedToPeerId(peerIdOrSeed);
     }
 
-    const client = new FluenceClient(peerId);
+    const client = new FluenceClientImpl(peerId);
 
     if (connectTo) {
         let theAddress: Multiaddr;
@@ -70,7 +71,7 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    client.registerCallback(serviceId, fnName, handler);
+    (client as FluenceClientImpl).registerCallback(serviceId, fnName, handler);
 };
 
 // prettier-ignore
@@ -85,7 +86,7 @@ export const unregisterServiceFunction = (
     serviceId: string,
     fnName: string
 ) => {
-    client.unregisterCallback(serviceId, fnName);
+    (client as FluenceClientImpl).unregisterCallback(serviceId, fnName);
 };
 
 /**
