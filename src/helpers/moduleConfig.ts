@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUtils';
-export { FluenceClient } from './FluenceClient';
-export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
-export * from './api';
-export { Particle } from './internal/particle';
-export * from "./helpers/builtin"
+export interface ModuleConfig {
+    name: string;
+    mem_pages_count?: number;
+    logger_enabled?: boolean;
+    wasi?: Wasi;
+    mounted_binaries?: object;
+}
+
+export interface Wasi {
+    envs?: object;
+    preopened_files?: string[];
+    mapped_dirs?: object;
+}

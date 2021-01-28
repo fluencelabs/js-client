@@ -11,6 +11,7 @@ import { createConnectedClient, createLocalClient } from './util';
 import log from 'loglevel';
 import { createClient } from '../api';
 import Multiaddr from 'multiaddr';
+import {getModules} from "../helpers/builtin";
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -218,6 +219,17 @@ describe('Typescript usage suite', () => {
         // assert
         const res = await resMakingPromise;
         expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
+    });
+
+    it.skip('add_module', async function () {
+        this.timeout(30000);
+        // arrange
+        const client = await createConnectedClient(
+            '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb',
+        );
+
+        let a = await getModules(client)
+        console.log(a)
     });
 
     it.skip('fetch should work', async function () {
