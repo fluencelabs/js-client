@@ -19,20 +19,30 @@ import { decode, encode } from 'bs58';
 import { keys } from 'libp2p-crypto';
 
 /**
- * @param seed 32 bytes
+ * Converts seed string which back to peer id. Seed string can be obtained by using @see {@link peerIdToSeed} function
+ * @param { string } seed - Seed to convert to peer id
+ * @returns { PeerId } - Peer id
  */
-export async function seedToPeerId(seed: string): Promise<PeerId> {
-    let seedArr = decode(seed);
+export const seedToPeerId = async (seed: string): Promise<PeerId> => {
+    const seedArr = decode(seed);
+    const privateKey = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
+    return await PeerId.createFromPrivKey(privateKey.bytes);
+};
 
-    let privateK = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
-    return await PeerId.createFromPrivKey(privateK.bytes);
-}
-
-export function peerIdToSeed(peerId: PeerId): string {
-    let seedBuf = peerId.privKey.marshal().subarray(0, 32);
+/**
+ * Converts peer id to a string which can be used to restore back to peer id format with. @see {@link seedToPeerId}
+ * @param { PeerId } peerId - Peer id to convert to seed
+ * @returns { string } - Seed string
+ */
+export const peerIdToSeed = (peerId: PeerId): string => {
+    const seedBuf = peerId.privKey.marshal().subarray(0, 32);
     return encode(seedBuf);
-}
+};
 
-export async function generatePeerId(): Promise<PeerId> {
+/**
+ * Generates a new peer id with random private key
+ * @returns { Promise<PeerId> } - Promise with the created Peer Id
+ */
+export const generatePeerId = async (): Promise<PeerId> => {
     return await PeerId.create({ keyType: 'Ed25519' });
-}
+};

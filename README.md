@@ -1,31 +1,128 @@
-# Fluence browser client
+# Fluence JS SDK
 
-[![npm version](https://badge.fury.io/js/%40fluencelabs%2Ffluence.svg)](https://badge.fury.io/js/%40fluencelabs%2Ffluence)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/fluence)](https://www.npmjs.com/package/@fluencelabs/fluence)
 
-Browser client for the Fluence network based on the js-libp2p.
+Official SDK for building web-based applications for Fluence
 
-## How to build
+## About Fluence
 
-With `npm` installed building could be done as follows:
+Fluence is an open application platform where apps can build on each other, share data and users
+
+|         Layer         |                                                               Tech                                                                |              Scale               |               State               |                                                   Based on                                                    |
+| :-------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------: | :-------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
+|       Execution       |                                             [FCE](https://github.com/fluencelabs/fce)                                             |           Single peer            | Disk, network, external processes | Wasm, [IT](https://github.com/fluencelabs/interface-types), [Wasmer\*](https://github.com/fluencelabs/wasmer) |
+|      Composition      |                                      [Aquamarine](https://github.com/fluencelabs/aquamarine)                                      |          Involved peers          |      Results and signatures       |                                                 ⇅, π-calculus                                                 |
+|       Topology        | [TrustGraph](https://github.com/fluencelabs/fluence/tree/master/trust-graph), [DHT\*](https://github.com/fluencelabs/rust-libp2p) | Distributed with Kademlia\* algo |    Actual state of the network    |                                [libp2p](https://github.com/libp2p/rust-libp2p)                                |
+| Security & Accounting |                                                            Blockchain                                                             |          Whole network           |        Licenses & payments        |                                                  substrate?                                                   |
+
+<img alt="aquamarine scheme" align="center" src="doc/stack.png"/>
+
+
+## Installation
+
+With npm
 
 ```bash
-npm install fluence
+npm install @fluencelabs/fluence
 ```
 
-## Example 
+With yarn
 
-Shows how to register and call new service in Fluence network.
-
-
-Generate new peer ids for clients.
-```typescript
-let peerId1 = await Fluence.generatePeerId();
-let peerId2 = await Fluence.generatePeerId();
+```bash
+yarn add @fluencelabs/fluence
 ```
 
-Establish connections to predefined nodes.
+## Getting started
+
+Pick a node to connect to the Fluence network. The easiest way to do so is by using [fluence-network-environment](https://github.com/fluencelabs/fluence-network-environment) package
 
 ```typescript
-let client1 = await Fluence.connect("/dns4/134.209.186.43/tcp/9003/ws/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb", peerId1);
-let client2 = await Fluence.connect("/ip4/134.209.186.43/tcp/9002/ws/p2p/12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er", peerId2);
+import { dev } from '@fluencelabs/fluence-network-environment';
+
+export const relayNode = dev[0];
 ```
+
+Initialize client
+
+
+```typescript
+import { createClient, FluenceClient } from '@fluencelabs/fluence';
+
+const client = await createClient(relayNode);
+```
+
+Add response service function calls
+
+```typescript
+subscribeToEvent(client, 'helloService', 'helloFunction', (args) => {
+    const [networkInfo] = args;
+    console.log(networkInfo);
+});
+```
+
+Make a particle
+
+```typescript
+const particle = new Particle(`
+    (seq
+        (call myRelay ("op" "identify") [] result)
+        (call %init_peer_id% ("helloService" "helloFunction") [result])
+    )`,
+    {
+        myRelay: client.relayPeerId,
+    },
+);
+```
+
+Send it to the network
+
+```typescript
+await sendParticle(client, particle);
+```
+
+Observe the result in browser console
+
+```json
+{
+    "external_addresses": [ "/ip4/1.2.3.4/tcp/7777", "/dns4/dev.fluence.dev/tcp/19002" ]
+}
+```
+
+## Documentation
+
+SDK Reference: [readme.io](https://fluence-labs.readme.io/docs/js-sdk)
+
+Detailed guide on building applications:  [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
+
+Sample applications:
+
+* [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
+* [Other demos](https://github.com/fluencelabs/aqua-demo): (Chat app,  Social feed app, Blog platform app)
+
+About [Fluence](https://fluence.network/) 
+
+## Developing
+
+### Setting up Dev
+
+Install node packages
+
+```bash
+npm install
+```
+
+### Running tests
+
+To run test execute
+
+```bash
+npm test
+```
+
+## Contributing
+
+While the project is a still in the early stage of development, you are welcome to track progress and contribute. At the current moment we don't have detailed instructions on how to join development or which code guidelines to follow. However, you can expect more info to appear soon enough. In the meanwhile, check out the [basic contributing rules](CONTRIBUTING.md).
+
+## License
+
+[Apache 2.0](LICENSE)
