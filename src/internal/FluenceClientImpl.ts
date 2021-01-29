@@ -222,14 +222,16 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
             }
         },
         onLocalParticleRecieved: (particle: ParticleDto) => {
-            log.trace('local particle received', particle);
+            log.debug('local particle received', particle);
         },
         onExternalParticleRecieved: (particle: ParticleDto) => {
-            log.trace('external particle received', particle);
+            log.debug('external particle received', particle);
         },
-        onStepperExecuting: (particle: ParticleDto) => {},
+        onStepperExecuting: (particle: ParticleDto) => {
+            log.debug('stepper executing particle', particle);
+        },
         onStepperExecuted: (stepperOutcome: StepperOutcome) => {
-            log.trace('inner interpreter outcome:', stepperOutcome);
+            log.debug('inner interpreter outcome:', stepperOutcome);
         },
     };
 
