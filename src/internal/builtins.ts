@@ -197,6 +197,7 @@ export const createService = async (
  * Get all available blueprints hosted on a connected relay. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param {[string]} nodeId - Optional node peer id to get available blueprints from
+ * @param {[string]} nodeId - Optional node peer id to deploy service to
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<string> } - List of available blueprints
  */
@@ -246,6 +247,7 @@ export const addProvider = async (
 /**
  * Get a provider from DHT network from neighborhood around a key. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[buffer]} key - get provider by this key
  * @param {[string]} nodeId - Optional node peer id to get providers from
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<object> } - List of providers
@@ -269,12 +271,48 @@ export const getProviders = async (client: FluenceClient, key: Buffer, nodeId?: 
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<string> } - List of peer ids of neighbors of the node
  */
-export const neighborhood = async (client: FluenceClient, node: string, ttl?: number): Promise<string[]> => {
+export const neighborhood = async (client: FluenceClient, nodeId: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'neighborhood';
     let call = (nodeId: string) => `(call "${nodeId}" ("dht" "neighborhood") [node] ${returnValue})`;
 
     let data = new Map();
-    data.set('node', node);
+    data.set('node', nodeId);
 
-    return requestResponse(client, 'neighborhood', call, returnValue, data, (args) => args[0] as string[], node, ttl);
+    return requestResponse(client, 'neighborhood', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
+};
+
+/**
+ * Upload an AIR script, that will be runned in a loop on a node. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} script - script to upload
+ * @param {[string]} nodeId - Optional node peer id to get neighborhood from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { Array<string> } - List of peer ids of neighbors of the node
+ */
+export const addScript = async (client: FluenceClient, script: string, nodeId: string, ttl?: number): Promise<string[]> => {
+    let returnValue = 'id';
+    let call = (nodeId: string) => `(call "${nodeId}" ("script" "add") [script] ${returnValue})`;
+
+    let data = new Map();
+    data.set('script', script);
+
+    return requestResponse(client, 'addScript', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
+};
+
+/**
+ * Remove an AIR script from a node. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} id - id of a script
+ * @param {[string]} nodeId - Optional node peer id to get neighborhood from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns { Array<string> } - List of peer ids of neighbors of the node
+ */
+export const removeScript = async (client: FluenceClient, id: string, nodeId: string, ttl?: number): Promise<string[]> => {
+    let returnValue = 'id';
+    let call = (nodeId: string) => `(call "${nodeId}" ("script" "remove") [id] ${returnValue})`;
+
+    let data = new Map();
+    data.set('id', id);
+
+    return requestResponse(client, 'removeScript', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
 };
