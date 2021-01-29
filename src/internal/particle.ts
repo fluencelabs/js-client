@@ -22,11 +22,20 @@ import { injectDataIntoParticle } from './ParticleProcessor';
 
 const DEFAULT_TTL = 7000;
 
+/**
+ * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
+ */
 export class Particle {
     script: string;
     data: Map<string, any>;
     ttl: number;
 
+    /**
+     * Creates a particle with specified parameters.
+     * @param { String }script - Air script which defines the execution of a particle – its path, functions it triggers on peers, and so on.
+     * @param { Map<string, any> | Record<string, any> } data - Variables passed to the particle in the form of either JS Map or JS object with keys representing variable names and values representing values correspondingly
+     * @param { [Number]=7000 } ttl - Time to live, a timout after which the particle execution is stopped by Aquamarine.
+     */
     constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
         this.script = script;
         if (data === undefined) {

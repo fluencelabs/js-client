@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-import { PeerIdB58 } from './internal/commonTypes';
-import Multiaddr from 'multiaddr';
+export interface ModuleConfig {
+    name: string;
+    mem_pages_count?: number;
+    logger_enabled?: boolean;
+    wasi?: Wasi;
+    mounted_binaries?: object;
+}
 
-export interface FluenceClient {
-    readonly relayPeerId: PeerIdB58;
-    readonly selfPeerId: PeerIdB58;
-    readonly isConnected: boolean;
-
-    disconnect(): Promise<void>;
-
-    /**
-     * Establish a connection to the node. If the connection is already established, disconnect and reregister all services in a new connection.
-     *
-     * @param multiaddr
-     */
-    connect(multiaddr: string | Multiaddr): Promise<void>;
-
-    sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string>;
+export interface Wasi {
+    envs?: object;
+    preopened_files?: string[];
+    mapped_dirs?: object;
 }

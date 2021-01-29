@@ -6,11 +6,15 @@ import { certificateFromString, certificateToString, issue } from '../internal/t
 import { TrustGraph } from '../internal/trust/trust_graph';
 import { nodeRootCert } from '../internal/trust/misc';
 import { generatePeerId, peerIdToSeed, seedToPeerId } from '../internal/peerIdUtils';
-import { FluenceClient } from '../FluenceClient';
+import { FluenceClientImpl } from '../internal/FluenceClientImpl';
 import { createConnectedClient, createLocalClient } from './util';
 import log from 'loglevel';
 import { createClient } from '../api';
 import Multiaddr from 'multiaddr';
+import { getModules } from '../internal/builtins';
+
+const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -49,7 +53,7 @@ describe('Typescript usage suite', () => {
     describe.skip('should make connection to network', async function () {
         this.timeout(30000);
 
-        const testProcedure = async (client: FluenceClient) => {
+        const testProcedure = async (client: FluenceClientImpl) => {
             let resMakingPromise = new Promise((resolve) => {
                 client.registerCallback('test', 'test', (args, _) => {
                     resolve(args);
@@ -75,11 +79,10 @@ describe('Typescript usage suite', () => {
 
         it('address as string', async function () {
             // arrange
-            const addr =
-                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+            const addr = devNodeAddress;
 
             // act
-            const client = await createClient(addr);
+            const client = (await createClient(addr)) as FluenceClientImpl;
 
             // assert
             const res = await testProcedure(client);
@@ -88,12 +91,10 @@ describe('Typescript usage suite', () => {
 
         it('address as multiaddr', async function () {
             // arrange
-            const addr = new Multiaddr(
-                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-            );
+            const addr = new Multiaddr(devNodeAddress);
 
             // act
-            const client = await createClient(addr);
+            const client = (await createClient(addr)) as FluenceClientImpl;
 
             // assert
             const res = await testProcedure(client);
@@ -103,13 +104,12 @@ describe('Typescript usage suite', () => {
         it('address as node', async function () {
             // arrange
             const addr = {
-                multiaddr:
-                    '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-                peerId: '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+                multiaddr: devNodeAddress,
+                peerId: devNodePeerId,
             };
 
             // act
-            const client = await createClient(addr);
+            const client = (await createClient(addr)) as FluenceClientImpl;
 
             // assert
             const res = await testProcedure(client);
@@ -118,26 +118,24 @@ describe('Typescript usage suite', () => {
 
         it('peerid as peer id', async function () {
             // arrange
-            const addr =
-                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+            const addr = devNodeAddress;
             const pid = await generatePeerId();
 
             // act
-            const client = await createClient(addr, pid);
+            const client = (await createClient(addr, pid)) as FluenceClientImpl;
 
             // assert
             const res = await testProcedure(client);
             expect(res).to.deep.equal(['world']);
         });
 
-        it('peerid as see', async function () {
+        it('peerid as seed', async function () {
             // arrange
-            const addr =
-                '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+            const addr = devNodeAddress;
             const pid = peerIdToSeed(await generatePeerId());
 
             // act
-            const client = await createClient(addr, pid);
+            const client = (await createClient(addr, pid)) as FluenceClientImpl;
 
             // assert
             const res = await testProcedure(client);
@@ -148,9 +146,7 @@ describe('Typescript usage suite', () => {
     it.skip('should make a call through the network', async function () {
         this.timeout(30000);
         // arrange
-        const client = await createConnectedClient(
-            '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-        );
+        const client = await createConnectedClient(devNodeAddress);
 
         client.registerCallback('test', 'test', (args, _) => {
             log.trace('should make a call through the network, called "test" "test" with args', args);
@@ -191,9 +187,7 @@ describe('Typescript usage suite', () => {
     it.skip('fireAndForget should work', async function () {
         this.timeout(30000);
         // arrange
-        const client = await createConnectedClient(
-            '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-        );
+        const client = await createConnectedClient(devNodeAddress);
 
         let resMakingPromise = new Promise((resolve) => {
             client.registerCallback('test', 'reverse_args', (args, _) => {
@@ -220,12 +214,22 @@ describe('Typescript usage suite', () => {
         expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it.skip('fetch should work', async function () {
+    it.skip('add_module', async function () {
         this.timeout(30000);
         // arrange
         const client = await createConnectedClient(
-            '/dns4/net01.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
+            '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb',
         );
+
+        let a = await getModules(client);
+
+        expect(a).not.to.be.undefined;
+    });
+
+    it.skip('fetch should work', async function () {
+        this.timeout(30000);
+        // arrange
+        const client = await createConnectedClient(devNodeAddress);
 
         // act
         let script = `
@@ -243,16 +247,12 @@ describe('Typescript usage suite', () => {
     it.skip('two clients should work inside the same time browser', async function () {
         // arrange
         const pid1 = await generatePeerId();
-        const client1 = new FluenceClient(pid1);
-        await client1.connect(
-            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-        );
+        const client1 = new FluenceClientImpl(pid1);
+        await client1.connect(devNodeAddress);
 
         const pid2 = await generatePeerId();
-        const client2 = new FluenceClient(pid2);
-        await client2.connect(
-            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-        );
+        const client2 = new FluenceClientImpl(pid2);
+        await client2.connect(devNodeAddress);
 
         let resMakingPromise = new Promise((resolve) => {
             client2.registerCallback('test', 'test', (args, _) => {
@@ -283,16 +283,12 @@ describe('Typescript usage suite', () => {
     it.skip('event registration should work', async function () {
         // arrange
         const pid1 = await generatePeerId();
-        const client1 = new FluenceClient(pid1);
-        await client1.connect(
-            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-        );
+        const client1 = new FluenceClientImpl(pid1);
+        await client1.connect(devNodeAddress);
 
         const pid2 = await generatePeerId();
-        const client2 = new FluenceClient(pid2);
-        await client2.connect(
-            '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9',
-        );
+        const client2 = new FluenceClientImpl(pid2);
+        await client2.connect(devNodeAddress);
 
         client2.registerEvent('event_stream', 'test');
         const resMakingPromise = new Promise((resolve) => {
@@ -323,8 +319,8 @@ export async function testCerts() {
     const key2 = await generatePeerId();
 
     // connect to two different nodes
-    const cl1 = new FluenceClient(key1);
-    const cl2 = new FluenceClient(key2);
+    const cl1 = new FluenceClientImpl(key1);
+    const cl2 = new FluenceClientImpl(key2);
 
     await cl1.connect('/dns4/134.209.186.43/tcp/9003/ws/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb');
     await cl2.connect('/ip4/134.209.186.43/tcp/9002/ws/p2p/12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er');
