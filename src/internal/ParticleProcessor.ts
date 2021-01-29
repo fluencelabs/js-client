@@ -215,11 +215,8 @@ export class ParticleProcessor {
         let data: any = particle.data;
         let error: any = data['protocol!error'];
         if (error !== undefined) {
-            log.error('error in external particle: ');
-            log.error(error);
+            log.error('error in external particle: ', error);
         } else {
-            log.info('handle external particle: ');
-            log.info(particle);
             await this.handleParticle(particle);
         }
     }

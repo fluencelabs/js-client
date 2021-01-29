@@ -221,12 +221,15 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
                 executingParticle.reject(new Error(`particle ${particle.id} timed out`));
             }
         },
-        onLocalParticleRecieved: (particle: ParticleDto) => {},
-        onExternalParticleRecieved: (particle: ParticleDto) => {},
+        onLocalParticleRecieved: (particle: ParticleDto) => {
+            log.trace('local particle received', particle);
+        },
+        onExternalParticleRecieved: (particle: ParticleDto) => {
+            log.trace('external particle received', particle);
+        },
         onStepperExecuting: (particle: ParticleDto) => {},
         onStepperExecuted: (stepperOutcome: StepperOutcome) => {
-            log.info('inner interpreter outcome:');
-            log.info(stepperOutcome);
+            log.trace('inner interpreter outcome:', stepperOutcome);
         },
     };
 
