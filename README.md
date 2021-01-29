@@ -17,7 +17,6 @@ Fluence is an open application platform where apps can build on each other, shar
 
 <img alt="aquamarine scheme" align="center" src="doc/stack.png"/>
 
-
 ## Installation
 
 With npm
@@ -44,14 +43,13 @@ export const relayNode = dev[0];
 
 Initialize client
 
-
 ```typescript
 import { createClient, FluenceClient } from '@fluencelabs/fluence';
 
 const client = await createClient(relayNode);
 ```
 
-Add response service function calls
+Respond to service function calls
 
 ```typescript
 subscribeToEvent(client, 'helloService', 'helloFunction', (args) => {
@@ -63,7 +61,8 @@ subscribeToEvent(client, 'helloService', 'helloFunction', (args) => {
 Make a particle
 
 ```typescript
-const particle = new Particle(`
+const particle = new Particle(
+    `
     (seq
         (call myRelay ("op" "identify") [] result)
         (call %init_peer_id% ("helloService" "helloFunction") [result])
@@ -84,7 +83,7 @@ Observe the result in browser console
 
 ```json
 {
-    "external_addresses": [ "/ip4/1.2.3.4/tcp/7777", "/dns4/dev.fluence.dev/tcp/19002" ]
+    "external_addresses": ["/ip4/1.2.3.4/tcp/7777", "/dns4/dev.fluence.dev/tcp/19002"]
 }
 ```
 
@@ -92,14 +91,14 @@ Observe the result in browser console
 
 SDK Reference: [readme.io](https://fluence-labs.readme.io/docs/js-sdk)
 
-Detailed guide on building applications:  [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
+Detailed guide on building applications: [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
 
 Sample applications:
 
-* [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
-* [Other demos](https://github.com/fluencelabs/aqua-demo): (Chat app,  Social feed app, Blog platform app)
+-   [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
+-   [Other demos](https://github.com/fluencelabs/aqua-demo): (Chat app, Social feed app, Blog platform app)
 
-About [Fluence](https://fluence.network/) 
+About [Fluence](https://fluence.network/)
 
 ## Developing
 
@@ -121,7 +120,7 @@ npm test
 
 ## Contributing
 
-While the project is a still in the early stage of development, you are welcome to track progress and contribute. At the current moment we don't have detailed instructions on how to join development or which code guidelines to follow. However, you can expect more info to appear soon enough. In the meanwhile, check out the [basic contributing rules](CONTRIBUTING.md).
+While the project is still in the early stages of development, you are welcome to track progress and contribute. As the project is undergoing rapid changes, interested contributors should contact the team before embarking on larger pieces of work. All contributors should consult with and agree to our [basic contributing rules](CONTRIBUTING.md).
 
 ## License
 
