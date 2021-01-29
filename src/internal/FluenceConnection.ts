@@ -81,7 +81,7 @@ export class FluenceConnection {
         if (this.status === Status.Initializing) {
             await this.node.start();
 
-            log.debug(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
+            log.trace(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
 
             await this.node.dial(this.address);
 
@@ -92,8 +92,7 @@ export class FluenceConnection {
                     for await (const msg of source) {
                         try {
                             let particle = parseParticle(msg);
-                            log.debug('Particle is received:');
-                            log.debug(JSON.stringify(particle, undefined, 2));
+                            log.trace('Particle is received:', JSON.stringify(particle, undefined, 2));
                             _this.handleParticle(particle);
                         } catch (e) {
                             log.error('error on handling a new incoming message: ' + e);
