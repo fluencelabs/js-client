@@ -1,8 +1,6 @@
-import 'mocha';
-import { expect } from 'chai';
 import { createLocalClient } from './util';
 
-describe('== AIR suite', () => {
+test('== AIR suite', () => {
     it('check init_peer_id', async function () {
         // arrange
         const serviceId = 'test_service';
@@ -21,7 +19,7 @@ describe('== AIR suite', () => {
         await client.sendScript(script);
 
         // assert
-        expect(res).to.be.equal(client.selfPeerId);
+        expect(res).toEqual(client.selfPeerId);
     });
 
     it('call local function', async function () {
@@ -43,7 +41,7 @@ describe('== AIR suite', () => {
         await client.sendScript(script);
 
         // assert
-        expect(res).to.be.equal(arg);
+        expect(res).toEqual(arg);
     });
 
     it('check particle arguments', async function () {
@@ -66,7 +64,7 @@ describe('== AIR suite', () => {
         await client.sendScript(script, data);
 
         // assert
-        expect(res).to.be.equal('hello');
+        expect(res).toEqual('hello');
     });
 
     it('check security tetraplet', async function () {
@@ -102,7 +100,7 @@ describe('== AIR suite', () => {
 
         // assert
         const tetraplet = res.tetraplets[0][0];
-        expect(tetraplet).to.contain({
+        expect(tetraplet).toContain({
             service_id: 'make_data_service',
             function_name: 'make_data',
             json_path: '$.field',
@@ -110,7 +108,6 @@ describe('== AIR suite', () => {
     });
 
     it('check chain of services work properly', async function () {
-        this.timeout(5000);
         // arrange
         const client = await createLocalClient();
 
@@ -151,8 +148,8 @@ describe('== AIR suite', () => {
         await client.sendScript(script);
 
         // assert
-        expect(res1).to.be.equal(arg1);
-        expect(res2).to.be.equal(arg2);
-        expect(res3).to.be.deep.equal([res1, res2]);
+        expect(res1).toEqual(arg1);
+        expect(res2).toEqual(arg2);
+        expect(res3).toEqual([res1, res2]);
     });
 });

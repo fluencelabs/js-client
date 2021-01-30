@@ -1,8 +1,6 @@
-import { expect } from 'chai';
-import 'mocha';
 import { parseAIR } from '../internal/stepper';
 
-describe('== AST parsing suite', () => {
+test('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
         let ast = await parseAIR(`
             (call node ("service" "function") [1 2 3 arg] output)
@@ -10,7 +8,7 @@ describe('== AST parsing suite', () => {
 
         ast = JSON.parse(ast);
 
-        expect(ast).to.deep.equal({
+        expect(ast).toEqual({
             Call: {
                 peer_part: { PeerPk: { Variable: 'node' } },
                 function_part: { ServiceIdWithFuncName: [{ Literal: 'service' }, { Literal: 'function' }] },
