@@ -7,11 +7,12 @@ import { TrustGraph } from '../internal/trust/trust_graph';
 import { nodeRootCert } from '../internal/trust/misc';
 import { generatePeerId, peerIdToSeed, seedToPeerId } from '../internal/peerIdUtils';
 import { FluenceClientImpl } from '../internal/FluenceClientImpl';
-import { createConnectedClient, createLocalClient } from './util';
+import { createConnectedClient } from './util';
 import log from 'loglevel';
 import { createClient } from '../api';
 import Multiaddr from 'multiaddr';
-import { getModules } from '../internal/builtins';
+import {addScript, getModules, removeScript} from '../internal/builtins';
+import {dev} from "@fluencelabs/fluence-network-environment";
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -146,7 +147,7 @@ describe('Typescript usage suite', () => {
     it.skip('should make a call through the network', async function () {
         this.timeout(30000);
         // arrange
-        const client = await createConnectedClient(devNodeAddress);
+        const client = await createConnectedClient(dev[0].multiaddr);
 
         client.registerCallback('test', 'test', (args, _) => {
             log.trace('should make a call through the network, called "test" "test" with args', args);
@@ -214,16 +215,45 @@ describe('Typescript usage suite', () => {
         expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it.skip('add_module', async function () {
+    it('get_modules', async function () {
         this.timeout(30000);
         // arrange
-        const client = await createConnectedClient(
-            '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb',
-        );
+        console.log(dev[2].multiaddr);
+        const client = await createConnectedClient(dev[2].multiaddr);
 
-        let a = await getModules(client);
+        console.log("peerid: " + client.selfPeerId)
 
-        expect(a).not.to.be.undefined;
+        let modulesList = await getModules(client);
+
+        expect(modulesList).not.to.be.undefined;
+    });
+
+    it.skip('add and remove script', async function () {
+        this.timeout(30000);
+        // arrange
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        console.log("peerid: " + client.selfPeerId)
+
+        let script = `
+            (seq
+                (call "${client.relayPeerId}" ("op" "identity") [])
+                (call "${client.selfPeerId}" ("test" "test1") ["1" "2" "3"] result)
+            )
+        `;
+
+        let scriptId = await addScript(client, script);
+        console.log(scriptId)
+        expect(scriptId).not.to.be.undefined;
+
+        let resMakingPromise = new Promise((resolve) => {
+            client.registerCallback('test', 'test1', (args, _) => {
+                resolve([...args].reverse());
+                return {};
+            });
+        });
+
+        await removeScript(client, scriptId);
     });
 
     it.skip('fetch should work', async function () {

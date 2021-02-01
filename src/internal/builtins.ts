@@ -287,16 +287,16 @@ export const neighborhood = async (client: FluenceClient, nodeId: string, ttl?: 
  * @param {[string]} script - script to upload
  * @param {[string]} nodeId - Optional node peer id to get neighborhood from
  * @param {[number]} ttl - Optional ttl for the particle which does the job
- * @returns { Array<string> } - List of peer ids of neighbors of the node
+ * @returns {[string]} - script id
  */
-export const addScript = async (client: FluenceClient, script: string, nodeId: string, ttl?: number): Promise<string[]> => {
+export const addScript = async (client: FluenceClient, script: string, nodeId?: string, ttl?: number): Promise<string> => {
     let returnValue = 'id';
     let call = (nodeId: string) => `(call "${nodeId}" ("script" "add") [script] ${returnValue})`;
 
     let data = new Map();
     data.set('script', script);
 
-    return requestResponse(client, 'addScript', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
+    return requestResponse(client, 'addScript', call, returnValue, data, (args) => args[0] as string, nodeId, ttl);
 };
 
 /**
@@ -305,14 +305,13 @@ export const addScript = async (client: FluenceClient, script: string, nodeId: s
  * @param {[string]} id - id of a script
  * @param {[string]} nodeId - Optional node peer id to get neighborhood from
  * @param {[number]} ttl - Optional ttl for the particle which does the job
- * @returns { Array<string> } - List of peer ids of neighbors of the node
  */
-export const removeScript = async (client: FluenceClient, id: string, nodeId: string, ttl?: number): Promise<string[]> => {
-    let returnValue = 'id';
-    let call = (nodeId: string) => `(call "${nodeId}" ("script" "remove") [id] ${returnValue})`;
+export const removeScript = async (client: FluenceClient, id: string, nodeId?: string, ttl?: number): Promise<void> => {
+    let returnValue = 'empty';
+    let call = (nodeId: string) => `(call "${nodeId}" ("script" "remove") [script_id] ${returnValue})`;
 
     let data = new Map();
-    data.set('id', id);
+    data.set('script_id', id);
 
-    return requestResponse(client, 'removeScript', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
+    return requestResponse(client, 'removeScript', call, returnValue, data, (args) => {}, nodeId, ttl);
 };
