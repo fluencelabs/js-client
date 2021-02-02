@@ -94,7 +94,7 @@ export const uploadModule = async (
     name: string,
     moduleBase64: string,
     config?: ModuleConfig,
-): Promise<string[]> => {
+): Promise<void> => {
     if (!config) {
         config = {
             name: name,
