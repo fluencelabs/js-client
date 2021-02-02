@@ -138,10 +138,10 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
                 const executingParticlePromiseFns = this.fetchParticles.get(fnName);
                 if (executingParticlePromiseFns) {
                     // don't block
-                    setImmediate(() => {
+                    setTimeout(() => {
                         this.fetchParticles.delete(fnName);
                         executingParticlePromiseFns.resolve(args);
-                    });
+                    }, 0);
                 }
 
                 return {
@@ -170,12 +170,12 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
                 }
 
                 // don't block
-                setImmediate(() => {
+                setTimeout(() => {
                     this.pushEvent(serviceId, {
                         type: fnName,
                         args: args,
                     });
-                });
+                }, 0);
 
                 return {
                     ret_code: 0,
