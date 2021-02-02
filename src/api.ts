@@ -1,6 +1,6 @@
 import { FluenceClient } from './FluenceClient';
 import { SecurityTetraplet } from './internal/commonTypes';
-import { genUUID, Particle } from './internal/particle';
+import { Particle } from './internal/particle';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
@@ -106,9 +106,9 @@ export const subscribeToEvent = (
 ): Function => {
     const realHandler = (args: any[], tetraplets: SecurityTetraplet[][]) => {
         // dont' block
-        setImmediate(() => {
+        setTimeout(() => {
             handler(args, tetraplets);
-        });
+        }, 0);
 
         return {};
     };
