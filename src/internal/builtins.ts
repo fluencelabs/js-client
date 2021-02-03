@@ -56,7 +56,7 @@ const requestResponse = async <T>(
     )
     `;
 
-    const res = await sendParticleAsFetch<any[]>(client, new Particle(script, data, ttl), '');
+    const res = await sendParticleAsFetch<any[]>(client, new Particle(script, data, ttl), name);
     return handleResponse(res);
 };
 
@@ -122,7 +122,7 @@ export const uploadModule = async (
     )
     `;
 
-    return sendParticleAsFetch(client, new Particle(script, data), 'result');
+    return sendParticleAsFetch(client, new Particle(script, data), 'getModules', "_callback");
 };
 
 /**
@@ -201,7 +201,7 @@ export const createService = async (
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<string> } - List of available blueprints
  */
-export const getBlueprints = async (client: FluenceClient, nodeId: string, ttl?: number): Promise<string[]> => {
+export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'blueprints';
     let call = (nodeId: string) => `(call "${nodeId}" ("dist" "get_blueprints") [] ${returnValue})`;
 
@@ -285,16 +285,20 @@ export const neighborhood = async (client: FluenceClient, nodeId: string, ttl?: 
  * Upload an AIR script, that will be runned in a loop on a node. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param {[string]} script - script to upload
+ * @param period how often start script processing, in seconds
  * @param {[string]} nodeId - Optional node peer id to get neighborhood from
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns {[string]} - script id
  */
-export const addScript = async (client: FluenceClient, script: string, nodeId?: string, ttl?: number): Promise<string> => {
+export const addScript = async (client: FluenceClient, script: string, period?: number, nodeId?: string, ttl?: number): Promise<string> => {
     let returnValue = 'id';
-    let call = (nodeId: string) => `(call "${nodeId}" ("script" "add") [script] ${returnValue})`;
+    let periodV = ""
+    if (period) periodV = period.toString()
+    let call = (nodeId: string) => `(call "${nodeId}" ("script" "add") [script ${periodV}] ${returnValue})`;
 
     let data = new Map();
     data.set('script', script);
+    if (period) data.set('period', period)
 
     return requestResponse(client, 'addScript', call, returnValue, data, (args) => args[0] as string, nodeId, ttl);
 };

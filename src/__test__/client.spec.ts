@@ -11,7 +11,15 @@ import { createConnectedClient } from './util';
 import log from 'loglevel';
 import { createClient } from '../api';
 import Multiaddr from 'multiaddr';
-import {addScript, getModules, removeScript} from '../internal/builtins';
+import {
+    addBlueprint, addProvider,
+    addScript,
+    createService,
+    getBlueprints,
+    getModules, getProviders,
+    removeScript,
+    uploadModule
+} from '../internal/builtins';
 import {dev} from "@fluencelabs/fluence-network-environment";
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -215,23 +223,75 @@ describe('Typescript usage suite', () => {
         expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it('get_modules', async function () {
+    it.skip('get_modules', async function () {
         this.timeout(30000);
-        // arrange
-        console.log(dev[2].multiaddr);
         const client = await createConnectedClient(dev[2].multiaddr);
-
-        console.log("peerid: " + client.selfPeerId)
 
         let modulesList = await getModules(client);
 
         expect(modulesList).not.to.be.undefined;
     });
 
+    it.skip('get_blueprints', async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let bpList = await getBlueprints(client);
+
+        expect(bpList).not.to.be.undefined;
+    });
+
+    it.skip("upload_modules", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        console.log("peerid: " + client.selfPeerId)
+
+        let base64 = "MjNy"
+
+        await uploadModule(client, "test_broken_module", base64);
+    });
+
+    it.skip("add_blueprint", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let bpId = "some"
+
+        let bpIdReturned = await addBlueprint(client, "test_broken_blueprint", ["test_broken_module"], bpId);
+
+        expect(bpIdReturned).to.be.equal(bpId);
+    });
+
+    it.skip("create_service", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let serviceId = await createService(client, "test_broken_blueprint");
+
+        // TODO there is no error on broken blueprint from a node
+        expect(serviceId).not.to.be.undefined;
+    });
+
+    it.skip("add_provider", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let key = Math.random().toString(36).substring(7);
+        let buf = Buffer.from(key)
+
+        let r = Math.random().toString(36).substring(7);
+        await addProvider(client, buf, dev[2].peerId, r);
+
+        let pr = await getProviders(client, buf);
+        console.log(pr)
+        console.log(r)
+        expect(r).to.be.equal(pr[0][0].service_id);
+    });
+
     it.skip('add and remove script', async function () {
         this.timeout(30000);
-        // arrange
-        const client = await createConnectedClient(dev[2].multiaddr);
+        const client = await createConnectedClient(dev[3].multiaddr);
 
         console.log("peerid: " + client.selfPeerId)
 
@@ -242,18 +302,23 @@ describe('Typescript usage suite', () => {
             )
         `;
 
-        let scriptId = await addScript(client, script);
-        console.log(scriptId)
-        expect(scriptId).not.to.be.undefined;
-
         let resMakingPromise = new Promise((resolve) => {
             client.registerCallback('test', 'test1', (args, _) => {
-                resolve([...args].reverse());
+                resolve([...args]);
                 return {};
             });
         });
 
-        await removeScript(client, scriptId);
+        let scriptId = await addScript(client, script);
+
+        await resMakingPromise.then((args) => {
+            console.log("final!")
+            expect(args as string[]).to.be.deep.equal(["1", "2", "3"]);
+        }).finally(() => {
+            removeScript(client, scriptId);
+        })
+
+        expect(scriptId).not.to.be.undefined;
     });
 
     it.skip('fetch should work', async function () {
