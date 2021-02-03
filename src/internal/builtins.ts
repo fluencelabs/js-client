@@ -56,7 +56,7 @@ const requestResponse = async <T>(
     )
     `;
 
-    const res = await sendParticleAsFetch<any[]>(client, new Particle(script, data, ttl), '');
+    const res = await sendParticleAsFetch<any[]>(client, new Particle(script, data, ttl), name);
     return handleResponse(res);
 };
 
@@ -66,11 +66,12 @@ const requestResponse = async <T>(
  * @returns { Array<string> } - list of available modules on the connected relay
  */
 export const getModules = async (client: FluenceClient): Promise<string[]> => {
+    let callbackFn = "getModules"
     const particle = new Particle(
         `
         (seq 
             (call __relay ("dist" "get_modules") [] result)
-            (call myPeerId ("_callback" "getModules") [result])
+            (call myPeerId ("_callback" "${callbackFn}") [result])
         )
     `,
         {
@@ -79,7 +80,30 @@ export const getModules = async (client: FluenceClient): Promise<string[]> => {
         },
     );
 
-    return sendParticleAsFetch(client, particle, 'getModules');
+    return sendParticleAsFetch(client, particle, callbackFn);
+};
+
+/**
+ * Get all available modules hosted on a connected relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @returns { Array<string> } - list of available modules on the connected relay
+ */
+export const getInterfaces = async (client: FluenceClient): Promise<string[]> => {
+    let callbackFn = "getInterfaces"
+    const particle = new Particle(
+        `
+        (seq 
+            (call __relay ("srv" "get_interfaces") [] result)
+            (call myPeerId ("_callback" "${callbackFn}") [result])
+        )
+    `,
+        {
+            __relay: client.relayPeerId,
+            myPeerId: client.selfPeerId,
+        },
+    );
+
+    return sendParticleAsFetch(client, particle, callbackFn);
 };
 
 /**
@@ -94,7 +118,7 @@ export const uploadModule = async (
     name: string,
     moduleBase64: string,
     config?: ModuleConfig,
-): Promise<string[]> => {
+): Promise<void> => {
     if (!config) {
         config = {
             name: name,
@@ -122,7 +146,7 @@ export const uploadModule = async (
     )
     `;
 
-    return sendParticleAsFetch(client, new Particle(script, data), 'result');
+    return sendParticleAsFetch(client, new Particle(script, data), 'getModules', "_callback");
 };
 
 /**
@@ -197,10 +221,11 @@ export const createService = async (
  * Get all available blueprints hosted on a connected relay. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param {[string]} nodeId - Optional node peer id to get available blueprints from
+ * @param {[string]} nodeId - Optional node peer id to deploy service to
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<string> } - List of available blueprints
  */
-export const getBlueprints = async (client: FluenceClient, nodeId: string, ttl?: number): Promise<string[]> => {
+export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'blueprints';
     let call = (nodeId: string) => `(call "${nodeId}" ("dist" "get_blueprints") [] ${returnValue})`;
 
@@ -246,6 +271,7 @@ export const addProvider = async (
 /**
  * Get a provider from DHT network from neighborhood around a key. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[buffer]} key - get provider by this key
  * @param {[string]} nodeId - Optional node peer id to get providers from
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<object> } - List of providers
@@ -269,12 +295,51 @@ export const getProviders = async (client: FluenceClient, key: Buffer, nodeId?: 
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<string> } - List of peer ids of neighbors of the node
  */
-export const neighborhood = async (client: FluenceClient, node: string, ttl?: number): Promise<string[]> => {
+export const neighborhood = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'neighborhood';
     let call = (nodeId: string) => `(call "${nodeId}" ("dht" "neighborhood") [node] ${returnValue})`;
 
     let data = new Map();
-    data.set('node', node);
+    if (nodeId) data.set('node', nodeId);
 
-    return requestResponse(client, 'neighborhood', call, returnValue, data, (args) => args[0] as string[], node, ttl);
+    return requestResponse(client, 'neighborhood', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
+};
+
+/**
+ * Upload an AIR script, that will be runned in a loop on a node. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} script - script to upload
+ * @param period how often start script processing, in seconds
+ * @param {[string]} nodeId - Optional node peer id to get neighborhood from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ * @returns {[string]} - script id
+ */
+export const addScript = async (client: FluenceClient, script: string, period?: number, nodeId?: string, ttl?: number): Promise<string> => {
+    let returnValue = 'id';
+    let periodV = ""
+    if (period) periodV = period.toString()
+    let call = (nodeId: string) => `(call "${nodeId}" ("script" "add") [script ${periodV}] ${returnValue})`;
+
+    let data = new Map();
+    data.set('script', script);
+    if (period) data.set('period', period)
+
+    return requestResponse(client, 'addScript', call, returnValue, data, (args) => args[0] as string, nodeId, ttl);
+};
+
+/**
+ * Remove an AIR script from a node. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @param {[string]} id - id of a script
+ * @param {[string]} nodeId - Optional node peer id to get neighborhood from
+ * @param {[number]} ttl - Optional ttl for the particle which does the job
+ */
+export const removeScript = async (client: FluenceClient, id: string, nodeId?: string, ttl?: number): Promise<void> => {
+    let returnValue = 'empty';
+    let call = (nodeId: string) => `(call "${nodeId}" ("script" "remove") [script_id] ${returnValue})`;
+
+    let data = new Map();
+    data.set('script_id', id);
+
+    return requestResponse(client, 'removeScript', call, returnValue, data, (args) => {}, nodeId, ttl);
 };
