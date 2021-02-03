@@ -15,7 +15,7 @@ import {
     addBlueprint, addProvider,
     addScript,
     createService,
-    getBlueprints,
+    getBlueprints, getInterfaces,
     getModules, getProviders,
     removeScript,
     uploadModule
@@ -230,6 +230,15 @@ describe('Typescript usage suite', () => {
         let modulesList = await getModules(client);
 
         expect(modulesList).not.to.be.undefined;
+    });
+
+    it.skip('get_interfaces', async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let interfaces = await getInterfaces(client);
+
+        expect(interfaces).not.to.be.undefined;
     });
 
     it.skip('get_blueprints', async function () {

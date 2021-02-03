@@ -66,11 +66,12 @@ const requestResponse = async <T>(
  * @returns { Array<string> } - list of available modules on the connected relay
  */
 export const getModules = async (client: FluenceClient): Promise<string[]> => {
+    let callbackFn = "getModules"
     const particle = new Particle(
         `
         (seq 
             (call __relay ("dist" "get_modules") [] result)
-            (call myPeerId ("_callback" "getModules") [result])
+            (call myPeerId ("_callback" "${callbackFn}") [result])
         )
     `,
         {
@@ -79,7 +80,30 @@ export const getModules = async (client: FluenceClient): Promise<string[]> => {
         },
     );
 
-    return sendParticleAsFetch(client, particle, 'getModules');
+    return sendParticleAsFetch(client, particle, callbackFn);
+};
+
+/**
+ * Get all available modules hosted on a connected relay. @deprecated prefer using raw Particles instead
+ * @param { FluenceClient } client - The Fluence Client instance.
+ * @returns { Array<string> } - list of available modules on the connected relay
+ */
+export const getInterfaces = async (client: FluenceClient): Promise<string[]> => {
+    let callbackFn = "getInterfaces"
+    const particle = new Particle(
+        `
+        (seq 
+            (call __relay ("srv" "get_interfaces") [] result)
+            (call myPeerId ("_callback" "${callbackFn}") [result])
+        )
+    `,
+        {
+            __relay: client.relayPeerId,
+            myPeerId: client.selfPeerId,
+        },
+    );
+
+    return sendParticleAsFetch(client, particle, callbackFn);
 };
 
 /**
