@@ -271,12 +271,12 @@ export const getProviders = async (client: FluenceClient, key: Buffer, nodeId?: 
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<string> } - List of peer ids of neighbors of the node
  */
-export const neighborhood = async (client: FluenceClient, nodeId: string, ttl?: number): Promise<string[]> => {
+export const neighborhood = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'neighborhood';
     let call = (nodeId: string) => `(call "${nodeId}" ("dht" "neighborhood") [node] ${returnValue})`;
 
     let data = new Map();
-    data.set('node', nodeId);
+    if (nodeId) data.set('node', nodeId);
 
     return requestResponse(client, 'neighborhood', call, returnValue, data, (args) => args[0] as string[], nodeId, ttl);
 };
