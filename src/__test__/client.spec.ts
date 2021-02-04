@@ -21,6 +21,7 @@ import {
     uploadModule
 } from '../internal/builtins';
 import {dev} from "@fluencelabs/fluence-network-environment";
+import {ModuleConfig, Wasi} from "../internal/moduleConfig";
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -250,15 +251,27 @@ describe('Typescript usage suite', () => {
         expect(bpList).not.to.be.undefined;
     });
 
-    it.skip("upload_modules", async function () {
+    it("upload_modules", async function () {
         this.timeout(30000);
         const client = await createConnectedClient(dev[2].multiaddr);
 
         console.log("peerid: " + client.selfPeerId)
 
+        let config: ModuleConfig = {
+            name: "test_broken_module",
+            mem_pages_count: 100,
+            logger_enabled: true,
+            wasi: {
+                envs: {a: "b"},
+                preopened_files: ["a", "b"],
+                mapped_dirs: {c: "d"},
+            },
+            mounted_binaries: {e: "f"}
+        }
+
         let base64 = "MjNy"
 
-        await uploadModule(client, "test_broken_module", base64);
+        await uploadModule(client, "test_broken_module", base64, config);
     });
 
     it.skip("add_blueprint", async function () {
