@@ -1,4 +1,4 @@
-import { createLocalClient } from './util';
+import { createLocalClient } from '../util';
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {

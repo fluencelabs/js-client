@@ -5,7 +5,10 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "test": "jest",
+    "test": "jest --watch",
+    "test:all": "jest",
+    "test:unit": "jest --testPathPattern=src/__test__/unit",
+    "test:integration": "jest  --testPathPattern=src/__test__/integration",
     "build": "tsc && rsync -r src/internal/aqua/*.js dist/internal/aqua",
     "build:webpack": "webpack --mode production"
   },

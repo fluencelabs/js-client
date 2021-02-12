@@ -1,14 +1,14 @@
 import { encode } from 'bs58';
-import { certificateFromString, certificateToString, issue } from '../internal/trust/certificate';
-import { TrustGraph } from '../internal/trust/trust_graph';
-import { nodeRootCert } from '../internal/trust/misc';
-import { generatePeerId, peerIdToSeed, seedToPeerId } from '../internal/peerIdUtils';
-import { FluenceClientImpl } from '../internal/FluenceClientImpl';
-import { createConnectedClient, createLocalClient } from './util';
+import { certificateFromString, certificateToString, issue } from '../../internal/trust/certificate';
+import { TrustGraph } from '../../internal/trust/trust_graph';
+import { nodeRootCert } from '../../internal/trust/misc';
+import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
+import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
+import { createConnectedClient, createLocalClient } from '../util';
 import log from 'loglevel';
-import { createClient } from '../api';
+import { createClient } from '../../api';
 import Multiaddr from 'multiaddr';
-import { getModules } from '../internal/builtins';
+import { getModules } from '../../internal/builtins';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -45,7 +45,7 @@ describe('Typescript usage suite', () => {
         await testCerts();
     });
 
-    describe('should make connection to network', async function () {
+    describe('should make connection to network', function () {
         const testProcedure = async (client: FluenceClientImpl) => {
             let resMakingPromise = new Promise((resolve) => {
                 client.registerCallback('test', 'test', (args, _) => {
