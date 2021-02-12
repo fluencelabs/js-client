@@ -4,11 +4,21 @@ import { TrustGraph } from '../../internal/trust/trust_graph';
 import { nodeRootCert } from '../../internal/trust/misc';
 import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
 import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
-import { createConnectedClient, createLocalClient } from '../util';
+import { createConnectedClient, createLocalClient } from './util';
 import log from 'loglevel';
 import { createClient } from '../../api';
 import Multiaddr from 'multiaddr';
-import { getModules } from '../../internal/builtins';
+import {
+    addBlueprint, addProvider,
+    addScript,
+    createService,
+    getBlueprints, getInterfaces,
+    getModules, getProviders,
+    removeScript,
+    uploadModule
+import { getModules } from '../internal/builtins';
+import {dev} from "@fluencelabs/fluence-network-environment";
+import {ModuleConfig, Wasi} from "../internal/moduleConfig";
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -138,7 +148,7 @@ describe('Typescript usage suite', () => {
 
     it('should make a call through the network', async function () {
         // arrange
-        const client = await createConnectedClient(devNodeAddress);
+        const client = await createConnectedClient(dev[0].multiaddr);
 
         client.registerCallback('test', 'test', (args, _) => {
             log.trace('should make a call through the network, called "test" "test" with args', args);
@@ -205,15 +215,122 @@ describe('Typescript usage suite', () => {
         expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it('add_module', async function () {
-        // arrange
-        const client = await createConnectedClient(
-            '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb',
-        );
+    it.skip('add_module', async function () {
+        const client = await createConnectedClient(dev[2].multiaddr);
 
-        let a = await getModules(client);
+        let modulesList = await getModules(client);
 
-        expect(a).not.toBeUndefined;
+        expect(modulesList).not.to.be.undefined;
+    });
+
+    it.skip('get_interfaces', async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let interfaces = await getInterfaces(client);
+
+        expect(interfaces).not.to.be.undefined;
+    });
+
+    it.skip('get_blueprints', async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let bpList = await getBlueprints(client);
+
+        expect(bpList).not.to.be.undefined;
+    });
+
+    it("upload_modules", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        console.log("peerid: " + client.selfPeerId)
+
+        let config: ModuleConfig = {
+            name: "test_broken_module",
+            mem_pages_count: 100,
+            logger_enabled: true,
+            wasi: {
+                envs: {a: "b"},
+                preopened_files: ["a", "b"],
+                mapped_dirs: {c: "d"},
+            },
+            mounted_binaries: {e: "f"}
+        }
+
+        let base64 = "MjNy"
+
+        await uploadModule(client, "test_broken_module", base64, config);
+    });
+
+    it.skip("add_blueprint", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let bpId = "some"
+
+        let bpIdReturned = await addBlueprint(client, "test_broken_blueprint", ["test_broken_module"], bpId);
+
+        expect(bpIdReturned).to.be.equal(bpId);
+    });
+
+    it.skip("create_service", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let serviceId = await createService(client, "test_broken_blueprint");
+
+        // TODO there is no error on broken blueprint from a node
+        expect(serviceId).not.to.be.undefined;
+    });
+
+    it.skip("add_provider", async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[2].multiaddr);
+
+        let key = Math.random().toString(36).substring(7);
+        let buf = Buffer.from(key)
+
+        let r = Math.random().toString(36).substring(7);
+        await addProvider(client, buf, dev[2].peerId, r);
+
+        let pr = await getProviders(client, buf);
+        console.log(pr)
+        console.log(r)
+        expect(r).to.be.equal(pr[0][0].service_id);
+    });
+
+    it.skip('add and remove script', async function () {
+        this.timeout(30000);
+        const client = await createConnectedClient(dev[3].multiaddr);
+
+        console.log("peerid: " + client.selfPeerId)
+
+        let script = `
+            (seq
+                (call "${client.relayPeerId}" ("op" "identity") [])
+                (call "${client.selfPeerId}" ("test" "test1") ["1" "2" "3"] result)
+            )
+        `;
+
+        let resMakingPromise = new Promise((resolve) => {
+            client.registerCallback('test', 'test1', (args, _) => {
+                resolve([...args]);
+                return {};
+            });
+        });
+
+        let scriptId = await addScript(client, script);
+
+        await resMakingPromise.then((args) => {
+            console.log("final!")
+            expect(args as string[]).to.be.deep.equal(["1", "2", "3"]);
+        }).finally(() => {
+            removeScript(client, scriptId);
+        })
+
+        expect(a).not.to.be.undefined;
     });
 
     it('fetch should work', async function () {

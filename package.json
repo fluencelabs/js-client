@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/fluence",
-  "version": "0.9.3",
+  "version": "0.9.14",
   "description": "JS SDK for the Fluence network",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
