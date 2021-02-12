@@ -9,7 +9,7 @@
     "test:all": "jest",
     "test:unit": "jest --testPathPattern=src/__test__/unit",
     "test:integration": "jest  --testPathPattern=src/__test__/integration",
-    "build": "tsc && rsync -r src/internal/aqua/*.js dist/internal/aqua",
+    "build": "tsc",
     "build:webpack": "webpack --mode production"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
