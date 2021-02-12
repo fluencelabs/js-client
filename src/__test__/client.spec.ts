@@ -13,7 +13,7 @@ import { getModules } from '../internal/builtins';
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 
-test('Typescript usage suite', () => {
+describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
         // prettier-ignore
         let seed = [46, 188, 245, 171, 145, 73, 40, 24, 52, 233, 215, 163, 54, 26, 31, 221, 159, 179, 126, 106, 27, 199, 189, 194, 80, 133, 235, 42, 42, 247, 80, 201];
@@ -41,12 +41,11 @@ test('Typescript usage suite', () => {
         expect(ser).toEqual(cert);
     });
 
-    // delete `.skip` and run `npm run test` to check service's and certificate's api with Fluence nodes
     it.skip('should perform tests on certs', async function () {
         await testCerts();
     });
 
-    describe.skip('should make connection to network', async function () {
+    describe('should make connection to network', async function () {
         const testProcedure = async (client: FluenceClientImpl) => {
             let resMakingPromise = new Promise((resolve) => {
                 client.registerCallback('test', 'test', (args, _) => {
@@ -137,7 +136,7 @@ test('Typescript usage suite', () => {
         });
     });
 
-    it.skip('should make a call through the network', async function () {
+    it('should make a call through the network', async function () {
         // arrange
         const client = await createConnectedClient(devNodeAddress);
 
@@ -177,7 +176,7 @@ test('Typescript usage suite', () => {
         expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it.skip('fireAndForget should work', async function () {
+    it('fireAndForget should work', async function () {
         // arrange
         const client = await createConnectedClient(devNodeAddress);
 
@@ -206,7 +205,7 @@ test('Typescript usage suite', () => {
         expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it.skip('add_module', async function () {
+    it('add_module', async function () {
         // arrange
         const client = await createConnectedClient(
             '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb',
@@ -217,7 +216,7 @@ test('Typescript usage suite', () => {
         expect(a).not.toBeUndefined;
     });
 
-    it.skip('fetch should work', async function () {
+    it('fetch should work', async function () {
         // arrange
         const client = await createConnectedClient(devNodeAddress);
 
@@ -234,7 +233,7 @@ test('Typescript usage suite', () => {
         expect(res.external_addresses).not.toBeUndefined;
     });
 
-    it.skip('two clients should work inside the same time browser', async function () {
+    it('two clients should work inside the same time browser', async function () {
         // arrange
         const pid1 = await generatePeerId();
         const client1 = new FluenceClientImpl(pid1);
@@ -270,7 +269,7 @@ test('Typescript usage suite', () => {
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
     });
 
-    it.skip('event registration should work', async function () {
+    it('event registration should work', async function () {
         // arrange
         const pid1 = await generatePeerId();
         const client1 = new FluenceClientImpl(pid1);

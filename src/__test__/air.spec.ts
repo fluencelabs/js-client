@@ -1,6 +1,6 @@
 import { createLocalClient } from './util';
 
-test('== AIR suite', () => {
+describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
         // arrange
         const serviceId = 'test_service';
@@ -100,7 +100,7 @@ test('== AIR suite', () => {
 
         // assert
         const tetraplet = res.tetraplets[0][0];
-        expect(tetraplet).toContain({
+        expect(tetraplet).toMatchObject({
             service_id: 'make_data_service',
             function_name: 'make_data',
             json_path: '$.field',

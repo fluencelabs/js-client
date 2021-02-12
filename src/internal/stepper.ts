@@ -21,7 +21,7 @@ import { ParticleHandler, CallServiceResult, SecurityTetraplet } from './commonT
 
 import PeerId from 'peer-id';
 import log from 'loglevel';
-import { wasmBs64 } from '@fluencelabs/aquamarine-stepper';
+import wasmBs64 from '@fluencelabs/aquamarine-stepper';
 
 export type InterpreterInvoke = (
     init_user_id: string,
@@ -62,7 +62,7 @@ class HostImportsConfig {
     }
 }
 
-const interpreter_wasm = toByteArray(wasmBs64);
+const interpreter_wasm = toByteArray(wasmBs64 as any);
 
 /// Instantiates WebAssembly runtime with AIR interpreter module
 async function interpreterInstance(cfg: HostImportsConfig): Promise<Instance> {
