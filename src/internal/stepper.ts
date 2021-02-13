@@ -21,10 +21,7 @@ import { ParticleHandler, CallServiceResult, SecurityTetraplet } from './commonT
 
 import PeerId from 'peer-id';
 import log from 'loglevel';
-import { wasmBs64 } from '@fluencelabs/aquamarine-stepper';
-import Instance = WebAssembly.Instance;
-import Exports = WebAssembly.Exports;
-import ExportValue = WebAssembly.ExportValue;
+import wasmBs64 from '@fluencelabs/aquamarine-stepper';
 
 export type InterpreterInvoke = (
     init_user_id: string,
@@ -46,6 +43,10 @@ type ImportObject = {
 type LogImport = {
     log_utf8_string: (level: any, target: any, offset: any, size: any) => void;
 };
+
+type Exports = any;
+type Instance = any;
+type ExportValue = any;
 
 class HostImportsConfig {
     exports: Exports | undefined;

@@ -18,28 +18,31 @@ export function getUint8Memory0(wasm) {
     return cachegetUint8Memory0;
 }
 
-const lTextEncoder = typeof TextEncoder === 'undefined' ? (0, module.require)('util').TextEncoder : TextEncoder;
+const lTextEncoder = typeof TextEncoder === 'undefined' ? module.require('util').TextEncoder : TextEncoder;
 
 let cachedTextEncoder = new lTextEncoder('utf-8');
 
-const encodeString = (typeof cachedTextEncoder.encodeInto === 'function'
-    ? function (arg, view) {
-        return cachedTextEncoder.encodeInto(arg, view);
-    }
-    : function (arg, view) {
-        const buf = cachedTextEncoder.encode(arg);
-        view.set(buf);
-        return {
-            read: arg.length,
-            written: buf.length
-        };
-    });
+const encodeString =
+    typeof cachedTextEncoder.encodeInto === 'function'
+        ? function (arg, view) {
+              return cachedTextEncoder.encodeInto(arg, view);
+          }
+        : function (arg, view) {
+              const buf = cachedTextEncoder.encode(arg);
+              view.set(buf);
+              return {
+                  read: arg.length,
+                  written: buf.length,
+              };
+          };
 
 export function passStringToWasm0(wasm, arg, malloc, realloc) {
     if (realloc === undefined) {
         const buf = cachedTextEncoder.encode(arg);
         const ptr = malloc(buf.length);
-        getUint8Memory0(wasm).subarray(ptr, ptr + buf.length).set(buf);
+        getUint8Memory0(wasm)
+            .subarray(ptr, ptr + buf.length)
+            .set(buf);
         WASM_VECTOR_LEN = buf.length;
         return ptr;
     }
@@ -53,21 +56,19 @@ export function passStringToWasm0(wasm, arg, malloc, realloc) {
 
     for (; offset < len; offset++) {
         const code = arg.charCodeAt(offset);
-        if (code > 0x7F) break;
+        if (code > 0x7f) break;
         mem[ptr + offset] = code;
     }
     if (offset !== len) {
-
         if (offset !== 0) {
             arg = arg.slice(offset);
         }
-        ptr = realloc(ptr, len, len = offset + arg.length * 3);
+        ptr = realloc(ptr, len, (len = offset + arg.length * 3));
         const view = getUint8Memory0(wasm).subarray(ptr + offset, ptr + len);
         const ret = encodeString(arg, view);
 
         offset += ret.written;
     }
-
 
     WASM_VECTOR_LEN = offset;
 
@@ -82,7 +83,7 @@ export function getInt32Memory0(wasm) {
     return cachegetInt32Memory0;
 }
 
-const lTextDecoder = typeof TextDecoder === 'undefined' ? (0, module.require)('util').TextDecoder : TextDecoder;
+const lTextDecoder = typeof TextDecoder === 'undefined' ? module.require('util').TextDecoder : TextDecoder;
 
 let cachedTextDecoder = new lTextDecoder('utf-8', { ignoreBOM: true, fatal: true });
 
@@ -154,7 +155,6 @@ export function return_call_service_result(wasm, ret, arg0) {
     var len1 = WASM_VECTOR_LEN;
     getInt32Memory0(wasm)[arg0 / 4 + 1] = len1;
     getInt32Memory0(wasm)[arg0 / 4 + 0] = ptr1;
-
 }
 
 export function free(wasm, ptr, len) {

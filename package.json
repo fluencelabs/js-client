@@ -5,16 +5,18 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "test": "mocha --timeout 10000 -r esm -r ts-node/register src/**/*.spec.ts",
-    "build": "tsc && rsync -r src/internal/aqua/*.js dist/internal/aqua",
+    "test": "jest --watch",
+    "test:all": "jest",
+    "test:unit": "jest --testPathPattern=src/__test__/unit",
+    "test:integration": "jest  --testPathPattern=src/__test__/integration",
+    "build": "tsc",
     "build:webpack": "webpack --mode production"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@fluencelabs/aquamarine-stepper": "0.4.2",
-    "@fluencelabs/fluence-network-environment": "1.0.8",
+    "@fluencelabs/aquamarine-stepper": "0.4.4",
     "async": "3.2.0",
     "base64-js": "1.3.1",
     "bs58": "4.0.1",
@@ -30,25 +32,22 @@
     "uuid": "8.3.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-typescript": "^7.12.7",
     "@types/base64-js": "1.2.5",
     "@types/bs58": "4.0.1",
-    "@types/chai": "4.2.11",
-    "@types/mocha": "7.0.2",
+    "@types/jest": "^26.0.20",
     "@types/uuid": "8.3.0",
     "assert": "2.0.0",
-    "chai": "4.2.0",
-    "clean-webpack-plugin": "3.0.0",
+    "babel-jest": "^26.6.3",
+    "babel-plugin-replace-ts-export-assignment": "0.0.2",
     "esm": "^3.2.25",
-    "html-webpack-plugin": "^3.2.0",
+    "jest": "^26.6.3",
     "libp2p-ts": "https://github.com/ChainSafe/libp2p-ts.git#fca072c9764436ef71f974a211bb1befae432575",
-    "mocha": "^8.2.1",
-    "mocha-loader": "^5.1.5",
     "text-encoding": "^0.7.0",
+    "ts-jest": "^26.5.0",
     "ts-loader": "7.0.5",
-    "ts-mocha": "8.0.0",
-    "typescript": "^3.9.5",
-    "webpack": "4.43.0",
-    "webpack-cli": "3.3.11",
-    "webpack-dev-server": "3.11.0"
+    "typescript": "^3.9.5"
   }
 }

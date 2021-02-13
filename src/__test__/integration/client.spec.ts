@@ -1,27 +1,13 @@
-import { expect } from 'chai';
-
-import 'mocha';
 import { encode } from 'bs58';
-import { certificateFromString, certificateToString, issue } from '../internal/trust/certificate';
-import { TrustGraph } from '../internal/trust/trust_graph';
-import { nodeRootCert } from '../internal/trust/misc';
-import { generatePeerId, peerIdToSeed, seedToPeerId } from '../internal/peerIdUtils';
-import { FluenceClientImpl } from '../internal/FluenceClientImpl';
-import { createConnectedClient } from './util';
+import { certificateFromString, certificateToString, issue } from '../../internal/trust/certificate';
+import { TrustGraph } from '../../internal/trust/trust_graph';
+import { nodeRootCert } from '../../internal/trust/misc';
+import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
+import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
+import { createConnectedClient, createLocalClient } from '../util';
 import log from 'loglevel';
-import { createClient } from '../api';
+import { createClient } from '../../api';
 import Multiaddr from 'multiaddr';
-import {
-    addBlueprint, addProvider,
-    addScript,
-    createService,
-    getBlueprints, getInterfaces,
-    getModules, getProviders,
-    removeScript,
-    uploadModule
-} from '../internal/builtins';
-import {dev} from "@fluencelabs/fluence-network-environment";
-import {ModuleConfig, Wasi} from "../internal/moduleConfig";
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -33,7 +19,7 @@ describe('Typescript usage suite', () => {
         let seedStr = encode(seed);
         log.trace('SEED STR: ' + seedStr);
         let pid = await seedToPeerId(seedStr);
-        expect(peerIdToSeed(pid)).to.be.equal(seedStr);
+        expect(peerIdToSeed(pid)).toEqual(seedStr);
     });
 
     it('should serialize and deserialize certificate correctly', async function () {
@@ -51,18 +37,14 @@ describe('Typescript usage suite', () => {
         let deser = await certificateFromString(cert);
         let ser = certificateToString(deser);
 
-        expect(ser).to.be.equal(cert);
+        expect(ser).toEqual(cert);
     });
 
-    // delete `.skip` and run `npm run test` to check service's and certificate's api with Fluence nodes
     it.skip('should perform tests on certs', async function () {
-        this.timeout(15000);
         await testCerts();
     });
 
-    describe.skip('should make connection to network', async function () {
-        this.timeout(30000);
-
+    describe('should make connection to network', function () {
         const testProcedure = async (client: FluenceClientImpl) => {
             let resMakingPromise = new Promise((resolve) => {
                 client.registerCallback('test', 'test', (args, _) => {
@@ -96,7 +78,7 @@ describe('Typescript usage suite', () => {
 
             // assert
             const res = await testProcedure(client);
-            expect(res).to.deep.equal(['world']);
+            expect(res).toEqual(['world']);
         });
 
         it('address as multiaddr', async function () {
@@ -108,7 +90,7 @@ describe('Typescript usage suite', () => {
 
             // assert
             const res = await testProcedure(client);
-            expect(res).to.deep.equal(['world']);
+            expect(res).toEqual(['world']);
         });
 
         it('address as node', async function () {
@@ -123,7 +105,7 @@ describe('Typescript usage suite', () => {
 
             // assert
             const res = await testProcedure(client);
-            expect(res).to.deep.equal(['world']);
+            expect(res).toEqual(['world']);
         });
 
         it('peerid as peer id', async function () {
@@ -136,7 +118,7 @@ describe('Typescript usage suite', () => {
 
             // assert
             const res = await testProcedure(client);
-            expect(res).to.deep.equal(['world']);
+            expect(res).toEqual(['world']);
         });
 
         it('peerid as seed', async function () {
@@ -149,14 +131,13 @@ describe('Typescript usage suite', () => {
 
             // assert
             const res = await testProcedure(client);
-            expect(res).to.deep.equal(['world']);
+            expect(res).toEqual(['world']);
         });
     });
 
-    it.skip('should make a call through the network', async function () {
-        this.timeout(30000);
+    it('should make a call through the network', async function () {
         // arrange
-        const client = await createConnectedClient(dev[0].multiaddr);
+        const client = await createConnectedClient(devNodeAddress);
 
         client.registerCallback('test', 'test', (args, _) => {
             log.trace('should make a call through the network, called "test" "test" with args', args);
@@ -191,11 +172,10 @@ describe('Typescript usage suite', () => {
 
         // assert
         const res = await resMakingPromise;
-        expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
+        expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it.skip('fireAndForget should work', async function () {
-        this.timeout(30000);
+    it('fireAndForget should work', async function () {
         // arrange
         const client = await createConnectedClient(devNodeAddress);
 
@@ -221,130 +201,10 @@ describe('Typescript usage suite', () => {
 
         // assert
         const res = await resMakingPromise;
-        expect(res).to.deep.equal(['some d', 'some c', 'some b', 'some a']);
+        expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
     });
 
-    it.skip('get_modules', async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        let modulesList = await getModules(client);
-
-        expect(modulesList).not.to.be.undefined;
-    });
-
-    it.skip('get_interfaces', async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        let interfaces = await getInterfaces(client);
-
-        expect(interfaces).not.to.be.undefined;
-    });
-
-    it.skip('get_blueprints', async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        let bpList = await getBlueprints(client);
-
-        expect(bpList).not.to.be.undefined;
-    });
-
-    it("upload_modules", async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        console.log("peerid: " + client.selfPeerId)
-
-        let config: ModuleConfig = {
-            name: "test_broken_module",
-            mem_pages_count: 100,
-            logger_enabled: true,
-            wasi: {
-                envs: {a: "b"},
-                preopened_files: ["a", "b"],
-                mapped_dirs: {c: "d"},
-            },
-            mounted_binaries: {e: "f"}
-        }
-
-        let base64 = "MjNy"
-
-        await uploadModule(client, "test_broken_module", base64, config);
-    });
-
-    it.skip("add_blueprint", async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        let bpId = "some"
-
-        let bpIdReturned = await addBlueprint(client, "test_broken_blueprint", ["test_broken_module"], bpId);
-
-        expect(bpIdReturned).to.be.equal(bpId);
-    });
-
-    it.skip("create_service", async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        let serviceId = await createService(client, "test_broken_blueprint");
-
-        // TODO there is no error on broken blueprint from a node
-        expect(serviceId).not.to.be.undefined;
-    });
-
-    it.skip("add_provider", async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[2].multiaddr);
-
-        let key = Math.random().toString(36).substring(7);
-        let buf = Buffer.from(key)
-
-        let r = Math.random().toString(36).substring(7);
-        await addProvider(client, buf, dev[2].peerId, r);
-
-        let pr = await getProviders(client, buf);
-        console.log(pr)
-        console.log(r)
-        expect(r).to.be.equal(pr[0][0].service_id);
-    });
-
-    it.skip('add and remove script', async function () {
-        this.timeout(30000);
-        const client = await createConnectedClient(dev[3].multiaddr);
-
-        console.log("peerid: " + client.selfPeerId)
-
-        let script = `
-            (seq
-                (call "${client.relayPeerId}" ("op" "identity") [])
-                (call "${client.selfPeerId}" ("test" "test1") ["1" "2" "3"] result)
-            )
-        `;
-
-        let resMakingPromise = new Promise((resolve) => {
-            client.registerCallback('test', 'test1', (args, _) => {
-                resolve([...args]);
-                return {};
-            });
-        });
-
-        let scriptId = await addScript(client, script);
-
-        await resMakingPromise.then((args) => {
-            console.log("final!")
-            expect(args as string[]).to.be.deep.equal(["1", "2", "3"]);
-        }).finally(() => {
-            removeScript(client, scriptId);
-        })
-
-        expect(scriptId).not.to.be.undefined;
-    });
-
-    it.skip('fetch should work', async function () {
-        this.timeout(30000);
+    it('fetch should work', async function () {
         // arrange
         const client = await createConnectedClient(devNodeAddress);
 
@@ -358,10 +218,10 @@ describe('Typescript usage suite', () => {
         const [res] = await client.fetch(script, ['result'], data);
 
         // assert
-        expect(res.external_addresses).to.be.not.undefined;
+        expect(res.external_addresses).not.toBeUndefined;
     });
 
-    it.skip('two clients should work inside the same time browser', async function () {
+    it('two clients should work inside the same time browser', async function () {
         // arrange
         const pid1 = await generatePeerId();
         const client1 = new FluenceClientImpl(pid1);
@@ -394,10 +254,10 @@ describe('Typescript usage suite', () => {
         await client1.sendScript(script, data);
 
         let res = await resMakingPromise;
-        expect(res).to.deep.equal(['some a', 'some b', 'some c', 'some d']);
+        expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
     });
 
-    it.skip('event registration should work', async function () {
+    it('event registration should work', async function () {
         // arrange
         const pid1 = await generatePeerId();
         const client1 = new FluenceClientImpl(pid1);
@@ -424,7 +284,7 @@ describe('Typescript usage suite', () => {
 
         // assert
         let res = await resMakingPromise;
-        expect(res).to.deep.equal({
+        expect(res).toEqual({
             type: 'test',
             args: ['world'],
         });
@@ -461,10 +321,10 @@ export async function testCerts() {
     let certs = await trustGraph2.getCertificates(key2.toB58String());
 
     // root certificate could be different because nodes save trusts with bigger `expiresAt` date and less `issuedAt` date
-    expect(certs[0].chain[1].issuedFor.toB58String()).to.be.equal(extended.chain[1].issuedFor.toB58String());
-    expect(certs[0].chain[1].signature).to.be.equal(extended.chain[1].signature);
-    expect(certs[0].chain[1].expiresAt).to.be.equal(extended.chain[1].expiresAt);
-    expect(certs[0].chain[1].issuedAt).to.be.equal(extended.chain[1].issuedAt);
+    expect(certs[0].chain[1].issuedFor.toB58String()).toEqual(extended.chain[1].issuedFor.toB58String());
+    expect(certs[0].chain[1].signature).toEqual(extended.chain[1].signature);
+    expect(certs[0].chain[1].expiresAt).toEqual(extended.chain[1].expiresAt);
+    expect(certs[0].chain[1].issuedAt).toEqual(extended.chain[1].issuedAt);
 
     await cl1.disconnect();
     await cl2.disconnect();
