@@ -22,7 +22,7 @@ export * from './api';
 export { Particle } from './internal/particle';
 export * from './internal/builtins';
 
-import log from "loglevel";
+import log, {LogLevelDesc} from "loglevel";
 function testLog() {
     log.trace('TRACE testLog');
     log.debug('DEBUG testLog');
@@ -31,6 +31,10 @@ function testLog() {
     log.error('ERROR testLog');
 }
 
-export { testLog };
+function setLogLevelWtf(level: LogLevelDesc) {
+    log.setLevel(level);
+}
+
+export { testLog, setLogLevelWtf };
 
 
