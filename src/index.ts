@@ -31,10 +31,17 @@ function testLog() {
     log.error('ERROR testLog');
 }
 
+console.log("index.ts: current level is " + log.getLevel());
+
 function setLogLevelWtf(level: LogLevelDesc) {
     log.setLevel(level);
 }
 
-export { testLog, setLogLevelWtf };
+function setCurrentLevel() {
+    console.log("current level is " + log.getLevel());
+    log.setLevel(log.getLevel());
+}
+
+export { testLog, setLogLevelWtf, setCurrentLevel };
 
 
