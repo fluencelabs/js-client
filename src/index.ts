@@ -23,11 +23,14 @@ export { Particle } from './internal/particle';
 export * from './internal/builtins';
 
 import log from "loglevel";
-export function testLog() {
+function testLog() {
     log.trace('TRACE testLog');
     log.debug('DEBUG testLog');
     log.info('INFO testLog');
     log.warn('WARN testLog');
     log.error('ERROR testLog');
 }
+
+export { testLog };
+
 
