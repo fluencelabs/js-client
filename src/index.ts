@@ -21,27 +21,10 @@ export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
 export * from './api';
 export { Particle } from './internal/particle';
 export * from './internal/builtins';
-
 import log, {LogLevelDesc} from "loglevel";
-function testLog() {
-    log.trace('TRACE testLog');
-    log.debug('DEBUG testLog');
-    log.info('INFO testLog');
-    log.warn('WARN testLog');
-    log.error('ERROR testLog');
-}
 
-console.log("index.ts: current level is " + log.getLevel());
-
-function setLogLevelWtf(level: LogLevelDesc) {
+export const setLogLevel = (level: LogLevelDesc) => {
     log.setLevel(level);
 }
 
-function setCurrentLevel() {
-    console.log("current level is " + log.getLevel());
-    log.setLevel(log.getLevel());
-}
-
-export { testLog, setLogLevelWtf, setCurrentLevel };
-
-
+log.setDefaultLevel('WARN');
