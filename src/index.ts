@@ -20,10 +20,10 @@ export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
 export * from './api';
 export { Particle } from './internal/particle';
 export * from './internal/builtins';
-import log, {LogLevelDesc} from "loglevel";
+import log, { LogLevelDesc } from 'loglevel';
 
 export const setLogLevel = (level: LogLevelDesc) => {
     log.setLevel(level);
-}
+};
 
 log.setDefaultLevel('WARN');
