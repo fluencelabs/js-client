@@ -19,6 +19,7 @@ import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import { injectDataIntoParticle } from './ParticleProcessor';
+import { InterpreterOutcome, ParticleHandler } from './commonTypes';
 
 const DEFAULT_TTL = 7000;
 
@@ -51,6 +52,47 @@ export class Particle {
 
         this.ttl = ttl ?? DEFAULT_TTL;
     }
+
+    async toDto(peerId: PeerId, customId?: string): Promise<ParticleDto> {
+        const id = customId ?? genUUID();
+        let currentTime = new Date().getTime();
+
+        let data;
+        if (this.data === undefined) {
+            data = new Map();
+        }
+
+        let ttl;
+        if (this.ttl === undefined) {
+            ttl = DEFAULT_TTL;
+        }
+
+        injectDataIntoParticle(id, data, ttl);
+        let script = wrapWithVariableInjectionScript(this.script, Array.from(data.keys()));
+
+        let particle: ParticleDto = {
+            id: id,
+            init_peer_id: peerId.toB58String(),
+            timestamp: currentTime,
+            ttl: ttl,
+            script: script,
+            signature: '',
+            data: Buffer.from([]),
+        };
+
+        particle.signature = await signParticle(peerId, particle);
+
+        return particle;
+    }
+
+    executionHandler: ParticleHandler;
+    sendParticleFurther: (particle: ParticleDto) => void;
+
+    onParticleTimeout?: (particle: ParticleDto, now: number) => void;
+    onLocalParticleRecieved?: (particle: ParticleDto) => void;
+    onExternalParticleRecieved?: (particle: ParticleDto) => void;
+    onInterpreterExecuting?: (particle: ParticleDto) => void;
+    onInterpreterExecuted?: (interpreterOutcome: InterpreterOutcome) => void;
 }
 
 export interface ParticleDto {
@@ -89,42 +131,6 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
     });
 
     return script;
-}
-
-export async function build(
-    peerId: PeerId,
-    script: string,
-    data?: Map<string, any>,
-    ttl?: number,
-    customId?: string,
-): Promise<ParticleDto> {
-    const id = customId ?? genUUID();
-    let currentTime = new Date().getTime();
-
-    if (data === undefined) {
-        data = new Map();
-    }
-
-    if (ttl === undefined) {
-        ttl = DEFAULT_TTL;
-    }
-
-    injectDataIntoParticle(id, data, ttl);
-    script = wrapWithVariableInjectionScript(script, Array.from(data.keys()));
-
-    let particle: ParticleDto = {
-        id: id,
-        init_peer_id: peerId.toB58String(),
-        timestamp: currentTime,
-        ttl: ttl,
-        script: script,
-        signature: '',
-        data: Buffer.from([]),
-    };
-
-    particle.signature = await signParticle(peerId, particle);
-
-    return particle;
 }
 
 /**

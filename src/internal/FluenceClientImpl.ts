@@ -19,88 +19,16 @@ import PeerId from 'peer-id';
 import { SecurityTetraplet, InterpreterOutcome } from './commonTypes';
 import { FluenceClientBase } from './FluenceClientBase';
 import { FluenceClient } from '../FluenceClient';
-import { build, genUUID, ParticleDto } from './particle';
+import { genUUID, ParticleDto } from './particle';
 import { ParticleProcessor } from './ParticleProcessor';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
 
-const fetchCallbackServiceName = '__callback';
-const selfRelayVarName = '__relay';
-
-const wrapRelayBasedCall = (script: string) => {
-    return `
-    (seq
-        (call ${selfRelayVarName} ("op" "identity") [])
-        ${script}
-    )
-    `;
-};
-
-const wrapFetchCall = (script: string, particleId: string, resultArgNames: string[]) => {
-    // TODO: sanitize
-    const resultTogether = resultArgNames.join(' ');
-    let res = `
-    (seq
-        ${script}
-        (seq
-            (call ${selfRelayVarName} ("op" "identity") [])
-            (call %init_peer_id%  ("${fetchCallbackServiceName}" "${particleId}") [${resultTogether}])
-        )
-    )`;
-    return wrapRelayBasedCall(res);
-};
-
-export interface FluenceEvent {
-    type: string;
-    args: any[];
-}
-
-export type FluenceEventHandler = (event: FluenceEvent) => void;
-
 export class FluenceClientImpl extends FluenceClientBase implements FluenceClient {
-    private eventSubscribers: Map<string, FluenceEventHandler[]> = new Map();
-    private eventValidators: Map<string, Function> = new Map();
     private callbacks: Map<string, Function> = new Map();
-    private fetchParticles: Map<string, { resolve: Function; reject: Function }> = new Map();
 
     constructor(selfPeerId: PeerId) {
         super(selfPeerId);
         this.processor = new ParticleProcessor(this.strategy, selfPeerId);
-    }
-
-    async fetch<T>(script: string, resultArgNames: string[], data?: Map<string, any>, ttl?: number): Promise<T> {
-        data = this.addRelayToArgs(data);
-        const callBackId = genUUID();
-        script = wrapFetchCall(script, callBackId, resultArgNames);
-        const particle = await build(this.selfPeerIdFull, script, data, ttl, callBackId);
-
-        return new Promise<T>((resolve, reject) => {
-            this.fetchParticles.set(callBackId, { resolve, reject });
-            this.processor.executeLocalParticle(particle);
-        });
-    }
-
-    // TODO:: better naming probably?
-    async fireAndForget(script: string, data?: Map<string, any>, ttl?: number) {
-        data = this.addRelayToArgs(data);
-        script = wrapRelayBasedCall(script);
-
-        await this.sendScript(script, data, ttl);
-    }
-
-    registerEvent(
-        channel: string,
-        eventName: string,
-        validate?: (channel: string, eventName: string, args: any[], tetraplets: any[][]) => boolean,
-    ) {
-        if (!validate) {
-            validate = (c, e, a, t) => true;
-        }
-
-        this.eventValidators.set(`${channel}/${eventName}`, validate);
-    }
-
-    unregisterEvent(channel: string, eventName: string) {
-        this.eventValidators.delete(`${channel}/${eventName}`);
     }
 
     registerCallback(
@@ -111,16 +39,8 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
         this.callbacks.set(`${serviceId}/${fnName}`, callback);
     }
 
-    unregisterCallback(channel: string, eventName: string) {
-        this.eventValidators.delete(`${channel}/${eventName}`);
-    }
-
-    subscribe(channel: string, handler: FluenceEventHandler) {
-        if (!this.eventSubscribers.get(channel)) {
-            this.eventSubscribers.set(channel, []);
-        }
-
-        this.eventSubscribers.get(channel).push(handler);
+    unregisterCallback(serviceId: string, fnName: string) {
+        this.callbacks.delete(`${serviceId}/${fnName}`);
     }
 
     protected strategy: ParticleProcessorStrategy = {
@@ -133,57 +53,8 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
                 };
             }
 
-            // async fetch model handling
-            if (serviceId === fetchCallbackServiceName) {
-                const executingParticlePromiseFns = this.fetchParticles.get(fnName);
-                if (executingParticlePromiseFns) {
-                    // don't block
-                    setTimeout(() => {
-                        this.fetchParticles.delete(fnName);
-                        executingParticlePromiseFns.resolve(args);
-                    }, 0);
-                }
-
-                return {
-                    ret_code: 0,
-                    result: JSON.stringify({}),
-                };
-            }
-
-            // event model handling
+            // callback handling
             const eventPair = `${serviceId}/${fnName}`;
-            const eventValidator = this.eventValidators.get(eventPair);
-            if (eventValidator) {
-                try {
-                    if (!eventValidator(serviceId, fnName, args, tetraplets)) {
-                        return {
-                            ret_code: 1, // TODO:: error codes
-                            result: 'validation failed',
-                        };
-                    }
-                } catch (e) {
-                    log.error('error running validation function: ' + e);
-                    return {
-                        ret_code: 1, // TODO:: error codes
-                        result: 'validation failed',
-                    };
-                }
-
-                // don't block
-                setTimeout(() => {
-                    this.pushEvent(serviceId, {
-                        type: fnName,
-                        args: args,
-                    });
-                }, 0);
-
-                return {
-                    ret_code: 0,
-                    result: JSON.stringify({}),
-                };
-            }
-
-            // callback model handling
             const callback = this.callbacks.get(eventPair);
             if (callback) {
                 try {
@@ -216,10 +87,6 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
 
         onParticleTimeout: (particle: ParticleDto, now: number) => {
             log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
-            const executingParticle = this.fetchParticles.get(particle.id);
-            if (executingParticle) {
-                executingParticle.reject(new Error(`particle ${particle.id} timed out`));
-            }
         },
         onLocalParticleRecieved: (particle: ParticleDto) => {
             log.debug('local particle received', particle);
@@ -234,25 +101,4 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
             log.debug('inner interpreter outcome:', interpreterOutcome);
         },
     };
-
-    private pushEvent(channel: string, event: FluenceEvent) {
-        const subs = this.eventSubscribers.get(channel);
-        if (subs) {
-            for (let sub of subs) {
-                sub(event);
-            }
-        }
-    }
-
-    private addRelayToArgs(data: Map<string, any>) {
-        if (data === undefined) {
-            data = new Map();
-        }
-
-        if (!data.has(selfRelayVarName)) {
-            data.set(selfRelayVarName, this.relayPeerId);
-        }
-
-        return data;
-    }
 }

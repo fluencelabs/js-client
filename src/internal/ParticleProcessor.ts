@@ -16,7 +16,7 @@
 
 import { ParticleDto } from './particle';
 import * as PeerId from 'peer-id';
-import { instantiateInterpreter, InterpreterInvoke } from './interpreter';
+import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
 import { ParticleHandler, SecurityTetraplet, InterpreterOutcome } from './commonTypes';
 import log from 'loglevel';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';

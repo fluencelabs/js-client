@@ -15,9 +15,9 @@
  */
 
 import { toByteArray } from 'base64-js';
-import * as aqua from './aqua';
-import { return_current_peer_id, return_call_service_result, getStringFromWasm0, free } from './aqua';
-import { ParticleHandler, CallServiceResult, SecurityTetraplet } from './commonTypes';
+import * as aqua from '.';
+import { return_current_peer_id, return_call_service_result, getStringFromWasm0, free } from '.';
+import { ParticleHandler, CallServiceResult, SecurityTetraplet } from '../commonTypes';
 
 import PeerId from 'peer-id';
 import log from 'loglevel';
