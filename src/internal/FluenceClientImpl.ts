@@ -16,7 +16,7 @@
 
 import log from 'loglevel';
 import PeerId from 'peer-id';
-import { SecurityTetraplet, StepperOutcome } from './commonTypes';
+import { SecurityTetraplet, InterpreterOutcome } from './commonTypes';
 import { FluenceClientBase } from './FluenceClientBase';
 import { FluenceClient } from '../FluenceClient';
 import { build, genUUID, ParticleDto } from './particle';
@@ -227,11 +227,11 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
         onExternalParticleRecieved: (particle: ParticleDto) => {
             log.debug('external particle received', particle);
         },
-        onStepperExecuting: (particle: ParticleDto) => {
-            log.debug('stepper executing particle', particle);
+        onInterpreterExecuting: (particle: ParticleDto) => {
+            log.debug('interpreter executing particle', particle);
         },
-        onStepperExecuted: (stepperOutcome: StepperOutcome) => {
-            log.debug('inner interpreter outcome:', stepperOutcome);
+        onInterpreterExecuted: (interpreterOutcome: InterpreterOutcome) => {
+            log.debug('inner interpreter outcome:', interpreterOutcome);
         },
     };
 

@@ -16,15 +16,15 @@
 
 import { ParticleDto } from './particle';
 import * as PeerId from 'peer-id';
-import { instantiateInterpreter, InterpreterInvoke } from './stepper';
-import { ParticleHandler, SecurityTetraplet, StepperOutcome } from './commonTypes';
+import { instantiateInterpreter, InterpreterInvoke } from './interpreter';
+import { ParticleHandler, SecurityTetraplet, InterpreterOutcome } from './commonTypes';
 import log from 'loglevel';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
 
-// HACK:: make an api for aqua stepper to accept variables in an easy way!
+// HACK:: make an api for aqua interpreter to accept variables in an easy way!
 let magicParticleStorage: Map<string, Map<string, any>> = new Map();
 
-// HACK:: make an api for aqua stepper to accept variables in an easy way!
+// HACK:: make an api for aqua interpreter to accept variables in an easy way!
 export function injectDataIntoParticle(particleId: string, data: Map<string, any>, ttl: number) {
     log.trace(`setting data for ${particleId}`, data);
     magicParticleStorage.set(particleId, data);
@@ -34,7 +34,7 @@ export function injectDataIntoParticle(particleId: string, data: Map<string, any
     }, ttl);
 }
 
-// HACK:: make an api for aqua stepper to accept variables in an easy way!
+// HACK:: make an api for aqua interpreter to accept variables in an easy way!
 const wrapWithDataInjectionHandling = (
     handler: ParticleHandler,
     getCurrentParticleId: () => string,
@@ -116,10 +116,9 @@ export class ParticleProcessor {
      * @param ttl time to live, subscription will be deleted after this time
      */
     subscribe(particle: ParticleDto, ttl: number) {
-        let self = this;
         setTimeout(() => {
-            self.subscriptions.delete(particle.id);
-            self.strategy?.onParticleTimeout(particle, Date.now());
+            this.subscriptions.delete(particle.id);
+            this.strategy?.onParticleTimeout(particle, Date.now());
         }, ttl);
         this.subscriptions.set(particle.id, particle);
     }
@@ -148,62 +147,64 @@ export class ParticleProcessor {
         // if a current particle is processing, add new particle to the queue
         if (this.getCurrentParticleId() !== undefined && this.getCurrentParticleId() !== particle.id) {
             this.enqueueParticle(particle);
-        } else {
-            if (this.interpreter === undefined) {
-                throw new Error('Undefined. Interpreter is not initialized');
+            return;
+        }
+
+        if (this.interpreter === undefined) {
+            throw new Error('Undefined. Interpreter is not initialized');
+        }
+
+        // start particle processing if queue is empty
+        try {
+            this.setCurrentParticleId(particle.id);
+            // check if a particle is relevant
+            let now = Date.now();
+            let actualTtl = particle.timestamp + particle.ttl - now;
+            if (actualTtl <= 0) {
+                this.strategy?.onParticleTimeout(particle, now);
+            } else {
+                // if there is no subscription yet, previous data is empty
+                let prevData: Uint8Array = Buffer.from([]);
+                let prevParticle = this.getSubscription(particle.id);
+                if (prevParticle) {
+                    prevData = prevParticle.data;
+                    // update a particle in a subscription
+                    this.updateSubscription(particle);
+                } else {
+                    // set a particle with actual ttl
+                    this.subscribe(particle, actualTtl);
+                }
+                this.strategy.onInterpreterExecuting(particle);
+                let interpreterOutcomeStr = this.interpreter(
+                    particle.init_peer_id,
+                    particle.script,
+                    prevData,
+                    particle.data,
+                );
+                let interpreterOutcome: InterpreterOutcome = JSON.parse(interpreterOutcomeStr);
+
+                // update data after aquamarine execution
+                let newParticle: ParticleDto = { ...particle, data: interpreterOutcome.data };
+                this.strategy.onInterpreterExecuted(interpreterOutcome);
+
+                this.updateSubscription(newParticle);
+
+                // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
+                if (interpreterOutcome.next_peer_pks.length > 0) {
+                    this.strategy.sendParticleFurther(newParticle);
+                }
             }
-            // start particle processing if queue is empty
-            try {
-                this.setCurrentParticleId(particle.id);
-                // check if a particle is relevant
-                let now = Date.now();
-                let actualTtl = particle.timestamp + particle.ttl - now;
-                if (actualTtl <= 0) {
-                    this.strategy?.onParticleTimeout(particle, now);
-                } else {
-                    // if there is no subscription yet, previous data is empty
-                    let prevData: Uint8Array = Buffer.from([]);
-                    let prevParticle = this.getSubscription(particle.id);
-                    if (prevParticle) {
-                        prevData = prevParticle.data;
-                        // update a particle in a subscription
-                        this.updateSubscription(particle);
-                    } else {
-                        // set a particle with actual ttl
-                        this.subscribe(particle, actualTtl);
-                    }
-                    this.strategy.onStepperExecuting(particle);
-                    let stepperOutcomeStr = this.interpreter(
-                        particle.init_peer_id,
-                        particle.script,
-                        prevData,
-                        particle.data,
-                    );
-                    let stepperOutcome: StepperOutcome = JSON.parse(stepperOutcomeStr);
-
-                    // update data after aquamarine execution
-                    let newParticle: ParticleDto = { ...particle, data: stepperOutcome.data };
-                    this.strategy.onStepperExecuted(stepperOutcome);
-
-                    this.updateSubscription(newParticle);
-
-                    // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
-                    if (stepperOutcome.next_peer_pks.length > 0) {
-                        this.strategy.sendParticleFurther(newParticle);
-                    }
-                }
-            } finally {
-                // get last particle from the queue
-                let nextParticle = this.popParticle();
-                // start the processing of a new particle if it exists
-                if (nextParticle) {
-                    // update current particle
-                    this.setCurrentParticleId(nextParticle.id);
-                    await this.handleParticle(nextParticle);
-                } else {
-                    // wait for a new call (do nothing) if there is no new particle in a queue
-                    this.setCurrentParticleId(undefined);
-                }
+        } finally {
+            // get last particle from the queue
+            let nextParticle = this.popParticle();
+            // start the processing of a new particle if it exists
+            if (nextParticle) {
+                // update current particle
+                this.setCurrentParticleId(nextParticle.id);
+                await this.handleParticle(nextParticle);
+            } else {
+                // wait for a new call (do nothing) if there is no new particle in a queue
+                this.setCurrentParticleId(undefined);
             }
         }
     }

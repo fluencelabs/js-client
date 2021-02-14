@@ -203,7 +203,6 @@ function newLogImport(cfg: HostImportsConfig): ImportObject {
 }
 
 /// Instantiates AIR interpreter, and returns its `invoke` function as closure
-/// NOTE: an interpreter is also called a stepper from time to time
 export async function instantiateInterpreter(
     particleHandler: ParticleHandler,
     peerId: PeerId,

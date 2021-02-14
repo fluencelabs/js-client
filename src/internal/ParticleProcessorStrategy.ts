@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ParticleHandler, StepperOutcome } from './commonTypes';
+import { ParticleHandler, InterpreterOutcome } from './commonTypes';
 import { ParticleDto } from './particle';
 
 export interface ParticleProcessorStrategy {
@@ -24,6 +24,6 @@ export interface ParticleProcessorStrategy {
     onParticleTimeout?: (particle: ParticleDto, now: number) => void;
     onLocalParticleRecieved?: (particle: ParticleDto) => void;
     onExternalParticleRecieved?: (particle: ParticleDto) => void;
-    onStepperExecuting?: (particle: ParticleDto) => void;
-    onStepperExecuted?: (stepperOutcome: StepperOutcome) => void;
+    onInterpreterExecuting?: (particle: ParticleDto) => void;
+    onInterpreterExecuted?: (interpreterOutcome: InterpreterOutcome) => void;
 }

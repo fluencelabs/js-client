@@ -26,7 +26,7 @@ export type ParticleHandler = (
     tetraplets: SecurityTetraplet[][],
 ) => CallServiceResult;
 
-export interface StepperOutcome {
+export interface InterpreterOutcome {
     ret_code: number;
     data: Uint8Array;
     next_peer_pks: string[];
