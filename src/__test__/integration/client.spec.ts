@@ -3,11 +3,12 @@ import { certificateFromString, certificateToString, issue } from '../../interna
 import { TrustGraph } from '../../internal/trust/trust_graph';
 import { nodeRootCert } from '../../internal/trust/misc';
 import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
-import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
-import { createConnectedClient, createLocalClient } from '../util';
+import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
+import { createConnectedClient } from '../util';
 import log from 'loglevel';
-import { createClient } from '../../api';
+import { createClient, sendParticle } from '../../api';
 import Multiaddr from 'multiaddr';
+import { RequestFlow } from '../../internal/particle';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -45,7 +46,7 @@ describe('Typescript usage suite', () => {
     });
 
     describe('should make connection to network', function () {
-        const testProcedure = async (client: FluenceClientImpl) => {
+        const testProcedure = async (client: FluenceClientTmp) => {
             let resMakingPromise = new Promise((resolve) => {
                 client.registerCallback('test', 'test', (args, _) => {
                     resolve(args);
@@ -63,7 +64,7 @@ describe('Typescript usage suite', () => {
             let data: Map<string, any> = new Map();
             data.set('hello', 'world');
 
-            await client.sendScript(script, data);
+            await client.sendParticle(new RequestFlow(script, data));
 
             const res = await resMakingPromise;
             return res;
@@ -74,7 +75,7 @@ describe('Typescript usage suite', () => {
             const addr = devNodeAddress;
 
             // act
-            const client = (await createClient(addr)) as FluenceClientImpl;
+            const client = (await createClient(addr)) as FluenceClientTmp;
 
             // assert
             const res = await testProcedure(client);
@@ -86,7 +87,7 @@ describe('Typescript usage suite', () => {
             const addr = new Multiaddr(devNodeAddress);
 
             // act
-            const client = (await createClient(addr)) as FluenceClientImpl;
+            const client = (await createClient(addr)) as FluenceClientTmp;
 
             // assert
             const res = await testProcedure(client);
@@ -101,7 +102,7 @@ describe('Typescript usage suite', () => {
             };
 
             // act
-            const client = (await createClient(addr)) as FluenceClientImpl;
+            const client = (await createClient(addr)) as FluenceClientTmp;
 
             // assert
             const res = await testProcedure(client);
@@ -114,7 +115,7 @@ describe('Typescript usage suite', () => {
             const pid = await generatePeerId();
 
             // act
-            const client = (await createClient(addr, pid)) as FluenceClientImpl;
+            const client = (await createClient(addr, pid)) as FluenceClientTmp;
 
             // assert
             const res = await testProcedure(client);
@@ -127,7 +128,7 @@ describe('Typescript usage suite', () => {
             const pid = peerIdToSeed(await generatePeerId());
 
             // act
-            const client = (await createClient(addr, pid)) as FluenceClientImpl;
+            const client = (await createClient(addr, pid)) as FluenceClientTmp;
 
             // assert
             const res = await testProcedure(client);
@@ -168,67 +169,21 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await client.sendScript(script, data);
+        await sendParticle(client, new RequestFlow(script, data));
 
         // assert
         const res = await resMakingPromise;
         expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
-    });
-
-    it('fireAndForget should work', async function () {
-        // arrange
-        const client = await createConnectedClient(devNodeAddress);
-
-        let resMakingPromise = new Promise((resolve) => {
-            client.registerCallback('test', 'reverse_args', (args, _) => {
-                resolve([...args].reverse());
-                return {};
-            });
-        });
-
-        // act
-        let script = `
-        (call "${client.selfPeerId}" ("test" "reverse_args") [a b c d])
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('a', 'some a');
-        data.set('b', 'some b');
-        data.set('c', 'some c');
-        data.set('d', 'some d');
-
-        await client.fireAndForget(script, data);
-
-        // assert
-        const res = await resMakingPromise;
-        expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
-    });
-
-    it('fetch should work', async function () {
-        // arrange
-        const client = await createConnectedClient(devNodeAddress);
-
-        // act
-        let script = `
-        (call "${client.relayPeerId}" ("op" "identify") [] result)
-        `;
-        const data = new Map();
-        data.set('__relay', client.relayPeerId);
-
-        const [res] = await client.fetch(script, ['result'], data);
-
-        // assert
-        expect(res.external_addresses).not.toBeUndefined;
     });
 
     it('two clients should work inside the same time browser', async function () {
         // arrange
         const pid1 = await generatePeerId();
-        const client1 = new FluenceClientImpl(pid1);
+        const client1 = new FluenceClientTmp(pid1);
         await client1.connect(devNodeAddress);
 
         const pid2 = await generatePeerId();
-        const client2 = new FluenceClientImpl(pid2);
+        const client2 = new FluenceClientTmp(pid2);
         await client2.connect(devNodeAddress);
 
         let resMakingPromise = new Promise((resolve) => {
@@ -251,43 +206,10 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await client1.sendScript(script, data);
+        await client1.sendParticle(new RequestFlow(script, data));
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
-    });
-
-    it('event registration should work', async function () {
-        // arrange
-        const pid1 = await generatePeerId();
-        const client1 = new FluenceClientImpl(pid1);
-        await client1.connect(devNodeAddress);
-
-        const pid2 = await generatePeerId();
-        const client2 = new FluenceClientImpl(pid2);
-        await client2.connect(devNodeAddress);
-
-        client2.registerEvent('event_stream', 'test');
-        const resMakingPromise = new Promise((resolve) => {
-            client2.subscribe('event_stream', resolve);
-        });
-
-        // act
-        let script = `
-            (call "${pid2.toB58String()}" ("event_stream" "test") [hello])
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('hello', 'world');
-
-        await client1.fireAndForget(script, data);
-
-        // assert
-        let res = await resMakingPromise;
-        expect(res).toEqual({
-            type: 'test',
-            args: ['world'],
-        });
     });
 });
 
@@ -296,8 +218,8 @@ export async function testCerts() {
     const key2 = await generatePeerId();
 
     // connect to two different nodes
-    const cl1 = new FluenceClientImpl(key1);
-    const cl2 = new FluenceClientImpl(key2);
+    const cl1 = new FluenceClientTmp(key1);
+    const cl2 = new FluenceClientTmp(key2);
 
     await cl1.connect('/dns4/134.209.186.43/tcp/9003/ws/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb');
     await cl2.connect('/ip4/134.209.186.43/tcp/9002/ws/p2p/12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er');

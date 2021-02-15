@@ -45,6 +45,7 @@ export class FluenceClientTmp implements FluenceClient {
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
+        this.processor = new ParticleProcessor(this.strategy, selfPeerIdFull);
     }
 
     async disconnect(): Promise<void> {

@@ -48,13 +48,13 @@ export class RequestFlow {
         const id = customId ?? genUUID();
         let currentTime = new Date().getTime();
 
-        let data;
+        let data = this.data;
         if (this.data === undefined) {
             data = new Map();
         }
 
-        let ttl;
-        if (this.ttl === undefined) {
+        let ttl = this.ttl;
+        if (ttl === undefined) {
             ttl = DEFAULT_TTL;
         }
 

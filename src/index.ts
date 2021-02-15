@@ -18,7 +18,7 @@ export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUti
 export { FluenceClient } from './FluenceClient';
 export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
 export * from './api';
-export { Particle } from './internal/particle';
+export { RequestFlow as Particle } from './internal/particle';
 export * from './internal/builtins';
 import log, { LogLevelDesc } from 'loglevel';
 

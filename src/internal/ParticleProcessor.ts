@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ParticleDto } from './particle';
+import { Particle } from './particle';
 import * as PeerId from 'peer-id';
 import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
 import { ParticleHandler, SecurityTetraplet, InterpreterOutcome } from './commonTypes';
@@ -57,8 +57,8 @@ const wrapWithDataInjectionHandling = (
 
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
-    private subscriptions: Map<string, ParticleDto> = new Map();
-    private particlesQueue: ParticleDto[] = [];
+    private subscriptions: Map<string, Particle> = new Map();
+    private particlesQueue: Particle[] = [];
     private currentParticle?: string;
 
     strategy: ParticleProcessorStrategy;
@@ -77,14 +77,14 @@ export class ParticleProcessor {
         // TODO: destroy interpreter
     }
 
-    async executeLocalParticle(particle: ParticleDto) {
+    async executeLocalParticle(particle: Particle) {
         this.strategy?.onLocalParticleRecieved(particle);
         await this.handleParticle(particle).catch((err) => {
             log.error('particle processing failed: ' + err);
         });
     }
 
-    async executeExternalParticle(particle: ParticleDto) {
+    async executeExternalParticle(particle: Particle) {
         this.strategy?.onExternalParticleRecieved(particle);
         await this.handleExternalParticle(particle);
     }
@@ -101,11 +101,11 @@ export class ParticleProcessor {
         this.currentParticle = particle;
     }
 
-    private enqueueParticle(particle: ParticleDto): void {
+    private enqueueParticle(particle: Particle): void {
         this.particlesQueue.push(particle);
     }
 
-    private popParticle(): ParticleDto | undefined {
+    private popParticle(): Particle | undefined {
         return this.particlesQueue.pop();
     }
 
@@ -115,7 +115,7 @@ export class ParticleProcessor {
      * @param particle
      * @param ttl time to live, subscription will be deleted after this time
      */
-    subscribe(particle: ParticleDto, ttl: number) {
+    subscribe(particle: Particle, ttl: number) {
         setTimeout(() => {
             this.subscriptions.delete(particle.id);
             this.strategy?.onParticleTimeout(particle, Date.now());
@@ -123,7 +123,7 @@ export class ParticleProcessor {
         this.subscriptions.set(particle.id, particle);
     }
 
-    updateSubscription(particle: ParticleDto): boolean {
+    updateSubscription(particle: Particle): boolean {
         if (this.subscriptions.has(particle.id)) {
             this.subscriptions.set(particle.id, particle);
             return true;
@@ -132,18 +132,18 @@ export class ParticleProcessor {
         }
     }
 
-    getSubscription(id: string): ParticleDto | undefined {
+    getSubscription(id: string): Particle | undefined {
         return this.subscriptions.get(id);
     }
 
-    hasSubscription(particle: ParticleDto): boolean {
+    hasSubscription(particle: Particle): boolean {
         return this.subscriptions.has(particle.id);
     }
 
     /**
      * Pass a particle to a interpreter and send a result to other services.
      */
-    private async handleParticle(particle: ParticleDto): Promise<void> {
+    private async handleParticle(particle: Particle): Promise<void> {
         // if a current particle is processing, add new particle to the queue
         if (this.getCurrentParticleId() !== undefined && this.getCurrentParticleId() !== particle.id) {
             this.enqueueParticle(particle);
@@ -184,7 +184,7 @@ export class ParticleProcessor {
                 let interpreterOutcome: InterpreterOutcome = JSON.parse(interpreterOutcomeStr);
 
                 // update data after aquamarine execution
-                let newParticle: ParticleDto = { ...particle, data: interpreterOutcome.data };
+                let newParticle: Particle = { ...particle, data: interpreterOutcome.data };
                 this.strategy.onInterpreterExecuted(interpreterOutcome);
 
                 this.updateSubscription(newParticle);
@@ -212,7 +212,7 @@ export class ParticleProcessor {
     /**
      * Handle incoming particle from a relay.
      */
-    private async handleExternalParticle(particle: ParticleDto): Promise<void> {
+    private async handleExternalParticle(particle: Particle): Promise<void> {
         let data: any = particle.data;
         let error: any = data['protocol!error'];
         if (error !== undefined) {

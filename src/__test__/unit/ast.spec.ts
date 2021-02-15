@@ -1,4 +1,4 @@
-import { parseAIR } from '../../internal/stepper';
+import { parseAIR } from '../../internal/aqua/interpreter';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {

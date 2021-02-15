@@ -4,7 +4,7 @@ import { RequestFlow } from './internal/particle';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
-import { FluenceClientTmp } from './internal/FluenceClientBase';
+import { FluenceClientTmp } from './internal/FluenceClientTmp';
 
 type Node = {
     peerId: string;
@@ -52,10 +52,10 @@ export const createClient = async (
 /**
  * Send a particle to Fluence Network using the specified Fluence Client.
  * @param { FluenceClient } client - The Fluence Client instance.
- * @param { RequestFlow } particle  - The particle to send.
+ * @param { RequestFlow } request  - The particle to send.
  */
-export const sendParticle = async (client: FluenceClient, particle: RequestFlow): Promise<string> => {
-    return await client.sendParticle(particle);
+export const sendParticle = async (client: FluenceClient, request: RequestFlow): Promise<string> => {
+    return await client.sendParticle(request);
 };
 
 /**

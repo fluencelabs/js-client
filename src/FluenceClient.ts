@@ -16,7 +16,7 @@
 
 import { PeerIdB58 } from './internal/commonTypes';
 import Multiaddr from 'multiaddr';
-import { Particle } from './internal/particle';
+import { RequestFlow } from './internal/particle';
 
 export interface FluenceClient {
     readonly relayPeerId: PeerIdB58;
@@ -32,5 +32,5 @@ export interface FluenceClient {
      */
     connect(multiaddr: string | Multiaddr): Promise<void>;
 
-    sendParticle(particle: Particle): Promise<string>;
+    sendParticle(particle: RequestFlow): Promise<string>;
 }
