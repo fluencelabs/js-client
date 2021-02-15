@@ -23,20 +23,11 @@ import { InterpreterOutcome, ParticleHandler } from './commonTypes';
 
 const DEFAULT_TTL = 7000;
 
-/**
- * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
- */
-export class Particle {
+export class RequestFlow {
     script: string;
     data: Map<string, any>;
     ttl: number;
 
-    /**
-     * Creates a particle with specified parameters.
-     * @param { String }script - Air script which defines the execution of a particle – its path, functions it triggers on peers, and so on.
-     * @param { Map<string, any> | Record<string, any> } data - Variables passed to the particle in the form of either JS Map or JS object with keys representing variable names and values representing values correspondingly
-     * @param { [Number]=7000 } ttl - Time to live, a timout after which the particle execution is stopped by Aquamarine.
-     */
     constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
         this.script = script;
         if (data === undefined) {
@@ -53,7 +44,7 @@ export class Particle {
         this.ttl = ttl ?? DEFAULT_TTL;
     }
 
-    async toDto(peerId: PeerId, customId?: string): Promise<ParticleDto> {
+    async getParticle(peerId: PeerId, customId?: string): Promise<Particle> {
         const id = customId ?? genUUID();
         let currentTime = new Date().getTime();
 
@@ -70,7 +61,7 @@ export class Particle {
         injectDataIntoParticle(id, data, ttl);
         let script = wrapWithVariableInjectionScript(this.script, Array.from(data.keys()));
 
-        let particle: ParticleDto = {
+        let particle: Particle = {
             id: id,
             init_peer_id: peerId.toB58String(),
             timestamp: currentTime,
@@ -85,17 +76,11 @@ export class Particle {
         return particle;
     }
 
-    executionHandler: ParticleHandler;
-    sendParticleFurther: (particle: ParticleDto) => void;
-
-    onParticleTimeout?: (particle: ParticleDto, now: number) => void;
-    onLocalParticleRecieved?: (particle: ParticleDto) => void;
-    onExternalParticleRecieved?: (particle: ParticleDto) => void;
-    onInterpreterExecuting?: (particle: ParticleDto) => void;
-    onInterpreterExecuted?: (interpreterOutcome: InterpreterOutcome) => void;
+    particleHandler: ParticleHandler;
+    onParticleTimeout?: (particle: Particle, now: number) => void;
 }
 
-export interface ParticleDto {
+export interface Particle {
     id: string;
     init_peer_id: string;
     timestamp: number;
@@ -136,7 +121,7 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
 /**
  * Creates an action to send to a node.
  */
-export function toPayload(particle: ParticleDto): ParticlePayload {
+export function toPayload(particle: Particle): ParticlePayload {
     return {
         action: 'Particle',
         id: particle.id,
@@ -150,7 +135,7 @@ export function toPayload(particle: ParticleDto): ParticlePayload {
     };
 }
 
-export function parseParticle(str: string): ParticleDto {
+export function parseParticle(str: string): Particle {
     let json = JSON.parse(str);
 
     return {
@@ -164,7 +149,7 @@ export function parseParticle(str: string): ParticleDto {
     };
 }
 
-export function canonicalBytes(particle: ParticleDto) {
+export function canonicalBytes(particle: Particle) {
     let peerIdBuf = Buffer.from(particle.init_peer_id, 'utf8');
     let idBuf = Buffer.from(particle.id, 'utf8');
 
@@ -184,7 +169,7 @@ export function canonicalBytes(particle: ParticleDto) {
 /**
  * Sign a particle with a private key from peerId.
  */
-export async function signParticle(peerId: PeerId, particle: ParticleDto): Promise<string> {
+export async function signParticle(peerId: PeerId, particle: Particle): Promise<string> {
     let bufToSign = canonicalBytes(particle);
 
     let signature = await peerId.privKey.sign(bufToSign);

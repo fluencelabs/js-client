@@ -15,15 +15,15 @@
  */
 
 import { ParticleHandler, InterpreterOutcome } from './commonTypes';
-import { ParticleDto } from './particle';
+import { Particle } from './particle';
 
 export interface ParticleProcessorStrategy {
     particleHandler: ParticleHandler;
-    sendParticleFurther: (particle: ParticleDto) => void;
+    sendParticleFurther: (particle: Particle) => void;
 
-    onParticleTimeout?: (particle: ParticleDto, now: number) => void;
-    onLocalParticleRecieved?: (particle: ParticleDto) => void;
-    onExternalParticleRecieved?: (particle: ParticleDto) => void;
-    onInterpreterExecuting?: (particle: ParticleDto) => void;
+    onParticleTimeout?: (particle: Particle, now: number) => void;
+    onLocalParticleRecieved?: (particle: Particle) => void;
+    onExternalParticleRecieved?: (particle: Particle) => void;
+    onInterpreterExecuting?: (particle: Particle) => void;
     onInterpreterExecuted?: (interpreterOutcome: InterpreterOutcome) => void;
 }

@@ -1,10 +1,10 @@
 import { FluenceClient } from './FluenceClient';
 import { SecurityTetraplet } from './internal/commonTypes';
-import { Particle } from './internal/particle';
+import { RequestFlow } from './internal/particle';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
-import { FluenceClientImpl } from './internal/FluenceClientImpl';
+import { FluenceClientTmp } from './internal/FluenceClientBase';
 
 type Node = {
     peerId: string;
@@ -32,7 +32,7 @@ export const createClient = async (
         peerId = await seedToPeerId(peerIdOrSeed);
     }
 
-    const client = new FluenceClientImpl(peerId);
+    const client = new FluenceClientTmp(peerId);
 
     if (connectTo) {
         let theAddress: Multiaddr;
@@ -52,9 +52,9 @@ export const createClient = async (
 /**
  * Send a particle to Fluence Network using the specified Fluence Client.
  * @param { FluenceClient } client - The Fluence Client instance.
- * @param { Particle } particle  - The particle to send.
+ * @param { RequestFlow } particle  - The particle to send.
  */
-export const sendParticle = async (client: FluenceClient, particle: Particle): Promise<string> => {
+export const sendParticle = async (client: FluenceClient, particle: RequestFlow): Promise<string> => {
     return await client.sendParticle(particle);
 };
 
@@ -71,7 +71,7 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    (client as FluenceClientImpl).registerCallback(serviceId, fnName, handler);
+    (client as FluenceClientTmp).registerCallback(serviceId, fnName, handler);
 };
 
 // prettier-ignore
@@ -86,7 +86,7 @@ export const unregisterServiceFunction = (
     serviceId: string,
     fnName: string
 ) => {
-    (client as FluenceClientImpl).unregisterCallback(serviceId, fnName);
+    (client as FluenceClientTmp).unregisterCallback(serviceId, fnName);
 };
 
 /**
@@ -121,14 +121,14 @@ export const subscribeToEvent = (
 /**
  * Send a particle with a fetch-like semantics. In order to for this to work you have to you have to make a call to the same callbackServiceId\callbackFnName pair from Air script as specified by the parameters. The arguments of the call are returned as the resolve value of promise
  * @param { FluenceClient } client - The Fluence Client instance.
- * @param { Particle } particle  - The particle to send.
+ * @param { RequestFlow } particle  - The particle to send.
  * @param { string } callbackFnName - The identifier of function which should be used in Air script to pass the data to fetch "promise"
  * @param { [string]='_callback' } callbackServiceId - The service identifier which should be used in Air script to pass the data to fetch "promise"
  * @returns { Promise<T> } - A promise which would be resolved with the data returned from Aquamarine
  */
 export const sendParticleAsFetch = async <T>(
     client: FluenceClient,
-    particle: Particle,
+    particle: RequestFlow,
     callbackFnName: string,
     callbackServiceId: string = '_callback',
 ): Promise<T> => {

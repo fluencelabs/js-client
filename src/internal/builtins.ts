@@ -16,7 +16,7 @@
 
 import bs58 from 'bs58';
 import { sendParticleAsFetch } from '../api';
-import { Particle } from './particle';
+import { RequestFlow } from './particle';
 import { FluenceClient } from '../FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 
@@ -56,7 +56,7 @@ const requestResponse = async <T>(
     )
     `;
 
-    const res = await sendParticleAsFetch<any[]>(client, new Particle(script, data, ttl), name);
+    const res = await sendParticleAsFetch<any[]>(client, new RequestFlow(script, data, ttl), name);
     return handleResponse(res);
 };
 
@@ -66,8 +66,8 @@ const requestResponse = async <T>(
  * @returns { Array<string> } - list of available modules on the connected relay
  */
 export const getModules = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
-    let callbackFn = "getModules"
-    const particle = new Particle(
+    let callbackFn = 'getModules';
+    const particle = new RequestFlow(
         `
         (seq 
             (call __relay ("dist" "get_modules") [] result)
@@ -78,7 +78,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
             __relay: client.relayPeerId,
             myPeerId: client.selfPeerId,
         },
-        ttl
+        ttl,
     );
 
     return sendParticleAsFetch(client, particle, callbackFn);
@@ -90,8 +90,8 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
  * @returns { Array<string> } - list of available modules on the connected relay
  */
 export const getInterfaces = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
-    let callbackFn = "getInterfaces"
-    const particle = new Particle(
+    let callbackFn = 'getInterfaces';
+    const particle = new RequestFlow(
         `
         (seq 
             (call __relay ("srv" "get_interfaces") [] result)
@@ -102,7 +102,7 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
             __relay: client.relayPeerId,
             myPeerId: client.selfPeerId,
         },
-        ttl
+        ttl,
     );
 
     return sendParticleAsFetch(client, particle, callbackFn);
@@ -149,7 +149,7 @@ export const uploadModule = async (
     )
     `;
 
-    return sendParticleAsFetch(client, new Particle(script, data, ttl), 'getModules', "_callback");
+    return sendParticleAsFetch(client, new RequestFlow(script, data, ttl), 'getModules', '_callback');
 };
 
 /**
@@ -317,15 +317,21 @@ export const neighborhood = async (client: FluenceClient, nodeId?: string, ttl?:
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns {[string]} - script id
  */
-export const addScript = async (client: FluenceClient, script: string, period?: number, nodeId?: string, ttl?: number): Promise<string> => {
+export const addScript = async (
+    client: FluenceClient,
+    script: string,
+    period?: number,
+    nodeId?: string,
+    ttl?: number,
+): Promise<string> => {
     let returnValue = 'id';
-    let periodV = ""
-    if (period) periodV = period.toString()
+    let periodV = '';
+    if (period) periodV = period.toString();
     let call = (nodeId: string) => `(call "${nodeId}" ("script" "add") [script ${periodV}] ${returnValue})`;
 
     let data = new Map();
     data.set('script', script);
-    if (period) data.set('period', period)
+    if (period) data.set('period', period);
 
     return requestResponse(client, 'addScript', call, returnValue, data, (args) => args[0] as string, nodeId, ttl);
 };
