@@ -1,4 +1,4 @@
-import { CallServiceResult } from './commonTypes';
+import { CallServiceResult, ErrorCodes } from './commonTypes';
 
 interface AquaCall {
     serviceId: string;
@@ -40,8 +40,8 @@ type InternalHandler = (req: AquaCall, resp: AquaResult) => void;
 
 export class AquaCallHandler {
     private static defaultHandler(req: AquaCall, resp: AquaResult) {
-        resp.retCode = -1;
-        resp.result = 'Something went wrong';
+        resp.retCode = ErrorCodes.noServiceFound;
+        resp.result = `Error. There is no service: ${req.serviceId}`;
     }
 
     middlewares: Middleware[] = [];

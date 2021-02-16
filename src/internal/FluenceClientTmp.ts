@@ -20,10 +20,19 @@ import { FluenceConnection } from './FluenceConnection';
 
 import { ParticleProcessor } from './ParticleProcessor';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
-import { InterpreterOutcome, PeerIdB58, SecurityTetraplet } from './commonTypes';
-import { Particle, RequestFlow } from './particle';
+import { ErrorCodes, InterpreterOutcome, PeerIdB58, SecurityTetraplet } from './commonTypes';
+import { Particle } from './particle';
 import log from 'loglevel';
 import { FluenceClient } from 'src';
+import { RequestFlow } from './RequestFlow';
+import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
+
+const makeDefaultClientHandler = (): AquaCallHandler => {
+    const res = new AquaCallHandler();
+    res.use(errorHandler);
+    res.use(fnHandler('op', 'identity', (args, _) => args));
+    return res;
+};
 
 export class FluenceClientTmp implements FluenceClient {
     readonly selfPeerIdFull: PeerId;
@@ -47,6 +56,8 @@ export class FluenceClientTmp implements FluenceClient {
         this.selfPeerIdFull = selfPeerIdFull;
         this.processor = new ParticleProcessor(this.strategy, selfPeerIdFull);
     }
+
+    handler: AquaCallHandler = makeDefaultClientHandler();
 
     async disconnect(): Promise<void> {
         await this.connection.disconnect();
@@ -89,58 +100,33 @@ export class FluenceClientTmp implements FluenceClient {
         this.connection = connection;
     }
 
-    async sendParticle(particle: RequestFlow): Promise<string> {
+    async initiateFlow(particle: RequestFlow): Promise<string> {
         const dto = await particle.getParticle(this.selfPeerIdFull);
         this.processor.executeLocalParticle(dto);
         return dto.id;
     }
-
-    private callbacks: Map<string, Function> = new Map();
 
     registerCallback(
         serviceId: string,
         fnName: string,
         callback: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
     ) {
-        this.callbacks.set(`${serviceId}/${fnName}`, callback);
+        this.handler.on(serviceId, fnName, callback);
     }
 
     unregisterCallback(serviceId: string, fnName: string) {
-        this.callbacks.delete(`${serviceId}/${fnName}`);
+        // TODO:: don't know how to make unregistration yet;
     }
 
     protected strategy: ParticleProcessorStrategy = {
         particleHandler: (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
-            // missing built-in op
-            if (serviceId === 'op' && fnName === 'identity') {
-                return {
-                    ret_code: 0,
-                    result: JSON.stringify(args),
-                };
-            }
-
-            // callback handling
-            const eventPair = `${serviceId}/${fnName}`;
-            const callback = this.callbacks.get(eventPair);
-            if (callback) {
-                try {
-                    const res = callback(args, tetraplets);
-                    return {
-                        ret_code: 0,
-                        result: JSON.stringify(res),
-                    };
-                } catch (e) {
-                    return {
-                        ret_code: 1, // TODO:: error codes
-                        result: JSON.stringify(e),
-                    };
-                }
-            }
-
-            return {
-                ret_code: 1,
-                result: `Error. There is no service: ${serviceId}`,
-            };
+            return this.handler.execute({
+                serviceId,
+                fnName,
+                args,
+                tetraplets,
+                particleContext: {},
+            });
         },
 
         sendParticleFurther: async (particle: Particle) => {

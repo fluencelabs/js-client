@@ -19,66 +19,7 @@ import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import { injectDataIntoParticle } from './ParticleProcessor';
-import { InterpreterOutcome, ParticleHandler } from './commonTypes';
-
-const DEFAULT_TTL = 7000;
-
-export class RequestFlow {
-    script: string;
-    data: Map<string, any>;
-    ttl: number;
-
-    constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
-        this.script = script;
-        if (data === undefined) {
-            this.data = new Map();
-        } else if (data instanceof Map) {
-            this.data = data;
-        } else {
-            this.data = new Map();
-            for (let k in data) {
-                this.data.set(k, data[k]);
-            }
-        }
-
-        this.ttl = ttl ?? DEFAULT_TTL;
-    }
-
-    async getParticle(peerId: PeerId, customId?: string): Promise<Particle> {
-        const id = customId ?? genUUID();
-        let currentTime = new Date().getTime();
-
-        let data = this.data;
-        if (this.data === undefined) {
-            data = new Map();
-        }
-
-        let ttl = this.ttl;
-        if (ttl === undefined) {
-            ttl = DEFAULT_TTL;
-        }
-
-        injectDataIntoParticle(id, data, ttl);
-        let script = wrapWithVariableInjectionScript(this.script, Array.from(data.keys()));
-
-        let particle: Particle = {
-            id: id,
-            init_peer_id: peerId.toB58String(),
-            timestamp: currentTime,
-            ttl: ttl,
-            script: script,
-            signature: '',
-            data: Buffer.from([]),
-        };
-
-        particle.signature = await signParticle(peerId, particle);
-
-        return particle;
-    }
-
-    particleHandler: ParticleHandler;
-    onParticleTimeout?: (particle: Particle, now: number) => void;
-}
+import { AquaCallHandler } from './AquaHandler';
 
 export interface Particle {
     id: string;
@@ -103,19 +44,6 @@ interface ParticlePayload {
     script: string;
     signature: number[];
     data: string;
-}
-
-function wrapWithVariableInjectionScript(script: string, fields: string[]): string {
-    fields.forEach((v) => {
-        script = `
-(seq
-    (call %init_peer_id% ("__magic" "load") ["${v}"] ${v})
-    ${script}
-)
-                 `;
-    });
-
-    return script;
 }
 
 /**

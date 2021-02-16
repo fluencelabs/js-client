@@ -1,10 +1,10 @@
 import { FluenceClient } from './FluenceClient';
 import { SecurityTetraplet } from './internal/commonTypes';
-import { RequestFlow } from './internal/particle';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
 import { FluenceClientTmp } from './internal/FluenceClientTmp';
+import { RequestFlow } from './internal/RequestFlow';
 
 type Node = {
     peerId: string;
@@ -55,7 +55,7 @@ export const createClient = async (
  * @param { RequestFlow } request  - The particle to send.
  */
 export const sendParticle = async (client: FluenceClient, request: RequestFlow): Promise<string> => {
-    return await client.sendParticle(request);
+    return await client.initiateFlow(request);
 };
 
 /**

@@ -43,3 +43,9 @@ export interface SecurityTetraplet extends ResolvedTriplet {
 }
 
 export type PeerIdB58 = string;
+
+export enum ErrorCodes {
+    success = 0,
+    noServiceFound = 1,
+    unkownError = 1024,
+}

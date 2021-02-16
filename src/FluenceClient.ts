@@ -16,12 +16,15 @@
 
 import { PeerIdB58 } from './internal/commonTypes';
 import Multiaddr from 'multiaddr';
-import { RequestFlow } from './internal/particle';
+import { RequestFlow } from './internal/RequestFlow';
+import { AquaCallHandler } from './internal/AquaHandler';
 
 export interface FluenceClient {
     readonly relayPeerId: PeerIdB58;
     readonly selfPeerId: PeerIdB58;
     readonly isConnected: boolean;
+
+    handler: AquaCallHandler;
 
     disconnect(): Promise<void>;
 
@@ -32,5 +35,5 @@ export interface FluenceClient {
      */
     connect(multiaddr: string | Multiaddr): Promise<void>;
 
-    sendParticle(particle: RequestFlow): Promise<string>;
+    initiateFlow(particle: RequestFlow): Promise<string>;
 }
