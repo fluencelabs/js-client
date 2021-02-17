@@ -54,8 +54,8 @@ export const createClient = async (
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param { RequestFlow } request  - The particle to send.
  */
-export const sendParticle = async (client: FluenceClient, request: RequestFlow): Promise<string> => {
-    return await client.initiateFlow(request);
+export const sendParticle = async (client: FluenceClient, request: RequestFlow): Promise<void> => {
+    await client.initiateFlow(request);
 };
 
 /**

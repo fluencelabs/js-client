@@ -18,7 +18,6 @@ import { ParticleHandler, InterpreterOutcome } from './commonTypes';
 import { Particle } from './particle';
 
 export interface ParticleProcessorStrategy {
-    particleHandler: ParticleHandler;
     sendParticleFurther: (particle: Particle) => void;
 
     onParticleTimeout?: (particle: Particle, now: number) => void;

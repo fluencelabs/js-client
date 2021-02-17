@@ -17,9 +17,11 @@
 import { Particle } from './particle';
 import * as PeerId from 'peer-id';
 import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
-import { ParticleHandler, SecurityTetraplet, InterpreterOutcome } from './commonTypes';
+import { ParticleHandler, SecurityTetraplet, InterpreterOutcome, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
+import { RequestFlow } from './RequestFlow';
+import { AquaCallHandler } from './AquaHandler';
 
 // HACK:: make an api for aqua interpreter to accept variables in an easy way!
 let magicParticleStorage: Map<string, Map<string, any>> = new Map();
@@ -63,10 +65,12 @@ export class ParticleProcessor {
 
     strategy: ParticleProcessorStrategy;
     peerId: PeerId;
+    clientHandler: AquaCallHandler;
 
-    constructor(strategy: ParticleProcessorStrategy, peerId: PeerId) {
+    constructor(strategy: ParticleProcessorStrategy, peerId: PeerId, clientHandler: AquaCallHandler) {
         this.strategy = strategy;
         this.peerId = peerId;
+        this.clientHandler = clientHandler;
     }
 
     async init() {
@@ -77,7 +81,8 @@ export class ParticleProcessor {
         // TODO: destroy interpreter
     }
 
-    async executeLocalParticle(particle: Particle) {
+    async executeLocalParticle(request: RequestFlow) {
+        const particle = await request.getParticle(this.peerId);
         this.strategy?.onLocalParticleRecieved(particle);
         await this.handleParticle(particle).catch((err) => {
             log.error('particle processing failed: ' + err);
@@ -95,6 +100,11 @@ export class ParticleProcessor {
 
     private getCurrentParticleId(): string | undefined {
         return this.currentParticle;
+    }
+
+    private getCurrentRequestFlow(): RequestFlow | undefined {
+        // TODO:: implement
+        return undefined;
     }
 
     private setCurrentParticleId(particle: string | undefined) {
@@ -222,15 +232,22 @@ export class ParticleProcessor {
         }
     }
 
+    private theHandler: ParticleHandler = (
+        serviceId: string,
+        fnName: string,
+        args: any[],
+        tetraplets: SecurityTetraplet[][],
+    ): CallServiceResult => {
+        const request = this.getCurrentRequestFlow();
+        return request.handler.execute({ serviceId, fnName, args, tetraplets, particleContext: {} });
+    };
+
     /**
      * Instantiate WebAssembly with AIR interpreter to execute AIR scripts
      */
     async instantiateInterpreter() {
         this.interpreter = await instantiateInterpreter(
-            wrapWithDataInjectionHandling(
-                this.strategy.particleHandler.bind(this),
-                this.getCurrentParticleId.bind(this),
-            ),
+            wrapWithDataInjectionHandling(this.theHandler.bind(this), this.getCurrentParticleId.bind(this)),
             this.peerId,
         );
     }

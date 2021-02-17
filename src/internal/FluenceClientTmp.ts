@@ -54,10 +54,11 @@ export class FluenceClientTmp implements FluenceClient {
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
-        this.processor = new ParticleProcessor(this.strategy, selfPeerIdFull);
+        this.handler = makeDefaultClientHandler();
+        this.processor = new ParticleProcessor(this.strategy, selfPeerIdFull, this.handler);
     }
 
-    handler: AquaCallHandler = makeDefaultClientHandler();
+    handler: AquaCallHandler;
 
     async disconnect(): Promise<void> {
         await this.connection.disconnect();
@@ -100,10 +101,8 @@ export class FluenceClientTmp implements FluenceClient {
         this.connection = connection;
     }
 
-    async initiateFlow(particle: RequestFlow): Promise<string> {
-        const dto = await particle.getParticle(this.selfPeerIdFull);
-        this.processor.executeLocalParticle(dto);
-        return dto.id;
+    async initiateFlow(request: RequestFlow): Promise<void> {
+        this.processor.executeLocalParticle(request);
     }
 
     registerCallback(
@@ -119,16 +118,6 @@ export class FluenceClientTmp implements FluenceClient {
     }
 
     protected strategy: ParticleProcessorStrategy = {
-        particleHandler: (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
-            return this.handler.execute({
-                serviceId,
-                fnName,
-                args,
-                tetraplets,
-                particleContext: {},
-            });
-        },
-
         sendParticleFurther: async (particle: Particle) => {
             try {
                 await this.connection.sendParticle(particle);

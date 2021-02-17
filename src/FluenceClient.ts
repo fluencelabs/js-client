@@ -35,5 +35,5 @@ export interface FluenceClient {
      */
     connect(multiaddr: string | Multiaddr): Promise<void>;
 
-    initiateFlow(particle: RequestFlow): Promise<string>;
+    initiateFlow(request: RequestFlow): Promise<void>;
 }

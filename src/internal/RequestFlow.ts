@@ -19,13 +19,15 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
 }
 
 export class RequestFlow {
-    script: string;
-    data: Map<string, any> = new Map();
-    ttl: number;
-    handler = new AquaCallHandler();
-    onTimeout?: () => void;
+    readonly id: string;
+    readonly script: string;
+    readonly data: Map<string, any> = new Map();
+    readonly ttl: number;
+    readonly handler = new AquaCallHandler();
+    readonly onTimeout?: () => void;
 
     constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
+        this.id = genUUID();
         this.script = script;
         if (data === undefined) {
             this.data = new Map();
@@ -41,8 +43,8 @@ export class RequestFlow {
         this.ttl = ttl ?? DEFAULT_TTL;
     }
 
-    async getParticle(peerId: PeerId, customId?: string): Promise<Particle> {
-        const id = customId ?? genUUID();
+    async getParticle(peerId: PeerId): Promise<Particle> {
+        const id = this.id;
         let currentTime = new Date().getTime();
 
         let data = this.data;
@@ -75,29 +77,39 @@ export class RequestFlow {
 }
 
 export class RequestFlowBuilder {
-    private item: RequestFlow;
+    private params: any = {};
+    private data = new Map();
+    private handlerConfig?;
 
     build() {
-        return RequestFlow;
+        if (!this.params.script) {
+            throw new Error();
+        }
+        const res = new RequestFlow(this.params.script, this.params.data, this.params.ttl);
+        if (this.handlerConfig) {
+            this.handlerConfig(res.handler);
+        }
+
+        return res;
     }
 
     withScript(script: string): RequestFlowBuilder {
-        this.item.script = script;
+        this.params.script = script;
         return this;
     }
 
     withTTL(ttl: number): RequestFlowBuilder {
-        this.item.ttl = ttl;
+        this.params.ttl = ttl;
         return this;
     }
 
     withVariable(name: string, value: any): RequestFlowBuilder {
-        this.item.data.set(name, value);
+        this.data.set(name, value);
         return this;
     }
 
     configHandler(config: (AquaCallHandler) => void): RequestFlowBuilder {
-        config(this.item.handler);
+        this.handlerConfig = config;
         return this;
     }
 }
