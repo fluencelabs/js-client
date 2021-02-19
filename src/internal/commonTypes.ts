@@ -47,5 +47,6 @@ export type PeerIdB58 = string;
 export enum ErrorCodes {
     success = 0,
     noServiceFound = 1,
+    exceptionInHandler = 2,
     unkownError = 1024,
 }

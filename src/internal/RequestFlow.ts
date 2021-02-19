@@ -1,3 +1,4 @@
+import { trace } from 'loglevel';
 import PeerId from 'peer-id';
 import { AquaCallHandler } from './AquaHandler';
 import { Particle, genUUID, signParticle } from './particle';
@@ -19,36 +20,53 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
 }
 
 export class RequestFlow {
-    readonly id: string;
-    readonly script: string;
-    readonly data: Map<string, any> = new Map();
-    readonly ttl: number;
-    readonly handler = new AquaCallHandler();
-    readonly onTimeout?: () => void;
+    private state: Particle;
 
-    constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
-        this.id = genUUID();
-        this.script = script;
+    readonly id: string;
+    readonly isExternal: boolean;
+    readonly script: string;
+    readonly handler = new AquaCallHandler();
+
+    static createExternal(particle: Particle): RequestFlow {
+        const res = new RequestFlow(true, particle.id, particle.script);
+        res.ttl = particle.ttl;
+        return res;
+    }
+
+    static createLocal(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number): RequestFlow {
+        const res = new RequestFlow(false, genUUID(), script);
+
         if (data === undefined) {
-            this.data = new Map();
+            res.variables = new Map();
         } else if (data instanceof Map) {
-            this.data = data;
+            res.variables = data;
         } else {
-            this.data = new Map();
+            res.variables = new Map();
             for (let k in data) {
-                this.data.set(k, data[k]);
+                res.variables.set(k, data[k]);
             }
         }
 
-        this.ttl = ttl ?? DEFAULT_TTL;
+        res.ttl = ttl ?? DEFAULT_TTL;
+        return res;
     }
 
-    async getParticle(peerId: PeerId): Promise<Particle> {
+    constructor(isExternal: boolean, id: string, script: string) {
+        this.isExternal = isExternal;
+        this.id = id;
+        this.script = script;
+    }
+
+    variables: Map<string, any> = new Map();
+    ttl: number;
+    onTimeout?: () => void;
+
+    async initState(peerId: PeerId): Promise<void> {
         const id = this.id;
         let currentTime = new Date().getTime();
 
-        let data = this.data;
-        if (this.data === undefined) {
+        let data = this.variables;
+        if (this.variables === undefined) {
             data = new Map();
         }
 
@@ -72,13 +90,18 @@ export class RequestFlow {
 
         particle.signature = await signParticle(peerId, particle);
 
-        return particle;
+        this.state = particle;
+    }
+
+    async getParticle(peerId: PeerId): Promise<Particle> {
+        await this.initState(peerId);
+        return this.state;
     }
 }
 
 export class RequestFlowBuilder {
     private params: any = {};
-    private data = new Map();
+    private data = new Map<string, any>();
     private handlerConfig?;
 
     build() {
@@ -106,6 +129,16 @@ export class RequestFlowBuilder {
     withVariable(name: string, value: any): RequestFlowBuilder {
         this.data.set(name, value);
         return this;
+    }
+
+    withVariables(data: Map<string, any> | Record<string, any>) {
+        if (data instanceof Map) {
+            this.data = new Map([...Array.from(this.data.entries()), ...Array.from(data.entries())]);
+        } else {
+            for (let k in data) {
+                this.data.set(k, data[k]);
+            }
+        }
     }
 
     configHandler(config: (AquaCallHandler) => void): RequestFlowBuilder {

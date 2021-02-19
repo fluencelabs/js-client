@@ -239,7 +239,15 @@ export class ParticleProcessor {
         tetraplets: SecurityTetraplet[][],
     ): CallServiceResult => {
         const request = this.getCurrentRequestFlow();
-        return request.handler.execute({ serviceId, fnName, args, tetraplets, particleContext: {} });
+        return request.handler.execute({
+            serviceId,
+            fnName,
+            args,
+            tetraplets,
+            particleContext: {
+                particleId: request.id,
+            },
+        });
     };
 
     /**

@@ -16,7 +16,7 @@
 
 import bs58 from 'bs58';
 import { sendParticleAsFetch } from '../api';
-import { RequestFlow } from './particle';
+import { RequestFlow } from './RequestFlow';
 import { FluenceClient } from '../FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 
@@ -56,7 +56,7 @@ const requestResponse = async <T>(
     )
     `;
 
-    const res = await sendParticleAsFetch<any[]>(client, new RequestFlow(script, data, ttl), name);
+    const res = await sendParticleAsFetch<any[]>(client, RequestFlow.createLocal(script, data, ttl), name);
     return handleResponse(res);
 };
 
@@ -67,7 +67,7 @@ const requestResponse = async <T>(
  */
 export const getModules = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getModules';
-    const particle = new RequestFlow(
+    const particle = RequestFlow.createLocal(
         `
         (seq 
             (call __relay ("dist" "get_modules") [] result)
@@ -91,7 +91,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
  */
 export const getInterfaces = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getInterfaces';
-    const particle = new RequestFlow(
+    const particle = RequestFlow.createLocal(
         `
         (seq 
             (call __relay ("srv" "get_interfaces") [] result)
@@ -149,7 +149,7 @@ export const uploadModule = async (
     )
     `;
 
-    return sendParticleAsFetch(client, new RequestFlow(script, data, ttl), 'getModules', '_callback');
+    return sendParticleAsFetch(client, RequestFlow.createLocal(script, data, ttl), 'getModules', '_callback');
 };
 
 /**

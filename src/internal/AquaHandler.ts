@@ -1,17 +1,24 @@
 import { CallServiceResult, ErrorCodes } from './commonTypes';
 
+interface ParticleContext {
+    particleId?: string;
+    [x: string]: any;
+}
+
 interface AquaCall {
     serviceId: string;
     fnName: string;
     args: any[];
     tetraplets: any[][];
-    particleContext: Record<string, any>;
+    particleContext: ParticleContext;
+    [x: string]: any;
 }
 
-type AquaResult = {
-    retCode: number;
+interface AquaResult {
+    retCode: ErrorCodes;
     result?: any;
-};
+    [x: string]: any;
+}
 
 export type Middleware = (req: AquaCall, resp: AquaResult, next: Function) => void;
 
@@ -19,7 +26,7 @@ export const fnHandler = (serviceId: string, fnName: string, handler: (args: any
     return (req: AquaCall, resp: AquaResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             const res = handler(req.args, req.tetraplets);
-            resp.retCode = 0;
+            resp.retCode = ErrorCodes.success;
             resp.result = res;
         } else {
             next();
@@ -31,7 +38,7 @@ export const errorHandler: Middleware = (req: AquaCall, resp: AquaResult, next: 
     try {
         next();
     } catch (e) {
-        resp.retCode = 2;
+        resp.retCode = ErrorCodes.exceptionInHandler;
         resp.result = e.message;
     }
 };
@@ -74,7 +81,7 @@ export class AquaCallHandler {
 
     execute(req: AquaCall): CallServiceResult {
         const res: AquaResult = {
-            retCode: 1,
+            retCode: ErrorCodes.unkownError,
         };
         this.buildHanlder()(req, res);
         return {
