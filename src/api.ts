@@ -5,6 +5,7 @@ import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
 import { FluenceClientImpl } from './internal/FluenceClientImpl';
+import log from "loglevel";
 
 type Node = {
     peerId: string;
@@ -44,6 +45,9 @@ export const createClient = async (
         }
 
         await client.connect(theAddress);
+        if (!await checkConnection(client)) {
+            throw new Error("Connection check failed. Check if the node is working or try to connect to another node")
+        }
     }
 
     return client;
@@ -147,7 +151,43 @@ export const sendParticleAsFetch = async <T>(
         }, particle.ttl);
     });
 
-    sendParticle(client, particle);
+    await sendParticle(client, particle);
 
     return promise;
 };
+
+export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
+    let msg = Math.random().toString(36).substring(7);
+    let callbackFn = "checkConnection"
+    let callbackService = "_callback"
+
+    const particle = new Particle(
+        `
+                    (seq 
+                        (call __relay ("op" "identity") [msg] result)
+                        (call myPeerId ("${callbackService}" "${callbackFn}") [result])
+                    )
+                `,
+        {
+            __relay: client.relayPeerId,
+            myPeerId: client.selfPeerId,
+            msg
+        },
+        3000
+    );
+
+    if (!client.isConnected) {
+        return false;
+    }
+
+    try {
+        let result = await sendParticleAsFetch<string[][]>(client, particle, callbackFn, callbackService)
+        if (result[0][0] != msg) {
+            log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.")
+        }
+        return true;
+    } catch (e) {
+        log.error("Error on establishing connection: ", e)
+        return false;
+    }
+}

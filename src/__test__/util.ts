@@ -1,5 +1,5 @@
-import { generatePeerId } from '..';
-import { FluenceClientImpl } from '../internal/FluenceClientImpl';
+import {generatePeerId} from '..';
+import {FluenceClientImpl} from '../internal/FluenceClientImpl';
 
 export const createLocalClient = async () => {
     const peerId = await generatePeerId();
