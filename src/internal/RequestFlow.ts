@@ -1,6 +1,8 @@
 import { trace } from 'loglevel';
 import PeerId from 'peer-id';
+import { InterpreterInvoke } from './aqua/interpreter';
 import { AquaCallHandler } from './AquaHandler';
+import { InterpreterOutcome } from './commonTypes';
 import { Particle, genUUID, signParticle } from './particle';
 import { injectDataIntoParticle } from './ParticleProcessor';
 
@@ -21,6 +23,7 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
 
 export class RequestFlow {
     private state: Particle;
+    private prevData: Uint8Array = Buffer.from([]);
 
     readonly id: string;
     readonly isExternal: boolean;
@@ -93,9 +96,31 @@ export class RequestFlow {
         this.state = particle;
     }
 
-    async getParticle(peerId: PeerId): Promise<Particle> {
-        await this.initState(peerId);
-        return this.state;
+    receiveUpdate(particle: Particle) {
+        // TODO:: keep the history of particle data mb?
+        this.prevData = this.state.data;
+        this.state.data = particle.data;
+    }
+
+    runInterpreter(interpreter: InterpreterInvoke) {
+        const interpreterOutcomeStr = interpreter(
+            this.state.init_peer_id,
+            this.state.script,
+            this.prevData,
+            this.state.data,
+        );
+        const interpreterOutcome: InterpreterOutcome = JSON.parse(interpreterOutcomeStr);
+        // TODO:: keep the history of particle data mb?
+        this.state.data = interpreterOutcome.data;
+        return interpreterOutcome;
+    }
+
+    getParticle = () => this.state;
+
+    getParticleWithoutData(): Omit<Particle, 'data'> {
+        const res = { ...this.state };
+        delete res.data;
+        return res;
     }
 }
 

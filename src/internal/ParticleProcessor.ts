@@ -20,7 +20,7 @@ import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
 import { ParticleHandler, SecurityTetraplet, InterpreterOutcome, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
-import { RequestFlow } from './RequestFlow';
+import { RequestFlow, RequestFlowBuilder } from './RequestFlow';
 import { AquaCallHandler } from './AquaHandler';
 
 // HACK:: make an api for aqua interpreter to accept variables in an easy way!
@@ -59,9 +59,9 @@ const wrapWithDataInjectionHandling = (
 
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
-    private subscriptions: Map<string, Particle> = new Map();
-    private particlesQueue: Particle[] = [];
-    private currentParticle?: string;
+    private requests: Map<string, RequestFlow> = new Map();
+    private queue: RequestFlow[] = [];
+    private currentRequestId: string | null;
 
     strategy: ParticleProcessorStrategy;
     peerId: PeerId;
@@ -82,81 +82,54 @@ export class ParticleProcessor {
     }
 
     async executeLocalParticle(request: RequestFlow) {
-        const particle = await request.getParticle(this.peerId);
-        this.strategy?.onLocalParticleRecieved(particle);
-        await this.handleParticle(particle).catch((err) => {
+        this.requests.set(request.id, request);
+
+        log.debug('local particle received', request.getParticleWithoutData());
+
+        try {
+            this.processRequest(request);
+        } catch (err) {
             log.error('particle processing failed: ' + err);
-        });
-    }
-
-    async executeExternalParticle(particle: Particle) {
-        this.strategy?.onExternalParticleRecieved(particle);
-        await this.handleExternalParticle(particle);
-    }
-
-    /*
-     * private
-     */
-
-    private getCurrentParticleId(): string | undefined {
-        return this.currentParticle;
-    }
-
-    private getCurrentRequestFlow(): RequestFlow | undefined {
-        // TODO:: implement
-        return undefined;
-    }
-
-    private setCurrentParticleId(particle: string | undefined) {
-        this.currentParticle = particle;
-    }
-
-    private enqueueParticle(particle: Particle): void {
-        this.particlesQueue.push(particle);
-    }
-
-    private popParticle(): Particle | undefined {
-        return this.particlesQueue.pop();
-    }
-
-    /**
-     * Subscriptions will be applied by outside message if id will be the same.
-     *
-     * @param particle
-     * @param ttl time to live, subscription will be deleted after this time
-     */
-    subscribe(particle: Particle, ttl: number) {
-        setTimeout(() => {
-            this.subscriptions.delete(particle.id);
-            this.strategy?.onParticleTimeout(particle, Date.now());
-        }, ttl);
-        this.subscriptions.set(particle.id, particle);
-    }
-
-    updateSubscription(particle: Particle): boolean {
-        if (this.subscriptions.has(particle.id)) {
-            this.subscriptions.set(particle.id, particle);
-            return true;
-        } else {
-            return false;
         }
     }
 
-    getSubscription(id: string): Particle | undefined {
-        return this.subscriptions.get(id);
+    /**
+     * Handle incoming particle from a relay.
+     */
+    async executeExternalParticle(particle: Particle) {
+        const toLog = { ...particle };
+        delete toLog.data;
+        log.debug('external particle received', toLog);
+
+        let data: any = particle.data;
+        let error: any = data['protocol!error'];
+        if (error !== undefined) {
+            log.error('error in external particle: ', error);
+            return;
+        }
+
+        let request = this.requests.get(particle.id);
+        if (request) {
+            request.receiveUpdate(particle);
+        } else {
+            request = RequestFlow.createExternal(particle);
+        }
+        this.requests.set(request.id, request);
+
+        await this.processRequest(request);
     }
 
-    hasSubscription(particle: Particle): boolean {
-        return this.subscriptions.has(particle.id);
+    private getCurrentRequestId(): string | undefined {
+        return this.currentRequestId;
     }
 
     /**
      * Pass a particle to a interpreter and send a result to other services.
      */
-    private async handleParticle(particle: Particle): Promise<void> {
-        // if a current particle is processing, add new particle to the queue
-        if (this.getCurrentParticleId() !== undefined && this.getCurrentParticleId() !== particle.id) {
-            this.enqueueParticle(particle);
+    private async processRequest(request: RequestFlow): Promise<void> {
+        // enque the request if it's not the currently processed one
+        if (this.currentRequestId !== null && this.currentRequestId !== request.id) {
+            this.queue.push(request);
             return;
         }
 
@@ -166,69 +139,41 @@ export class ParticleProcessor {
 
         // start particle processing if queue is empty
         try {
-            this.setCurrentParticleId(particle.id);
+            this.currentRequestId = request.id;
             // check if a particle is relevant
             let now = Date.now();
+            const particle = request.getParticle();
             let actualTtl = particle.timestamp + particle.ttl - now;
             if (actualTtl <= 0) {
-                this.strategy?.onParticleTimeout(particle, now);
-            } else {
-                // if there is no subscription yet, previous data is empty
-                let prevData: Uint8Array = Buffer.from([]);
-                let prevParticle = this.getSubscription(particle.id);
-                if (prevParticle) {
-                    prevData = prevParticle.data;
-                    // update a particle in a subscription
-                    this.updateSubscription(particle);
-                } else {
-                    // set a particle with actual ttl
-                    this.subscribe(particle, actualTtl);
-                }
-                this.strategy.onInterpreterExecuting(particle);
-                let interpreterOutcomeStr = this.interpreter(
-                    particle.init_peer_id,
-                    particle.script,
-                    prevData,
-                    particle.data,
-                );
-                let interpreterOutcome: InterpreterOutcome = JSON.parse(interpreterOutcomeStr);
+                log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
+                request.onTimeout();
+                // TODO:: put this behavior under a flag mb?
+                // this.requests.delete(request.id);
+                return;
+            }
 
-                // update data after aquamarine execution
-                let newParticle: Particle = { ...particle, data: interpreterOutcome.data };
-                this.strategy.onInterpreterExecuted(interpreterOutcome);
+            log.debug('interpreter executing particle', request.getParticleWithoutData());
+            const interpreterOutcome = request.runInterpreter(this.interpreter);
+            log.debug('inner interpreter outcome:', interpreterOutcome);
 
-                this.updateSubscription(newParticle);
-
-                // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
-                if (interpreterOutcome.next_peer_pks.length > 0) {
-                    this.strategy.sendParticleFurther(newParticle);
-                }
+            // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
+            if (interpreterOutcome.next_peer_pks.length > 0) {
+                this.strategy.sendParticleFurther(request.getParticle());
             }
         } finally {
-            // get last particle from the queue
-            let nextParticle = this.popParticle();
-            // start the processing of a new particle if it exists
-            if (nextParticle) {
+            // get last request from the queue
+            let nextRequest = this.queue.pop();
+
+            // start the processing of the new request if it exists
+            if (nextRequest) {
                 // update current particle
-                this.setCurrentParticleId(nextParticle.id);
-                await this.handleParticle(nextParticle);
+                this.currentRequestId = nextRequest.id;
+
+                await this.processRequest(nextRequest);
             } else {
                 // wait for a new call (do nothing) if there is no new particle in a queue
-                this.setCurrentParticleId(undefined);
+                this.currentRequestId = null;
             }
-        }
-    }
-
-    /**
-     * Handle incoming particle from a relay.
-     */
-    private async handleExternalParticle(particle: Particle): Promise<void> {
-        let data: any = particle.data;
-        let error: any = data['protocol!error'];
-        if (error !== undefined) {
-            log.error('error in external particle: ', error);
-        } else {
-            await this.handleParticle(particle);
         }
     }
 
@@ -238,7 +183,11 @@ export class ParticleProcessor {
         args: any[],
         tetraplets: SecurityTetraplet[][],
     ): CallServiceResult => {
-        const request = this.getCurrentRequestFlow();
+        if (this.currentRequestId === null) {
+            throw Error('current request can`t be null here');
+        }
+
+        const request = this.requests.get(this.currentRequestId);
         return request.handler.execute({
             serviceId,
             fnName,
@@ -255,7 +204,7 @@ export class ParticleProcessor {
      */
     async instantiateInterpreter() {
         this.interpreter = await instantiateInterpreter(
-            wrapWithDataInjectionHandling(this.theHandler.bind(this), this.getCurrentParticleId.bind(this)),
+            wrapWithDataInjectionHandling(this.theHandler.bind(this), this.getCurrentRequestId.bind(this)),
             this.peerId,
         );
     }

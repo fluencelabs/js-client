@@ -102,6 +102,7 @@ export class FluenceClientTmp implements FluenceClient {
     }
 
     async initiateFlow(request: RequestFlow): Promise<void> {
+        await request.initState(this.selfPeerIdFull);
         this.processor.executeLocalParticle(request);
     }
 
