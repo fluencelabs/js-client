@@ -20,42 +20,8 @@ import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
 import { ParticleHandler, SecurityTetraplet, InterpreterOutcome, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
 import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
-import { RequestFlow, RequestFlowBuilder } from './RequestFlow';
+import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler } from './AquaHandler';
-
-// HACK:: make an api for aqua interpreter to accept variables in an easy way!
-let magicParticleStorage: Map<string, Map<string, any>> = new Map();
-
-// HACK:: make an api for aqua interpreter to accept variables in an easy way!
-export function injectDataIntoParticle(particleId: string, data: Map<string, any>, ttl: number) {
-    log.trace(`setting data for ${particleId}`, data);
-    magicParticleStorage.set(particleId, data);
-    setTimeout(() => {
-        log.trace(`data for ${particleId} is deleted`);
-        magicParticleStorage.delete(particleId);
-    }, ttl);
-}
-
-// HACK:: make an api for aqua interpreter to accept variables in an easy way!
-const wrapWithDataInjectionHandling = (
-    handler: ParticleHandler,
-    getCurrentParticleId: () => string,
-): ParticleHandler => {
-    return (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
-        if (serviceId === '__magic' && fnName === 'load') {
-            const current = getCurrentParticleId();
-            const data = magicParticleStorage.get(current);
-
-            const res = data ? data.get(args[0]) : {};
-            return {
-                ret_code: 0,
-                result: JSON.stringify(res),
-            };
-        }
-
-        return handler(serviceId, fnName, args, tetraplets);
-    };
-};
 
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
@@ -73,8 +39,11 @@ export class ParticleProcessor {
         this.clientHandler = clientHandler;
     }
 
+    /**
+     * Instantiate WebAssembly with AIR interpreter to execute AIR scripts
+     */
     async init() {
-        await this.instantiateInterpreter();
+        this.interpreter = await instantiateInterpreter(this.theHandler.bind(this), this.peerId);
     }
 
     async destroy() {
@@ -113,14 +82,11 @@ export class ParticleProcessor {
             request.receiveUpdate(particle);
         } else {
             request = RequestFlow.createExternal(particle);
+            request.handler.combineWith(this.clientHandler);
         }
         this.requests.set(request.id, request);
 
         await this.processRequest(request);
-    }
-
-    private getCurrentRequestId(): string | undefined {
-        return this.currentRequestId;
     }
 
     /**
@@ -137,10 +103,10 @@ export class ParticleProcessor {
             throw new Error('Undefined. Interpreter is not initialized');
         }
 
-        // start particle processing if queue is empty
+        // start request processing if queue is empty
         try {
             this.currentRequestId = request.id;
-            // check if a particle is relevant
+            // check if the request is relevant
             let now = Date.now();
             const particle = request.getParticle();
             let actualTtl = particle.timestamp + particle.ttl - now;
@@ -198,14 +164,4 @@ export class ParticleProcessor {
             },
         });
     };
-
-    /**
-     * Instantiate WebAssembly with AIR interpreter to execute AIR scripts
-     */
-    async instantiateInterpreter() {
-        this.interpreter = await instantiateInterpreter(
-            wrapWithDataInjectionHandling(this.theHandler.bind(this), this.getCurrentRequestId.bind(this)),
-            this.peerId,
-        );
-    }
 }

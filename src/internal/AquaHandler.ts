@@ -58,7 +58,7 @@ export class AquaCallHandler {
         return this;
     }
 
-    combine(other: AquaCallHandler): AquaCallHandler {
+    combineWith(other: AquaCallHandler): AquaCallHandler {
         this.middlewares = [...this.middlewares, ...other.middlewares];
         return this;
     }

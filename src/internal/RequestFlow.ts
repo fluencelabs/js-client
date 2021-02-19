@@ -8,6 +8,7 @@ import { injectDataIntoParticle } from './ParticleProcessor';
 
 const DEFAULT_TTL = 7000;
 
+// HACK:: make an api for aqua interpreter to accept variables in an easy way!
 function wrapWithVariableInjectionScript(script: string, fields: string[]): string {
     fields.forEach((v) => {
         script = `
@@ -78,8 +79,11 @@ export class RequestFlow {
             ttl = DEFAULT_TTL;
         }
 
-        injectDataIntoParticle(id, data, ttl);
+        // HACK:: make an api for aqua interpreter to accept variables in an easy way!
         let script = wrapWithVariableInjectionScript(this.script, Array.from(data.keys()));
+        this.handler.on('__magic', 'load', (args, _) => {
+            return data ? data.get(args[0]) : {};
+        });
 
         let particle: Particle = {
             id: id,
