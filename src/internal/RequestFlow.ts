@@ -1,10 +1,10 @@
-import { trace } from 'loglevel';
+import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
 import { InterpreterInvoke } from './aqua/interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome } from './commonTypes';
+import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, signParticle } from './particle';
-import { injectDataIntoParticle } from './ParticleProcessor';
 
 const DEFAULT_TTL = 7000;
 
@@ -104,6 +104,15 @@ export class RequestFlow {
         // TODO:: keep the history of particle data mb?
         this.prevData = this.state.data;
         this.state.data = particle.data;
+    }
+
+    async sendIntoConnection(connection: FluenceConnection): Promise<void> {
+        const particle = this.state;
+        try {
+            await connection.sendParticle(particle);
+        } catch (err) {
+            log.error(`Error on sending particle with id ${particle.id}: ${err}`);
+        }
     }
 
     runInterpreter(interpreter: InterpreterInvoke) {

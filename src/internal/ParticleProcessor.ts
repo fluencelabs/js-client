@@ -19,9 +19,9 @@ import * as PeerId from 'peer-id';
 import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
 import { ParticleHandler, SecurityTetraplet, InterpreterOutcome, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
-import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler } from './AquaHandler';
+import { FluenceConnection } from './FluenceConnection';
 
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
@@ -29,14 +29,14 @@ export class ParticleProcessor {
     private queue: RequestFlow[] = [];
     private currentRequestId: string | null;
 
-    strategy: ParticleProcessorStrategy;
-    peerId: PeerId;
-    clientHandler: AquaCallHandler;
+    private readonly peerId: PeerId;
+    private readonly clientHandler: AquaCallHandler;
+    private readonly connection: FluenceConnection;
 
-    constructor(strategy: ParticleProcessorStrategy, peerId: PeerId, clientHandler: AquaCallHandler) {
-        this.strategy = strategy;
+    constructor(peerId: PeerId, clientHandler: AquaCallHandler, connection: FluenceConnection) {
         this.peerId = peerId;
         this.clientHandler = clientHandler;
+        this.connection = connection;
     }
 
     /**
@@ -124,7 +124,7 @@ export class ParticleProcessor {
 
             // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
             if (interpreterOutcome.next_peer_pks.length > 0) {
-                this.strategy.sendParticleFurther(request.getParticle());
+                request.sendIntoConnection(this.connection);
             }
         } finally {
             // get last request from the queue

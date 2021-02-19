@@ -19,10 +19,7 @@ import Multiaddr from 'multiaddr';
 import { FluenceConnection } from './FluenceConnection';
 
 import { ParticleProcessor } from './ParticleProcessor';
-import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
-import { ErrorCodes, InterpreterOutcome, PeerIdB58, SecurityTetraplet } from './commonTypes';
-import { Particle } from './particle';
-import log from 'loglevel';
+import { PeerIdB58, SecurityTetraplet } from './commonTypes';
 import { FluenceClient } from 'src';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
@@ -55,7 +52,7 @@ export class FluenceClientTmp implements FluenceClient {
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
         this.handler = makeDefaultClientHandler();
-        this.processor = new ParticleProcessor(this.strategy, selfPeerIdFull, this.handler);
+        this.processor = new ParticleProcessor(selfPeerIdFull, this.handler, this.connection);
     }
 
     handler: AquaCallHandler;
@@ -117,30 +114,4 @@ export class FluenceClientTmp implements FluenceClient {
     unregisterCallback(serviceId: string, fnName: string) {
         // TODO:: don't know how to make unregistration yet;
     }
-
-    protected strategy: ParticleProcessorStrategy = {
-        sendParticleFurther: async (particle: Particle) => {
-            try {
-                await this.connection.sendParticle(particle);
-            } catch (reason) {
-                log.error(`Error on sending particle with id ${particle.id}: ${reason}`);
-            }
-        },
-
-        onParticleTimeout: (particle: Particle, now: number) => {
-            log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
-        },
-        onLocalParticleRecieved: (particle: Particle) => {
-            log.debug('local particle received', particle);
-        },
-        onExternalParticleRecieved: (particle: Particle) => {
-            log.debug('external particle received', particle);
-        },
-        onInterpreterExecuting: (particle: Particle) => {
-            log.debug('interpreter executing particle', particle);
-        },
-        onInterpreterExecuted: (interpreterOutcome: InterpreterOutcome) => {
-            log.debug('inner interpreter outcome:', interpreterOutcome);
-        },
-    };
 }
