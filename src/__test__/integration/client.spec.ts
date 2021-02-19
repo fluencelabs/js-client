@@ -1,9 +1,9 @@
-import { encode } from 'bs58';
-import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
-import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
-import { createConnectedClient } from '../util';
+import {encode} from 'bs58';
+import {generatePeerId, peerIdToSeed, seedToPeerId} from '../../internal/peerIdUtils';
+import {FluenceClientImpl} from '../../internal/FluenceClientImpl';
+import {createConnectedClient} from '../util';
 import log from 'loglevel';
-import { createClient } from '../../api';
+import {createClient} from '../../api';
 import Multiaddr from 'multiaddr';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -40,8 +40,7 @@ describe('Typescript usage suite', () => {
 
             await client.sendScript(script, data);
 
-            const res = await resMakingPromise;
-            return res;
+            return await resMakingPromise;
         };
 
         it('address as string', async function () {
@@ -198,13 +197,8 @@ describe('Typescript usage suite', () => {
 
     it('two clients should work inside the same time browser', async function () {
         // arrange
-        const pid1 = await generatePeerId();
-        const client1 = new FluenceClientImpl(pid1);
-        await client1.connect(devNodeAddress);
-
-        const pid2 = await generatePeerId();
-        const client2 = new FluenceClientImpl(pid2);
-        await client2.connect(devNodeAddress);
+        const client1 = await createConnectedClient(devNodeAddress);
+        const client2 = await createConnectedClient(devNodeAddress);
 
         let resMakingPromise = new Promise((resolve) => {
             client2.registerCallback('test', 'test', (args, _) => {
@@ -216,7 +210,7 @@ describe('Typescript usage suite', () => {
         let script = `
             (seq
                 (call "${client1.relayPeerId}" ("op" "identity") [])
-                (call "${pid2.toB58String()}" ("test" "test") [a b c d])
+                (call "${client2.selfPeerId}" ("test" "test") [a b c d])
             )
         `;
 
@@ -234,13 +228,8 @@ describe('Typescript usage suite', () => {
 
     it('event registration should work', async function () {
         // arrange
-        const pid1 = await generatePeerId();
-        const client1 = new FluenceClientImpl(pid1);
-        await client1.connect(devNodeAddress);
-
-        const pid2 = await generatePeerId();
-        const client2 = new FluenceClientImpl(pid2);
-        await client2.connect(devNodeAddress);
+        const client1 = await createConnectedClient(devNodeAddress);
+        const client2 = await createConnectedClient(devNodeAddress);
 
         client2.registerEvent('event_stream', 'test');
         const resMakingPromise = new Promise((resolve) => {
@@ -249,7 +238,7 @@ describe('Typescript usage suite', () => {
 
         // act
         let script = `
-            (call "${pid2.toB58String()}" ("event_stream" "test") [hello])
+            (call "${client2.selfPeerId}" ("event_stream" "test") [hello])
         `;
 
         let data: Map<string, any> = new Map();

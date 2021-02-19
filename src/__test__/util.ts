@@ -1,4 +1,4 @@
-import {createClient, generatePeerId} from '..';
+import {generatePeerId} from '..';
 import {FluenceClientImpl} from '../internal/FluenceClientImpl';
 
 export const createLocalClient = async () => {
@@ -9,5 +9,8 @@ export const createLocalClient = async () => {
 };
 
 export const createConnectedClient = async (node: string) => {
-    return await createClient(node);
+    const peerId = await generatePeerId();
+    const client = new FluenceClientImpl(peerId);
+    await client.connect(node);
+    return client;
 };

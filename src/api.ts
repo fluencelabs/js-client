@@ -21,7 +21,7 @@ type Node = {
 export const createClient = async (
     connectTo?: string | Multiaddr | Node,
     peerIdOrSeed?: PeerId | string,
-): Promise<FluenceClientImpl> => {
+): Promise<FluenceClient> => {
     let peerId;
     if (!peerIdOrSeed) {
         peerId = await generatePeerId();
@@ -176,19 +176,18 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         3000
     );
 
-    if (client.isConnected) {
-        try {
-            let result = await sendParticleAsFetch<string[][]>(client, particle, callbackFn, callbackService)
-            if (result[0][0] != msg) {
-                log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.")
-            }
-            return true;
-        } catch (e) {
-            console.error("Error on establishing connection: ", e)
-            return false;
-        }
+    if (!client.isConnected) {
+        return false;
+    }
 
-    } else {
+    try {
+        let result = await sendParticleAsFetch<string[][]>(client, particle, callbackFn, callbackService)
+        if (result[0][0] != msg) {
+            log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.")
+        }
+        return true;
+    } catch (e) {
+        log.error("Error on establishing connection: ", e)
         return false;
     }
 }
