@@ -17,21 +17,22 @@
 import { Particle } from './particle';
 import * as PeerId from 'peer-id';
 import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
-import { ParticleHandler, SecurityTetraplet, InterpreterOutcome, CallServiceResult } from './commonTypes';
+import { ParticleHandler, SecurityTetraplet, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler } from './AquaHandler';
 import { FluenceConnection } from './FluenceConnection';
 
 export class ParticleProcessor {
+    private readonly peerId: PeerId;
+    private readonly clientHandler: AquaCallHandler;
+    private readonly connection: FluenceConnection;
+
     private interpreter: InterpreterInvoke;
     private requests: Map<string, RequestFlow> = new Map();
     private queue: RequestFlow[] = [];
     private currentRequestId: string | null;
-
-    private readonly peerId: PeerId;
-    private readonly clientHandler: AquaCallHandler;
-    private readonly connection: FluenceConnection;
+    private watchDog;
 
     constructor(peerId: PeerId, clientHandler: AquaCallHandler, connection: FluenceConnection) {
         this.peerId = peerId;
@@ -44,10 +45,17 @@ export class ParticleProcessor {
      */
     async init() {
         this.interpreter = await instantiateInterpreter(this.theHandler.bind(this), this.peerId);
+        this.watchDog = setInterval(() => {
+            for (let key in this.requests.keys) {
+                if (this.requests.get(key).hasExpired()) {
+                    this.requests.delete(key);
+                }
+            }
+        }, 5000);
     }
 
     async destroy() {
-        // TODO: destroy interpreter
+        clearInterval(this.watchDog);
     }
 
     async executeLocalParticle(request: RequestFlow) {
@@ -89,9 +97,6 @@ export class ParticleProcessor {
         await this.processRequest(request);
     }
 
-    /**
-     * Pass a particle to a interpreter and send a result to other services.
-     */
     private async processRequest(request: RequestFlow): Promise<void> {
         // enque the request if it's not the currently processed one
         if (this.currentRequestId !== null && this.currentRequestId !== request.id) {
@@ -106,15 +111,7 @@ export class ParticleProcessor {
         // start request processing if queue is empty
         try {
             this.currentRequestId = request.id;
-            // check if the request is relevant
-            let now = Date.now();
-            const particle = request.getParticle();
-            let actualTtl = particle.timestamp + particle.ttl - now;
-            if (actualTtl <= 0) {
-                log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
-                request.onTimeout();
-                // TODO:: put this behavior under a flag mb?
-                // this.requests.delete(request.id);
+            if (request.hasExpired()) {
                 return;
             }
 

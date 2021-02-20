@@ -34,6 +34,8 @@ export class RequestFlow {
     static createExternal(particle: Particle): RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
         res.ttl = particle.ttl;
+        res.state = particle;
+        setTimeout(res.raiseTimeout, particle.ttl);
         return res;
     }
 
@@ -98,6 +100,7 @@ export class RequestFlow {
         particle.signature = await signParticle(peerId, particle);
 
         this.state = particle;
+        setTimeout(this.raiseTimeout, particle.ttl);
     }
 
     receiveUpdate(particle: Particle) {
@@ -134,6 +137,23 @@ export class RequestFlow {
         const res = { ...this.state };
         delete res.data;
         return res;
+    }
+
+    hasExpired(): boolean {
+        let now = Date.now();
+        const particle = this.getParticle();
+        let actualTtl = particle.timestamp + particle.ttl - now;
+        return actualTtl <= 0;
+    }
+
+    private raiseTimeout() {
+        const now = Date.now();
+        const particle = this.state;
+        log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
+
+        if (this.onTimeout) {
+            this.onTimeout();
+        }
     }
 }
 
