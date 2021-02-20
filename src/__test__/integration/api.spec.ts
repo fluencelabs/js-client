@@ -1,14 +1,8 @@
-import { encode } from 'bs58';
-import { certificateFromString, certificateToString, issue } from '../../internal/trust/certificate';
-import { TrustGraph } from '../../internal/trust/trust_graph';
-import { nodeRootCert } from '../../internal/trust/misc';
-import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
+import { generatePeerId } from '../../internal/peerIdUtils';
 import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
-import { createConnectedClient, createLocalClient } from '../util';
-import log from 'loglevel';
-import { createClient, sendParticle, sendParticleAsFetch, subscribeToEvent } from '../../api';
-import Multiaddr from 'multiaddr';
-import { RequestFlow } from '../../internal/particle';
+import { createConnectedClient } from '../util';
+import { sendParticleAsFetch, sendRequest, subscribeToEvent } from '../../api';
+import { RequestFlow } from '../../internal/RequestFlow';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -36,7 +30,7 @@ describe('Api tests', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await sendParticle(client, new RequestFlow(script, data));
+        await sendRequest(client, RequestFlow.createLocal(script, data));
 
         // assert
         const res = await resMakingPromise;
@@ -54,7 +48,7 @@ describe('Api tests', () => {
         const data = new Map();
         data.set('__relay', client.relayPeerId);
 
-        const [res] = await sendParticleAsFetch(client, new RequestFlow(script, data), 'getResult');
+        const [res] = await sendParticleAsFetch(client, RequestFlow.createLocal(script, data), 'getResult');
 
         // assert
         expect(res.external_addresses).not.toBeUndefined;
@@ -84,7 +78,7 @@ describe('Api tests', () => {
         let data: Map<string, any> = new Map();
         data.set('hello', 'world');
 
-        await sendParticle(client1, new RequestFlow(script, data));
+        await sendRequest(client1, RequestFlow.createLocal(script, data));
 
         // assert
         let res = await resMakingPromise;

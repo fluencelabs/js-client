@@ -58,13 +58,25 @@ export class AquaCallHandler {
         return this;
     }
 
+    unUse(middleware: Middleware): AquaCallHandler {
+        const index = this.middlewares.indexOf(middleware);
+        if (index !== -1) {
+            this.middlewares.splice(index, 1);
+        }
+        return this;
+    }
+
     combineWith(other: AquaCallHandler): AquaCallHandler {
         this.middlewares = [...this.middlewares, ...other.middlewares];
         return this;
     }
 
-    on(serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => any): AquaCallHandler {
-        return this.use(fnHandler(serviceId, fnName, handler));
+    on(serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => any): Function {
+        const mw = fnHandler(serviceId, fnName, handler);
+        this.use(mw);
+        return () => {
+            this.unUse(mw);
+        };
     }
 
     buildHanlder(initialHanlder?: InternalHandler): InternalHandler {

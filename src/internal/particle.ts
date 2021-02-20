@@ -18,8 +18,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
-import { injectDataIntoParticle } from './ParticleProcessor';
-import { AquaCallHandler } from './AquaHandler';
 
 export interface Particle {
     id: string;

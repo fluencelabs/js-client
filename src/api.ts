@@ -58,7 +58,7 @@ export const createClient = async (
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param { RequestFlow } request  - The particle to send.
  */
-export const sendParticle = async (client: FluenceClient, request: RequestFlow): Promise<void> => {
+export const sendRequest = async (client: FluenceClient, request: RequestFlow): Promise<void> => {
     await client.initiateFlow(request);
 };
 
@@ -75,22 +75,7 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    (client as FluenceClientTmp).registerCallback(serviceId, fnName, handler);
-};
-
-// prettier-ignore
-/**
- * Removes registers for the function previously registered with {@link registerServiceFunction}
- * @param { FluenceClient } client - The Fluence Client instance.
- * @param { string } serviceId - The identifier of service used in {@link registerServiceFunction} call
- * @param { string } fnName - The identifier of function used in {@link registerServiceFunction} call
- */
-export const unregisterServiceFunction = (
-    client: FluenceClient,
-    serviceId: string,
-    fnName: string
-) => {
-    (client as FluenceClientTmp).unregisterCallback(serviceId, fnName);
+    return (client as FluenceClientTmp).registerCallback(serviceId, fnName, handler);
 };
 
 /**
@@ -116,10 +101,7 @@ export const subscribeToEvent = (
 
         return {};
     };
-    registerServiceFunction(client, serviceId, fnName, realHandler);
-    return () => {
-        unregisterServiceFunction(client, serviceId, fnName);
-    };
+    return registerServiceFunction(client, serviceId, fnName, realHandler);
 };
 
 /**
@@ -151,7 +133,7 @@ export const sendParticleAsFetch = async <T>(
         }, particle.ttl);
     });
 
-    await sendParticle(client, particle);
+    await sendRequest(client, particle);
 
     return promise;
 };

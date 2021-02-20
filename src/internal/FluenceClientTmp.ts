@@ -107,11 +107,7 @@ export class FluenceClientTmp implements FluenceClient {
         serviceId: string,
         fnName: string,
         callback: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
-    ) {
-        this.handler.on(serviceId, fnName, callback);
-    }
-
-    unregisterCallback(serviceId: string, fnName: string) {
-        // TODO:: don't know how to make unregistration yet;
+    ): Function {
+        return this.handler.on(serviceId, fnName, callback);
     }
 }

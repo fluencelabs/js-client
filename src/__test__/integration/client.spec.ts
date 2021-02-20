@@ -1,12 +1,11 @@
-import {encode} from 'bs58';
-import {generatePeerId, peerIdToSeed, seedToPeerId} from '../../internal/peerIdUtils';
+import { encode } from 'bs58';
+import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
 import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
 import { createConnectedClient } from '../util';
 import log from 'loglevel';
-import { createClient, sendParticle } from '../../api';
+import { createClient, sendRequest, subscribeToEvent } from '../../api';
 import Multiaddr from 'multiaddr';
-import { RequestFlow } from '../../internal/particle';
-
+import { RequestFlow } from '../../internal/RequestFlow';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -40,7 +39,7 @@ describe('Typescript usage suite', () => {
             let data: Map<string, any> = new Map();
             data.set('hello', 'world');
 
-            await client.sendParticle(new RequestFlow(script, data));
+            await client.initiateFlow(RequestFlow.createLocal(script, data));
 
             return await resMakingPromise;
         };
@@ -144,7 +143,7 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await sendParticle(client, new RequestFlow(script, data));
+        await sendRequest(client, RequestFlow.createLocal(script, data));
 
         // assert
         const res = await resMakingPromise;
@@ -176,36 +175,9 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await client1.sendParticle(new RequestFlow(script, data));
+        await client1.initiateFlow(RequestFlow.createLocal(script, data));
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
-    });
-    it('event registration should work', async function () {
-        // arrange
-        const client1 = await createConnectedClient(devNodeAddress);
-        const client2 = await createConnectedClient(devNodeAddress);
-
-        client2.registerEvent('event_stream', 'test');
-        const resMakingPromise = new Promise((resolve) => {
-            client2.subscribe('event_stream', resolve);
-        });
-
-        // act
-        let script = `
-            (call "${client2.selfPeerId}" ("event_stream" "test") [hello])
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('hello', 'world');
-
-        await client1.fireAndForget(script, data);
-
-        // assert
-        let res = await resMakingPromise;
-        expect(res).toEqual({
-            type: 'test',
-            args: ['world'],
-        });
     });
 });

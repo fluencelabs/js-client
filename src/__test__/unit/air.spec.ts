@@ -1,4 +1,4 @@
-import { RequestFlow } from '../../internal/particle';
+import { RequestFlow } from '../../internal/RequestFlow';
 import { createLocalClient } from '../util';
 
 describe('== AIR suite', () => {
@@ -17,7 +17,7 @@ describe('== AIR suite', () => {
 
         // act
         const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
-        await client.sendParticle(new RequestFlow(script));
+        await client.initiateFlow(RequestFlow.createLocal(script));
 
         // assert
         expect(res).toEqual(client.selfPeerId);
@@ -39,7 +39,7 @@ describe('== AIR suite', () => {
         // act
         const arg = 'hello';
         const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") ["${arg}"])`;
-        await client.sendParticle(new RequestFlow(script));
+        await client.initiateFlow(RequestFlow.createLocal(script));
 
         // assert
         expect(res).toEqual(arg);
@@ -62,7 +62,7 @@ describe('== AIR suite', () => {
         const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [arg1])`;
         const data = new Map();
         data.set('arg1', 'hello');
-        await client.sendParticle(new RequestFlow(script, data));
+        await client.initiateFlow(RequestFlow.createLocal(script, data));
 
         // assert
         expect(res).toEqual('hello');
@@ -97,7 +97,7 @@ describe('== AIR suite', () => {
             (call %init_peer_id% ("${makeDataServiceId}" "${makeDataFnName}") [] result)
             (call %init_peer_id% ("${getDataServiceId}" "${getDataFnName}") [result.$.field])
         )`;
-        await client.sendParticle(new RequestFlow(script));
+        await client.initiateFlow(RequestFlow.createLocal(script));
 
         // assert
         const tetraplet = res.tetraplets[0][0];
@@ -146,7 +146,7 @@ describe('== AIR suite', () => {
                         (call %init_peer_id% ("${serviceId2}" "${fnName2}") ["${arg2}"] result2))
                        (call %init_peer_id% ("${serviceId3}" "${fnName3}") [result1 result2]))
         `;
-        await client.sendParticle(new RequestFlow(script));
+        await client.initiateFlow(RequestFlow.createLocal(script));
 
         // assert
         expect(res1).toEqual(arg1);
