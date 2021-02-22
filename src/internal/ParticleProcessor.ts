@@ -151,7 +151,7 @@ export class ParticleProcessor {
         }
 
         const request = this.requests.get(this.currentRequestId);
-        return request.handler.execute({
+        const res = request.handler.execute({
             serviceId,
             fnName,
             args,
@@ -160,5 +160,9 @@ export class ParticleProcessor {
                 particleId: request.id,
             },
         });
+        return {
+            ret_code: res.retCode,
+            result: JSON.stringify(res.result || {}),
+        };
     };
 }

@@ -28,9 +28,8 @@ export const fnHandler = (serviceId: string, fnName: string, handler: (args: any
             const res = handler(req.args, req.tetraplets);
             resp.retCode = ErrorCodes.success;
             resp.result = res;
-        } else {
-            next();
         }
+        next();
     };
 };
 
@@ -39,7 +38,7 @@ export const errorHandler: Middleware = (req: AquaCall, resp: AquaResult, next: 
         next();
     } catch (e) {
         resp.retCode = ErrorCodes.exceptionInHandler;
-        resp.result = e.message;
+        resp.result = e.toString();
     }
 };
 
@@ -79,26 +78,24 @@ export class AquaCallHandler {
         };
     }
 
-    buildHanlder(initialHanlder?: InternalHandler): InternalHandler {
-        let h: InternalHandler = initialHanlder || AquaCallHandler.defaultHandler;
+    buildHanlder(): InternalHandler {
+        const result = this.middlewares.reduceRight<InternalHandler>(
+            (agg, cur) => {
+                return (req, resp) => {
+                    cur(req, resp, () => agg(req, resp));
+                };
+            },
+            (req, res) => {},
+        );
 
-        for (let mw of this.middlewares) {
-            h = (req, resp) => {
-                mw(req, resp, () => h(req, resp));
-            };
-        }
-
-        return h;
+        return result;
     }
 
-    execute(req: AquaCall): CallServiceResult {
+    execute(req: AquaCall): AquaResult {
         const res: AquaResult = {
             retCode: ErrorCodes.unkownError,
         };
         this.buildHanlder()(req, res);
-        return {
-            ret_code: res.retCode,
-            result: JSON.stringify(res.result || {}),
-        };
+        return res;
     }
 }
