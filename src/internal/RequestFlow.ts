@@ -69,7 +69,7 @@ export class RequestFlow {
 
     async initState(peerId: PeerId): Promise<void> {
         const id = this.id;
-        let currentTime = new Date().getTime();
+        let currentTime = Date.now();
 
         let data = this.variables;
         if (this.variables === undefined) {
@@ -87,7 +87,7 @@ export class RequestFlow {
             return data ? data.get(args[0]) : {};
         });
 
-        let particle: Particle = {
+        const particle: Particle = {
             id: id,
             init_peer_id: peerId.toB58String(),
             timestamp: currentTime,
@@ -166,7 +166,7 @@ export class RequestFlowBuilder {
         if (!this.params.script) {
             throw new Error();
         }
-        const res = new RequestFlow(this.params.script, this.params.data, this.params.ttl);
+        const res = RequestFlow.createLocal(this.params.script, this.params.data, this.params.ttl);
         if (this.handlerConfig) {
             this.handlerConfig(res.handler);
         }
@@ -199,7 +199,7 @@ export class RequestFlowBuilder {
         }
     }
 
-    configHandler(config: (AquaCallHandler) => void): RequestFlowBuilder {
+    configHandler(config: (handler: AquaCallHandler) => void): RequestFlowBuilder {
         this.handlerConfig = config;
         return this;
     }

@@ -31,7 +31,7 @@ export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
     private requests: Map<string, RequestFlow> = new Map();
     private queue: RequestFlow[] = [];
-    private currentRequestId: string | null;
+    private currentRequestId: string | null = null;
     private watchDog;
 
     constructor(peerId: PeerId, clientHandler: AquaCallHandler, connection: FluenceConnection) {
@@ -59,6 +59,7 @@ export class ParticleProcessor {
     }
 
     async executeLocalParticle(request: RequestFlow) {
+        request.handler.combineWith(this.clientHandler);
         this.requests.set(request.id, request);
 
         log.debug('local particle received', request.getParticleWithoutData());

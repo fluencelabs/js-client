@@ -1,4 +1,4 @@
-import { RequestFlow } from '../../internal/RequestFlow';
+import { RequestFlow, RequestFlowBuilder } from '../../internal/RequestFlow';
 import { createLocalClient } from '../util';
 
 describe('== AIR suite', () => {
@@ -6,18 +6,21 @@ describe('== AIR suite', () => {
         // arrange
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
-
-        const client = await createLocalClient();
+        const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
 
         let res;
-        client.registerCallback(serviceId, fnName, (args, _) => {
-            res = args[0];
-            return res;
-        });
+        const request = new RequestFlowBuilder()
+            .withScript(script)
+            .configHandler((h) => {
+                h.on(serviceId, fnName, (args) => {
+                    res = args[0];
+                });
+            })
+            .build();
 
         // act
-        const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
-        await client.initiateFlow(RequestFlow.createLocal(script));
+        const client = await createLocalClient();
+        await client.initiateFlow(request);
 
         // assert
         expect(res).toEqual(client.selfPeerId);
