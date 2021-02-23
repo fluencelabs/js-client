@@ -91,6 +91,10 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
     return script;
 }
 
+function wrapWithXor(script: string): string {
+    return `(xor ${script} (null))`;
+}
+
 export async function build(
     peerId: PeerId,
     script: string,
@@ -111,6 +115,7 @@ export async function build(
 
     injectDataIntoParticle(id, data, ttl);
     script = wrapWithVariableInjectionScript(script, Array.from(data.keys()));
+    script = wrapWithXor(script);
 
     let particle: ParticleDto = {
         id: id,
