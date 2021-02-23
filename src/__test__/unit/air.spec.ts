@@ -1,4 +1,7 @@
+import log from 'loglevel';
 import { createLocalClient } from '../util';
+
+log.setLevel('debug');
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {

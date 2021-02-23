@@ -87,9 +87,9 @@ export abstract class FluenceClientBase {
         this.connection = connection;
     }
 
-    async sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string> {
-        const particle = await build(this.selfPeerIdFull, script, data, ttl);
-        this.processor.executeLocalParticle(particle);
-        return particle.id;
+    async sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<[Promise<void>, string]> {
+        const particle = await build(this.selfPeerIdFull, this.relayPeerId, script, data, ttl);
+        const promise = this.processor.executeLocalParticle(particle);
+        return [promise, particle.id];
     }
 }

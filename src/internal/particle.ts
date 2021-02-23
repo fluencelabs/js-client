@@ -19,6 +19,7 @@ import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import { injectDataIntoParticle } from './ParticleProcessor';
+import { PeerIdB58 } from './commonTypes';
 
 const DEFAULT_TTL = 7000;
 
@@ -92,11 +93,27 @@ function wrapWithVariableInjectionScript(script: string, fields: string[]): stri
 }
 
 function wrapWithXor(script: string): string {
-    return `(xor ${script} (null))`;
+    return `
+    (xor
+        ${script}
+        (seq
+            (call __magic_relay ("op" "identity") [])
+            (call %init_peer_id% ("__magic" "handle_xor") [%last_error%])
+        )
+    )`;
+}
+
+function wrapWithXorLocal(script: string): string {
+    return `
+    (xor
+        ${script}
+        (call %init_peer_id% ("__magic" "handle_xor") [%last_error%])
+    )`;
 }
 
 export async function build(
     peerId: PeerId,
+    relay: PeerIdB58,
     script: string,
     data?: Map<string, any>,
     ttl?: number,
@@ -113,9 +130,16 @@ export async function build(
         ttl = DEFAULT_TTL;
     }
 
+    if (relay) {
+        data.set('__magic_relay', relay);
+    }
     injectDataIntoParticle(id, data, ttl);
     script = wrapWithVariableInjectionScript(script, Array.from(data.keys()));
-    script = wrapWithXor(script);
+    if (relay) {
+        script = wrapWithXor(script);
+    } else {
+        script = wrapWithXorLocal(script);
+    }
 
     let particle: ParticleDto = {
         id: id,

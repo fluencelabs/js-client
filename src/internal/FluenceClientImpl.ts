@@ -71,7 +71,7 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
         data = this.addRelayToArgs(data);
         const callBackId = genUUID();
         script = wrapFetchCall(script, callBackId, resultArgNames);
-        const particle = await build(this.selfPeerIdFull, script, data, ttl, callBackId);
+        const particle = await build(this.selfPeerIdFull, this.relayPeerId, script, data, ttl, callBackId);
 
         return new Promise<T>((resolve, reject) => {
             this.fetchParticles.set(callBackId, { resolve, reject });

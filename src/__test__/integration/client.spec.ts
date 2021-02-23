@@ -1,9 +1,9 @@
-import {encode} from 'bs58';
-import {generatePeerId, peerIdToSeed, seedToPeerId} from '../../internal/peerIdUtils';
-import {FluenceClientImpl} from '../../internal/FluenceClientImpl';
-import {createConnectedClient} from '../util';
+import { encode } from 'bs58';
+import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
+import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
+import { createConnectedClient, createLocalClient } from '../util';
 import log from 'loglevel';
-import {createClient} from '../../api';
+import { createClient, sendParticle } from '../../api';
 import Multiaddr from 'multiaddr';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
@@ -252,5 +252,36 @@ describe('Typescript usage suite', () => {
             type: 'test',
             args: ['world'],
         });
+    });
+
+    it('xor handling should work connected client', async function () {
+        // arrange
+        const client = await createConnectedClient(devNodeAddress);
+
+        // act
+        let script = `
+            (seq 
+                (call relay ("op" "identity") [])
+                (call relay ("incorrect" "service") ["incorrect_arg"])
+            )
+        `;
+
+        const [promise, _] = await client.sendScript(script);
+
+        // assert
+        expect(promise).rejects;
+    });
+
+    it('xor handling should work local client', async function () {
+        // arrange
+        const client = await createLocalClient();
+
+        // act
+        let script = `(call %init_peer_id% ("incorrect" "service") ["incorrect_arg"])`;
+
+        const [promise, _] = await client.sendScript(script);
+
+        // assert
+        expect(promise).rejects;
     });
 });

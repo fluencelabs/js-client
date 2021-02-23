@@ -55,6 +55,25 @@ const wrapWithDataInjectionHandling = (
     };
 };
 
+export class ParticleError extends Error {
+    constructor(m: string) {
+        super(m);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, ParticleError.prototype);
+    }
+}
+
+const wrapWithXorHandling = (handler: ParticleHandler): ParticleHandler => {
+    return (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
+        if (serviceId === '__magic' && fnName === 'handle_xor') {
+            throw new ParticleError(args[0]);
+        }
+
+        return handler(serviceId, fnName, args, tetraplets);
+    };
+};
+
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
     private subscriptions: Map<string, ParticleDto> = new Map();
@@ -79,9 +98,7 @@ export class ParticleProcessor {
 
     async executeLocalParticle(particle: ParticleDto) {
         this.strategy?.onLocalParticleRecieved(particle);
-        await this.handleParticle(particle).catch((err) => {
-            log.error('particle processing failed: ' + err);
-        });
+        await this.handleParticle(particle);
     }
 
     async executeExternalParticle(particle: ParticleDto) {
@@ -192,6 +209,11 @@ export class ParticleProcessor {
                         this.strategy.sendParticleFurther(newParticle);
                     }
                 }
+            } catch (err) {
+                log.error('particle processing failed: ' + err);
+                if (err instanceof ParticleError) {
+                    throw err;
+                }
             } finally {
                 // get last particle from the queue
                 let nextParticle = this.popParticle();
@@ -226,9 +248,11 @@ export class ParticleProcessor {
      */
     async instantiateInterpreter() {
         this.interpreter = await instantiateInterpreter(
-            wrapWithDataInjectionHandling(
-                this.strategy.particleHandler.bind(this),
-                this.getCurrentParticleId.bind(this),
+            wrapWithXorHandling(
+                wrapWithDataInjectionHandling(
+                    this.strategy.particleHandler.bind(this),
+                    this.getCurrentParticleId.bind(this),
+                ),
             ),
             this.peerId,
         );
