@@ -1,13 +1,15 @@
-import {encode} from 'bs58';
-import {generatePeerId, peerIdToSeed, seedToPeerId} from '../../internal/peerIdUtils';
-import {FluenceClientImpl} from '../../internal/FluenceClientImpl';
-import {createConnectedClient} from '../util';
+import { encode } from 'bs58';
+import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
+import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
+import { createConnectedClient } from '../util';
 import log from 'loglevel';
-import {createClient} from '../../api';
+import { createClient } from '../../api';
 import Multiaddr from 'multiaddr';
 
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+
+log.setLevel('debug');
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
