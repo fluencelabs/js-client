@@ -202,8 +202,10 @@ export class ParticleProcessor {
                         this.strategy.sendParticleFurther(newParticle);
                     }
 
-                    if (stepperOutcome.ret_code == 0 && resolve) {
-                        resolve()
+                    if (stepperOutcome.ret_code == 0) {
+                        if (resolve) {
+                            resolve()
+                        }
                     } else {
                         const error = stepperOutcome.error_message;
                         if (reject) {

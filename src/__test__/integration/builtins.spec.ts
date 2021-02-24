@@ -71,7 +71,7 @@ describe('Builtins usage suite', () => {
 
         let base64 = 'MjNy';
 
-        await uploadModule(client, 'test_broken_module', base64, config);
+        await uploadModule(client, 'test_broken_module', base64, config, 10000);
     });
 
     it('add_blueprint', async function () {
@@ -101,9 +101,9 @@ describe('Builtins usage suite', () => {
         let buf = Buffer.from(key);
 
         let r = Math.random().toString(36).substring(7);
-        await addProvider(client, buf, dev2peerId, r);
+        await addProvider(client, buf, dev2peerId, r, undefined, 10000);
 
-        let pr = await getProviders(client, buf);
+        let pr = await getProviders(client, buf, undefined, 10000);
         console.log(pr);
         console.log(r);
         expect(r).toEqual(pr[0][0].service_id);
