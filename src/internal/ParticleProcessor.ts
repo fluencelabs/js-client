@@ -79,8 +79,15 @@ export class ParticleProcessor {
 
     async executeLocalParticle(particle: ParticleDto) {
         this.strategy?.onLocalParticleRecieved(particle);
-        await this.handleParticle(particle).catch((err) => {
-            log.error('particle processing failed: ' + err);
+        return new Promise((resolve, reject) => {
+            const resolveCallback = function () {
+                resolve()
+            }
+            const rejectCallback = function (err: any) {
+                reject(err)
+            }
+            // we check by callbacks that the script passed through the interpreter without errors
+            this.handleParticle(particle, resolveCallback, rejectCallback)
         });
     }
 
@@ -143,8 +150,10 @@ export class ParticleProcessor {
 
     /**
      * Pass a particle to a interpreter and send a result to other services.
+     * `resolve` will be completed if ret_code equals 0
+     * `reject` will be completed if ret_code not equals 0
      */
-    private async handleParticle(particle: ParticleDto): Promise<void> {
+    private async handleParticle(particle: ParticleDto, resolve?: () => void, reject?: (r: any) => any): Promise<void> {
         // if a current particle is processing, add new particle to the queue
         if (this.getCurrentParticleId() !== undefined && this.getCurrentParticleId() !== particle.id) {
             this.enqueueParticle(particle);
@@ -160,6 +169,7 @@ export class ParticleProcessor {
                 let actualTtl = particle.timestamp + particle.ttl - now;
                 if (actualTtl <= 0) {
                     this.strategy?.onParticleTimeout(particle, now);
+                    if (reject) reject(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`)
                 } else {
                     // if there is no subscription yet, previous data is empty
                     let prevData: Uint8Array = Buffer.from([]);
@@ -191,6 +201,26 @@ export class ParticleProcessor {
                     if (stepperOutcome.next_peer_pks.length > 0) {
                         this.strategy.sendParticleFurther(newParticle);
                     }
+
+                    if (stepperOutcome.ret_code == 0) {
+                        if (resolve) {
+                            resolve()
+                        }
+                    } else {
+                        const error = stepperOutcome.error_message;
+                        if (reject) {
+                            reject(error);
+                        } else {
+                            log.error("Unhandled error: ", error);
+                        }
+                    }
+                }
+            } catch (e) {
+                if (reject) {
+                    reject(e);
+                } else {
+                    log.error("Unhandled error: ", e)
+                    throw e;
                 }
             } finally {
                 // get last particle from the queue
