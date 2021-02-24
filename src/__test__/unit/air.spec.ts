@@ -1,4 +1,4 @@
-import { createLocalClient } from '../util';
+import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
@@ -57,7 +57,7 @@ describe('== AIR suite', () => {
 
         const script = `(call %init_peer_id% ("" "") [""])`;
 
-        await expect(client.sendScript(script, undefined, 1)).rejects.toContain("Particle expired");
+        await expect(client.sendScript(script, undefined, 1)).rejects.toContain('Particle expired');
     });
 
     it.skip('call broken script by fetch', async function () {

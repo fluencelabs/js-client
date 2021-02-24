@@ -64,7 +64,7 @@ Make a particle
 const particle = new Particle(
     `
     (seq
-        (call myRelay ("op" "identify") [] result)
+        (call myRelay ("peer" "identify") [] result)
         (call %init_peer_id% ("helloService" "helloFunction") [result])
     )`,
     {
