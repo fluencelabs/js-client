@@ -5,7 +5,7 @@ import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
 import { FluenceClientImpl } from './internal/FluenceClientImpl';
-import log from "loglevel";
+import log from 'loglevel';
 
 type Node = {
     peerId: string;
@@ -45,8 +45,8 @@ export const createClient = async (
         }
 
         await client.connect(theAddress);
-        if (!await checkConnection(client)) {
-            throw new Error("Connection check failed. Check if the node is working or try to connect to another node")
+        if (!(await checkConnection(client))) {
+            throw new Error('Connection check failed. Check if the node is working or try to connect to another node');
         }
     }
 
@@ -158,8 +158,8 @@ export const sendParticleAsFetch = async <T>(
 
 export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
     let msg = Math.random().toString(36).substring(7);
-    let callbackFn = "checkConnection"
-    let callbackService = "_callback"
+    let callbackFn = 'checkConnection';
+    let callbackService = '_callback';
 
     const particle = new Particle(
         `
@@ -171,9 +171,8 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         {
             __relay: client.relayPeerId,
             myPeerId: client.selfPeerId,
-            msg
+            msg,
         },
-        3000
     );
 
     if (!client.isConnected) {
@@ -181,13 +180,13 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
     }
 
     try {
-        let result = await sendParticleAsFetch<string[][]>(client, particle, callbackFn, callbackService)
+        let result = await sendParticleAsFetch<string[][]>(client, particle, callbackFn, callbackService);
         if (result[0][0] != msg) {
-            log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.")
+            log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.");
         }
         return true;
     } catch (e) {
-        log.error("Error on establishing connection: ", e)
+        log.error('Error on establishing connection: ', e);
         return false;
     }
-}
+};
