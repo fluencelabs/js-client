@@ -96,7 +96,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('add and remove script', async function () {
-        const client = await createConnectedClient(nodes[1].multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         console.log('peerid: ' + client.selfPeerId);
 
