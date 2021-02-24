@@ -169,6 +169,7 @@ export class ParticleProcessor {
                 let actualTtl = particle.timestamp + particle.ttl - now;
                 if (actualTtl <= 0) {
                     this.strategy?.onParticleTimeout(particle, now);
+                    if (reject) reject(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`)
                 } else {
                     // if there is no subscription yet, previous data is empty
                     let prevData: Uint8Array = Buffer.from([]);
