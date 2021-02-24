@@ -79,8 +79,7 @@ export class ParticleProcessor {
 
     async executeLocalParticle(particle: ParticleDto) {
         this.strategy?.onLocalParticleRecieved(particle);
-        const _this = this;
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             const resolveCallback = function () {
                 resolve()
             }
@@ -88,7 +87,7 @@ export class ParticleProcessor {
                 reject(err)
             }
             // we check by callbacks that the script passed through the interpreter without errors
-            _this.handleParticle(particle, resolveCallback, rejectCallback)
+            this.handleParticle(particle, resolveCallback, rejectCallback)
         });
     }
 
@@ -202,8 +201,8 @@ export class ParticleProcessor {
                         this.strategy.sendParticleFurther(newParticle);
                     }
 
-                    if (stepperOutcome.ret_code == 0) {
-                        if (resolve) resolve()
+                    if (stepperOutcome.ret_code == 0 && resolve) {
+                        resolve()
                     } else {
                         const error = stepperOutcome.error_message;
                         if (reject) {
