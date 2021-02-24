@@ -12,7 +12,10 @@ import {
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
 import { createConnectedClient } from '../util';
-import {checkConnection} from "../../api";
+import { checkConnection } from '../../api';
+import log from 'loglevel';
+import { generatePeerId } from '../..';
+import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
 
 const dev2multiaddr = '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb';
 const dev3multiaddr = '/dns4/dev.fluence.dev/tcp/19004/wss/p2p/12D3KooWJbJFaZ3k5sNd8DjQgg3aERoKtBAnirEvPV8yp76kEXHB';
@@ -45,7 +48,10 @@ describe('Builtins usage suite', () => {
     });
 
     it('check_connection', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const peerId = await generatePeerId();
+        const client = new FluenceClientImpl(peerId);
+        await client.local();
+        await client.connect(dev2multiaddr);
 
         let isConnected = await checkConnection(client);
 

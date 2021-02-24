@@ -9,8 +9,6 @@ import Multiaddr from 'multiaddr';
 const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 
-log.setLevel('debug');
-
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
         // prettier-ignore
