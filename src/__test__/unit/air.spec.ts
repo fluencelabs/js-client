@@ -44,6 +44,22 @@ describe('== AIR suite', () => {
         expect(res).toEqual(arg);
     });
 
+    it('call broken script', async function () {
+        const client = await createLocalClient();
+
+        const script = `(htyth)`;
+
+        await expect(client.sendScript(script)).rejects.toContain("aqua script can't be parsed");
+    });
+
+    it('call broken script by fetch', async function () {
+        const client = await createLocalClient();
+
+        const script = `(htyth)`;
+
+        await expect(client.fetch(script, ['result'])).rejects.toContain("aqua script can't be parsed");
+    });
+
     it('check particle arguments', async function () {
         // arrange
         const serviceId = 'test_service';
