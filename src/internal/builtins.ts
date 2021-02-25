@@ -87,7 +87,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
 /**
  * Get all available interfaces hosted on a connected relay. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
- * @returns { Array<string> } - list of available modules on the connected relay
+ * @returns { Array<string> } - list of available interfaces on the connected relay
  */
 export const getInterfaces = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getInterfaces';
