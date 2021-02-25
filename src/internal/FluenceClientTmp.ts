@@ -101,12 +101,4 @@ export class FluenceClientTmp implements FluenceClient {
         await request.initState(this.selfPeerIdFull);
         this.processor.executeLocalParticle(request);
     }
-
-    registerCallback(
-        serviceId: string,
-        fnName: string,
-        callback: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
-    ): Function {
-        return this.handler.on(serviceId, fnName, callback);
-    }
 }

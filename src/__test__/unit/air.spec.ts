@@ -1,4 +1,5 @@
-import { RequestFlow, RequestFlowBuilder } from '../../internal/RequestFlow';
+import { RequestFlowBuilder } from '../..';
+import { RequestFlow } from '../../internal/RequestFlow';
 import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {
@@ -10,7 +11,7 @@ describe('== AIR suite', () => {
 
         let res;
         const request = new RequestFlowBuilder()
-            .withScript(script)
+            .withRawScript(script)
             .configHandler((h) => {
                 h.on(serviceId, fnName, (args) => {
                     res = args[0];
@@ -34,7 +35,7 @@ describe('== AIR suite', () => {
         const client = await createLocalClient();
 
         let res;
-        client.registerCallback(serviceId, fnName, (args, _) => {
+        client.handler.on(serviceId, fnName, (args, _) => {
             res = args[0];
             return res;
         });
@@ -80,7 +81,7 @@ describe('== AIR suite', () => {
         const client = await createLocalClient();
 
         let res;
-        client.registerCallback(serviceId, fnName, (args, _) => {
+        client.handler.on(serviceId, fnName, (args, _) => {
             res = args[0];
             return res;
         });
@@ -104,13 +105,13 @@ describe('== AIR suite', () => {
 
         const client = await createLocalClient();
 
-        client.registerCallback(makeDataServiceId, makeDataFnName, (args, _) => {
+        client.handler.on(makeDataServiceId, makeDataFnName, (args, _) => {
             return {
                 field: 42,
             };
         });
         let res;
-        client.registerCallback(getDataServiceId, getDataFnName, (args, tetraplets) => {
+        client.handler.on(getDataServiceId, getDataFnName, (args, tetraplets) => {
             res = {
                 args: args,
                 tetraplets: tetraplets,
@@ -142,7 +143,7 @@ describe('== AIR suite', () => {
         const serviceId1 = 'check1';
         const fnName1 = 'fn1';
         let res1;
-        client.registerCallback(serviceId1, fnName1, (args, _) => {
+        client.handler.on(serviceId1, fnName1, (args, _) => {
             res1 = args[0];
             return res1;
         });
@@ -150,7 +151,7 @@ describe('== AIR suite', () => {
         const serviceId2 = 'check2';
         const fnName2 = 'fn2';
         let res2;
-        client.registerCallback(serviceId2, fnName2, (args, _) => {
+        client.handler.on(serviceId2, fnName2, (args, _) => {
             res2 = args[0];
             return res2;
         });
@@ -158,7 +159,7 @@ describe('== AIR suite', () => {
         const serviceId3 = 'check3';
         const fnName3 = 'fn3';
         let res3;
-        client.registerCallback(serviceId3, fnName3, (args, _) => {
+        client.handler.on(serviceId3, fnName3, (args, _) => {
             res3 = args;
             return res3;
         });
