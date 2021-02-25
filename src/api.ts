@@ -59,8 +59,7 @@ export const createClient = async (
  * @param { Particle } particle  - The particle to send.
  */
 export const sendParticle = async (client: FluenceClient, particle: Particle): Promise<string> => {
-    const [promise, id] = await client.sendScript(particle.script, particle.data, particle.ttl);
-    return id;
+    return await client.sendScript(particle.script, particle.data, particle.ttl);
 };
 
 /**
@@ -174,7 +173,6 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
             myPeerId: client.selfPeerId,
             msg,
         },
-        3000,
     );
 
     if (!client.isConnected) {

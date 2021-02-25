@@ -73,10 +73,11 @@ export class FluenceClientImpl extends FluenceClientBase implements FluenceClien
         script = wrapFetchCall(script, callBackId, resultArgNames);
         const particle = await build(this.selfPeerIdFull, this.relayPeerId, script, data, ttl, callBackId);
 
-        return new Promise<T>((resolve, reject) => {
+        const prFetch = new Promise<T>(async (resolve, reject) => {
             this.fetchParticles.set(callBackId, { resolve, reject });
-            this.processor.executeLocalParticle(particle);
         });
+        const prExec = this.processor.executeLocalParticle(particle);
+        return prExec.then(() => prFetch);
     }
 
     // TODO:: better naming probably?

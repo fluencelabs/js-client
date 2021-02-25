@@ -1,14 +1,11 @@
 import { encode } from 'bs58';
 import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
 import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
-import { createConnectedClient, createLocalClient } from '../util';
 import log from 'loglevel';
-import { createClient, sendParticle } from '../../api';
+import { createClient } from '../../api';
 import Multiaddr from 'multiaddr';
+import { createConnectedClient, nodes } from '../connection';
 import { ParticleError } from '../../internal/ParticleProcessor';
-
-const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
-const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -46,7 +43,7 @@ describe('Typescript usage suite', () => {
 
         it('address as string', async function () {
             // arrange
-            const addr = devNodeAddress;
+            const addr = nodes[0].multiaddr;
 
             // act
             const client = (await createClient(addr)) as FluenceClientImpl;
@@ -58,7 +55,7 @@ describe('Typescript usage suite', () => {
 
         it('address as multiaddr', async function () {
             // arrange
-            const addr = new Multiaddr(devNodeAddress);
+            const addr = new Multiaddr(nodes[0].multiaddr);
 
             // act
             const client = (await createClient(addr)) as FluenceClientImpl;
@@ -70,10 +67,7 @@ describe('Typescript usage suite', () => {
 
         it('address as node', async function () {
             // arrange
-            const addr = {
-                multiaddr: devNodeAddress,
-                peerId: devNodePeerId,
-            };
+            const addr = nodes[0];
 
             // act
             const client = (await createClient(addr)) as FluenceClientImpl;
@@ -85,7 +79,7 @@ describe('Typescript usage suite', () => {
 
         it('peerid as peer id', async function () {
             // arrange
-            const addr = devNodeAddress;
+            const addr = nodes[0].multiaddr;
             const pid = await generatePeerId();
 
             // act
@@ -98,7 +92,7 @@ describe('Typescript usage suite', () => {
 
         it('peerid as seed', async function () {
             // arrange
-            const addr = devNodeAddress;
+            const addr = nodes[0].multiaddr;
             const pid = peerIdToSeed(await generatePeerId());
 
             // act
@@ -112,7 +106,7 @@ describe('Typescript usage suite', () => {
 
     it('should make a call through the network', async function () {
         // arrange
-        const client = await createConnectedClient(devNodeAddress);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         client.registerCallback('test', 'test', (args, _) => {
             log.trace('should make a call through the network, called "test" "test" with args', args);
@@ -152,7 +146,7 @@ describe('Typescript usage suite', () => {
 
     it('fireAndForget should work', async function () {
         // arrange
-        const client = await createConnectedClient(devNodeAddress);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         let resMakingPromise = new Promise((resolve) => {
             client.registerCallback('test', 'reverse_args', (args, _) => {
@@ -181,11 +175,11 @@ describe('Typescript usage suite', () => {
 
     it('fetch should work', async function () {
         // arrange
-        const client = await createConnectedClient(devNodeAddress);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         // act
         let script = `
-        (call "${client.relayPeerId}" ("op" "identify") [] result)
+        (call "${client.relayPeerId}" ("peer" "identify") [] result)
         `;
         const data = new Map();
         data.set('__relay', client.relayPeerId);
@@ -198,8 +192,8 @@ describe('Typescript usage suite', () => {
 
     it('two clients should work inside the same time browser', async function () {
         // arrange
-        const client1 = await createConnectedClient(devNodeAddress);
-        const client2 = await createConnectedClient(devNodeAddress);
+        const client1 = await createConnectedClient(nodes[0].multiaddr);
+        const client2 = await createConnectedClient(nodes[0].multiaddr);
 
         let resMakingPromise = new Promise((resolve) => {
             client2.registerCallback('test', 'test', (args, _) => {
@@ -226,35 +220,7 @@ describe('Typescript usage suite', () => {
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
     });
-
-    it('event registration should work', async function () {
-        // arrange
-        const client1 = await createConnectedClient(devNodeAddress);
-        const client2 = await createConnectedClient(devNodeAddress);
-
-        client2.registerEvent('event_stream', 'test');
-        const resMakingPromise = new Promise((resolve) => {
-            client2.subscribe('event_stream', resolve);
-        });
-
-        // act
-        let script = `
-            (call "${client2.selfPeerId}" ("event_stream" "test") [hello])
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('hello', 'world');
-
-        await client1.fireAndForget(script, data);
-
-        // assert
-        let res = await resMakingPromise;
-        expect(res).toEqual({
-            type: 'test',
-            args: ['world'],
-        });
-    });
-
+    
     // will fix with the new api
     it.skip('xor handling should work with connected client', async function () {
         // arrange

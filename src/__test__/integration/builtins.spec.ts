@@ -1,27 +1,25 @@
 import {
     addBlueprint,
-    addProvider,
     addScript,
     createService,
     getBlueprints,
     getInterfaces,
     getModules,
-    getProviders,
     removeScript,
     uploadModule,
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
-import { createConnectedClient } from '../util';
-import {checkConnection} from "../../api";
-
-const dev2multiaddr = '/dns4/dev.fluence.dev/tcp/19003/wss/p2p/12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb';
-const dev3multiaddr = '/dns4/dev.fluence.dev/tcp/19004/wss/p2p/12D3KooWJbJFaZ3k5sNd8DjQgg3aERoKtBAnirEvPV8yp76kEXHB';
-
-const dev2peerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+import { checkConnection } from '../../api';
+import log from 'loglevel';
+import { generatePeerId } from '../..';
+import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
+import { createConnectedClient, nodes } from '../connection';
 
 describe('Builtins usage suite', () => {
+    jest.setTimeout(10000);
+
     it('get_modules', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         let modulesList = await getModules(client);
 
@@ -29,7 +27,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('get_interfaces', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         let interfaces = await getInterfaces(client);
 
@@ -37,7 +35,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('get_blueprints', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         let bpList = await getBlueprints(client);
 
@@ -45,7 +43,10 @@ describe('Builtins usage suite', () => {
     });
 
     it('check_connection', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const peerId = await generatePeerId();
+        const client = new FluenceClientImpl(peerId);
+        await client.local();
+        await client.connect(nodes[0].multiaddr);
 
         let isConnected = await checkConnection(client);
 
@@ -53,7 +54,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('upload_modules', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         console.log('peerid: ' + client.selfPeerId);
 
@@ -71,11 +72,11 @@ describe('Builtins usage suite', () => {
 
         let base64 = 'MjNy';
 
-        await uploadModule(client, 'test_broken_module', base64, config);
+        await uploadModule(client, 'test_broken_module', base64, config, 10000);
     });
 
     it('add_blueprint', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         let bpId = 'some';
 
@@ -86,7 +87,7 @@ describe('Builtins usage suite', () => {
 
     // FIXME:: there is no error on broken blueprint from a node
     it.skip('create_service', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         let serviceId = await createService(client, 'test_broken_blueprint');
 
@@ -94,23 +95,8 @@ describe('Builtins usage suite', () => {
         expect(serviceId).not.toBeUndefined;
     });
 
-    it('add_provider', async function () {
-        const client = await createConnectedClient(dev2multiaddr);
-
-        let key = Math.random().toString(36).substring(7);
-        let buf = Buffer.from(key);
-
-        let r = Math.random().toString(36).substring(7);
-        await addProvider(client, buf, dev2peerId, r);
-
-        let pr = await getProviders(client, buf);
-        console.log(pr);
-        console.log(r);
-        expect(r).toEqual(pr[0][0].service_id);
-    });
-
     it('add and remove script', async function () {
-        const client = await createConnectedClient(dev3multiaddr);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         console.log('peerid: ' + client.selfPeerId);
 
