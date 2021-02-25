@@ -79,15 +79,15 @@ export class ParticleProcessor {
 
     async executeLocalParticle(particle: ParticleDto) {
         this.strategy?.onLocalParticleRecieved(particle);
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             const resolveCallback = function () {
-                resolve()
-            }
+                resolve();
+            };
             const rejectCallback = function (err: any) {
-                reject(err)
-            }
+                reject(err);
+            };
             // we check by callbacks that the script passed through the interpreter without errors
-            this.handleParticle(particle, resolveCallback, rejectCallback)
+            this.handleParticle(particle, resolveCallback, rejectCallback);
         });
     }
 
@@ -169,7 +169,9 @@ export class ParticleProcessor {
                 let actualTtl = particle.timestamp + particle.ttl - now;
                 if (actualTtl <= 0) {
                     this.strategy?.onParticleTimeout(particle, now);
-                    if (reject) reject(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`)
+                    if (reject) {
+                        reject(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
+                    }
                 } else {
                     // if there is no subscription yet, previous data is empty
                     let prevData: Uint8Array = Buffer.from([]);
@@ -204,14 +206,14 @@ export class ParticleProcessor {
 
                     if (stepperOutcome.ret_code == 0) {
                         if (resolve) {
-                            resolve()
+                            resolve();
                         }
                     } else {
                         const error = stepperOutcome.error_message;
                         if (reject) {
                             reject(error);
                         } else {
-                            log.error("Unhandled error: ", error);
+                            log.error('Unhandled error: ', error);
                         }
                     }
                 }
@@ -219,7 +221,7 @@ export class ParticleProcessor {
                 if (reject) {
                     reject(e);
                 } else {
-                    log.error("Unhandled error: ", e)
+                    log.error('Unhandled error: ', e);
                     throw e;
                 }
             } finally {
