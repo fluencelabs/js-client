@@ -111,8 +111,76 @@ describe('Aqua handler tests', () => {
         it('Should register service function', () => {
             // arrange
             const handler = new AquaCallHandler();
+            handler.on('service', 'function', (args) => {
+                return { called: args };
+            });
+
+            // act
+            const res = handler.execute({
+                ...req(),
+                serviceId: 'service',
+                fnName: 'function',
+                args: ['hello', 'world'],
+            });
+
+            // assert
+            expect(res).toMatchObject({
+                retCode: ErrorCodes.success,
+                result: { called: ['hello', 'world'] },
+            });
+        });
+
+        it('Should UNregister service function', () => {
+            // arrange
+            const handler = new AquaCallHandler();
             const unreg = handler.on('service', 'function', (args) => {
                 return { called: args };
+            });
+            unreg();
+
+            // act
+            const res = handler.execute({
+                ...req(),
+                serviceId: 'service',
+                fnName: 'function',
+                args: ['hello', 'world'],
+            });
+
+            // assert
+            expect(res).toMatchObject({
+                retCode: ErrorCodes.unkownError,
+            });
+        });
+
+        it('Should register event', async () => {
+            // arrange
+            const handler = new AquaCallHandler();
+            const returnPromise = new Promise((resolve) => {
+                handler.onEvent('service', 'function', (args) => {
+                    resolve({ called: args });
+                });
+            });
+            handler.onEvent('service', 'function', (args) => {
+                return { called: args };
+            });
+
+            // act
+            const res = handler.execute({
+                ...req(),
+                serviceId: 'service',
+                fnName: 'function',
+                args: ['hello', 'world'],
+            });
+
+            // assert
+            await expect(returnPromise).resolves.toMatchObject({ called: ['hello', 'world'] });
+        });
+
+        it('Should UNregister event', () => {
+            // arrange
+            const handler = new AquaCallHandler();
+            const unreg = handler.onEvent('service', 'function', (args) => {
+                // don't care
             });
             unreg();
 

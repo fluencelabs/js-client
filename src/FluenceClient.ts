@@ -24,7 +24,7 @@ export interface FluenceClient {
     readonly selfPeerId: PeerIdB58;
     readonly isConnected: boolean;
 
-    handler: AquaCallHandler;
+    readonly handler: AquaCallHandler;
 
     disconnect(): Promise<void>;
 

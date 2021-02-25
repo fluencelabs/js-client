@@ -33,6 +33,24 @@ export const fnHandler = (serviceId: string, fnName: string, handler: (args: any
     };
 };
 
+export const fnAsEventHandler = (
+    serviceId: string,
+    fnName: string,
+    handler: (args: any[], tetraplets: any[][]) => void,
+) => {
+    return (req: AquaCall, resp: AquaResult, next: Function): void => {
+        if (req.fnName === fnName && req.serviceId === serviceId) {
+            setTimeout(() => {
+                handler(req.args, req.tetraplets);
+            }, 0);
+
+            resp.retCode = ErrorCodes.success;
+            resp.result = {};
+        }
+        next();
+    };
+};
+
 export const errorHandler: Middleware = (req: AquaCall, resp: AquaResult, next: Function): void => {
     try {
         next();
@@ -72,6 +90,14 @@ export class AquaCallHandler {
 
     on(serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => any): Function {
         const mw = fnHandler(serviceId, fnName, handler);
+        this.use(mw);
+        return () => {
+            this.unUse(mw);
+        };
+    }
+
+    onEvent(serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => void): Function {
+        const mw = fnAsEventHandler(serviceId, fnName, handler);
         this.use(mw);
         return () => {
             this.unUse(mw);

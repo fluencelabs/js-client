@@ -6,7 +6,7 @@ import { InterpreterOutcome } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, signParticle } from './particle';
 
-const DEFAULT_TTL = 7000;
+export const DEFAULT_TTL = 7000;
 
 // HACK:: make an api for aqua interpreter to accept variables in an easy way!
 function wrapWithVariableInjectionScript(script: string, fields: string[]): string {
@@ -154,53 +154,5 @@ export class RequestFlow {
         if (this.onTimeout) {
             this.onTimeout();
         }
-    }
-}
-
-export class RequestFlowBuilder {
-    private params: any = {};
-    private data = new Map<string, any>();
-    private handlerConfig?;
-
-    build() {
-        if (!this.params.script) {
-            throw new Error();
-        }
-        const res = RequestFlow.createLocal(this.params.script, this.params.data, this.params.ttl);
-        if (this.handlerConfig) {
-            this.handlerConfig(res.handler);
-        }
-
-        return res;
-    }
-
-    withScript(script: string): RequestFlowBuilder {
-        this.params.script = script;
-        return this;
-    }
-
-    withTTL(ttl: number): RequestFlowBuilder {
-        this.params.ttl = ttl;
-        return this;
-    }
-
-    withVariable(name: string, value: any): RequestFlowBuilder {
-        this.data.set(name, value);
-        return this;
-    }
-
-    withVariables(data: Map<string, any> | Record<string, any>) {
-        if (data instanceof Map) {
-            this.data = new Map([...Array.from(this.data.entries()), ...Array.from(data.entries())]);
-        } else {
-            for (let k in data) {
-                this.data.set(k, data[k]);
-            }
-        }
-    }
-
-    configHandler(config: (handler: AquaCallHandler) => void): RequestFlowBuilder {
-        this.handlerConfig = config;
-        return this;
     }
 }
