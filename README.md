@@ -112,10 +112,34 @@ npm install
 
 ### Running tests
 
-To run test execute
+Tests are split into unit and integration categories. By default integration tests require a locally running Fluence node with 4310 port open for ws connections. The dependency can be started with docker
 
 ```bash
-npm test
+ docker run --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence:freeze -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj
+```
+
+To run all tests in interactive mode
+
+```bash
+npm run test
+```
+
+To run only unit tests
+
+```bash
+npm run test:unit
+```
+
+To run only integration tests
+
+```bash
+npm run test:unit
+```
+
+To run all tests
+
+```bash
+npm run test:all
 ```
 
 ## Contributing
