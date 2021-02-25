@@ -95,7 +95,10 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
         `
             (seq
                 (seq
-                    (call relay ("srv" "list") [] services)
+                    (seq
+                        (call relay ("srv" "list") [] services)
+                        (call relay ("op" "identity") [] interfaces[])
+                    )
                     (fold services s
                         (seq
                             (call relay ("srv" "get_interface") [s.$.id!] interfaces[])
@@ -113,7 +116,8 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
         ttl,
     );
 
-    return sendParticleAsFetch(client, particle, callbackFn);
+    const [res] = await sendParticleAsFetch<[string[]]>(client, particle, callbackFn);
+    return res;
 };
 
 /**
