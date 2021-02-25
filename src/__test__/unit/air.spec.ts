@@ -1,3 +1,4 @@
+import { ParticleError } from '../../internal/ParticleProcessor';
 import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {
@@ -45,27 +46,39 @@ describe('== AIR suite', () => {
     });
 
     it('call broken script', async function () {
+        // arrange
         const client = await createLocalClient();
+        const script = `(incorrect)`;
 
-        const script = `(htyth)`;
+        // act
+        const promise = client.sendScript(script);
 
-        await expect(client.sendScript(script)).rejects.toContain("aqua script can't be parsed");
+        // assert
+        await expect(promise).rejects.toThrow("aqua script can't be parsed");
     });
 
-    it('call script without ttl', async function () {
+    it.skip('call script without ttl', async function () {
+        // arrange
         const client = await createLocalClient();
-
         const script = `(call %init_peer_id% ("" "") [""])`;
 
-        await expect(client.sendScript(script, undefined, 1)).rejects.toContain('Particle expired');
+        // act
+        const promise = client.sendScript(script, undefined, 1);
+
+        // assert
+        await expect(promise).rejects.toThrow('Particle expired');
     });
 
-    it.skip('call broken script by fetch', async function () {
+    it('call broken script by fetch', async function () {
+        // arrange
         const client = await createLocalClient();
+        const script = `(incorrect)`;
 
-        const script = `(htyth)`;
+        // act
+        const promise = client.fetch(script, ['result']);
 
-        await expect(client.fetch(script, ['result'])).rejects.toContain("aqua script can't be parsed");
+        // assert
+        await expect(promise).rejects.toThrow("aqua script can't be parsed");
     });
 
     it('check particle arguments', async function () {

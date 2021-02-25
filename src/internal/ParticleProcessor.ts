@@ -99,14 +99,16 @@ export class ParticleProcessor {
     async executeLocalParticle(particle: ParticleDto): Promise<void> {
         this.strategy?.onLocalParticleRecieved(particle);
         return new Promise<void>((resolve, reject) => {
-            const resolveCallback = function () {
+            const resolveCallback = () => {
                 resolve();
             };
-            const rejectCallback = function (err: any) {
+            const rejectCallback = (err: any) => {
                 reject(err);
             };
+
             // we check by callbacks that the script passed through the interpreter without errors
-        await this.handleParticle(particle).catch((err) => {
+            this.handleParticle(particle, resolveCallback, rejectCallback);
+        });
     }
 
     async executeExternalParticle(particle: ParticleDto): Promise<void> {
@@ -222,25 +224,24 @@ export class ParticleProcessor {
                         this.strategy.sendParticleFurther(newParticle);
                     }
 
-                    if (stepperOutcome.ret_code == 0) {
-                        if (resolve) {
-                            resolve();
-                        }
-                    } else {
-                        const error = stepperOutcome.error_message;
-                        if (reject) {
-                            reject(error);
-                        } else {
-                            log.error('Unhandled error: ', error);
-                        }
+                    if (stepperOutcome.ret_code !== 0) {
+                        throw new ParticleError(
+                            `code=${stepperOutcome.ret_code} message=${stepperOutcome.error_message}`,
+                        );
+                    }
+
+                    if (resolve) {
+                        resolve();
                     }
                 }
-            } catch (e) {
+            } catch (err) {
                 if (reject) {
-                    reject(e);
+                    reject(err);
                 } else {
-                    log.error('Unhandled error: ', e);
-                    throw e;
+                    log.error('particle processing failed: ' + err);
+                    if (err instanceof ParticleError) {
+                        throw err;
+                    }
                 }
             } finally {
                 // get last particle from the queue

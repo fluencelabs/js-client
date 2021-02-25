@@ -31,5 +31,5 @@ export interface FluenceClient {
      */
     connect(multiaddr: string | Multiaddr): Promise<void>;
 
-    sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<[Promise<void>, string]>;
+    sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string>;
 }

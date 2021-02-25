@@ -4,7 +4,7 @@ import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
 import log from 'loglevel';
 import { createClient } from '../../api';
 import Multiaddr from 'multiaddr';
-import { createConnectedClient, nodes } from '../connection';
+import { createConnectedClient, createLocalClient, nodes } from '../connection';
 import { ParticleError } from '../../internal/ParticleProcessor';
 
 describe('Typescript usage suite', () => {
@@ -220,11 +220,11 @@ describe('Typescript usage suite', () => {
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
     });
-    
+
     // will fix with the new api
     it.skip('xor handling should work with connected client', async function () {
         // arrange
-        const client = await createConnectedClient(devNodeAddress);
+        const client = await createConnectedClient(nodes[0].multiaddr);
 
         // act
         let script = `
@@ -234,7 +234,7 @@ describe('Typescript usage suite', () => {
             )
         `;
 
-        const [promise, _] = await client.sendScript(script);
+        const promise = client.sendScript(script);
 
         // assert
         await expect(promise).rejects.toThrow(ParticleError);
@@ -247,7 +247,7 @@ describe('Typescript usage suite', () => {
         // act
         let script = `(call %init_peer_id% ("incorrect" "service") ["incorrect_arg"])`;
 
-        const [promise, _] = await client.sendScript(script);
+        const promise = client.sendScript(script);
 
         // assert
         await expect(promise).rejects.toThrow(ParticleError);
