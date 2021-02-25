@@ -68,7 +68,7 @@ describe('== AIR suite', () => {
         await expect(promise).rejects.toContain('Particle expired');
     });
 
-    it('call broken script by fetch', async function () {
+    it.skip('call broken script by fetch', async function () {
         // arrange
         const client = await createLocalClient();
         const script = `(incorrect)`;
