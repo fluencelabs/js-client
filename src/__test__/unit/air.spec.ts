@@ -1,4 +1,3 @@
-import { ParticleError } from '../../internal/ParticleProcessor';
 import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {
@@ -54,7 +53,7 @@ describe('== AIR suite', () => {
         const promise = client.sendScript(script);
 
         // assert
-        await expect(promise).rejects.toThrow("aqua script can't be parsed");
+        await expect(promise).rejects.toContain("aqua script can't be parsed");
     });
 
     it.skip('call script without ttl', async function () {
@@ -78,7 +77,7 @@ describe('== AIR suite', () => {
         const promise = client.fetch(script, ['result']);
 
         // assert
-        await expect(promise).rejects.toThrow("aqua script can't be parsed");
+        await expect(promise).rejects.toContain("aqua script can't be parsed");
     });
 
     it('check particle arguments', async function () {

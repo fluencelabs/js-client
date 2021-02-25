@@ -190,3 +190,25 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         return false;
     }
 };
+
+export const subscribeForErrors = (client: FluenceClient, ttl: number): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        registerServiceFunction(client, '__magic', 'handle_xor', (args, _) => {
+            setTimeout(() => {
+                try {
+                    reject(JSON.parse(args[0]));
+                } catch {
+                    reject(args);
+                }
+            }, 0);
+
+            unregisterServiceFunction(client, '__magic', 'handle_xor');
+            return {};
+        });
+
+        setTimeout(() => {
+            unregisterServiceFunction(client, '__magic', 'handle_xor');
+            resolve();
+        }, ttl);
+    });
+};

@@ -55,25 +55,6 @@ const wrapWithDataInjectionHandling = (
     };
 };
 
-export class ParticleError extends Error {
-    constructor(m: string) {
-        super(m);
-
-        // Set the prototype explicitly.
-        Object.setPrototypeOf(this, ParticleError.prototype);
-    }
-}
-
-const wrapWithXorHandling = (handler: ParticleHandler): ParticleHandler => {
-    return (serviceId: string, fnName: string, args: any[], tetraplets: SecurityTetraplet[][]) => {
-        if (serviceId === '__magic' && fnName === 'handle_xor') {
-            throw new ParticleError(args[0]);
-        }
-
-        return handler(serviceId, fnName, args, tetraplets);
-    };
-};
-
 export class ParticleProcessor {
     private interpreter: InterpreterInvoke;
     private subscriptions: Map<string, ParticleDto> = new Map();
@@ -99,15 +80,8 @@ export class ParticleProcessor {
     async executeLocalParticle(particle: ParticleDto): Promise<void> {
         this.strategy?.onLocalParticleRecieved(particle);
         return new Promise<void>((resolve, reject) => {
-            const resolveCallback = () => {
-                resolve();
-            };
-            const rejectCallback = (err: any) => {
-                reject(err);
-            };
-
             // we check by callbacks that the script passed through the interpreter without errors
-            this.handleParticle(particle, resolveCallback, rejectCallback);
+            this.handleParticle(particle, resolve, reject);
         });
     }
 
@@ -224,24 +198,25 @@ export class ParticleProcessor {
                         this.strategy.sendParticleFurther(newParticle);
                     }
 
-                    if (stepperOutcome.ret_code !== 0) {
-                        throw new ParticleError(
-                            `code=${stepperOutcome.ret_code} message=${stepperOutcome.error_message}`,
-                        );
-                    }
-
-                    if (resolve) {
-                        resolve();
+                    if (stepperOutcome.ret_code == 0) {
+                        if (resolve) {
+                            resolve();
+                        }
+                    } else {
+                        const error = stepperOutcome.error_message;
+                        if (reject) {
+                            reject(error);
+                        } else {
+                            log.error('Unhandled error: ', error);
+                        }
                     }
                 }
-            } catch (err) {
+            } catch (e) {
                 if (reject) {
-                    reject(err);
+                    reject(e);
                 } else {
-                    log.error('particle processing failed: ' + err);
-                    if (err instanceof ParticleError) {
-                        throw err;
-                    }
+                    log.error('Unhandled error: ', e);
+                    throw e;
                 }
             } finally {
                 // get last particle from the queue
@@ -277,11 +252,9 @@ export class ParticleProcessor {
      */
     async instantiateInterpreter() {
         this.interpreter = await instantiateInterpreter(
-            wrapWithXorHandling(
-                wrapWithDataInjectionHandling(
-                    this.strategy.particleHandler.bind(this),
-                    this.getCurrentParticleId.bind(this),
-                ),
+            wrapWithDataInjectionHandling(
+                this.strategy.particleHandler.bind(this),
+                this.getCurrentParticleId.bind(this),
             ),
             this.peerId,
         );
