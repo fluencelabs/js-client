@@ -220,7 +220,6 @@ describe('Typescript usage suite', () => {
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
     });
 
-    // will fix with the new api
     it('xor handling should work with connected client', async function () {
         // arrange
         const client = await createConnectedClient(nodes[0].multiaddr);
