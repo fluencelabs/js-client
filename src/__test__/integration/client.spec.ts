@@ -2,9 +2,9 @@ import { encode } from 'bs58';
 import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
 import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
 import log from 'loglevel';
-import { createClient } from '../../api';
+import { createClient, subscribeForErrors } from '../../api';
 import Multiaddr from 'multiaddr';
-import { createConnectedClient, nodes } from '../connection';
+import { createConnectedClient, createLocalClient, nodes } from '../connection';
 
 describe('Typescript usage suite', () => {
     it('should create private key from seed and back', async function () {
@@ -218,5 +218,47 @@ describe('Typescript usage suite', () => {
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
+    });
+
+    it('xor handling should work with connected client', async function () {
+        // arrange
+        const client = await createConnectedClient(nodes[0].multiaddr);
+        log.setLevel('info');
+
+        // act
+        let script = `
+            (seq 
+                (call relay ("op" "identity") [])
+                (call relay ("incorrect" "service") ["incorrect_arg"])
+            )
+        `;
+        const data = new Map();
+        data.set('relay', client.relayPeerId);
+
+        const promise = subscribeForErrors(client, 7000);
+        await client.sendScript(script, data);
+
+        // assert
+        await expect(promise).rejects.toMatchObject({
+            error: expect.stringContaining("Service with id 'incorrect' not found"),
+            instruction: expect.stringContaining('incorrect'),
+        });
+    });
+
+    it('xor handling should work with local client', async function () {
+        // arrange
+        const client = await createLocalClient();
+
+        // act
+        let script = `(call %init_peer_id% ("incorrect" "service") ["incorrect_arg"])`;
+
+        const promise = subscribeForErrors(client, 7000);
+        await client.sendScript(script);
+
+        // assert
+        await expect(promise).rejects.toMatchObject({
+            error: expect.stringContaining('There is no service: incorrect'),
+            instruction: expect.stringContaining('incorrect'),
+        });
     });
 });

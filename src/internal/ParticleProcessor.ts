@@ -77,23 +77,17 @@ export class ParticleProcessor {
         // TODO: destroy interpreter
     }
 
-    async executeLocalParticle(particle: ParticleDto) {
+    async executeLocalParticle(particle: ParticleDto): Promise<void> {
         this.strategy?.onLocalParticleRecieved(particle);
         return new Promise<void>((resolve, reject) => {
-            const resolveCallback = function () {
-                resolve();
-            };
-            const rejectCallback = function (err: any) {
-                reject(err);
-            };
             // we check by callbacks that the script passed through the interpreter without errors
-            this.handleParticle(particle, resolveCallback, rejectCallback);
+            this.handleParticle(particle, resolve, reject);
         });
     }
 
-    async executeExternalParticle(particle: ParticleDto) {
+    async executeExternalParticle(particle: ParticleDto): Promise<void> {
         this.strategy?.onExternalParticleRecieved(particle);
-        await this.handleExternalParticle(particle);
+        return await this.handleExternalParticle(particle);
     }
 
     /*
@@ -231,7 +225,7 @@ export class ParticleProcessor {
                 if (nextParticle) {
                     // update current particle
                     this.setCurrentParticleId(nextParticle.id);
-                    await this.handleParticle(nextParticle);
+                    return await this.handleParticle(nextParticle);
                 } else {
                     // wait for a new call (do nothing) if there is no new particle in a queue
                     this.setCurrentParticleId(undefined);
@@ -249,7 +243,7 @@ export class ParticleProcessor {
         if (error !== undefined) {
             log.error('error in external particle: ', error);
         } else {
-            await this.handleParticle(particle);
+            return await this.handleParticle(particle);
         }
     }
 

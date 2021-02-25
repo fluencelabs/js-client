@@ -10,7 +10,6 @@ import {
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
 import { checkConnection } from '../../api';
-import log from 'loglevel';
 import { generatePeerId } from '../..';
 import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
 import { createConnectedClient, nodes } from '../connection';
