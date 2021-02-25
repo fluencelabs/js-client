@@ -12,7 +12,24 @@ describe('== AST parsing suite', () => {
             Call: {
                 peer_part: { PeerPk: { Variable: 'node' } },
                 function_part: { ServiceIdWithFuncName: [{ Literal: 'service' }, { Literal: 'function' }] },
-                args: [{ Variable: '1' }, { Variable: '2' }, { Variable: '3' }, { Variable: 'arg' }],
+                args: [
+                    {
+                        Number: {
+                            Int: 1,
+                        },
+                    },
+                    {
+                        Number: {
+                            Int: 2,
+                        },
+                    },
+                    {
+                        Number: {
+                            Int: 3,
+                        },
+                    },
+                    { Variable: 'arg' },
+                ],
                 output: { Scalar: 'output' },
             },
         });

@@ -70,7 +70,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
     const particle = RequestFlow.createLocal(
         `
         (seq 
-            (call __relay ("dist" "get_modules") [] result)
+            (call __relay ("dist" "list_modules") [] result)
             (call myPeerId ("_callback" "${callbackFn}") [result])
         )
     `,
@@ -85,27 +85,39 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
 };
 
 /**
- * Get all available modules hosted on a connected relay. @deprecated prefer using raw Particles instead
+ * Get all available interfaces hosted on a connected relay. @deprecated prefer using raw Particles instead
  * @param { FluenceClient } client - The Fluence Client instance.
- * @returns { Array<string> } - list of available modules on the connected relay
+ * @returns { Array<string> } - list of available interfaces on the connected relay
  */
 export const getInterfaces = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getInterfaces';
     const particle = RequestFlow.createLocal(
         `
-        (seq 
-            (call __relay ("srv" "get_interfaces") [] result)
-            (call myPeerId ("_callback" "${callbackFn}") [result])
-        )
-    `,
+            (seq
+                (seq
+                    (seq
+                        (call relay ("srv" "list") [] services)
+                        (call relay ("op" "identity") [] interfaces[])
+                    )
+                    (fold services s
+                        (seq
+                            (call relay ("srv" "get_interface") [s.$.id!] interfaces[])
+                            (next s)
+                        )
+                    )
+                )
+                (call myPeerId ("_callback" "${callbackFn}") [interfaces])
+            )
+        `,
         {
-            __relay: client.relayPeerId,
+            relay: client.relayPeerId,
             myPeerId: client.selfPeerId,
         },
         ttl,
     );
 
-    return sendParticleAsFetch(client, particle, callbackFn);
+    const [res] = await sendParticleAsFetch<[string[]]>(client, particle, callbackFn);
+    return res;
 };
 
 /**
@@ -230,7 +242,7 @@ export const createService = async (
  */
 export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<string[]> => {
     let returnValue = 'blueprints';
-    let call = (nodeId: string) => `(call "${nodeId}" ("dist" "get_blueprints") [] ${returnValue})`;
+    let call = (nodeId: string) => `(call "${nodeId}" ("dist" "list_blueprints") [] ${returnValue})`;
 
     return requestResponse(
         client,
@@ -242,53 +254,6 @@ export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?
         nodeId,
         ttl,
     );
-};
-
-/**
- * Add a provider to DHT network to neighborhood around a key. @deprecated prefer using raw Particles instead
- */
-export const addProvider = async (
-    client: FluenceClient,
-    key: Buffer,
-    providerPeer: string,
-    providerServiceId?: string,
-    nodeId?: string,
-    ttl?: number,
-): Promise<void> => {
-    let call = (nodeId: string) => `(call "${nodeId}" ("dht" "add_provider") [key provider] void[])`;
-
-    key = bs58.encode(key) as any;
-
-    let provider = {
-        peer: providerPeer,
-        service_id: providerServiceId,
-    };
-
-    let data = new Map();
-    data.set('key', key);
-    data.set('provider', provider);
-
-    return requestResponse(client, 'addProvider', call, '', data, () => {}, nodeId, ttl);
-};
-
-/**
- * Get a provider from DHT network from neighborhood around a key. @deprecated prefer using raw Particles instead
- * @param { FluenceClient } client - The Fluence Client instance.
- * @param {[buffer]} key - get provider by this key
- * @param {[string]} nodeId - Optional node peer id to get providers from
- * @param {[number]} ttl - Optional ttl for the particle which does the job
- * @returns { Array<object> } - List of providers
- */
-export const getProviders = async (client: FluenceClient, key: Buffer, nodeId?: string, ttl?: number): Promise<any> => {
-    key = bs58.encode(key) as any;
-
-    let returnValue = 'providers';
-    let call = (nodeId: string) => `(call "${nodeId}" ("dht" "get_providers") [key] providers[])`;
-
-    let data = new Map();
-    data.set('key', key);
-
-    return requestResponse(client, 'getProviders', call, returnValue, data, (args) => args[0], nodeId, ttl);
 };
 
 /**

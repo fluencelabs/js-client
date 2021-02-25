@@ -1,183 +1,164 @@
-import { encode } from 'bs58';
-import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
-import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
-import { createConnectedClient } from '../util';
-import log from 'loglevel';
-import { createClient, sendRequest, subscribeToEvent } from '../../api';
-import Multiaddr from 'multiaddr';
-import { RequestFlow } from '../../internal/RequestFlow';
+// import { encode } from 'bs58';
+// import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
+// import log from 'loglevel';
+// import { createClient } from '../../api';
+// import Multiaddr from 'multiaddr';
+// import { createConnectedClient, createLocalClient, nodes } from '../connection';
+// import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
+// import { RequestFlow } from '../../internal/RequestFlow';
 
-const devNodeAddress = '/dns4/dev.fluence.dev/tcp/19001/wss/p2p/12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
-const devNodePeerId = '12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9';
+// describe('Typescript usage suite', () => {
+//     it('should create private key from seed and back', async function () {
+//         // prettier-ignore
+//         let seed = [46, 188, 245, 171, 145, 73, 40, 24, 52, 233, 215, 163, 54, 26, 31, 221, 159, 179, 126, 106, 27, 199, 189, 194, 80, 133, 235, 42, 42, 247, 80, 201];
+//         let seedStr = encode(seed);
+//         log.trace('SEED STR: ' + seedStr);
+//         let pid = await seedToPeerId(seedStr);
+//         expect(peerIdToSeed(pid)).toEqual(seedStr);
+//     });
 
-describe('Typescript usage suite', () => {
-    it('should create private key from seed and back', async function () {
-        // prettier-ignore
-        let seed = [46, 188, 245, 171, 145, 73, 40, 24, 52, 233, 215, 163, 54, 26, 31, 221, 159, 179, 126, 106, 27, 199, 189, 194, 80, 133, 235, 42, 42, 247, 80, 201];
-        let seedStr = encode(seed);
-        log.trace('SEED STR: ' + seedStr);
-        let pid = await seedToPeerId(seedStr);
-        expect(peerIdToSeed(pid)).toEqual(seedStr);
-    });
+//     describe('should make connection to network', function () {
+//         const testProcedure = async (client: FluenceClientTmp) => {
+//             let resMakingPromise = new Promise((resolve) => {
+//                 client.registerCallback('test', 'test', (args, _) => {
+//                     resolve(args);
+//                     return {};
+//                 });
+//             });
 
-    describe('should make connection to network', function () {
-        const testProcedure = async (client: FluenceClientTmp) => {
-            let resMakingPromise = new Promise((resolve) => {
-                client.registerCallback('test', 'test', (args, _) => {
-                    resolve(args);
-                    return {};
-                });
-            });
+//             let script = `
+//                 (seq
+//                     (call "${client.relayPeerId}" ("op" "identity") [])
+//                     (call "${client.selfPeerId}" ("test" "test") [hello])
+//                 )
+//             `;
 
-            let script = `
-                (seq
-                    (call "${client.relayPeerId}" ("op" "identity") [])
-                    (call "${client.selfPeerId}" ("test" "test") [hello])
-                )
-            `;
+//             let data: Map<string, any> = new Map();
+//             data.set('hello', 'world');
 
-            let data: Map<string, any> = new Map();
-            data.set('hello', 'world');
+//             await client.initiateFlow(RequestFlow.createLocal(script, data));
 
-            await client.initiateFlow(RequestFlow.createLocal(script, data));
+//             return await resMakingPromise;
+//         };
 
-            return await resMakingPromise;
-        };
+//         it('address as string', async function () {
+//             // arrange
+//             const addr = nodes[0].multiaddr;
 
-        it('address as string', async function () {
-            // arrange
-            const addr = devNodeAddress;
+//             // act
+//             const client = (await createClient(addr)) as FluenceClientTmp;
 
-            // act
-            const client = (await createClient(addr)) as FluenceClientTmp;
+//             // assert
+//             const res = await testProcedure(client);
+//             expect(res).toEqual(['world']);
+//         });
 
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
+//         it('address as multiaddr', async function () {
+//             // arrange
+//             const addr = new Multiaddr(nodes[0].multiaddr);
 
-        it('address as multiaddr', async function () {
-            // arrange
-            const addr = new Multiaddr(devNodeAddress);
+//             // act
+//             const client = (await createClient(addr)) as FluenceClientTmp;
 
-            // act
-            const client = (await createClient(addr)) as FluenceClientTmp;
+//             // assert
+//             const res = await testProcedure(client);
+//             expect(res).toEqual(['world']);
+//         });
 
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
+//         it('address as node', async function () {
+//             // arrange
+//             const addr = nodes[0];
 
-        it('address as node', async function () {
-            // arrange
-            const addr = {
-                multiaddr: devNodeAddress,
-                peerId: devNodePeerId,
-            };
+//             // act
+//             const client = (await createClient(addr)) as FluenceClientTmp;
 
-            // act
-            const client = (await createClient(addr)) as FluenceClientTmp;
+//             // assert
+//             const res = await testProcedure(client);
+//             expect(res).toEqual(['world']);
+//         });
 
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
+//         it('peerid as peer id', async function () {
+//             // arrange
+//             const addr = nodes[0].multiaddr;
+//             const pid = await generatePeerId();
 
-        it('peerid as peer id', async function () {
-            // arrange
-            const addr = devNodeAddress;
-            const pid = await generatePeerId();
+//             // act
+//             const client = (await createClient(addr, pid)) as FluenceClientTmp;
 
-            // act
-            const client = (await createClient(addr, pid)) as FluenceClientTmp;
+//             // assert
+//             const res = await testProcedure(client);
+//             expect(res).toEqual(['world']);
+//         });
 
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
+//         it('peerid as seed', async function () {
+//             // arrange
+//             const addr = nodes[0].multiaddr;
+//             const pid = peerIdToSeed(await generatePeerId());
 
-        it('peerid as seed', async function () {
-            // arrange
-            const addr = devNodeAddress;
-            const pid = peerIdToSeed(await generatePeerId());
+//             // act
+//             const client = (await createClient(addr, pid)) as FluenceClientTmp;
 
-            // act
-            const client = (await createClient(addr, pid)) as FluenceClientTmp;
+//             // assert
+//             const res = await testProcedure(client);
+//             expect(res).toEqual(['world']);
+//         });
+//     });
 
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
-    });
+//     it('two clients should work inside the same time browser', async function () {
+//         // arrange
+//         const client1 = await createConnectedClient(nodes[0].multiaddr);
+//         const client2 = await createConnectedClient(nodes[0].multiaddr);
 
-    it('should make a call through the network', async function () {
-        // arrange
-        const client = await createConnectedClient(devNodeAddress);
+//         let resMakingPromise = new Promise((resolve) => {
+//             client2.registerCallback('test', 'test', (args, _) => {
+//                 resolve([...args]);
+//                 return {};
+//             });
+//         });
 
-        client.registerCallback('test', 'test', (args, _) => {
-            log.trace('should make a call through the network, called "test" "test" with args', args);
-            return {};
-        });
+//         let script = `
+//             (seq
+//                 (call "${client1.relayPeerId}" ("op" "identity") [])
+//                 (call "${client2.selfPeerId}" ("test" "test") [a b c d])
+//             )
+//         `;
 
-        let resMakingPromise = new Promise((resolve) => {
-            client.registerCallback('test', 'reverse_args', (args, _) => {
-                resolve([...args].reverse());
-                return {};
-            });
-        });
+//         let data: Map<string, any> = new Map();
+//         data.set('a', 'some a');
+//         data.set('b', 'some b');
+//         data.set('c', 'some c');
+//         data.set('d', 'some d');
 
-        // act
-        let script = `
-            (seq
-                (call "${client.relayPeerId}" ("op" "identity") [])
-                (seq
-                    (call "${client.selfPeerId}" ("test" "test") [a b c d] result)
-                    (call "${client.selfPeerId}" ("test" "reverse_args") [a b c d])
-                )
-            )
-        `;
+//         await client1.initiateFlow(RequestFlow.createLocal(script, data));
 
-        let data: Map<string, any> = new Map();
-        data.set('a', 'some a');
-        data.set('b', 'some b');
-        data.set('c', 'some c');
-        data.set('d', 'some d');
-
-        await sendRequest(client, RequestFlow.createLocal(script, data));
-
-        // assert
-        const res = await resMakingPromise;
-        expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
-    });
-
-    it('two clients should work inside the same time browser', async function () {
-        // arrange
-        const client1 = await createConnectedClient(devNodeAddress);
-        const client2 = await createConnectedClient(devNodeAddress);
-
-        let resMakingPromise = new Promise((resolve) => {
-            client2.registerCallback('test', 'test', (args, _) => {
-                resolve([...args]);
-                return {};
-            });
-        });
-
-        let script = `
-            (seq
-                (call "${client1.relayPeerId}" ("op" "identity") [])
-                (call "${client2.selfPeerId}" ("test" "test") [a b c d])
-            )
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('a', 'some a');
-        data.set('b', 'some b');
-        data.set('c', 'some c');
-        data.set('d', 'some d');
-
-        await client1.initiateFlow(RequestFlow.createLocal(script, data));
-
-        let res = await resMakingPromise;
-        expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
-    });
-});
+//         let res = await resMakingPromise;
+//         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
+//     });
+//     it('event registration should work', async function () {
+//         const client1 = await createConnectedClient(devNodeAddress);
+//         log.setLevel('info');
+//             (seq
+//                 (call relay ("op" "identity") [])
+//             (call "${client2.selfPeerId}" ("event_stream" "test") [hello])
+//             )
+//         let data: Map<string, any> = new Map();
+//         data.set('relay', client.relayPeerId);
+//         const promise = subscribeForErrors(client, 7000);
+//         await client1.fireAndForget(script, data);
+//         await expect(promise).rejects.toMatchObject({
+//             error: expect.stringContaining("Service with id 'incorrect' not found"),
+//             instruction: expect.stringContaining('incorrect'),
+//         });
+//     });
+//     it('xor handling should work with local client', async function () {
+//         // arrange
+//         const client = await createLocalClient();
+//         // act
+//         let script = `(call %init_peer_id% ("incorrect" "service") ["incorrect_arg"])`;
+//         const promise = subscribeForErrors(client, 7000);
+//         await client.sendScript(script);
+//         // assert
+//         await expect(promise).rejects.toMatchObject({
+//             error: expect.stringContaining('There is no service: incorrect'),
+//             instruction: expect.stringContaining('incorrect'),
+// });

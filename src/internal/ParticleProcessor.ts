@@ -26,24 +26,24 @@ import { FluenceConnection } from './FluenceConnection';
 export class ParticleProcessor {
     private readonly peerId: PeerId;
     private readonly clientHandler: AquaCallHandler;
-    private readonly connection: FluenceConnection;
 
+    private connection: FluenceConnection;
     private interpreter: InterpreterInvoke;
     private requests: Map<string, RequestFlow> = new Map();
     private queue: RequestFlow[] = [];
     private currentRequestId: string | null = null;
     private watchDog;
 
-    constructor(peerId: PeerId, clientHandler: AquaCallHandler, connection: FluenceConnection) {
+    constructor(peerId: PeerId, clientHandler: AquaCallHandler) {
         this.peerId = peerId;
         this.clientHandler = clientHandler;
-        this.connection = connection;
     }
 
     /**
      * Instantiate WebAssembly with AIR interpreter to execute AIR scripts
      */
-    async init() {
+    async init(connection?: FluenceConnection) {
+        this.connection = connection;
         this.interpreter = await instantiateInterpreter(this.theHandler.bind(this), this.peerId);
         this.watchDog = setInterval(() => {
             for (let key in this.requests.keys) {
@@ -118,10 +118,19 @@ export class ParticleProcessor {
 
             log.debug('interpreter executing particle', request.getParticleWithoutData());
             const interpreterOutcome = request.runInterpreter(this.interpreter);
-            log.debug('inner interpreter outcome:', interpreterOutcome);
+
+            log.debug('inner interpreter outcome:', {
+                ret_code: interpreterOutcome.ret_code,
+                error_message: interpreterOutcome.error_message,
+                next_peer_pks: interpreterOutcome.next_peer_pks,
+            });
 
             // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
             if (interpreterOutcome.next_peer_pks.length > 0) {
+                if (!this.connection) {
+                    log.error('Cannot send particle: non connected');
+                }
+
                 request.sendIntoConnection(this.connection);
             }
         } finally {

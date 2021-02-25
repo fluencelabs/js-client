@@ -30,6 +30,7 @@ export interface InterpreterOutcome {
     ret_code: number;
     data: Uint8Array;
     next_peer_pks: string[];
+    error_message: string;
 }
 
 export interface ResolvedTriplet {

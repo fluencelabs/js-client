@@ -155,7 +155,6 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
             myPeerId: client.selfPeerId,
             msg,
         },
-        3000,
     );
 
     if (!client.isConnected) {

@@ -34,7 +34,7 @@ const makeDefaultClientHandler = (): AquaCallHandler => {
 export class FluenceClientTmp implements FluenceClient {
     readonly selfPeerIdFull: PeerId;
 
-    get relayPeerId(): PeerIdB58 {
+    get relayPeerId(): PeerIdB58 | undefined {
         return this.connection?.nodePeerId.toB58String();
     }
 
@@ -46,13 +46,13 @@ export class FluenceClientTmp implements FluenceClient {
         return this.connection?.isConnected();
     }
 
-    protected connection: FluenceConnection;
+    private connection: FluenceConnection;
     protected processor: ParticleProcessor;
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
         this.handler = makeDefaultClientHandler();
-        this.processor = new ParticleProcessor(selfPeerIdFull, this.handler, this.connection);
+        this.processor = new ParticleProcessor(selfPeerIdFull, this.handler);
     }
 
     handler: AquaCallHandler;
@@ -93,9 +93,8 @@ export class FluenceClientTmp implements FluenceClient {
             this.processor.executeExternalParticle.bind(this.processor),
         );
         await connection.connect();
-        await this.processor.init();
-
         this.connection = connection;
+        await this.processor.init(connection);
     }
 
     async initiateFlow(request: RequestFlow): Promise<void> {

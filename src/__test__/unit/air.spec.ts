@@ -1,5 +1,5 @@
 import { RequestFlow, RequestFlowBuilder } from '../../internal/RequestFlow';
-import { createLocalClient } from '../util';
+import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
@@ -46,6 +46,30 @@ describe('== AIR suite', () => {
 
         // assert
         expect(res).toEqual(arg);
+    });
+
+    it('call broken script', async function () {
+        // arrange
+        const client = await createLocalClient();
+        const script = `(incorrect)`;
+
+        // act
+        const promise = client.initiateFlow(RequestFlow.createLocal(script));
+
+        // assert
+        await expect(promise).rejects.toContain("aqua script can't be parsed");
+    });
+
+    it('call script without ttl', async function () {
+        // arrange
+        const client = await createLocalClient();
+        const script = `(call %init_peer_id% ("" "") [""])`;
+
+        // act
+        const promise = client.initiateFlow(RequestFlow.createLocal(script));
+
+        // assert
+        await expect(promise).rejects.toContain('Particle expired');
     });
 
     it('check particle arguments', async function () {
