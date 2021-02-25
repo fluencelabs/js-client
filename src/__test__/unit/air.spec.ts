@@ -56,7 +56,7 @@ describe('== AIR suite', () => {
         await expect(promise).rejects.toContain("aqua script can't be parsed");
     });
 
-    it.skip('call script without ttl', async function () {
+    it('call script without ttl', async function () {
         // arrange
         const client = await createLocalClient();
         const script = `(call %init_peer_id% ("" "") [""])`;
@@ -65,7 +65,7 @@ describe('== AIR suite', () => {
         const promise = client.sendScript(script, undefined, 1);
 
         // assert
-        await expect(promise).rejects.toThrow('Particle expired');
+        await expect(promise).rejects.toContain('Particle expired');
     });
 
     it('call broken script by fetch', async function () {

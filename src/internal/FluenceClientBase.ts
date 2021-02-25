@@ -26,7 +26,7 @@ import { PeerIdB58 } from './commonTypes';
 export abstract class FluenceClientBase {
     readonly selfPeerIdFull: PeerId;
 
-    get relayPeerId(): PeerIdB58 {
+    get relayPeerId(): PeerIdB58 | undefined {
         return this.connection?.nodePeerId.toB58String();
     }
 

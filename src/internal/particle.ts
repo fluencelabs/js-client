@@ -113,7 +113,7 @@ function wrapWithXorLocal(script: string): string {
 
 export async function build(
     peerId: PeerId,
-    relay: PeerIdB58,
+    relay: PeerIdB58 | undefined,
     script: string,
     data?: Map<string, any>,
     ttl?: number,
