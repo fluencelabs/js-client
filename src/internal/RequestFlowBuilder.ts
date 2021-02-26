@@ -80,13 +80,12 @@ export class RequestFlowBuilder {
     }
 
     buildWithFetchSemantics<T>(
-        callbackFnName: string = 'callback',
         callbackServiceId: string = 'callback',
+        callbackFnName: string = 'callback',
     ): [RequestFlow, Promise<T>] {
         const fetchPromise = new Promise<T>((resolve, reject) => {
             this.handlerConfigs.push((h) => {
-                h.onEvent(callbackFnName, callbackServiceId, (args, _) => {
-                    console.log('wewqewqe', args);
+                h.onEvent(callbackServiceId, callbackFnName, (args, _) => {
                     resolve(args as any);
                 });
             });

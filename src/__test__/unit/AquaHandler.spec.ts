@@ -16,7 +16,7 @@ const res = () => ({
 });
 
 describe('Aqua handler tests', () => {
-    it('Should work withou middlewares', () => {
+    it('Should work without middlewares', () => {
         // arrange
         const handler = new AquaCallHandler();
 
