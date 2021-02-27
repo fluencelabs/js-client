@@ -46,64 +46,60 @@ describe('== AIR suite', () => {
         expect(res).toEqual(arg);
     });
 
-    it('call broken script', async function () {
-        // arrange
-        const script = `(incorrect)`;
-        // prettier-ignore
-        const [request, error] = new RequestFlowBuilder()
+    describe('error handling', () => {
+        it('call broken script', async function () {
+            // arrange
+            const script = `(incorrect)`;
+            // prettier-ignore
+            const [request, error] = new RequestFlowBuilder()
                 .withRawScript(script)
                 .buildWithErrorHandling();
 
-        // act
-        const client = await createLocalClient();
-        await client.initiateFlow(request);
+            // act
+            const client = await createLocalClient();
+            await client.initiateFlow(request);
 
-        // assert
-        await expect(error).rejects.toContain("aqua script can't be parsed");
-    });
+            // assert
+            await expect(error).rejects.toContain("aqua script can't be parsed");
+        });
 
-    it('call script without ttl', async function () {
-        // arrange
-        const script = `(null)`;
-        // prettier-ignore
-        const [request, promise] = new RequestFlowBuilder()
+        it('call script without ttl', async function () {
+            // arrange
+            const script = `(null)`;
+            // prettier-ignore
+            const [request, promise] = new RequestFlowBuilder()
                 .withTTL(1)
                 .withRawScript(script)
                 .buildWithFetchSemantics();
 
-        // act
-        const client = await createLocalClient();
-        await client.initiateFlow(request);
+            // act
+            const client = await createLocalClient();
+            await client.initiateFlow(request);
 
-        // assert
-        await expect(promise).rejects.toContain('Timed out after 1ms');
+            // assert
+            await expect(promise).rejects.toContain('Timed out after 1ms');
+        });
     });
 
     it('check particle arguments', async function () {
         // arrange
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
-
-        const client = await createLocalClient();
-
-        let res;
-        client.handler.on(serviceId, fnName, (args, _) => {
-            res = args[0];
-            return res;
-        });
-
         const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [arg1])`;
+
         // prettier-ignore
-        const request = new RequestFlowBuilder()
+        const [request, promise] = new RequestFlowBuilder()
             .withRawScript(script)
             .withVariable('arg1', 'hello')
-            .build();
+            .buildWithFetchSemantics<string[]>(serviceId, fnName);
 
         // act
+        const client = await createLocalClient();
         await client.initiateFlow(request);
+        const [result] = await promise;
 
         // assert
-        expect(res).toEqual('hello');
+        expect(result).toEqual('hello');
     });
 
     it('check security tetraplet', async function () {
@@ -135,7 +131,7 @@ describe('== AIR suite', () => {
             (call %init_peer_id% ("${makeDataServiceId}" "${makeDataFnName}") [] result)
             (call %init_peer_id% ("${getDataServiceId}" "${getDataFnName}") [result.$.field])
         )`;
-        await client.initiateFlow(RequestFlow.createLocal(script));
+        await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
         const tetraplet = res.tetraplets[0][0];
@@ -184,7 +180,7 @@ describe('== AIR suite', () => {
                         (call %init_peer_id% ("${serviceId2}" "${fnName2}") ["${arg2}"] result2))
                        (call %init_peer_id% ("${serviceId3}" "${fnName3}") [result1 result2]))
         `;
-        await client.initiateFlow(RequestFlow.createLocal(script));
+        await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
         expect(res1).toEqual(arg1);
