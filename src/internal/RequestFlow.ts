@@ -25,7 +25,7 @@ export class RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
         res.ttl = particle.ttl;
         res.state = particle;
-        setTimeout(res.raiseTimeout, particle.ttl);
+        setTimeout(res.raiseTimeout.bind(res), particle.ttl);
         return res;
     }
 
@@ -66,7 +66,7 @@ export class RequestFlow {
         particle.signature = await signParticle(peerId, particle);
 
         this.state = particle;
-        setTimeout(this.raiseTimeout, particle.ttl);
+        setTimeout(this.raiseTimeout.bind(this), particle.ttl);
     }
 
     receiveUpdate(particle: Particle) {

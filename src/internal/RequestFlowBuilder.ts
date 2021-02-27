@@ -157,7 +157,7 @@ export class RequestFlowBuilder {
             });
 
             this.handleTimeout(() => {
-                reject(`Timed out after ${this.ttl}`);
+                reject(`Timed out after ${this.ttl}ms`);
             });
 
             this.handleScriptError((e) => {

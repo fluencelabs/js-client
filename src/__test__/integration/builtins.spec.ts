@@ -43,7 +43,6 @@ describe('Builtins usage suite', () => {
     });
 
     it('check_connection', async function () {
-        log.setLevel('debug');
         const peerId = await generatePeerId();
         const client = new FluenceClientTmp(peerId);
         await client.local();

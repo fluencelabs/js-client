@@ -6,7 +6,6 @@ import { createLocalClient } from '../connection';
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
         // arrange
-        log.setLevel('debug');
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
         const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
@@ -63,22 +62,21 @@ describe('== AIR suite', () => {
         await expect(error).rejects.toContain("aqua script can't be parsed");
     });
 
-    it.skip('call script without ttl', async function () {
+    it('call script without ttl', async function () {
         // arrange
-        // const script = `(call %init_peer_id% ("" "") [""])`;
         const script = `(null)`;
         // prettier-ignore
-        const [request, error] = new RequestFlowBuilder()
+        const [request, promise] = new RequestFlowBuilder()
                 .withTTL(1)
                 .withRawScript(script)
-                .buildWithErrorHandling();
+                .buildWithFetchSemantics();
 
         // act
         const client = await createLocalClient();
         await client.initiateFlow(request);
 
         // assert
-        await expect(error).rejects.toContain('Particle expired');
+        await expect(promise).rejects.toContain('Timed out after 1ms');
     });
 
     it('check particle arguments', async function () {
