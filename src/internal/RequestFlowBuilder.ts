@@ -2,21 +2,25 @@ import log from 'loglevel';
 import { AquaCallHandler } from './AquaHandler';
 import { DEFAULT_TTL, RequestFlow } from './RequestFlow';
 
-const loadVariablesService = 'load_variables';
-const loadVariablesFn = 'load';
+export const loadVariablesService = 'load';
+const loadVariablesFn = 'load_variable';
+export const loadRelayFn = 'load_relay';
 const xorHandleService = '__magic';
 const xorHandleFn = 'handle_xor';
-const relay = 'init_peer_relay';
+export const relayVariableName = 'init_peer_relay';
 
 const wrapWithXor = (script: string): string => {
     return `
     (xor
         ${script}
-        (seq
-            (match ${relay} ''
-                (call ${relay} ("op" "identity") [])
+        (xor
+            (match ${relayVariableName} ""
+                (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
             )
-            (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
+            (seq 
+                (call ${relayVariableName} ("op" "identity") [])
+                (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
+            )
         )
     )`;
 };
@@ -40,11 +44,18 @@ const wrapWithVariableInjectionScript = (script: string, fields: string[]): stri
 (seq
     (call %init_peer_id% ("${loadVariablesService}" "${loadVariablesFn}") ["${v}"] ${v})
     ${script}
-)
-                 `;
+)`;
     });
 
     return script;
+};
+
+const wrapWithInjectRelayScript = (script: string): string => {
+    return `
+(seq
+    (call %init_peer_id% ("${loadVariablesService}" "${loadRelayFn}") [] ${relayVariableName})
+    ${script}
+)`;
 };
 
 export class RequestFlowBuilder {
@@ -53,6 +64,7 @@ export class RequestFlowBuilder {
     private handlerConfigs: Array<(handler: AquaCallHandler) => void> = [];
     private buildScript: (sb: ScriptBuilder) => void;
     private onTimeout: () => void;
+    private onError: (error: any) => void;
 
     build() {
         if (!this.buildScript) {
@@ -64,6 +76,7 @@ export class RequestFlowBuilder {
         let script = b.build();
         script = wrapWithVariableInjectionScript(script, Array.from(this.variables.keys()));
         script = wrapWithXor(script);
+        script = wrapWithInjectRelayScript(script);
 
         const res = RequestFlow.createLocal(script, this.ttl);
         res.handler.on(loadVariablesService, loadVariablesFn, (args, _) => {
@@ -72,10 +85,7 @@ export class RequestFlowBuilder {
         res.handler.onEvent(xorHandleService, xorHandleFn, (args) => {
             try {
                 const msg = JSON.parse(args[0]);
-
-                if (res.onError) {
-                    res.onError(msg);
-                }
+                res.raiseError(msg);
             } catch (e) {
                 log.warn("Error handling script didn't work", e);
             }
@@ -85,7 +95,9 @@ export class RequestFlowBuilder {
             h(res.handler);
         }
 
-        res.onTimeout = this.onTimeout;
+        res.onTimeout(this.onTimeout);
+        res.onError(this.onError);
+
         return res;
     }
 
@@ -108,6 +120,11 @@ export class RequestFlowBuilder {
 
     handleTimeout(handler: () => void): RequestFlowBuilder {
         this.onTimeout = handler;
+        return this;
+    }
+
+    handleScriptError(handler: (error) => void): RequestFlowBuilder {
+        this.onError = handler;
         return this;
     }
 
@@ -140,11 +157,23 @@ export class RequestFlowBuilder {
             });
 
             this.handleTimeout(() => {
-                reject(new Error(`callback for ${callbackServiceId}/${callbackFnName} timed out after ${this.ttl}`));
+                reject(`Timed out after ${this.ttl}`);
+            });
+
+            this.handleScriptError((e) => {
+                reject(e);
             });
         });
 
         return [this.build(), fetchPromise];
+    }
+
+    buildWithErrorHandling(): [RequestFlow, Promise<void>] {
+        const promise = new Promise<void>((resolve, reject) => {
+            this.handleScriptError(reject);
+        });
+
+        return [this.build(), promise];
     }
 
     configHandler(config: (handler: AquaCallHandler) => void): RequestFlowBuilder {

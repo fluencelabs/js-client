@@ -8,23 +8,11 @@ import { Particle, genUUID, signParticle } from './particle';
 
 export const DEFAULT_TTL = 7000;
 
-// HACK:: make an api for aqua interpreter to accept variables in an easy way!
-function wrapWithVariableInjectionScript(script: string, fields: string[]): string {
-    fields.forEach((v) => {
-        script = `
-(seq
-    (call %init_peer_id% ("__magic" "load") ["${v}"] ${v})
-    ${script}
-)
-                 `;
-    });
-
-    return script;
-}
-
 export class RequestFlow {
     private state: Particle;
     private prevData: Uint8Array = Buffer.from([]);
+    private onTimeoutHandlers = [];
+    private onErrorHandlers = [];
 
     readonly id: string;
     readonly isExternal: boolean;
@@ -53,8 +41,13 @@ export class RequestFlow {
         this.script = script;
     }
 
-    onTimeout: () => void;
-    onError: (string) => void;
+    onTimeout(handler: () => void) {
+        this.onTimeoutHandlers.push(handler);
+    }
+
+    onError(handler: (error) => void) {
+        this.onErrorHandlers.push(handler);
+    }
 
     async initState(peerId: PeerId): Promise<void> {
         const id = this.id;
@@ -119,13 +112,19 @@ export class RequestFlow {
         return actualTtl <= 0;
     }
 
+    raiseError(error) {
+        for (const h of this.onErrorHandlers) {
+            h(error);
+        }
+    }
+
     private raiseTimeout() {
         const now = Date.now();
         const particle = this.state;
-        log.info(`Particle expired. Now: ${now}, ttl: ${particle.ttl}, ts: ${particle.timestamp}`);
+        log.info(`Particle expired. Now: ${now}, ttl: ${particle?.ttl}, ts: ${particle?.timestamp}`);
 
-        if (this.onTimeout) {
-            this.onTimeout();
+        for (const h of this.onTimeoutHandlers) {
+            h();
         }
     }
 }

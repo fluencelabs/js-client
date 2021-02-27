@@ -11,7 +11,7 @@ describe('Request flow tests', () => {
     it('test1', async () => {
         // arrange
         jest.useFakeTimers();
-        const request = RequestFlow.createLocal('(null)', {}, 10000);
+        const request = RequestFlow.createLocal('(null)', 10000);
         const peerId = await seedToPeerId(seed);
 
         // act
@@ -22,8 +22,7 @@ describe('Request flow tests', () => {
         expect(particle).toMatchObject({
             init_peer_id: peerId.toB58String(),
             script: '(null)',
-            // TODO:: why signature is different every time?
-            // signature: '5kMjU5RTjaLTJhPnngoXf98kz2CKZxNi7dv6GJDFkzBwvduaJEZmfp2VJNH58tWpL4BJSEfU2x5QFMu3EVx8GHAV',
+            signature: '5kMjU5RTjaLTJhPnngoXf98kz2CKZxNi7dv6GJDFkzBwvduaJEZmfp2VJNH58tWpL4BJSEfU2x5QFMu3EVx8GHAV',
             timestamp: mockDate,
             ttl: 10000,
         });

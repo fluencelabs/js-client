@@ -23,6 +23,7 @@ import { PeerIdB58, SecurityTetraplet } from './commonTypes';
 import { FluenceClient } from 'src';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
+import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 
 const makeDefaultClientHandler = (): AquaCallHandler => {
     const res = new AquaCallHandler();
@@ -98,6 +99,9 @@ export class FluenceClientTmp implements FluenceClient {
     }
 
     async initiateFlow(request: RequestFlow): Promise<void> {
+        request.handler.on(loadVariablesService, loadRelayFn, () => {
+            return this.relayPeerId || '';
+        });
         await request.initState(this.selfPeerIdFull);
         this.processor.executeLocalParticle(request);
     }

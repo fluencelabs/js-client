@@ -125,6 +125,12 @@ export class ParticleProcessor {
                 next_peer_pks: interpreterOutcome.next_peer_pks,
             });
 
+            if (interpreterOutcome.ret_code !== 0) {
+                request.raiseError(
+                    `Interpreter failed with code=${interpreterOutcome.ret_code} message=${interpreterOutcome.error_message}`,
+                );
+            }
+
             // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
             if (interpreterOutcome.next_peer_pks.length > 0) {
                 if (!this.connection) {
