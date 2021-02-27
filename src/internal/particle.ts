@@ -44,25 +44,6 @@ interface ParticlePayload {
     data: string;
 }
 
-function wrapWithXor(script: string): string {
-    return `
-    (xor
-        ${script}
-        (seq
-            (call __magic_relay ("op" "identity") [])
-            (call %init_peer_id% ("__magic" "handle_xor") [%last_error%])
-        )
-    )`;
-}
-
-function wrapWithXorLocal(script: string): string {
-    return `
-    (xor
-        ${script}
-        (call %init_peer_id% ("__magic" "handle_xor") [%last_error%])
-    )`;
-}
-
 /**
  * Creates an action to send to a node.
  */

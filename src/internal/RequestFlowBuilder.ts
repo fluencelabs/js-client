@@ -1,5 +1,25 @@
+import log from 'loglevel';
 import { AquaCallHandler } from './AquaHandler';
 import { DEFAULT_TTL, RequestFlow } from './RequestFlow';
+
+const loadVariablesService = 'load_variables';
+const loadVariablesFn = 'load';
+const xorHandleService = '__magic';
+const xorHandleFn = 'handle_xor';
+const relay = 'init_peer_relay';
+
+const wrapWithXor = (script: string): string => {
+    return `
+    (xor
+        ${script}
+        (seq
+            (match ${relay} ''
+                (call ${relay} ("op" "identity") [])
+            )
+            (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
+        )
+    )`;
+};
 
 class ScriptBuilder {
     private script: string;
@@ -14,9 +34,22 @@ class ScriptBuilder {
     }
 }
 
+const wrapWithVariableInjectionScript = (script: string, fields: string[]): string => {
+    fields.forEach((v) => {
+        script = `
+(seq
+    (call %init_peer_id% ("${loadVariablesService}" "${loadVariablesFn}") ["${v}"] ${v})
+    ${script}
+)
+                 `;
+    });
+
+    return script;
+};
+
 export class RequestFlowBuilder {
     private ttl: number = DEFAULT_TTL;
-    private data = new Map<string, any>();
+    private variables = new Map<string, any>();
     private handlerConfigs: Array<(handler: AquaCallHandler) => void> = [];
     private buildScript: (sb: ScriptBuilder) => void;
     private onTimeout: () => void;
@@ -28,15 +61,31 @@ export class RequestFlowBuilder {
 
         const b = new ScriptBuilder();
         this.buildScript(b);
-        const script = b.build();
+        let script = b.build();
+        script = wrapWithVariableInjectionScript(script, Array.from(this.variables.keys()));
+        script = wrapWithXor(script);
 
-        const res = RequestFlow.createLocal(script, this.data, this.ttl);
+        const res = RequestFlow.createLocal(script, this.ttl);
+        res.handler.on(loadVariablesService, loadVariablesFn, (args, _) => {
+            return this.variables.get(args[0]) || {};
+        });
+        res.handler.onEvent(xorHandleService, xorHandleFn, (args) => {
+            try {
+                const msg = JSON.parse(args[0]);
+
+                if (res.onError) {
+                    res.onError(msg);
+                }
+            } catch (e) {
+                log.warn("Error handling script didn't work", e);
+            }
+        });
+
         for (let h of this.handlerConfigs) {
             h(res.handler);
         }
 
         res.onTimeout = this.onTimeout;
-
         return res;
     }
 
@@ -63,16 +112,16 @@ export class RequestFlowBuilder {
     }
 
     withVariable(name: string, value: any): RequestFlowBuilder {
-        this.data.set(name, value);
+        this.variables.set(name, value);
         return this;
     }
 
     withVariables(data: Map<string, any> | Record<string, any>): RequestFlowBuilder {
         if (data instanceof Map) {
-            this.data = new Map([...Array.from(this.data.entries()), ...Array.from(data.entries())]);
+            this.variables = new Map([...Array.from(this.variables.entries()), ...Array.from(data.entries())]);
         } else {
             for (let k in data) {
-                this.data.set(k, data[k]);
+                this.variables.set(k, data[k]);
             }
         }
 

@@ -31,6 +31,8 @@ export class RequestFlow {
     readonly script: string;
     readonly handler = new AquaCallHandler();
 
+    ttl: number = DEFAULT_TTL;
+
     static createExternal(particle: Particle): RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
         res.ttl = particle.ttl;
@@ -39,20 +41,8 @@ export class RequestFlow {
         return res;
     }
 
-    static createLocal(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number): RequestFlow {
+    static createLocal(script: string, ttl?: number): RequestFlow {
         const res = new RequestFlow(false, genUUID(), script);
-
-        if (data === undefined) {
-            res.variables = new Map();
-        } else if (data instanceof Map) {
-            res.variables = data;
-        } else {
-            res.variables = new Map();
-            for (let k in data) {
-                res.variables.set(k, data[k]);
-            }
-        }
-
         res.ttl = ttl ?? DEFAULT_TTL;
         return res;
     }
@@ -63,36 +53,19 @@ export class RequestFlow {
         this.script = script;
     }
 
-    variables: Map<string, any> = new Map();
-    ttl: number;
-    onTimeout?: () => void;
+    onTimeout: () => void;
+    onError: (string) => void;
 
     async initState(peerId: PeerId): Promise<void> {
         const id = this.id;
         let currentTime = Date.now();
 
-        let data = this.variables;
-        if (this.variables === undefined) {
-            data = new Map();
-        }
-
-        let ttl = this.ttl;
-        if (ttl === undefined) {
-            ttl = DEFAULT_TTL;
-        }
-
-        // HACK:: make an api for aqua interpreter to accept variables in an easy way!
-        let script = wrapWithVariableInjectionScript(this.script, Array.from(data.keys()));
-        this.handler.on('__magic', 'load', (args, _) => {
-            return data ? data.get(args[0]) : {};
-        });
-
         const particle: Particle = {
             id: id,
             init_peer_id: peerId.toB58String(),
             timestamp: currentTime,
-            ttl: ttl,
-            script: script,
+            ttl: this.ttl,
+            script: this.script,
             signature: '',
             data: Buffer.from([]),
         };
