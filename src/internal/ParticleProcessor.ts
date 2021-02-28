@@ -45,7 +45,7 @@ export class ParticleProcessor {
     async init(connection?: FluenceConnection) {
         this.connection = connection;
         this.interpreter = await AquamarineInterpreter.create({
-            particleHandler: this.theHandler.bind(this),
+            particleHandler: this.hanlder.bind(this),
             peerId: this.peerId,
         });
         this.watchDog = setInterval(() => {
@@ -152,7 +152,7 @@ export class ParticleProcessor {
         }
     }
 
-    private theHandler: ParticleHandler = (
+    private hanlder: ParticleHandler = (
         serviceId: string,
         fnName: string,
         args: any[],
