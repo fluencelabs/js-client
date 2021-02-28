@@ -1,3 +1,4 @@
+import { of } from 'ipfs-only-hash';
 import log from 'loglevel';
 import { AquaCallHandler } from './AquaHandler';
 import { DEFAULT_TTL, RequestFlow } from './RequestFlow';
@@ -98,8 +99,12 @@ export class RequestFlowBuilder {
             h(res.handler);
         }
 
-        res.onTimeout(this.onTimeout);
-        res.onError(this.onError);
+        if (this.onTimeout) {
+            res.onTimeout(this.onTimeout);
+        }
+        if (this.onError) {
+            res.onError(this.onError);
+        }
 
         return res;
     }

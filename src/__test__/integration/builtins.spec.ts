@@ -42,8 +42,6 @@ describe('Builtins usage suite', () => {
     it('upload_modules', async function () {
         const client = await createClient(nodes[0].multiaddr);
 
-        console.log('peerid: ' + client.selfPeerId);
-
         let config: ModuleConfig = {
             name: 'test_broken_module',
             mem_pages_count: 100,
@@ -84,8 +82,6 @@ describe('Builtins usage suite', () => {
     it('add and remove script', async function () {
         const client = await createClient(nodes[0].multiaddr);
 
-        console.log('peerid: ' + client.selfPeerId);
-
         let script = `
         (seq
             (call "${client.relayPeerId}" ("op" "identity") [])
@@ -104,7 +100,6 @@ describe('Builtins usage suite', () => {
 
         await resMakingPromise
             .then((args) => {
-                console.log('final!');
                 expect(args as string[]).toEqual(['1', '2', '3']);
             })
             .finally(() => {

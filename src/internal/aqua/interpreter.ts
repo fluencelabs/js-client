@@ -142,7 +142,7 @@ const theParticleHandler = (
 
         tetrapletsObject = JSON.parse(tetraplets);
     } catch (err) {
-        console.error('Cannot parse arguments: ' + JSON.stringify(err));
+        log.error('Cannot parse arguments: ' + JSON.stringify(err));
         return {
             result: JSON.stringify('Cannot parse arguments: ' + JSON.stringify(err)),
             ret_code: 1,
@@ -189,7 +189,7 @@ function newImportObject(particleHandler: ParticleHandler, cfg: HostImportsConfi
                 return_current_peer_id(wasm, peerIdStr, arg0);
             },
             __wbindgen_throw: (arg: any) => {
-                console.log(`wbindgen throw: ${JSON.stringify(arg)}`);
+                log.error(`wbindgen throw: ${JSON.stringify(arg)}`);
             },
         },
         host: log_import(cfg),
