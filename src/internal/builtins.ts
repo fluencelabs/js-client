@@ -125,7 +125,7 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
             myPeerId: client.selfPeerId,
         })
         .withTTL(ttl)
-        .buildWithFetchSemantics<[string[]]>('_callback', 'callback');
+        .buildWithFetchSemantics<[string[]]>('_callback', callbackFn);
 
     client.initiateFlow(req);
 
