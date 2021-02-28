@@ -14,13 +14,11 @@ const wrapWithXor = (script: string): string => {
     (xor
         ${script}
         (xor
-            (match ${relayVariableName} ""
-                (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
-            )
             (seq 
                 (call ${relayVariableName} ("op" "identity") [])
                 (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
             )
+            (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
         )
     )`;
 };
@@ -53,7 +51,10 @@ const wrapWithVariableInjectionScript = (script: string, fields: string[]): stri
 const wrapWithInjectRelayScript = (script: string): string => {
     return `
 (seq
-    (call %init_peer_id% ("${loadVariablesService}" "${loadRelayFn}") [] ${relayVariableName})
+    (seq 
+        (call %init_peer_id% ("${loadVariablesService}" "${loadRelayFn}") [] ${relayVariableName})
+        (call %init_peer_id% ("op" "identity") [%init_peer_id%] init_peer_id)
+    )
     ${script}
 )`;
 };

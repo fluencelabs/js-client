@@ -1,7 +1,3 @@
-import { generatePeerId } from '..';
-import { createClient } from '../api';
-import { FluenceClientTmp } from '../internal/FluenceClientTmp';
-
 // Uncomment to test on dev nodes
 // export const nodes = [
 //     {
@@ -13,6 +9,9 @@ import { FluenceClientTmp } from '../internal/FluenceClientTmp';
 //         peerId: '12D3KooWJbJFaZ3k5sNd8DjQgg3aERoKtBAnirEvPV8yp76kEXHB',
 //     },
 // ];
+
+import { generatePeerId } from '..';
+import { FluenceClientTmp } from '../internal/FluenceClientTmp';
 
 /* 
  * start docker container to run integration tests locally:
@@ -32,8 +31,4 @@ export const createLocalClient = async () => {
     const client = new FluenceClientTmp(peerId);
     await client.local();
     return client;
-};
-
-export const createConnectedClient = async (node: string) => {
-    return (await createClient(node)) as FluenceClientTmp;
 };

@@ -9,38 +9,14 @@ import {
     uploadModule,
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
-import { checkConnection } from '../../api';
+import { checkConnection, createClient } from '../../api';
 import { generatePeerId } from '../..';
 import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
-import { createConnectedClient, nodes } from '../connection';
 import log from 'loglevel';
+import { nodes } from '../connection';
 
 describe('Builtins usage suite', () => {
     jest.setTimeout(10000);
-
-    it('get_modules', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        let modulesList = await getModules(client);
-
-        expect(modulesList).not.toBeUndefined;
-    });
-
-    it('get_interfaces', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        let interfaces = await getInterfaces(client);
-
-        expect(interfaces).not.toBeUndefined;
-    });
-
-    it('get_blueprints', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        let bpList = await getBlueprints(client);
-
-        expect(bpList).not.toBeUndefined;
-    });
 
     it('check_connection', async function () {
         const peerId = await generatePeerId();
@@ -53,8 +29,32 @@ describe('Builtins usage suite', () => {
         expect(isConnected).toEqual(true);
     });
 
+    it('get_modules', async function () {
+        const client = await createClient(nodes[0].multiaddr);
+
+        let modulesList = await getModules(client);
+
+        expect(modulesList).not.toBeUndefined;
+    });
+
+    it('get_interfaces', async function () {
+        const client = await createClient(nodes[0].multiaddr);
+
+        let interfaces = await getInterfaces(client);
+
+        expect(interfaces).not.toBeUndefined;
+    });
+
+    it('get_blueprints', async function () {
+        const client = await createClient(nodes[0].multiaddr);
+
+        let bpList = await getBlueprints(client);
+
+        expect(bpList).not.toBeUndefined;
+    });
+
     it('upload_modules', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        const client = await createClient(nodes[0].multiaddr);
 
         console.log('peerid: ' + client.selfPeerId);
 
@@ -76,7 +76,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('add_blueprint', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        const client = await createClient(nodes[0].multiaddr);
 
         let bpId = 'some';
 
@@ -87,7 +87,7 @@ describe('Builtins usage suite', () => {
 
     // FIXME:: there is no error on broken blueprint from a node
     it.skip('create_service', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        const client = await createClient(nodes[0].multiaddr);
 
         let serviceId = await createService(client, 'test_broken_blueprint');
 
@@ -96,7 +96,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('add and remove script', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        const client = await createClient(nodes[0].multiaddr);
 
         console.log('peerid: ' + client.selfPeerId);
 

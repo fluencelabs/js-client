@@ -1,8 +1,9 @@
 import { generatePeerId, peerIdToSeed } from '../../internal/peerIdUtils';
 import { checkConnection, createClient } from '../../api';
 import Multiaddr from 'multiaddr';
-import { createConnectedClient, nodes } from '../connection';
+import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
+import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
 
 describe('Typescript usage suite', () => {
     describe('should make connection to network', () => {
@@ -66,11 +67,34 @@ describe('Typescript usage suite', () => {
             expect(isConnected).toBeTruthy;
         });
     });
+    1;
+    it('should make a call through network', async () => {
+        // arrange
+        const peerId = await generatePeerId();
+        const client = new FluenceClientTmp(peerId);
+        await client.local();
+        await client.connect(nodes[0].multiaddr);
+
+        // act
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `(seq 
+        (call init_peer_relay ("op" "identity") ["hello world!"] result)
+        (call %init_peer_id% ("callback" "callback") [result])
+    )`,
+            )
+            .buildWithFetchSemantics<[[string]]>('callback', 'callback');
+        await client.initiateFlow(request);
+
+        // assert
+        const [[result]] = await promise;
+        expect(result).toBe('hello world!');
+    });
 
     it('two clients should work inside the same time browser', async () => {
         // arrange
-        const client1 = await createConnectedClient(nodes[0].multiaddr);
-        const client2 = await createConnectedClient(nodes[0].multiaddr);
+        const client1 = await createClient(nodes[0].multiaddr);
+        const client2 = await createClient(nodes[0].multiaddr);
 
         let resMakingPromise = new Promise((resolve) => {
             client2.handler.onEvent('test', 'test', (args, _) => {

@@ -62,13 +62,11 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
     const [request, promise] = new RequestFlowBuilder()
         .withRawScript(
             `(seq 
-        (call relay ("op" "identity") [msg] result)
-        (call myPeerId ("${callbackService}" "${callbackFn}") [result])
+        (call init_peer_relay ("op" "identity") [msg] result)
+        (call %init_peer_id% ("${callbackService}" "${callbackFn}") [result])
     )`,
         )
         .withVariables({
-            relay: client.relayPeerId,
-            myPeerId: client.selfPeerId,
             msg,
         })
         .buildWithFetchSemantics<string[][]>(callbackFn, callbackService);
