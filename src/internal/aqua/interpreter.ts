@@ -23,12 +23,14 @@ import PeerId from 'peer-id';
 import log from 'loglevel';
 import wasmBs64 from '@fluencelabs/aquamarine-interpreter';
 
-export type InterpreterInvoke = (
-    init_user_id: string,
+// prettier-ignore
+type InterpreterInvoke = (
+    init_peer_id: string,
     script: string,
     prev_data: Uint8Array,
     data: Uint8Array,
 ) => string;
+
 type ImportObject = {
     './aquamarine_client_bg.js': {
         // fn call_service_impl(service_id: String, fn_name: String, args: String, security_tetraplets: String) -> String;
@@ -206,16 +208,13 @@ function newLogImport(cfg: HostImportsConfig): ImportObject {
 }
 
 /// Instantiates AIR interpreter, and returns its `invoke` function as closure
-export async function instantiateInterpreter(
-    particleHandler: ParticleHandler,
-    peerId: PeerId,
-): Promise<InterpreterInvoke> {
+async function instantiateInterpreter(particleHandler: ParticleHandler, peerId: PeerId): Promise<InterpreterInvoke> {
     let cfg = new HostImportsConfig((cfg) => {
         return newImportObject(particleHandler, cfg, peerId);
     });
     let instance = await interpreterInstance(cfg);
 
-    return (init_user_id: string, script: string, prev_data: Uint8Array, data: Uint8Array) => {
+    return (init_peer_id: string, script: string, prev_data: Uint8Array, data: Uint8Array) => {
         let logLevel = log.getLevel();
         let logLevelStr = 'info';
         if (logLevel === 0) {
@@ -232,13 +231,13 @@ export async function instantiateInterpreter(
             logLevelStr = 'off';
         }
 
-        return aqua.invoke(instance.exports, init_user_id, script, prev_data, data, logLevelStr);
+        return aqua.invoke(instance.exports, init_peer_id, script, prev_data, data, logLevelStr);
     };
 }
 
 /// Instantiate AIR interpreter with host imports containing only logger, but not call_service
 /// peerId isn't actually required for AST parsing, but host imports require it, and I don't see any workaround
-export async function parseAstClosure(): Promise<(script: string) => string> {
+async function parseAstClosure(): Promise<(script: string) => string> {
     let cfg = new HostImportsConfig((cfg) => newLogImport(cfg));
     let instance = await interpreterInstance(cfg);
 
@@ -249,7 +248,49 @@ export async function parseAstClosure(): Promise<(script: string) => string> {
 
 /// Parses script and returns AST in JSON format
 /// NOTE & TODO: interpreter is instantiated every time, make it a lazy constant?
-export async function parseAIR(script: string): Promise<string> {
+async function parseAIR(script: string): Promise<string> {
     let closure = await parseAstClosure();
     return closure(script);
+}
+
+export class AquamarineInterpreter {
+    private wasmWrapper;
+
+    constructor(wasmWrapper) {
+        this.wasmWrapper = wasmWrapper;
+    }
+
+    static async create(config: { particleHandler: ParticleHandler; peerId: PeerId }) {
+        const cfg = new HostImportsConfig((cfg) => {
+            return newImportObject(config.particleHandler, cfg, config.peerId);
+        });
+
+        const instance = await interpreterInstance(cfg);
+        const res = new AquamarineInterpreter(instance);
+        return res;
+    }
+
+    invoke(init_peer_id: string, script: string, prev_data: Uint8Array, data: Uint8Array): string {
+        let logLevel = log.getLevel();
+        let logLevelStr = 'info';
+        if (logLevel === 0) {
+            logLevelStr = 'trace';
+        } else if (logLevel === 1) {
+            logLevelStr = 'debug';
+        } else if (logLevel === 2) {
+            logLevelStr = 'info';
+        } else if (logLevel === 3) {
+            logLevelStr = 'warn';
+        } else if (logLevel === 4) {
+            logLevelStr = 'error';
+        } else if (logLevel === 5) {
+            logLevelStr = 'off';
+        }
+
+        return aqua.invoke(this.wasmWrapper.exports, init_peer_id, script, prev_data, data, logLevelStr);
+    }
+
+    parseAir(script: string): string {
+        return aqua.ast(this.wasmWrapper.exports, script);
+    }
 }

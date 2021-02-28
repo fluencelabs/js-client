@@ -1,8 +1,9 @@
-import { parseAIR } from '../../internal/aqua/interpreter';
+import { AquamarineInterpreter } from '../../internal/aqua/interpreter';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
-        let ast = await parseAIR(`
+        const interpreter = await AquamarineInterpreter.create({} as any);
+        let ast = interpreter.parseAir(`
             (call node ("service" "function") [1 2 3 arg] output)
         `);
 

@@ -16,19 +16,19 @@
 
 import { Particle } from './particle';
 import * as PeerId from 'peer-id';
-import { instantiateInterpreter, InterpreterInvoke } from './aqua/interpreter';
 import { ParticleHandler, SecurityTetraplet, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler } from './AquaHandler';
 import { FluenceConnection } from './FluenceConnection';
+import { AquamarineInterpreter } from './aqua/interpreter';
 
 export class ParticleProcessor {
     private readonly peerId: PeerId;
     private readonly clientHandler: AquaCallHandler;
 
     private connection: FluenceConnection;
-    private interpreter: InterpreterInvoke;
+    private interpreter: AquamarineInterpreter;
     private requests: Map<string, RequestFlow> = new Map();
     private queue: RequestFlow[] = [];
     private currentRequestId: string | null = null;
@@ -44,7 +44,10 @@ export class ParticleProcessor {
      */
     async init(connection?: FluenceConnection) {
         this.connection = connection;
-        this.interpreter = await instantiateInterpreter(this.theHandler.bind(this), this.peerId);
+        this.interpreter = await AquamarineInterpreter.create({
+            particleHandler: this.theHandler.bind(this),
+            peerId: this.peerId,
+        });
         this.watchDog = setInterval(() => {
             for (let key in this.requests.keys) {
                 if (this.requests.get(key).hasExpired()) {
@@ -78,13 +81,6 @@ export class ParticleProcessor {
         const toLog = { ...particle };
         delete toLog.data;
         log.debug('external particle received', toLog);
-
-        let data: any = particle.data;
-        let error: any = data['protocol!error'];
-        if (error !== undefined) {
-            log.error('error in external particle: ', error);
-            return;
-        }
 
         let request = this.requests.get(particle.id);
         if (request) {

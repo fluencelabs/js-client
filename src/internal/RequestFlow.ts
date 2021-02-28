@@ -1,6 +1,6 @@
 import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
-import { InterpreterInvoke } from './aqua/interpreter';
+import { AquamarineInterpreter } from './aqua/interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
@@ -84,8 +84,8 @@ export class RequestFlow {
         }
     }
 
-    runInterpreter(interpreter: InterpreterInvoke) {
-        const interpreterOutcomeStr = interpreter(
+    runInterpreter(interpreter: AquamarineInterpreter) {
+        const interpreterOutcomeStr = interpreter.invoke(
             this.state.init_peer_id,
             this.state.script,
             this.prevData,
