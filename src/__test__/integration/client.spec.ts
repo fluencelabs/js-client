@@ -6,6 +6,71 @@ import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
 
 describe('Typescript usage suite', () => {
+    it('should make a call through network', async () => {
+        // arrange
+        const peerId = await generatePeerId();
+        const client = new FluenceClientTmp(peerId);
+        await client.local();
+        await client.connect(nodes[0].multiaddr);
+
+        // act
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `(seq 
+        (call init_peer_relay ("op" "identity") ["hello world!"] result)
+        (call %init_peer_id% ("callback" "callback") [result])
+    )`,
+            )
+            .buildWithFetchSemantics<[[string]]>('callback', 'callback');
+        await client.initiateFlow(request);
+
+        // assert
+        const [[result]] = await promise;
+        expect(result).toBe('hello world!');
+    });
+
+    it('check connection should work', async function () {
+        const peerId = await generatePeerId();
+        const client = new FluenceClientTmp(peerId);
+        await client.local();
+        await client.connect(nodes[0].multiaddr);
+
+        let isConnected = await checkConnection(client);
+
+        expect(isConnected).toEqual(true);
+    });
+
+    it('two clients should work inside the same time browser', async () => {
+        // arrange
+        const client1 = await createClient(nodes[0].multiaddr);
+        const client2 = await createClient(nodes[0].multiaddr);
+
+        let resMakingPromise = new Promise((resolve) => {
+            client2.handler.onEvent('test', 'test', (args, _) => {
+                resolve([...args]);
+                return {};
+            });
+        });
+
+        let script = `
+            (seq
+                (call "${client1.relayPeerId}" ("op" "identity") [])
+                (call "${client2.selfPeerId}" ("test" "test") [a b c d])
+            )
+        `;
+
+        let data: Map<string, any> = new Map();
+        data.set('a', 'some a');
+        data.set('b', 'some b');
+        data.set('c', 'some c');
+        data.set('d', 'some d');
+
+        await client1.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
+
+        let res = await resMakingPromise;
+        expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
+    });
+
     describe('should make connection to network', () => {
         it('address as string', async () => {
             // arrange
@@ -66,59 +131,5 @@ describe('Typescript usage suite', () => {
             // assert
             expect(isConnected).toBeTruthy;
         });
-    });
-    1;
-    it('should make a call through network', async () => {
-        // arrange
-        const peerId = await generatePeerId();
-        const client = new FluenceClientTmp(peerId);
-        await client.local();
-        await client.connect(nodes[0].multiaddr);
-
-        // act
-        const [request, promise] = new RequestFlowBuilder()
-            .withRawScript(
-                `(seq 
-        (call init_peer_relay ("op" "identity") ["hello world!"] result)
-        (call %init_peer_id% ("callback" "callback") [result])
-    )`,
-            )
-            .buildWithFetchSemantics<[[string]]>('callback', 'callback');
-        await client.initiateFlow(request);
-
-        // assert
-        const [[result]] = await promise;
-        expect(result).toBe('hello world!');
-    });
-
-    it('two clients should work inside the same time browser', async () => {
-        // arrange
-        const client1 = await createClient(nodes[0].multiaddr);
-        const client2 = await createClient(nodes[0].multiaddr);
-
-        let resMakingPromise = new Promise((resolve) => {
-            client2.handler.onEvent('test', 'test', (args, _) => {
-                resolve([...args]);
-                return {};
-            });
-        });
-
-        let script = `
-            (seq
-                (call "${client1.relayPeerId}" ("op" "identity") [])
-                (call "${client2.selfPeerId}" ("test" "test") [a b c d])
-            )
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('a', 'some a');
-        data.set('b', 'some b');
-        data.set('c', 'some c');
-        data.set('d', 'some d');
-
-        await client1.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
-
-        let res = await resMakingPromise;
-        expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
     });
 });

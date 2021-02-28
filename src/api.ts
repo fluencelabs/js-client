@@ -55,9 +55,13 @@ export const createClient = async (
 };
 
 export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
-    let msg = Math.random().toString(36).substring(7);
-    let callbackFn = 'checkConnection';
-    let callbackService = '_callback';
+    if (!client.isConnected) {
+        return false;
+    }
+
+    const msg = Math.random().toString(36).substring(7);
+    const callbackFn = 'checkConnection';
+    const callbackService = '_callback';
 
     const [request, promise] = new RequestFlowBuilder()
         .withRawScript(
@@ -69,17 +73,13 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         .withVariables({
             msg,
         })
-        .buildWithFetchSemantics<string[][]>(callbackFn, callbackService);
-
-    if (!client.isConnected) {
-        return false;
-    }
+        .buildWithFetchSemantics<[[string]]>(callbackService, callbackFn);
 
     await client.initiateFlow(request);
 
     try {
-        let result = await promise;
-        if (result[0][0] != msg) {
+        const [[result]] = await promise;
+        if (result != msg) {
             log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.");
         }
         return true;

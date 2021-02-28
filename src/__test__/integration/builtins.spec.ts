@@ -18,17 +18,6 @@ import { nodes } from '../connection';
 describe('Builtins usage suite', () => {
     jest.setTimeout(10000);
 
-    it('check_connection', async function () {
-        const peerId = await generatePeerId();
-        const client = new FluenceClientTmp(peerId);
-        await client.local();
-        await client.connect(nodes[0].multiaddr);
-
-        let isConnected = await checkConnection(client);
-
-        expect(isConnected).toEqual(true);
-    });
-
     it('get_modules', async function () {
         const client = await createClient(nodes[0].multiaddr);
 
