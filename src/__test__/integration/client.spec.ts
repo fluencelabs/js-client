@@ -1,10 +1,9 @@
 import { generatePeerId, peerIdToSeed } from '../../internal/peerIdUtils';
-import { checkConnection, createClient } from '../../api';
+import { checkConnection, createClient, FluenceClient } from '../../api.unstable';
 import Multiaddr from 'multiaddr';
 import { createLocalClient, nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import { ClientImpl } from '../../internal/ClientImpl';
-import log from 'loglevel';
 
 describe('Typescript usage suite', () => {
     it('should make a call through network', async () => {
@@ -160,7 +159,6 @@ describe('Typescript usage suite', () => {
 
     it('xor handling should work with local client', async function () {
         // arrange
-        log.setLevel('debug');
         const [request, promise] = new RequestFlowBuilder()
             .withRawScript(
                 `

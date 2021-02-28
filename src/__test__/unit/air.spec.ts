@@ -1,6 +1,5 @@
-import log from 'loglevel';
-import { RequestFlowBuilder } from '../..';
 import { RequestFlow } from '../../internal/RequestFlow';
+import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {

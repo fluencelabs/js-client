@@ -9,10 +9,7 @@ import {
     uploadModule,
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
-import { checkConnection, createClient } from '../../api';
-import { generatePeerId } from '../..';
-import { ClientImpl } from '../../internal/ClientImpl';
-import log from 'loglevel';
+import { createClient } from '../../api.unstable';
 import { nodes } from '../connection';
 
 describe('Builtins usage suite', () => {

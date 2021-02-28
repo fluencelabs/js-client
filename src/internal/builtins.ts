@@ -15,9 +15,9 @@
  */
 
 import { RequestFlow } from './RequestFlow';
-import { FluenceClient } from '../FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
+import { FluenceClient } from 'src/api.unstable';
 
 const nodeIdentityCall = (client: FluenceClient): string => {
     return `(call "${client.relayPeerId}" ("op" "identity") [])`;
