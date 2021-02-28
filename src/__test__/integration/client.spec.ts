@@ -1,9 +1,10 @@
 import { generatePeerId, peerIdToSeed } from '../../internal/peerIdUtils';
 import { checkConnection, createClient } from '../../api';
 import Multiaddr from 'multiaddr';
-import { nodes } from '../connection';
+import { createLocalClient, nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
+import log from 'loglevel';
 
 describe('Typescript usage suite', () => {
     it('should make a call through network', async () => {
@@ -131,5 +132,54 @@ describe('Typescript usage suite', () => {
             // assert
             expect(isConnected).toBeTruthy;
         });
+    });
+
+    it('xor handling should work with connected client', async function () {
+        // arrange
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `
+            (seq 
+                (call init_peer_relay ("op" "identity") [])
+                (call init_peer_relay ("incorrect" "service") ["incorrect_arg"])
+            )
+        `,
+            )
+            .buildWithErrorHandling();
+
+        // act
+        const client = await createClient(nodes[0].multiaddr);
+        await client.initiateFlow(request);
+
+        // assert
+        await expect(promise).rejects.toMatchObject({
+            error: expect.stringContaining("Service with id 'incorrect' not found"),
+            instruction: expect.stringContaining('incorrect'),
+        });
+    });
+
+    it('xor handling should work with local client', async function () {
+        // arrange
+        log.setLevel('debug');
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `
+            (call %init_peer_id% ("service" "fails") [])
+            `,
+            )
+            .configHandler((h) => {
+                h.use((req, res, _) => {
+                    res.retCode = 1;
+                    res.result = 'service failed internally';
+                });
+            })
+            .buildWithErrorHandling();
+
+        // act
+        const client = await createLocalClient();
+        await client.initiateFlow(request);
+
+        // assert
+        await expect(promise).rejects.toMatch('service failed internally');
     });
 });

@@ -14,11 +14,13 @@ const wrapWithXor = (script: string): string => {
     (xor
         ${script}
         (xor
+            (match ${relayVariableName} ""
+                (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
+            )
             (seq 
                 (call ${relayVariableName} ("op" "identity") [])
                 (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
             )
-            (call %init_peer_id% ("${xorHandleService}" "${xorHandleFn}") [%last_error%])
         )
     )`;
 };
