@@ -1,4 +1,5 @@
 import PeerId from 'peer-id';
+import { verifyParticle } from '../../internal/particle';
 import { seedToPeerId } from '../../internal/peerIdUtils';
 import { RequestFlow } from '../../internal/RequestFlow';
 
@@ -22,10 +23,10 @@ describe('Request flow tests', () => {
         expect(particle).toMatchObject({
             init_peer_id: peerId.toB58String(),
             script: '(null)',
-            signature: '5kMjU5RTjaLTJhPnngoXf98kz2CKZxNi7dv6GJDFkzBwvduaJEZmfp2VJNH58tWpL4BJSEfU2x5QFMu3EVx8GHAV',
             timestamp: mockDate,
             ttl: 10000,
         });
+        expect(await verifyParticle(peerId, particle)).toBeTruthy();
         expect(setTimeout).toHaveBeenCalledTimes(1);
     });
 });

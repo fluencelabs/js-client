@@ -17,7 +17,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
-import { encode } from 'bs58';
+import { encode, decode } from 'bs58';
 
 export interface Particle {
     id: string;
@@ -100,6 +100,12 @@ export async function signParticle(peerId: PeerId, particle: Particle): Promise<
 
     let signature = await peerId.privKey.sign(bufToSign);
     return encode(signature);
+}
+
+export async function verifyParticle(peerId: PeerId, particle: Particle): Promise<boolean> {
+    let buf = canonicalBytes(particle);
+
+    return await peerId.pubKey.verify(buf, decode(particle.signature));
 }
 
 export function genUUID() {
