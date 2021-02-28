@@ -8,7 +8,7 @@ const mockDate = new Date(Date.UTC(2021, 2, 14)).valueOf();
 describe('Request flow tests', () => {
     Date.now = jest.fn(() => mockDate);
 
-    it('test1', async () => {
+    it('particle initiation should work', async () => {
         // arrange
         jest.useFakeTimers();
         const request = RequestFlow.createLocal('(null)', 10000);
