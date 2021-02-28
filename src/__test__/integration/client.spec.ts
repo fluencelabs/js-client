@@ -3,14 +3,14 @@ import { checkConnection, createClient } from '../../api';
 import Multiaddr from 'multiaddr';
 import { createLocalClient, nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
-import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
+import { ClientImpl } from '../../internal/ClientImpl';
 import log from 'loglevel';
 
 describe('Typescript usage suite', () => {
     it('should make a call through network', async () => {
         // arrange
         const peerId = await generatePeerId();
-        const client = new FluenceClientTmp(peerId);
+        const client = new ClientImpl(peerId);
         await client.local();
         await client.connect(nodes[0].multiaddr);
 
@@ -32,7 +32,7 @@ describe('Typescript usage suite', () => {
 
     it('check connection should work', async function () {
         const peerId = await generatePeerId();
-        const client = new FluenceClientTmp(peerId);
+        const client = new ClientImpl(peerId);
         await client.local();
         await client.connect(nodes[0].multiaddr);
 

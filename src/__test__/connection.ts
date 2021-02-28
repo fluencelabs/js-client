@@ -11,7 +11,7 @@
 // ];
 
 import { generatePeerId } from '..';
-import { FluenceClientTmp } from '../internal/FluenceClientTmp';
+import { ClientImpl } from '../internal/ClientImpl';
 
 /* 
  * start docker container to run integration tests locally:
@@ -28,7 +28,7 @@ export const nodes = [
 
 export const createLocalClient = async () => {
     const peerId = await generatePeerId();
-    const client = new FluenceClientTmp(peerId);
+    const client = new ClientImpl(peerId);
     await client.local();
     return client;
 };

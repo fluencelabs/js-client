@@ -3,7 +3,7 @@ import { SecurityTetraplet } from './internal/commonTypes';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
-import { FluenceClientTmp } from './internal/FluenceClientTmp';
+import { ClientImpl } from './internal/ClientImpl';
 import { RequestFlow } from './internal/RequestFlow';
 import log from 'loglevel';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
@@ -34,7 +34,7 @@ export const createClient = async (
         peerId = await seedToPeerId(peerIdOrSeed);
     }
 
-    const client = new FluenceClientTmp(peerId);
+    const client = new ClientImpl(peerId);
 
     if (connectTo) {
         let theAddress: Multiaddr;

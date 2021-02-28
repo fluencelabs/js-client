@@ -32,7 +32,7 @@ const makeDefaultClientHandler = (): AquaCallHandler => {
     return res;
 };
 
-export class FluenceClientTmp implements FluenceClient {
+export class ClientImpl implements FluenceClient {
     readonly selfPeerIdFull: PeerId;
 
     get relayPeerId(): PeerIdB58 | undefined {

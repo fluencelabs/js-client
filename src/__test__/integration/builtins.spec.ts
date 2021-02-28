@@ -11,7 +11,7 @@ import {
 import { ModuleConfig } from '../../internal/moduleConfig';
 import { checkConnection, createClient } from '../../api';
 import { generatePeerId } from '../..';
-import { FluenceClientTmp } from '../../internal/FluenceClientTmp';
+import { ClientImpl } from '../../internal/ClientImpl';
 import log from 'loglevel';
 import { nodes } from '../connection';
 
