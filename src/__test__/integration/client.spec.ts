@@ -1,16 +1,12 @@
-import { generatePeerId, peerIdToSeed } from '../../internal/peerIdUtils';
-import { checkConnection, createClient, FluenceClient } from '../../api.unstable';
+import { checkConnection, createClient } from '../../api.unstable';
 import Multiaddr from 'multiaddr';
-import { createLocalClient, nodes } from '../connection';
+import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
-import { ClientImpl } from '../../internal/ClientImpl';
 
 describe('Typescript usage suite', () => {
     it('should make a call through network', async () => {
         // arrange
-        const peerId = await generatePeerId();
-        const client = new ClientImpl(peerId);
-        await client.local();
+        const client = await createClient();
         await client.connect(nodes[0].multiaddr);
 
         // act
@@ -30,9 +26,7 @@ describe('Typescript usage suite', () => {
     });
 
     it('check connection should work', async function () {
-        const peerId = await generatePeerId();
-        const client = new ClientImpl(peerId);
-        await client.local();
+        const client = await createClient();
         await client.connect(nodes[0].multiaddr);
 
         let isConnected = await checkConnection(client);
@@ -174,7 +168,7 @@ describe('Typescript usage suite', () => {
             .buildWithErrorHandling();
 
         // act
-        const client = await createLocalClient();
+        const client = await createClient();
         await client.initiateFlow(request);
 
         // assert

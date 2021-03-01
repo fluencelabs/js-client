@@ -70,6 +70,8 @@ export const createClient = async (
         if (!(await checkConnection(client))) {
             throw new Error('Connection check failed. Check if the node is working or try to connect to another node');
         }
+    } else {
+        await client.local();
     }
 
     return client;

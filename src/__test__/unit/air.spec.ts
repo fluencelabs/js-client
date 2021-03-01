@@ -1,6 +1,6 @@
+import { createClient } from '../../api.unstable';
 import { RequestFlow } from '../../internal/RequestFlow';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
-import { createLocalClient } from '../connection';
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
@@ -15,7 +15,7 @@ describe('== AIR suite', () => {
             .buildWithFetchSemantics<string[]>(serviceId, fnName);
 
         // act
-        const client = await createLocalClient();
+        const client = await createClient();
         await client.initiateFlow(request);
         const [result] = await promise;
 
@@ -28,7 +28,7 @@ describe('== AIR suite', () => {
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
 
-        const client = await createLocalClient();
+        const client = await createClient();
 
         let res;
         client.handler.on(serviceId, fnName, (args, _) => {
@@ -55,7 +55,7 @@ describe('== AIR suite', () => {
                 .buildWithErrorHandling();
 
             // act
-            const client = await createLocalClient();
+            const client = await createClient();
             await client.initiateFlow(request);
 
             // assert
@@ -72,7 +72,7 @@ describe('== AIR suite', () => {
                 .buildWithFetchSemantics();
 
             // act
-            const client = await createLocalClient();
+            const client = await createClient();
             await client.initiateFlow(request);
 
             // assert
@@ -93,7 +93,7 @@ describe('== AIR suite', () => {
             .buildWithFetchSemantics<string[]>(serviceId, fnName);
 
         // act
-        const client = await createLocalClient();
+        const client = await createClient();
         await client.initiateFlow(request);
         const [result] = await promise;
 
@@ -108,7 +108,7 @@ describe('== AIR suite', () => {
         const getDataServiceId = 'get_data_service';
         const getDataFnName = 'get_data';
 
-        const client = await createLocalClient();
+        const client = await createClient();
 
         client.handler.on(makeDataServiceId, makeDataFnName, (args, _) => {
             return {
@@ -143,7 +143,7 @@ describe('== AIR suite', () => {
 
     it('check chain of services work properly', async function () {
         // arrange
-        const client = await createLocalClient();
+        const client = await createClient();
 
         const serviceId1 = 'check1';
         const fnName1 = 'fn1';

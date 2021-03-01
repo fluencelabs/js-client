@@ -77,10 +77,14 @@ export class ParticleProcessor {
     /**
      * Handle incoming particle from a relay.
      */
-    async executeExternalParticle(particle: Particle) {
-        const toLog = { ...particle };
-        delete toLog.data;
-        log.debug('external particle received', toLog);
+    async executeIncomingParticle(particle: Particle) {
+        log.debug('external particle received', {
+            id: particle.id,
+            init_peer_id: particle.init_peer_id,
+            timestamp: particle.timestamp,
+            ttl: particle.ttl,
+            script: particle.script,
+        });
 
         let request = this.requests.get(particle.id);
         if (request) {

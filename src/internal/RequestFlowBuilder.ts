@@ -8,7 +8,7 @@ const loadVariablesFn = 'load_variable';
 export const loadRelayFn = 'load_relay';
 const xorHandleService = '__magic';
 const xorHandleFn = 'handle_xor';
-export const relayVariableName = 'init_peer_relay';
+export const relayVariableName = 'init_relay';
 
 const wrapWithXor = (script: string): string => {
     return `

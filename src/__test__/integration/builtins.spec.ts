@@ -69,14 +69,15 @@ describe('Builtins usage suite', () => {
         expect(bpIdReturned).toEqual(bpId);
     });
 
-    // FIXME:: there is no error on broken blueprint from a node
-    it.skip('create_service', async function () {
+    it('create broken blueprint', async function () {
         const client = await createClient(nodes[0].multiaddr);
 
-        let serviceId = await createService(client, 'test_broken_blueprint');
+        let promise = createService(client, 'test_broken_blueprint');
 
-        // TODO there is no error on broken blueprint from a node
-        expect(serviceId).not.toBeUndefined;
+        await expect(promise).rejects.toMatchObject({
+            error: expect.stringContaining("Blueprint wasn't found at"),
+            instruction: expect.stringContaining('blueprint_id'),
+        });
     });
 
     it('add and remove script', async function () {

@@ -91,7 +91,7 @@ export class ClientImpl implements FluenceClient {
             multiaddr,
             node,
             this.selfPeerIdFull,
-            this.processor.executeExternalParticle.bind(this.processor),
+            this.processor.executeIncomingParticle.bind(this.processor),
         );
         await connection.connect();
         this.connection = connection;

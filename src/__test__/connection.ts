@@ -10,13 +10,10 @@
 //     },
 // ];
 
-import { generatePeerId } from '..';
-import { ClientImpl } from '../internal/ClientImpl';
-
 /* 
  * start docker container to run integration tests locally:
 
-docker run --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence:freeze -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj
+docker run --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj
 
  */
 export const nodes = [
@@ -25,10 +22,3 @@ export const nodes = [
         peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
     },
 ];
-
-export const createLocalClient = async () => {
-    const peerId = await generatePeerId();
-    const client = new ClientImpl(peerId);
-    await client.local();
-    return client;
-};
