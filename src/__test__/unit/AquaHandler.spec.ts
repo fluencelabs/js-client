@@ -1,5 +1,5 @@
 import { AquaCallHandler, errorHandler } from '../../internal/AquaHandler';
-import { ErrorCodes } from '../../internal/commonTypes';
+import { ResultCodes } from '../../internal/commonTypes';
 
 const req = () => ({
     serviceId: 'service',
@@ -102,7 +102,7 @@ describe('Aqua handler tests', () => {
 
         // assert
         expect(res).toMatchObject({
-            retCode: ErrorCodes.exceptionInHandler,
+            retCode: ResultCodes.exceptionInHandler,
             result: 'Error: some error',
         });
     });
@@ -125,7 +125,7 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: { called: ['hello', 'world'] },
             });
         });
@@ -148,7 +148,7 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ErrorCodes.unkownError,
+                retCode: ResultCodes.unkownError,
             });
         });
 
@@ -194,7 +194,7 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ErrorCodes.unkownError,
+                retCode: ResultCodes.unkownError,
             });
         });
 
@@ -222,11 +222,11 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res1).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: 'called function1',
             });
             expect(res2).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: 'called function2',
             });
         });
@@ -250,7 +250,7 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: 'overridden',
             });
         });
@@ -284,11 +284,11 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res1).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: 'called function1',
             });
             expect(res2).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: 'called function2',
             });
         });
@@ -315,7 +315,7 @@ describe('Aqua handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ErrorCodes.success,
+                retCode: ResultCodes.success,
                 result: 'overridden',
             });
         });

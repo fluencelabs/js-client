@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
+import log, { LogLevel } from 'loglevel';
 
 export interface Particle {
     id: string;
@@ -29,6 +30,10 @@ export interface Particle {
     signature: string;
     data: Uint8Array;
 }
+
+export const logParticle = (fn: Function, message: string, particle: Particle) => {
+    fn(message, particle);
+};
 
 /**
  * Represents particle action to send to a node

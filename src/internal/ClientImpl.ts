@@ -99,6 +99,7 @@ export class ClientImpl implements FluenceClient {
     }
 
     async initiateFlow(request: RequestFlow): Promise<void> {
+        // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
         request.handler.on(loadVariablesService, loadRelayFn, () => {
             return this.relayPeerId || '';
         });

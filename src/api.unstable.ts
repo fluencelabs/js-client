@@ -96,7 +96,7 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         .withVariables({
             msg,
         })
-        .buildWithFetchSemantics<[[string]]>(callbackService, callbackFn);
+        .buildAsFetch<[[string]]>(callbackService, callbackFn);
 
     await client.initiateFlow(request);
 

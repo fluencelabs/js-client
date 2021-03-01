@@ -59,7 +59,7 @@ const requestResponse = async <T>(
         .withRawScript(script)
         .withVariables(data)
         .withTTL(ttl)
-        .buildWithFetchSemantics<any[]>('_callback', name);
+        .buildAsFetch<any[]>('_callback', name);
     await client.initiateFlow(request);
     const res = await promise;
     return handleResponse(res);
@@ -86,7 +86,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
             myPeerId: client.selfPeerId,
         })
         .withTTL(ttl)
-        .buildWithFetchSemantics<[string[]]>('_callback', callbackFn);
+        .buildAsFetch<[string[]]>('_callback', callbackFn);
     client.initiateFlow(req);
 
     const [res] = await promise;
@@ -125,7 +125,7 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
             myPeerId: client.selfPeerId,
         })
         .withTTL(ttl)
-        .buildWithFetchSemantics<[string[]]>('_callback', callbackFn);
+        .buildAsFetch<[string[]]>('_callback', callbackFn);
 
     client.initiateFlow(req);
 
@@ -178,7 +178,7 @@ export const uploadModule = async (
         )
         .withVariables(data)
         .withTTL(ttl)
-        .buildWithFetchSemantics<[string[]]>('_callback', 'getModules');
+        .buildAsFetch<[string[]]>('_callback', 'getModules');
 
     await client.initiateFlow(req);
     await promise;

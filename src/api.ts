@@ -98,7 +98,12 @@ export const sendParticle = async (
     return req.id;
 };
 
-const handlersMap = new Map();
+/*
+    This map stores functions which unregister callbacks registered by registerServiceFunction
+    The key sould be created with makeKey. The value is the unresitration function
+    This is only needed to support legacy api
+*/
+const handlersUnregistratorsMAp = new Map();
 const makeKey = (client: FluenceClient, serviceId: string, fnName: string) => {
     const pid = client.selfPeerId || '';
     return `${pid}/${serviceId}/${fnName}`;
@@ -117,8 +122,8 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    const unuse = (client as ClientImpl).handler.on(serviceId, fnName, handler);
-    handlersMap.set(makeKey(client, serviceId, fnName), unuse);
+    const unregister = (client as ClientImpl).handler.on(serviceId, fnName, handler);
+    handlersUnregistratorsMAp.set(makeKey(client, serviceId, fnName), unregister);
 };
 
 // prettier-ignore
@@ -133,11 +138,12 @@ export const unregisterServiceFunction = (
     serviceId: string,
     fnName: string
 ) => {
-    const unuse = handlersMap.get(makeKey(client, serviceId, fnName));
+    const key = makeKey(client, serviceId, fnName);
+    const unuse = handlersUnregistratorsMAp.get(key);
     if(unuse) {
         unuse();
     }
-    handlersMap.delete(makeKey(client, serviceId, fnName));
+    handlersUnregistratorsMAp.delete(key);
 };
 
 /**
@@ -187,7 +193,7 @@ export const sendParticleAsFetch = async <T>(
         .withRawScript(particle.script)
         .withVariables(particle.data)
         .withTTL(particle.ttl)
-        .buildWithFetchSemantics<T>(callbackServiceId, callbackFnName);
+        .buildAsFetch<T>(callbackServiceId, callbackFnName);
 
     await (client as ClientImpl).initiateFlow(request);
 

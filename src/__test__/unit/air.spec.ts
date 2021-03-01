@@ -12,7 +12,7 @@ describe('== AIR suite', () => {
         // prettier-ignore
         const [request, promise] = new RequestFlowBuilder()
             .withRawScript(script)
-            .buildWithFetchSemantics<string[]>(serviceId, fnName);
+            .buildAsFetch<string[]>(serviceId, fnName);
 
         // act
         const client = await createClient();
@@ -69,7 +69,7 @@ describe('== AIR suite', () => {
             const [request, promise] = new RequestFlowBuilder()
                 .withTTL(1)
                 .withRawScript(script)
-                .buildWithFetchSemantics();
+                .buildAsFetch();
 
             // act
             const client = await createClient();
@@ -90,7 +90,7 @@ describe('== AIR suite', () => {
         const [request, promise] = new RequestFlowBuilder()
             .withRawScript(script)
             .withVariable('arg1', 'hello')
-            .buildWithFetchSemantics<string[]>(serviceId, fnName);
+            .buildAsFetch<string[]>(serviceId, fnName);
 
         // act
         const client = await createClient();

@@ -153,7 +153,7 @@ export class RequestFlowBuilder {
         return this;
     }
 
-    buildWithFetchSemantics<T>(
+    buildAsFetch<T>(
         callbackServiceId: string = 'callback',
         callbackFnName: string = 'callback',
     ): [RequestFlow, Promise<T>] {

@@ -17,7 +17,7 @@ describe('Typescript usage suite', () => {
         (call %init_peer_id% ("callback" "callback") [result])
     )`,
             )
-            .buildWithFetchSemantics<[[string]]>('callback', 'callback');
+            .buildAsFetch<[[string]]>('callback', 'callback');
         await client.initiateFlow(request);
 
         // assert

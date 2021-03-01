@@ -1,7 +1,7 @@
-import { CallServiceResult, ErrorCodes } from './commonTypes';
+import { ResultCodes, SecurityTetraplet } from './commonTypes';
 
 interface ParticleContext {
-    particleId?: string;
+    particleId: string;
     [x: string]: any;
 }
 
@@ -9,24 +9,28 @@ interface AquaCall {
     serviceId: string;
     fnName: string;
     args: any[];
-    tetraplets: any[][];
+    tetraplets: SecurityTetraplet[][];
     particleContext: ParticleContext;
     [x: string]: any;
 }
 
 interface AquaResult {
-    retCode: ErrorCodes;
+    retCode: ResultCodes;
     result?: any;
     [x: string]: any;
 }
 
 export type Middleware = (req: AquaCall, resp: AquaResult, next: Function) => void;
 
-export const fnHandler = (serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => any) => {
+export const fnHandler = (
+    serviceId: string,
+    fnName: string,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => any,
+) => {
     return (req: AquaCall, resp: AquaResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             const res = handler(req.args, req.tetraplets);
-            resp.retCode = ErrorCodes.success;
+            resp.retCode = ResultCodes.success;
             resp.result = res;
         }
         next();
@@ -36,7 +40,7 @@ export const fnHandler = (serviceId: string, fnName: string, handler: (args: any
 export const fnAsEventHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: any[][]) => void,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
 ) => {
     return (req: AquaCall, resp: AquaResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
@@ -44,7 +48,7 @@ export const fnAsEventHandler = (
                 handler(req.args, req.tetraplets);
             }, 0);
 
-            resp.retCode = ErrorCodes.success;
+            resp.retCode = ResultCodes.success;
             resp.result = {};
         }
         next();
@@ -55,7 +59,7 @@ export const errorHandler: Middleware = (req: AquaCall, resp: AquaResult, next: 
     try {
         next();
     } catch (e) {
-        resp.retCode = ErrorCodes.exceptionInHandler;
+        resp.retCode = ResultCodes.exceptionInHandler;
         resp.result = e.toString();
     }
 };
@@ -64,7 +68,7 @@ type InternalHandler = (req: AquaCall, resp: AquaResult) => void;
 
 export class AquaCallHandler {
     private static defaultHandler(req: AquaCall, resp: AquaResult) {
-        resp.retCode = ErrorCodes.noServiceFound;
+        resp.retCode = ResultCodes.noServiceFound;
         resp.result = `Error. There is no service: ${req.serviceId}`;
     }
 
@@ -88,7 +92,7 @@ export class AquaCallHandler {
         return this;
     }
 
-    on(serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => any): Function {
+    on(serviceId: string, fnName: string, handler: (args: any[], tetraplets: SecurityTetraplet[][]) => any): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
         return () => {
@@ -96,7 +100,11 @@ export class AquaCallHandler {
         };
     }
 
-    onEvent(serviceId: string, fnName: string, handler: (args: any[], tetraplets: any[][]) => void): Function {
+    onEvent(
+        serviceId: string,
+        fnName: string,
+        handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
+    ): Function {
         const mw = fnAsEventHandler(serviceId, fnName, handler);
         this.use(mw);
         return () => {
@@ -119,7 +127,7 @@ export class AquaCallHandler {
 
     execute(req: AquaCall): AquaResult {
         const res: AquaResult = {
-            retCode: ErrorCodes.unkownError,
+            retCode: ResultCodes.unkownError,
         };
         this.buildHanlder()(req, res);
         return res;

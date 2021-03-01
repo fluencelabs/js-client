@@ -99,12 +99,6 @@ export class RequestFlow {
 
     getParticle = () => this.state;
 
-    getParticleWithoutData(): Omit<Particle, 'data'> {
-        const res = { ...this.state };
-        delete res.data;
-        return res;
-    }
-
     hasExpired(): boolean {
         let now = Date.now();
         const particle = this.getParticle();

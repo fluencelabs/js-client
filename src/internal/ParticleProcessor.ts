@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Particle } from './particle';
+import { logParticle, Particle } from './particle';
 import * as PeerId from 'peer-id';
 import { ParticleHandler, SecurityTetraplet, CallServiceResult } from './commonTypes';
 import log from 'loglevel';
@@ -65,7 +65,7 @@ export class ParticleProcessor {
         request.handler.combineWith(this.clientHandler);
         this.requests.set(request.id, request);
 
-        log.debug('local particle received', request.getParticleWithoutData());
+        logParticle(log.debug, 'external particle received', request.getParticle());
 
         try {
             this.processRequest(request);
@@ -78,13 +78,7 @@ export class ParticleProcessor {
      * Handle incoming particle from a relay.
      */
     async executeIncomingParticle(particle: Particle) {
-        log.debug('external particle received', {
-            id: particle.id,
-            init_peer_id: particle.init_peer_id,
-            timestamp: particle.timestamp,
-            ttl: particle.ttl,
-            script: particle.script,
-        });
+        logParticle(log.debug, 'external particle received', particle);
 
         let request = this.requests.get(particle.id);
         if (request) {
@@ -116,7 +110,7 @@ export class ParticleProcessor {
                 return;
             }
 
-            log.debug('interpreter executing particle', request.getParticleWithoutData());
+            logParticle(log.debug, 'interpreter executing particle', request.getParticle());
             const interpreterOutcome = request.runInterpreter(this.interpreter);
 
             log.debug('inner interpreter outcome:', {
