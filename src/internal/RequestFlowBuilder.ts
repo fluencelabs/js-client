@@ -87,11 +87,17 @@ export class RequestFlowBuilder {
             return this.variables.get(args[0]) || {};
         });
         res.handler.onEvent(xorHandleService, xorHandleFn, (args) => {
+            let msg;
             try {
-                const msg = JSON.parse(args[0]);
+                msg = JSON.parse(args[0]);
+            } catch (e) {
+                msg = e;
+            }
+
+            try {
                 res.raiseError(msg);
             } catch (e) {
-                log.warn("Error handling script didn't work", e);
+                log.error('Error handling script executed with error', e);
             }
         });
 
@@ -123,6 +129,11 @@ export class RequestFlowBuilder {
 
     withTTL(ttl: number): RequestFlowBuilder {
         this.ttl = ttl;
+        return this;
+    }
+
+    configHandler(config: (handler: AquaCallHandler) => void): RequestFlowBuilder {
+        this.handlerConfigs.push(config);
         return this;
     }
 
@@ -182,10 +193,5 @@ export class RequestFlowBuilder {
         });
 
         return [this.build(), promise];
-    }
-
-    configHandler(config: (handler: AquaCallHandler) => void): RequestFlowBuilder {
-        this.handlerConfigs.push(config);
-        return this;
     }
 }
