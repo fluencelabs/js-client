@@ -6,17 +6,34 @@ import { ClientImpl } from './internal/ClientImpl';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 import { RequestFlow } from './internal/RequestFlow';
 
+/**
+ * The class represents interface to Fluence Platform. To create a client @see {@link createClient} function.
+ */
 export interface FluenceClient {
+    /**
+     * { string } Gets the base58 representation of the current peer id. Read only
+     */
     readonly relayPeerId: PeerIdB58;
+
+    /**
+     * { string } Gets the base58 representation of the connected relay's peer id. Read only
+     */
     readonly selfPeerId: PeerIdB58;
+
+    /**
+     * { string } True if the client is connected to network. False otherwise. Read only
+     */
     readonly isConnected: boolean;
 
+    /**
+     * Disconnects the client from the network
+     */
     disconnect(): Promise<void>;
 
     /**
      * Establish a connection to the node. If the connection is already established, disconnect and reregister all services in a new connection.
      *
-     * @param multiaddr
+     * @param {string | Multiaddr} [multiaddr] - Address of the node in Fluence network.
      */
     connect(multiaddr: string | Multiaddr): Promise<void>;
 }

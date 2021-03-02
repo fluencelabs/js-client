@@ -10,13 +10,30 @@ import { RequestFlow } from './internal/RequestFlow';
 
 export { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 
+/**
+ * The class represents interface to Fluence Platform. To create a client @see {@link createClient} function.
+ */
 export interface FluenceClient {
+    /**
+     * { string } Gets the base58 representation of the current peer id. Read only
+     */
     readonly relayPeerId: PeerIdB58;
+
+    /**
+     * { string } Gets the base58 representation of the connected relay's peer id. Read only
+     */
     readonly selfPeerId: PeerIdB58;
+
+    /**
+     * { string } True if the client is connected to network. False otherwise. Read only
+     */
     readonly isConnected: boolean;
 
     readonly handler: AquaCallHandler;
 
+    /**
+     * Disconnects the client from the network
+     */
     disconnect(): Promise<void>;
 
     /**
