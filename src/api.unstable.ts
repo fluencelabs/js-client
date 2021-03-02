@@ -106,7 +106,7 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
     const [request, promise] = new RequestFlowBuilder()
         .withRawScript(
             `(seq 
-        (call init_peer_relay ("op" "identity") [msg] result)
+        (call init_relay ("op" "identity") [msg] result)
         (call %init_peer_id% ("${callbackService}" "${callbackFn}") [result])
     )`,
         )

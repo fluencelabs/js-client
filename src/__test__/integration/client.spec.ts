@@ -13,7 +13,7 @@ describe('Typescript usage suite', () => {
         const [request, promise] = new RequestFlowBuilder()
             .withRawScript(
                 `(seq 
-        (call init_peer_relay ("op" "identity") ["hello world!"] result)
+        (call init_relay ("op" "identity") ["hello world!"] result)
         (call %init_peer_id% ("callback" "callback") [result])
     )`,
             )
@@ -133,8 +133,8 @@ describe('Typescript usage suite', () => {
             .withRawScript(
                 `
             (seq 
-                (call init_peer_relay ("op" "identity") [])
-                (call init_peer_relay ("incorrect" "service") ["incorrect_arg"])
+                (call init_relay ("op" "identity") [])
+                (call init_relay ("incorrect" "service") ["incorrect_arg"])
             )
         `,
             )

@@ -20,7 +20,7 @@ describe('Legacy api suite', () => {
         });
 
         const script = `(seq 
-            (call init_peer_relay ("op" "identity") [])
+            (call init_relay ("op" "identity") [])
             (call %init_peer_id% ("callback" "callback") [arg])
         )`;
 
@@ -37,7 +37,7 @@ describe('Legacy api suite', () => {
         const client = await createClient(nodes[0]);
 
         const script = `
-            (call init_peer_relay ("incorrect" "service") [])
+            (call init_relay ("incorrect" "service") [])
             `;
 
         const promise = new Promise((resolve, reject) => {
@@ -54,7 +54,7 @@ describe('Legacy api suite', () => {
         const client = await createClient(nodes[0]);
 
         const script = `(seq 
-            (call init_peer_relay ("op" "identity") [])
+            (call init_relay ("op" "identity") [])
             (call %init_peer_id% ("service" "fn") [arg])
         )`;
 
@@ -71,7 +71,7 @@ describe('Legacy api suite', () => {
         const client = await createClient(nodes[0]);
 
         const script = `
-            (call init_peer_relay ("incorrect" "service") [])
+            (call init_relay ("incorrect" "service") [])
             `;
 
         const promise = sendParticleAsFetch<[string]>(client, new Particle(script), 'fn', 'service');
