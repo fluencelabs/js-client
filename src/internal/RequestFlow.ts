@@ -8,6 +8,13 @@ import { Particle, genUUID, signParticle } from './particle';
 
 export const DEFAULT_TTL = 7000;
 
+/**
+ * The class represents the current view (and state) of distributed the particle execution process from client's point of view.
+ * It stores the intermediate particles state during the process. RequestFlow is identified by the id of the particle that is executed during the flow.
+ * Each RequestFlow contains a separate (unique to the current flow) AquaCallHandler where the handling of `call` AIR instruction takes place
+ * Please note, that RequestFlow's is handler is combined with the handler from client before the execution occures.
+ * After the combination middlewares from RequestFlow are executed before client handler's middlewares.
+ */
 export class RequestFlow {
     private state: Particle;
     private prevData: Uint8Array = Buffer.from([]);

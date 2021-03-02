@@ -29,6 +29,11 @@ export interface FluenceClient {
      */
     readonly isConnected: boolean;
 
+    /**
+     * The base handler which is used by every RequestFlow executed by this FluenceClient.
+     * Please note, that the handler is combined with the handler from RequestFlow before the execution occures.
+     * After this combination, middlewares from RequestFlow are executed before client handler's middlewares.
+     */
     readonly aquaCallHandler: AquaCallHandler;
 
     /**
