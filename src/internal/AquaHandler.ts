@@ -46,7 +46,7 @@ interface AquaCall {
 /**
  * Represents the result of the `call` air instruction to be returned into Aquamarine interpreter
  */
-interface AquaResult {
+interface AquaCallResult {
     /**
      * Return code to be returned to Aquamarine interpreter
      */
@@ -65,10 +65,10 @@ interface AquaResult {
  * Each middleware is free to write additional properties to either request or response object.
  * When the chain finishes the response is passed back to Aquamarine interpreter
  * @param { AquaCall } req - information about the air `call` instruction
- * @param { AquaResult } resp - response to be passed to Aquamarine interpreter
+ * @param { AquaCallResult } resp - response to be passed to Aquamarine interpreter
  * @param { Function } next - function which invokes next middleware in chain
  */
-export type Middleware = (req: AquaCall, resp: AquaResult, next: Function) => void;
+export type Middleware = (req: AquaCall, resp: AquaCallResult, next: Function) => void;
 
 /**
  * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
@@ -82,7 +82,7 @@ export const fnHandler = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => any,
 ) => {
-    return (req: AquaCall, resp: AquaResult, next: Function): void => {
+    return (req: AquaCall, resp: AquaCallResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             const res = handler(req.args, req.tetraplets);
             resp.retCode = ResultCodes.success;
@@ -104,7 +104,7 @@ export const fnAsEventHandler = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
 ) => {
-    return (req: AquaCall, resp: AquaResult, next: Function): void => {
+    return (req: AquaCall, resp: AquaCallResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             setTimeout(() => {
                 handler(req.args, req.tetraplets);
@@ -120,7 +120,7 @@ export const fnAsEventHandler = (
 /**
  * Error catching middleware
  */
-export const errorHandler: Middleware = (req: AquaCall, resp: AquaResult, next: Function): void => {
+export const errorHandler: Middleware = (req: AquaCall, resp: AquaCallResult, next: Function): void => {
     try {
         next();
     } catch (e) {
@@ -129,12 +129,12 @@ export const errorHandler: Middleware = (req: AquaCall, resp: AquaResult, next: 
     }
 };
 
-type AquaCallFunction = (req: AquaCall, resp: AquaResult) => void;
+type AquaCallFunction = (req: AquaCall, resp: AquaCallResult) => void;
 
 /**
  * Class defines the handling of a `call` air intruction executed by aquamarine on the local peer.
  * All the execution process is defined by the chain of middlewares - architecture popular among backend web frameworks.
- * Each middleware has the form of `(req: AquaCall, resp: AquaResult, next: Function) => void;`
+ * Each middleware has the form of `(req: AquaCall, resp: AquaCallResult, next: Function) => void;`
  * A handler starts with an empty middleware chain and does nothing.
  * To execute the handler use @see { @link execute } function
  */
@@ -217,8 +217,8 @@ export class AquaCallHandler {
     /**
      * Executes the handler with the specified AquaCall request. Return the result response
      */
-    execute(req: AquaCall): AquaResult {
-        const res: AquaResult = {
+    execute(req: AquaCall): AquaCallResult {
+        const res: AquaCallResult = {
             retCode: ResultCodes.unkownError,
         };
         this.buildFunction()(req, res);
