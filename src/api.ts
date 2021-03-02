@@ -120,7 +120,7 @@ export const sendParticle = async (
     The key sould be created with makeKey. The value is the unresitration function
     This is only needed to support legacy api
 */
-const handlersUnregistratorsMAp = new Map();
+const handlersUnregistratorsMap = new Map();
 const makeKey = (client: FluenceClient, serviceId: string, fnName: string) => {
     const pid = client.selfPeerId || '';
     return `${pid}/${serviceId}/${fnName}`;
@@ -139,8 +139,8 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    const unregister = (client as ClientImpl).handler.on(serviceId, fnName, handler);
-    handlersUnregistratorsMAp.set(makeKey(client, serviceId, fnName), unregister);
+    const unregister = (client as ClientImpl).aquaCallHandler.on(serviceId, fnName, handler);
+    handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);
 };
 
 // prettier-ignore
@@ -156,11 +156,11 @@ export const unregisterServiceFunction = (
     fnName: string
 ) => {
     const key = makeKey(client, serviceId, fnName);
-    const unuse = handlersUnregistratorsMAp.get(key);
+    const unuse = handlersUnregistratorsMap.get(key);
     if(unuse) {
         unuse();
     }
-    handlersUnregistratorsMAp.delete(key);
+    handlersUnregistratorsMap.delete(key);
 };
 
 /**

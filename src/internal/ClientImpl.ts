@@ -52,11 +52,11 @@ export class ClientImpl implements FluenceClient {
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
-        this.handler = makeDefaultClientHandler();
-        this.processor = new ParticleProcessor(selfPeerIdFull, this.handler);
+        this.aquaCallHandler = makeDefaultClientHandler();
+        this.processor = new ParticleProcessor(selfPeerIdFull, this.aquaCallHandler);
     }
 
-    handler: AquaCallHandler;
+    aquaCallHandler: AquaCallHandler;
 
     async disconnect(): Promise<void> {
         await this.connection.disconnect();

@@ -31,7 +31,7 @@ describe('== AIR suite', () => {
         const client = await createClient();
 
         let res;
-        client.handler.on(serviceId, fnName, (args, _) => {
+        client.aquaCallHandler.on(serviceId, fnName, (args, _) => {
             res = args[0];
             return res;
         });
@@ -110,13 +110,13 @@ describe('== AIR suite', () => {
 
         const client = await createClient();
 
-        client.handler.on(makeDataServiceId, makeDataFnName, (args, _) => {
+        client.aquaCallHandler.on(makeDataServiceId, makeDataFnName, (args, _) => {
             return {
                 field: 42,
             };
         });
         let res;
-        client.handler.on(getDataServiceId, getDataFnName, (args, tetraplets) => {
+        client.aquaCallHandler.on(getDataServiceId, getDataFnName, (args, tetraplets) => {
             res = {
                 args: args,
                 tetraplets: tetraplets,
@@ -148,7 +148,7 @@ describe('== AIR suite', () => {
         const serviceId1 = 'check1';
         const fnName1 = 'fn1';
         let res1;
-        client.handler.on(serviceId1, fnName1, (args, _) => {
+        client.aquaCallHandler.on(serviceId1, fnName1, (args, _) => {
             res1 = args[0];
             return res1;
         });
@@ -156,7 +156,7 @@ describe('== AIR suite', () => {
         const serviceId2 = 'check2';
         const fnName2 = 'fn2';
         let res2;
-        client.handler.on(serviceId2, fnName2, (args, _) => {
+        client.aquaCallHandler.on(serviceId2, fnName2, (args, _) => {
             res2 = args[0];
             return res2;
         });
@@ -164,7 +164,7 @@ describe('== AIR suite', () => {
         const serviceId3 = 'check3';
         const fnName3 = 'fn3';
         let res3;
-        client.handler.on(serviceId3, fnName3, (args, _) => {
+        client.aquaCallHandler.on(serviceId3, fnName3, (args, _) => {
             res3 = args;
             return res3;
         });

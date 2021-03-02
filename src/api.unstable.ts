@@ -11,7 +11,7 @@ import { RequestFlow } from './internal/RequestFlow';
 export { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 
 /**
- * The class represents interface to Fluence Platform. To create a client @see {@link createClient} function.
+ * The class represents interface to Fluence Platform. To create a client use @see {@link createClient} function.
  */
 export interface FluenceClient {
     /**
@@ -29,7 +29,7 @@ export interface FluenceClient {
      */
     readonly isConnected: boolean;
 
-    readonly handler: AquaCallHandler;
+    readonly aquaCallHandler: AquaCallHandler;
 
     /**
      * Disconnects the client from the network
@@ -43,6 +43,10 @@ export interface FluenceClient {
      */
     connect(multiaddr: string | Multiaddr): Promise<void>;
 
+    /**
+     * Initiates RequestFlow execution @see { @link RequestFlow }
+     * @param { RequestFlow } [ request ] - RequestFlow to start the execution of
+     */
     initiateFlow(request: RequestFlow): Promise<void>;
 }
 
@@ -94,6 +98,10 @@ export const createClient = async (
     return client;
 };
 
+/**
+ * Checks the network connection by sending a ping-like request to relat node
+ * @param { FluenceClient } client - The Fluence Client instance.
+ */
 export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
     if (!client.isConnected) {
         return false;

@@ -40,7 +40,7 @@ describe('Typescript usage suite', () => {
         const client2 = await createClient(nodes[0].multiaddr);
 
         let resMakingPromise = new Promise((resolve) => {
-            client2.handler.onEvent('test', 'test', (args, _) => {
+            client2.aquaCallHandler.onEvent('test', 'test', (args, _) => {
                 resolve([...args]);
                 return {};
             });
