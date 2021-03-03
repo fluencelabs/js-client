@@ -1,4 +1,5 @@
 import { createLocalClient } from '../connection';
+import {subscribeForErrors} from "../../api";
 
 describe('== AIR suite', () => {
     it('check init_peer_id', async function () {
@@ -59,7 +60,7 @@ describe('== AIR suite', () => {
     it('call script without ttl', async function () {
         // arrange
         const client = await createLocalClient();
-        const script = `(call %init_peer_id% ("" "") [""])`;
+        const script = `(call %init_peer_id% ("op" "identity") [""])`;
 
         // act
         const promise = client.sendScript(script, undefined, 1);
