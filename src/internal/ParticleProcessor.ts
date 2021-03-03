@@ -48,17 +48,17 @@ export class ParticleProcessor {
             particleHandler: this.hanlder.bind(this),
             peerId: this.peerId,
         });
-        // this.watchDog = setInterval(() => {
-        //     for (let key in this.requests.keys) {
-        //         if (this.requests.get(key).hasExpired()) {
-        //             this.requests.delete(key);
-        //         }
-        //     }
-        // }, 5000);
+        this.watchDog = setInterval(() => {
+            for (let key in this.requests.keys) {
+                if (this.requests.get(key).hasExpired()) {
+                    this.requests.delete(key);
+                }
+            }
+        }, 5000);
     }
 
     async destroy() {
-        //clearInterval(this.watchDog);
+        clearInterval(this.watchDog);
     }
 
     async executeLocalParticle(request: RequestFlow) {

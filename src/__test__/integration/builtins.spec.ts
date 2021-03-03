@@ -9,14 +9,22 @@ import {
     uploadModule,
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
-import { createClient } from '../../api.unstable';
+import { createClient, FluenceClient } from '../../api.unstable';
 import { nodes } from '../connection';
 
+let client: FluenceClient;
+
 describe('Builtins usage suite', () => {
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
+    });
+
     jest.setTimeout(10000);
 
     it('get_modules', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let modulesList = await getModules(client);
 
@@ -24,7 +32,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('get_interfaces', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let interfaces = await getInterfaces(client);
 
@@ -32,7 +40,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('get_blueprints', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let bpList = await getBlueprints(client);
 
@@ -40,7 +48,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('upload_modules', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let config: ModuleConfig = {
             name: 'test_broken_module',
@@ -60,7 +68,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('add_blueprint', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let bpId = 'some';
 
@@ -70,7 +78,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('create broken blueprint', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let promise = createService(client, 'test_broken_blueprint');
 
@@ -81,7 +89,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('add and remove script', async function () {
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let script = `
         (seq

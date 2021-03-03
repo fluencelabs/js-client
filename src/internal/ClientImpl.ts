@@ -59,7 +59,9 @@ export class ClientImpl implements FluenceClient {
     aquaCallHandler: AquaCallHandler;
 
     async disconnect(): Promise<void> {
-        await this.connection.disconnect();
+        if (this.connection) {
+            await this.connection.disconnect();
+        }
         await this.processor.destroy();
     }
 

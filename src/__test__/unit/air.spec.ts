@@ -1,8 +1,16 @@
-import { createClient } from '../../api.unstable';
+import { createClient, FluenceClient } from '../../api.unstable';
 import { RequestFlow } from '../../internal/RequestFlow';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 
+let client: FluenceClient;
+
 describe('== AIR suite', () => {
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
+    });
+
     it('check init_peer_id', async function () {
         // arrange
         const serviceId = 'test_service';
@@ -15,7 +23,7 @@ describe('== AIR suite', () => {
             .buildAsFetch<string[]>(serviceId, fnName);
 
         // act
-        const client = await createClient();
+        client = await createClient();
         await client.initiateFlow(request);
         const [result] = await promise;
 
@@ -28,7 +36,7 @@ describe('== AIR suite', () => {
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
 
-        const client = await createClient();
+        client = await createClient();
 
         let res;
         client.aquaCallHandler.on(serviceId, fnName, (args, _) => {
@@ -55,14 +63,14 @@ describe('== AIR suite', () => {
                 .buildWithErrorHandling();
 
             // act
-            const client = await createClient();
+            client = await createClient();
             await client.initiateFlow(request);
 
             // assert
             await expect(error).rejects.toContain("aqua script can't be parsed");
         });
 
-        it.skip('call script without ttl', async function () {
+        it('call script without ttl', async function () {
             // arrange
             const script = `(null)`;
             // prettier-ignore
@@ -72,7 +80,7 @@ describe('== AIR suite', () => {
                 .buildAsFetch();
 
             // act
-            const client = await createClient();
+            client = await createClient();
             await client.initiateFlow(request);
 
             // assert
@@ -93,7 +101,7 @@ describe('== AIR suite', () => {
             .buildAsFetch<string[]>(serviceId, fnName);
 
         // act
-        const client = await createClient();
+        client = await createClient();
         await client.initiateFlow(request);
         const [result] = await promise;
 
@@ -108,7 +116,7 @@ describe('== AIR suite', () => {
         const getDataServiceId = 'get_data_service';
         const getDataFnName = 'get_data';
 
-        const client = await createClient();
+        client = await createClient();
 
         client.aquaCallHandler.on(makeDataServiceId, makeDataFnName, (args, _) => {
             return {
@@ -143,7 +151,7 @@ describe('== AIR suite', () => {
 
     it('check chain of services work properly', async function () {
         // arrange
-        const client = await createClient();
+        client = await createClient();
 
         const serviceId1 = 'check1';
         const fnName1 = 'fn1';

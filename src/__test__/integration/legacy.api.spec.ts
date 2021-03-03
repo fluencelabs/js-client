@@ -9,9 +9,11 @@ import {
 } from '../../api';
 import { nodes } from '../connection';
 
+let client: FluenceClient;
+
 describe('Legacy api suite', () => {
     it('sendParticle', async () => {
-        const client = await createClient(nodes[0]);
+        client = await createClient(nodes[0]);
 
         const result = new Promise((resolve) => {
             subscribeToEvent(client, 'callback', 'callback', (args) => {
@@ -34,7 +36,7 @@ describe('Legacy api suite', () => {
     });
 
     it('sendParticle Error', async () => {
-        const client = await createClient(nodes[0]);
+        client = await createClient(nodes[0]);
 
         const script = `
             (call init_relay ("incorrect" "service") [])
@@ -51,7 +53,7 @@ describe('Legacy api suite', () => {
     });
 
     it('sendParticleAsFetch', async () => {
-        const client = await createClient(nodes[0]);
+        client = await createClient(nodes[0]);
 
         const script = `(seq 
             (call init_relay ("op" "identity") [])
@@ -68,7 +70,7 @@ describe('Legacy api suite', () => {
     });
 
     it('sendParticleAsFetch Error', async () => {
-        const client = await createClient(nodes[0]);
+        client = await createClient(nodes[0]);
 
         const script = `
             (call init_relay ("incorrect" "service") [])
@@ -83,7 +85,7 @@ describe('Legacy api suite', () => {
     });
 
     it('registerServiceFunction', async () => {
-        const client = await createClient(nodes[0]);
+        client = await createClient(nodes[0]);
 
         registerServiceFunction(client, 'service', 'fn', (args) => {
             return { res: args[0] + ' world!' };
@@ -105,7 +107,7 @@ describe('Legacy api suite', () => {
     });
 
     it('subscribeToEvent', async () => {
-        const client = await createClient(nodes[0]);
+        client = await createClient(nodes[0]);
 
         const promise = new Promise((resolve) => {
             subscribeToEvent(client, 'service', 'fn', (args) => {

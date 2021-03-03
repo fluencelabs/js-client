@@ -1,12 +1,20 @@
-import { checkConnection, createClient } from '../../api.unstable';
+import { checkConnection, createClient, FluenceClient } from '../../api.unstable';
 import Multiaddr from 'multiaddr';
 import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 
+let client: FluenceClient;
+
 describe('Typescript usage suite', () => {
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
+    });
+
     it('should make a call through network', async () => {
         // arrange
-        const client = await createClient();
+        client = await createClient();
         await client.connect(nodes[0].multiaddr);
 
         // act
@@ -26,7 +34,7 @@ describe('Typescript usage suite', () => {
     });
 
     it('check connection should work', async function () {
-        const client = await createClient();
+        client = await createClient();
         await client.connect(nodes[0].multiaddr);
 
         let isConnected = await checkConnection(client);
@@ -63,6 +71,9 @@ describe('Typescript usage suite', () => {
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
+
+        await client1.disconnect();
+        await client2.disconnect();
     });
 
     describe('should make connection to network', () => {
@@ -71,7 +82,7 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0].multiaddr;
 
             // act
-            const client = await createClient(addr);
+            client = await createClient(addr);
             const isConnected = await checkConnection(client);
 
             // assert
@@ -83,7 +94,7 @@ describe('Typescript usage suite', () => {
             const addr = new Multiaddr(nodes[0].multiaddr);
 
             // act
-            const client = await createClient(addr);
+            client = await createClient(addr);
             const isConnected = await checkConnection(client);
 
             // assert
@@ -95,7 +106,7 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            const client = await createClient(addr);
+            client = await createClient(addr);
             const isConnected = await checkConnection(client);
 
             // assert
@@ -107,7 +118,7 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0].multiaddr;
 
             // act
-            const client = await createClient(addr);
+            client = await createClient(addr);
             const isConnected = await checkConnection(client);
 
             // assert
@@ -119,7 +130,7 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0].multiaddr;
 
             // act
-            const client = await createClient(addr);
+            client = await createClient(addr);
             const isConnected = await checkConnection(client);
 
             // assert
@@ -141,7 +152,7 @@ describe('Typescript usage suite', () => {
             .buildWithErrorHandling();
 
         // act
-        const client = await createClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
         await client.initiateFlow(request);
 
         // assert
@@ -168,7 +179,7 @@ describe('Typescript usage suite', () => {
             .buildWithErrorHandling();
 
         // act
-        const client = await createClient();
+        client = await createClient();
         await client.initiateFlow(request);
 
         // assert
