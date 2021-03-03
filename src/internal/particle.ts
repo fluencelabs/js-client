@@ -147,11 +147,10 @@ export async function build(
         timestamp: currentTime,
         ttl: ttl,
         script: script,
+        // TODO: sign particle
         signature: '',
         data: Buffer.from([]),
     };
-
-    particle.signature = await signParticle(peerId, particle);
 
     return particle;
 }
@@ -185,28 +184,6 @@ export function parseParticle(str: string): ParticleDto {
         signature: json.signature,
         data: toByteArray(json.data),
     };
-}
-
-export function canonicalBytes(particle: ParticleDto) {
-    let peerIdBuf = Buffer.from(particle.init_peer_id, 'utf8');
-    let idBuf = Buffer.from(particle.id, 'utf8');
-
-    let tsBuf = Buffer.from([particle.timestamp]);
-    let ttlBuf = Buffer.from([particle.ttl]);
-
-    let scriptBuf = Buffer.from(particle.script, 'utf8');
-
-    return Buffer.concat([peerIdBuf, idBuf, tsBuf, ttlBuf, scriptBuf]);
-}
-
-/**
- * Sign a particle with a private key from peerId.
- */
-export async function signParticle(peerId: PeerId, particle: ParticleDto): Promise<string> {
-    let bufToSign = canonicalBytes(particle);
-
-    let signature = await peerId.privKey.sign(bufToSign);
-    return encode(signature);
 }
 
 export function genUUID() {
