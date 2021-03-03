@@ -18,12 +18,14 @@ import * as PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
 import { FluenceConnection } from './FluenceConnection';
 
-import { ParticleProcessor } from './ParticleProcessor';
-import { PeerIdB58, SecurityTetraplet } from './commonTypes';
+import { CallServiceResult, ParticleHandler, PeerIdB58, SecurityTetraplet } from './commonTypes';
 import { FluenceClient } from 'src';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
+import { logParticle, Particle } from './particle';
+import log from 'loglevel';
+import { AquamarineInterpreter } from './aqua/interpreter';
 
 const makeDefaultClientHandler = (): AquaCallHandler => {
     const res = new AquaCallHandler();
@@ -34,6 +36,10 @@ const makeDefaultClientHandler = (): AquaCallHandler => {
 
 export class ClientImpl implements FluenceClient {
     readonly selfPeerIdFull: PeerId;
+
+    private requests: Map<string, RequestFlow> = new Map();
+    private currentRequestId: string | null = null;
+    private watchDog;
 
     get relayPeerId(): PeerIdB58 | undefined {
         return this.connection?.nodePeerId.toB58String();
@@ -48,12 +54,11 @@ export class ClientImpl implements FluenceClient {
     }
 
     private connection: FluenceConnection;
-    protected processor: ParticleProcessor;
+    private interpreter: AquamarineInterpreter;
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
         this.aquaCallHandler = makeDefaultClientHandler();
-        this.processor = new ParticleProcessor(selfPeerIdFull, this.aquaCallHandler);
     }
 
     aquaCallHandler: AquaCallHandler;
@@ -62,20 +67,16 @@ export class ClientImpl implements FluenceClient {
         if (this.connection) {
             await this.connection.disconnect();
         }
-        await this.processor.destroy();
+        this.clearWathcDog();
     }
 
-    // HACK:: this is only needed to fix tests.
-    // Particle processor should be tested instead
-    async local(): Promise<void> {
-        await this.processor.init();
+    async initAquamarineRuntime(): Promise<void> {
+        this.interpreter = await AquamarineInterpreter.create({
+            particleHandler: this.interpreterCallback.bind(this),
+            peerId: this.selfPeerIdFull,
+        });
     }
 
-    /**
-     * Establish a connection to the node. If the connection is already established, disconnect and reregister all services in a new connection.
-     *
-     * @param multiaddr
-     */
     async connect(multiaddr: string | Multiaddr): Promise<void> {
         multiaddr = Multiaddr(multiaddr);
 
@@ -93,11 +94,11 @@ export class ClientImpl implements FluenceClient {
             multiaddr,
             node,
             this.selfPeerIdFull,
-            this.processor.executeIncomingParticle.bind(this.processor),
+            this.executeIncomingParticle.bind(this),
         );
         await connection.connect();
         this.connection = connection;
-        await this.processor.init(connection);
+        this.initWatchDog();
     }
 
     async initiateFlow(request: RequestFlow): Promise<void> {
@@ -106,6 +107,77 @@ export class ClientImpl implements FluenceClient {
             return this.relayPeerId || '';
         });
         await request.initState(this.selfPeerIdFull);
-        this.processor.executeLocalParticle(request);
+
+        logParticle(log.debug, 'executing local particle', request.getParticle());
+        request.handler.combineWith(this.aquaCallHandler);
+        this.requests.set(request.id, request);
+
+        await this.processRequest(request);
+    }
+
+    async executeIncomingParticle(particle: Particle) {
+        logParticle(log.debug, 'external particle received', particle);
+
+        let request = this.requests.get(particle.id);
+        if (request) {
+            request.receiveUpdate(particle);
+        } else {
+            request = RequestFlow.createExternal(particle);
+            request.handler.combineWith(this.aquaCallHandler);
+        }
+        this.requests.set(request.id, request);
+
+        await this.processRequest(request);
+    }
+
+    private async processRequest(request: RequestFlow): Promise<void> {
+        try {
+            this.currentRequestId = request.id;
+            request.execute(this.interpreter, this.connection);
+        } catch (err) {
+            log.error('particle processing failed: ' + err);
+        } finally {
+            this.currentRequestId = null;
+        }
+    }
+
+    private interpreterCallback: ParticleHandler = (
+        serviceId: string,
+        fnName: string,
+        args: any[],
+        tetraplets: SecurityTetraplet[][],
+    ): CallServiceResult => {
+        if (this.currentRequestId === null) {
+            throw Error('current request can`t be null here');
+        }
+
+        const request = this.requests.get(this.currentRequestId);
+        const res = request.handler.execute({
+            serviceId,
+            fnName,
+            args,
+            tetraplets,
+            particleContext: {
+                particleId: request.id,
+            },
+        });
+        return {
+            ret_code: res.retCode,
+            result: JSON.stringify(res.result || {}),
+        };
+    };
+
+    private initWatchDog() {
+        this.watchDog = setInterval(() => {
+            for (let key in this.requests.keys) {
+                if (this.requests.get(key).hasExpired()) {
+                    this.requests.delete(key);
+                }
+            }
+        }, 5000);
+    }
+
+    private clearWathcDog() {
+        clearInterval(this.watchDog);
     }
 }
