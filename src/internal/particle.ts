@@ -191,13 +191,8 @@ export function canonicalBytes(particle: ParticleDto) {
     let peerIdBuf = Buffer.from(particle.init_peer_id, 'utf8');
     let idBuf = Buffer.from(particle.id, 'utf8');
 
-    let tsArr = new ArrayBuffer(8);
-    new DataView(tsArr).setBigUint64(0, BigInt(particle.timestamp));
-    let tsBuf = Buffer.from(tsArr);
-
-    let ttlArr = new ArrayBuffer(4);
-    new DataView(ttlArr).setUint32(0, particle.ttl);
-    let ttlBuf = Buffer.from(ttlArr);
+    let tsBuf = Buffer.from([particle.timestamp]);
+    let ttlBuf = Buffer.from([particle.ttl]);
 
     let scriptBuf = Buffer.from(particle.script, 'utf8');
 
