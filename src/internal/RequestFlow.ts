@@ -4,7 +4,7 @@ import { AquamarineInterpreter } from './aqua/interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
-import { Particle, genUUID, signParticle } from './particle';
+import { Particle, genUUID } from './particle';
 
 export const DEFAULT_TTL = 7000;
 
@@ -69,8 +69,6 @@ export class RequestFlow {
             signature: '',
             data: Buffer.from([]),
         };
-
-        particle.signature = await signParticle(peerId, particle);
 
         this.state = particle;
         setTimeout(this.raiseTimeout.bind(this), particle.ttl);

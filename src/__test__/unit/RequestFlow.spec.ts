@@ -11,8 +11,7 @@ describe('Request flow tests', () => {
         const mockDate = new Date(Date.UTC(2021, 2, 14)).valueOf();
         Date.now = jest.fn(() => mockDate);
 
-        const request = new RequestFlow(false, '9986a562-7a66-11eb-9439-0242ac130002', '(null)');
-        request.ttl = 10000;
+        const request = RequestFlow.createLocal('(null)', 10000);
         const peerId = await seedToPeerId(seed);
 
         // act
@@ -21,10 +20,9 @@ describe('Request flow tests', () => {
         // assert
         const particle = request.getParticle();
         expect(particle).toMatchObject({
-            id: '9986a562-7a66-11eb-9439-0242ac130002',
             init_peer_id: peerId.toB58String(),
             script: '(null)',
-            signature: '441A5VjNQN3Bq1KhuQZjsxpYt8xhkC453H3v5QCiQLJkxf48dnJpzk86MxfhT13ZUVs27GC8Q7yLLVTR2NFBE56g',
+            signature: '',
             timestamp: mockDate,
             ttl: 10000,
         });

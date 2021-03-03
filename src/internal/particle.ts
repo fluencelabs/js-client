@@ -80,33 +80,6 @@ export function parseParticle(str: string): Particle {
     };
 }
 
-export function canonicalBytes(particle: Particle) {
-    let peerIdBuf = Buffer.from(particle.init_peer_id, 'utf8');
-    let idBuf = Buffer.from(particle.id, 'utf8');
-
-    let tsArr = new ArrayBuffer(8);
-    new DataView(tsArr).setBigUint64(0, BigInt(particle.timestamp));
-    let tsBuf = Buffer.from(tsArr);
-
-    let ttlArr = new ArrayBuffer(4);
-    new DataView(ttlArr).setUint32(0, particle.ttl);
-    let ttlBuf = Buffer.from(ttlArr);
-
-    let scriptBuf = Buffer.from(particle.script, 'utf8');
-
-    return Buffer.concat([peerIdBuf, idBuf, tsBuf, ttlBuf, scriptBuf]);
-}
-
-/**
- * Sign a particle with a private key from peerId.
- */
-export async function signParticle(peerId: PeerId, particle: Particle): Promise<string> {
-    let bufToSign = canonicalBytes(particle);
-
-    let signature = await peerId.privKey.sign(bufToSign);
-    return encode(signature);
-}
-
 export function genUUID() {
     return uuidv4();
 }
