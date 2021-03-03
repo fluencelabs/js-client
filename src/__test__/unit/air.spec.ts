@@ -62,7 +62,7 @@ describe('== AIR suite', () => {
             await expect(error).rejects.toContain("aqua script can't be parsed");
         });
 
-        it('call script without ttl', async function () {
+        it.skip('call script without ttl', async function () {
             // arrange
             const script = `(null)`;
             // prettier-ignore
