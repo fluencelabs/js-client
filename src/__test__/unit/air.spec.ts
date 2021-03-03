@@ -63,7 +63,7 @@ describe('== AIR suite', () => {
         const script = `(call %init_peer_id% ("op" "identity") [""])`;
 
         // act
-        const promise = client.sendScript(script, undefined, 1);
+        const promise = client.sendScript(script, undefined, 0);
 
         // assert
         await expect(promise).rejects.toContain('Particle expired');
