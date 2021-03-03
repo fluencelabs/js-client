@@ -1,201 +1,54 @@
-import { encode } from 'bs58';
-import { generatePeerId, peerIdToSeed, seedToPeerId } from '../../internal/peerIdUtils';
-import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
-import log from 'loglevel';
-import { createClient, subscribeForErrors } from '../../api';
+import { checkConnection, createClient, FluenceClient } from '../../api.unstable';
 import Multiaddr from 'multiaddr';
-import { createConnectedClient, createLocalClient, nodes } from '../connection';
+import { nodes } from '../connection';
+import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
+
+let client: FluenceClient;
 
 describe('Typescript usage suite', () => {
-    it('should create private key from seed and back', async function () {
-        // prettier-ignore
-        let seed = [46, 188, 245, 171, 145, 73, 40, 24, 52, 233, 215, 163, 54, 26, 31, 221, 159, 179, 126, 106, 27, 199, 189, 194, 80, 133, 235, 42, 42, 247, 80, 201];
-        let seedStr = encode(seed);
-        log.trace('SEED STR: ' + seedStr);
-        let pid = await seedToPeerId(seedStr);
-        expect(peerIdToSeed(pid)).toEqual(seedStr);
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
     });
 
-    describe('should make connection to network', function () {
-        const testProcedure = async (client: FluenceClientImpl) => {
-            let resMakingPromise = new Promise((resolve) => {
-                client.registerCallback('test', 'test', (args, _) => {
-                    resolve(args);
-                    return {};
-                });
-            });
-
-            let script = `
-                (seq
-                    (call "${client.relayPeerId}" ("op" "identity") [])
-                    (call "${client.selfPeerId}" ("test" "test") [hello])
-                )
-            `;
-
-            let data: Map<string, any> = new Map();
-            data.set('hello', 'world');
-
-            await client.sendScript(script, data);
-
-            return await resMakingPromise;
-        };
-
-        it('address as string', async function () {
-            // arrange
-            const addr = nodes[0].multiaddr;
-
-            // act
-            const client = (await createClient(addr)) as FluenceClientImpl;
-
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
-
-        it('address as multiaddr', async function () {
-            // arrange
-            const addr = new Multiaddr(nodes[0].multiaddr);
-
-            // act
-            const client = (await createClient(addr)) as FluenceClientImpl;
-
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
-
-        it('address as node', async function () {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            const client = (await createClient(addr)) as FluenceClientImpl;
-
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
-
-        it('peerid as peer id', async function () {
-            // arrange
-            const addr = nodes[0].multiaddr;
-            const pid = await generatePeerId();
-
-            // act
-            const client = (await createClient(addr, pid)) as FluenceClientImpl;
-
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
-
-        it('peerid as seed', async function () {
-            // arrange
-            const addr = nodes[0].multiaddr;
-            const pid = peerIdToSeed(await generatePeerId());
-
-            // act
-            const client = (await createClient(addr, pid)) as FluenceClientImpl;
-
-            // assert
-            const res = await testProcedure(client);
-            expect(res).toEqual(['world']);
-        });
-    });
-
-    it('should make a call through the network', async function () {
+    it('should make a call through network', async () => {
         // arrange
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        client.registerCallback('test', 'test', (args, _) => {
-            log.trace('should make a call through the network, called "test" "test" with args', args);
-            return {};
-        });
-
-        let resMakingPromise = new Promise((resolve) => {
-            client.registerCallback('test', 'reverse_args', (args, _) => {
-                resolve([...args].reverse());
-                return {};
-            });
-        });
+        client = await createClient();
+        await client.connect(nodes[0].multiaddr);
 
         // act
-        let script = `
-            (seq
-                (call "${client.relayPeerId}" ("op" "identity") [])
-                (seq
-                    (call "${client.selfPeerId}" ("test" "test") [a b c d] result)
-                    (call "${client.selfPeerId}" ("test" "reverse_args") [a b c d])
-                )
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `(seq 
+        (call init_relay ("op" "identity") ["hello world!"] result)
+        (call %init_peer_id% ("callback" "callback") [result])
+    )`,
             )
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('a', 'some a');
-        data.set('b', 'some b');
-        data.set('c', 'some c');
-        data.set('d', 'some d');
-
-        await client.sendScript(script, data);
+            .buildAsFetch<[[string]]>('callback', 'callback');
+        await client.initiateFlow(request);
 
         // assert
-        const res = await resMakingPromise;
-        expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
+        const [[result]] = await promise;
+        expect(result).toBe('hello world!');
     });
 
-    it('fireAndForget should work', async function () {
+    it('check connection should work', async function () {
+        client = await createClient();
+        await client.connect(nodes[0].multiaddr);
+
+        let isConnected = await checkConnection(client);
+
+        expect(isConnected).toEqual(true);
+    });
+
+    it('two clients should work inside the same time browser', async () => {
         // arrange
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        const client1 = await createClient(nodes[0].multiaddr);
+        const client2 = await createClient(nodes[0].multiaddr);
 
         let resMakingPromise = new Promise((resolve) => {
-            client.registerCallback('test', 'reverse_args', (args, _) => {
-                resolve([...args].reverse());
-                return {};
-            });
-        });
-
-        // act
-        let script = `
-        (call "${client.selfPeerId}" ("test" "reverse_args") [a b c d])
-        `;
-
-        let data: Map<string, any> = new Map();
-        data.set('a', 'some a');
-        data.set('b', 'some b');
-        data.set('c', 'some c');
-        data.set('d', 'some d');
-
-        await client.fireAndForget(script, data);
-
-        // assert
-        const res = await resMakingPromise;
-        expect(res).toEqual(['some d', 'some c', 'some b', 'some a']);
-    });
-
-    it('fetch should work', async function () {
-        // arrange
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        // act
-        let script = `
-        (call "${client.relayPeerId}" ("peer" "identify") [] result)
-        `;
-        const data = new Map();
-        data.set('__relay', client.relayPeerId);
-
-        const [res] = await client.fetch(script, ['result'], data);
-
-        // assert
-        expect(res.external_addresses).not.toBeUndefined;
-    });
-
-    it('two clients should work inside the same time browser', async function () {
-        // arrange
-        const client1 = await createConnectedClient(nodes[0].multiaddr);
-        const client2 = await createConnectedClient(nodes[0].multiaddr);
-
-        let resMakingPromise = new Promise((resolve) => {
-            client2.registerCallback('test', 'test', (args, _) => {
+            client2.aquaCallHandler.onEvent('test', 'test', (args, _) => {
                 resolve([...args]);
                 return {};
             });
@@ -214,29 +67,93 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await client1.sendScript(script, data);
+        await client1.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
+
+        await client1.disconnect();
+        await client2.disconnect();
+    });
+
+    describe('should make connection to network', () => {
+        it('address as string', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr);
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('address as multiaddr', async () => {
+            // arrange
+            const addr = new Multiaddr(nodes[0].multiaddr);
+
+            // act
+            client = await createClient(addr);
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('address as node', async () => {
+            // arrange
+            const addr = nodes[0];
+
+            // act
+            client = await createClient(addr);
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('peerid as peer id', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr);
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('peerid as seed', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr);
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
     });
 
     it('xor handling should work with connected client', async function () {
         // arrange
-        const client = await createConnectedClient(nodes[0].multiaddr);
-        log.setLevel('info');
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `
+            (seq 
+                (call init_relay ("op" "identity") [])
+                (call init_relay ("incorrect" "service") ["incorrect_arg"])
+            )
+        `,
+            )
+            .buildWithErrorHandling();
 
         // act
-        let script = `
-            (seq 
-                (call relay ("op" "identity") [])
-                (call relay ("incorrect" "service") ["incorrect_arg"])
-            )
-        `;
-        const data = new Map();
-        data.set('relay', client.relayPeerId);
-
-        const promise = subscribeForErrors(client, 7000);
-        await client.sendScript(script, data);
+        client = await createClient(nodes[0].multiaddr);
+        await client.initiateFlow(request);
 
         // assert
         await expect(promise).rejects.toMatchObject({
@@ -247,18 +164,25 @@ describe('Typescript usage suite', () => {
 
     it('xor handling should work with local client', async function () {
         // arrange
-        const client = await createLocalClient();
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `
+            (call %init_peer_id% ("service" "fails") [])
+            `,
+            )
+            .configHandler((h) => {
+                h.use((req, res, _) => {
+                    res.retCode = 1;
+                    res.result = 'service failed internally';
+                });
+            })
+            .buildWithErrorHandling();
 
         // act
-        let script = `(call %init_peer_id% ("incorrect" "service") ["incorrect_arg"])`;
-
-        const promise = subscribeForErrors(client, 7000);
-        await client.sendScript(script);
+        client = await createClient();
+        await client.initiateFlow(request);
 
         // assert
-        await expect(promise).rejects.toMatchObject({
-            error: expect.stringContaining('There is no service: incorrect'),
-            instruction: expect.stringContaining('incorrect'),
-        });
+        await expect(promise).rejects.toMatch('service failed internally');
     });
 });

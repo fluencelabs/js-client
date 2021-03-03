@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import bs58 from 'bs58';
-import { sendParticleAsFetch } from '../api';
-import { Particle } from './particle';
-import { FluenceClient } from '../FluenceClient';
+import { RequestFlow } from './RequestFlow';
 import { ModuleConfig } from './moduleConfig';
+import { RequestFlowBuilder } from './RequestFlowBuilder';
+import { FluenceClient } from 'src/api.unstable';
 
 const nodeIdentityCall = (client: FluenceClient): string => {
     return `(call "${client.relayPeerId}" ("op" "identity") [])`;
@@ -56,7 +55,13 @@ const requestResponse = async <T>(
     )
     `;
 
-    const res = await sendParticleAsFetch<any[]>(client, new Particle(script, data, ttl), name);
+    const [request, promise] = new RequestFlowBuilder()
+        .withRawScript(script)
+        .withVariables(data)
+        .withTTL(ttl)
+        .buildAsFetch<any[]>('_callback', name);
+    await client.initiateFlow(request);
+    const res = await promise;
     return handleResponse(res);
 };
 
@@ -67,21 +72,25 @@ const requestResponse = async <T>(
  */
 export const getModules = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getModules';
-    const particle = new Particle(
-        `
+    const [req, promise] = new RequestFlowBuilder()
+        .withRawScript(
+            `
         (seq 
             (call __relay ("dist" "list_modules") [] result)
             (call myPeerId ("_callback" "${callbackFn}") [result])
         )
     `,
-        {
+        )
+        .withVariables({
             __relay: client.relayPeerId,
             myPeerId: client.selfPeerId,
-        },
-        ttl,
-    );
+        })
+        .withTTL(ttl)
+        .buildAsFetch<[string[]]>('_callback', callbackFn);
+    client.initiateFlow(req);
 
-    return sendParticleAsFetch(client, particle, callbackFn);
+    const [res] = await promise;
+    return res;
 };
 
 /**
@@ -91,8 +100,9 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
  */
 export const getInterfaces = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getInterfaces';
-    const particle = new Particle(
-        `
+    const [req, promise] = new RequestFlowBuilder()
+        .withRawScript(
+            `
             (seq
                 (seq
                     (seq
@@ -109,14 +119,17 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
                 (call myPeerId ("_callback" "${callbackFn}") [interfaces])
             )
         `,
-        {
+        )
+        .withVariables({
             relay: client.relayPeerId,
             myPeerId: client.selfPeerId,
-        },
-        ttl,
-    );
+        })
+        .withTTL(ttl)
+        .buildAsFetch<[string[]]>('_callback', callbackFn);
 
-    const [res] = await sendParticleAsFetch<[string[]]>(client, particle, callbackFn);
+    client.initiateFlow(req);
+
+    const [res] = await promise;
     return res;
 };
 
@@ -153,15 +166,22 @@ export const uploadModule = async (
     data.set('__relay', client.relayPeerId);
     data.set('myPeerId', client.selfPeerId);
 
-    let script = `
+    const [req, promise] = new RequestFlowBuilder()
+        .withRawScript(
+            `
     (seq 
         (call __relay ("dist" "add_module") [module_bytes module_config] result)
         (call myPeerId ("_callback" "getModules") [result])
 
     )
-    `;
+    `,
+        )
+        .withVariables(data)
+        .withTTL(ttl)
+        .buildAsFetch<[string[]]>('_callback', 'getModules');
 
-    return sendParticleAsFetch(client, new Particle(script, data, ttl), 'getModules', '_callback');
+    await client.initiateFlow(req);
+    await promise;
 };
 
 /**

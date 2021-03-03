@@ -1,26 +1,34 @@
-import { createLocalClient } from '../connection';
-import {subscribeForErrors} from "../../api";
+import { createClient, FluenceClient } from '../../api.unstable';
+import { RequestFlow } from '../../internal/RequestFlow';
+import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
+
+let client: FluenceClient;
 
 describe('== AIR suite', () => {
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
+    });
+
     it('check init_peer_id', async function () {
         // arrange
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
+        const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
 
-        const client = await createLocalClient();
-
-        let res;
-        client.registerCallback(serviceId, fnName, (args, _) => {
-            res = args[0];
-            return res;
-        });
+        // prettier-ignore
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(script)
+            .buildAsFetch<string[]>(serviceId, fnName);
 
         // act
-        const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [%init_peer_id%])`;
-        await client.sendScript(script);
+        client = await createClient();
+        await client.initiateFlow(request);
+        const [result] = await promise;
 
         // assert
-        expect(res).toEqual(client.selfPeerId);
+        expect(result).toBe(client.selfPeerId);
     });
 
     it('call local function', async function () {
@@ -28,10 +36,10 @@ describe('== AIR suite', () => {
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
 
-        const client = await createLocalClient();
+        client = await createClient();
 
         let res;
-        client.registerCallback(serviceId, fnName, (args, _) => {
+        client.aquaCallHandler.on(serviceId, fnName, (args, _) => {
             res = args[0];
             return res;
         });
@@ -39,69 +47,66 @@ describe('== AIR suite', () => {
         // act
         const arg = 'hello';
         const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") ["${arg}"])`;
-        await client.sendScript(script);
+        await client.initiateFlow(RequestFlow.createLocal(script));
 
         // assert
         expect(res).toEqual(arg);
     });
 
-    it('call broken script', async function () {
-        // arrange
-        const client = await createLocalClient();
-        const script = `(incorrect)`;
+    describe('error handling', () => {
+        it('call broken script', async function () {
+            // arrange
+            const script = `(incorrect)`;
+            // prettier-ignore
+            const [request, error] = new RequestFlowBuilder()
+                .withRawScript(script)
+                .buildWithErrorHandling();
 
-        // act
-        const promise = client.sendScript(script);
+            // act
+            client = await createClient();
+            await client.initiateFlow(request);
 
-        // assert
-        await expect(promise).rejects.toContain("aqua script can't be parsed");
-    });
+            // assert
+            await expect(error).rejects.toContain("aqua script can't be parsed");
+        });
 
-    it('call script without ttl', async function () {
-        // arrange
-        const client = await createLocalClient();
-        const script = `(call %init_peer_id% ("op" "identity") [""])`;
+        it('call script without ttl', async function () {
+            // arrange
+            const script = `(null)`;
+            // prettier-ignore
+            const [request, promise] = new RequestFlowBuilder()
+                .withTTL(0)
+                .withRawScript(script)
+                .buildAsFetch();
 
-        // act
-        const promise = client.sendScript(script, undefined, 0);
+            // act
+            client = await createClient();
+            await client.initiateFlow(request);
 
-        // assert
-        await expect(promise).rejects.toContain('Particle expired');
-    });
-
-    it.skip('call broken script by fetch', async function () {
-        // arrange
-        const client = await createLocalClient();
-        const script = `(incorrect)`;
-
-        // act
-        const promise = client.fetch(script, ['result']);
-
-        // assert
-        await expect(promise).rejects.toContain("aqua script can't be parsed");
+            // assert
+            await expect(promise).rejects.toContain('Timed out after');
+        });
     });
 
     it('check particle arguments', async function () {
         // arrange
         const serviceId = 'test_service';
         const fnName = 'return_first_arg';
+        const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [arg1])`;
 
-        const client = await createLocalClient();
-
-        let res;
-        client.registerCallback(serviceId, fnName, (args, _) => {
-            res = args[0];
-            return res;
-        });
+        // prettier-ignore
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(script)
+            .withVariable('arg1', 'hello')
+            .buildAsFetch<string[]>(serviceId, fnName);
 
         // act
-        const script = `(call %init_peer_id% ("${serviceId}" "${fnName}") [arg1])`;
-        const data = new Map();
-        data.set('arg1', 'hello');
-        await client.sendScript(script, data);
+        client = await createClient();
+        await client.initiateFlow(request);
+        const [result] = await promise;
 
         // assert
-        expect(res).toEqual('hello');
+        expect(result).toEqual('hello');
     });
 
     it('check security tetraplet', async function () {
@@ -111,15 +116,15 @@ describe('== AIR suite', () => {
         const getDataServiceId = 'get_data_service';
         const getDataFnName = 'get_data';
 
-        const client = await createLocalClient();
+        client = await createClient();
 
-        client.registerCallback(makeDataServiceId, makeDataFnName, (args, _) => {
+        client.aquaCallHandler.on(makeDataServiceId, makeDataFnName, (args, _) => {
             return {
                 field: 42,
             };
         });
         let res;
-        client.registerCallback(getDataServiceId, getDataFnName, (args, tetraplets) => {
+        client.aquaCallHandler.on(getDataServiceId, getDataFnName, (args, tetraplets) => {
             res = {
                 args: args,
                 tetraplets: tetraplets,
@@ -133,7 +138,7 @@ describe('== AIR suite', () => {
             (call %init_peer_id% ("${makeDataServiceId}" "${makeDataFnName}") [] result)
             (call %init_peer_id% ("${getDataServiceId}" "${getDataFnName}") [result.$.field])
         )`;
-        await client.sendScript(script);
+        await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
         const tetraplet = res.tetraplets[0][0];
@@ -146,12 +151,12 @@ describe('== AIR suite', () => {
 
     it('check chain of services work properly', async function () {
         // arrange
-        const client = await createLocalClient();
+        client = await createClient();
 
         const serviceId1 = 'check1';
         const fnName1 = 'fn1';
         let res1;
-        client.registerCallback(serviceId1, fnName1, (args, _) => {
+        client.aquaCallHandler.on(serviceId1, fnName1, (args, _) => {
             res1 = args[0];
             return res1;
         });
@@ -159,7 +164,7 @@ describe('== AIR suite', () => {
         const serviceId2 = 'check2';
         const fnName2 = 'fn2';
         let res2;
-        client.registerCallback(serviceId2, fnName2, (args, _) => {
+        client.aquaCallHandler.on(serviceId2, fnName2, (args, _) => {
             res2 = args[0];
             return res2;
         });
@@ -167,7 +172,7 @@ describe('== AIR suite', () => {
         const serviceId3 = 'check3';
         const fnName3 = 'fn3';
         let res3;
-        client.registerCallback(serviceId3, fnName3, (args, _) => {
+        client.aquaCallHandler.on(serviceId3, fnName3, (args, _) => {
             res3 = args;
             return res3;
         });
@@ -182,7 +187,7 @@ describe('== AIR suite', () => {
                         (call %init_peer_id% ("${serviceId2}" "${fnName2}") ["${arg2}"] result2))
                        (call %init_peer_id% ("${serviceId3}" "${fnName3}") [result1 result2]))
         `;
-        await client.sendScript(script);
+        await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
         expect(res1).toEqual(arg1);

@@ -18,43 +18,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import PeerId from 'peer-id';
 import { encode } from 'bs58';
-import { injectDataIntoParticle } from './ParticleProcessor';
-import { PeerIdB58 } from './commonTypes';
+import log, { LogLevel } from 'loglevel';
 
-const DEFAULT_TTL = 7000;
-
-/**
- * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
- */
-export class Particle {
-    script: string;
-    data: Map<string, any>;
-    ttl: number;
-
-    /**
-     * Creates a particle with specified parameters.
-     * @param { String }script - Air script which defines the execution of a particle – its path, functions it triggers on peers, and so on.
-     * @param { Map<string, any> | Record<string, any> } data - Variables passed to the particle in the form of either JS Map or JS object with keys representing variable names and values representing values correspondingly
-     * @param { [Number]=7000 } ttl - Time to live, a timout after which the particle execution is stopped by Aquamarine.
-     */
-    constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
-        this.script = script;
-        if (data === undefined) {
-            this.data = new Map();
-        } else if (data instanceof Map) {
-            this.data = data;
-        } else {
-            this.data = new Map();
-            for (let k in data) {
-                this.data.set(k, data[k]);
-            }
-        }
-
-        this.ttl = ttl ?? DEFAULT_TTL;
-    }
-}
-
-export interface ParticleDto {
+export interface Particle {
     id: string;
     init_peer_id: string;
     timestamp: number;
@@ -64,6 +30,10 @@ export interface ParticleDto {
     signature: string;
     data: Uint8Array;
 }
+
+export const logParticle = (fn: Function, message: string, particle: Particle) => {
+    fn(message, particle);
+};
 
 /**
  * Represents particle action to send to a node
@@ -79,86 +49,10 @@ interface ParticlePayload {
     data: string;
 }
 
-function wrapWithVariableInjectionScript(script: string, fields: string[]): string {
-    fields.forEach((v) => {
-        script = `
-(seq
-    (call %init_peer_id% ("__magic" "load") ["${v}"] ${v})
-    ${script}
-)
-                 `;
-    });
-
-    return script;
-}
-
-function wrapWithXor(script: string): string {
-    return `
-    (xor
-        ${script}
-        (seq
-            (call __magic_relay ("op" "identity") [])
-            (call %init_peer_id% ("__magic" "handle_xor") [%last_error%])
-        )
-    )`;
-}
-
-function wrapWithXorLocal(script: string): string {
-    return `
-    (xor
-        ${script}
-        (call %init_peer_id% ("__magic" "handle_xor") [%last_error%])
-    )`;
-}
-
-export async function build(
-    peerId: PeerId,
-    relay: PeerIdB58 | undefined,
-    script: string,
-    data?: Map<string, any>,
-    ttl?: number,
-    customId?: string,
-): Promise<ParticleDto> {
-    const id = customId ?? genUUID();
-    let currentTime = new Date().getTime();
-
-    if (data === undefined) {
-        data = new Map();
-    }
-
-    if (ttl === undefined) {
-        ttl = DEFAULT_TTL;
-    }
-
-    if (relay) {
-        data.set('__magic_relay', relay);
-    }
-    injectDataIntoParticle(id, data, ttl);
-    script = wrapWithVariableInjectionScript(script, Array.from(data.keys()));
-    if (relay) {
-        script = wrapWithXor(script);
-    } else {
-        script = wrapWithXorLocal(script);
-    }
-
-    let particle: ParticleDto = {
-        id: id,
-        init_peer_id: peerId.toB58String(),
-        timestamp: currentTime,
-        ttl: ttl,
-        script: script,
-        // TODO: sign particle
-        signature: '',
-        data: Buffer.from([]),
-    };
-
-    return particle;
-}
-
 /**
  * Creates an action to send to a node.
  */
-export function toPayload(particle: ParticleDto): ParticlePayload {
+export function toPayload(particle: Particle): ParticlePayload {
     return {
         action: 'Particle',
         id: particle.id,
@@ -172,7 +66,7 @@ export function toPayload(particle: ParticleDto): ParticlePayload {
     };
 }
 
-export function parseParticle(str: string): ParticleDto {
+export function parseParticle(str: string): Particle {
     let json = JSON.parse(str);
 
     return {

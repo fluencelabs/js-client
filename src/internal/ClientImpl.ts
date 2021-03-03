@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-import { build } from './particle';
 import * as PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
 import { FluenceConnection } from './FluenceConnection';
 
 import { ParticleProcessor } from './ParticleProcessor';
-import { ParticleProcessorStrategy } from './ParticleProcessorStrategy';
-import { PeerIdB58 } from './commonTypes';
+import { PeerIdB58, SecurityTetraplet } from './commonTypes';
+import { FluenceClient } from 'src';
+import { RequestFlow } from './RequestFlow';
+import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
+import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 
-export abstract class FluenceClientBase {
+const makeDefaultClientHandler = (): AquaCallHandler => {
+    const res = new AquaCallHandler();
+    res.use(errorHandler);
+    res.use(fnHandler('op', 'identity', (args, _) => args));
+    return res;
+};
+
+export class ClientImpl implements FluenceClient {
     readonly selfPeerIdFull: PeerId;
 
     get relayPeerId(): PeerIdB58 | undefined {
@@ -38,16 +47,21 @@ export abstract class FluenceClientBase {
         return this.connection?.isConnected();
     }
 
-    protected connection: FluenceConnection;
+    private connection: FluenceConnection;
     protected processor: ParticleProcessor;
-    protected abstract strategy: ParticleProcessorStrategy;
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
+        this.aquaCallHandler = makeDefaultClientHandler();
+        this.processor = new ParticleProcessor(selfPeerIdFull, this.aquaCallHandler);
     }
 
+    aquaCallHandler: AquaCallHandler;
+
     async disconnect(): Promise<void> {
-        await this.connection.disconnect();
+        if (this.connection) {
+            await this.connection.disconnect();
+        }
         await this.processor.destroy();
     }
 
@@ -79,17 +93,19 @@ export abstract class FluenceClientBase {
             multiaddr,
             node,
             this.selfPeerIdFull,
-            this.processor.executeExternalParticle.bind(this.processor),
+            this.processor.executeIncomingParticle.bind(this.processor),
         );
         await connection.connect();
-        await this.processor.init();
-
         this.connection = connection;
+        await this.processor.init(connection);
     }
 
-    async sendScript(script: string, data?: Map<string, any>, ttl?: number): Promise<string> {
-        const particle = await build(this.selfPeerIdFull, this.relayPeerId, script, data, ttl);
-        await this.processor.executeLocalParticle(particle);
-        return particle.id;
+    async initiateFlow(request: RequestFlow): Promise<void> {
+        // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
+        request.handler.on(loadVariablesService, loadRelayFn, () => {
+            return this.relayPeerId || '';
+        });
+        await request.initState(this.selfPeerIdFull);
+        this.processor.executeLocalParticle(request);
     }
 }

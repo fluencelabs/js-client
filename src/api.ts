@@ -1,11 +1,42 @@
-import { FluenceClient } from './FluenceClient';
-import { SecurityTetraplet } from './internal/commonTypes';
-import { Particle } from './internal/particle';
 import Multiaddr from 'multiaddr';
-import PeerId, { isPeerId } from 'peer-id';
-import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
-import { FluenceClientImpl } from './internal/FluenceClientImpl';
-import log from 'loglevel';
+import PeerId from 'peer-id';
+import { PeerIdB58, SecurityTetraplet } from './internal/commonTypes';
+import * as unstable from './api.unstable';
+import { ClientImpl } from './internal/ClientImpl';
+import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
+import { RequestFlow } from './internal/RequestFlow';
+
+/**
+ * The class represents interface to Fluence Platform. To create a client @see {@link createClient} function.
+ */
+export interface FluenceClient {
+    /**
+     * { string } Gets the base58 representation of the current peer id. Read only
+     */
+    readonly relayPeerId: PeerIdB58;
+
+    /**
+     * { string } Gets the base58 representation of the connected relay's peer id. Read only
+     */
+    readonly selfPeerId: PeerIdB58;
+
+    /**
+     * { string } True if the client is connected to network. False otherwise. Read only
+     */
+    readonly isConnected: boolean;
+
+    /**
+     * Disconnects the client from the network
+     */
+    disconnect(): Promise<void>;
+
+    /**
+     * Establish a connection to the node. If the connection is already established, disconnect and reregister all services in a new connection.
+     *
+     * @param {string | Multiaddr} [multiaddr] - Address of the node in Fluence network.
+     */
+    connect(multiaddr: string | Multiaddr): Promise<void>;
+}
 
 type Node = {
     peerId: string;
@@ -22,44 +53,77 @@ export const createClient = async (
     connectTo?: string | Multiaddr | Node,
     peerIdOrSeed?: PeerId | string,
 ): Promise<FluenceClient> => {
-    let peerId;
-    if (!peerIdOrSeed) {
-        peerId = await generatePeerId();
-    } else if (isPeerId(peerIdOrSeed)) {
-        // keep unchanged
-        peerId = peerIdOrSeed;
-    } else {
-        // peerId is string, therefore seed
-        peerId = await seedToPeerId(peerIdOrSeed);
-    }
-
-    const client = new FluenceClientImpl(peerId);
-
-    if (connectTo) {
-        let theAddress: Multiaddr;
-        let fromNode = (connectTo as any).multiaddr;
-        if (fromNode) {
-            theAddress = new Multiaddr(fromNode);
-        } else {
-            theAddress = new Multiaddr(connectTo as string);
-        }
-
-        await client.connect(theAddress);
-        if (!(await checkConnection(client))) {
-            throw new Error('Connection check failed. Check if the node is working or try to connect to another node');
-        }
-    }
-
-    return client;
+    const res = await unstable.createClient(connectTo, peerIdOrSeed);
+    return res as any;
 };
+
+export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
+    return unstable.checkConnection(client as any);
+};
+
+/**
+ * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
+ */
+export class Particle {
+    script: string;
+    data: Map<string, any>;
+    ttl: number;
+
+    /**
+     * Creates a particle with specified parameters.
+     * @param { String }script - Air script which defines the execution of a particle – its path, functions it triggers on peers, and so on.
+     * @param { Map<string, any> | Record<string, any> } data - Variables passed to the particle in the form of either JS Map or JS object with keys representing variable names and values representing values correspondingly
+     * @param { [Number]=7000 } ttl - Time to live, a timout after which the particle execution is stopped by Aquamarine.
+     */
+    constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
+        this.script = script;
+        if (data === undefined) {
+            this.data = new Map();
+        } else if (data instanceof Map) {
+            this.data = data;
+        } else {
+            this.data = new Map();
+            for (let k in data) {
+                this.data.set(k, data[k]);
+            }
+        }
+
+        this.ttl = ttl ?? 7000;
+    }
+}
 
 /**
  * Send a particle to Fluence Network using the specified Fluence Client.
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param { Particle } particle  - The particle to send.
  */
-export const sendParticle = async (client: FluenceClient, particle: Particle): Promise<string> => {
-    return await client.sendScript(particle.script, particle.data, particle.ttl);
+export const sendParticle = async (
+    client: FluenceClient,
+    particle: Particle,
+    onError?: (err) => void,
+): Promise<string> => {
+    const c = client as ClientImpl;
+    const [req, errorPromise] = new RequestFlowBuilder()
+        .withRawScript(particle.script)
+        .withVariables(particle.data)
+        .withTTL(particle.ttl)
+        .buildWithErrorHandling();
+
+    errorPromise.catch(onError);
+
+    await c.initiateFlow(req);
+    return req.id;
+};
+
+/*
+    This map stores functions which unregister callbacks registered by registerServiceFunction
+    The key sould be created with makeKey. The value is the unresitration function
+    This is only needed to support legacy api
+*/
+const handlersUnregistratorsMap = new Map();
+const makeKey = (client: FluenceClient, serviceId: string, fnName: string) => {
+    const pid = client.selfPeerId || '';
+    return `${pid}/${serviceId}/${fnName}`;
 };
 
 /**
@@ -75,7 +139,8 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    (client as FluenceClientImpl).registerCallback(serviceId, fnName, handler);
+    const unregister = (client as ClientImpl).aquaCallHandler.on(serviceId, fnName, handler);
+    handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);
 };
 
 // prettier-ignore
@@ -90,7 +155,12 @@ export const unregisterServiceFunction = (
     serviceId: string,
     fnName: string
 ) => {
-    (client as FluenceClientImpl).unregisterCallback(serviceId, fnName);
+    const key = makeKey(client, serviceId, fnName);
+    const unuse = handlersUnregistratorsMap.get(key);
+    if(unuse) {
+        unuse();
+    }
+    handlersUnregistratorsMap.delete(key);
 };
 
 /**
@@ -136,79 +206,13 @@ export const sendParticleAsFetch = async <T>(
     callbackFnName: string,
     callbackServiceId: string = '_callback',
 ): Promise<T> => {
-    const serviceId = callbackServiceId;
-    const fnName = callbackFnName;
+    const [request, promise] = new RequestFlowBuilder()
+        .withRawScript(particle.script)
+        .withVariables(particle.data)
+        .withTTL(particle.ttl)
+        .buildAsFetch<T>(callbackServiceId, callbackFnName);
 
-    let promise: Promise<T> = new Promise(function (resolve, reject) {
-        const unsub = subscribeToEvent(client, serviceId, fnName, (args: any[], _) => {
-            unsub();
-            resolve(args as any);
-        });
-
-        setTimeout(() => {
-            unsub();
-            reject(new Error(`callback for ${callbackServiceId}/${callbackFnName} timed out after ${particle.ttl}`));
-        }, particle.ttl);
-    });
-
-    await sendParticle(client, particle);
+    await (client as ClientImpl).initiateFlow(request);
 
     return promise;
-};
-
-export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
-    let msg = Math.random().toString(36).substring(7);
-    let callbackFn = 'checkConnection';
-    let callbackService = '_callback';
-
-    const particle = new Particle(
-        `
-                    (seq 
-                        (call __relay ("op" "identity") [msg] result)
-                        (call myPeerId ("${callbackService}" "${callbackFn}") [result])
-                    )
-                `,
-        {
-            __relay: client.relayPeerId,
-            myPeerId: client.selfPeerId,
-            msg,
-        },
-    );
-
-    if (!client.isConnected) {
-        return false;
-    }
-
-    try {
-        let result = await sendParticleAsFetch<string[][]>(client, particle, callbackFn, callbackService);
-        if (result[0][0] != msg) {
-            log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.");
-        }
-        return true;
-    } catch (e) {
-        log.error('Error on establishing connection: ', e);
-        return false;
-    }
-};
-
-export const subscribeForErrors = (client: FluenceClient, ttl: number): Promise<void> => {
-    return new Promise((resolve, reject) => {
-        registerServiceFunction(client, '__magic', 'handle_xor', (args, _) => {
-            setTimeout(() => {
-                try {
-                    reject(JSON.parse(args[0]));
-                } catch {
-                    reject(args);
-                }
-            }, 0);
-
-            unregisterServiceFunction(client, '__magic', 'handle_xor');
-            return {};
-        });
-
-        setTimeout(() => {
-            unregisterServiceFunction(client, '__magic', 'handle_xor');
-            resolve();
-        }, ttl);
-    });
 };

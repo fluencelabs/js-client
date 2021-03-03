@@ -9,16 +9,22 @@ import {
     uploadModule,
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
-import { checkConnection } from '../../api';
-import { generatePeerId } from '../..';
-import { FluenceClientImpl } from '../../internal/FluenceClientImpl';
-import { createConnectedClient, nodes } from '../connection';
+import { createClient, FluenceClient } from '../../api.unstable';
+import { nodes } from '../connection';
+
+let client: FluenceClient;
 
 describe('Builtins usage suite', () => {
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
+    });
+
     jest.setTimeout(10000);
 
     it('get_modules', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let modulesList = await getModules(client);
 
@@ -26,7 +32,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('get_interfaces', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let interfaces = await getInterfaces(client);
 
@@ -34,28 +40,15 @@ describe('Builtins usage suite', () => {
     });
 
     it('get_blueprints', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let bpList = await getBlueprints(client);
 
         expect(bpList).not.toBeUndefined;
     });
 
-    it('check_connection', async function () {
-        const peerId = await generatePeerId();
-        const client = new FluenceClientImpl(peerId);
-        await client.local();
-        await client.connect(nodes[0].multiaddr);
-
-        let isConnected = await checkConnection(client);
-
-        expect(isConnected).toEqual(true);
-    });
-
     it('upload_modules', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        console.log('peerid: ' + client.selfPeerId);
+        client = await createClient(nodes[0].multiaddr);
 
         let config: ModuleConfig = {
             name: 'test_broken_module',
@@ -75,7 +68,7 @@ describe('Builtins usage suite', () => {
     });
 
     it('add_blueprint', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+        client = await createClient(nodes[0].multiaddr);
 
         let bpId = 'some';
 
@@ -84,20 +77,19 @@ describe('Builtins usage suite', () => {
         expect(bpIdReturned).toEqual(bpId);
     });
 
-    // FIXME:: there is no error on broken blueprint from a node
-    it.skip('create_service', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
+    it('create broken blueprint', async function () {
+        client = await createClient(nodes[0].multiaddr);
 
-        let serviceId = await createService(client, 'test_broken_blueprint');
+        let promise = createService(client, 'test_broken_blueprint');
 
-        // TODO there is no error on broken blueprint from a node
-        expect(serviceId).not.toBeUndefined;
+        await expect(promise).rejects.toMatchObject({
+            error: expect.stringContaining("Blueprint wasn't found at"),
+            instruction: expect.stringContaining('blueprint_id'),
+        });
     });
 
     it('add and remove script', async function () {
-        const client = await createConnectedClient(nodes[0].multiaddr);
-
-        console.log('peerid: ' + client.selfPeerId);
+        client = await createClient(nodes[0].multiaddr);
 
         let script = `
         (seq
@@ -107,7 +99,7 @@ describe('Builtins usage suite', () => {
     `;
 
         let resMakingPromise = new Promise((resolve) => {
-            client.registerCallback('test', 'test1', (args, _) => {
+            client.aquaCallHandler.on('test', 'test1', (args, _) => {
                 resolve([...args]);
                 return {};
             });
@@ -117,7 +109,6 @@ describe('Builtins usage suite', () => {
 
         await resMakingPromise
             .then((args) => {
-                console.log('final!');
                 expect(args as string[]).toEqual(['1', '2', '3']);
             })
             .finally(() => {
