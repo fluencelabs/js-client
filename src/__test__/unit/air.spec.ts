@@ -75,7 +75,7 @@ describe('== AIR suite', () => {
             const script = `(null)`;
             // prettier-ignore
             const [request, promise] = new RequestFlowBuilder()
-                .withTTL(1)
+                .withTTL(0)
                 .withRawScript(script)
                 .buildAsFetch();
 
@@ -84,7 +84,7 @@ describe('== AIR suite', () => {
             await client.initiateFlow(request);
 
             // assert
-            await expect(promise).rejects.toContain('Timed out after 1ms');
+            await expect(promise).rejects.toContain('Timed out after');
         });
     });
 
