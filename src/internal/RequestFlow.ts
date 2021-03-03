@@ -4,7 +4,7 @@ import { AquamarineInterpreter } from './aqua/interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
-import { Particle, genUUID } from './particle';
+import { Particle, genUUID, logParticle } from './particle';
 
 export const DEFAULT_TTL = 7000;
 
@@ -54,6 +54,36 @@ export class RequestFlow {
 
     onError(handler: (error) => void) {
         this.onErrorHandlers.push(handler);
+    }
+
+    async execute(interpreter: AquamarineInterpreter, connection: FluenceConnection) {
+        if (this.hasExpired()) {
+            return;
+        }
+
+        logParticle(log.debug, 'interpreter executing particle', this.getParticle());
+        const interpreterOutcome = this.runInterpreter(interpreter);
+
+        log.debug('inner interpreter outcome:', {
+            ret_code: interpreterOutcome.ret_code,
+            error_message: interpreterOutcome.error_message,
+            next_peer_pks: interpreterOutcome.next_peer_pks,
+        });
+
+        if (interpreterOutcome.ret_code !== 0) {
+            this.raiseError(
+                `Interpreter failed with code=${interpreterOutcome.ret_code} message=${interpreterOutcome.error_message}`,
+            );
+        }
+
+        // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
+        if (interpreterOutcome.next_peer_pks.length > 0) {
+            if (!connection) {
+                log.error('Cannot send particle: non connected');
+            }
+
+            this.sendIntoConnection(connection);
+        }
     }
 
     async initState(peerId: PeerId): Promise<void> {
