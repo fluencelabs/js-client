@@ -2,7 +2,7 @@ import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
 import { AquamarineInterpreter } from './aqua/interpreter';
 import { AquaCallHandler } from './AquaHandler';
-import { InterpreterOutcome } from './commonTypes';
+import { InterpreterOutcome, PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, logParticle } from './particle';
 
@@ -27,6 +27,7 @@ export class RequestFlow {
     readonly handler = new AquaCallHandler();
 
     ttl: number = DEFAULT_TTL;
+    relayPeerId?: PeerIdB58;
 
     static createExternal(particle: Particle): RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
@@ -56,7 +57,7 @@ export class RequestFlow {
         this.onErrorHandlers.push(handler);
     }
 
-    async execute(interpreter: AquamarineInterpreter, connection: FluenceConnection) {
+    async execute(interpreter: AquamarineInterpreter, connection: FluenceConnection, relayPeerId?: PeerIdB58) {
         if (this.hasExpired()) {
             return;
         }
@@ -76,14 +77,32 @@ export class RequestFlow {
             );
         }
 
-        // do nothing if there is no `next_peer_pks` or if client isn't connected to the network
-        if (interpreterOutcome.next_peer_pks.length > 0) {
-            if (!connection) {
-                log.error('Cannot send particle: non connected');
-            }
+        const nextPeers = interpreterOutcome.next_peer_pks;
 
-            this.sendIntoConnection(connection);
+        // do nothing if there are no peers to send particle further
+        if (nextPeers.length === 0) {
+            return;
         }
+
+        // we only expect a single possible peer id to send particle further
+        if (nextPeers.length > 1) {
+            throw new Error(
+                'Particle is expected to be sent to only the single peer (relay which client is connected to)',
+            );
+        }
+
+        // this peer id must be the relay, the client is connected to
+        if (!relayPeerId || nextPeers[0] !== relayPeerId) {
+            throw new Error(
+                'Particle is expected to be sent to only the single peer (relay which client is connected to)',
+            );
+        }
+
+        if (!connection) {
+            throw new Error('Cannot send particle: non connected');
+        }
+
+        this.sendIntoConnection(connection);
     }
 
     async initState(peerId: PeerId): Promise<void> {

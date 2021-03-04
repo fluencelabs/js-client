@@ -17,7 +17,7 @@ export interface FluenceClient {
     /**
      * { string } Gets the base58 representation of the current peer id. Read only
      */
-    readonly relayPeerId: PeerIdB58;
+    readonly relayPeerId: PeerIdB58 | undefined;
 
     /**
      * { string } Gets the base58 representation of the connected relay's peer id. Read only

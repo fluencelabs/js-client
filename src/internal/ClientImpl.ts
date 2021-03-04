@@ -133,7 +133,7 @@ export class ClientImpl implements FluenceClient {
     private async processRequest(request: RequestFlow): Promise<void> {
         try {
             this.currentRequestId = request.id;
-            request.execute(this.interpreter, this.connection);
+            request.execute(this.interpreter, this.connection, this.relayPeerId);
         } catch (err) {
             log.error('particle processing failed: ' + err);
         } finally {
