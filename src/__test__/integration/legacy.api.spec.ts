@@ -1,10 +1,4 @@
-import {
-    Particle,
-    sendParticle,
-    registerServiceFunction,
-    subscribeToEvent,
-    sendParticleAsFetch,
-} from '../../api';
+import { Particle, sendParticle, registerServiceFunction, subscribeToEvent, sendParticleAsFetch } from '../../api';
 import { FluenceClient, createClient } from '../../FluenceClient';
 import { nodes } from '../connection';
 

@@ -1,8 +1,6 @@
-
 import { SecurityTetraplet } from './internal/commonTypes';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 import { FluenceClient } from './FluenceClient';
-
 
 /**
  * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.

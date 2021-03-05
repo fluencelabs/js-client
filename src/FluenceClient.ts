@@ -2,11 +2,11 @@ import log from 'loglevel';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 
-import { AquaCallHandler } from "./internal/AquaHandler";
+import { AquaCallHandler } from './internal/AquaHandler';
 import { ClientImpl } from './internal/ClientImpl';
-import { PeerIdB58 } from "./internal/commonTypes";
+import { PeerIdB58 } from './internal/commonTypes';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
-import { RequestFlow } from "./internal/RequestFlow";
+import { RequestFlow } from './internal/RequestFlow';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 
 /**
@@ -53,7 +53,6 @@ export interface FluenceClient {
      */
     initiateFlow(request: RequestFlow): Promise<void>;
 }
-
 
 type Node = {
     peerId: string;
