@@ -19,7 +19,7 @@ import Multiaddr from 'multiaddr';
 import { FluenceConnection } from './FluenceConnection';
 
 import { CallServiceResult, ParticleHandler, PeerIdB58, SecurityTetraplet } from './commonTypes';
-import { FluenceClient } from 'src';
+import { FluenceClient } from '../FluenceClient';
 import { RequestFlow } from './RequestFlow';
 import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';

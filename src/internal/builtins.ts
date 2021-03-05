@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
+import { FluenceClient } from '../FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
-import { FluenceClient as Unstable } from '../api.unstable';
-import { FluenceClient as Stable } from '..';
-
-// HACK:: A little hack to supress compiler errors in proto-distributor.
-// Will be wiped out when the HLL is ready
-type FluenceClient = Unstable | Stable;
 
 const nodeIdentityCall = (client: FluenceClient): string => {
     return `(call "${client.relayPeerId}" ("op" "identity") [])`;
@@ -64,7 +59,7 @@ const requestResponse = async <T>(
         .withVariables(data)
         .withTTL(ttl)
         .buildAsFetch<any[]>('_callback', name);
-    await (client as any).initiateFlow(request);
+    await client.initiateFlow(request);
     const res = await promise;
     return handleResponse(res);
 };
@@ -91,7 +86,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
         })
         .withTTL(ttl)
         .buildAsFetch<[string[]]>('_callback', callbackFn);
-    (client as any).initiateFlow(req);
+    client.initiateFlow(req);
 
     const [res] = await promise;
     return res;
@@ -131,7 +126,7 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
         .withTTL(ttl)
         .buildAsFetch<[string[]]>('_callback', callbackFn);
 
-    (client as any).initiateFlow(req);
+    client.initiateFlow(req);
 
     const [res] = await promise;
     return res;
@@ -184,7 +179,7 @@ export const uploadModule = async (
         .withTTL(ttl)
         .buildAsFetch<[string[]]>('_callback', 'getModules');
 
-    await (client as any).initiateFlow(req);
+    await client.initiateFlow(req);
     await promise;
 };
 
