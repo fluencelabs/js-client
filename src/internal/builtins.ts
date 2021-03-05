@@ -59,7 +59,7 @@ const requestResponse = async <T>(
         .withVariables(data)
         .withTTL(ttl)
         .buildAsFetch<any[]>('_callback', name);
-    await (client as any).initiateFlow(request);
+    await client.initiateFlow(request);
     const res = await promise;
     return handleResponse(res);
 };
@@ -86,7 +86,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
         })
         .withTTL(ttl)
         .buildAsFetch<[string[]]>('_callback', callbackFn);
-    (client as any).initiateFlow(req);
+    client.initiateFlow(req);
 
     const [res] = await promise;
     return res;
@@ -126,7 +126,7 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
         .withTTL(ttl)
         .buildAsFetch<[string[]]>('_callback', callbackFn);
 
-    (client as any).initiateFlow(req);
+    client.initiateFlow(req);
 
     const [res] = await promise;
     return res;
@@ -179,7 +179,7 @@ export const uploadModule = async (
         .withTTL(ttl)
         .buildAsFetch<[string[]]>('_callback', 'getModules');
 
-    await (client as any).initiateFlow(req);
+    await client.initiateFlow(req);
     await promise;
 };
 
