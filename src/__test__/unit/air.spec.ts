@@ -1,4 +1,4 @@
-import { createClient, FluenceClient } from '../../api.unstable';
+import { createClient, FluenceClient } from '../../FluenceClient';
 import { RequestFlow } from '../../internal/RequestFlow';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 

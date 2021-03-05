@@ -1,65 +1,8 @@
-import Multiaddr from 'multiaddr';
-import PeerId from 'peer-id';
-import { PeerIdB58, SecurityTetraplet } from './internal/commonTypes';
-import * as unstable from './api.unstable';
-import { ClientImpl } from './internal/ClientImpl';
+
+import { SecurityTetraplet } from './internal/commonTypes';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
-import { RequestFlow } from './internal/RequestFlow';
+import { FluenceClient } from './FluenceClient';
 
-/**
- * The class represents interface to Fluence Platform. To create a client @see {@link createClient} function.
- */
-export interface FluenceClient {
-    /**
-     * { string } Gets the base58 representation of the current peer id. Read only
-     */
-    readonly relayPeerId: PeerIdB58 | undefined;
-
-    /**
-     * { string } Gets the base58 representation of the connected relay's peer id. Read only
-     */
-    readonly selfPeerId: PeerIdB58;
-
-    /**
-     * { string } True if the client is connected to network. False otherwise. Read only
-     */
-    readonly isConnected: boolean;
-
-    /**
-     * Disconnects the client from the network
-     */
-    disconnect(): Promise<void>;
-
-    /**
-     * Establish a connection to the node. If the connection is already established, disconnect and reregister all services in a new connection.
-     *
-     * @param {string | Multiaddr} [multiaddr] - Address of the node in Fluence network.
-     */
-    connect(multiaddr: string | Multiaddr): Promise<void>;
-}
-
-type Node = {
-    peerId: string;
-    multiaddr: string;
-};
-
-/**
- * Creates a Fluence client. If the `connectTo` is specified connects the client to the network
- * @param { string | Multiaddr | Node } [connectTo] - Node in Fluence network to connect to. If not specified client will not be connected to the n
- * @param { PeerId | string } [peerIdOrSeed] - The Peer Id of the created client. Specified either as PeerId structure or as seed string. Will be generated randomly if not specified
- * @returns { Promise<FluenceClient> } Promise which will be resolved with the created FluenceClient
- */
-export const createClient = async (
-    connectTo?: string | Multiaddr | Node,
-    peerIdOrSeed?: PeerId | string,
-): Promise<FluenceClient> => {
-    const res = await unstable.createClient(connectTo, peerIdOrSeed);
-    return res as any;
-};
-
-export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
-    return unstable.checkConnection(client as any);
-};
 
 /**
  * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
@@ -102,7 +45,6 @@ export const sendParticle = async (
     particle: Particle,
     onError?: (err) => void,
 ): Promise<string> => {
-    const c = client as ClientImpl;
     const [req, errorPromise] = new RequestFlowBuilder()
         .withRawScript(particle.script)
         .withVariables(particle.data)
@@ -111,7 +53,7 @@ export const sendParticle = async (
 
     errorPromise.catch(onError);
 
-    await c.initiateFlow(req);
+    await client.initiateFlow(req);
     return req.id;
 };
 
@@ -139,7 +81,7 @@ export const registerServiceFunction = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object,
 ) => {
-    const unregister = (client as ClientImpl).aquaCallHandler.on(serviceId, fnName, handler);
+    const unregister = client.aquaCallHandler.on(serviceId, fnName, handler);
     handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);
 };
 
@@ -212,7 +154,7 @@ export const sendParticleAsFetch = async <T>(
         .withTTL(particle.ttl)
         .buildAsFetch<T>(callbackServiceId, callbackFnName);
 
-    await (client as ClientImpl).initiateFlow(request);
+    await client.initiateFlow(request);
 
     return promise;
 };

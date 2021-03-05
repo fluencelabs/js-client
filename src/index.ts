@@ -17,6 +17,7 @@
 export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUtils';
 export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
 export * from './api';
+export * from './FluenceClient';
 export * from './internal/builtins';
 import log, { LogLevelDesc } from 'loglevel';
 

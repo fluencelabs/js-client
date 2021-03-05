@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
+import { FluenceClient } from 'src/FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
-import { FluenceClient as Unstable } from '../api.unstable';
-import { FluenceClient as Stable } from '..';
-
-// HACK:: A little hack to supress compiler errors in proto-distributor.
-// Will be wiped out when the HLL is ready
-type FluenceClient = Unstable | Stable;
 
 const nodeIdentityCall = (client: FluenceClient): string => {
     return `(call "${client.relayPeerId}" ("op" "identity") [])`;

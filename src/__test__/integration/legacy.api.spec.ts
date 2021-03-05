@@ -1,12 +1,11 @@
 import {
-    createClient,
     Particle,
-    FluenceClient,
     sendParticle,
     registerServiceFunction,
     subscribeToEvent,
     sendParticleAsFetch,
 } from '../../api';
+import { FluenceClient, createClient } from '../../FluenceClient';
 import { nodes } from '../connection';
 
 let client: FluenceClient;

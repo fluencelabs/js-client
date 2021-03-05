@@ -9,7 +9,7 @@ import {
     uploadModule,
 } from '../../internal/builtins';
 import { ModuleConfig } from '../../internal/moduleConfig';
-import { createClient, FluenceClient } from '../../api.unstable';
+import { createClient, FluenceClient } from '../../FluenceClient';
 import { nodes } from '../connection';
 
 let client: FluenceClient;
