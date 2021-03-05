@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FluenceClient } from 'src/FluenceClient';
+import { FluenceClient } from '../FluenceClient';
 import { ModuleConfig } from './moduleConfig';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
 
