@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { RequestFlow } from './RequestFlow';
 import { ModuleConfig } from './moduleConfig';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
-import { FluenceClient } from 'src/api.unstable';
+import { FluenceClient } from '../api.unstable';
 
 const nodeIdentityCall = (client: FluenceClient): string => {
     return `(call "${client.relayPeerId}" ("op" "identity") [])`;
