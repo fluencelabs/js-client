@@ -63,7 +63,6 @@ export class FluenceConnection {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
                 connEncryption: [NOISE],
-                // peerDiscovery: [],
             },
         });
 
