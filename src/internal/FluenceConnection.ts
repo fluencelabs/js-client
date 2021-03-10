@@ -16,14 +16,14 @@
 
 import Websockets from 'libp2p-websockets';
 import Mplex from 'libp2p-mplex';
-import SECIO from 'libp2p-secio';
 import Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
-import Multiaddr from 'multiaddr';
-import PeerId from 'peer-id';
 import * as log from 'loglevel';
 import { parseParticle, Particle, toPayload } from './particle';
+import { NOISE } from 'libp2p-noise';
+import PeerId from 'peer-id';
+import Multiaddr from 'multiaddr'
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
@@ -35,7 +35,7 @@ enum Status {
 
 export class FluenceConnection {
     private readonly selfPeerId: PeerId;
-    private node: LibP2p;
+    private node: Peer;
     private readonly address: Multiaddr;
     readonly nodePeerId: PeerId;
     private readonly selfPeerIdStr: string;
@@ -62,8 +62,7 @@ export class FluenceConnection {
             modules: {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
-                connEncryption: [SECIO],
-                peerDiscovery: [],
+                connEncryption: [NOISE],
             },
         });
 
@@ -127,7 +126,7 @@ export class FluenceConnection {
 
         // create outgoing substream
         const conn = (await this.node.dialProtocol(this.address, PROTOCOL_NAME)) as {
-            stream: Stream;
+            stream;
             protocol: string;
         };
 

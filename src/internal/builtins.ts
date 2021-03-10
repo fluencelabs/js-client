@@ -257,9 +257,9 @@ export const createService = async (
  * @param {[string]} nodeId - Optional node peer id to get available blueprints from
  * @param {[string]} nodeId - Optional node peer id to deploy service to
  * @param {[number]} ttl - Optional ttl for the particle which does the job
- * @returns { Array<string> } - List of available blueprints
+ * @returns { Array<object> } - List of available blueprints
  */
-export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<string[]> => {
+export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<[{dependencies, id: string, name: string}]> => {
     let returnValue = 'blueprints';
     let call = (nodeId: string) => `(call "${nodeId}" ("dist" "list_blueprints") [] ${returnValue})`;
 
@@ -269,7 +269,7 @@ export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?
         call,
         returnValue,
         new Map(),
-        (args: any[]) => args[0] as string[],
+        (args: any[]) => args[0],
         nodeId,
         ttl,
     );

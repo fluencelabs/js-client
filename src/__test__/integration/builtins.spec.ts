@@ -73,8 +73,10 @@ describe('Builtins usage suite', () => {
         let bpId = 'some';
 
         let bpIdReturned = await addBlueprint(client, 'test_broken_blueprint', ['test_broken_module'], bpId);
+        let allBps = await getBlueprints(client);
+        const allBpIds = allBps.map(x => x.id);
 
-        expect(bpIdReturned).toEqual(bpId);
+        expect(allBpIds).toContain(bpIdReturned);
     });
 
     it('create broken blueprint', async function () {
