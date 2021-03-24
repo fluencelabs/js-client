@@ -74,7 +74,7 @@ describe('Builtins usage suite', () => {
 
         let bpIdReturned = await addBlueprint(client, 'test_broken_blueprint', ['test_broken_module'], bpId);
         let allBps = await getBlueprints(client);
-        const allBpIds = allBps.map(x => x.id);
+        const allBpIds = allBps.map((x) => x.id);
 
         expect(allBpIds).toContain(bpIdReturned);
     });
@@ -85,7 +85,7 @@ describe('Builtins usage suite', () => {
         let promise = createService(client, 'test_broken_blueprint');
 
         await expect(promise).rejects.toMatchObject({
-            error: expect.stringContaining("Blueprint wasn't found at"),
+            error: expect.stringContaining("Blueprint 'test_broken_blueprint' wasn't found"),
             instruction: expect.stringContaining('blueprint_id'),
         });
     });
