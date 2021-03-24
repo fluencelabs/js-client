@@ -4,14 +4,15 @@ describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
         const interpreter = await AquamarineInterpreter.create({} as any);
         let ast = interpreter.parseAir(`
-            (call node ("service" "function") [1 2 3 arg] output)
+            (call "node" ("service" "function") [1 2 3] output)
         `);
 
+        console.log(ast);
         ast = JSON.parse(ast);
 
         expect(ast).toEqual({
             Call: {
-                peer_part: { PeerPk: { Variable: 'node' } },
+                peer_part: { PeerPk: { Literal: 'node' } },
                 function_part: { ServiceIdWithFuncName: [{ Literal: 'service' }, { Literal: 'function' }] },
                 args: [
                     {
@@ -29,7 +30,6 @@ describe('== AST parsing suite', () => {
                             Int: 3,
                         },
                     },
-                    { Variable: 'arg' },
                 ],
                 output: { Scalar: 'output' },
             },
