@@ -16,7 +16,7 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@fluencelabs/aquamarine-interpreter": "0.7.8",
+    "@fluencelabs/aquamarine-interpreter": "0.7.9",
     "async": "3.2.0",
     "base64-js": "1.3.1",
     "bs58": "4.0.1",
