@@ -97,7 +97,7 @@ export const createClient = async (
 
         await client.connect(theAddress, options);
 
-        if (options && !options.skipCheckConnection) {
+        if (options?.skipCheckConnection) {
             if (!(await checkConnection(client, options.checkConnectionTTL))) {
                 throw new Error(
                     'Connection check failed. Check if the node is working or try to connect to another node',
