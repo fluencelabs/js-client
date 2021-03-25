@@ -39,6 +39,16 @@ enum Status {
  */
 export interface FluenceConnectionOptions {
     /**
+     * @property {number} [checkConnectionTTL] - TTL for the check connection request in ms
+     */
+    checkConnectionTTL?: number;
+
+    /**
+     * @property {number} [checkConnectionTTL] - set to true to skip check connection request completely
+     */
+    skipCheckConnection?: boolean;
+
+    /**
      * @property {number} [dialTimeout] - How long a dial attempt is allowed to take.
      */
     dialTimeout?: number;

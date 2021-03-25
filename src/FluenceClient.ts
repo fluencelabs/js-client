@@ -96,8 +96,13 @@ export const createClient = async (
         }
 
         await client.connect(theAddress, options);
-        if (!(await checkConnection(client))) {
-            throw new Error('Connection check failed. Check if the node is working or try to connect to another node');
+
+        if (options && !options.skipCheckConnection) {
+            if (!(await checkConnection(client, options.checkConnectionTTL))) {
+                throw new Error(
+                    'Connection check failed. Check if the node is working or try to connect to another node',
+                );
+            }
         }
     }
 
@@ -108,7 +113,7 @@ export const createClient = async (
  * Checks the network connection by sending a ping-like request to relat node
  * @param { FluenceClient } client - The Fluence Client instance.
  */
-export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
+export const checkConnection = async (client: FluenceClient, ttl?: number): Promise<boolean> => {
     if (!client.isConnected) {
         return false;
     }
@@ -124,6 +129,7 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         (call %init_peer_id% ("${callbackService}" "${callbackFn}") [result])
     )`,
         )
+        .withTTL(ttl)
         .withVariables({
             msg,
         })
