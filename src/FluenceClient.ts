@@ -5,6 +5,7 @@ import PeerId, { isPeerId } from 'peer-id';
 import { AquaCallHandler } from './internal/AquaHandler';
 import { ClientImpl } from './internal/ClientImpl';
 import { PeerIdB58 } from './internal/commonTypes';
+import { FluenceConnectionOptions } from './internal/FluenceConnection';
 import { generatePeerId, seedToPeerId } from './internal/peerIdUtils';
 import { RequestFlow } from './internal/RequestFlow';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
@@ -63,11 +64,13 @@ type Node = {
  * Creates a Fluence client. If the `connectTo` is specified connects the client to the network
  * @param { string | Multiaddr | Node } [connectTo] - Node in Fluence network to connect to. If not specified client will not be connected to the n
  * @param { PeerId | string } [peerIdOrSeed] - The Peer Id of the created client. Specified either as PeerId structure or as seed string. Will be generated randomly if not specified
+ * @param { FluenceConnectionOptions } [options] - additional configuraton options for Fluence Connection made with the client
  * @returns { Promise<FluenceClient> } Promise which will be resolved with the created FluenceClient
  */
 export const createClient = async (
     connectTo?: string | Multiaddr | Node,
     peerIdOrSeed?: PeerId | string,
+    options?: FluenceConnectionOptions,
 ): Promise<FluenceClient> => {
     let peerId;
     if (!peerIdOrSeed) {
@@ -92,9 +95,14 @@ export const createClient = async (
             theAddress = new Multiaddr(connectTo as string);
         }
 
-        await client.connect(theAddress);
-        if (!(await checkConnection(client))) {
-            throw new Error('Connection check failed. Check if the node is working or try to connect to another node');
+        await client.connect(theAddress, options);
+
+        if (options?.skipCheckConnection) {
+            if (!(await checkConnection(client, options.checkConnectionTTL))) {
+                throw new Error(
+                    'Connection check failed. Check if the node is working or try to connect to another node',
+                );
+            }
         }
     }
 
@@ -105,7 +113,7 @@ export const createClient = async (
  * Checks the network connection by sending a ping-like request to relat node
  * @param { FluenceClient } client - The Fluence Client instance.
  */
-export const checkConnection = async (client: FluenceClient): Promise<boolean> => {
+export const checkConnection = async (client: FluenceClient, ttl?: number): Promise<boolean> => {
     if (!client.isConnected) {
         return false;
     }
@@ -121,6 +129,7 @@ export const checkConnection = async (client: FluenceClient): Promise<boolean> =
         (call %init_peer_id% ("${callbackService}" "${callbackFn}") [result])
     )`,
         )
+        .withTTL(ttl)
         .withVariables({
             msg,
         })

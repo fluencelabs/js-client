@@ -42,6 +42,15 @@ describe('Typescript usage suite', () => {
         expect(isConnected).toEqual(true);
     });
 
+    it('check connection should work with ttl', async function () {
+        client = await createClient();
+        await client.connect(nodes[0].multiaddr);
+
+        let isConnected = await checkConnection(client, 10000);
+
+        expect(isConnected).toEqual(true);
+    });
+
     it('two clients should work inside the same time browser', async () => {
         // arrange
         const client1 = await createClient(nodes[0].multiaddr);
@@ -131,6 +140,42 @@ describe('Typescript usage suite', () => {
 
             // act
             client = await createClient(addr);
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('With connection options: dialTimeout', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr, undefined, { dialTimeout: 100000 });
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('With connection options: skipCheckConnection', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr, undefined, { skipCheckConnection: true });
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
+
+        it('With connection options: checkConnectionTTL', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr, undefined, { checkConnectionTTL: 1000 });
             const isConnected = await checkConnection(client);
 
             // assert

@@ -127,8 +127,10 @@ export class RequestFlowBuilder {
         return this;
     }
 
-    withTTL(ttl: number): RequestFlowBuilder {
-        this.ttl = ttl;
+    withTTL(ttl?: number): RequestFlowBuilder {
+        if (ttl) {
+            this.ttl = ttl;
+        }
         return this;
     }
 

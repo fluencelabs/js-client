@@ -75,7 +75,7 @@ describe('== AIR suite', () => {
             const script = `(null)`;
             // prettier-ignore
             const [request, promise] = new RequestFlowBuilder()
-                .withTTL(0)
+                .withTTL(1)
                 .withRawScript(script)
                 .buildAsFetch();
 
