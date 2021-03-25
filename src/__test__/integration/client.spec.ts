@@ -136,6 +136,18 @@ describe('Typescript usage suite', () => {
             // assert
             expect(isConnected).toBeTruthy;
         });
+
+        it('With connection options', async () => {
+            // arrange
+            const addr = nodes[0].multiaddr;
+
+            // act
+            client = await createClient(addr, undefined, { dialTimeout: 100000 });
+            const isConnected = await checkConnection(client);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
     });
 
     it('xor handling should work with connected client', async function () {

@@ -16,7 +16,7 @@
 
 import * as PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
-import { FluenceConnection } from './FluenceConnection';
+import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 
 import { CallServiceResult, ParticleHandler, PeerIdB58, SecurityTetraplet } from './commonTypes';
 import { FluenceClient } from '../FluenceClient';
@@ -77,7 +77,7 @@ export class ClientImpl implements FluenceClient {
         });
     }
 
-    async connect(multiaddr: string | Multiaddr): Promise<void> {
+    async connect(multiaddr: string | Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
         multiaddr = Multiaddr(multiaddr);
 
         const nodePeerId = multiaddr.getPeerId();
@@ -96,7 +96,7 @@ export class ClientImpl implements FluenceClient {
             this.selfPeerIdFull,
             this.executeIncomingParticle.bind(this),
         );
-        await connection.connect();
+        await connection.connect(options);
         this.connection = connection;
         this.initWatchDog();
     }

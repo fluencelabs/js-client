@@ -23,7 +23,8 @@ import * as log from 'loglevel';
 import { parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
-import Multiaddr from 'multiaddr'
+import Multiaddr from 'multiaddr';
+import { options } from 'libp2p/src/keychain';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
@@ -31,6 +32,16 @@ enum Status {
     Initializing = 'Initializing',
     Connected = 'Connected',
     Disconnected = 'Disconnected',
+}
+
+/**
+ * Options to configure fluence connection
+ */
+export interface FluenceConnectionOptions {
+    /**
+     * @property {number} [dialTimeout] - How long a dial attempt is allowed to take.
+     */
+    dialTimeout?: number;
 }
 
 export class FluenceConnection {
@@ -54,7 +65,7 @@ export class FluenceConnection {
         this.nodePeerId = hostPeerId;
     }
 
-    async connect() {
+    async connect(options?: FluenceConnectionOptions) {
         let peerInfo = this.selfPeerId;
         this.node = await Peer.create({
             peerId: peerInfo,
@@ -63,6 +74,9 @@ export class FluenceConnection {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
                 connEncryption: [NOISE],
+            },
+            dialer: {
+                timeout: options?.dialTimeout,
             },
         });
 
