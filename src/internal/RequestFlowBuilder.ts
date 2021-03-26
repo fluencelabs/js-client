@@ -29,10 +29,12 @@ const wrapWithXor = (script: string): string => {
 class ScriptBuilder {
     private script: string;
     private isXorInjected: boolean;
+    private shouldInjectRelay: boolean;
     private variables?: string[];
 
     constructor() {
         this.isXorInjected = false;
+        this.shouldInjectRelay = false;
     }
 
     raw(script: string): ScriptBuilder {
@@ -51,6 +53,7 @@ class ScriptBuilder {
     }
 
     withInjectedRelay(): ScriptBuilder {
+        this.shouldInjectRelay = true;
         return this;
     }
 
@@ -59,10 +62,10 @@ class ScriptBuilder {
         if (this.withInjectedVariables && this.withInjectedVariables.length > 0) {
             script = wrapWithVariableInjectionScript(script, this.variables);
         }
-        if (this.wrappedWithXor) {
+        if (this.isXorInjected) {
             script = wrapWithXor(script);
         }
-        if (this.withInjectedRelay) {
+        if (this.shouldInjectRelay) {
             script = wrapWithInjectRelayScript(script);
         }
         return script;
