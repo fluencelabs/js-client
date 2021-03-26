@@ -87,10 +87,7 @@ const wrapWithVariableInjectionScript = (script: string, fields: string[]): stri
 const wrapWithInjectRelayScript = (script: string): string => {
     return `
 (seq
-    (seq 
-        (call %init_peer_id% ("${loadVariablesService}" "${loadRelayFn}") [] ${relayVariableName})
-        (call %init_peer_id% ("op" "identity") [%init_peer_id%] init_peer_id)
-    )
+    (call %init_peer_id% ("${loadVariablesService}" "${loadRelayFn}") [] ${relayVariableName})
     ${script}
 )`;
 };
