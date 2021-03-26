@@ -28,14 +28,44 @@ const wrapWithXor = (script: string): string => {
 
 class ScriptBuilder {
     private script: string;
+    private isXorInjected: boolean;
+    private variables?: string[];
+
+    constructor() {
+        this.isXorInjected = false;
+    }
 
     raw(script: string): ScriptBuilder {
         this.script = script;
         return this;
     }
 
+    withInjectedVariables(fields: string[]): ScriptBuilder {
+        this.variables = fields;
+        return this;
+    }
+
+    wrappedWithXor(): ScriptBuilder {
+        this.isXorInjected = true;
+        return this;
+    }
+
+    withInjectedRelay(): ScriptBuilder {
+        return this;
+    }
+
     build(): string {
-        return this.script;
+        let script = this.script;
+        if (this.withInjectedVariables && this.withInjectedVariables.length > 0) {
+            script = wrapWithVariableInjectionScript(script, this.variables);
+        }
+        if (this.wrappedWithXor) {
+            script = wrapWithXor(script);
+        }
+        if (this.withInjectedRelay) {
+            script = wrapWithInjectRelayScript(script);
+        }
+        return script;
     }
 }
 
@@ -65,44 +95,22 @@ const wrapWithInjectRelayScript = (script: string): string => {
 export class RequestFlowBuilder {
     private ttl: number = DEFAULT_TTL;
     private variables = new Map<string, any>();
-    private handlerConfigs: Array<(handler: AquaCallHandler) => void> = [];
-    private buildScript: (sb: ScriptBuilder) => void;
+    private handlerConfigs: Array<(handler: AquaCallHandler, request: RequestFlow) => void> = [];
+    private buildScriptActions: Array<(sb: ScriptBuilder) => void> = [];
     private onTimeout: () => void;
     private onError: (error: any) => void;
 
     build() {
-        if (!this.buildScript) {
-            throw new Error();
+        const sb = new ScriptBuilder();
+        for (let action of this.buildScriptActions) {
+            action(sb);
         }
-
-        const b = new ScriptBuilder();
-        this.buildScript(b);
-        let script = b.build();
-        script = wrapWithVariableInjectionScript(script, Array.from(this.variables.keys()));
-        script = wrapWithXor(script);
-        script = wrapWithInjectRelayScript(script);
+        let script = sb.build();
 
         const res = RequestFlow.createLocal(script, this.ttl);
-        res.handler.on(loadVariablesService, loadVariablesFn, (args, _) => {
-            return this.variables.get(args[0]) || {};
-        });
-        res.handler.onEvent(xorHandleService, xorHandleFn, (args) => {
-            let msg;
-            try {
-                msg = JSON.parse(args[0]);
-            } catch (e) {
-                msg = e;
-            }
-
-            try {
-                res.raiseError(msg);
-            } catch (e) {
-                log.error('Error handling script executed with error', e);
-            }
-        });
 
         for (let h of this.handlerConfigs) {
-            h(res.handler);
+            h(res.handler, res);
         }
 
         if (this.onTimeout) {
@@ -115,15 +123,71 @@ export class RequestFlowBuilder {
         return res;
     }
 
-    withScript(action: (sb: ScriptBuilder) => void): RequestFlowBuilder {
-        this.buildScript = action;
+    withDefaults(): RequestFlowBuilder {
+        this.injectRelay();
+        this.injectVariables();
+        this.wrapWithXor();
+
+        return this;
+    }
+
+    injectRelay(): RequestFlowBuilder {
+        this.configureScript((sb) => {
+            sb.withInjectedRelay();
+        });
+
+        return this;
+    }
+
+    injectVariables(): RequestFlowBuilder {
+        this.configureScript((sb) => {
+            sb.withInjectedVariables(Array.from(this.variables.keys()));
+        });
+
+        this.configHandler((h) => {
+            h.on(loadVariablesService, loadVariablesFn, (args, _) => {
+                return this.variables.get(args[0]) || {};
+            });
+        });
+
+        return this;
+    }
+
+    wrapWithXor(): RequestFlowBuilder {
+        this.configureScript((sb) => {
+            sb.wrappedWithXor();
+        });
+
+        this.configHandler((h, request) => {
+            h.onEvent(xorHandleService, xorHandleFn, (args) => {
+                let msg;
+                try {
+                    msg = JSON.parse(args[0]);
+                } catch (e) {
+                    msg = e;
+                }
+
+                try {
+                    request.raiseError(msg);
+                } catch (e) {
+                    log.error('Error handling script executed with error', e);
+                }
+            });
+        });
+
+        return this;
+    }
+
+    configureScript(action: (sb: ScriptBuilder) => void): RequestFlowBuilder {
+        this.buildScriptActions.push(action);
         return this;
     }
 
     withRawScript(script: string): RequestFlowBuilder {
-        this.buildScript = (sb) => {
+        this.buildScriptActions.push((sb) => {
             sb.raw(script);
-        };
+        });
+
         return this;
     }
 
@@ -134,7 +198,7 @@ export class RequestFlowBuilder {
         return this;
     }
 
-    configHandler(config: (handler: AquaCallHandler) => void): RequestFlowBuilder {
+    configHandler(config: (handler: AquaCallHandler, request: RequestFlow) => void): RequestFlowBuilder {
         this.handlerConfigs.push(config);
         return this;
     }

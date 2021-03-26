@@ -19,6 +19,7 @@ describe('Typescript usage suite', () => {
 
         // act
         const [request, promise] = new RequestFlowBuilder()
+            .withDefaults()
             .withRawScript(
                 `(seq 
         (call init_relay ("op" "identity") ["hello world!"] result)
@@ -76,7 +77,9 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await client1.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
+        await client1.initiateFlow(
+            new RequestFlowBuilder().withDefaults().withRawScript(script).withVariables(data).build(),
+        );
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
@@ -186,6 +189,7 @@ describe('Typescript usage suite', () => {
     it('xor handling should work with connected client', async function () {
         // arrange
         const [request, promise] = new RequestFlowBuilder()
+            .withDefaults()
             .withRawScript(
                 `
             (seq 
@@ -210,6 +214,7 @@ describe('Typescript usage suite', () => {
     it('xor handling should work with local client', async function () {
         // arrange
         const [request, promise] = new RequestFlowBuilder()
+            .withDefaults()
             .withRawScript(
                 `
             (call %init_peer_id% ("service" "fails") [])
