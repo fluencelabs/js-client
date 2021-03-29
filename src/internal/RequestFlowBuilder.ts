@@ -1,4 +1,3 @@
-import { of } from 'ipfs-only-hash';
 import log from 'loglevel';
 import { AquaCallHandler } from './AquaHandler';
 import { DEFAULT_TTL, RequestFlow } from './RequestFlow';
