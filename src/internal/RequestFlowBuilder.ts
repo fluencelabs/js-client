@@ -92,6 +92,9 @@ const wrapWithInjectRelayScript = (script: string): string => {
 )`;
 };
 
+/**
+ * Builder class for configuring and creating Request Flows
+ */
 export class RequestFlowBuilder {
     private ttl: number = DEFAULT_TTL;
     private variables = new Map<string, any>();
@@ -100,6 +103,9 @@ export class RequestFlowBuilder {
     private onTimeout: () => void;
     private onError: (error: any) => void;
 
+    /**
+     * Builds the Request flow with current configuration
+     */
     build() {
         const sb = new ScriptBuilder();
         for (let action of this.buildScriptActions) {
@@ -123,6 +129,10 @@ export class RequestFlowBuilder {
         return res;
     }
 
+    /**
+     * Provides necessary defaults when building requests by hand without the Aquamarine language compiler
+     * Includes: relay and variable injection, error handling with top-level xor wrap
+     */
     withDefaults(): RequestFlowBuilder {
         this.injectRelay();
         this.injectVariables();
@@ -131,6 +141,9 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Injects `init_relay` variable into the script
+     */
     injectRelay(): RequestFlowBuilder {
         this.configureScript((sb) => {
             sb.withInjectedRelay();
@@ -139,6 +152,9 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Registers services for variable injection. Required for variables registration to work
+     */
     injectVariables(): RequestFlowBuilder {
         this.configureScript((sb) => {
             sb.withInjectedVariables(Array.from(this.variables.keys()));
@@ -153,6 +169,9 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Wraps the script with top-level error handling with xor instruction. Will raise error in the Request Flow in xor catches any error
+     */
     wrapWithXor(): RequestFlowBuilder {
         this.configureScript((sb) => {
             sb.wrappedWithXor();
@@ -178,11 +197,17 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Use ScriptBuilder provided by action in argument to configure script of the Request Flow
+     */
     configureScript(action: (sb: ScriptBuilder) => void): RequestFlowBuilder {
         this.buildScriptActions.push(action);
         return this;
     }
 
+    /**
+     * Use raw text as script for the Request Flow
+     */
     withRawScript(script: string): RequestFlowBuilder {
         this.buildScriptActions.push((sb) => {
             sb.raw(script);
@@ -191,6 +216,9 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Specify time to live for the request
+     */
     withTTL(ttl?: number): RequestFlowBuilder {
         if (ttl) {
             this.ttl = ttl;
@@ -198,26 +226,42 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Configure local call handler for the Request Flow
+     */
     configHandler(config: (handler: AquaCallHandler, request: RequestFlow) => void): RequestFlowBuilder {
         this.handlerConfigs.push(config);
         return this;
     }
 
+    /**
+     * Specifies handler for the particle timeout event
+     */
     handleTimeout(handler: () => void): RequestFlowBuilder {
         this.onTimeout = handler;
         return this;
     }
 
+    /**
+     * Specifies handler for any script errors
+     */
     handleScriptError(handler: (error) => void): RequestFlowBuilder {
         this.onError = handler;
         return this;
     }
 
+    /**
+     * Adds a variable to the list of injected variables
+     */
     withVariable(name: string, value: any): RequestFlowBuilder {
         this.variables.set(name, value);
         return this;
     }
 
+    /**
+     * Adds a multiple variable to the list of injected variables.
+     * Variables can be specified in form of either object or a map where keys correspond to variable names
+     */
     withVariables(data: Map<string, any> | Record<string, any>): RequestFlowBuilder {
         if (data instanceof Map) {
             this.variables = new Map([...Array.from(this.variables.entries()), ...Array.from(data.entries())]);
@@ -230,6 +274,11 @@ export class RequestFlowBuilder {
         return this;
     }
 
+    /**
+     * Builds the Request flow with current configuration with a fetch-single-result semantics
+     * returns a tuple of [RequestFlow, promise] where promise is a fetch-like promise resolved when
+     * the execution hits callback service and rejected when particle times out or any error happens
+     */
     buildAsFetch<T>(
         callbackServiceId: string = 'callback',
         callbackFnName: string = 'callback',
@@ -253,6 +302,10 @@ export class RequestFlowBuilder {
         return [this.build(), fetchPromise];
     }
 
+    /**
+     * Builds the Request flow with current configuration with error handling
+     * returns a tuple of [RequestFlow, promise]. The promise is never resolved and rejected in case of any error in the script
+     */
     buildWithErrorHandling(): [RequestFlow, Promise<void>] {
         const promise = new Promise<void>((resolve, reject) => {
             this.handleScriptError(reject);
