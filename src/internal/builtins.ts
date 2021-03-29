@@ -55,6 +55,7 @@ const requestResponse = async <T>(
     `;
 
     const [request, promise] = new RequestFlowBuilder()
+        .withDefaults()
         .withRawScript(script)
         .withVariables(data)
         .withTTL(ttl)
@@ -72,6 +73,7 @@ const requestResponse = async <T>(
 export const getModules = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getModules';
     const [req, promise] = new RequestFlowBuilder()
+        .withDefaults()
         .withRawScript(
             `
         (seq 
@@ -100,6 +102,7 @@ export const getModules = async (client: FluenceClient, ttl?: number): Promise<s
 export const getInterfaces = async (client: FluenceClient, ttl?: number): Promise<string[]> => {
     let callbackFn = 'getInterfaces';
     const [req, promise] = new RequestFlowBuilder()
+        .withDefaults()
         .withRawScript(
             `
             (seq
@@ -166,6 +169,7 @@ export const uploadModule = async (
     data.set('myPeerId', client.selfPeerId);
 
     const [req, promise] = new RequestFlowBuilder()
+        .withDefaults()
         .withRawScript(
             `
     (seq 
@@ -259,7 +263,11 @@ export const createService = async (
  * @param {[number]} ttl - Optional ttl for the particle which does the job
  * @returns { Array<object> } - List of available blueprints
  */
-export const getBlueprints = async (client: FluenceClient, nodeId?: string, ttl?: number): Promise<[{dependencies, id: string, name: string}]> => {
+export const getBlueprints = async (
+    client: FluenceClient,
+    nodeId?: string,
+    ttl?: number,
+): Promise<[{ dependencies; id: string; name: string }]> => {
     let returnValue = 'blueprints';
     let call = (nodeId: string) => `(call "${nodeId}" ("dist" "list_blueprints") [] ${returnValue})`;
 

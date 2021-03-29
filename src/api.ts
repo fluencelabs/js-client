@@ -44,6 +44,7 @@ export const sendParticle = async (
     onError?: (err) => void,
 ): Promise<string> => {
     const [req, errorPromise] = new RequestFlowBuilder()
+        .withDefaults()
         .withRawScript(particle.script)
         .withVariables(particle.data)
         .withTTL(particle.ttl)
@@ -147,6 +148,7 @@ export const sendParticleAsFetch = async <T>(
     callbackServiceId: string = '_callback',
 ): Promise<T> => {
     const [request, promise] = new RequestFlowBuilder()
+        .withDefaults()
         .withRawScript(particle.script)
         .withVariables(particle.data)
         .withTTL(particle.ttl)
