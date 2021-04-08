@@ -29,7 +29,7 @@ class ScriptBuilder {
     private script: string;
     private isXorInjected: boolean;
     private shouldInjectRelay: boolean;
-    private variables?: string[];
+    private variables: string[] = [];
 
     constructor() {
         this.isXorInjected = false;
@@ -42,7 +42,7 @@ class ScriptBuilder {
     }
 
     withInjectedVariables(fields: string[]): ScriptBuilder {
-        this.variables = fields;
+        this.variables = [...this.variables, ...fields];
         return this;
     }
 
