@@ -9,8 +9,7 @@
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
         "test:integration": "jest  --testPathPattern=src/__test__/integration",
-        "build": "tsc",
-        "build:webpack": "webpack --mode production"
+        "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -34,20 +33,9 @@
         "uuid": "8.3.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.12.10",
-        "@babel/preset-env": "^7.12.11",
-        "@babel/preset-typescript": "^7.12.7",
-        "@types/base64-js": "1.2.5",
-        "@types/bs58": "4.0.1",
-        "@types/jest": "^26.0.20",
-        "@types/uuid": "8.3.0",
-        "assert": "2.0.0",
-        "babel-jest": "^26.6.3",
-        "babel-plugin-replace-ts-export-assignment": "0.0.2",
-        "esm": "^3.2.25",
+        "@types/jest": "^26.0.22",
         "jest": "^26.6.3",
-        "ts-jest": "^26.5.0",
-        "ts-loader": "7.0.5",
+        "ts-jest": "^26.5.4",
         "typescript": "^3.9.5"
     }
 }
