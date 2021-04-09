@@ -16,15 +16,15 @@
 
 import Websockets from 'libp2p-websockets';
 import Mplex from 'libp2p-mplex';
-import Peer from 'libp2p';
+// @ts-ignore
+import Peer from 'libp2p/src/index';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
 import { parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
-import Multiaddr from 'multiaddr';
-import { options } from 'libp2p/src/keychain';
+import { Multiaddr } from 'multiaddr';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
