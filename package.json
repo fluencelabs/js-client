@@ -8,7 +8,7 @@
         "test": "jest --watch",
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
-        "test:integration": "jest  --testPathPattern=src/__test__/integration",
+        "test:integration": "jest --env=jsdom --testPathPattern=src/__test__/integration",
         "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",

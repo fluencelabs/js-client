@@ -24,6 +24,7 @@ import { parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
+const filters = require('libp2p-websockets/src/filters')
 import { options } from 'libp2p/src/keychain';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
@@ -79,11 +80,17 @@ export class FluenceConnection {
         let peerInfo = this.selfPeerId;
         this.node = await Peer.create({
             peerId: peerInfo,
-            config: {},
             modules: {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
                 connEncryption: [NOISE],
+            },
+            config: {
+                transport: {
+                    "Websockets": {
+                        filter: filters.all
+                    }
+                }
             },
             dialer: {
                 timeout: options?.dialTimeout,
