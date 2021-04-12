@@ -77,6 +77,18 @@ export class FluenceConnection {
     }
 
     async connect(options?: FluenceConnectionOptions) {
+        await this.createPeer(options);
+        await this.startReceiving();
+    }
+
+    isConnected() {
+        return this.status === Status.Connected;
+    }
+
+    // connection status. If `Disconnected`, it cannot be reconnected
+    private status: Status = Status.Initializing;
+
+    private async createPeer(options?: FluenceConnectionOptions) {
         let peerInfo = this.selfPeerId;
         this.node = await Peer.create({
             peerId: peerInfo,
@@ -96,16 +108,7 @@ export class FluenceConnection {
                 timeout: options?.dialTimeout,
             },
         });
-
-        await this.startReceiving();
     }
-
-    isConnected() {
-        return this.status === Status.Connected;
-    }
-
-    // connection status. If `Disconnected`, it cannot be reconnected
-    private status: Status = Status.Initializing;
 
     private async startReceiving() {
         if (this.status === Status.Initializing) {
