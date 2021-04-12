@@ -10,7 +10,7 @@ import * as PeerId from "peer-id";
 describe('Ws Transport', () => {
     it('Should work with ws schema', async () => {
         // arrange
-        let multiaddr = new Multiaddr("/ip4/127.0.0.1/tcp1234/ws/12D3KooWMJ78GJrtCxVUpjLEedbPtnLDxkFQJ2wuefEdrxq6zwSs");
+        let multiaddr = new Multiaddr("/ip4/127.0.0.1/tcp/1234/ws/p2p/12D3KooWMJ78GJrtCxVUpjLEedbPtnLDxkFQJ2wuefEdrxq6zwSs");
         const connection = new FluenceConnection(
             multiaddr,
             await PeerId.create(),
