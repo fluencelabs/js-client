@@ -89,7 +89,8 @@ export class FluenceConnection {
     private status: Status = Status.Initializing;
 
     private async createPeer(options?: FluenceConnectionOptions) {
-        let peerInfo = this.selfPeerId;
+        const peerInfo = this.selfPeerId;
+        const transportKey = Websockets.prototype[Symbol.toStringTag]
         this.node = await Peer.create({
             peerId: peerInfo,
             modules: {
@@ -99,7 +100,9 @@ export class FluenceConnection {
             },
             config: {
                 transport: {
-                    filter: filters.all
+                    [transportKey]: {
+                        filter: filters.all
+                    }
                 }
             },
             dialer: {
