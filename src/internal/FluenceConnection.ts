@@ -99,9 +99,7 @@ export class FluenceConnection {
             },
             config: {
                 transport: {
-                    "Websockets": {
-                        filter: filters.all
-                    }
+                    filter: filters.all
                 }
             },
             dialer: {
