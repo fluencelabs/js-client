@@ -5,9 +5,9 @@
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
-        "test": "jest --watch",
-        "test:all": "jest",
-        "test:unit": "jest --testPathPattern=src/__test__/unit",
+        "test": "jest --env=jsdom --watch",
+        "test:all": "jest --env=jsdom",
+        "test:unit": "jest --env=jsdom --testPathPattern=src/__test__/unit",
         "test:integration": "jest --env=jsdom --testPathPattern=src/__test__/integration",
         "build": "tsc"
     },
