@@ -220,6 +220,7 @@ export class AquaCallHandler {
     execute(req: AquaCall): AquaCallResult {
         const res: AquaCallResult = {
             retCode: ResultCodes.unkownError,
+            result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
         };
         this.buildFunction()(req, res);
         return res;
