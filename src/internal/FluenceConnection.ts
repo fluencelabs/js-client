@@ -24,7 +24,7 @@ import { parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
-import { options } from 'libp2p/src/keychain';
+import { all as allow_all } from 'libp2p-websockets/src/filters';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
@@ -76,20 +76,7 @@ export class FluenceConnection {
     }
 
     async connect(options?: FluenceConnectionOptions) {
-        let peerInfo = this.selfPeerId;
-        this.node = await Peer.create({
-            peerId: peerInfo,
-            config: {},
-            modules: {
-                transport: [Websockets],
-                streamMuxer: [Mplex],
-                connEncryption: [NOISE],
-            },
-            dialer: {
-                timeout: options?.dialTimeout,
-            },
-        });
-
+        await this.createPeer(options);
         await this.startReceiving();
     }
 
@@ -99,6 +86,29 @@ export class FluenceConnection {
 
     // connection status. If `Disconnected`, it cannot be reconnected
     private status: Status = Status.Initializing;
+
+    private async createPeer(options?: FluenceConnectionOptions) {
+        const peerInfo = this.selfPeerId;
+        const transportKey = Websockets.prototype[Symbol.toStringTag]
+        this.node = await Peer.create({
+            peerId: peerInfo,
+            modules: {
+                transport: [Websockets],
+                streamMuxer: [Mplex],
+                connEncryption: [NOISE],
+            },
+            config: {
+                transport: {
+                    [transportKey]: {
+                        filter: allow_all
+                    }
+                }
+            },
+            dialer: {
+                timeout: options?.dialTimeout,
+            },
+        });
+    }
 
     private async startReceiving() {
         if (this.status === Status.Initializing) {
