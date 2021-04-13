@@ -24,8 +24,7 @@ import { parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
-const filters = require('libp2p-websockets/src/filters')
-import { options } from 'libp2p/src/keychain';
+import { all as allow_all } from 'libp2p-websockets/src/filters';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
 
@@ -101,7 +100,7 @@ export class FluenceConnection {
             config: {
                 transport: {
                     [transportKey]: {
-                        filter: filters.all
+                        filter: allow_all
                     }
                 }
             },
