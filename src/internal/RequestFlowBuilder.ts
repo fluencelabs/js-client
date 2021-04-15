@@ -161,7 +161,11 @@ export class RequestFlowBuilder {
 
         this.configHandler((h) => {
             h.on(loadVariablesService, loadVariablesFn, (args, _) => {
-                return this.variables.get(args[0]) || {};
+                if (this.variables.has(args[0])) {
+                    return this.variables.get(args[0]);
+                }
+
+                throw new Error(`failed to inject variable: ${args[0]}`);
             });
         });
 
