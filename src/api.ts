@@ -72,13 +72,13 @@ const makeKey = (client: FluenceClient, serviceId: string, fnName: string) => {
  * @param { FluenceClient } client - The Fluence Client instance.
  * @param { string } serviceId - The identifier of service which would be used to make calls from Aquamarine
  * @param { string } fnName - The identifier of function which would be used to make calls from Aquamarine
- * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => any } handler - The handler which would be called by Aquamarine infrastructure. The result is any object passed back to Aquamarine
+ * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object | boolean | number | string } handler - The handler which would be called by Aquamarine infrastructure. The result is any object passed back to Aquamarine
  */
 export const registerServiceFunction = (
     client: FluenceClient,
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => any,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object | boolean | number | string,
 ) => {
     const unregister = client.aquaCallHandler.on(serviceId, fnName, handler);
     handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);
