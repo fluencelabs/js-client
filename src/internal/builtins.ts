@@ -109,16 +109,16 @@ export const getInterfaces = async (client: FluenceClient, ttl?: number): Promis
                 (seq
                     (seq
                         (call relay ("srv" "list") [] services)
-                        (call relay ("op" "identity") [] interfaces[])
+                        (call relay ("op" "identity") [] $interfaces)
                     )
                     (fold services s
                         (seq
-                            (call relay ("srv" "get_interface") [s.$.id!] interfaces[])
+                            (call relay ("srv" "get_interface") [s.$.id!] $interfaces)
                             (next s)
                         )
                     )
                 )
-                (call myPeerId ("_callback" "${callbackFn}") [interfaces])
+                (call myPeerId ("_callback" "${callbackFn}") [$interfaces])
             )
         `,
         )
