@@ -31,7 +31,9 @@ describe('== AST parsing suite', () => {
                         },
                     },
                 ],
-                output: { Scalar: 'output' },
+                output: {
+                    Variable: { Scalar: 'output' },
+                },
             },
         });
     });

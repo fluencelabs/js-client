@@ -35,8 +35,8 @@ type ImportObject = {
     './aquamarine_client_bg.js': {
         // fn call_service_impl(service_id: String, fn_name: String, args: String, security_tetraplets: String) -> String;
         // prettier-ignore
-        __wbg_callserviceimpl_d9f9208b7e581e24: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any, ) => void;
-        __wbg_getcurrentpeeridimpl_c6a63062490312cd: (arg0: any) => void;
+        __wbg_callserviceimpl_84d8278762e4c639: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any, ) => void;
+        __wbg_getcurrentpeeridimpl_4aca996e28cb8f44: (arg0: any) => void;
         __wbindgen_throw: (arg: any) => void;
     };
     host: LogImport;
@@ -159,7 +159,7 @@ function newImportObject(particleHandler: ParticleHandler, cfg: HostImportsConfi
         // If so, an error with a new name will be occurred after wasm initialization.
         './aquamarine_client_bg.js': {
             // prettier-ignore
-            __wbg_callserviceimpl_d9f9208b7e581e24: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any) => {
+            __wbg_callserviceimpl_84d8278762e4c639: (arg0: any, arg1: any, arg2: any, arg3: any, arg4: any, arg5: any, arg6: any, arg7: any, arg8: any) => {
                 let wasm = cfg.exports;
                 try {
                     let serviceId = getStringFromWasm0(wasm, arg1, arg2);
@@ -183,7 +183,7 @@ function newImportObject(particleHandler: ParticleHandler, cfg: HostImportsConfi
                     free(wasm, arg7, arg8);
                 }
             },
-            __wbg_getcurrentpeeridimpl_c6a63062490312cd: (arg0: any) => {
+            __wbg_getcurrentpeeridimpl_4aca996e28cb8f44: (arg0: any) => {
                 let peerIdStr = peerId.toB58String();
                 let wasm = cfg.exports;
                 return_current_peer_id(wasm, peerIdStr, arg0);
@@ -200,8 +200,8 @@ function newLogImport(cfg: HostImportsConfig): ImportObject {
     return {
         host: log_import(cfg),
         './aquamarine_client_bg.js': {
-            __wbg_callserviceimpl_d9f9208b7e581e24: (_) => {},
-            __wbg_getcurrentpeeridimpl_c6a63062490312cd: (_) => {},
+            __wbg_callserviceimpl_84d8278762e4c639: (_) => {},
+            __wbg_getcurrentpeeridimpl_4aca996e28cb8f44: (_) => {},
             __wbindgen_throw: (_) => {},
         },
     };
