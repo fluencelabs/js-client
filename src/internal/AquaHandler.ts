@@ -44,6 +44,11 @@ interface AquaCall {
 }
 
 /**
+ * Type for all the possible ovjects that can be return to the Aquamarine interpreter
+ */
+export type AquaResultType = object | boolean | number | string;
+
+/**
  * Represents the result of the `call` air instruction to be returned into Aquamarine interpreter
  */
 interface AquaCallResult {
@@ -55,7 +60,7 @@ interface AquaCallResult {
     /**
      * Result object to be returned to Aquamarine interpreter
      */
-    result: object | boolean | number | string;
+    result: AquaResultType;
     [x: string]: any;
 }
 
@@ -80,7 +85,7 @@ export type Middleware = (req: AquaCall, resp: AquaCallResult, next: Function) =
 export const fnHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => any,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => AquaResultType,
 ) => {
     return (req: AquaCall, resp: AquaCallResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
@@ -175,7 +180,11 @@ export class AquaCallHandler {
     /**
      * Convinience method for registring @see { @link fnHandler } middleware
      */
-    on(serviceId: string, fnName: string, handler: (args: any[], tetraplets: SecurityTetraplet[][]) => any): Function {
+    on(
+        serviceId: string,
+        fnName: string,
+        handler: (args: any[], tetraplets: SecurityTetraplet[][]) => AquaResultType,
+    ): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
         return () => {
