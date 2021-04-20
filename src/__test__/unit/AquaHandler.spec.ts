@@ -71,11 +71,11 @@ describe('Aqua handler tests', () => {
                 next();
             })
             .use((req, res, next) => {
-                res.result.name = 'john';
+                (res.result as any).name = 'john';
                 next();
             })
             .use((req, res, next) => {
-                res.result.color = 'red';
+                (res.result as any).color = 'red';
                 next();
             });
 
