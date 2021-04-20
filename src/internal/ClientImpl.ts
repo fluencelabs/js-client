@@ -161,9 +161,10 @@ export class ClientImpl implements FluenceClient {
                 particleId: request.id,
             },
         });
+
         return {
             ret_code: res.retCode,
-            result: JSON.stringify(res.result || {}),
+            result: JSON.stringify(res.result),
         };
     };
 
