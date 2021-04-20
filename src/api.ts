@@ -1,6 +1,7 @@
 import { SecurityTetraplet } from './internal/commonTypes';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 import { FluenceClient } from './FluenceClient';
+import { AquaResultType } from './internal/AquaHandler';
 
 /**
  * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
@@ -78,7 +79,7 @@ export const registerServiceFunction = (
     client: FluenceClient,
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => object | boolean | number | string,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => AquaResultType,
 ) => {
     const unregister = client.aquaCallHandler.on(serviceId, fnName, handler);
     handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);
