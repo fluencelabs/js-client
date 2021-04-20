@@ -241,7 +241,7 @@ describe('Typescript usage suite', () => {
         client = await createClient();
 
         // act
-        const res = getPeerExternalAddresses(client);
+        const res = callIdentifyOnInitPeerId(client);
 
         // assert
         await expect(res).rejects.toMatch(
@@ -250,46 +250,16 @@ describe('Typescript usage suite', () => {
     });
 });
 
-async function getPeerExternalAddresses(client: FluenceClient): Promise<string[]> {
+async function callIdentifyOnInitPeerId(client: FluenceClient): Promise<string[]> {
     let request;
     const promise = new Promise<string[]>((resolve, reject) => {
         request = new RequestFlowBuilder()
             .withRawScript(
                 `
-(seq
- (seq
-  (call %init_peer_id% ("getDataSrv" "relay") [] relay)
   (call %init_peer_id% ("peer" "identify") [] res)
- )
- (call %init_peer_id% ("callbackSrv" "response") [res.$.external_addresses!])
-)
-
             `,
             )
-            .configHandler((h) => {
-                h.on('getDataSrv', 'relay', () => {
-                    return client.relayPeerId;
-                });
-                h.on('getRelayService', 'hasReleay', () => {
-                    // Not Used
-                    return client.relayPeerId !== undefined;
-                });
-
-                h.on('callbackSrv', 'response', (args) => {
-                    const [res] = args;
-                    resolve(res);
-                });
-
-                h.on('nameOfServiceWhereToSendXorError', 'errorProbably', (args) => {
-                    // assuming error is the single argument
-                    const [err] = args;
-                    reject(err);
-                });
-            })
             .handleScriptError(reject)
-            .handleTimeout(() => {
-                reject('Request timed out');
-            })
             .build();
     });
     await client.initiateFlow(request);
