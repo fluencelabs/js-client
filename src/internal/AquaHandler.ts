@@ -53,9 +53,9 @@ interface AquaCallResult {
     retCode: ResultCodes;
 
     /**
-     * Resul object to be returned to Aquamarine interpreter
+     * Result object to be returned to Aquamarine interpreter
      */
-    result?: any;
+    result: object | boolean | number | string;
     [x: string]: any;
 }
 
