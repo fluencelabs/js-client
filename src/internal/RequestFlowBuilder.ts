@@ -146,7 +146,7 @@ export class RequestFlowBuilder {
      * Removes necessary defaults when building requests by hand without the Aquamarine language compiler
      * Removed features include: relay and variable injection, error handling with top-level xor wrap
      */
-    withOutDefaults(): RequestFlowBuilder {
+    withoutDefaults(): RequestFlowBuilder {
         this.shouldInjectRelay = false;
         this.shouldInjectVariables = false;
         this.shouldWrapWithXor = false;
