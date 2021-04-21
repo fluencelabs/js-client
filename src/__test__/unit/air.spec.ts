@@ -19,7 +19,6 @@ describe('== AIR suite', () => {
 
         // prettier-ignore
         const [request, promise] = new RequestFlowBuilder()
-            .withDefaults()
             .withRawScript(script)
             .buildAsFetch<string[]>(serviceId, fnName);
 
@@ -60,7 +59,6 @@ describe('== AIR suite', () => {
             const script = `(incorrect)`;
             // prettier-ignore
             const [request, error] = new RequestFlowBuilder()
-                .withDefaults()
                 .withRawScript(script)
                 .buildWithErrorHandling();
 
@@ -77,7 +75,6 @@ describe('== AIR suite', () => {
             const script = `(null)`;
             // prettier-ignore
             const [request, promise] = new RequestFlowBuilder()
-                .withDefaults()
                 .withTTL(1)
                 .withRawScript(script)
                 .buildAsFetch();
@@ -99,7 +96,6 @@ describe('== AIR suite', () => {
 
         // prettier-ignore
         const [request, promise] = new RequestFlowBuilder()
-            .withDefaults()
             .withRawScript(script)
             .withVariable('arg1', 'hello')
             .buildAsFetch<string[]>(serviceId, fnName);
@@ -142,7 +138,7 @@ describe('== AIR suite', () => {
             (call %init_peer_id% ("${makeDataServiceId}" "${makeDataFnName}") [] result)
             (call %init_peer_id% ("${getDataServiceId}" "${getDataFnName}") [result.$.field])
         )`;
-        await client.initiateFlow(new RequestFlowBuilder().withDefaults().withRawScript(script).build());
+        await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
         const tetraplet = res.tetraplets[0][0];
@@ -191,7 +187,7 @@ describe('== AIR suite', () => {
                         (call %init_peer_id% ("${serviceId2}" "${fnName2}") ["${arg2}"] result2))
                        (call %init_peer_id% ("${serviceId3}" "${fnName3}") [result1 result2]))
         `;
-        await client.initiateFlow(new RequestFlowBuilder().withDefaults().withRawScript(script).build());
+        await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
         expect(res1).toEqual(arg1);

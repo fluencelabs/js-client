@@ -123,7 +123,6 @@ export const checkConnection = async (client: FluenceClient, ttl?: number): Prom
     const callbackService = '_callback';
 
     const [request, promise] = new RequestFlowBuilder()
-        .withDefaults()
         .withRawScript(
             `(seq 
         (call init_relay ("op" "identity") [msg] result)
