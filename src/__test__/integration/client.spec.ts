@@ -2,6 +2,7 @@ import { checkConnection, createClient, FluenceClient } from '../../FluenceClien
 import Multiaddr from 'multiaddr';
 import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
+import { error } from 'loglevel';
 
 let client: FluenceClient;
 
@@ -19,7 +20,6 @@ describe('Typescript usage suite', () => {
 
         // act
         const [request, promise] = new RequestFlowBuilder()
-            .withDefaults()
             .withRawScript(
                 `(seq 
         (call init_relay ("op" "identity") ["hello world!"] result)
@@ -77,9 +77,7 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await client1.initiateFlow(
-            new RequestFlowBuilder().withDefaults().withRawScript(script).withVariables(data).build(),
-        );
+        await client1.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
@@ -189,7 +187,6 @@ describe('Typescript usage suite', () => {
     it('xor handling should work with connected client', async function () {
         // arrange
         const [request, promise] = new RequestFlowBuilder()
-            .withDefaults()
             .withRawScript(
                 `
             (seq 
@@ -214,7 +211,6 @@ describe('Typescript usage suite', () => {
     it('xor handling should work with local client', async function () {
         // arrange
         const [request, promise] = new RequestFlowBuilder()
-            .withDefaults()
             .withRawScript(
                 `
             (call %init_peer_id% ("service" "fails") [])
@@ -244,9 +240,11 @@ describe('Typescript usage suite', () => {
         const res = callIdentifyOnInitPeerId(client);
 
         // assert
-        await expect(res).rejects.toMatch(
-            "The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''",
-        );
+        await expect(res).rejects.toMatchObject({
+            error:
+                "Local service error: ret_code is 1024, error message is '\"The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'",
+            instruction: 'call %init_peer_id% ("peer" "identify") [] res',
+        });
     });
 });
 
