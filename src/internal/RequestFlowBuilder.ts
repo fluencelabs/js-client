@@ -96,7 +96,7 @@ const wrapWithInjectRelayScript = (script: string): string => {
  */
 export class RequestFlowBuilder {
     private shouldInjectVariables: boolean = true;
-    private shouldWrapWithXor: boolean = true;
+    private shouldInjectErrorHandling: boolean = true;
     private shouldInjectRelay: boolean = true;
 
     private ttl: number = DEFAULT_TTL;
@@ -116,7 +116,7 @@ export class RequestFlowBuilder {
         if (this.shouldInjectVariables) {
             this.injectVariables();
         }
-        if (this.shouldWrapWithXor) {
+        if (this.shouldInjectErrorHandling) {
             this.wrapWithXor();
         }
 
@@ -146,10 +146,10 @@ export class RequestFlowBuilder {
      * Removes necessary defaults when building requests by hand without the Aquamarine language compiler
      * Removed features include: relay and variable injection, error handling with top-level xor wrap
      */
-    withoutDefaults(): RequestFlowBuilder {
+    disableInjections(): RequestFlowBuilder {
         this.shouldInjectRelay = false;
         this.shouldInjectVariables = false;
-        this.shouldWrapWithXor = false;
+        this.shouldInjectErrorHandling = false;
         return this;
     }
 
