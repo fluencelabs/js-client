@@ -96,14 +96,14 @@ export class RequestFlow {
         }
 
         if (!connection) {
-            throw new Error('Cannot send particle: non connected');
+            this.raiseError('Cannot send particle: non connected');
         }
 
         this.sendIntoConnection(connection);
     }
 
     private throwIfNotSinglePeerAndRelay(nextPeers: PeerIdB58[]) {
-        throw new Error(
+        this.raiseError(
             `Particle is expected to be sent to only the single peer (relay which client is connected to).
 particle id: ${this.getParticle()?.id}
 next peers: ${nextPeers.join(' ')}

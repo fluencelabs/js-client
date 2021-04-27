@@ -112,7 +112,7 @@ export class ClientImpl implements FluenceClient {
         request.handler.combineWith(this.aquaCallHandler);
         this.requests.set(request.id, request);
 
-        await this.processRequest(request);
+        this.processRequest(request);
     }
 
     async executeIncomingParticle(particle: Particle) {
@@ -130,7 +130,7 @@ export class ClientImpl implements FluenceClient {
         await this.processRequest(request);
     }
 
-    private async processRequest(request: RequestFlow): Promise<void> {
+    private processRequest(request: RequestFlow) {
         try {
             this.currentRequestId = request.id;
             request.execute(this.interpreter, this.connection, this.relayPeerId);
