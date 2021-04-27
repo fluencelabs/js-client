@@ -87,12 +87,12 @@ export class RequestFlow {
 
         // we only expect a single possible peer id to send particle further
         if (nextPeers.length > 1) {
-            this.warnIfNotSinglePeerAndRelay(nextPeers);
+            this.throwIfNotSinglePeerAndRelay(nextPeers);
         }
 
         // this peer id must be the relay, the client is connected to
         if (!relayPeerId || nextPeers[0] !== relayPeerId) {
-            this.warnIfNotSinglePeerAndRelay(nextPeers);
+            this.throwIfNotSinglePeerAndRelay(nextPeers);
         }
 
         if (!connection) {
@@ -102,12 +102,14 @@ export class RequestFlow {
         this.sendIntoConnection(connection);
     }
 
-    private warnIfNotSinglePeerAndRelay(nextPeers: PeerIdB58[]) {
-        log.warn('Particle is expected to be sent to only the single peer (relay which client is connected to', {
-            particleId: this.getParticle()?.id,
-            nextPeers: nextPeers,
-            currentRelayId: this.relayPeerId,
-        });
+    private throwIfNotSinglePeerAndRelay(nextPeers: PeerIdB58[]) {
+        throw new Error(
+            `Particle is expected to be sent to only the single peer (relay which client is connected to).
+particle id: ${this.getParticle()?.id}
+next peers: ${nextPeers.join(' ')}
+relay peer id: ${this.relayPeerId}
+`,
+        );
     }
 
     async initState(peerId: PeerId): Promise<void> {

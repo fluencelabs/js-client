@@ -56,7 +56,7 @@ export interface FluenceConnectionOptions {
 
 export class VersionIncompatibleError extends Error {
     constructor() {
-        super('Version of JS SDK is incompatible with ');
+        super('Current version of JS SDK is incompatible with the network. Please update the JS SDK');
     }
 }
 
@@ -126,7 +126,6 @@ export class FluenceConnection {
                 await this.node.dial(this.address);
             } catch (e) {
                 if (e.name === 'AggregateError' && e._errors[0].code === 'ERR_ENCRYPTION_FAILED') {
-                    console.log(e);
                     throw new VersionIncompatibleError();
                 }
             }
