@@ -55,8 +55,11 @@ export interface FluenceConnectionOptions {
 }
 
 export class VersionIncompatibleError extends Error {
+    __proto__: Error;
     constructor() {
+        const trueProto = new.target.prototype;
         super('Current version of JS SDK is incompatible with the connected Fluence node. Please update JS SDK');
+        this.__proto__ = trueProto;
     }
 }
 
