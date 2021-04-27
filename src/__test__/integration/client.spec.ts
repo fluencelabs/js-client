@@ -246,6 +246,23 @@ describe('Typescript usage suite', () => {
             instruction: 'call %init_peer_id% ("peer" "identify") [] res',
         });
     });
+
+    it('Should throw correct error when the client tries to send a particle not to the relay', async () => {
+        // arrange
+        client = await createClient();
+
+        // act
+        const [req, promise] = new RequestFlowBuilder()
+            .withRawScript('(call "incorrect_peer_id" ("any" "service") [])')
+            .buildWithErrorHandling();
+
+        await client.initiateFlow(req);
+
+        // assert
+        await expect(promise).rejects.toMatch(
+            'Particle is expected to be sent to only the single peer (relay which client is connected to)',
+        );
+    });
 });
 
 async function callIdentifyOnInitPeerId(client: FluenceClient): Promise<string[]> {

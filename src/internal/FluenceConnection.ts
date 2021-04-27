@@ -54,6 +54,12 @@ export interface FluenceConnectionOptions {
     dialTimeout?: number;
 }
 
+export class VersionIncompatibleError extends Error {
+    constructor() {
+        super('Current version of JS SDK is incompatible with the connected Fluence node. Please update JS SDK');
+    }
+}
+
 export class FluenceConnection {
     private readonly selfPeerId: PeerId;
     private node: Peer;
@@ -89,7 +95,7 @@ export class FluenceConnection {
 
     private async createPeer(options?: FluenceConnectionOptions) {
         const peerInfo = this.selfPeerId;
-        const transportKey = Websockets.prototype[Symbol.toStringTag]
+        const transportKey = Websockets.prototype[Symbol.toStringTag];
         this.node = await Peer.create({
             peerId: peerInfo,
             modules: {
@@ -100,9 +106,9 @@ export class FluenceConnection {
             config: {
                 transport: {
                     [transportKey]: {
-                        filter: allow_all
-                    }
-                }
+                        filter: allow_all,
+                    },
+                },
             },
             dialer: {
                 timeout: options?.dialTimeout,
@@ -116,7 +122,13 @@ export class FluenceConnection {
 
             log.trace(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
 
-            await this.node.dial(this.address);
+            try {
+                await this.node.dial(this.address);
+            } catch (e) {
+                if (e.name === 'AggregateError' && e._errors[0].code === 'ERR_ENCRYPTION_FAILED') {
+                    throw new VersionIncompatibleError();
+                }
+            }
 
             let _this = this;
 
