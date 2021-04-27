@@ -56,7 +56,7 @@ export interface FluenceConnectionOptions {
 
 export class VersionIncompatibleError extends Error {
     constructor() {
-        super('Current version of JS SDK is incompatible with the network. Please update the JS SDK');
+        super('Current version of JS SDK is incompatible with the connected Fluence node. Please update JS SDK');
     }
 }
 

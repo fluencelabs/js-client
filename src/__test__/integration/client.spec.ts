@@ -253,11 +253,7 @@ describe('Typescript usage suite', () => {
 
         // act
         const [req, promise] = new RequestFlowBuilder()
-            .withRawScript(
-                `
-            (call "incorrect_peer_id" ("any" "service") [])
-            `,
-            )
+            .withRawScript('(call "incorrect_peer_id" ("any" "service") [])')
             .buildWithErrorHandling();
 
         await client.initiateFlow(req);
