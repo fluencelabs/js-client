@@ -1,6 +1,6 @@
 import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
-import { AquamarineInterpreter } from './aqua/interpreter';
+import { AquamarineInterpreter } from '@fluencelabs/air-interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome, PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
