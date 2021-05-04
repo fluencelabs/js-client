@@ -1,9 +1,9 @@
-import { AquamarineInterpreter } from '@fluencelabs/air-interpreter';
+import { AirInterpreter } from '@fluencelabs/air-interpreter';
 import { genUUID } from '../../internal/particle';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
-        const interpreter = await AquamarineInterpreter.create(
+        const interpreter = await AirInterpreter.create(
             undefined as any,
             undefined as any,
             undefined as any,

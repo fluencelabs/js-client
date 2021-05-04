@@ -1,6 +1,6 @@
 import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
-import { AquamarineInterpreter } from '@fluencelabs/air-interpreter';
+import { AirInterpreter } from '@fluencelabs/air-interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome, PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
@@ -57,7 +57,7 @@ export class RequestFlow {
         this.onErrorHandlers.push(handler);
     }
 
-    async execute(interpreter: AquamarineInterpreter, connection: FluenceConnection, relayPeerId?: PeerIdB58) {
+    async execute(interpreter: AirInterpreter, connection: FluenceConnection, relayPeerId?: PeerIdB58) {
         if (this.hasExpired()) {
             return;
         }
@@ -145,7 +145,7 @@ relay peer id: ${this.relayPeerId}
         }
     }
 
-    runInterpreter(interpreter: AquamarineInterpreter) {
+    runInterpreter(interpreter: AirInterpreter) {
         const interpreterOutcomeStr = interpreter.invoke(
             this.state.init_peer_id,
             this.state.script,

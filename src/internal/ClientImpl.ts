@@ -25,7 +25,7 @@ import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { logParticle, Particle } from './particle';
 import log from 'loglevel';
-import { AquamarineInterpreter } from '@fluencelabs/air-interpreter';
+import { AirInterpreter } from '@fluencelabs/air-interpreter';
 
 const makeDefaultClientHandler = (): AquaCallHandler => {
     const res = new AquaCallHandler();
@@ -54,7 +54,7 @@ export class ClientImpl implements FluenceClient {
     }
 
     private connection: FluenceConnection;
-    private interpreter: AquamarineInterpreter;
+    private interpreter: AirInterpreter;
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
@@ -71,7 +71,7 @@ export class ClientImpl implements FluenceClient {
     }
 
     async initAquamarineRuntime(): Promise<void> {
-        this.interpreter = await AquamarineInterpreter.create(
+        this.interpreter = await AirInterpreter.create(
             this.interpreterCallback.bind(this),
             this.selfPeerId,
             'trace',
