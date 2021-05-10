@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Run tests in node environment
 
 defaults:
     run:
