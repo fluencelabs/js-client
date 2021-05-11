@@ -1,13 +1,18 @@
-import { AquamarineInterpreter } from '../../internal/aqua/interpreter';
+import { AirInterpreter } from '@fluencelabs/air-interpreter';
+import { genUUID } from '../../internal/particle';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {
-        const interpreter = await AquamarineInterpreter.create({} as any);
+        const interpreter = await AirInterpreter.create(
+            undefined as any,
+            undefined as any,
+            undefined as any,
+            undefined as any,
+        );
         let ast = interpreter.parseAir(`
             (call "node" ("service" "function") [1 2 3] output)
         `);
 
-        console.log(ast);
         ast = JSON.parse(ast);
 
         expect(ast).toEqual({

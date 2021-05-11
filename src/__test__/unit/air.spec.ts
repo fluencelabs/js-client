@@ -67,7 +67,7 @@ describe('== AIR suite', () => {
             await client.initiateFlow(request);
 
             // assert
-            await expect(error).rejects.toContain("aqua script can't be parsed");
+            await expect(error).rejects.toContain("air can't be parsed");
         });
 
         it('call script without ttl', async function () {

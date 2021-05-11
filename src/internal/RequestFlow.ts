@@ -1,6 +1,6 @@
 import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
-import { AquamarineInterpreter } from './aqua/interpreter';
+import { AirInterpreter } from '@fluencelabs/air-interpreter';
 import { AquaCallHandler } from './AquaHandler';
 import { InterpreterOutcome, PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
@@ -20,6 +20,7 @@ export class RequestFlow {
     private prevData: Uint8Array = Buffer.from([]);
     private onTimeoutHandlers = [];
     private onErrorHandlers = [];
+    private timeoutHandle?: NodeJS.Timeout;
 
     readonly id: string;
     readonly isExternal: boolean;
@@ -33,7 +34,7 @@ export class RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
         res.ttl = particle.ttl;
         res.state = particle;
-        setTimeout(res.raiseTimeout.bind(res), particle.ttl);
+        res.timeoutHandle = setTimeout(res.raiseTimeout.bind(res), particle.ttl);
         return res;
     }
 
@@ -57,7 +58,7 @@ export class RequestFlow {
         this.onErrorHandlers.push(handler);
     }
 
-    async execute(interpreter: AquamarineInterpreter, connection: FluenceConnection, relayPeerId?: PeerIdB58) {
+    async execute(interpreter: AirInterpreter, connection: FluenceConnection, relayPeerId?: PeerIdB58) {
         if (this.hasExpired()) {
             return;
         }
@@ -97,9 +98,16 @@ export class RequestFlow {
 
         if (!connection) {
             this.raiseError('Cannot send particle: non connected');
+            return;
         }
 
         this.sendIntoConnection(connection);
+    }
+
+    public cancel() {
+        if (this.timeoutHandle) {
+            clearTimeout(this.timeoutHandle);
+        }
     }
 
     private throwIncorrectNextPeerPks(nextPeers: PeerIdB58[]) {
@@ -127,7 +135,7 @@ relay peer id: ${this.relayPeerId}
         };
 
         this.state = particle;
-        setTimeout(this.raiseTimeout.bind(this), particle.ttl);
+        this.timeoutHandle = setTimeout(this.raiseTimeout.bind(this), particle.ttl);
     }
 
     receiveUpdate(particle: Particle) {
@@ -145,7 +153,7 @@ relay peer id: ${this.relayPeerId}
         }
     }
 
-    runInterpreter(interpreter: AquamarineInterpreter) {
+    runInterpreter(interpreter: AirInterpreter) {
         const interpreterOutcomeStr = interpreter.invoke(
             this.state.init_peer_id,
             this.state.script,
