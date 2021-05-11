@@ -1,4 +1,4 @@
-name: Run tests in node environment
+name: Run tests
 
 defaults:
     run:
