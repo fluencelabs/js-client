@@ -34,7 +34,7 @@ export class RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
         res.ttl = particle.ttl;
         res.state = particle;
-        setTimeout(res.raiseTimeout.bind(res), particle.ttl);
+        res.timeoutHandle = setTimeout(res.raiseTimeout.bind(res), particle.ttl);
         return res;
     }
 
