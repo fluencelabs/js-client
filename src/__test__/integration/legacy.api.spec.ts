@@ -5,6 +5,12 @@ import { nodes } from '../connection';
 let client: FluenceClient;
 
 describe('Legacy api suite', () => {
+    afterEach(async () => {
+        if (client) {
+            await client.disconnect();
+        }
+    });
+
     it('sendParticle', async () => {
         client = await createClient(nodes[0]);
 
