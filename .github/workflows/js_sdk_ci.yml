@@ -1,4 +1,4 @@
-name: Run tests in jsdom environment
+name: Run tests in node environment
 
 defaults:
     run:
@@ -14,6 +14,7 @@ jobs:
         strategy:
             matrix:
                 node-version: [14.x, 15.x]
+                node-env: ['', ':node']
 
         steps:
             - uses: actions/checkout@v2
@@ -34,6 +35,6 @@ jobs:
               run: docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
 
             - run: npm install
-            - run: npm run test:all
+            - run: npm run test${{ node-env }}:all
               env:
                   CI: true
