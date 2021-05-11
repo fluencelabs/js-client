@@ -13,7 +13,6 @@ describe('== AST parsing suite', () => {
             (call "node" ("service" "function") [1 2 3] output)
         `);
 
-        console.log(ast);
         ast = JSON.parse(ast);
 
         expect(ast).toEqual({

@@ -20,6 +20,7 @@ export class RequestFlow {
     private prevData: Uint8Array = Buffer.from([]);
     private onTimeoutHandlers = [];
     private onErrorHandlers = [];
+    private timeoutHandle?: NodeJS.Timeout;
 
     readonly id: string;
     readonly isExternal: boolean;
@@ -97,9 +98,16 @@ export class RequestFlow {
 
         if (!connection) {
             this.raiseError('Cannot send particle: non connected');
+            return;
         }
 
         this.sendIntoConnection(connection);
+    }
+
+    public cancel() {
+        if (this.timeoutHandle) {
+            clearTimeout(this.timeoutHandle);
+        }
     }
 
     private throwIncorrectNextPeerPks(nextPeers: PeerIdB58[]) {
@@ -127,7 +135,7 @@ relay peer id: ${this.relayPeerId}
         };
 
         this.state = particle;
-        setTimeout(this.raiseTimeout.bind(this), particle.ttl);
+        this.timeoutHandle = setTimeout(this.raiseTimeout.bind(this), particle.ttl);
     }
 
     receiveUpdate(particle: Particle) {

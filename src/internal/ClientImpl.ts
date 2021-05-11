@@ -68,6 +68,9 @@ export class ClientImpl implements FluenceClient {
             await this.connection.disconnect();
         }
         this.clearWathcDog();
+        this.requests.forEach((r) => {
+            r.cancel();
+        });
     }
 
     async initAquamarineRuntime(): Promise<void> {
