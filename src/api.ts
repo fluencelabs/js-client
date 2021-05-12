@@ -1,7 +1,7 @@
-import { SecurityTetraplet } from './internal/commonTypes';
 import { RequestFlowBuilder } from './internal/RequestFlowBuilder';
 import { FluenceClient } from './FluenceClient';
-import { AquaResultType } from './internal/AquaHandler';
+import { CallServiceResultType } from './internal/CallServiceHandler';
+import { SecurityTetraplet } from '@fluencelabs/air-interpreter';
 
 /**
  * The class representing Particle - a data structure used to perform operations on Fluence Network. It originates on some peer in the network, travels the network through a predefined path, triggering function execution along its way.
@@ -15,7 +15,7 @@ export class Particle {
      * Creates a particle with specified parameters.
      * @param { String }script - Air script which defines the execution of a particle – its path, functions it triggers on peers, and so on.
      * @param { Map<string, any> | Record<string, any> } data - Variables passed to the particle in the form of either JS Map or JS object with keys representing variable names and values representing values correspondingly
-     * @param { [Number]=7000 } ttl - Time to live, a timout after which the particle execution is stopped by Aquamarine.
+     * @param { [Number]=7000 } ttl - Time to live, a timout after which the particle execution is stopped by AVM.
      */
     constructor(script: string, data?: Map<string, any> | Record<string, any>, ttl?: number) {
         this.script = script;
@@ -68,19 +68,19 @@ const makeKey = (client: FluenceClient, serviceId: string, fnName: string) => {
 };
 
 /**
- * Registers a function which can be called on the client from Aquamarine. The registration is per client basis.
+ * Registers a function which can be called on the client from AVM. The registration is per client basis.
  * @param { FluenceClient } client - The Fluence Client instance.
- * @param { string } serviceId - The identifier of service which would be used to make calls from Aquamarine
- * @param { string } fnName - The identifier of function which would be used to make calls from Aquamarine
- * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object | boolean | number | string } handler - The handler which would be called by Aquamarine infrastructure. The result is any object passed back to Aquamarine
+ * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
+ * @param { string } fnName - The identifier of function which would be used to make calls from AVM
+ * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object | boolean | number | string } handler - The handler which would be called by AVM. The result is any object passed back to AVM
  */
 export const registerServiceFunction = (
     client: FluenceClient,
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => AquaResultType,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
 ) => {
-    const unregister = client.aquaCallHandler.on(serviceId, fnName, handler);
+    const unregister = client.callServiceHandler.on(serviceId, fnName, handler);
     handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);
 };
 
@@ -105,12 +105,12 @@ export const unregisterServiceFunction = (
 };
 
 /**
- * Registers an event-like handler for all calls to the specific service\function pair from from Aquamarine. The registration is per client basis. Return a function which when called removes the subscription.
+ * Registers an event-like handler for all calls to the specific service\function pair from AVM. The registration is per client basis. Return a function which when called removes the subscription.
  * Same as registerServiceFunction which immediately returns empty object.
  * @param { FluenceClient } client - The Fluence Client instance.
- * @param { string } serviceId - The identifier of service calls to which from Aquamarine are transformed into events.
- * @param { string } fnName - The identifier of function calls to which from Aquamarine are transformed into events.
- * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object } handler - The handler which would be called by Aquamarine infrastructure
+ * @param { string } serviceId - The identifier of service calls to which from AVM are transformed into events.
+ * @param { string } fnName - The identifier of function calls to which from AVM are transformed into events.
+ * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object } handler - The handler which would be called by AVM
  * @returns { Function } - A function which when called removes the subscription.
  */
 export const subscribeToEvent = (
@@ -139,7 +139,7 @@ export const subscribeToEvent = (
  * @param { Particle } particle  - The particle to send.
  * @param { string } callbackFnName - The identifier of function which should be used in Air script to pass the data to fetch "promise"
  * @param { [string]='_callback' } callbackServiceId - The service identifier which should be used in Air script to pass the data to fetch "promise"
- * @returns { Promise<T> } - A promise which would be resolved with the data returned from Aquamarine
+ * @returns { Promise<T> } - A promise which would be resolved with the data returned from AVM
  */
 export const sendParticleAsFetch = async <T>(
     client: FluenceClient,

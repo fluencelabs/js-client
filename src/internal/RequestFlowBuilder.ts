@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import { AquaCallHandler } from './AquaHandler';
+import { CallServiceHandler } from './CallServiceHandler';
 import { DEFAULT_TTL, RequestFlow } from './RequestFlow';
 
 export const loadVariablesService = 'load';
@@ -101,7 +101,7 @@ export class RequestFlowBuilder {
 
     private ttl: number = DEFAULT_TTL;
     private variables = new Map<string, any>();
-    private handlerConfigs: Array<(handler: AquaCallHandler, request: RequestFlow) => void> = [];
+    private handlerConfigs: Array<(handler: CallServiceHandler, request: RequestFlow) => void> = [];
     private buildScriptActions: Array<(sb: ScriptBuilder) => void> = [];
     private onTimeout: () => void;
     private onError: (error: any) => void;
@@ -143,7 +143,7 @@ export class RequestFlowBuilder {
     }
 
     /**
-     * Removes necessary defaults when building requests by hand without the Aquamarine language compiler
+     * Removes necessary defaults when building requests by hand without the Aqua language compiler
      * Removed features include: relay and variable injection, error handling with top-level xor wrap
      */
     disableInjections(): RequestFlowBuilder {
@@ -245,7 +245,7 @@ export class RequestFlowBuilder {
     /**
      * Configure local call handler for the Request Flow
      */
-    configHandler(config: (handler: AquaCallHandler, request: RequestFlow) => void): RequestFlowBuilder {
+    configHandler(config: (handler: CallServiceHandler, request: RequestFlow) => void): RequestFlowBuilder {
         this.handlerConfigs.push(config);
         return this;
     }

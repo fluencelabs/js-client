@@ -14,40 +14,4 @@
  * limitations under the License.
  */
 
-export interface CallServiceResult {
-    ret_code: number;
-    result: string;
-}
-
-export type ParticleHandler = (
-    serviceId: string,
-    fnName: string,
-    args: any[],
-    tetraplets: SecurityTetraplet[][],
-) => CallServiceResult;
-
-export interface InterpreterOutcome {
-    ret_code: number;
-    data: Uint8Array;
-    next_peer_pks: string[];
-    error_message: string;
-}
-
-export interface ResolvedTriplet {
-    peer_pk: string;
-    service_id: string;
-    function_name: string;
-}
-
-export interface SecurityTetraplet extends ResolvedTriplet {
-    json_path: string;
-}
-
 export type PeerIdB58 = string;
-
-export enum ResultCodes {
-    success = 0,
-    noServiceFound = 1,
-    exceptionInHandler = 2,
-    unkownError = 1024,
-}

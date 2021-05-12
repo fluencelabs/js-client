@@ -1,5 +1,3 @@
-import PeerId from 'peer-id';
-import { genUUID } from '../../internal/particle';
 import { seedToPeerId } from '../../internal/peerIdUtils';
 import { RequestFlow } from '../../internal/RequestFlow';
 

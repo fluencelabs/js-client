@@ -1,5 +1,4 @@
-import { AquaCallHandler, errorHandler } from '../../internal/AquaHandler';
-import { ResultCodes } from '../../internal/commonTypes';
+import { CallServiceHandler, errorHandler, ResultCodes } from '../../internal/CallServiceHandler';
 
 const req = () => ({
     serviceId: 'service',
@@ -15,10 +14,10 @@ const res = () => ({
     res,
 });
 
-describe('Aqua handler tests', () => {
+describe('Call service handler tests', () => {
     it('Should work without middlewares', () => {
         // arrange
-        const handler = new AquaCallHandler();
+        const handler = new CallServiceHandler();
 
         // act
         const res = handler.execute(req());
@@ -29,7 +28,7 @@ describe('Aqua handler tests', () => {
 
     it('Should work with no-op middleware', () => {
         // arrange
-        const handler = new AquaCallHandler();
+        const handler = new CallServiceHandler();
         handler.use((req, res, next) => {
             next();
         });
@@ -43,7 +42,7 @@ describe('Aqua handler tests', () => {
 
     it('Should work with two overlapping middlewares', () => {
         // arrange
-        const handler = new AquaCallHandler();
+        const handler = new CallServiceHandler();
         handler
             .use((req, res, next) => {
                 res.result = { hello: 'world' };
@@ -64,7 +63,7 @@ describe('Aqua handler tests', () => {
 
     it('Should work with two NON-overlapping middlewares', () => {
         // arrange
-        const handler = new AquaCallHandler();
+        const handler = new CallServiceHandler();
         handler
             .use((req, res, next) => {
                 res.result = {};
@@ -90,7 +89,7 @@ describe('Aqua handler tests', () => {
 
     it('Should work with provided error handling middleware', () => {
         // arrange
-        const handler = new AquaCallHandler();
+        const handler = new CallServiceHandler();
 
         handler.use(errorHandler);
         handler.use((req, res, next) => {
@@ -110,7 +109,7 @@ describe('Aqua handler tests', () => {
     describe('Service handler tests', () => {
         it('Should register service function', () => {
             // arrange
-            const handler = new AquaCallHandler();
+            const handler = new CallServiceHandler();
             handler.on('service', 'function', (args) => {
                 return { called: args };
             });
@@ -132,7 +131,7 @@ describe('Aqua handler tests', () => {
 
         it('Should UNregister service function', () => {
             // arrange
-            const handler = new AquaCallHandler();
+            const handler = new CallServiceHandler();
             const unreg = handler.on('service', 'function', (args) => {
                 return { called: args };
             });
@@ -154,7 +153,7 @@ describe('Aqua handler tests', () => {
 
         it('Should register event', async () => {
             // arrange
-            const handler = new AquaCallHandler();
+            const handler = new CallServiceHandler();
             const returnPromise = new Promise((resolve) => {
                 handler.onEvent('service', 'function', (args) => {
                     resolve({ called: args });
@@ -178,7 +177,7 @@ describe('Aqua handler tests', () => {
 
         it('Should UNregister event', () => {
             // arrange
-            const handler = new AquaCallHandler();
+            const handler = new CallServiceHandler();
             const unreg = handler.onEvent('service', 'function', (args) => {
                 // don't care
             });
@@ -200,7 +199,7 @@ describe('Aqua handler tests', () => {
 
         it('Should register multiple service functions', () => {
             // arrange
-            const handler = new AquaCallHandler();
+            const handler = new CallServiceHandler();
             handler.on('service', 'function1', (args) => {
                 return 'called function1';
             });
@@ -233,7 +232,7 @@ describe('Aqua handler tests', () => {
 
         it('Should override previous function registration', () => {
             // arrange
-            const handler = new AquaCallHandler();
+            const handler = new CallServiceHandler();
             handler.on('service', 'function', (args) => {
                 return { called: args };
             });
@@ -259,11 +258,11 @@ describe('Aqua handler tests', () => {
     describe('Middleware combination tests', () => {
         it('Should work with NON overlapping function registration', () => {
             // arrange
-            const base = new AquaCallHandler();
+            const base = new CallServiceHandler();
             base.on('service', 'function1', (args) => {
                 return 'called function1';
             });
-            const another = new AquaCallHandler();
+            const another = new CallServiceHandler();
             base.on('service', 'function2', (args) => {
                 return 'called function2';
             });
@@ -295,11 +294,11 @@ describe('Aqua handler tests', () => {
 
         it('Should work with overlapping function registration', () => {
             // arrange
-            const base = new AquaCallHandler();
+            const base = new CallServiceHandler();
             base.on('service', 'function', (args) => {
                 return { called: args };
             });
-            const another = new AquaCallHandler();
+            const another = new CallServiceHandler();
             another.on('service', 'function', (args) => {
                 return 'overridden';
             });

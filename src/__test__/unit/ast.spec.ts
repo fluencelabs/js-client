@@ -1,5 +1,4 @@
 import { AirInterpreter } from '@fluencelabs/air-interpreter';
-import { genUUID } from '../../internal/particle';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {

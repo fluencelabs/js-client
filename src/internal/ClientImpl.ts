@@ -18,17 +18,17 @@ import * as PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 
-import { CallServiceResult, ParticleHandler, PeerIdB58, SecurityTetraplet } from './commonTypes';
+import { PeerIdB58 } from './commonTypes';
 import { FluenceClient } from '../FluenceClient';
 import { RequestFlow } from './RequestFlow';
-import { AquaCallHandler, errorHandler, fnHandler } from './AquaHandler';
+import { CallServiceHandler, errorHandler, fnHandler } from './CallServiceHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { logParticle, Particle } from './particle';
 import log from 'loglevel';
-import { AirInterpreter } from '@fluencelabs/air-interpreter';
+import { AirInterpreter, CallServiceResult, ParticleHandler, SecurityTetraplet } from '@fluencelabs/air-interpreter';
 
-const makeDefaultClientHandler = (): AquaCallHandler => {
-    const res = new AquaCallHandler();
+const makeDefaultClientHandler = (): CallServiceHandler => {
+    const res = new CallServiceHandler();
     res.use(errorHandler);
     res.use(fnHandler('op', 'identity', (args, _) => args));
     return res;
@@ -58,10 +58,10 @@ export class ClientImpl implements FluenceClient {
 
     constructor(selfPeerIdFull: PeerId) {
         this.selfPeerIdFull = selfPeerIdFull;
-        this.aquaCallHandler = makeDefaultClientHandler();
+        this.callServiceHandler = makeDefaultClientHandler();
     }
 
-    aquaCallHandler: AquaCallHandler;
+    callServiceHandler: CallServiceHandler;
 
     async disconnect(): Promise<void> {
         if (this.connection) {
@@ -73,7 +73,7 @@ export class ClientImpl implements FluenceClient {
         });
     }
 
-    async initAquamarineRuntime(): Promise<void> {
+    async initAirInterpreter(): Promise<void> {
         this.interpreter = await AirInterpreter.create(
             this.interpreterCallback.bind(this),
             this.selfPeerId,
@@ -114,7 +114,7 @@ export class ClientImpl implements FluenceClient {
         await request.initState(this.selfPeerIdFull);
 
         logParticle(log.debug, 'executing local particle', request.getParticle());
-        request.handler.combineWith(this.aquaCallHandler);
+        request.handler.combineWith(this.callServiceHandler);
         this.requests.set(request.id, request);
 
         this.processRequest(request);
@@ -128,7 +128,7 @@ export class ClientImpl implements FluenceClient {
             request.receiveUpdate(particle);
         } else {
             request = RequestFlow.createExternal(particle);
-            request.handler.combineWith(this.aquaCallHandler);
+            request.handler.combineWith(this.callServiceHandler);
         }
         this.requests.set(request.id, request);
 

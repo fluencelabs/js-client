@@ -1,17 +1,24 @@
 import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
 import { AirInterpreter } from '@fluencelabs/air-interpreter';
-import { AquaCallHandler } from './AquaHandler';
-import { InterpreterOutcome, PeerIdB58 } from './commonTypes';
+import { CallServiceHandler } from './CallServiceHandler';
+import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, logParticle } from './particle';
 
 export const DEFAULT_TTL = 7000;
 
+interface InterpreterOutcome {
+    ret_code: number;
+    data: Uint8Array;
+    next_peer_pks: string[];
+    error_message: string;
+}
+
 /**
  * The class represents the current view (and state) of distributed the particle execution process from client's point of view.
  * It stores the intermediate particles state during the process. RequestFlow is identified by the id of the particle that is executed during the flow.
- * Each RequestFlow contains a separate (unique to the current flow) AquaCallHandler where the handling of `call` AIR instruction takes place
+ * Each RequestFlow contains a separate (unique to the current flow) CallServiceHandler where the handling of `call` AIR instruction takes place
  * Please note, that RequestFlow's is handler is combined with the handler from client before the execution occures.
  * After the combination middlewares from RequestFlow are executed before client handler's middlewares.
  */
@@ -25,7 +32,7 @@ export class RequestFlow {
     readonly id: string;
     readonly isExternal: boolean;
     readonly script: string;
-    readonly handler = new AquaCallHandler();
+    readonly handler = new CallServiceHandler();
 
     ttl: number = DEFAULT_TTL;
     relayPeerId?: PeerIdB58;
