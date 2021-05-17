@@ -1,6 +1,6 @@
 import log, { trace } from 'loglevel';
 import PeerId from 'peer-id';
-import { AirInterpreter } from '@fluencelabs/air-interpreter';
+import { AirInterpreter } from '@fluencelabs/avm';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';

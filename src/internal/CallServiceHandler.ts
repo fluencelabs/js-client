@@ -1,4 +1,4 @@
-import { SecurityTetraplet } from '@fluencelabs/air-interpreter';
+import { SecurityTetraplet } from '@fluencelabs/avm';
 
 export enum ResultCodes {
     success = 0,

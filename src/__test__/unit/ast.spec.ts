@@ -1,4 +1,4 @@
-import { AirInterpreter } from '@fluencelabs/air-interpreter';
+import { AirInterpreter } from '@fluencelabs/avm';
 
 describe('== AST parsing suite', () => {
     it('parse simple script and return ast', async function () {

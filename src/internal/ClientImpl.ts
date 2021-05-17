@@ -25,7 +25,7 @@ import { CallServiceHandler, errorHandler, fnHandler } from './CallServiceHandle
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { logParticle, Particle } from './particle';
 import log from 'loglevel';
-import { AirInterpreter, CallServiceResult, ParticleHandler, SecurityTetraplet } from '@fluencelabs/air-interpreter';
+import { AirInterpreter, CallServiceResult, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 
 const makeDefaultClientHandler = (): CallServiceHandler => {
     const res = new CallServiceHandler();
