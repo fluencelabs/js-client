@@ -21,7 +21,7 @@ interface ParticleContext {
 /**
  * Represents the information passed from AVM when a `call` air instruction is executed on the local peer
  */
-interface Call {
+interface CallServiceData {
     /**
      * Service ID as specified in `call` air instruction
      */
@@ -76,11 +76,11 @@ interface CallServiceResult {
  * In a nutshell middelware is a function of request, response and function to trigger the next middleware in chain.
  * Each middleware is free to write additional properties to either request or response object.
  * When the chain finishes the response is passed back to AVM
- * @param { Call } req - information about the air `call` instruction
+ * @param { CallServiceData } req - information about the air `call` instruction
  * @param { CallServiceResult } resp - response to be passed to AVM
  * @param { Function } next - function which invokes next middleware in chain
  */
-export type Middleware = (req: Call, resp: CallServiceResult, next: Function) => void;
+export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => void;
 
 /**
  * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
@@ -94,7 +94,7 @@ export const fnHandler = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
 ) => {
-    return (req: Call, resp: CallServiceResult, next: Function): void => {
+    return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             const res = handler(req.args, req.tetraplets);
             resp.retCode = ResultCodes.success;
@@ -116,7 +116,7 @@ export const fnAsEventHandler = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
 ) => {
-    return (req: Call, resp: CallServiceResult, next: Function): void => {
+    return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             setTimeout(() => {
                 handler(req.args, req.tetraplets);
@@ -132,7 +132,7 @@ export const fnAsEventHandler = (
 /**
  * Error catching middleware
  */
-export const errorHandler: Middleware = (req: Call, resp: CallServiceResult, next: Function): void => {
+export const errorHandler: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
     try {
         next();
     } catch (e) {
@@ -141,7 +141,7 @@ export const errorHandler: Middleware = (req: Call, resp: CallServiceResult, nex
     }
 };
 
-type CallServiceFunction = (req: Call, resp: CallServiceResult) => void;
+type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => void;
 
 /**
  * Class defines the handling of a `call` air intruction executed by AVM on the local peer.
@@ -233,7 +233,7 @@ export class CallServiceHandler {
     /**
      * Executes the handler with the specified Call request. Return the result response
      */
-    execute(req: Call): CallServiceResult {
+    execute(req: CallServiceData): CallServiceResult {
         const res: CallServiceResult = {
             retCode: ResultCodes.unkownError,
             result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
