@@ -8,7 +8,7 @@ export enum ResultCodes {
 }
 
 /**
- * Particle context. Contains additional information about particle which triggered `call` air instruction from Air interpreter
+ * Particle context. Contains additional information about particle which triggered `call` air instruction from AVM
  */
 interface ParticleContext {
     /**
@@ -19,7 +19,7 @@ interface ParticleContext {
 }
 
 /**
- * Represents the information passed from Air interpreter when a `call` air instruction is executed on the local peer
+ * Represents the information passed from AVM when a `call` air instruction is executed on the local peer
  */
 interface Call {
     /**
@@ -38,7 +38,7 @@ interface Call {
     args: any[];
 
     /**
-     * Security Tetraplets recieved from Air interpreter
+     * Security Tetraplets recieved from AVM
      */
     tetraplets: SecurityTetraplet[][];
 
@@ -51,21 +51,21 @@ interface Call {
 }
 
 /**
- * Type for all the possible ovjects that can be return to the Air interpreter
+ * Type for all the possible ovjects that can be return to the AVM
  */
 export type CallServiceResultType = object | boolean | number | string;
 
 /**
- * Represents the result of the `call` air instruction to be returned into Air interpreter
+ * Represents the result of the `call` air instruction to be returned into AVM
  */
 interface CallServiceResult {
     /**
-     * Return code to be returned to Air interpreter
+     * Return code to be returned to AVM
      */
     retCode: ResultCodes;
 
     /**
-     * Result object to be returned to Air interpreter
+     * Result object to be returned to AVM
      */
     result: CallServiceResultType;
     [x: string]: any;
@@ -75,9 +75,9 @@ interface CallServiceResult {
  * Type for the middleware used in CallServiceHandler middleware chain.
  * In a nutshell middelware is a function of request, response and function to trigger the next middleware in chain.
  * Each middleware is free to write additional properties to either request or response object.
- * When the chain finishes the response is passed back to Air interpreter
+ * When the chain finishes the response is passed back to AVM
  * @param { Call } req - information about the air `call` instruction
- * @param { CallServiceResult } resp - response to be passed to Air interpreter
+ * @param { CallServiceResult } resp - response to be passed to AVM
  * @param { Function } next - function which invokes next middleware in chain
  */
 export type Middleware = (req: Call, resp: CallServiceResult, next: Function) => void;
