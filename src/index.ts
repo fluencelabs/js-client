@@ -15,7 +15,8 @@
  */
 
 export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUtils';
-export { SecurityTetraplet, PeerIdB58 } from './internal/commonTypes';
+export { PeerIdB58 } from './internal/commonTypes';
+export { SecurityTetraplet } from '@fluencelabs/avm';
 export * from './api';
 export * from './FluenceClient';
 export * from './internal/builtins';
