@@ -58,7 +58,7 @@ describe('Typescript usage suite', () => {
         const client2 = await createClient(nodes[0].multiaddr);
 
         let resMakingPromise = new Promise((resolve) => {
-            client2.aquaCallHandler.onEvent('test', 'test', (args, _) => {
+            client2.callServiceHandler.onEvent('test', 'test', (args, _) => {
                 resolve([...args]);
                 return {};
             });
@@ -241,8 +241,7 @@ describe('Typescript usage suite', () => {
 
         // assert
         await expect(res).rejects.toMatchObject({
-            error:
-                "Local service error: ret_code is 1024, error message is '\"The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'",
+            error: "Local service error: ret_code is 1024, error message is '\"The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'",
             instruction: 'call %init_peer_id% ("peer" "identify") [] res',
         });
     });

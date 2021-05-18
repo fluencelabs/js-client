@@ -101,7 +101,7 @@ describe('Builtins usage suite', () => {
     `;
 
         let resMakingPromise = new Promise((resolve) => {
-            client.aquaCallHandler.on('test', 'test1', (args, _) => {
+            client.callServiceHandler.on('test', 'test1', (args, _) => {
                 resolve([...args]);
                 return {};
             });

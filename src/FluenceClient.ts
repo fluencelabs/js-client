@@ -2,7 +2,7 @@ import log from 'loglevel';
 import Multiaddr from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 
-import { AquaCallHandler } from './internal/AquaHandler';
+import { CallServiceHandler } from './internal/CallServiceHandler';
 import { ClientImpl } from './internal/ClientImpl';
 import { PeerIdB58 } from './internal/commonTypes';
 import { FluenceConnectionOptions } from './internal/FluenceConnection';
@@ -34,7 +34,7 @@ export interface FluenceClient {
      * Please note, that the handler is combined with the handler from RequestFlow before the execution occures.
      * After this combination, middlewares from RequestFlow are executed before client handler's middlewares.
      */
-    readonly aquaCallHandler: AquaCallHandler;
+    readonly callServiceHandler: CallServiceHandler;
 
     /**
      * Disconnects the client from the network
@@ -84,7 +84,7 @@ export const createClient = async (
     }
 
     const client = new ClientImpl(peerId);
-    await client.initAquamarineRuntime();
+    await client.initAirInterpreter();
 
     if (connectTo) {
         let theAddress: Multiaddr;

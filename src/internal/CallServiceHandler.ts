@@ -1,7 +1,14 @@
-import { ResultCodes, SecurityTetraplet } from './commonTypes';
+import { SecurityTetraplet } from '@fluencelabs/avm';
+
+export enum ResultCodes {
+    success = 0,
+    noServiceFound = 1,
+    exceptionInHandler = 2,
+    unkownError = 1024,
+}
 
 /**
- * Particle context. Contains additional information about particle which triggered `call` air instruction from Aquamarine interpreter
+ * Particle context. Contains additional information about particle which triggered `call` air instruction from AVM
  */
 interface ParticleContext {
     /**
@@ -12,9 +19,9 @@ interface ParticleContext {
 }
 
 /**
- * Represents the information passed from Aquamarine interpreter when a `call` air instruction is executed on the local peer
+ * Represents the information passed from AVM when a `call` air instruction is executed on the local peer
  */
-interface AquaCall {
+interface CallServiceData {
     /**
      * Service ID as specified in `call` air instruction
      */
@@ -31,7 +38,7 @@ interface AquaCall {
     args: any[];
 
     /**
-     * Security Tetraplets recieved from Aquamarine interpreter
+     * Security Tetraplets recieved from AVM
      */
     tetraplets: SecurityTetraplet[][];
 
@@ -44,50 +51,50 @@ interface AquaCall {
 }
 
 /**
- * Type for all the possible ovjects that can be return to the Aquamarine interpreter
+ * Type for all the possible ovjects that can be return to the AVM
  */
-export type AquaResultType = object | boolean | number | string;
+export type CallServiceResultType = object | boolean | number | string;
 
 /**
- * Represents the result of the `call` air instruction to be returned into Aquamarine interpreter
+ * Represents the result of the `call` air instruction to be returned into AVM
  */
-interface AquaCallResult {
+interface CallServiceResult {
     /**
-     * Return code to be returned to Aquamarine interpreter
+     * Return code to be returned to AVM
      */
     retCode: ResultCodes;
 
     /**
-     * Result object to be returned to Aquamarine interpreter
+     * Result object to be returned to AVM
      */
-    result: AquaResultType;
+    result: CallServiceResultType;
     [x: string]: any;
 }
 
 /**
- * Type for the middleware used in AquaCallHandler middleware chain.
+ * Type for the middleware used in CallServiceHandler middleware chain.
  * In a nutshell middelware is a function of request, response and function to trigger the next middleware in chain.
  * Each middleware is free to write additional properties to either request or response object.
- * When the chain finishes the response is passed back to Aquamarine interpreter
- * @param { AquaCall } req - information about the air `call` instruction
- * @param { AquaCallResult } resp - response to be passed to Aquamarine interpreter
+ * When the chain finishes the response is passed back to AVM
+ * @param { CallServiceData } req - information about the air `call` instruction
+ * @param { CallServiceResult } resp - response to be passed to AVM
  * @param { Function } next - function which invokes next middleware in chain
  */
-export type Middleware = (req: AquaCall, resp: AquaCallResult, next: Function) => void;
+export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => void;
 
 /**
  * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
- * The return value of the handler is passed back to Aquamarine
- * @param { string } serviceId - The identifier of service which would be used to make calls from Aquamarine
- * @param { string } fnName - The identifier of function which would be used to make calls from Aquamarine
- * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object } handler - The handler which should handle the call. The result is any object passed back to Aquamarine
+ * The return value of the handler is passed back to AVM
+ * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
+ * @param { string } fnName - The identifier of function which would be used to make calls from AVM
+ * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => object } handler - The handler which should handle the call. The result is any object passed back to AVM
  */
 export const fnHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => AquaResultType,
+    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
 ) => {
-    return (req: AquaCall, resp: AquaCallResult, next: Function): void => {
+    return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             const res = handler(req.args, req.tetraplets);
             resp.retCode = ResultCodes.success;
@@ -100,8 +107,8 @@ export const fnHandler = (
 /**
  * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
  * Similar to @see { @link fnHandler } but instead returns and empty object immediately runs the handler asynchronously
- * @param { string } serviceId - The identifier of service which would be used to make calls from Aquamarine
- * @param { string } fnName - The identifier of function which would be used to make calls from Aquamarine
+ * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
+ * @param { string } fnName - The identifier of function which would be used to make calls from AVM
  * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => void } handler - The handler which should handle the call.
  */
 export const fnAsEventHandler = (
@@ -109,7 +116,7 @@ export const fnAsEventHandler = (
     fnName: string,
     handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
 ) => {
-    return (req: AquaCall, resp: AquaCallResult, next: Function): void => {
+    return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             setTimeout(() => {
                 handler(req.args, req.tetraplets);
@@ -125,7 +132,7 @@ export const fnAsEventHandler = (
 /**
  * Error catching middleware
  */
-export const errorHandler: Middleware = (req: AquaCall, resp: AquaCallResult, next: Function): void => {
+export const errorHandler: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
     try {
         next();
     } catch (e) {
@@ -134,23 +141,23 @@ export const errorHandler: Middleware = (req: AquaCall, resp: AquaCallResult, ne
     }
 };
 
-type AquaCallFunction = (req: AquaCall, resp: AquaCallResult) => void;
+type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => void;
 
 /**
- * Class defines the handling of a `call` air intruction executed by aquamarine on the local peer.
+ * Class defines the handling of a `call` air intruction executed by AVM on the local peer.
  * All the execution process is defined by the chain of middlewares - architecture popular among backend web frameworks.
- * Each middleware has the form of `(req: AquaCall, resp: AquaCallResult, next: Function) => void;`
+ * Each middleware has the form of `(req: Call, resp: CallServiceResult, next: Function) => void;`
  * A handler starts with an empty middleware chain and does nothing.
  * To execute the handler use @see { @link execute } function
  */
-export class AquaCallHandler {
+export class CallServiceHandler {
     private middlewares: Middleware[] = [];
 
     /**
      * Appends middleware to the chain of middlewares
      * @param { Middleware } middleware
      */
-    use(middleware: Middleware): AquaCallHandler {
+    use(middleware: Middleware): CallServiceHandler {
         this.middlewares.push(middleware);
         return this;
     }
@@ -159,7 +166,7 @@ export class AquaCallHandler {
      * Removes the middleware from the chain of middlewares
      * @param { Middleware } middleware
      */
-    unUse(middleware: Middleware): AquaCallHandler {
+    unUse(middleware: Middleware): CallServiceHandler {
         const index = this.middlewares.indexOf(middleware);
         if (index !== -1) {
             this.middlewares.splice(index, 1);
@@ -170,9 +177,9 @@ export class AquaCallHandler {
     /**
      * Combine handler with another one. Combintaion is done by copying middleware chain from the argument's handler into current one.
      * Please note, that current handler's middlewares take precedence over the ones from handler to be combined with
-     * @param { AquaCallHandler } other - AquaCallHandler to be combined with
+     * @param { CallServiceHandler } other - CallServiceHandler to be combined with
      */
-    combineWith(other: AquaCallHandler): AquaCallHandler {
+    combineWith(other: CallServiceHandler): CallServiceHandler {
         this.middlewares = [...this.middlewares, ...other.middlewares];
         return this;
     }
@@ -183,7 +190,7 @@ export class AquaCallHandler {
     on(
         serviceId: string,
         fnName: string,
-        handler: (args: any[], tetraplets: SecurityTetraplet[][]) => AquaResultType,
+        handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
     ): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
@@ -210,8 +217,8 @@ export class AquaCallHandler {
     /**
      * Collapses middleware chain into a single function.
      */
-    buildFunction(): AquaCallFunction {
-        const result = this.middlewares.reduceRight<AquaCallFunction>(
+    buildFunction(): CallServiceFunction {
+        const result = this.middlewares.reduceRight<CallServiceFunction>(
             (agg, cur) => {
                 return (req, resp) => {
                     cur(req, resp, () => agg(req, resp));
@@ -224,10 +231,10 @@ export class AquaCallHandler {
     }
 
     /**
-     * Executes the handler with the specified AquaCall request. Return the result response
+     * Executes the handler with the specified Call request. Return the result response
      */
-    execute(req: AquaCall): AquaCallResult {
-        const res: AquaCallResult = {
+    execute(req: CallServiceData): CallServiceResult {
+        const res: CallServiceResult = {
             retCode: ResultCodes.unkownError,
             result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
         };
