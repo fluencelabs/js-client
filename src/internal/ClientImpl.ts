@@ -21,18 +21,12 @@ import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection
 import { PeerIdB58 } from './commonTypes';
 import { FluenceClient } from '../FluenceClient';
 import { RequestFlow } from './RequestFlow';
-import { CallServiceHandler, errorHandler, fnHandler } from './CallServiceHandler';
+import { CallServiceHandler } from './CallServiceHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { logParticle, Particle } from './particle';
 import log from 'loglevel';
-import { AirInterpreter, CallServiceResult, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
-
-const makeDefaultClientHandler = (): CallServiceHandler => {
-    const res = new CallServiceHandler();
-    res.use(errorHandler);
-    res.use(fnHandler('op', 'identity', (args, _) => args));
-    return res;
-};
+import { AirInterpreter, ParticleHandler, SecurityTetraplet, CallServiceResult } from '@fluencelabs/avm';
+import makeDefaultClientHandler from './defaultClientHandler';
 
 export class ClientImpl implements FluenceClient {
     readonly selfPeerIdFull: PeerId;

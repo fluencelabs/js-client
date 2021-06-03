@@ -133,14 +133,14 @@ export const checkConnection = async (client: FluenceClient, ttl?: number): Prom
         .withVariables({
             msg,
         })
-        .buildAsFetch<[[string]]>(callbackService, callbackFn);
+        .buildAsFetch<[string]>(callbackService, callbackFn);
 
     await client.initiateFlow(request);
 
     try {
-        const [[result]] = await promise;
+        const [result] = await promise;
         if (result != msg) {
-            log.warn("unexpected behavior. 'identity' must return arguments the passed arguments.");
+            log.warn("unexpected behavior. 'identity' must return the passed arguments.");
         }
         return true;
     } catch (e) {
