@@ -26,11 +26,11 @@ describe('Typescript usage suite', () => {
         (call %init_peer_id% ("callback" "callback") [result])
     )`,
             )
-            .buildAsFetch<[[string]]>('callback', 'callback');
+            .buildAsFetch<[string]>('callback', 'callback');
         await client.initiateFlow(request);
 
         // assert
-        const [[result]] = await promise;
+        const [result] = await promise;
         expect(result).toBe('hello world!');
     });
 
