@@ -59,14 +59,12 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
                     return;
 
                 case 'bytes_to_b58':
-                    const array = req.args[0] as number[];
-                    success(resp, encode(new Uint8Array(array)));
+                    const argumentArray = req.args[0] as number[];
+                    success(resp, encode(new Uint8Array(argumentArray)));
                     return;
 
                 case 'bytes_from_b58':
-                    const ba = decode(req.args[0]);
-                    const x = Array.from(ba);
-                    success(resp, x);
+                    success(resp, Array.from(decode(req.args[0])));
                     return;
             }
         }
