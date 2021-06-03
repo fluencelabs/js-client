@@ -128,12 +128,9 @@ export class FluenceConnection {
             try {
                 await this.node.dial(this.address);
             } catch (e) {
-                if (
-                    e.name === 'AggregateError' &&
-                    e._errors[0].code === 'ERR_ENCRYPTION_FAILED' &&
-                    e._errors[0].message === 'protocol selection failed'
-                ) {
-                    throw new VersionIncompatibleError();
+                if (e.name === 'AggregateError' && e._errors[0].length === 1) {
+                    const error = e._errors[0];
+                    throw `Error dialing node ${this.address}: ${error.code} ${error.message}`;
                 } else {
                     throw e;
                 }
