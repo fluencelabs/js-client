@@ -134,6 +134,8 @@ export class FluenceConnection {
                     e._errors[0].message === 'protocol selection failed'
                 ) {
                     throw new VersionIncompatibleError();
+                } else {
+                    throw e;
                 }
             }
 
