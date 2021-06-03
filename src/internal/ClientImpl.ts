@@ -21,16 +21,74 @@ import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection
 import { PeerIdB58 } from './commonTypes';
 import { FluenceClient } from '../FluenceClient';
 import { RequestFlow } from './RequestFlow';
-import { CallServiceHandler, errorHandler, fnHandler } from './CallServiceHandler';
+import {
+    CallServiceData,
+    CallServiceHandler,
+    CallServiceResult,
+    CallServiceResultType,
+    errorHandler,
+    fnHandler,
+    Middleware,
+} from './CallServiceHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { logParticle, Particle } from './particle';
 import log from 'loglevel';
-import { AirInterpreter, CallServiceResult, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
+import {
+    AirInterpreter,
+    ParticleHandler,
+    SecurityTetraplet,
+    CallServiceResult as AvmCallServiceResult,
+} from '@fluencelabs/avm';
 
 const makeDefaultClientHandler = (): CallServiceHandler => {
+    const success = (resp: CallServiceResult, result: CallServiceResultType) => {
+        resp.retCode = 0;
+        resp.result = result;
+    };
+    const error = (resp: CallServiceResult, errorMsg: string) => {
+        resp.retCode = 1;
+        resp.result = errorMsg;
+    };
+    const mw: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => {
+        if (req.serviceId === 'op') {
+            switch (req.fnName) {
+                case 'noop':
+                    success(resp, {});
+                    return;
+
+                case 'array':
+                    success(resp, req.args);
+                    return;
+
+                case 'identity':
+                    if (req.args.length > 1) {
+                        error(resp, `identity accepts up to 1 arguments, received ${req.args.length} arguments`);
+                    } else {
+                        success(resp, req.args);
+                    }
+                    return;
+
+                case 'concat':
+                    const incorrectArgIndices = req.args //
+                        .map((x, i) => [Array.isArray(x), i])
+                        .filter(([isArray, index]) => isArray)
+                        .map((_, index) => index);
+
+                    if (incorrectArgIndices.length > 0) {
+                        const str = incorrectArgIndices.join(' ');
+                        error(resp, `All arguments of 'concat' must be arrays: arguments ${str} are not`);
+                    } else {
+                        success(resp, [].concat.apply([], req.args));
+                    }
+                    return;
+            }
+        }
+
+        next();
+    };
     const res = new CallServiceHandler();
     res.use(errorHandler);
-    res.use(fnHandler('op', 'identity', (args, _) => args));
+    res.use(mw);
     return res;
 };
 
@@ -151,7 +209,7 @@ export class ClientImpl implements FluenceClient {
         fnName: string,
         args: any[],
         tetraplets: SecurityTetraplet[][],
-    ): CallServiceResult => {
+    ): AvmCallServiceResult => {
         if (this.currentRequestId === null) {
             throw Error('current request can`t be null here');
         }
