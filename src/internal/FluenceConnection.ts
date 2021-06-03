@@ -54,15 +54,6 @@ export interface FluenceConnectionOptions {
     dialTimeout?: number;
 }
 
-export class VersionIncompatibleError extends Error {
-    __proto__: Error;
-    constructor() {
-        const trueProto = new.target.prototype;
-        super('Current version of JS SDK is incompatible with the connected Fluence node. Please update JS SDK');
-        this.__proto__ = trueProto;
-    }
-}
-
 export class FluenceConnection {
     private readonly selfPeerId: PeerId;
     private node: Peer;
@@ -128,8 +119,11 @@ export class FluenceConnection {
             try {
                 await this.node.dial(this.address);
             } catch (e) {
-                if (e.name === 'AggregateError' && e._errors[0].code === 'ERR_ENCRYPTION_FAILED') {
-                    throw new VersionIncompatibleError();
+                if (e.name === 'AggregateError' && e._errors.length === 1) {
+                    const error = e._errors[0];
+                    throw `Error dialing node ${this.address}:\n${error.code}\n${error.message}`;
+                } else {
+                    throw e;
                 }
             }
 
