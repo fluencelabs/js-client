@@ -18,7 +18,7 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
         resp.result = errorMsg;
     };
     const mw: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => {
-        if (req.serviceId === 'op') {
+        if (req.serviceId === 'Op') {
             switch (req.fnName) {
                 case 'noop':
                     success(resp, {});
@@ -67,9 +67,9 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
                 case 'sha256_string':
                     return;
             }
-
-            next();
         }
+
+        next();
     };
 
     const res = new CallServiceHandler();

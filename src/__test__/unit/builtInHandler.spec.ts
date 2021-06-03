@@ -1,13 +1,34 @@
 import { encode } from 'bs58';
 import { peerIdToSeed, seedToPeerId } from '../..';
+import { CallServiceData } from '../../internal/CallServiceHandler';
+import makeDefaultClientHandler from '../../internal/defaultClientHandler';
+
+const handler = makeDefaultClientHandler();
+
+const mkReq = (fnName: string, args: unknown[]) => {
+    return {
+        serviceId: 'Op',
+        fnName: fnName,
+        args: args,
+        tetraplets: [],
+        particleContext: {
+            particleId: 'some',
+        },
+    };
+};
 
 describe('Handler for builtins', () => {
-    it('should create private key from seed and back', async function () {
-        // prettier-ignore
-        let seed = [46, 188, 245, 171, 145, 73, 40, 24, 52, 233, 215, 163, 54, 26, 31, 221, 159, 179, 126, 106, 27, 199, 189, 194, 80, 133, 235, 42, 42, 247, 80, 201];
-        let seedStr = encode(seed);
+    it('1', () => {
+        // arrange
+        const req: CallServiceData = mkReq('identity', []);
 
-        let pid = await seedToPeerId(seedStr);
-        expect(peerIdToSeed(pid)).toEqual(seedStr);
+        // act
+        const res = handler.execute(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 0,
+            result: {},
+        });
     });
 });
