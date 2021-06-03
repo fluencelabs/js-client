@@ -121,9 +121,7 @@ export class FluenceConnection {
             } catch (e) {
                 if (e.name === 'AggregateError' && e._errors.length === 1) {
                     const error = e._errors[0];
-                    throw `Error dialing node ${this.address}:
-${error.code}
-${error.message}`;
+                    throw `Error dialing node ${this.address}:\n${error.code}\n${error.message}`;
                 } else {
                     throw e;
                 }
