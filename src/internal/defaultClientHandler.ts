@@ -51,20 +51,36 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
                     return;
 
                 case 'string_to_b58':
-                    success(resp, encode(new TextEncoder().encode(req.args[0])));
+                    if (req.args.length !== 1) {
+                        error(resp, 'string_to_b58 accepts only one string argument');
+                    } else {
+                        success(resp, encode(new TextEncoder().encode(req.args[0])));
+                    }
                     return;
 
                 case 'string_from_b58':
-                    success(resp, new TextDecoder().decode(decode(req.args[0])));
+                    if (req.args.length !== 1) {
+                        error(resp, 'string_from_b58 accepts only one string argument');
+                    } else {
+                        success(resp, new TextDecoder().decode(decode(req.args[0])));
+                    }
                     return;
 
                 case 'bytes_to_b58':
-                    const argumentArray = req.args[0] as number[];
-                    success(resp, encode(new Uint8Array(argumentArray)));
+                    if (req.args.length !== 1 || !Array.isArray(req.args[0])) {
+                        error(resp, 'bytes_to_b58 accepts only single argument: array of numbers');
+                    } else {
+                        const argumentArray = req.args[0] as number[];
+                        success(resp, encode(new Uint8Array(argumentArray)));
+                    }
                     return;
 
                 case 'bytes_from_b58':
-                    success(resp, Array.from(decode(req.args[0])));
+                    if (req.args.length !== 1) {
+                        error(resp, 'bytes_from_b58 accepts only one string argument');
+                    } else {
+                        success(resp, Array.from(decode(req.args[0])));
+                    }
                     return;
             }
         }

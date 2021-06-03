@@ -20,13 +20,20 @@ describe('Tests for default handler', () => {
   ${'concat'}          | ${[1, [1, 2], 1]}              | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
 
   ${'string_to_b58'}   | ${["test"]}                    | ${0}    | ${"3yZe7d"}
+  ${'string_to_b58'}   | ${["test", 1]}                 | ${1}    | ${"string_to_b58 accepts only one string argument"}
+  
   ${'string_from_b58'} | ${["3yZe7d"]}                  | ${0}    | ${"test"}
+  ${'string_from_b58'} | ${["3yZe7d", 1]}               | ${1}    | ${"string_from_b58 accepts only one string argument"}
+  
   ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}      | ${0}    | ${"3yZe7d"}
+  ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}   | ${1}    | ${"bytes_to_b58 accepts only single argument: array of numbers"}
+  
   ${'bytes_from_b58'}  | ${["3yZe7d"]}                  | ${0}    | ${[116, 101, 115, 116]}
+  ${'bytes_from_b58'}  | ${["3yZe7d", 1]}               | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
 
 `.test(
         //
-        '$fnName with $args expected retcode: $retCode and result: $retcode',
+        '$fnName with $args expected retcode: $retCode and result: $result',
         ({ fnName, args, retCode, result }) => {
             // arrange
             const req: CallServiceData = {
