@@ -32,18 +32,18 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
                     if (req.args.length > 1) {
                         error(resp, `identity accepts up to 1 arguments, received ${req.args.length} arguments`);
                     } else {
-                        success(resp, req.args);
+                        success(resp, req.args.length === 0 ? {} : req.args[0]);
                     }
                     return;
 
                 case 'concat':
                     const incorrectArgIndices = req.args //
                         .map((x, i) => [Array.isArray(x), i])
-                        .filter(([isArray, index]) => isArray)
-                        .map((_, index) => index);
+                        .filter(([isArray, _]) => !isArray)
+                        .map(([_, index]) => index);
 
                     if (incorrectArgIndices.length > 0) {
-                        const str = incorrectArgIndices.join(' ');
+                        const str = incorrectArgIndices.join(', ');
                         error(resp, `All arguments of 'concat' must be arrays: arguments ${str} are not`);
                     } else {
                         success(resp, [].concat.apply([], req.args));
