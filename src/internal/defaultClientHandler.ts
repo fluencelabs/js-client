@@ -51,20 +51,22 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
                     return;
 
                 case 'string_to_b58':
+                    success(resp, encode(new TextEncoder().encode(req.args[0])));
                     return;
 
                 case 'string_from_b58':
+                    success(resp, new TextDecoder().decode(decode(req.args[0])));
                     return;
 
                 case 'bytes_to_b58':
-                    success(resp, encode(req.args[0]));
+                    const array = req.args[0] as number[];
+                    success(resp, encode(new Uint8Array(array)));
                     return;
 
                 case 'bytes_from_b58':
-                    success(resp, decode(req.args[0]));
-                    return;
-
-                case 'sha256_string':
+                    const ba = decode(req.args[0]);
+                    const x = Array.from(ba);
+                    success(resp, x);
                     return;
             }
         }

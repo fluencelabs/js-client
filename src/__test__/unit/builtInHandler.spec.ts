@@ -147,4 +147,60 @@ describe('Handler for builtins', () => {
             result: "All arguments of 'concat' must be arrays: arguments 0, 2 are not",
         });
     });
+
+    it('qqq', () => {
+        // arrange
+        const req: CallServiceData = mkReq('string_to_b58', ['test']);
+
+        // act
+        const res = handler.execute(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 0,
+            result: '3yZe7d',
+        });
+    });
+
+    it('qqq22', () => {
+        // arrange
+        const req: CallServiceData = mkReq('string_from_b58', ['3yZe7d']);
+
+        // act
+        const res = handler.execute(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 0,
+            result: 'test',
+        });
+    });
+
+    it('qццццqq', () => {
+        // arrange
+        const req: CallServiceData = mkReq('bytes_to_b58', [[116, 101, 115, 116]]);
+
+        // act
+        const res = handler.execute(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 0,
+            result: '3yZe7d',
+        });
+    });
+
+    it('qqцццq22', () => {
+        // arrange
+        const req: CallServiceData = mkReq('bytes_from_b58', ['3yZe7d']);
+
+        // act
+        const res = handler.execute(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 0,
+            result: [116, 101, 115, 116],
+        });
+    });
 });
