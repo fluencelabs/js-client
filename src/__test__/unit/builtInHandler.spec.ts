@@ -37,7 +37,7 @@ describe('Tests for default handler', () => {
         ({ fnName, args, retCode, result }) => {
             // arrange
             const req: CallServiceData = {
-                serviceId: 'Op',
+                serviceId: 'op',
                 fnName: fnName,
                 args: args,
                 tetraplets: [],
