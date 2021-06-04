@@ -32,7 +32,9 @@ export interface Particle {
 }
 
 export const logParticle = (fn: Function, message: string, particle: Particle) => {
-    fn(message, particle);
+    const toLog = { ...particle };
+    delete toLog.data;
+    fn(message, toLog);
 };
 
 /**

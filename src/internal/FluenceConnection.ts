@@ -20,7 +20,7 @@ import Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
-import { parseParticle, Particle, toPayload } from './particle';
+import { logParticle, parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
@@ -114,7 +114,7 @@ export class FluenceConnection {
         if (this.status === Status.Initializing) {
             await this.node.start();
 
-            log.trace(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
+            log.info(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
 
             try {
                 await this.node.dial(this.address);
@@ -127,15 +127,13 @@ export class FluenceConnection {
                 }
             }
 
-            let _this = this;
-
             this.node.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
-                pipe(stream.source, decode(), async function (source: AsyncIterable<string>) {
+                pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
                     for await (const msg of source) {
                         try {
-                            let particle = parseParticle(msg);
-                            log.trace('Particle is received:', JSON.stringify(particle, undefined, 2));
-                            _this.handleParticle(particle);
+                            const particle = parseParticle(msg);
+                            logParticle(log.info, 'Particle is received:', particle);
+                            this.handleParticle(particle);
                         } catch (e) {
                             log.error('error on handling a new incoming message: ' + e);
                         }
@@ -165,7 +163,7 @@ export class FluenceConnection {
 
         let action = toPayload(particle);
         let particleStr = JSON.stringify(action);
-        log.debug('send particle: \n' + JSON.stringify(action, undefined, 2));
+        logParticle(log.debug, 'send particle: \n', particle);
 
         // create outgoing substream
         const conn = (await this.node.dialProtocol(this.address, PROTOCOL_NAME)) as {
