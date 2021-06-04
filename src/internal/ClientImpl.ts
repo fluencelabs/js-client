@@ -72,7 +72,7 @@ export class ClientImpl implements FluenceClient {
             this.interpreterCallback.bind(this),
             this.selfPeerId,
             'trace',
-            log.log,
+            (level, msg) => console.log(`level: ${level}, msg: ${msg}`),
         );
     }
 
