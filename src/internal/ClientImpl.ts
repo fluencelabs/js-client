@@ -25,8 +25,59 @@ import { CallServiceHandler } from './CallServiceHandler';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { logParticle, Particle } from './particle';
 import log from 'loglevel';
-import { AirInterpreter, ParticleHandler, SecurityTetraplet, CallServiceResult } from '@fluencelabs/avm';
+import {
+    AirInterpreter,
+    ParticleHandler,
+    SecurityTetraplet,
+    CallServiceResult,
+    LogLevel as AvmLogLevel,
+} from '@fluencelabs/avm';
 import makeDefaultClientHandler from './defaultClientHandler';
+
+const createClient = (handler, peerId): Promise<AirInterpreter> => {
+    let logLevel: AvmLogLevel = 'off';
+    switch (log.getLevel()) {
+        case 0: // 'TRACE'
+            logLevel = 'trace';
+            break;
+        case 1: // 'DEBUG'
+            logLevel = 'debug';
+            break;
+        case 2: // 'INFO'
+            logLevel = 'info';
+            break;
+        case 3: // 'WARN'
+            logLevel = 'warn';
+            break;
+        case 4: // 'ERROR'
+            logLevel = 'error';
+            break;
+        case 5: // 'SILENT'
+            logLevel = 'off';
+            break;
+    }
+    const logFn = (level: AvmLogLevel, msg: string) => {
+        switch (level) {
+            case 'error':
+                log.error(msg);
+                break;
+
+            case 'warn':
+                log.warn(msg);
+                break;
+
+            case 'info':
+                log.info(msg);
+                break;
+
+            case 'debug':
+            case 'trace':
+                log.log(msg);
+                break;
+        }
+    };
+    return AirInterpreter.create(handler, peerId, logLevel, logFn);
+};
 
 export class ClientImpl implements FluenceClient {
     readonly selfPeerIdFull: PeerId;
@@ -68,12 +119,7 @@ export class ClientImpl implements FluenceClient {
     }
 
     async initAirInterpreter(): Promise<void> {
-        this.interpreter = await AirInterpreter.create(
-            this.interpreterCallback.bind(this),
-            this.selfPeerId,
-            'trace',
-            (level, msg) => console.log(`level: ${level}, msg: ${msg}`),
-        );
+        this.interpreter = await createClient(this.interpreterCallback.bind(this), this.selfPeerId);
     }
 
     async connect(multiaddr: string | Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
