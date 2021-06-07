@@ -195,15 +195,8 @@ export class RequestFlowBuilder {
 
         this.configHandler((h, request) => {
             h.onEvent(xorHandleService, xorHandleFn, (args) => {
-                let msg;
                 try {
-                    msg = JSON.parse(args[0]);
-                } catch (e) {
-                    msg = e;
-                }
-
-                try {
-                    request.raiseError(msg);
+                    request.raiseError(args[0]);
                 } catch (e) {
                     log.error('Error handling script executed with error', e);
                 }
