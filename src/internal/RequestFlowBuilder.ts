@@ -195,6 +195,12 @@ export class RequestFlowBuilder {
 
         this.configHandler((h, request) => {
             h.onEvent(xorHandleService, xorHandleFn, (args) => {
+                if (args[0] === undefined) {
+                    log.error(
+                        'Request flow error handler recieved unexpected argument, value of %last_error% is undefined',
+                    );
+                }
+
                 try {
                     request.raiseError(args[0]);
                 } catch (e) {
