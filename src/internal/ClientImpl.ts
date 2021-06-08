@@ -207,6 +207,11 @@ export class ClientImpl implements FluenceClient {
             },
         });
 
+        if (res.result === undefined) {
+            log.error('Call service unexpectedly returned undefined result, falling back to null');
+            res.result = null;
+        }
+
         return {
             ret_code: res.retCode,
             result: JSON.stringify(res.result),
