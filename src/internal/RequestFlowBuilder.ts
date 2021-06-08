@@ -175,8 +175,7 @@ export class RequestFlowBuilder {
         this.configHandler((h) => {
             h.on(loadVariablesService, loadVariablesFn, (args, _) => {
                 if (this.variables.has(args[0])) {
-                    const res = this.variables.get(args[0]);
-                    return res;
+                    return this.variables.get(args[0]);
                 }
 
                 throw new Error(`failed to inject variable: ${args[0]}`);
