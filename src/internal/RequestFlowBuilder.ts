@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import { CallServiceHandler } from './CallServiceHandler';
+import { CallServiceHandler, CallServiceResultType } from './CallServiceHandler';
 import { DEFAULT_TTL, RequestFlow } from './RequestFlow';
 
 export const loadVariablesService = 'load';
@@ -100,7 +100,7 @@ export class RequestFlowBuilder {
     private shouldInjectRelay: boolean = true;
 
     private ttl: number = DEFAULT_TTL;
-    private variables = new Map<string, any>();
+    private variables = new Map<string, CallServiceResultType>();
     private handlerConfigs: Array<(handler: CallServiceHandler, request: RequestFlow) => void> = [];
     private buildScriptActions: Array<(sb: ScriptBuilder) => void> = [];
     private onTimeout: () => void;
@@ -268,7 +268,7 @@ export class RequestFlowBuilder {
     /**
      * Adds a variable to the list of injected variables
      */
-    withVariable(name: string, value: any): RequestFlowBuilder {
+    withVariable(name: string, value: CallServiceResultType): RequestFlowBuilder {
         this.variables.set(name, value);
         return this;
     }
@@ -277,7 +277,9 @@ export class RequestFlowBuilder {
      * Adds a multiple variable to the list of injected variables.
      * Variables can be specified in form of either object or a map where keys correspond to variable names
      */
-    withVariables(data: Map<string, any> | Record<string, any>): RequestFlowBuilder {
+    withVariables(
+        data: Map<string, CallServiceResultType> | Record<string, CallServiceResultType>,
+    ): RequestFlowBuilder {
         if (data instanceof Map) {
             this.variables = new Map([...Array.from(this.variables.entries()), ...Array.from(data.entries())]);
         } else {
