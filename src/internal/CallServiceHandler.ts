@@ -21,7 +21,7 @@ interface ParticleContext {
 /**
  * Represents the information passed from AVM when a `call` air instruction is executed on the local peer
  */
-interface CallServiceData {
+export interface CallServiceData {
     /**
      * Service ID as specified in `call` air instruction
      */
@@ -53,12 +53,12 @@ interface CallServiceData {
 /**
  * Type for all the possible ovjects that can be return to the AVM
  */
-export type CallServiceResultType = object | boolean | number | string;
+export type CallServiceResultType = object | boolean | number | string | null;
 
 /**
  * Represents the result of the `call` air instruction to be returned into AVM
  */
-interface CallServiceResult {
+export interface CallServiceResult {
     /**
      * Return code to be returned to AVM
      */

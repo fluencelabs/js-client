@@ -46,7 +46,7 @@ describe('Legacy api suite', () => {
         });
 
         await expect(promise).rejects.toMatchObject({
-            error: expect.stringContaining("Service with id 'incorrect' not found"),
+            msg: expect.stringContaining("Service with id 'incorrect' not found"),
             instruction: expect.stringContaining('incorrect'),
         });
     });
@@ -78,7 +78,7 @@ describe('Legacy api suite', () => {
         const promise = sendParticleAsFetch<[string]>(client, new Particle(script), 'fn', 'service');
 
         await expect(promise).rejects.toMatchObject({
-            error: expect.stringContaining("Service with id 'incorrect' not found"),
+            msg: expect.stringContaining("Service with id 'incorrect' not found"),
             instruction: expect.stringContaining('incorrect'),
         });
     });

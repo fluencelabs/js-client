@@ -2,7 +2,7 @@ import { checkConnection, createClient, FluenceClient } from '../../FluenceClien
 import Multiaddr from 'multiaddr';
 import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
-import { error } from 'loglevel';
+import log from 'loglevel';
 
 let client: FluenceClient;
 
@@ -26,11 +26,11 @@ describe('Typescript usage suite', () => {
         (call %init_peer_id% ("callback" "callback") [result])
     )`,
             )
-            .buildAsFetch<[[string]]>('callback', 'callback');
+            .buildAsFetch<[string]>('callback', 'callback');
         await client.initiateFlow(request);
 
         // assert
-        const [[result]] = await promise;
+        const [result] = await promise;
         expect(result).toBe('hello world!');
     });
 
@@ -203,7 +203,7 @@ describe('Typescript usage suite', () => {
 
         // assert
         await expect(promise).rejects.toMatchObject({
-            error: expect.stringContaining("Service with id 'incorrect' not found"),
+            msg: expect.stringContaining("Service with id 'incorrect' not found"),
             instruction: expect.stringContaining('incorrect'),
         });
     });
@@ -241,9 +241,32 @@ describe('Typescript usage suite', () => {
 
         // assert
         await expect(res).rejects.toMatchObject({
-            error: "Local service error: ret_code is 1024, error message is '\"The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'",
+            msg: "Local service error: ret_code is 1024, error message is '\"The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'",
             instruction: 'call %init_peer_id% ("peer" "identify") [] res',
         });
+    });
+
+    it('Should not crash if undefined is passed as a variable', async () => {
+        // arrange
+        client = await createClient();
+        const [request, promise] = new RequestFlowBuilder()
+            .withRawScript(
+                `
+                (seq
+                 (call %init_peer_id% ("op" "identity") [arg] res)
+                 (call %init_peer_id% ("return" "return") [res])
+                )
+            `,
+            )
+            .withVariable('arg', undefined as any)
+            .buildAsFetch<any[]>('return', 'return');
+
+        // act
+        await client.initiateFlow(request);
+        const [res] = await promise;
+
+        // assert
+        expect(res).toBe(null);
     });
 
     it('Should throw correct error when the client tries to send a particle not to the relay', async () => {

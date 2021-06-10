@@ -20,7 +20,7 @@ import Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
-import { parseParticle, Particle, toPayload } from './particle';
+import { logParticle, parseParticle, Particle, toPayload } from './particle';
 import { NOISE } from 'libp2p-noise';
 import PeerId from 'peer-id';
 import Multiaddr from 'multiaddr';
@@ -52,15 +52,6 @@ export interface FluenceConnectionOptions {
      * @property {number} [dialTimeout] - How long a dial attempt is allowed to take.
      */
     dialTimeout?: number;
-}
-
-export class VersionIncompatibleError extends Error {
-    __proto__: Error;
-    constructor() {
-        const trueProto = new.target.prototype;
-        super('Current version of JS SDK is incompatible with the connected Fluence node. Please update JS SDK');
-        this.__proto__ = trueProto;
-    }
 }
 
 export class FluenceConnection {
@@ -123,25 +114,26 @@ export class FluenceConnection {
         if (this.status === Status.Initializing) {
             await this.node.start();
 
-            log.trace(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
+            log.debug(`dialing to the node with client's address: ` + this.node.peerId.toB58String());
 
             try {
                 await this.node.dial(this.address);
             } catch (e) {
-                if (e.name === 'AggregateError' && e._errors[0].code === 'ERR_ENCRYPTION_FAILED') {
-                    throw new VersionIncompatibleError();
+                if (e.name === 'AggregateError' && e._errors.length === 1) {
+                    const error = e._errors[0];
+                    throw `Error dialing node ${this.address}:\n${error.code}\n${error.message}`;
+                } else {
+                    throw e;
                 }
             }
 
-            let _this = this;
-
             this.node.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
-                pipe(stream.source, decode(), async function (source: AsyncIterable<string>) {
+                pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
                     for await (const msg of source) {
                         try {
-                            let particle = parseParticle(msg);
-                            log.trace('Particle is received:', JSON.stringify(particle, undefined, 2));
-                            _this.handleParticle(particle);
+                            const particle = parseParticle(msg);
+                            logParticle(log.debug, 'Particle is received:', particle);
+                            this.handleParticle(particle);
                         } catch (e) {
                             log.error('error on handling a new incoming message: ' + e);
                         }
@@ -171,7 +163,7 @@ export class FluenceConnection {
 
         let action = toPayload(particle);
         let particleStr = JSON.stringify(action);
-        log.debug('send particle: \n' + JSON.stringify(action, undefined, 2));
+        logParticle(log.debug, 'send particle: \n', particle);
 
         // create outgoing substream
         const conn = (await this.node.dialProtocol(this.address, PROTOCOL_NAME)) as {

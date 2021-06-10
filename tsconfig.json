@@ -3,7 +3,6 @@
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/libp2p-ts/types",
-      "./types"
     ],
     "outDir": "./dist/",
     "baseUrl": ".",

@@ -85,7 +85,7 @@ describe('Builtins usage suite', () => {
         let promise = createService(client, 'test_broken_blueprint');
 
         await expect(promise).rejects.toMatchObject({
-            error: expect.stringContaining("Blueprint 'test_broken_blueprint' wasn't found"),
+            msg: expect.stringContaining("Blueprint 'test_broken_blueprint' wasn't found"),
             instruction: expect.stringContaining('blueprint_id'),
         });
     });
