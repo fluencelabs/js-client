@@ -241,7 +241,9 @@ describe('Typescript usage suite', () => {
 
         // assert
         await expect(res).rejects.toMatchObject({
-            msg: "Local service error: ret_code is 1024, error message is '\"The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'",
+            msg: expect.stringContaining(
+                `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'`,
+            ),
             instruction: 'call %init_peer_id% ("peer" "identify") [] res',
         });
     });
