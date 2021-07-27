@@ -1,4 +1,5 @@
-import { CallServiceHandler, errorHandler, ResultCodes } from '../../internal/CallServiceHandler';
+import { CallServiceHandler, ResultCodes } from '../../internal/CallServiceHandler';
+import { errorHandler } from '../../internal/defaultMiddlewares';
 
 const req = () => ({
     serviceId: 'service',
@@ -7,6 +8,10 @@ const req = () => ({
     tetraplets: [],
     particleContext: {
         particleId: 'id',
+        initPeerId: 'init peer id',
+        timeStamp: 595951200,
+        ttl: 595961200,
+        signature: 'sig',
     },
 });
 

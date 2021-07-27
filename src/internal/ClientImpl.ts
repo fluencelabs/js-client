@@ -197,6 +197,10 @@ export class ClientImpl implements FluenceClient {
         }
 
         const request = this.requests.get(this.currentRequestId);
+        const particle = request.getParticle();
+        if (particle === null) {
+            throw new Error("particle can't be null here");
+        }
         const res = request.handler.execute({
             serviceId,
             fnName,
@@ -204,6 +208,10 @@ export class ClientImpl implements FluenceClient {
             tetraplets,
             particleContext: {
                 particleId: request.id,
+                initPeerId: particle.init_peer_id,
+                timeStamp: particle.timestamp,
+                ttl: particle.ttl,
+                signature: particle.signature,
             },
         });
 

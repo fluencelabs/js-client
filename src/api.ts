@@ -78,7 +78,7 @@ export const registerServiceFunction = (
     client: FluenceClient,
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
+    handler: (args: any[], context: any) => CallServiceResultType,
 ) => {
     const unregister = client.callServiceHandler.on(serviceId, fnName, handler);
     handlersUnregistratorsMap.set(makeKey(client, serviceId, fnName), unregister);

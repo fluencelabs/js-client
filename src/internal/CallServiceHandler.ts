@@ -1,4 +1,5 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
+import { PeerIdB58 } from './commonTypes';
 
 export enum ResultCodes {
     success = 0,
@@ -15,7 +16,10 @@ interface ParticleContext {
      * The particle ID
      */
     particleId: string;
-    [x: string]: any;
+    initPeerId: PeerIdB58;
+    timeStamp: number;
+    ttl: number;
+    signature: string;
 }
 
 /**
@@ -82,6 +86,20 @@ export interface CallServiceResult {
  */
 export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => void;
 
+export class CallServiceArg<T> {
+    val: T;
+    tetraplet: SecurityTetraplet;
+
+    constructor(val: T, tetraplet: SecurityTetraplet) {
+        this.val = val;
+        this.tetraplet = tetraplet;
+    }
+}
+
+type Context = ParticleContext & {
+    wrappedArgs: CallServiceArg<any>[];
+};
+
 /**
  * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
  * The return value of the handler is passed back to AVM
@@ -92,11 +110,11 @@ export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: F
 export const fnHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
+    handler: (args: any[], context: Context) => CallServiceResultType,
 ) => {
     return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
-            const res = handler(req.args, req.tetraplets);
+            const res = handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
             resp.retCode = ResultCodes.success;
             resp.result = res;
         }
@@ -112,14 +130,14 @@ export const fnHandler = (
  * @param { (args: any[], tetraplets: SecurityTetraplet[][]) => void } handler - The handler which should handle the call.
  */
 export const fnAsEventHandler = (
-    serviceId: string,
+    serviceId: string, // force format
     fnName: string,
-    handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
+    handler: (args: any[], ctx: Context) => void,
 ) => {
     return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             setTimeout(() => {
-                handler(req.args, req.tetraplets);
+                handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
             }, 0);
 
             resp.retCode = ResultCodes.success;
@@ -127,18 +145,6 @@ export const fnAsEventHandler = (
         }
         next();
     };
-};
-
-/**
- * Error catching middleware
- */
-export const errorHandler: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
-    try {
-        next();
-    } catch (e) {
-        resp.retCode = ResultCodes.exceptionInHandler;
-        resp.result = e.toString();
-    }
 };
 
 type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => void;
@@ -188,9 +194,9 @@ export class CallServiceHandler {
      * Convinience method for registring @see { @link fnHandler } middleware
      */
     on(
-        serviceId: string,
+        serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], tetraplets: SecurityTetraplet[][]) => CallServiceResultType,
+        handler: (args: any[], context: Context) => CallServiceResultType,
     ): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
@@ -203,9 +209,9 @@ export class CallServiceHandler {
      * Convinience method for registring @see { @link fnAsEventHandler } middleware
      */
     onEvent(
-        serviceId: string,
+        serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], tetraplets: SecurityTetraplet[][]) => void,
+        handler: (args: any[], context: Context) => void,
     ): Function {
         const mw = fnAsEventHandler(serviceId, fnName, handler);
         this.use(mw);

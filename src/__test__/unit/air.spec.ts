@@ -124,10 +124,10 @@ describe('== AIR suite', () => {
             };
         });
         let res;
-        client.callServiceHandler.on(getDataServiceId, getDataFnName, (args, tetraplets) => {
+        client.callServiceHandler.on(getDataServiceId, getDataFnName, (args, context) => {
             res = {
                 args: args,
-                tetraplets: tetraplets,
+                wrappedArgs: context.wrappedArgs,
             };
             return args[0];
         });
@@ -141,12 +141,13 @@ describe('== AIR suite', () => {
         await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
-        const tetraplet = res.tetraplets[0][0];
-        expect(tetraplet).toMatchObject({
+        const [[arg0]] = res.wrappedArgs;
+        expect(arg0.tetraplet).toMatchObject({
             service_id: 'make_data_service',
             function_name: 'make_data',
             json_path: '$.field',
         });
+        expect(arg0.val).toBe(42);
     });
 
     it('check chain of services work properly', async function () {
