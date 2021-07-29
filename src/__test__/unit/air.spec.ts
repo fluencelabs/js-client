@@ -124,10 +124,10 @@ describe('== AIR suite', () => {
             };
         });
         let res;
-        client.callServiceHandler.on(getDataServiceId, getDataFnName, (args, context) => {
+        client.callServiceHandler.on(getDataServiceId, getDataFnName, (args, callparams) => {
             res = {
                 args: args,
-                wrappedArgs: context.wrappedArgs,
+                wrappedArgs: callparams.wrappedArgs,
             };
             return args[0];
         });
@@ -141,13 +141,13 @@ describe('== AIR suite', () => {
         await client.initiateFlow(new RequestFlowBuilder().withRawScript(script).build());
 
         // assert
-        const [[arg0]] = res.wrappedArgs;
-        expect(arg0.tetraplet).toMatchObject({
+        const [arg0] = res.wrappedArgs;
+        expect(arg0.tetraplet[0]).toMatchObject({
             service_id: 'make_data_service',
             function_name: 'make_data',
             json_path: '$.field',
         });
-        expect(arg0.val).toBe(42);
+        expect(arg0.val).toStrictEqual([42]);
     });
 
     it('check chain of services work properly', async function () {

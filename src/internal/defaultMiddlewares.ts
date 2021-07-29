@@ -19,22 +19,7 @@ export const wrapTetrapltes: Middleware = (req: CallServiceData, resp: CallServi
 
     const wrappedArgs = req.args.map((val, index) => {
         const tetraplet = req.tetraplets[index];
-        if (Array.isArray(val)) {
-            if (val.length !== tetraplet.length) {
-                throw new Error(
-                    `Tetraplet for arument ${index} is expected to have the same number of elements as the argument`,
-                );
-            }
-
-            return val.map((elem, elemIndex) => {
-                return new CallServiceArg(elem, tetraplet[elemIndex]);
-            });
-        }
-
-        if (tetraplet.length !== 1) {
-            throw new Error(`Tetraplet for arument ${index} is expected to have the only a single element`);
-        }
-        return new CallServiceArg(val, tetraplet[0]);
+        return new CallServiceArg(val, tetraplet);
     });
 
     req.wrappedArgs = wrappedArgs;

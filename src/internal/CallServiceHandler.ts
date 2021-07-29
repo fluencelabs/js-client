@@ -88,15 +88,15 @@ export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: F
 
 export class CallServiceArg<T> {
     val: T;
-    tetraplet: SecurityTetraplet;
+    tetraplet: SecurityTetraplet[];
 
-    constructor(val: T, tetraplet: SecurityTetraplet) {
+    constructor(val: T, tetraplet: SecurityTetraplet[]) {
         this.val = val;
         this.tetraplet = tetraplet;
     }
 }
 
-type Context = ParticleContext & {
+type CallParams = ParticleContext & {
     wrappedArgs: CallServiceArg<any>[];
 };
 
@@ -110,7 +110,7 @@ type Context = ParticleContext & {
 export const fnHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], context: Context) => CallServiceResultType,
+    handler: (args: any[], callParams: CallParams) => CallServiceResultType,
 ) => {
     return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
@@ -132,7 +132,7 @@ export const fnHandler = (
 export const fnAsEventHandler = (
     serviceId: string, // force format
     fnName: string,
-    handler: (args: any[], ctx: Context) => void,
+    handler: (args: any[], callParams: CallParams) => void,
 ) => {
     return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
@@ -196,7 +196,7 @@ export class CallServiceHandler {
     on(
         serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], context: Context) => CallServiceResultType,
+        handler: (args: any[], callParams: CallParams) => CallServiceResultType,
     ): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
@@ -211,7 +211,7 @@ export class CallServiceHandler {
     onEvent(
         serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], context: Context) => void,
+        handler: (args: any[], callParams: CallParams) => void,
     ): Function {
         const mw = fnAsEventHandler(serviceId, fnName, handler);
         this.use(mw);
