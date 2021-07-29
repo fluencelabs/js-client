@@ -1,4 +1,3 @@
-import { SecurityTetraplet } from '@fluencelabs/avm';
 import { createClient, FluenceClient } from '../../FluenceClient';
 import { ResultCodes } from '../../internal/CallServiceHandler';
 import { RequestFlow } from '../../internal/RequestFlow';
@@ -12,11 +11,12 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(client, (arg0, arg1, ctx) => {
+            callMeBack(client, (arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
-                    ctx: ctx,
+                    arg0Tetraplet: params.tetraplets.arg0[0], // completion should work here
+                    arg1Tetraplet: params.tetraplets.arg1[0], // completion should work here
                 });
             });
         });
@@ -25,30 +25,19 @@ describe('Compiler support infrastructure tests', () => {
         expect(await res).toMatchObject({
             arg0: 'hello, world',
             arg1: 42,
-            ctx: {
-                initPeerId: client.selfPeerId,
-                // particleId: '844586c3-6e91-4028-a200-e7107107e346',
-                signature: '',
-                tetraplets: {
-                    arg0: [
-                        {
-                            function_name: '',
-                            json_path: '',
-                            // peer_pk: '12D3KooWMwDDVRPEn5YGrN5LvVFLjNuBmokaeKfpLUgxsSkqRwwv',
-                            service_id: '',
-                        },
-                    ],
-                    arg1: [
-                        {
-                            function_name: '',
-                            json_path: '',
-                            // peer_pk: '12D3KooWMwDDVRPEn5YGrN5LvVFLjNuBmokaeKfpLUgxsSkqRwwv',
-                            service_id: '',
-                        },
-                    ],
-                },
-                // timeStamp: 1627555380988,
-                // ttl: 7000,
+
+            arg0Tetraplet: {
+                function_name: '',
+                json_path: '',
+                // peer_pk: '12D3KooWMwDDVRPEn5YGrN5LvVFLjNuBmokaeKfpLUgxsSkqRwwv',
+                service_id: '',
+            },
+
+            arg1Tetraplet: {
+                function_name: '',
+                json_path: '',
+                // peer_pk: '12D3KooWMwDDVRPEn5YGrN5LvVFLjNuBmokaeKfpLUgxsSkqRwwv',
+                service_id: '',
             },
         });
     });
@@ -60,10 +49,12 @@ describe('Compiler support infrastructure tests', () => {
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld(client, 'hello_world', {
-                sayHello: (s, ctx) => {
+                sayHello: (s, params) => {
+                    const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: (ctx) => {
+                getNumber: (params) => {
+                    // ctx.tetraplets should be {}
                     return 42;
                 },
             });
@@ -105,8 +96,8 @@ function registerHelloWorld(
     client: FluenceClient,
     id: string,
     service: {
-        sayHello: (s: string, callParams: CallParams & { tetraplets: { s: SecurityTetraplet[] } }) => void;
-        getNumber: (callParams: CallParams & { tetraplets: {} }) => number;
+        sayHello: (s: string, callParams: CallParams<'s'>) => void;
+        getNumber: (callParams: CallParams<null>) => number;
     },
 ) {
     client.callServiceHandler.use((req, resp, next) => {
@@ -120,6 +111,7 @@ function registerHelloWorld(
                 ...req.particleContext,
                 tetraplets: {
                     s: req.tetraplets[0],
+                    x: 10,
                 },
             };
             const res = service.sayHello(req.args[0], callParams);
@@ -130,7 +122,10 @@ function registerHelloWorld(
         if (req.fnName === 'getNumber') {
             const callParams = {
                 ...req.particleContext,
-                tetraplets: {},
+                tetraplets: {
+                    a: 10,
+                    b: 2,
+                },
             };
             const res = service.getNumber(callParams);
             resp.retCode = ResultCodes.success;
@@ -144,9 +139,9 @@ function registerHelloWorld(
 async function callMeBack(
     client: FluenceClient,
     callback: (
-        arg0: string,
+        arg0: string, // force format
         arg1: number,
-        callParams: CallParams & { tetraplets: { arg0: SecurityTetraplet[]; arg1: SecurityTetraplet[] } },
+        callParams: CallParams<'arg0' | 'arg1'>,
     ) => void,
     config?: { ttl?: number },
 ): Promise<void> {
