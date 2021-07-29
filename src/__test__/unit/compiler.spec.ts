@@ -111,7 +111,6 @@ function registerHelloWorld(
                 ...req.particleContext,
                 tetraplets: {
                     s: req.tetraplets[0],
-                    x: 10,
                 },
             };
             const res = service.sayHello(req.args[0], callParams);
@@ -122,10 +121,7 @@ function registerHelloWorld(
         if (req.fnName === 'getNumber') {
             const callParams = {
                 ...req.particleContext,
-                tetraplets: {
-                    a: 10,
-                    b: 2,
-                },
+                tetraplets: {},
             };
             const res = service.getNumber(callParams);
             resp.retCode = ResultCodes.success;
