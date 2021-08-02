@@ -1,8 +1,11 @@
-import { createClient, FluenceClient } from '../../FluenceClient';
-import { ResultCodes } from '../../internal/CallServiceHandler';
-import { RequestFlow } from '../../internal/RequestFlow';
-import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
-import { CallParams } from '../../internal/compilerSupport';
+import {
+    createClient,
+    FluenceClient,
+    ResultCodes,
+    RequestFlow,
+    RequestFlowBuilder,
+    CallParams,
+} from '../../internal/compilerSupport/v1';
 
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {
