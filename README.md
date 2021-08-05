@@ -89,14 +89,12 @@ Observe the result in browser console
 
 ## Documentation
 
-SDK Reference: [readme.io](https://fluence-labs.readme.io/docs/js-sdk)
-
-Detailed guide on building applications: [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
+Guide on building applications: [doc.fluence.dev](https://doc.fluence.dev/docs/tutorials_tutorials/building-a-frontend-with-js-sdk)
 
 Sample applications:
 
 -   [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
--   [Other demos](https://github.com/fluencelabs/aqua-demo): (Chat app, Social feed app, Blog platform app)
+-   [Examples](https://github.com/fluencelabs/examples): examples of using the Aqua programming language
 
 About [Fluence](https://fluence.network/)
 
