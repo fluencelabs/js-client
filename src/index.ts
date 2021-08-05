@@ -14,16 +14,4 @@
  * limitations under the License.
  */
 
-export { seedToPeerId, peerIdToSeed, generatePeerId } from './internal/peerIdUtils';
-export { PeerIdB58 } from './internal/commonTypes';
-export { SecurityTetraplet } from '@fluencelabs/avm';
-export * from './api';
-export * from './FluenceClient';
-export * from './internal/builtins';
-import log, { LogLevelDesc } from 'loglevel';
-
-export const setLogLevel = (level: LogLevelDesc) => {
-    log.setLevel(level);
-};
-
-log.setDefaultLevel('WARN');
+export { FluencePeer } from './internal/FluencePeer';
