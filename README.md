@@ -94,6 +94,7 @@ Guide on building applications: [readme.io](https://doc.fluence.dev/docs/tutoria
 Sample applications:
 
 -   [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
+-   [Examples](https://github.com/fluencelabs/aqua-demo): examples of using the Aqua programming language
 
 About [Fluence](https://fluence.network/)
 
