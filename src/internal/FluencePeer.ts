@@ -36,8 +36,8 @@ export class FluencePeer {
     getConnectionInfo(): ConnectionInfo {
         return {
             isConnected: false,
-            seflPeerId: this.selfPeerId,
-            connectedRelays: this.relayPeerId ? [this.relayPeerId] : [],
+            seflPeerId: this._selfPeerId,
+            connectedRelays: this._relayPeerId ? [this._relayPeerId] : [],
         };
     }
 
@@ -54,7 +54,7 @@ export class FluencePeer {
             peerId = await seedToPeerId(peerIdOrSeed);
         }
 
-        await this.initAirInterpreter();
+        await this._initAirInterpreter();
 
         if (options?.connectTo) {
             let connectTo = options!.connectTo[0];
@@ -66,7 +66,7 @@ export class FluencePeer {
                 theAddress = new MA(connectTo as string);
             }
 
-            await this.connect(theAddress);
+            await this._connect(theAddress);
         }
     }
 
@@ -81,7 +81,7 @@ export class FluencePeer {
     async initiateFlow(request: RequestFlow): Promise<void> {
         // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
         request.handler.on(loadVariablesService, loadRelayFn, () => {
-            return this.relayPeerId || '';
+            return this._relayPeerId || '';
         });
         await request.initState(this.selfPeerIdFull);
 
@@ -89,7 +89,7 @@ export class FluencePeer {
         request.handler.combineWith(this.callServiceHandler);
         this._requests.set(request.id, request);
 
-        this.processRequest(request);
+        this._processRequest(request);
     }
 
     callServiceHandler: CallServiceHandler;
@@ -106,11 +106,11 @@ export class FluencePeer {
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
 
-    async initAirInterpreter(): Promise<void> {
-        this._interpreter = await createInterpreter(this.interpreterCallback.bind(this), this.selfPeerId);
+    async _initAirInterpreter(): Promise<void> {
+        this._interpreter = await createInterpreter(this._interpreterCallback.bind(this), this._selfPeerId);
     }
 
-    async connect(multiaddr: string | Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
+    async _connect(multiaddr: string | Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
         multiaddr = MA(multiaddr);
 
         const nodePeerId = multiaddr.getPeerId();
@@ -127,32 +127,32 @@ export class FluencePeer {
             multiaddr,
             node,
             this.selfPeerIdFull,
-            this.executeIncomingParticle.bind(this),
+            this._executeIncomingParticle.bind(this),
         );
         await connection.connect(options);
         this._connection = connection;
-        this.initWatchDog();
+        this._initWatchDog();
     }
 
-    async disconnect(): Promise<void> {
+    async _disconnect(): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
         }
-        this.clearWathcDog();
+        this._clearWathcDog();
         this._requests.forEach((r) => {
             r.cancel();
         });
     }
 
-    get selfPeerId(): PeerIdB58 {
+    get _selfPeerId(): PeerIdB58 {
         return this.selfPeerIdFull.toB58String();
     }
 
-    get relayPeerId(): PeerIdB58 | undefined {
+    get _relayPeerId(): PeerIdB58 | undefined {
         return this._connection?.nodePeerId.toB58String();
     }
 
-    private async executeIncomingParticle(particle: Particle) {
+    private async _executeIncomingParticle(particle: Particle) {
         logParticle(log.debug, 'external particle received', particle);
 
         let request = this._requests.get(particle.id);
@@ -164,13 +164,13 @@ export class FluencePeer {
         }
         this._requests.set(request.id, request);
 
-        await this.processRequest(request);
+        await this._processRequest(request);
     }
 
-    private processRequest(request: RequestFlow) {
+    private _processRequest(request: RequestFlow) {
         try {
             this._currentRequestId = request.id;
-            request.execute(this._interpreter, this._connection, this.relayPeerId);
+            request.execute(this._interpreter, this._connection, this._relayPeerId);
         } catch (err) {
             log.error('particle processing failed: ' + err);
         } finally {
@@ -178,7 +178,7 @@ export class FluencePeer {
         }
     }
 
-    private interpreterCallback: ParticleHandler = (
+    private _interpreterCallback: ParticleHandler = (
         serviceId: string,
         fnName: string,
         args: any[],
@@ -220,7 +220,7 @@ export class FluencePeer {
         };
     };
 
-    private initWatchDog() {
+    private _initWatchDog() {
         this._watchDog = setInterval(() => {
             for (let key in this._requests.keys) {
                 if (this._requests.get(key).hasExpired()) {
@@ -230,7 +230,7 @@ export class FluencePeer {
         }, 5000);
     }
 
-    private clearWathcDog() {
+    private _clearWathcDog() {
         clearInterval(this._watchDog);
     }
 }

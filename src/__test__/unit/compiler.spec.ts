@@ -1,20 +1,19 @@
 import {
-    createClient,
-    FluenceClient,
     ResultCodes,
     RequestFlow,
     RequestFlowBuilder,
     CallParams,
+    FluencePeer,
 } from '../../internal/compilerSupport/v1';
 
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {
         // arrange
-        const client = await createClient();
+        FluencePeer.default.init();
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(client, (arg0, arg1, params) => {
+            callMeBack((arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -47,20 +46,23 @@ describe('Compiler support infrastructure tests', () => {
 
     it('Compiled code for service should work', async () => {
         // arrange
-        const client = await createClient();
+        FluencePeer.default.init();
 
         // act
         const helloPromise = new Promise((resolve) => {
-            registerHelloWorld(client, 'hello_world', {
-                sayHello: (s, params) => {
-                    const tetrapelt = params.tetraplets.s; // completion should work here
-                    resolve(s);
+            registerHelloWorld(
+                { serviceId: 'hello_world' },
+                {
+                    sayHello: (s, params) => {
+                        const tetrapelt = params.tetraplets.s; // completion should work here
+                        resolve(s);
+                    },
+                    getNumber: (params) => {
+                        // ctx.tetraplets should be {}
+                        return 42;
+                    },
                 },
-                getNumber: (params) => {
-                    // ctx.tetraplets should be {}
-                    return 42;
-                },
-            });
+            );
         });
 
         const [request, getNumberPromise] = new RequestFlowBuilder()
@@ -74,7 +76,7 @@ describe('Compiler support infrastructure tests', () => {
                 )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await client.initiateFlow(request);
+        await FluencePeer.default.initiateFlow(request);
 
         // assert
         expect(await helloPromise).toBe('hello world!');
@@ -96,15 +98,14 @@ func callMeBack(callback: string, i32 -> ()):
 */
 
 function registerHelloWorld(
-    client: FluenceClient,
-    id: string,
+    options: { serviceId: string },
     service: {
         sayHello: (s: string, callParams: CallParams<'s'>) => void;
         getNumber: (callParams: CallParams<null>) => number;
     },
 ) {
-    client.callServiceHandler.use((req, resp, next) => {
-        if (req.serviceId !== id) {
+    FluencePeer.default.callServiceHandler.use((req, resp, next) => {
+        if (req.serviceId !== options.serviceId) {
             next();
             return;
         }
@@ -136,7 +137,6 @@ function registerHelloWorld(
 }
 
 async function callMeBack(
-    client: FluenceClient,
     callback: (
         arg0: string, // force format
         arg1: number,
@@ -165,7 +165,7 @@ async function callMeBack(
             )
             .configHandler((h) => {
                 h.on('getDataSrv', '-relay-', () => {
-                    return client.relayPeerId!;
+                    return FluencePeer.default.relayPeerId!;
                 });
 
                 h.use((req, resp, next) => {
@@ -199,6 +199,6 @@ async function callMeBack(
         }
         request = r.build();
     });
-    await client.initiateFlow(request!);
+    await FluencePeer.default.initiateFlow(request!);
     return Promise.race([promise, Promise.resolve()]);
 }
