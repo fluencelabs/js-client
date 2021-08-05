@@ -89,7 +89,7 @@ Observe the result in browser console
 
 ## Documentation
 
-Guide on building applications: [readme.io](https://doc.fluence.dev/docs/tutorials_tutorials/building-a-frontend-with-js-sdk)
+Guide on building applications: [doc.fluence.dev](https://doc.fluence.dev/docs/tutorials_tutorials/building-a-frontend-with-js-sdk)
 
 Sample applications:
 
