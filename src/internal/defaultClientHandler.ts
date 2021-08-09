@@ -6,7 +6,7 @@ import {
     CallServiceResultType,
     Middleware,
 } from './CallServiceHandler';
-import { errorHandler, wrapTetrapltes } from './defaultMiddlewares';
+import { errorHandler } from './defaultMiddlewares';
 
 const makeDefaultClientHandler = (): CallServiceHandler => {
     const success = (resp: CallServiceResult, result: CallServiceResultType) => {
@@ -90,7 +90,6 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
 
     const res = new CallServiceHandler();
     res.use(errorHandler);
-    res.use(wrapTetrapltes);
     res.use(mw);
     return res;
 };

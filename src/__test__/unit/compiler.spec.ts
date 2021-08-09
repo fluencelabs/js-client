@@ -165,7 +165,7 @@ async function callMeBack(
             )
             .configHandler((h) => {
                 h.on('getDataSrv', '-relay-', () => {
-                    return FluencePeer.default.relayPeerId!;
+                    return FluencePeer.default.connectionInfo.connectedRelays[0];
                 });
 
                 h.use((req, resp, next) => {

@@ -4,6 +4,7 @@ import MA from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
+import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 import { logParticle, Particle } from './particle';
 import { generatePeerId, seedToPeerId } from './peerIdUtils';
@@ -11,7 +12,12 @@ import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
 
-export type Multiaddr = string | MA;
+type Node = {
+    peerId: string;
+    multiaddr: string;
+};
+
+export type ConnectionSpec = string | MA | Node;
 
 export interface InitOptions {
     vmPoolSize?;
@@ -19,24 +25,28 @@ export interface InitOptions {
     defaultTTL?;
     etc?;
     peerIdPk?;
-    connectTo: Array<Multiaddr>;
+    checkConnectionTTLMs?: number;
+    skipCheckConnection?: boolean;
+    connectTo?: ConnectionSpec | Array<ConnectionSpec>;
+    dialTimeoutMs?: number;
 }
 
 interface ConnectionInfo {
     isConnected: Boolean;
-    seflPeerId: PeerIdB58;
+    selfPeerId: PeerIdB58;
     connectedRelays: Array<PeerIdB58>;
 }
 
 export class FluencePeer {
-    async addConnection(relays: Array<Multiaddr>): Promise<void> {}
+    async addConnection(relays: Array<ConnectionSpec>): Promise<void> {}
 
-    async removeConnections(relays: Array<Multiaddr>): Promise<void> {}
+    async removeConnections(relays: Array<ConnectionSpec>): Promise<void> {}
 
-    getConnectionInfo(): ConnectionInfo {
+    get connectionInfo(): ConnectionInfo {
+        const isConnected = this._connection?.isConnected();
         return {
-            isConnected: false,
-            seflPeerId: this._selfPeerId,
+            isConnected: isConnected,
+            selfPeerId: this._selfPeerId,
             connectedRelays: this._relayPeerId ? [this._relayPeerId] : [],
         };
     }
@@ -53,24 +63,36 @@ export class FluencePeer {
             // peerId is string, therefore seed
             peerId = await seedToPeerId(peerIdOrSeed);
         }
+        this._selfPeerIdFull = peerId;
 
         await this._initAirInterpreter();
 
+        this.callServiceHandler = makeDefaultClientHandler();
+
         if (options?.connectTo) {
-            let connectTo = options!.connectTo[0];
-            let theAddress: Multiaddr;
-            let fromNode = (connectTo as any).multiaddr;
+            let connectTo;
+            if (Array.isArray(options!.connectTo)) {
+                connectTo = options!.connectTo;
+            } else {
+                connectTo = [options!.connectTo];
+            }
+
+            let theAddress: ConnectionSpec;
+            let fromNode = (connectTo[0] as any).multiaddr;
             if (fromNode) {
                 theAddress = new MA(fromNode);
             } else {
-                theAddress = new MA(connectTo as string);
+                theAddress = new MA(connectTo[0] as string);
             }
 
             await this._connect(theAddress);
         }
     }
 
-    async uninit() {}
+    async uninit() {
+        await this._disconnect();
+        this.callServiceHandler = null;
+    }
 
     static get default(): FluencePeer {
         return this._default;
@@ -83,7 +105,7 @@ export class FluencePeer {
         request.handler.on(loadVariablesService, loadRelayFn, () => {
             return this._relayPeerId || '';
         });
-        await request.initState(this.selfPeerIdFull);
+        await request.initState(this._selfPeerIdFull);
 
         logParticle(log.debug, 'executing local particle', request.getParticle());
         request.handler.combineWith(this.callServiceHandler);
@@ -98,7 +120,7 @@ export class FluencePeer {
 
     private static _default: FluencePeer = new FluencePeer();
 
-    private readonly selfPeerIdFull: PeerId;
+    private _selfPeerIdFull: PeerId;
     private _requests: Map<string, RequestFlow> = new Map();
     private _currentRequestId: string | null = null;
     private _watchDog;
@@ -106,13 +128,11 @@ export class FluencePeer {
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
 
-    async _initAirInterpreter(): Promise<void> {
+    private async _initAirInterpreter(): Promise<void> {
         this._interpreter = await createInterpreter(this._interpreterCallback.bind(this), this._selfPeerId);
     }
 
-    async _connect(multiaddr: string | Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
-        multiaddr = MA(multiaddr);
-
+    private async _connect(multiaddr: MA, options?: FluenceConnectionOptions): Promise<void> {
         const nodePeerId = multiaddr.getPeerId();
         if (!nodePeerId) {
             throw Error("'multiaddr' did not contain a valid peer id");
@@ -126,7 +146,7 @@ export class FluencePeer {
         const connection = new FluenceConnection(
             multiaddr,
             node,
-            this.selfPeerIdFull,
+            this._selfPeerIdFull,
             this._executeIncomingParticle.bind(this),
         );
         await connection.connect(options);
@@ -134,7 +154,7 @@ export class FluencePeer {
         this._initWatchDog();
     }
 
-    async _disconnect(): Promise<void> {
+    private async _disconnect(): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
         }
@@ -144,11 +164,11 @@ export class FluencePeer {
         });
     }
 
-    get _selfPeerId(): PeerIdB58 {
-        return this.selfPeerIdFull.toB58String();
+    private get _selfPeerId(): PeerIdB58 {
+        return this._selfPeerIdFull.toB58String();
     }
 
-    get _relayPeerId(): PeerIdB58 | undefined {
+    private get _relayPeerId(): PeerIdB58 | undefined {
         return this._connection?.nodePeerId.toB58String();
     }
 
