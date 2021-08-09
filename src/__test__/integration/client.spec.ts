@@ -17,7 +17,6 @@ describe('Typescript usage suite', () => {
     it('should make a call through network', async () => {
         // arrange
         await peer.init({ connectTo: nodes[0] });
-        var ci = peer.connectionInfo;
 
         // act
         const [request, promise] = new RequestFlowBuilder()
