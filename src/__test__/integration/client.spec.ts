@@ -233,7 +233,7 @@ describe('Typescript usage suite', () => {
         await expect(promise).rejects.toMatch('service failed internally');
     });
 
-    it('Should throw correct message when calling non existing local service', async function () {
+    it.skip('Should throw correct message when calling non existing local service', async function () {
         // arrange
         await peer.init();
 

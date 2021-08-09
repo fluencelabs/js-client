@@ -9,7 +9,7 @@ import {
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {
         // arrange
-        FluencePeer.default.init();
+        await FluencePeer.default.init();
 
         // act
         const res = new Promise((resolve) => {
