@@ -1,30 +1,9 @@
 import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
-import { FluencePeer } from './FluencePeer';
+import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
 
-export const createInterpreter = (handler, peerId): Promise<AirInterpreter> => {
-    let logLevel: AvmLogLevel = 'off';
-    switch (log.getLevel()) {
-        case 0: // 'TRACE'
-            logLevel = 'trace';
-            break;
-        case 1: // 'DEBUG'
-            logLevel = 'debug';
-            break;
-        case 2: // 'INFO'
-            logLevel = 'info';
-            break;
-        case 3: // 'WARN'
-            logLevel = 'warn';
-            break;
-        case 4: // 'ERROR'
-            logLevel = 'error';
-            break;
-        case 5: // 'SILENT'
-            logLevel = 'off';
-            break;
-    }
+export const createInterpreter = (handler, peerId, logLevel: AvmLoglevel): Promise<AirInterpreter> => {
     const logFn = (level: AvmLogLevel, msg: string) => {
         switch (level) {
             case 'error':

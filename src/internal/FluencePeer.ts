@@ -1,4 +1,4 @@
-import { AirInterpreter, CallServiceResult, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
+import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
 import MA from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
@@ -19,15 +19,14 @@ type Node = {
 
 export type ConnectionSpec = string | MA | Node;
 
+export type AvmLoglevel = LogLevel;
+
 export interface InitOptions {
-    vmPoolSize?;
-    logLevel?;
-    defaultTTL?;
-    etc?;
-    peerIdPk?;
+    connectTo?: ConnectionSpec | Array<ConnectionSpec>;
+    avmLogLevel?: AvmLoglevel;
+    peerIdSK?: string;
     checkConnectionTTLMs?: number;
     skipCheckConnection?: boolean;
-    connectTo?: ConnectionSpec | Array<ConnectionSpec>;
     dialTimeoutMs?: number;
 }
 
@@ -53,7 +52,7 @@ export class FluencePeer {
 
     async init(options?: InitOptions): Promise<void> {
         let peerId;
-        const peerIdOrSeed = options?.peerIdPk;
+        const peerIdOrSeed = options?.peerIdSK;
         if (!peerIdOrSeed) {
             peerId = await randomPeerId();
         } else if (isPeerId(peerIdOrSeed)) {
@@ -65,7 +64,7 @@ export class FluencePeer {
         }
         this._selfPeerIdFull = peerId;
 
-        await this._initAirInterpreter();
+        await this._initAirInterpreter(options?.avmLogLevel || 'off');
 
         this.callServiceHandler = makeDefaultClientHandler();
 
@@ -128,8 +127,8 @@ export class FluencePeer {
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
 
-    private async _initAirInterpreter(): Promise<void> {
-        this._interpreter = await createInterpreter(this._interpreterCallback.bind(this), this._selfPeerId);
+    private async _initAirInterpreter(logLevel: AvmLoglevel): Promise<void> {
+        this._interpreter = await createInterpreter(this._interpreterCallback.bind(this), this._selfPeerId, logLevel);
     }
 
     private async _connect(multiaddr: MA, options?: FluenceConnectionOptions): Promise<void> {
