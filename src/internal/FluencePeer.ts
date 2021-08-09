@@ -7,7 +7,7 @@ import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 import { logParticle, Particle } from './particle';
-import { generatePeerId, seedToPeerId } from './peerIdUtils';
+import { randomPeerId, peerIdFromEd25519SK } from './peerIdUtils';
 import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
@@ -55,13 +55,13 @@ export class FluencePeer {
         let peerId;
         const peerIdOrSeed = options?.peerIdPk;
         if (!peerIdOrSeed) {
-            peerId = await generatePeerId();
+            peerId = await randomPeerId();
         } else if (isPeerId(peerIdOrSeed)) {
             // keep unchanged
             peerId = peerIdOrSeed;
         } else {
             // peerId is string, therefore seed
-            peerId = await seedToPeerId(peerIdOrSeed);
+            peerId = await peerIdFromEd25519SK(peerIdOrSeed);
         }
         this._selfPeerIdFull = peerId;
 
