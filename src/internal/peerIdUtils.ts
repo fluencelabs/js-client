@@ -25,12 +25,11 @@ export const peerIdFromEd25519SK = async (sk: string): Promise<PeerId> => {
     // calculate ed25519 public key
     const publicKey = await ed.getPublicKey(bytes);
     // concatenate secret + public because that's what libp2p-crypto expects
-    const sk_pk = new Uint8Array([...bytes, ...publicKey]);
+    const privateAndPublicKeysArray = new Uint8Array([...bytes, ...publicKey]);
     // deserialize keys.supportedKeys.Ed25519PrivateKey
-    const privateKey = await keys.supportedKeys.ed25519.unmarshalEd25519PrivateKey(sk_pk);
+    const privateKey = await keys.supportedKeys.ed25519.unmarshalEd25519PrivateKey(privateAndPublicKeysArray);
     // serialize it to protobuf encoding because that's what PeerId expects
     const protobuf = keys.marshalPrivateKey(privateKey);
-    console.log('protobuf: ', protobuf);
     // deserialize PeerId from protobuf encoding
     return await PeerId.createFromPrivKey(protobuf);
 };
