@@ -37,9 +37,11 @@ interface ConnectionInfo {
 }
 
 export class FluencePeer {
-    async addConnection(relays: Array<ConnectionSpec>): Promise<void> {}
+    // TODO:: implement api alongside with multi-relay implementation
+    //async addConnection(relays: Array<ConnectionSpec>): Promise<void> {}
 
-    async removeConnections(relays: Array<ConnectionSpec>): Promise<void> {}
+    // TODO:: implement api alongside with multi-relay implementation
+    //async removeConnections(relays: Array<ConnectionSpec>): Promise<void> {}
 
     get connectionInfo(): ConnectionInfo {
         const isConnected = this._connection?.isConnected();

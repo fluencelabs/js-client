@@ -17,8 +17,13 @@
 import * as PeerId from 'peer-id';
 import * as base64 from 'base64-js';
 import * as ed from 'noble-ed25519';
+import { decode, encode } from 'bs58';
 import { keys } from 'libp2p-crypto';
 
+/**
+ * Generates a new peer id from base64 string contatining the 32 byte Ed25519S secret key
+ * @returns - Promise with the created Peer Id
+ */
 export const peerIdFromEd25519SK = async (sk: string): Promise<PeerId> => {
     // deserialize secret key from base64
     const bytes = base64.toByteArray(sk);
@@ -34,6 +39,10 @@ export const peerIdFromEd25519SK = async (sk: string): Promise<PeerId> => {
     return await PeerId.createFromPrivKey(protobuf);
 };
 
+/**
+ * Converts peer id into base64 string contatining the 32 byte Ed25519S secret key
+ * @returns - base64 of Ed25519S secret key
+ */
 export const peerIdToEd25519SK = (peerId: PeerId): string => {
     // export as [...private, ...public] array
     const privateAndPublicKeysArray = peerId.privKey.marshal();
@@ -46,8 +55,29 @@ export const peerIdToEd25519SK = (peerId: PeerId): string => {
 
 /**
  * Generates a new peer id with random private key
- * @returns { Promise<PeerId> } - Promise with the created Peer Id
+ * @returns - Promise with the created Peer Id
  */
 export const randomPeerId = async (): Promise<PeerId> => {
     return await PeerId.create({ keyType: 'Ed25519' });
+};
+
+/**
+ * Converts seed string which back to peer id. Seed string can be obtained by using @see {@link peerIdToSeed} function
+ * @param seed - Seed to convert to peer id
+ * @returns - Peer id
+ */
+export const seedToPeerId = async (seed: string): Promise<PeerId> => {
+    const seedArr = decode(seed);
+    const privateKey = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
+    return await PeerId.createFromPrivKey(privateKey.bytes);
+};
+
+/**
+ * Converts peer id to a string which can be used to restore back to peer id format with. @see {@link seedToPeerId}
+ * @param peerId - Peer id to convert to seed
+ * @returns - Seed string
+ */
+export const peerIdToSeed = (peerId: PeerId): string => {
+    const seedBuf = peerId.privKey.marshal().subarray(0, 32);
+    return encode(seedBuf);
 };

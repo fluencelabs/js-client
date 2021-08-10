@@ -2,20 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@fluencelabs/fluence)](https://www.npmjs.com/package/@fluencelabs/fluence)
 
-Official SDK for building web-based applications for Fluence
-
-## About Fluence
-
-Fluence is an open application platform where apps can build on each other, share data and users
-
-|         Layer         |                                                               Tech                                                                |              Scale               |               State               |                                                   Based on                                                    |
-| :-------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------: | :-------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
-|       Execution       |                                             [FCE](https://github.com/fluencelabs/fce)                                             |           Single peer            | Disk, network, external processes | Wasm, [IT](https://github.com/fluencelabs/interface-types), [Wasmer\*](https://github.com/fluencelabs/wasmer) |
-|      Composition      |                                      [Aquamarine](https://github.com/fluencelabs/aquamarine)                                      |          Involved peers          |      Results and signatures       |                                                 ⇅, π-calculus                                                 |
-|       Topology        | [TrustGraph](https://github.com/fluencelabs/fluence/tree/master/trust-graph), [DHT\*](https://github.com/fluencelabs/rust-libp2p) | Distributed with Kademlia\* algo |    Actual state of the network    |                                [libp2p](https://github.com/libp2p/rust-libp2p)                                |
-| Security & Accounting |                                                            Blockchain                                                             |          Whole network           |        Licenses & payments        |                                                  substrate?                                                   |
-
-<img alt="aquamarine scheme" align="center" src="doc/stack.png"/>
+Official SDK providing javascript-based implementation of the Fluence Peer.
 
 ## Installation
 
@@ -33,70 +20,97 @@ yarn add @fluencelabs/fluence
 
 ## Getting started
 
-Pick a node to connect to the Fluence network. The easiest way to do so is by using [fluence-network-environment](https://github.com/fluencelabs/fluence-network-environment) package
+To start communicating with the Fluence network you need to initiate FluencePeer and connect to an existing node. The picked node will be used as a relay. The easiest way to do so is by using [fluence-network-environment](https://github.com/fluencelabs/fluence-network-environment) package
 
 ```typescript
-import { dev } from '@fluencelabs/fluence-network-environment';
+import { krasnodar } from '@fluencelabs/fluence-network-environment';
 
-export const relayNode = dev[0];
+export const relayNode = krasnodar[0];
 ```
 
-Initialize client
+Initialize a local peer
 
 ```typescript
-import { createClient, FluenceClient } from '@fluencelabs/fluence';
+import { FluencePeer } from '@fluencelabs/fluence';
 
-const client = await createClient(relayNode);
+await FluencePeer.default.init({ connectTo: relayNode });
 ```
 
-Respond to service function calls
+Once the peer is initialized you can start interacting with Fluence network. **We strongly recommend to use Aqua programming language** for that instead of exposing js sdk internals. The aqua compiler will generate all the necessary boilerplate code for you. For more information about Aqua please refer to [the Aqua book](https://doc.fluence.dev/aqua-book/) and the [official repo](https://github.com/fluencelabs/aqua)
 
-```typescript
-subscribeToEvent(client, 'helloService', 'helloFunction', (args) => {
-    const [networkInfo] = args;
-    console.log(networkInfo);
-});
+Consider the following aqua code compiled into `helloWorld.ts`:
+
+```
+service HelloWorld("hello_world"):
+    hello(s: string)
+
+func sayHello():
+    HelloWorld.hello("hello, world")
 ```
 
-Make a particle
+Which can now be called from typescript:
 
 ```typescript
-const particle = new Particle(
-    `
-    (seq
-        (call myRelay ("peer" "identify") [] result)
-        (call %init_peer_id% ("helloService" "helloFunction") [result])
-    )`,
+import { registerHelloWorld, sayHello } from './helloWorld';
+
+// register handler for HelloWorld service
+registerHelloWorld(
+    {},
     {
-        myRelay: client.relayPeerId,
+        hello: (arg) => {
+            console.log(arg);
+        },
     },
 );
+
+// call sayHello function just like a ordinary function in js
+sayHello()
+    .then(() => {
+        console.log('Said hello');
+    })
+    .catch((err) => {
+        console.log('An error occured, ', err);
+    });
 ```
 
-Send it to the network
+## Global and Instance API
+
+The SDK provied a default instance of the FluencePeer. That should be enough for the vast majority of use cases. The instance can be obtained from `FluencePeer.default` as shown in previous section. By default all functions generated by the Aqua compiler will be executed against the default peer for convenience.
+
+Sometimes it might be needed to run several peers inside the same js vm. In order to do that you first need to create a new instance of FluencePeer class. The compiler provied instance counterparts for every function which can be used as follows:
 
 ```typescript
-await sendParticle(client, particle);
-```
+const peer = new FluencePeer();
 
-Observe the result in browser console
+await peer.init({ connectTo: relayNode });
 
-```json
-{
-    "external_addresses": ["/ip4/1.2.3.4/tcp/7777", "/dns4/dev.fluence.dev/tcp/19002"]
+// register service handler on the specifi peer
+peer.registerHelloWorld(
+    {},
+    {
+        hello: (arg) => {
+            console.log(arg);
+        },
+    },
+);
+
+try {
+    // execute functions through the specific peer
+    await peer.sayHello();
+    console.log('Said hello');
+} catch (err) {
+    console.log('An error occured, ', err);
 }
 ```
 
 ## Documentation
 
-SDK Reference: [readme.io](https://fluence-labs.readme.io/docs/js-sdk)
-
-Detailed guide on building applications: [readme.io](https://fluence-labs.readme.io/docs/build-an-app)
+Guide on building applications: [doc.fluence.dev](https://doc.fluence.dev/docs/tutorials_tutorials/building-a-frontend-with-js-sdk)
 
 Sample applications:
 
 -   [FluentPad](https://github.com/fluencelabs/fluent-pad): a collaborative text editor with users online status synchronization
--   [Other demos](https://github.com/fluencelabs/aqua-demo): (Chat app, Social feed app, Blog platform app)
+-   [Examples](https://github.com/fluencelabs/examples): examples of using the Aqua programming language
 
 About [Fluence](https://fluence.network/)
 
@@ -149,3 +163,16 @@ While the project is still in the early stages of development, you are welcome t
 ## License
 
 [Apache 2.0](LICENSE)
+
+## About Fluence
+
+Fluence is an open application platform where apps can build on each other, share data and users
+
+|         Layer         |                                                               Tech                                                                |              Scale               |               State               |                                                   Based on                                                    |
+| :-------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------: | :-------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
+|       Execution       |                                             [FCE](https://github.com/fluencelabs/fce)                                             |           Single peer            | Disk, network, external processes | Wasm, [IT](https://github.com/fluencelabs/interface-types), [Wasmer\*](https://github.com/fluencelabs/wasmer) |
+|      Composition      |                                      [Aquamarine](https://github.com/fluencelabs/aquamarine)                                      |          Involved peers          |      Results and signatures       |                                                 ⇅, π-calculus                                                 |
+|       Topology        | [TrustGraph](https://github.com/fluencelabs/fluence/tree/master/trust-graph), [DHT\*](https://github.com/fluencelabs/rust-libp2p) | Distributed with Kademlia\* algo |    Actual state of the network    |                                [libp2p](https://github.com/libp2p/rust-libp2p)                                |
+| Security & Accounting |                                                            Blockchain                                                             |          Whole network           |        Licenses & payments        |                                                  substrate?                                                   |
+
+<img alt="aquamarine scheme" align="center" src="doc/stack.png"/>
