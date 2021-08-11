@@ -17,7 +17,6 @@
 import * as PeerId from 'peer-id';
 import * as base64 from 'base64-js';
 import * as ed from 'noble-ed25519';
-import { decode, encode } from 'bs58';
 import { keys } from 'libp2p-crypto';
 
 /**
@@ -59,25 +58,4 @@ export const peerIdToEd25519SK = (peerId: PeerId): string => {
  */
 export const randomPeerId = async (): Promise<PeerId> => {
     return await PeerId.create({ keyType: 'Ed25519' });
-};
-
-/**
- * Converts seed string which back to peer id. Seed string can be obtained by using @see {@link peerIdToSeed} function
- * @param seed - Seed to convert to peer id
- * @returns - Peer id
- */
-export const seedToPeerId = async (seed: string): Promise<PeerId> => {
-    const seedArr = decode(seed);
-    const privateKey = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
-    return await PeerId.createFromPrivKey(privateKey.bytes);
-};
-
-/**
- * Converts peer id to a string which can be used to restore back to peer id format with. @see {@link seedToPeerId}
- * @param peerId - Peer id to convert to seed
- * @returns - Seed string
- */
-export const peerIdToSeed = (peerId: PeerId): string => {
-    const seedBuf = peerId.privKey.marshal().subarray(0, 32);
-    return encode(seedBuf);
 };
