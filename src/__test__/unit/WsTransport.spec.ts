@@ -1,6 +1,6 @@
 import { FluenceConnection } from '../../internal/FluenceConnection';
 import Peer from 'libp2p';
-import Multiaddr = require('multiaddr');
+import { Multiaddr } from 'multiaddr';
 import { generatePeerId } from '../../internal/peerIdUtils';
 
 describe('Ws Transport', () => {

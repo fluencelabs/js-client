@@ -1,5 +1,5 @@
 import log from 'loglevel';
-import Multiaddr from 'multiaddr';
+import { Multiaddr } from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 
 import { CallServiceHandler } from './internal/CallServiceHandler';
