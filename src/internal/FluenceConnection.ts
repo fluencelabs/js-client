@@ -21,9 +21,9 @@ import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
 import { logParticle, parseParticle, Particle, toPayload } from './particle';
-import { NOISE } from 'libp2p-noise';
+import { NOISE } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
-import Multiaddr from 'multiaddr';
+import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 
 export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
@@ -105,7 +105,7 @@ export class FluenceConnection {
                 },
             },
             dialer: {
-                timeout: options?.dialTimeout,
+                dialTimeout: options?.dialTimeout,
             },
         });
     }
