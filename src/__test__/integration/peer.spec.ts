@@ -1,4 +1,4 @@
-import Multiaddr from 'multiaddr';
+import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import log from 'loglevel';
