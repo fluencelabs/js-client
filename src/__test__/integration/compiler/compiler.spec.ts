@@ -1,4 +1,6 @@
+import { options } from 'libp2p/src/keychain';
 import { FluencePeer } from '../../..';
+import { parseParticle } from '../../../internal/particle';
 import { RequestFlowBuilder } from '../../../internal/RequestFlowBuilder';
 import { callMeBack, registerHelloWorld } from './gen1';
 
@@ -46,19 +48,16 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const helloPromise = new Promise((resolve) => {
-            registerHelloWorld(
-                { serviceId: 'hello_world' },
-                {
-                    sayHello: (s, params) => {
-                        const tetrapelt = params.tetraplets.s; // completion should work here
-                        resolve(s);
-                    },
-                    getNumber: (params) => {
-                        // ctx.tetraplets should be {}
-                        return 42;
-                    },
+            registerHelloWorld('hello_world', {
+                sayHello: (s, params) => {
+                    const tetrapelt = params.tetraplets.s; // completion should work here
+                    resolve(s);
                 },
-            );
+                getNumber: (params) => {
+                    // ctx.tetraplets should be {}
+                    return 42;
+                },
+            });
         });
 
         const [request, getNumberPromise] = new RequestFlowBuilder()
@@ -86,7 +85,7 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const res = new Promise((resolve) => {
-            peer.callMeBack((arg0, arg1, params) => {
+            callMeBack(peer, (arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -124,19 +123,16 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const helloPromise = new Promise((resolve) => {
-            peer.registerHelloWorld(
-                { serviceId: 'hello_world' },
-                {
-                    sayHello: (s, params) => {
-                        const tetrapelt = params.tetraplets.s; // completion should work here
-                        resolve(s);
-                    },
-                    getNumber: (params) => {
-                        // ctx.tetraplets should be {}
-                        return 42;
-                    },
+            registerHelloWorld(peer, 'hello_world', {
+                sayHello: (s, params) => {
+                    const tetrapelt = params.tetraplets.s; // completion should work here
+                    resolve(s);
                 },
-            );
+                getNumber: (params) => {
+                    // ctx.tetraplets should be {}
+                    return 42;
+                },
+            });
         });
 
         const [request, getNumberPromise] = new RequestFlowBuilder()
