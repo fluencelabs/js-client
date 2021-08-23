@@ -1,6 +1,6 @@
 import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
-import MA from 'multiaddr';
+import { Multiaddr as MA } from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';

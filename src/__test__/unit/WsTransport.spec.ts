@@ -1,7 +1,7 @@
 import { FluenceConnection } from '../../internal/FluenceConnection';
 import Peer from 'libp2p';
 import { Multiaddr } from 'multiaddr';
-import { generatePeerId } from '../../internal/peerIdUtils';
+import { randomPeerId } from '../../internal/peerIdUtils';
 
 describe('Ws Transport', () => {
     // TODO:: fix test
