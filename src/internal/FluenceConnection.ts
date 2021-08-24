@@ -26,7 +26,7 @@ import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 
-export const PROTOCOL_NAME = '/fluence/faas/1.0.0';
+export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
 enum Status {
     Initializing = 'Initializing',
