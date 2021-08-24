@@ -1,6 +1,4 @@
-import { options } from 'libp2p/src/keychain';
 import { FluencePeer } from '../../..';
-import { parseParticle } from '../../../internal/particle';
 import { RequestFlowBuilder } from '../../../internal/RequestFlowBuilder';
 import { callMeBack, registerHelloWorld } from './gen1';
 
