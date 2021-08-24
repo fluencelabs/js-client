@@ -1,19 +1,12 @@
-import log, { trace } from 'loglevel';
+import log from 'loglevel';
 import PeerId from 'peer-id';
-import { AirInterpreter } from '@fluencelabs/avm';
-import { CallServiceHandler } from './CallServiceHandler';
+import { AirInterpreter, CallServiceResult, CallRequest, InterpreterResult } from '@fluencelabs/avm';
+import { CallServiceData, CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, logParticle } from './particle';
 
 export const DEFAULT_TTL = 7000;
-
-interface InterpreterOutcome {
-    ret_code: number;
-    data: Uint8Array;
-    next_peer_pks: string[];
-    error_message: string;
-}
 
 /**
  * The class represents the current view (and state) of distributed the particle execution process from client's point of view.
@@ -65,28 +58,33 @@ export class RequestFlow {
         this.onErrorHandlers.push(handler);
     }
 
-    async execute(interpreter: AirInterpreter, connection: FluenceConnection, relayPeerId?: PeerIdB58) {
+    async execute(
+        interpreter: AirInterpreter,
+        connection: FluenceConnection,
+        selfPeerId: PeerIdB58,
+        relayPeerId?: PeerIdB58,
+    ) {
         if (this.hasExpired()) {
             return;
         }
 
         logParticle(log.debug, 'interpreter executing particle', this.getParticle());
-        const interpreterOutcome = this.runInterpreter(interpreter);
+        const interpreterOutcome = await this.runInterpreter(interpreter, selfPeerId);
 
         log.debug('inner interpreter outcome:', {
             particleId: this.getParticle()?.id,
-            ret_code: interpreterOutcome.ret_code,
-            error_message: interpreterOutcome.error_message,
-            next_peer_pks: interpreterOutcome.next_peer_pks,
+            retCode: interpreterOutcome.retCode,
+            errorMessage: interpreterOutcome.errorMessage,
+            next_peer_pks: interpreterOutcome.nextPeerPks,
         });
 
-        if (interpreterOutcome.ret_code !== 0) {
+        if (interpreterOutcome.retCode !== 0) {
             this.raiseError(
-                `Interpreter failed with code=${interpreterOutcome.ret_code} message=${interpreterOutcome.error_message}`,
+                `Interpreter failed with code=${interpreterOutcome.retCode} message=${interpreterOutcome.errorMessage}`,
             );
         }
 
-        const nextPeers = interpreterOutcome.next_peer_pks;
+        const nextPeers = interpreterOutcome.nextPeerPks;
 
         // do nothing if there are no peers to send particle further
         if (nextPeers.length === 0) {
@@ -146,7 +144,6 @@ relay peer id: ${this.relayPeerId}
     }
 
     receiveUpdate(particle: Particle) {
-        // TODO:: keep the history of particle data mb?
         this.prevData = this.state.data;
         this.state.data = particle.data;
     }
@@ -160,17 +157,73 @@ relay peer id: ${this.relayPeerId}
         }
     }
 
-    runInterpreter(interpreter: AirInterpreter) {
-        const interpreterOutcomeStr = interpreter.invoke(
-            this.state.init_peer_id,
-            this.state.script,
-            this.prevData,
-            this.state.data,
-        );
-        const interpreterOutcome: InterpreterOutcome = JSON.parse(interpreterOutcomeStr);
-        // TODO:: keep the history of particle data mb?
-        this.state.data = interpreterOutcome.data;
-        return interpreterOutcome;
+    async runInterpreter(interpreter: AirInterpreter, selfPeerId: string) {
+        let callbacksToExec: Array<[number, CallRequest]> = [];
+        let interpreterResult: InterpreterResult;
+        do {
+            const cbResults = await this.execCallbacks(callbacksToExec);
+
+            let callbacksToPass = {};
+            for (const [k, res] of cbResults) {
+                callbacksToPass[k] = res;
+            }
+
+            interpreterResult = interpreter.invoke(
+                this.state.script,
+                this.prevData,
+                this.state.data,
+                {
+                    initPeerId: this.state.init_peer_id,
+                    currentPeerId: selfPeerId,
+                },
+                callbacksToPass,
+            );
+
+            this.prevData = this.state.data;
+            this.state.data = interpreterResult.data;
+            callbacksToExec = Object.entries(interpreterResult.callRequests) as any;
+        } while (callbacksToExec.length > 0);
+
+        // this.state.data = interpreterResult.data;
+        return interpreterResult;
+    }
+
+    async execCallbacks(callbacks: Array<[number, CallRequest]>): Promise<Array<readonly [number, CallServiceResult]>> {
+        const particle = this.getParticle();
+
+        const promises = callbacks.map(([k, val]) => {
+            const req = {
+                serviceId: val.serviceName,
+                fnName: val.functionName,
+                args: val.arguments,
+                tetraplets: val.tetraplets,
+                particleContext: {
+                    particleId: this.id,
+                    initPeerId: particle.init_peer_id,
+                    timeStamp: particle.timestamp,
+                    ttl: particle.ttl,
+                    signature: particle.signature,
+                },
+            };
+            const promise = this.handler.execute(req).then((res) => {
+                if (res.result === undefined) {
+                    log.error(
+                        `Call to serviceId=${req.serviceId} fnName=${req.fnName} unexpectedly returned undefined result, falling back to null`,
+                    );
+                    res.result = null;
+                }
+
+                const returnValue = {
+                    retCode: res.retCode,
+                    result: JSON.stringify(res.result),
+                };
+
+                return [k, returnValue] as const;
+            });
+            return promise;
+        });
+
+        return await Promise.all(promises);
     }
 
     getParticle = () => this.state;

@@ -84,7 +84,7 @@ export interface CallServiceResult {
  * @param { CallServiceResult } resp - response to be passed to AVM
  * @param { Function } next - function which invokes next middleware in chain
  */
-export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => void;
+export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => Promise<void>;
 
 export class CallServiceArg<T> {
     val: T;
@@ -110,15 +110,15 @@ type CallParams = ParticleContext & {
 export const fnHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], callParams: CallParams) => CallServiceResultType,
+    handler: (args: any[], callParams: CallParams) => Promise<CallServiceResultType>,
 ) => {
-    return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
+    return async (req: CallServiceData, resp: CallServiceResult, next: Function): Promise<void> => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
-            const res = handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
+            const res = await handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
             resp.retCode = ResultCodes.success;
             resp.result = res;
         }
-        next();
+        await await next();
     };
 };
 
@@ -132,9 +132,9 @@ export const fnHandler = (
 export const fnAsEventHandler = (
     serviceId: string, // force format
     fnName: string,
-    handler: (args: any[], callParams: CallParams) => void,
+    handler: (args: any[], callParams: CallParams) => Promise<void>,
 ) => {
-    return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
+    return async (req: CallServiceData, resp: CallServiceResult, next: Function): Promise<void> => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             setTimeout(() => {
                 handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
@@ -143,11 +143,11 @@ export const fnAsEventHandler = (
             resp.retCode = ResultCodes.success;
             resp.result = {};
         }
-        next();
+        await next();
     };
 };
 
-type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => void;
+type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => Promise<void>;
 
 /**
  * Class defines the handling of a `call` air intruction executed by AVM on the local peer.
@@ -196,7 +196,7 @@ export class CallServiceHandler {
     on(
         serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], callParams: CallParams) => CallServiceResultType,
+        handler: (args: any[], callParams: CallParams) => Promise<CallServiceResultType>,
     ): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
@@ -211,7 +211,7 @@ export class CallServiceHandler {
     onEvent(
         serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], callParams: CallParams) => void,
+        handler: (args: any[], callParams: CallParams) => Promise<void>,
     ): Function {
         const mw = fnAsEventHandler(serviceId, fnName, handler);
         this.use(mw);
@@ -226,25 +226,25 @@ export class CallServiceHandler {
     buildFunction(): CallServiceFunction {
         const result = this.middlewares.reduceRight<CallServiceFunction>(
             (agg, cur) => {
-                return (req, resp) => {
-                    cur(req, resp, () => agg(req, resp));
+                return async (req, resp) => {
+                    await cur(req, resp, () => agg(req, resp));
                 };
             },
-            (req, res) => {},
+            async (req, res) => {},
         );
-
         return result;
     }
 
     /**
      * Executes the handler with the specified Call request. Return the result response
      */
-    execute(req: CallServiceData): CallServiceResult {
+    async execute(req: CallServiceData): Promise<CallServiceResult> {
         const res: CallServiceResult = {
             retCode: ResultCodes.unkownError,
             result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
         };
-        this.buildFunction()(req, res);
+        const fn = this.buildFunction();
+        await fn(req, res);
         return res;
     }
 }

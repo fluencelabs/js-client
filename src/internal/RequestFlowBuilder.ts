@@ -173,7 +173,7 @@ export class RequestFlowBuilder {
         });
 
         this.configHandler((h) => {
-            h.on(loadVariablesService, loadVariablesFn, (args, _) => {
+            h.on(loadVariablesService, loadVariablesFn, async (args, _) => {
                 if (this.variables.has(args[0])) {
                     return this.variables.get(args[0]);
                 }
@@ -194,7 +194,7 @@ export class RequestFlowBuilder {
         });
 
         this.configHandler((h, request) => {
-            h.onEvent(xorHandleService, xorHandleFn, (args) => {
+            h.onEvent(xorHandleService, xorHandleFn, async (args) => {
                 if (args[0] === undefined) {
                     log.error(
                         'Request flow error handler recieved unexpected argument, value of %last_error% is undefined',
@@ -302,7 +302,7 @@ export class RequestFlowBuilder {
     ): [RequestFlow, Promise<T>] {
         const fetchPromise = new Promise<T>((resolve, reject) => {
             this.handlerConfigs.push((h) => {
-                h.onEvent(callbackServiceId, callbackFnName, (args, _) => {
+                h.onEvent(callbackServiceId, callbackFnName, async (args, _) => {
                     resolve(args as any);
                 });
             });

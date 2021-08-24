@@ -17,7 +17,7 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
         resp.retCode = 1;
         resp.result = errorMsg;
     };
-    const mw: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => {
+    const mw: Middleware = async (req: CallServiceData, resp: CallServiceResult, next: Function) => {
         if (req.serviceId === 'op') {
             switch (req.fnName) {
                 case 'noop':
@@ -85,7 +85,7 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
             }
         }
 
-        next();
+        await next();
     };
 
     const res = new CallServiceHandler();

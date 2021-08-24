@@ -20,45 +20,45 @@ const res = () => ({
 });
 
 describe('Call service handler tests', () => {
-    it('Should work without middlewares', () => {
+    it('Should work without middlewares', async () => {
         // arrange
         const handler = new CallServiceHandler();
 
         // act
-        const res = handler.execute(req());
+        const res = await handler.execute(req());
 
         // assert
         expect(res).not.toBeUndefined();
     });
 
-    it('Should work with no-op middleware', () => {
+    it('Should work with no-op middleware', async () => {
         // arrange
         const handler = new CallServiceHandler();
-        handler.use((req, res, next) => {
-            next();
+        handler.use(async (req, res, next) => {
+            await next();
         });
 
         // act
-        const res = handler.execute(req());
+        const res = await handler.execute(req());
 
         // assert
         expect(res).not.toBeUndefined();
     });
 
-    it('Should work with two overlapping middlewares', () => {
+    it('Should work with two overlapping middlewares', async () => {
         // arrange
         const handler = new CallServiceHandler();
         handler
-            .use((req, res, next) => {
+            .use(async (req, res, next) => {
                 res.result = { hello: 'world' };
             })
-            .use((req, res, next) => {
+            .use(async (req, res, next) => {
                 res.result = { hello: 'incorect' };
-                next();
+                await next();
             });
 
         // act
-        const res = handler.execute(req());
+        const res = await handler.execute(req());
 
         // assert
         expect(res).toMatchObject({
@@ -66,25 +66,25 @@ describe('Call service handler tests', () => {
         });
     });
 
-    it('Should work with two NON-overlapping middlewares', () => {
+    it('Should work with two NON-overlapping middlewares', async () => {
         // arrange
         const handler = new CallServiceHandler();
         handler
-            .use((req, res, next) => {
+            .use(async (req, res, next) => {
                 res.result = {};
-                next();
+                await next();
             })
-            .use((req, res, next) => {
+            .use(async (req, res, next) => {
                 (res.result as any).name = 'john';
-                next();
+                await next();
             })
-            .use((req, res, next) => {
+            .use(async (req, res, next) => {
                 (res.result as any).color = 'red';
-                next();
+                await next();
             });
 
         // act
-        const res = handler.execute(req());
+        const res = await handler.execute(req());
 
         // assert
         expect(res).toMatchObject({
@@ -92,17 +92,17 @@ describe('Call service handler tests', () => {
         });
     });
 
-    it('Should work with provided error handling middleware', () => {
+    it('Should work with provided error handling middleware', async () => {
         // arrange
         const handler = new CallServiceHandler();
 
         handler.use(errorHandler);
-        handler.use((req, res, next) => {
+        handler.use(async (req, res, next) => {
             throw new Error('some error');
         });
 
         // act
-        const res = handler.execute(req());
+        const res = await handler.execute(req());
 
         // assert
         expect(res).toMatchObject({
@@ -112,15 +112,15 @@ describe('Call service handler tests', () => {
     });
 
     describe('Service handler tests', () => {
-        it('Should register service function', () => {
+        it('Should register service function', async () => {
             // arrange
             const handler = new CallServiceHandler();
-            handler.on('service', 'function', (args) => {
+            handler.on('service', 'function', async (args) => {
                 return { called: args };
             });
 
             // act
-            const res = handler.execute({
+            const res = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',
@@ -134,16 +134,16 @@ describe('Call service handler tests', () => {
             });
         });
 
-        it('Should UNregister service function', () => {
+        it('Should UNregister service function', async () => {
             // arrange
             const handler = new CallServiceHandler();
-            const unreg = handler.on('service', 'function', (args) => {
+            const unreg = handler.on('service', 'function', async (args) => {
                 return { called: args };
             });
             unreg();
 
             // act
-            const res = handler.execute({
+            const res = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',
@@ -160,16 +160,16 @@ describe('Call service handler tests', () => {
             // arrange
             const handler = new CallServiceHandler();
             const returnPromise = new Promise((resolve) => {
-                handler.onEvent('service', 'function', (args) => {
+                handler.onEvent('service', 'function', async (args) => {
                     resolve({ called: args });
                 });
             });
-            handler.onEvent('service', 'function', (args) => {
+            handler.on('service', 'function', async (args) => {
                 return { called: args };
             });
 
             // act
-            const res = handler.execute({
+            const res = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',
@@ -180,16 +180,16 @@ describe('Call service handler tests', () => {
             await expect(returnPromise).resolves.toMatchObject({ called: ['hello', 'world'] });
         });
 
-        it('Should UNregister event', () => {
+        it('Should UNregister event', async () => {
             // arrange
             const handler = new CallServiceHandler();
-            const unreg = handler.onEvent('service', 'function', (args) => {
+            const unreg = handler.onEvent('service', 'function', async (args) => {
                 // don't care
             });
             unreg();
 
             // act
-            const res = handler.execute({
+            const res = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',
@@ -202,23 +202,23 @@ describe('Call service handler tests', () => {
             });
         });
 
-        it('Should register multiple service functions', () => {
+        it('Should register multiple service functions', async () => {
             // arrange
             const handler = new CallServiceHandler();
-            handler.on('service', 'function1', (args) => {
+            handler.on('service', 'function1', async (args) => {
                 return 'called function1';
             });
-            handler.on('service', 'function2', (args) => {
+            handler.on('service', 'function2', async (args) => {
                 return 'called function2';
             });
 
             // act
-            const res1 = handler.execute({
+            const res1 = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function1',
             });
-            const res2 = handler.execute({
+            const res2 = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function2',
@@ -235,18 +235,18 @@ describe('Call service handler tests', () => {
             });
         });
 
-        it('Should override previous function registration', () => {
+        it('Should override previous function registration', async () => {
             // arrange
             const handler = new CallServiceHandler();
-            handler.on('service', 'function', (args) => {
+            handler.on('service', 'function', async (args) => {
                 return { called: args };
             });
-            handler.on('service', 'function', (args) => {
+            handler.on('service', 'function', async (args) => {
                 return 'overridden';
             });
 
             // act
-            const res = handler.execute({
+            const res = await handler.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',
@@ -261,26 +261,26 @@ describe('Call service handler tests', () => {
     });
 
     describe('Middleware combination tests', () => {
-        it('Should work with NON overlapping function registration', () => {
+        it('Should work with NON overlapping function registration', async () => {
             // arrange
             const base = new CallServiceHandler();
-            base.on('service', 'function1', (args) => {
+            base.on('service', 'function1', async (args) => {
                 return 'called function1';
             });
             const another = new CallServiceHandler();
-            base.on('service', 'function2', (args) => {
+            base.on('service', 'function2', async (args) => {
                 return 'called function2';
             });
 
             base.combineWith(another);
 
             // act
-            const res1 = base.execute({
+            const res1 = await base.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function1',
             });
-            const res2 = base.execute({
+            const res2 = await base.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function2',
@@ -297,21 +297,21 @@ describe('Call service handler tests', () => {
             });
         });
 
-        it('Should work with overlapping function registration', () => {
+        it('Should work with overlapping function registration', async () => {
             // arrange
             const base = new CallServiceHandler();
-            base.on('service', 'function', (args) => {
+            base.on('service', 'function', async (args) => {
                 return { called: args };
             });
             const another = new CallServiceHandler();
-            another.on('service', 'function', (args) => {
+            another.on('service', 'function', async (args) => {
                 return 'overridden';
             });
 
             base.combineWith(another);
 
             // act
-            const res = base.execute({
+            const res = await base.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',

@@ -3,9 +3,13 @@ import { CallServiceArg, CallServiceData, CallServiceResult, Middleware, ResultC
 /**
  * Error catching middleware
  */
-export const errorHandler: Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
+export const errorHandler: Middleware = async (
+    req: CallServiceData,
+    resp: CallServiceResult,
+    next: Function,
+): Promise<void> => {
     try {
-        next();
+        await next();
     } catch (e) {
         resp.retCode = ResultCodes.exceptionInHandler;
         resp.result = e.toString();

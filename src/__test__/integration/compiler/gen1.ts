@@ -26,29 +26,29 @@ func callMeBack(callback: string, i32 -> ()):
 // Services
 
 export function registerHelloWorld(service: {
-    getNumber: (callParams: CallParams<null>) => number;
-    sayHello: (s: string, callParams: CallParams<'s'>) => void;
+    getNumber: (callParams: CallParams<null>) => Promise<number>;
+    sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
 }): void;
 export function registerHelloWorld(
     serviceId: string,
     service: {
-        getNumber: (callParams: CallParams<null>) => number;
-        sayHello: (s: string, callParams: CallParams<'s'>) => void;
+        getNumber: (callParams: CallParams<null>) => Promise<number>;
+        sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
     },
 ): void;
 export function registerHelloWorld(
     peer: FluencePeer,
     service: {
-        getNumber: (callParams: CallParams<null>) => number;
-        sayHello: (s: string, callParams: CallParams<'s'>) => void;
+        getNumber: (callParams: CallParams<null>) => Promise<number>;
+        sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
     },
 ): void;
 export function registerHelloWorld(
     peer: FluencePeer,
     serviceId: string,
     service: {
-        getNumber: (callParams: CallParams<null>) => number;
-        sayHello: (s: string, callParams: CallParams<'s'>) => void;
+        getNumber: (callParams: CallParams<null>) => Promise<number>;
+        sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
     },
 ): void;
 export function registerHelloWorld(...args) {
@@ -77,9 +77,9 @@ export function registerHelloWorld(...args) {
         service = args[2];
     }
 
-    peer.callServiceHandler.use((req, resp, next) => {
+    peer.callServiceHandler.use(async (req, resp, next) => {
         if (req.serviceId !== serviceId) {
-            next();
+            await next();
             return;
         }
 
@@ -89,7 +89,7 @@ export function registerHelloWorld(...args) {
                 tetraplets: {},
             };
             resp.retCode = ResultCodes.success;
-            resp.result = service.getNumber(callParams);
+            resp.result = await service.getNumber(callParams);
         }
 
         if (req.fnName === 'sayHello') {
@@ -100,23 +100,23 @@ export function registerHelloWorld(...args) {
                 },
             };
             resp.retCode = ResultCodes.success;
-            service.sayHello(req.args[0], callParams);
+            await service.sayHello(req.args[0], callParams);
             resp.result = {};
         }
 
-        next();
+        await next();
     });
 }
 
 // Functions
 
 export async function callMeBack(
-    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => void,
+    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => Promise<void>,
     config?: { ttl?: number },
 ): Promise<void>;
 export async function callMeBack(
     peer: FluencePeer,
-    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => void,
+    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => Promise<void>,
     config?: { ttl?: number },
 ): Promise<void>;
 export async function callMeBack(...args) {
@@ -153,11 +153,11 @@ export async function callMeBack(...args) {
                  `,
             )
             .configHandler((h) => {
-                h.on('getDataSrv', '-relay-', () => {
+                h.on('getDataSrv', '-relay-', async () => {
                     return peer.connectionInfo.connectedRelays[0];
                 });
 
-                h.use((req, resp, next) => {
+                h.use(async (req, resp, next) => {
                     if (req.serviceId === 'callbackSrv' && req.fnaAme === 'callback') {
                         const callParams = {
                             ...req.particleContext,
@@ -167,15 +167,15 @@ export async function callMeBack(...args) {
                             },
                         };
                         resp.retCode = ResultCodes.success;
-                        callback(req.args[0], req.args[1], callParams);
+                        await callback(req.args[0], req.args[1], callParams);
                         resp.result = {};
                     }
-                    next();
+                    await next();
                 });
 
-                h.onEvent('callbackSrv', 'response', (args) => {});
+                h.onEvent('callbackSrv', 'response', async (args) => {});
 
-                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                h.onEvent('errorHandlingSrv', 'error', async (args) => {
                     const [err] = args;
                     reject(err);
                 });

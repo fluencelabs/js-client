@@ -9,7 +9,7 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack((arg0, arg1, params) => {
+            callMeBack(async (arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -47,11 +47,11 @@ describe('Compiler support infrastructure tests', () => {
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld('hello_world', {
-                sayHello: (s, params) => {
+                sayHello: async (s, params) => {
                     const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: (params) => {
+                getNumber: async (params) => {
                     // ctx.tetraplets should be {}
                     return 42;
                 },
@@ -83,7 +83,7 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(peer, (arg0, arg1, params) => {
+            callMeBack(peer, async (arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -122,11 +122,11 @@ describe('Compiler support infrastructure tests', () => {
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld(peer, 'hello_world', {
-                sayHello: (s, params) => {
+                sayHello: async (s, params) => {
                     const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: (params) => {
+                getNumber: async (params) => {
                     // ctx.tetraplets should be {}
                     return 42;
                 },
