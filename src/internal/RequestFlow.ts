@@ -69,22 +69,7 @@ export class RequestFlow {
         }
 
         logParticle(log.debug, 'interpreter executing particle', this.getParticle());
-        const interpreterOutcome = await this.runInterpreter(interpreter, selfPeerId);
-
-        log.debug('inner interpreter outcome:', {
-            particleId: this.getParticle()?.id,
-            retCode: interpreterOutcome.retCode,
-            errorMessage: interpreterOutcome.errorMessage,
-            next_peer_pks: interpreterOutcome.nextPeerPks,
-        });
-
-        if (interpreterOutcome.retCode !== 0) {
-            this.raiseError(
-                `Interpreter failed with code=${interpreterOutcome.retCode} message=${interpreterOutcome.errorMessage}`,
-            );
-        }
-
-        const nextPeers = interpreterOutcome.nextPeerPks;
+        const nextPeers = await this.runInterpreter(interpreter, selfPeerId);
 
         // do nothing if there are no peers to send particle further
         if (nextPeers.length === 0) {
@@ -184,8 +169,20 @@ relay peer id: ${this.relayPeerId}
             callbacksToExec = Object.entries(interpreterResult.callRequests) as any;
         } while (callbacksToExec.length > 0);
 
-        // this.state.data = interpreterResult.data;
-        return interpreterResult;
+        log.debug('inner interpreter outcome:', {
+            particleId: this.getParticle()?.id,
+            retCode: interpreterResult.retCode,
+            errorMessage: interpreterResult.errorMessage,
+            next_peer_pks: interpreterResult.nextPeerPks,
+        });
+
+        if (interpreterResult.retCode !== 0) {
+            this.raiseError(
+                `Interpreter failed with code=${interpreterResult.retCode} message=${interpreterResult.errorMessage}`,
+            );
+        }
+
+        return interpreterResult.nextPeerPks;
     }
 
     async execCallbacks(callbacks: Array<[number, CallRequest]>): Promise<Array<readonly [number, CallServiceResult]>> {
