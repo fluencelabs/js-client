@@ -66,7 +66,7 @@ export function registerHelloWorld(...args) {
     } else if (typeof args[1] === 'string') {
         serviceId = args[1];
     } else {
-        serviceId = '"default"';
+        serviceId = 'default';
     }
 
     if (!(args[0] instanceof FluencePeer) && typeof args[0] === 'object') {
@@ -158,7 +158,7 @@ export async function callMeBack(...args) {
                 });
 
                 h.use(async (req, resp, next) => {
-                    if (req.serviceId === 'callbackSrv' && req.fnaAme === 'callback') {
+                    if (req.serviceId === 'callbackSrv' && req.fnName === 'callback') {
                         const callParams = {
                             ...req.particleContext,
                             tetraplets: {
