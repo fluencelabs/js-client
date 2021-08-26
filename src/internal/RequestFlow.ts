@@ -143,15 +143,10 @@ relay peer id: ${this.relayPeerId}
     }
 
     async runInterpreter(interpreter: AirInterpreter, selfPeerId: string) {
-        let callbacksToExec: Array<[number, CallRequest]> = [];
+        let callRequestsToExec: Array<[number, CallRequest]> = [];
         let interpreterResult: InterpreterResult;
         do {
-            const cbResults = await this.execCallbacks(callbacksToExec);
-
-            let callbacksToPass = {};
-            for (const [k, res] of cbResults) {
-                callbacksToPass[k] = res;
-            }
+            const cbResults = await this.execCallbacks(callRequestsToExec);
 
             interpreterResult = interpreter.invoke(
                 this.state.script,
@@ -161,13 +156,13 @@ relay peer id: ${this.relayPeerId}
                     initPeerId: this.state.init_peer_id,
                     currentPeerId: selfPeerId,
                 },
-                callbacksToPass,
+                cbResults,
             );
 
             this.prevData = this.state.data;
             this.state.data = interpreterResult.data;
-            callbacksToExec = Object.entries(interpreterResult.callRequests) as any;
-        } while (callbacksToExec.length > 0);
+            callRequestsToExec = interpreterResult.callRequests;
+        } while (callRequestsToExec.length > 0);
 
         log.debug('inner interpreter outcome:', {
             particleId: this.getParticle()?.id,
@@ -185,12 +180,12 @@ relay peer id: ${this.relayPeerId}
         return interpreterResult.nextPeerPks;
     }
 
-    async execCallbacks(callbacks: Array<[number, CallRequest]>): Promise<Array<readonly [number, CallServiceResult]>> {
+    async execCallbacks(callbacks: Array<[number, CallRequest]>): Promise<Array<[number, CallServiceResult]>> {
         const particle = this.getParticle();
 
         const promises = callbacks.map(([k, val]) => {
             const req = {
-                serviceId: val.serviceName,
+                serviceId: val.serviceId,
                 fnName: val.functionName,
                 args: val.arguments,
                 tetraplets: val.tetraplets,
@@ -220,7 +215,8 @@ relay peer id: ${this.relayPeerId}
             return promise;
         });
 
-        return await Promise.all(promises);
+        const res = await Promise.all(promises);
+        return res as any;
     }
 
     getParticle = () => this.state;

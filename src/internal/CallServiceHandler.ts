@@ -3,9 +3,8 @@ import { PeerIdB58 } from './commonTypes';
 
 export enum ResultCodes {
     success = 0,
-    noServiceFound = 1,
+    unkownError = 1,
     exceptionInHandler = 2,
-    unkownError = 1024,
 }
 
 /**
