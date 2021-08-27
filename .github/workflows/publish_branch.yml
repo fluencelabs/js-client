@@ -1,0 +1,37 @@
+name: "publish-branch"
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  npm-publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      ### Set version
+      - name: Set version
+        run: npm version prerelease --preid ${GITHUB_REF}_${GITHUB_RUN_NUMBER}
+
+      ### Publish to NPM registry
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '15'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: cat package.json
+
+      - run: npm i
+      - run: npm run build
+
+      - run: npm publish --access public --tag=beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
