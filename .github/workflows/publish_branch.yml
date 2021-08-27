@@ -22,7 +22,9 @@ jobs:
 
       ### Set version
       - name: Set version
-        run: npm version prerelease --preid ${{ env.BRANCH_NAME }}_${GITHUB_RUN_NUMBER}
+        run: |
+          npm --no-git-tag-version version
+          npm version prerelease --preid ${{ env.BRANCH_NAME }}_${{ github.run_number }}
 
       ### Publish to NPM registry
       - uses: actions/setup-node@v1
