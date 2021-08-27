@@ -38,6 +38,14 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       ### Create a release
+      - name: Build Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          configuration: ".github/workflows/changelog_config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Release
         id: release
         uses: softprops/action-gh-release@v1
@@ -46,7 +54,7 @@ jobs:
           tag_name: ${{ env.RELEASE_VERSION }}
           files: |
             aqua-dht.tar.gz
-          body: ${{steps.github_release.outputs.changelog}}
+          body: ${{steps.changelog.outputs.changelog}}
           draft: false
           prerelease: false
         env:
