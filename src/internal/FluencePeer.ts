@@ -177,7 +177,7 @@ export class FluencePeer {
 
         let request = this._requests.get(particle.id);
         if (request) {
-            request.receiveUpdate(particle);
+            await request.receiveUpdate(particle);
         } else {
             request = RequestFlow.createExternal(particle);
             request.handler.combineWith(this.callServiceHandler);

@@ -128,8 +128,12 @@ relay peer id: ${this.relayPeerId}
         this.timeoutHandle = setTimeout(this.raiseTimeout.bind(this), particle.ttl);
     }
 
-    receiveUpdate(particle: Particle) {
-        this.prevData = this.state.data;
+    async receiveUpdate(particle: Particle) {
+        await new Promise(resolve => {
+            setTimeout(resolve, 2);
+        })
+        //console.log("received from node: ", new TextDecoder().decode(Buffer.from(particle.data)))
+        //this.prevData = this.state.data;
         this.state.data = particle.data;
     }
 
@@ -148,6 +152,9 @@ relay peer id: ${this.relayPeerId}
         do {
             const cbResults = await this.execCallbacks(callRequestsToExec);
 
+            //console.log("---------------------")
+            //console.log("prev data: ", new TextDecoder().decode(Buffer.from(this.prevData)))
+            //console.log("data: ", new TextDecoder().decode(Buffer.from(this.state.data)))
             interpreterResult = interpreter.invoke(
                 this.state.script,
                 this.prevData,
@@ -158,11 +165,16 @@ relay peer id: ${this.relayPeerId}
                 },
                 cbResults,
             );
+            //console.log("new data: ", new TextDecoder().decode(Buffer.from(interpreterResult.data)))
+            //console.log("---------------------")
 
-            this.prevData = this.state.data;
-            this.state.data = interpreterResult.data;
+            this.prevData = interpreterResult.data;
+            this.state.data = Buffer.from([]);
             callRequestsToExec = interpreterResult.callRequests;
         } while (callRequestsToExec.length > 0);
+        //console.log("finished loop")
+
+        this.state.data = this.prevData;
 
         log.debug('inner interpreter outcome:', {
             particleId: this.getParticle()?.id,
