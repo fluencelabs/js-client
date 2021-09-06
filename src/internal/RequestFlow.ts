@@ -131,6 +131,7 @@ relay peer id: ${this.relayPeerId}
 
     receiveUpdate(particle: Particle) {
         this.state.data = particle.data;
+        log.debug('Received update');
     }
 
     async sendIntoConnection(connection: FluenceConnection): Promise<void> {
@@ -145,6 +146,8 @@ relay peer id: ${this.relayPeerId}
     async runInterpreter(interpreter: AirInterpreter, selfPeerId: string) {
         let callRequestsToExec: Array<[number, CallRequest]> = [];
         let interpreterResult: InterpreterResult;
+        log.debug(`Processing particle. id=${this.state?.id}`);
+        log.debug(this.state.script);
         do {
             const cbResults = await this.execCallbacks(callRequestsToExec);
 
@@ -162,22 +165,17 @@ relay peer id: ${this.relayPeerId}
                 cbResults,
             );
             log.debug('new data: ', ParticleDataToString(interpreterResult.data));
+            log.debug(`ret code=${interpreterResult.retCode}, error message=${interpreterResult.errorMessage}`);
             log.debug('---------------------');
 
             this.prevData = interpreterResult.data;
             this.state.data = Buffer.from([]);
             callRequestsToExec = interpreterResult.callRequests;
         } while (callRequestsToExec.length > 0);
+        log.debug('next peer ids:', interpreterResult.nextPeerPks);
         log.debug('Finished particle processing loop');
 
         this.state.data = this.prevData;
-
-        log.debug('inner interpreter outcome:', {
-            particleId: this.getParticle()?.id,
-            retCode: interpreterResult.retCode,
-            errorMessage: interpreterResult.errorMessage,
-            next_peer_pks: interpreterResult.nextPeerPks,
-        });
 
         if (interpreterResult.retCode !== 0) {
             this.raiseError(
