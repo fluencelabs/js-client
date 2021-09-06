@@ -5,6 +5,7 @@ import { CallServiceData, CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, logParticle } from './particle';
+import { ParticleDataToString } from './utils';
 
 export const DEFAULT_TTL = 7000;
 
@@ -128,12 +129,7 @@ relay peer id: ${this.relayPeerId}
         this.timeoutHandle = setTimeout(this.raiseTimeout.bind(this), particle.ttl);
     }
 
-    async receiveUpdate(particle: Particle) {
-        await new Promise(resolve => {
-            setTimeout(resolve, 2);
-        })
-        //console.log("received from node: ", new TextDecoder().decode(Buffer.from(particle.data)))
-        //this.prevData = this.state.data;
+    receiveUpdate(particle: Particle) {
         this.state.data = particle.data;
     }
 
@@ -152,9 +148,9 @@ relay peer id: ${this.relayPeerId}
         do {
             const cbResults = await this.execCallbacks(callRequestsToExec);
 
-            //console.log("---------------------")
-            //console.log("prev data: ", new TextDecoder().decode(Buffer.from(this.prevData)))
-            //console.log("data: ", new TextDecoder().decode(Buffer.from(this.state.data)))
+            log.debug('---------------------');
+            log.debug('prev data: ', ParticleDataToString(this.prevData));
+            log.debug('data: ', ParticleDataToString(this.state.data));
             interpreterResult = interpreter.invoke(
                 this.state.script,
                 this.prevData,
@@ -165,14 +161,14 @@ relay peer id: ${this.relayPeerId}
                 },
                 cbResults,
             );
-            //console.log("new data: ", new TextDecoder().decode(Buffer.from(interpreterResult.data)))
-            //console.log("---------------------")
+            log.debug('new data: ', ParticleDataToString(interpreterResult.data));
+            log.debug('---------------------');
 
             this.prevData = interpreterResult.data;
             this.state.data = Buffer.from([]);
             callRequestsToExec = interpreterResult.callRequests;
         } while (callRequestsToExec.length > 0);
-        //console.log("finished loop")
+        log.debug('Finished particle processing loop');
 
         this.state.data = this.prevData;
 

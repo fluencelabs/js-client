@@ -16,8 +16,7 @@ describe('Typescript usage suite', () => {
 
     it('should make a call through network', async () => {
         // arrange
-        await peer.init({ connectTo: nodes[0] })    ;
-        console.log(peer.connectionInfo.selfPeerId);
+        await peer.init({ connectTo: nodes[0] });
 
         // act
         const [request, promise] = new RequestFlowBuilder()
@@ -30,7 +29,7 @@ describe('Typescript usage suite', () => {
             .buildAsFetch<[string]>('callback', 'callback');
         await peer.initiateFlow(request);
         console.log(request.getParticle().script);
-        
+
         // assert
         const [result] = await promise;
         expect(result).toBe('hello world!');

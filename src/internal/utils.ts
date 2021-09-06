@@ -66,3 +66,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         return false;
     }
 };
+
+export const ParticleDataToString = (data: Uint8Array): string => {
+    return new TextDecoder().decode(Buffer.from(data));
+};
