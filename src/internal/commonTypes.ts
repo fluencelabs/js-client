@@ -14,4 +14,7 @@
  * limitations under the License.
  */
 
+/**
+ * Peer ID's id as a base58 string (multihash/CIDv0).
+ */
 export type PeerIdB58 = string;

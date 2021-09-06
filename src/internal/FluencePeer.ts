@@ -12,30 +12,91 @@ import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
 
+/**
+ * Node of the Fluence detwork specified as a pair of node's multiaddr and it's peer id
+ */
 type Node = {
-    peerId: string;
+    peerId: PeerIdB58;
     multiaddr: string;
 };
 
+/**
+ * Represents all the possible types which can used to specify the connection point. Can be in the form of:
+ * * string - multiaddr in string format
+ * * Multiaddr - multiaddr object, @see https://github.com/multiformats/js-multiaddr
+ * * Node - node structure, @see Node
+ */
 export type ConnectionSpec = string | MA | Node;
 
+/**
+ * Enum representing the log level used in Aqua VM.
+ * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
+ */
 export type AvmLoglevel = LogLevel;
 
-export interface InitOptions {
+/**
+ * Configuration used when initiating Fluence Peer
+ */
+export interface PeerConfig {
+    /**
+     * Node in Fluence network to connect to.
+     * If not specified the will work locally and would not be able to send or receive particles.
+     */
     connectTo?: ConnectionSpec | Array<ConnectionSpec>;
+
     avmLogLevel?: AvmLoglevel;
-    peerIdSK?: string;
-    checkConnectionTTLMs?: number;
+
+    /**
+     * Specify the peer id to be used to identify the Fluence Peer .
+     * Specified either as PeerId structure or as seed string
+     * Will be generated randomly if not specified
+     */
+    peerId?: string;
+
+    /**
+     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+     * The options allows to specify the timeout for that message in milliseconds.
+     * If not specified the default timeout will be used
+     */
+    checkConnectionTimoutMs?: number;
+
+    /**
+     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+     * If set to true, the ping-like message will be skipped
+     * Default: false
+     */
     skipCheckConnection?: boolean;
+
+    /**
+     * The dialing timeout in milliseconds
+     */
     dialTimeoutMs?: number;
 }
 
+/**
+ * Information about Fluence Peer connection
+ */
 interface ConnectionInfo {
+    /**
+     * Is the peer connected to network or not
+     */
     isConnected: Boolean;
+
+    /**
+     * The Peer's identification in the Fluence network
+     */
     selfPeerId: PeerIdB58;
+
+    /**
+     * The list of relays's peer ids to which the peer is connected to
+     */
     connectedRelays: Array<PeerIdB58>;
 }
 
+/**
+ * This class implements the Fluence protocol for javascript-based environments.
+ * It provides all the necessary features to communicate with Fluence network
+ */
 export class FluencePeer {
     // TODO:: implement api alongside with multi-relay implementation
     //async addConnection(relays: Array<ConnectionSpec>): Promise<void> {}
@@ -43,6 +104,15 @@ export class FluencePeer {
     // TODO:: implement api alongside with multi-relay implementation
     //async removeConnections(relays: Array<ConnectionSpec>): Promise<void> {}
 
+    /**
+     * Creates a new Fluence Peer instance. Does not start the workflows.
+     * In order to work with the Peer it has to be initialized with the `init` method
+     */
+    constructor() {}
+
+    /**
+     * Get the information about Fluence Peer connections
+     */
     get connectionInfo(): ConnectionInfo {
         const isConnected = this._connection?.isConnected();
         return {
@@ -52,9 +122,14 @@ export class FluencePeer {
         };
     }
 
-    async init(options?: InitOptions): Promise<void> {
+    /**
+     * Initializes the peer: starts the Aqua VM, initializes the default call service handlers
+     * and (optionally) connect to the Fluence network
+     * @param config - object specifying peer configuration
+     */
+    async init(config?: PeerConfig): Promise<void> {
         let peerId;
-        const peerIdOrSeed = options?.peerIdSK;
+        const peerIdOrSeed = config?.peerId;
         if (!peerIdOrSeed) {
             peerId = await randomPeerId();
         } else if (isPeerId(peerIdOrSeed)) {
@@ -66,16 +141,16 @@ export class FluencePeer {
         }
         this._selfPeerIdFull = peerId;
 
-        await this._initAirInterpreter(options?.avmLogLevel || 'off');
+        await this._initAirInterpreter(config?.avmLogLevel || 'off');
 
         this.callServiceHandler = makeDefaultClientHandler();
 
-        if (options?.connectTo) {
+        if (config?.connectTo) {
             let connectTo;
-            if (Array.isArray(options!.connectTo)) {
-                connectTo = options!.connectTo;
+            if (Array.isArray(config!.connectTo)) {
+                connectTo = config!.connectTo;
             } else {
-                connectTo = [options!.connectTo];
+                connectTo = [config!.connectTo];
             }
 
             let theAddress: ConnectionSpec;
@@ -90,11 +165,19 @@ export class FluencePeer {
         }
     }
 
+    /**
+     * Uninitializes the peer: stops all the underltying workflows, stops the Aqua VM
+     * and disconnects from the Fluence network
+     */
     async uninit() {
         await this._disconnect();
         this.callServiceHandler = null;
     }
 
+    /**
+     * Get the default Fluence peer instance. The default peer is used automatically in all the functions generated
+     * by the Aqua compiler if not specified otherwise.
+     */
     static get default(): FluencePeer {
         return this._default;
     }

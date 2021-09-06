@@ -16,7 +16,6 @@
 
 import log, { LogLevelDesc } from 'loglevel';
 
-export { SecurityTetraplet } from '@fluencelabs/avm';
 export { peerIdFromEd25519SK, peerIdToEd25519SK, randomPeerId } from './internal/peerIdUtils';
 export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
 export { PeerIdB58 } from './internal/commonTypes';
