@@ -38,11 +38,13 @@ describe('Compiler support infrastructure tests', () => {
                 service_id: '',
             },
         });
+
+        await FluencePeer.default.uninit();
     });
 
     it('Compiled code for service should work', async () => {
         // arrange
-        FluencePeer.default.init();
+        await FluencePeer.default.init();
 
         // act
         const helloPromise = new Promise((resolve) => {
@@ -74,6 +76,8 @@ describe('Compiler support infrastructure tests', () => {
         // assert
         expect(await helloPromise).toBe('hello world!');
         expect(await getNumberPromise).toStrictEqual([42]);
+
+        await FluencePeer.default.uninit();
     });
 
     it('Compiled code for function should work2', async () => {
@@ -112,6 +116,8 @@ describe('Compiler support infrastructure tests', () => {
                 service_id: '',
             },
         });
+
+        await peer.uninit();
     });
 
     it('Compiled code for service should work2', async () => {
@@ -149,5 +155,7 @@ describe('Compiler support infrastructure tests', () => {
         // assert
         expect(await helloPromise).toBe('hello world!');
         expect(await getNumberPromise).toStrictEqual([42]);
+
+        await peer.uninit();
     });
 });
