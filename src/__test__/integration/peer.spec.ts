@@ -27,7 +27,7 @@ describe('Typescript usage suite', () => {
     )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await peer.initiateFlow(request);
+        await peer.internals.initiateFlow(request);
         console.log(request.getParticle().script);
 
         // assert
@@ -59,7 +59,7 @@ describe('Typescript usage suite', () => {
         await peer2.init({ connectTo: nodes[0] });
 
         let resMakingPromise = new Promise((resolve) => {
-            peer2.callServiceHandler.onEvent('test', 'test', async (args, _) => {
+            peer2.internals.callServiceHandler.onEvent('test', 'test', async (args, _) => {
                 resolve([...args]);
             });
         });
@@ -77,7 +77,7 @@ describe('Typescript usage suite', () => {
         data.set('c', 'some c');
         data.set('d', 'some d');
 
-        await peer1.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
+        await peer1.internals.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
 
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
@@ -199,7 +199,7 @@ describe('Typescript usage suite', () => {
 
         // act
         await peer.init({ connectTo: nodes[0] });
-        await peer.initiateFlow(request);
+        await peer.internals.initiateFlow(request);
 
         // assert
         await expect(promise).rejects.toMatchObject({
@@ -226,7 +226,7 @@ describe('Typescript usage suite', () => {
 
         // act
         await peer.init();
-        await peer.initiateFlow(request);
+        await peer.internals.initiateFlow(request);
 
         // assert
         await expect(promise).rejects.toMatch('service failed internally');
@@ -264,7 +264,7 @@ describe('Typescript usage suite', () => {
             .buildAsFetch<any[]>('return', 'return');
 
         // act
-        await peer.initiateFlow(request);
+        await peer.internals.initiateFlow(request);
         const [res] = await promise;
 
         // assert
@@ -280,7 +280,7 @@ describe('Typescript usage suite', () => {
             .withRawScript('(call "incorrect_peer_id" ("any" "service") [])')
             .buildWithErrorHandling();
 
-        await peer.initiateFlow(req);
+        await peer.internals.initiateFlow(req);
 
         // assert
         await expect(promise).rejects.toMatch(
@@ -301,6 +301,6 @@ async function callIdentifyOnInitPeerId(peer: FluencePeer): Promise<string[]> {
             .handleScriptError(reject)
             .build();
     });
-    await peer.initiateFlow(request);
+    await peer.internals.initiateFlow(request);
     return promise;
 }

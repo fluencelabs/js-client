@@ -77,7 +77,7 @@ export function registerHelloWorld(...args) {
         service = args[2];
     }
 
-    peer.callServiceHandler.use(async (req, resp, next) => {
+    peer.internals.callServiceHandler.use(async (req, resp, next) => {
         if (req.serviceId !== serviceId) {
             await next();
             return;
@@ -189,6 +189,6 @@ export async function callMeBack(...args) {
         }
         request = r.build();
     });
-    await peer.initiateFlow(request!);
+    await peer.internals.initiateFlow(request!);
     return Promise.race([promise, Promise.resolve()]);
 }

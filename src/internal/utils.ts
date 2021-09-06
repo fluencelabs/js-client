@@ -53,7 +53,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         })
         .buildAsFetch<[string]>(callbackService, callbackFn);
 
-    await peer.initiateFlow(request);
+    await peer.internals.initiateFlow(request);
 
     try {
         const [result] = await promise;

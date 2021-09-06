@@ -143,7 +143,7 @@ export class FluencePeer {
 
         await this._initAirInterpreter(config?.avmLogLevel || 'off');
 
-        this.callServiceHandler = makeDefaultClientHandler();
+        this._callServiceHandler = makeDefaultClientHandler();
 
         if (config?.connectTo) {
             let connectTo;
@@ -171,7 +171,7 @@ export class FluencePeer {
      */
     async uninit() {
         await this._disconnect();
-        this.callServiceHandler = null;
+        this._callServiceHandler = null;
     }
 
     /**
@@ -184,7 +184,19 @@ export class FluencePeer {
 
     // internal api
 
-    async initiateFlow(request: RequestFlow): Promise<void> {
+    /**
+     * Does not intended to be used manually. Subject to change
+     */
+    get internals() {
+        return {
+            initiateFlow: this._initiateFlow.bind(this),
+            callServiceHandler: this._callServiceHandler,
+        };
+    }
+
+    // private
+
+    private async _initiateFlow(request: RequestFlow): Promise<void> {
         // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
         request.handler.on(loadVariablesService, loadRelayFn, async () => {
             return this._relayPeerId || '';
@@ -192,15 +204,13 @@ export class FluencePeer {
         await request.initState(this._selfPeerIdFull);
 
         logParticle(log.debug, 'executing local particle', request.getParticle());
-        request.handler.combineWith(this.callServiceHandler);
+        request.handler.combineWith(this._callServiceHandler);
         this._requests.set(request.id, request);
 
         await this._processRequest(request);
     }
 
-    callServiceHandler: CallServiceHandler;
-
-    // private
+    private _callServiceHandler: CallServiceHandler;
 
     private static _default: FluencePeer = new FluencePeer();
 
@@ -263,7 +273,7 @@ export class FluencePeer {
             await request.receiveUpdate(particle);
         } else {
             request = RequestFlow.createExternal(particle);
-            request.handler.combineWith(this.callServiceHandler);
+            request.handler.combineWith(this._callServiceHandler);
         }
         this._requests.set(request.id, request);
 

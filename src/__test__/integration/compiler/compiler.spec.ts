@@ -71,7 +71,7 @@ describe('Compiler support infrastructure tests', () => {
                 )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await FluencePeer.default.initiateFlow(request);
+        await FluencePeer.default.internals.initiateFlow(request);
 
         // assert
         expect(await helloPromise).toBe('hello world!');
@@ -150,7 +150,7 @@ describe('Compiler support infrastructure tests', () => {
                 )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await peer.initiateFlow(request);
+        await peer.internals.initiateFlow(request);
 
         // assert
         expect(await helloPromise).toBe('hello world!');
