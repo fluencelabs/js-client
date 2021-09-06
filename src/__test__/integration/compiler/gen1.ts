@@ -25,32 +25,15 @@ func callMeBack(callback: string, i32 -> ()):
 
 // Services
 
-export function registerHelloWorld(service: {
-    getNumber: (callParams: CallParams<null>) => Promise<number>;
-    sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
-}): void;
-export function registerHelloWorld(
-    serviceId: string,
-    service: {
-        getNumber: (callParams: CallParams<null>) => Promise<number>;
-        sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
-    },
-): void;
-export function registerHelloWorld(
-    peer: FluencePeer,
-    service: {
-        getNumber: (callParams: CallParams<null>) => Promise<number>;
-        sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
-    },
-): void;
-export function registerHelloWorld(
-    peer: FluencePeer,
-    serviceId: string,
-    service: {
-        getNumber: (callParams: CallParams<null>) => Promise<number>;
-        sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void>;
-    },
-): void;
+export interface HelloWorldDef {
+    getNumber: (callParams: CallParams<null>) => Promise<number> | number;
+    sayHello: (s: string, callParams: CallParams<'s'>) => Promise<void> | void;
+}
+
+export function registerHelloWorld(service: HelloWorldDef): void;
+export function registerHelloWorld(serviceId: string, service: HelloWorldDef): void;
+export function registerHelloWorld(peer: FluencePeer, service: HelloWorldDef): void;
+export function registerHelloWorld(peer: FluencePeer, serviceId: string, service: HelloWorldDef): void;
 export function registerHelloWorld(...args) {
     let peer: FluencePeer;
     let serviceId;
@@ -111,12 +94,12 @@ export function registerHelloWorld(...args) {
 // Functions
 
 export async function callMeBack(
-    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => Promise<void>,
+    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => Promise<void> | void,
     config?: { ttl?: number },
 ): Promise<void>;
 export async function callMeBack(
     peer: FluencePeer,
-    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => Promise<void>,
+    callback: (arg0: string, arg1: number, callParams: CallParams<'arg0' | 'arg1'>) => Promise<void> | void,
     config?: { ttl?: number },
 ): Promise<void>;
 export async function callMeBack(...args) {
@@ -154,7 +137,7 @@ export async function callMeBack(...args) {
             )
             .configHandler((h) => {
                 h.on('getDataSrv', '-relay-', async () => {
-                    return peer.connectionInfo.connectedRelays[0];
+                    return peer.connectionInfo.connectedRelays[0] || null;
                 });
 
                 h.use(async (req, resp, next) => {
