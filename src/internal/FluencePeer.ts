@@ -1,6 +1,6 @@
 import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
-import { Multiaddr as MA } from 'multiaddr';
+import { Multiaddr } from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
@@ -26,7 +26,7 @@ type Node = {
  * * Multiaddr - multiaddr object, @see https://github.com/multiformats/js-multiaddr
  * * Node - node structure, @see Node
  */
-export type ConnectionSpec = string | MA | Node;
+export type ConnectionSpec = string | Multiaddr | Node;
 
 /**
  * Enum representing the log level used in Aqua VM.
@@ -153,12 +153,12 @@ export class FluencePeer {
                 connectTo = [config!.connectTo];
             }
 
-            let theAddress: ConnectionSpec;
+            let theAddress: Multiaddr;
             let fromNode = (connectTo[0] as any).multiaddr;
             if (fromNode) {
-                theAddress = new MA(fromNode);
+                theAddress = new Multiaddr(fromNode);
             } else {
-                theAddress = new MA(connectTo[0] as string);
+                theAddress = new Multiaddr(connectTo[0] as string);
             }
 
             await this._connect(theAddress);
@@ -226,7 +226,7 @@ export class FluencePeer {
         this._interpreter = await createInterpreter(this._interpreterCallback.bind(this), this._selfPeerId, logLevel);
     }
 
-    private async _connect(multiaddr: MA, options?: FluenceConnectionOptions): Promise<void> {
+    private async _connect(multiaddr: Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
         const nodePeerId = multiaddr.getPeerId();
         if (!nodePeerId) {
             throw Error("'multiaddr' did not contain a valid peer id");
@@ -305,7 +305,7 @@ export class FluencePeer {
         const request = this._requests.get(this._currentRequestId);
         const particle = request.getParticle();
         if (particle === null) {
-            throw new Error("particle can't be null here");
+            throw new Error("particle can't be null here, current request id: " + this._currentRequestId);
         }
         const res = request.handler.execute({
             serviceId,
@@ -323,7 +323,7 @@ export class FluencePeer {
 
         if (res.result === undefined) {
             log.error(
-                `Call to serviceId=${serviceId} fnName=${fnName} unexpectedly returned undefined result, falling back to null`,
+                `Call to serviceId=${serviceId} fnName=${fnName} unexpectedly returned undefined result, falling back to null. Particle id=${request.id}`,
             );
             res.result = null;
         }
@@ -341,7 +341,7 @@ export class FluencePeer {
                     this._requests.delete(key);
                 }
             }
-        }, 5000);
+        }, 5000); // TODO: make configurable
     }
 
     private _clearWathcDog() {

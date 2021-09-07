@@ -8,6 +8,7 @@ export const errorHandler: Middleware = (req: CallServiceData, resp: CallService
         next();
     } catch (e) {
         resp.retCode = ResultCodes.exceptionInHandler;
-        resp.result = e.toString();
+        resp.result = `Handler failed. fnName=${req.fnName} serviceId=${req.serviceId} error: ${e.toString()}`;
     }
 };
+1;

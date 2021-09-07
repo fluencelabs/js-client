@@ -150,7 +150,6 @@ relay peer id: ${this.relayPeerId}
         // TODO:: keep the history of particle data mb?
         this.prevData = this.state.data;
         this.state.data = particle.data;
-        log.debug('Received update');
     }
 
     async sendIntoConnection(connection: FluenceConnection): Promise<void> {
