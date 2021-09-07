@@ -3,7 +3,7 @@ import log from 'loglevel';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { RequestFlowBuilder } from './RequestFlowBuilder';
 
-export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
+export const createInterpreter = (handler, peerId, logLevel: AvmLoglevel): Promise<AirInterpreter> => {
     const logFn = (level: AvmLogLevel, msg: string) => {
         switch (level) {
             case 'error':
@@ -24,7 +24,7 @@ export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter
                 break;
         }
     };
-    return AirInterpreter.create(logLevel, logFn);
+    return AirInterpreter.create(handler, peerId, logLevel, logFn);
 };
 
 /**

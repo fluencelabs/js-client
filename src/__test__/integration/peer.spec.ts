@@ -59,8 +59,9 @@ describe('Typescript usage suite', () => {
         await peer2.init({ connectTo: nodes[0] });
 
         let resMakingPromise = new Promise((resolve) => {
-            peer2.internals.callServiceHandler.onEvent('test', 'test', async (args, _) => {
+            peer2.internals.callServiceHandler.onEvent('test', 'test', (args, _) => {
                 resolve([...args]);
+                return {};
             });
         });
 
@@ -217,7 +218,7 @@ describe('Typescript usage suite', () => {
             `,
             )
             .configHandler((h) => {
-                h.use(async (req, res, _) => {
+                h.use((req, res, _) => {
                     res.retCode = 1;
                     res.result = 'service failed internally';
                 });

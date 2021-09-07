@@ -1,4 +1,4 @@
-import { AirInterpreter, CallServiceResult, InterpreterResult, LogLevel, SecurityTetraplet } from '@fluencelabs/avm';
+import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { Multiaddr as MA } from 'multiaddr';
 import PeerId, { isPeerId } from 'peer-id';
@@ -198,7 +198,7 @@ export class FluencePeer {
 
     private async _initiateFlow(request: RequestFlow): Promise<void> {
         // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
-        request.handler.on(loadVariablesService, loadRelayFn, async () => {
+        request.handler.on(loadVariablesService, loadRelayFn, () => {
             return this._relayPeerId || '';
         });
         await request.initState(this._selfPeerIdFull);
@@ -207,7 +207,7 @@ export class FluencePeer {
         request.handler.combineWith(this._callServiceHandler);
         this._requests.set(request.id, request);
 
-        await this._processRequest(request);
+        this._processRequest(request);
     }
 
     private _callServiceHandler: CallServiceHandler;
@@ -216,13 +216,14 @@ export class FluencePeer {
 
     private _selfPeerIdFull: PeerId;
     private _requests: Map<string, RequestFlow> = new Map();
+    private _currentRequestId: string | null = null;
     private _watchDog;
 
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
 
     private async _initAirInterpreter(logLevel: AvmLoglevel): Promise<void> {
-        this._interpreter = await createInterpreter(logLevel);
+        this._interpreter = await createInterpreter(this._interpreterCallback.bind(this), this._selfPeerId, logLevel);
     }
 
     private async _connect(multiaddr: MA, options?: FluenceConnectionOptions): Promise<void> {
@@ -280,13 +281,58 @@ export class FluencePeer {
         await this._processRequest(request);
     }
 
-    private async _processRequest(request: RequestFlow) {
+    private _processRequest(request: RequestFlow) {
         try {
-            await request.execute(this._interpreter, this._connection, this._selfPeerId, this._relayPeerId);
+            this._currentRequestId = request.id;
+            request.execute(this._interpreter, this._connection, this._relayPeerId);
         } catch (err) {
             log.error('particle processing failed: ' + err);
+        } finally {
+            this._currentRequestId = null;
         }
     }
+
+    private _interpreterCallback: ParticleHandler = (
+        serviceId: string,
+        fnName: string,
+        args: any[],
+        tetraplets: SecurityTetraplet[][],
+    ): CallServiceResult => {
+        if (this._currentRequestId === null) {
+            throw Error('current request can`t be null here');
+        }
+
+        const request = this._requests.get(this._currentRequestId);
+        const particle = request.getParticle();
+        if (particle === null) {
+            throw new Error("particle can't be null here");
+        }
+        const res = request.handler.execute({
+            serviceId,
+            fnName,
+            args,
+            tetraplets,
+            particleContext: {
+                particleId: request.id,
+                initPeerId: particle.init_peer_id,
+                timeStamp: particle.timestamp,
+                ttl: particle.ttl,
+                signature: particle.signature,
+            },
+        });
+
+        if (res.result === undefined) {
+            log.error(
+                `Call to serviceId=${serviceId} fnName=${fnName} unexpectedly returned undefined result, falling back to null`,
+            );
+            res.result = null;
+        }
+
+        return {
+            ret_code: res.retCode,
+            result: JSON.stringify(res.result),
+        };
+    };
 
     private _initWatchDog() {
         this._watchDog = setInterval(() => {

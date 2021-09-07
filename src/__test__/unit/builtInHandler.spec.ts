@@ -34,7 +34,7 @@ describe('Tests for default handler', () => {
 `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
-        async ({ fnName, args, retCode, result }) => {
+        ({ fnName, args, retCode, result }) => {
             // arrange
             const req: CallServiceData = {
                 serviceId: 'op',
@@ -51,13 +51,14 @@ describe('Tests for default handler', () => {
             };
 
             // act
-            const res = await makeDefaultClientHandler().execute(req);
+            const res = makeDefaultClientHandler().execute(req);
 
             // assert
             expect(res).toMatchObject({
                 retCode: retCode,
                 result: result,
             });
+            const handler = makeDefaultClientHandler();
         },
     );
 });

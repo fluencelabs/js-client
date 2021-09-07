@@ -9,7 +9,7 @@ describe('Compiler support infrastructure tests', () => {
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(async (arg0, arg1, params) => {
+            callMeBack((arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -49,11 +49,11 @@ describe('Compiler support infrastructure tests', () => {
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld('hello_world', {
-                sayHello: async (s, params) => {
+                sayHello: (s, params) => {
                     const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: async (params) => {
+                getNumber: (params) => {
                     // ctx.tetraplets should be {}
                     return 42;
                 },
@@ -80,14 +80,14 @@ describe('Compiler support infrastructure tests', () => {
         await FluencePeer.default.uninit();
     });
 
-    it('Compiled code for function should work2', async () => {
+    it('Compiled code for function should work with another peer', async () => {
         // arrange
         const peer = new FluencePeer();
         await peer.init();
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(peer, async (arg0, arg1, params) => {
+            callMeBack(peer, (arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -120,7 +120,7 @@ describe('Compiler support infrastructure tests', () => {
         await peer.uninit();
     });
 
-    it('Compiled code for service should work2', async () => {
+    it('Compiled code for service should work another peer', async () => {
         // arrange
         const peer = new FluencePeer();
         await peer.init();
@@ -128,11 +128,11 @@ describe('Compiler support infrastructure tests', () => {
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld(peer, 'hello_world', {
-                sayHello: async (s, params) => {
+                sayHello: (s, params) => {
                     const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: async (params) => {
+                getNumber: (params) => {
                     // ctx.tetraplets should be {}
                     return 42;
                 },
