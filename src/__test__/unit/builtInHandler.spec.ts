@@ -44,7 +44,7 @@ describe('Tests for default handler', () => {
                 particleContext: {
                     particleId: 'some',
                     initPeerId: 'init peer id',
-                    timeStamp: 595951200,
+                    timestamp: 595951200,
                     ttl: 595961200,
                     signature: 'sig',
                 },

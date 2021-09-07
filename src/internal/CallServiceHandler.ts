@@ -16,7 +16,7 @@ interface ParticleContext {
      */
     particleId: string;
     initPeerId: PeerIdB58;
-    timeStamp: number;
+    timestamp: number;
     ttl: number;
     signature: string;
 }

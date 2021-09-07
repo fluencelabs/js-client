@@ -53,7 +53,7 @@ export interface PeerConfig {
      * The options allows to specify the timeout for that message in milliseconds.
      * If not specified the default timeout will be used
      */
-    checkConnectionTimoutMs?: number;
+    checkConnectionTimeoutMs?: number;
 
     /**
      * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
@@ -128,19 +128,12 @@ export class FluencePeer {
         this._callServiceHandler = makeDefaultClientHandler();
 
         if (config?.connectTo) {
-            let connectTo;
-            if (Array.isArray(config!.connectTo)) {
-                connectTo = config!.connectTo;
-            } else {
-                connectTo = [config!.connectTo];
-            }
-
             let theAddress: Multiaddr;
-            let fromNode = (connectTo[0] as any).multiaddr;
+            let fromNode = (config.connectTo as any).multiaddr;
             if (fromNode) {
                 theAddress = new Multiaddr(fromNode);
             } else {
-                theAddress = new Multiaddr(connectTo[0] as string);
+                theAddress = new Multiaddr(config.connectTo as string);
             }
 
             await this._connect(theAddress);
@@ -199,7 +192,7 @@ export class FluencePeer {
     private _keyPair: KeyPair;
     private _requests: Map<string, RequestFlow> = new Map();
     private _currentRequestId: string | null = null;
-    private _watchDog;
+    private _watchdog;
 
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
@@ -249,7 +242,7 @@ export class FluencePeer {
     }
 
     private async _executeIncomingParticle(particle: Particle) {
-        logParticle(log.debug, 'external particle received', particle);
+        logParticle(log.debug, 'incoming particle received', particle);
 
         let request = this._requests.get(particle.id);
         if (request) {
@@ -297,7 +290,7 @@ export class FluencePeer {
             particleContext: {
                 particleId: request.id,
                 initPeerId: particle.init_peer_id,
-                timeStamp: particle.timestamp,
+                timestamp: particle.timestamp,
                 ttl: particle.ttl,
                 signature: particle.signature,
             },
@@ -317,7 +310,7 @@ export class FluencePeer {
     };
 
     private _initWatchDog() {
-        this._watchDog = setInterval(() => {
+        this._watchdog = setInterval(() => {
             for (let key in this._requests.keys) {
                 if (this._requests.get(key).hasExpired()) {
                     this._requests.delete(key);
@@ -327,6 +320,6 @@ export class FluencePeer {
     }
 
     private _clearWathcDog() {
-        clearInterval(this._watchDog);
+        clearInterval(this._watchdog);
     }
 }

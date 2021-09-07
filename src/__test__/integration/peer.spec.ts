@@ -177,7 +177,7 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr, checkConnectionTimoutMs: 1000 });
+            await peer.init({ connectTo: addr, checkConnectionTimeoutMs: 1000 });
             const isConnected = await checkConnection(peer);
 
             // assert
