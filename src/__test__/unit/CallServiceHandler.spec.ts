@@ -1,7 +1,7 @@
-import { CallServiceHandler, ResultCodes } from '../../internal/CallServiceHandler';
+import { CallServiceData, CallServiceHandler, ResultCodes } from '../../internal/CallServiceHandler';
 import { errorHandler } from '../../internal/defaultMiddlewares';
 
-const req = () => ({
+const req = (): CallServiceData => ({
     serviceId: 'service',
     fnName: 'fn name',
     args: [],
@@ -9,7 +9,7 @@ const req = () => ({
     particleContext: {
         particleId: 'id',
         initPeerId: 'init peer id',
-        timeStamp: 595951200,
+        timestamp: 595951200,
         ttl: 595961200,
         signature: 'sig',
     },
