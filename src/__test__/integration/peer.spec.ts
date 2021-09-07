@@ -67,7 +67,7 @@ describe('Typescript usage suite', () => {
 
         let script = `
             (seq
-                (call "${peer1.connectionInfo.connectedRelays[0]}" ("op" "identity") [])
+                (call "${peer1.connectionInfo.connectedRelay}" ("op" "identity") [])
                 (call "${peer2.connectionInfo.selfPeerId}" ("test" "test") [a b c d])
             )
         `;

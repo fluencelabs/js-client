@@ -1,7 +1,7 @@
 import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { Multiaddr } from 'multiaddr';
-import PeerId, { isPeerId } from 'peer-id';
+import PeerId from 'peer-id';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
@@ -21,14 +21,6 @@ type Node = {
 };
 
 /**
- * Represents all the possible types which can used to specify the connection point. Can be in the form of:
- * * string - multiaddr in string format
- * * Multiaddr - multiaddr object, @see https://github.com/multiformats/js-multiaddr
- * * Node - node structure, @see Node
- */
-export type ConnectionSpec = string | Multiaddr | Node;
-
-/**
  * Enum representing the log level used in Aqua VM.
  * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
  */
@@ -40,9 +32,13 @@ export type AvmLoglevel = LogLevel;
 export interface PeerConfig {
     /**
      * Node in Fluence network to connect to.
+     * Can be in the form of:
+     * - string: multiaddr in string format
+     * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
+     * - Node: node structure, @see Node
      * If not specified the will work locally and would not be able to send or receive particles.
      */
-    connectTo?: ConnectionSpec | Array<ConnectionSpec>;
+    connectTo?: string | Multiaddr | Node;
 
     avmLogLevel?: AvmLoglevel;
 
@@ -87,9 +83,9 @@ interface ConnectionInfo {
     selfPeerId: PeerIdB58;
 
     /**
-     * The list of relays's peer ids to which the peer is connected to
+     * The relays's peer id to which the peer is connected to
      */
-    connectedRelays: Array<PeerIdB58>;
+    connectedRelay: PeerIdB58 | null;
 }
 
 /**
@@ -97,12 +93,6 @@ interface ConnectionInfo {
  * It provides all the necessary features to communicate with Fluence network
  */
 export class FluencePeer {
-    // TODO:: implement api alongside with multi-relay implementation
-    //async addConnection(relays: Array<ConnectionSpec>): Promise<void> {}
-
-    // TODO:: implement api alongside with multi-relay implementation
-    //async removeConnections(relays: Array<ConnectionSpec>): Promise<void> {}
-
     /**
      * Creates a new Fluence Peer instance. Does not start the workflows.
      * In order to work with the Peer it has to be initialized with the `init` method
@@ -117,7 +107,7 @@ export class FluencePeer {
         return {
             isConnected: isConnected,
             selfPeerId: this._selfPeerId,
-            connectedRelays: this._relayPeerId ? [this._relayPeerId] : [],
+            connectedRelay: this._relayPeerId || null,
         };
     }
 

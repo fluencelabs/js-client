@@ -137,7 +137,7 @@ export function callMeBack(...args) {
             )
             .configHandler((h) => {
                 h.on('getDataSrv', '-relay-', () => {
-                    return peer.connectionInfo.connectedRelays[0] || null;
+                    return peer.connectionInfo.connectedRelay || null;
                 });
 
                 h.use((req, resp, next) => {
