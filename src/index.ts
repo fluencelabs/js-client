@@ -16,7 +16,7 @@
 
 import log, { LogLevelDesc } from 'loglevel';
 
-export { peerIdFromEd25519SK, peerIdToEd25519SK, randomPeerId } from './internal/peerIdUtils';
+export { KeyPair } from './internal/KeyPair';
 export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
 export { PeerIdB58, CallParams } from './internal/commonTypes';
 

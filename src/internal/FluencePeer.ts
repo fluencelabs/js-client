@@ -7,7 +7,7 @@ import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 import { logParticle, Particle } from './particle';
-import { randomPeerId, peerIdFromEd25519SK } from './peerIdUtils';
+import { KeyPair } from './KeyPair';
 import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
@@ -47,11 +47,10 @@ export interface PeerConfig {
     avmLogLevel?: AvmLoglevel;
 
     /**
-     * Specify the peer id to be used to identify the Fluence Peer .
-     * Specified either as PeerId structure or as seed string
+     * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
-    peerId?: string;
+    KeyPair?: KeyPair;
 
     /**
      * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
@@ -128,18 +127,11 @@ export class FluencePeer {
      * @param config - object specifying peer configuration
      */
     async init(config?: PeerConfig): Promise<void> {
-        let peerId;
-        const peerIdOrSeed = config?.peerId;
-        if (!peerIdOrSeed) {
-            peerId = await randomPeerId();
-        } else if (isPeerId(peerIdOrSeed)) {
-            // keep unchanged
-            peerId = peerIdOrSeed;
+        if (config?.KeyPair) {
+            this._keyPair = config!.KeyPair;
         } else {
-            // peerId is string, therefore seed
-            peerId = await peerIdFromEd25519SK(peerIdOrSeed);
+            this._keyPair = await KeyPair.randomEd25519();
         }
-        this._selfPeerIdFull = peerId;
 
         await this._initAirInterpreter(config?.avmLogLevel || 'off');
 
@@ -201,7 +193,7 @@ export class FluencePeer {
         request.handler.on(loadVariablesService, loadRelayFn, () => {
             return this._relayPeerId || '';
         });
-        await request.initState(this._selfPeerIdFull);
+        await request.initState(this._keyPair.Libp2pPeerId);
 
         logParticle(log.debug, 'executing local particle', request.getParticle());
         request.handler.combineWith(this._callServiceHandler);
@@ -214,7 +206,7 @@ export class FluencePeer {
 
     private static _default: FluencePeer = new FluencePeer();
 
-    private _selfPeerIdFull: PeerId;
+    private _keyPair: KeyPair;
     private _requests: Map<string, RequestFlow> = new Map();
     private _currentRequestId: string | null = null;
     private _watchDog;
@@ -240,7 +232,7 @@ export class FluencePeer {
         const connection = new FluenceConnection(
             multiaddr,
             node,
-            this._selfPeerIdFull,
+            this._keyPair.Libp2pPeerId,
             this._executeIncomingParticle.bind(this),
         );
         await connection.connect(options);
@@ -259,7 +251,7 @@ export class FluencePeer {
     }
 
     private get _selfPeerId(): PeerIdB58 {
-        return this._selfPeerIdFull.toB58String();
+        return this._keyPair.Libp2pPeerId.toB58String();
     }
 
     private get _relayPeerId(): PeerIdB58 | undefined {

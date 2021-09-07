@@ -1,4 +1,4 @@
-import { peerIdFromEd25519SK } from '../../internal/peerIdUtils';
+import { KeyPair } from '../../internal/KeyPair';
 import { RequestFlow } from '../../internal/RequestFlow';
 
 describe('Request flow tests', () => {
@@ -10,7 +10,7 @@ describe('Request flow tests', () => {
         Date.now = jest.fn(() => mockDate);
 
         const request = RequestFlow.createLocal('(null)', 10000);
-        const peerId = await peerIdFromEd25519SK(sk);
+        const peerId = await (await KeyPair.fromEd25519SK(sk)).Libp2pPeerId;
 
         // act
         await request.initState(peerId);
