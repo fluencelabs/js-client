@@ -18,7 +18,7 @@ import log, { LogLevelDesc } from 'loglevel';
 
 export { peerIdFromEd25519SK, peerIdToEd25519SK, randomPeerId } from './internal/peerIdUtils';
 export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
-export { PeerIdB58 } from './internal/commonTypes';
+export { PeerIdB58, CallParams } from './internal/commonTypes';
 
 export const setLogLevel = (level: LogLevelDesc) => {
     log.setLevel(level);
