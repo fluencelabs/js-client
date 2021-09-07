@@ -107,7 +107,7 @@ describe('Call service handler tests', () => {
         // assert
         expect(res).toMatchObject({
             retCode: ResultCodes.exceptionInHandler,
-            result: 'Error: some error',
+            result: 'Handler failed. fnName="fn name" serviceId="service" error: Error: some error',
         });
     });
 
