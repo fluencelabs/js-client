@@ -5,6 +5,7 @@ import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, genUUID, logParticle } from './particle';
+import { ParticleDataToString } from './utils';
 
 export const DEFAULT_TTL = 7000;
 

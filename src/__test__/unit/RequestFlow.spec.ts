@@ -1,16 +1,16 @@
-import { seedToPeerId } from '../../internal/peerIdUtils';
+import { KeyPair } from '../../internal/KeyPair';
 import { RequestFlow } from '../../internal/RequestFlow';
 
 describe('Request flow tests', () => {
     it('particle initiation should work', async () => {
         // arrange
         jest.useFakeTimers();
-        const seed = '4vzv3mg6cnjpEK24TXXLA3Ye7QrvKWPKqfbDvAKAyLK6';
+        const sk = 'z1x3cVXhk9nJKE1pZaX9KxccUBzxu3aGlaUjDdAB2oY=';
         const mockDate = new Date(Date.UTC(2021, 2, 14)).valueOf();
         Date.now = jest.fn(() => mockDate);
 
         const request = RequestFlow.createLocal('(null)', 10000);
-        const peerId = await seedToPeerId(seed);
+        const peerId = await (await KeyPair.fromEd25519SK(sk)).Libp2pPeerId;
 
         // act
         await request.initState(peerId);

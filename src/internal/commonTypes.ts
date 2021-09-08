@@ -14,4 +14,44 @@
  * limitations under the License.
  */
 
+import { SecurityTetraplet } from '@fluencelabs/avm';
+
+/**
+ * Peer ID's id as a base58 string (multihash/CIDv0).
+ */
 export type PeerIdB58 = string;
+
+/**
+ * Additional information about a service call
+ */
+export interface CallParams<ArgName extends string | null> {
+    /**
+     * The identifier of particle which triggered the call
+     */
+    particleId: string;
+
+    /**
+     * The peer id which created the particle
+     */
+    initPeerId: PeerIdB58;
+
+    /**
+     * Particle's timestamp when it was created
+     */
+    timeStamp: number;
+
+    /**
+     * Time to live in milliseconds. The time after the particle should be expired
+     */
+    ttl: number;
+
+    /**
+     * Particle's signature
+     */
+    signature: string;
+
+    /**
+     * Security tetraplets
+     */
+    tetraplets: { [key in ArgName]: SecurityTetraplet[] };
+}

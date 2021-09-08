@@ -43,6 +43,10 @@ describe('Tests for default handler', () => {
                 tetraplets: [],
                 particleContext: {
                     particleId: 'some',
+                    initPeerId: 'init peer id',
+                    timestamp: 595951200,
+                    ttl: 595961200,
+                    signature: 'sig',
                 },
             };
 

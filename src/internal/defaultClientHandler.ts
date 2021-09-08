@@ -4,9 +4,9 @@ import {
     CallServiceHandler,
     CallServiceResult,
     CallServiceResultType,
-    errorHandler,
     Middleware,
 } from './CallServiceHandler';
+import { errorHandler } from './defaultMiddlewares';
 
 const makeDefaultClientHandler = (): CallServiceHandler => {
     const success = (resp: CallServiceResult, result: CallServiceResultType) => {
