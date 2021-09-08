@@ -80,7 +80,7 @@ interface ConnectionInfo {
     /**
      * The Peer's identification in the Fluence network
      */
-    selfPeerId: PeerIdB58;
+    selfPeerId: PeerIdB58 | null;
 
     /**
      * The relays's peer id to which the peer is connected to
@@ -103,10 +103,10 @@ export class FluencePeer {
      * Get the information about Fluence Peer connections
      */
     get connectionInfo(): ConnectionInfo {
-        const isConnected = this._connection?.isConnected();
+        const isConnected = this._connection ? this._connection.isConnected() : false;
         return {
             isConnected: isConnected,
-            selfPeerId: this._selfPeerId,
+            selfPeerId: this._selfPeerId || null,
             connectedRelay: this._relayPeerId || null,
         };
     }
@@ -189,7 +189,7 @@ export class FluencePeer {
 
     private static _default: FluencePeer = new FluencePeer();
 
-    private _keyPair: KeyPair;
+    private _keyPair?: KeyPair;
     private _requests: Map<string, RequestFlow> = new Map();
     private _currentRequestId: string | null = null;
     private _watchdog;
@@ -234,7 +234,7 @@ export class FluencePeer {
     }
 
     private get _selfPeerId(): PeerIdB58 {
-        return this._keyPair.Libp2pPeerId.toB58String();
+        return this._keyPair?.Libp2pPeerId?.toB58String();
     }
 
     private get _relayPeerId(): PeerIdB58 | undefined {
