@@ -22,7 +22,7 @@ jobs:
 
      ### Set version
       - name: Set version to ${{ env.RELEASE_VERSION }}
-        run: npm version --new-version ${{ env.RELEASE_VERSION }} --no-git-tag-version
+        run: npm version --new-version --allow-same-version ${{ env.RELEASE_VERSION }} --no-git-tag-version
 
       ### Publish to NPM registry
       - uses: actions/setup-node@v1
