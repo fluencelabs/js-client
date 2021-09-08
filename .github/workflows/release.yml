@@ -50,10 +50,8 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v1
         with:
-          name: aqua-dht ${{ env.RELEASE_VERSION }}
+          name: JS SDK ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
-          files: |
-            aqua-dht.tar.gz
           body: ${{steps.changelog.outputs.changelog}}
           draft: false
           prerelease: false
