@@ -24,7 +24,7 @@ export class KeyPair {
      * @deprecated
      * Key pair in libp2p format. Used for backward compatibility with the current FluencePeer implementation
      */
-    public Libp2pPeerId: PeerId;
+    public libp2pPeerId: PeerId;
 
     /**
      * Generates a new KeyPair from base64 string contatining the 32 byte Ed25519 secret key
@@ -44,7 +44,7 @@ export class KeyPair {
         // deserialize PeerId from protobuf encoding
         const lib2p2Pid = await PeerId.createFromPrivKey(protobuf);
         const res = new KeyPair();
-        res.Libp2pPeerId = lib2p2Pid;
+        res.libp2pPeerId = lib2p2Pid;
         return res;
     }
 
@@ -54,7 +54,7 @@ export class KeyPair {
      */
     static async randomEd25519(): Promise<KeyPair> {
         const res = new KeyPair();
-        res.Libp2pPeerId = await PeerId.create({ keyType: 'Ed25519' });
+        res.libp2pPeerId = await PeerId.create({ keyType: 'Ed25519' });
         return res;
     }
 }

@@ -46,7 +46,7 @@ export interface PeerConfig {
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
-    KeyPair?: KeyPair;
+    keyPair?: KeyPair;
 
     /**
      * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
@@ -135,8 +135,8 @@ export class FluencePeer {
      * @param config - object specifying peer configuration
      */
     async init(config?: PeerConfig): Promise<void> {
-        if (config?.KeyPair) {
-            this._keyPair = config!.KeyPair;
+        if (config?.keyPair) {
+            this._keyPair = config!.keyPair;
         } else {
             this._keyPair = await KeyPair.randomEd25519();
         }
@@ -194,7 +194,7 @@ export class FluencePeer {
         request.handler.on(loadVariablesService, loadRelayFn, () => {
             return this._relayPeerId || '';
         });
-        await request.initState(this._keyPair.Libp2pPeerId);
+        await request.initState(this._keyPair.libp2pPeerId);
 
         logParticle(log.debug, 'executing local particle', request.getParticle());
         request.handler.combineWith(this._callServiceHandler);
@@ -233,7 +233,7 @@ export class FluencePeer {
         const connection = new FluenceConnection(
             multiaddr,
             node,
-            this._keyPair.Libp2pPeerId,
+            this._keyPair.libp2pPeerId,
             this._executeIncomingParticle.bind(this),
         );
         await connection.connect(options);
@@ -252,11 +252,11 @@ export class FluencePeer {
     }
 
     private get _selfPeerId(): PeerIdB58 {
-        return this._keyPair?.Libp2pPeerId?.toB58String();
+        return this._keyPair?.libp2pPeerId?.toB58String();
     }
 
     private get _relayPeerId(): PeerIdB58 | undefined {
-        return this._connection?.nodePeerId.toB58String();
+        return this._connection?.nodePeerId?.toB58String();
     }
 
     private async _executeIncomingParticle(particle: Particle) {

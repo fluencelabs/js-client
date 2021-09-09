@@ -10,7 +10,7 @@ describe('Request flow tests', () => {
         Date.now = jest.fn(() => mockDate);
 
         const request = RequestFlow.createLocal('(null)', 10000);
-        const peerId = await (await KeyPair.fromEd25519SK(sk)).Libp2pPeerId;
+        const peerId = await (await KeyPair.fromEd25519SK(sk)).libp2pPeerId;
 
         // act
         await request.initState(peerId);

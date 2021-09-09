@@ -10,7 +10,7 @@ describe('KeyPair tests', () => {
 
         // act
         const keyPair = await KeyPair.fromEd25519SK(sk);
-        const sk2 = peerIdToEd25519SK(keyPair.Libp2pPeerId);
+        const sk2 = peerIdToEd25519SK(keyPair.libp2pPeerId);
 
         // assert
         expect(sk2).toBe(sk);
