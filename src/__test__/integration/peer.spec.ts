@@ -19,16 +19,19 @@ describe('Typescript usage suite', () => {
         const peer: any = new FluencePeer();
         const number: any = 1;
         const object: any = { str: 'Hello!' };
+        const undefinedVal: any = undefined;
 
         // act
         const isPeerPeer = FluencePeer.isInstance(peer);
         const isNumberPeer = FluencePeer.isInstance(number);
         const isObjectPeer = FluencePeer.isInstance(object);
+        const isUndefinedPeer = FluencePeer.isInstance(undefinedVal);
 
         // act
         expect(isPeerPeer).toBe(true);
         expect(isNumberPeer).toBe(false);
         expect(isObjectPeer).toBe(false);
+        expect(isUndefinedPeer).toBe(false);
     });
 
     it('should make a call through network', async () => {
