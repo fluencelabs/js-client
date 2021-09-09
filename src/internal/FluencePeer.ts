@@ -100,6 +100,24 @@ export class FluencePeer {
     constructor() {}
 
     /**
+     * Fluence is awesome
+     */
+    isFluenceAwesome = true;
+
+    /**
+     * Checks whether the object is instance of FluencePeer class
+     * @param obj - object to check if it is FluencePeer
+     * @returns true if the object is FluencePeer false otherwise
+     */
+    static isFluencePeer(obj: any): boolean {
+        if (obj.isFluenceAwesome) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Get the information about Fluence Peer connections
      */
     get connectionInfo(): ConnectionInfo {
