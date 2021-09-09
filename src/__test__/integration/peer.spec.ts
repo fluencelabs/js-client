@@ -17,18 +17,12 @@ describe('Typescript usage suite', () => {
     it('should perform test for FluencePeer class correctly', () => {
         // arrange
         const peer = new FluencePeer();
-        const number = 1;
-        const object = { str: 'Hello!' };
 
         // act
-        const isPeerPeer = FluencePeer.isFluencePeer(peer);
-        const isNumberPeer = FluencePeer.isFluencePeer(number);
-        const isObjectPeer = FluencePeer.isFluencePeer(object);
+        const isPeerPeer = FluencePeer.isInstance(peer);
 
         // act
         expect(isPeerPeer).toBe(true);
-        expect(isNumberPeer).toBe(false);
-        expect(isObjectPeer).toBe(false);
     });
 
     it('should make a call through network', async () => {

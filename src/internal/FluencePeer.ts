@@ -109,7 +109,7 @@ export class FluencePeer {
      * @param obj - object to check if it is FluencePeer
      * @returns true if the object is FluencePeer false otherwise
      */
-    static isFluencePeer(obj: any): boolean {
+    static isInstance(obj: FluencePeer): boolean {
         if (obj.isFluenceAwesome) {
             return true;
         } else {
