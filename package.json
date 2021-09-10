@@ -14,7 +14,7 @@
         "test:node:unit": "jest --env=node --testPathPattern=src/__test__/unit",
         "test:node:integration": "jest --env=node --testPathPattern=src/__test__/integration",
         "build": "tsc",
-        "build:docs": "typedoc --out docs --excludePrivate --hideBreadcrumbs --publicPath js-sdk/6_reference/ src/index.ts"
+        "build:docs": "typedoc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
