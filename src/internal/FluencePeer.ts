@@ -107,6 +107,19 @@ export class FluencePeer {
     constructor() {}
 
     /**
+     * Checks whether the object is instance of FluencePeer class
+     * @param obj - object to check if it is FluencePeer
+     * @returns true if the object is FluencePeer false otherwise
+     */
+    static isInstance(obj: FluencePeer): boolean {
+        if (obj && obj._isFluenceAwesome) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Get the peer's status
      */
     getStatus(): PeerStatus {
@@ -171,6 +184,8 @@ export class FluencePeer {
     }
 
     // private
+
+    private _isFluenceAwesome = true;
 
     private async _initiateFlow(request: RequestFlow): Promise<void> {
         // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
