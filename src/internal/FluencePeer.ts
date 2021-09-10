@@ -40,6 +40,9 @@ export interface PeerConfig {
      */
     connectTo?: string | Multiaddr | Node;
 
+    /**
+     * Specify log level for Aqua VM running on the peer
+     */
     avmLogLevel?: AvmLoglevel;
 
     /**
@@ -71,7 +74,12 @@ export interface PeerConfig {
 /**
  * Information about Fluence Peer connection
  */
-interface ConnectionInfo {
+export interface PeerStatus {
+    /**
+     * Is the peer connected to network or not
+     */
+    isInitialized: Boolean;
+
     /**
      * Is the peer connected to network or not
      */
@@ -80,12 +88,12 @@ interface ConnectionInfo {
     /**
      * The Peer's identification in the Fluence network
      */
-    selfPeerId: PeerIdB58;
+    peerId: PeerIdB58 | null;
 
     /**
      * The relays's peer id to which the peer is connected to
      */
-    connectedRelay: PeerIdB58 | null;
+    relayPeerId: PeerIdB58 | null;
 }
 
 /**
@@ -94,20 +102,21 @@ interface ConnectionInfo {
  */
 export class FluencePeer {
     /**
-     * Creates a new Fluence Peer instance. Does not start the workflows.
-     * In order to work with the Peer it has to be initialized with the `init` method
+     * Creates a new Fluence Peer instance.
      */
     constructor() {}
 
     /**
-     * Get the information about Fluence Peer connections
+     * Get the peer's status
      */
-    get connectionInfo(): ConnectionInfo {
+    getStatus(): PeerStatus {
         const isConnected = this._connection?.isConnected();
+        const hasKeyPair = this._keyPair !== undefined;
         return {
+            isInitialized: hasKeyPair,
             isConnected: isConnected,
-            selfPeerId: this._selfPeerId,
-            connectedRelay: this._relayPeerId || null,
+            peerId: this._selfPeerId,
+            relayPeerId: this._relayPeerId || null,
         };
     }
 
@@ -116,7 +125,7 @@ export class FluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async init(config?: PeerConfig): Promise<void> {
+    async start(config?: PeerConfig): Promise<void> {
         if (config?.KeyPair) {
             this._keyPair = config!.KeyPair;
         } else {
@@ -144,17 +153,9 @@ export class FluencePeer {
      * Uninitializes the peer: stops all the underltying workflows, stops the Aqua VM
      * and disconnects from the Fluence network
      */
-    async uninit() {
+    async stop() {
         await this._disconnect();
         this._callServiceHandler = null;
-    }
-
-    /**
-     * Get the default Fluence peer instance. The default peer is used automatically in all the functions generated
-     * by the Aqua compiler if not specified otherwise.
-     */
-    static get default(): FluencePeer {
-        return this._default;
     }
 
     // internal api
@@ -186,8 +187,6 @@ export class FluencePeer {
     }
 
     private _callServiceHandler: CallServiceHandler;
-
-    private static _default: FluencePeer = new FluencePeer();
 
     private _keyPair: KeyPair;
     private _requests: Map<string, RequestFlow> = new Map();

@@ -15,6 +15,7 @@
  */
 
 import log, { LogLevelDesc } from 'loglevel';
+import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
 export { KeyPair } from './internal/KeyPair';
 export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
@@ -25,3 +26,25 @@ export const setLogLevel = (level: LogLevelDesc) => {
 };
 
 log.setDefaultLevel('WARN');
+
+const defaultPeer = new FluencePeer();
+
+const Fluence = {
+    start: (config?: PeerConfig): Promise<void> => {
+        return defaultPeer.start(config);
+    },
+
+    stop: (): Promise<void> => {
+        return defaultPeer.stop();
+    },
+
+    getStatus: () => {
+        return defaultPeer.getStatus();
+    },
+
+    getPeer: (): FluencePeer => {
+        return defaultPeer;
+    },
+};
+
+export default Fluence;
