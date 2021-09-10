@@ -36,13 +36,13 @@ describe('Typescript usage suite', () => {
 
     describe('Should expose correct peer status', () => {
         it('Should expose correct status for uninitialized peer', () => {
-            // arrnge
+            // arrange
             const peer = new FluencePeer();
 
             // act
             const status = peer.getStatus();
 
-            // act
+            // assert
             expect(status.isConnected).toBe(false);
             expect(status.isInitialized).toBe(false);
             expect(status.peerId).toBe(null);
@@ -50,18 +50,20 @@ describe('Typescript usage suite', () => {
         });
 
         it('Should expose correct status for initialized but not connected peer', async () => {
-            // arrnge
+            // arrange
             const peer = new FluencePeer();
             await peer.start();
 
             // act
             const status = peer.getStatus();
 
-            // act
+            // assert
             expect(status.isConnected).toBe(false);
             expect(status.isInitialized).toBe(true);
             expect(status.peerId).not.toBe(null);
             expect(status.relayPeerId).toBe(null);
+
+            await peer.stop();
         });
 
         it('Should expose correct status for connected peer', async () => {
@@ -72,11 +74,13 @@ describe('Typescript usage suite', () => {
             // act
             const status = peer.getStatus();
 
-            // act
+            // assert
             expect(status.isConnected).toBe(true);
             expect(status.isInitialized).toBe(true);
             expect(status.peerId).not.toBe(null);
             expect(status.relayPeerId).not.toBe(null);
+
+            await peer.stop();
         });
     });
 
@@ -94,7 +98,6 @@ describe('Typescript usage suite', () => {
             )
             .buildAsFetch<[string]>('callback', 'callback');
         await anotherPeer.internals.initiateFlow(request);
-        console.log(request.getParticle().script);
 
         // assert
         const [result] = await promise;
