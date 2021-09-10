@@ -1,4 +1,4 @@
-import Fluence, { FluencePeer } from '../../index';
+import { Fluence, FluencePeer } from '../../index';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 
 const anotherPeer = new FluencePeer();

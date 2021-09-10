@@ -32,7 +32,7 @@ const defaultPeer = new FluencePeer();
 /**
  * Public interface to Fluence JS SDK
  */
-const Fluence = {
+export const Fluence = {
     /**
      * Initializes the default peer: starts the Aqua VM, initializes the default call service handlers
      * and (optionally) connect to the Fluence network
@@ -66,5 +66,3 @@ const Fluence = {
         return defaultPeer;
     },
 };
-
-export default Fluence;

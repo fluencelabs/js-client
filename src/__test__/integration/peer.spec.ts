@@ -2,7 +2,7 @@ import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import log from 'loglevel';
-import Fluence, { FluencePeer } from '../../index';
+import { Fluence, FluencePeer } from '../../index';
 import { checkConnection } from '../../internal/utils';
 
 const anotherPeer = new FluencePeer();

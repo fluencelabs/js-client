@@ -1,4 +1,4 @@
-import Fluence, { FluencePeer } from '../../..';
+import { Fluence, FluencePeer } from '../../..';
 import { RequestFlowBuilder } from '../../../internal/RequestFlowBuilder';
 import { callMeBack, registerHelloWorld } from './gen1';
 
