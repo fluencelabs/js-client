@@ -188,6 +188,9 @@ export class FluencePeer {
 
     // private
 
+    /**
+     *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
+     */
     private _isFluenceAwesome = true;
 
     private async _initiateFlow(request: RequestFlow): Promise<void> {

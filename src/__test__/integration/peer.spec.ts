@@ -15,7 +15,7 @@ describe('Typescript usage suite', () => {
     });
 
     it('should perform test for FluencePeer class correctly', () => {
-        // arrnge
+        // arrange
         const peer: any = new FluencePeer();
         const number: any = 1;
         const object: any = { str: 'Hello!' };
