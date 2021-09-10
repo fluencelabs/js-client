@@ -1,18 +1,18 @@
-import { FluencePeer } from '../../index';
+import { Fluence, FluencePeer } from '../../index';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 
-const peer = new FluencePeer();
+const anotherPeer = new FluencePeer();
 
 describe('Avm spec', () => {
     afterEach(async () => {
-        if (peer) {
-            await peer.uninit();
+        if (anotherPeer) {
+            await anotherPeer.stop();
         }
     });
 
     it('Par execution should work', async () => {
         // arrange
-        await peer.init();
+        await Fluence.start();
 
         let request;
         const promise = new Promise<string[]>((resolve) => {
@@ -41,7 +41,7 @@ describe('Avm spec', () => {
         });
 
         // act
-        await peer.internals.initiateFlow(request);
+        await Fluence.getPeer().internals.initiateFlow(request);
         const res = await promise;
 
         // assert

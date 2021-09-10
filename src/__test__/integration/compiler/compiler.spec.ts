@@ -1,11 +1,11 @@
-import { FluencePeer } from '../../..';
+import { Fluence, FluencePeer } from '../../..';
 import { RequestFlowBuilder } from '../../../internal/RequestFlowBuilder';
 import { callMeBack, registerHelloWorld } from './gen1';
 
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {
         // arrange
-        await FluencePeer.default.init();
+        await Fluence.start();
 
         // act
         const res = new Promise((resolve) => {
@@ -39,12 +39,12 @@ describe('Compiler support infrastructure tests', () => {
             },
         });
 
-        await FluencePeer.default.uninit();
+        await Fluence.stop();
     });
 
     it('Compiled code for service should work', async () => {
         // arrange
-        await FluencePeer.default.init();
+        await Fluence.start();
 
         // act
         const helloPromise = new Promise((resolve) => {
@@ -71,19 +71,19 @@ describe('Compiler support infrastructure tests', () => {
                 )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await FluencePeer.default.internals.initiateFlow(request);
+        await Fluence.getPeer().internals.initiateFlow(request);
 
         // assert
         expect(await helloPromise).toBe('hello world!');
         expect(await getNumberPromise).toStrictEqual([42]);
 
-        await FluencePeer.default.uninit();
+        await Fluence.stop();
     });
 
     it('Compiled code for function should work with another peer', async () => {
         // arrange
         const peer = new FluencePeer();
-        await peer.init();
+        await peer.start();
 
         // act
         const res = new Promise((resolve) => {
@@ -117,13 +117,13 @@ describe('Compiler support infrastructure tests', () => {
             },
         });
 
-        await peer.uninit();
+        await peer.stop();
     });
 
     it('Compiled code for service should work another peer', async () => {
         // arrange
         const peer = new FluencePeer();
-        await peer.init();
+        await peer.start();
 
         // act
         const helloPromise = new Promise((resolve) => {
@@ -156,6 +156,6 @@ describe('Compiler support infrastructure tests', () => {
         expect(await helloPromise).toBe('hello world!');
         expect(await getNumberPromise).toStrictEqual([42]);
 
-        await peer.uninit();
+        await peer.stop();
     });
 });

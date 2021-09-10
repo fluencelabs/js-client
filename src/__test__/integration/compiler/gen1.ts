@@ -1,5 +1,5 @@
 import { ResultCodes, RequestFlow, RequestFlowBuilder, CallParams } from '../../../internal/compilerSupport/v1';
-import { FluencePeer } from '../../../index';
+import { Fluence, FluencePeer } from '../../../index';
 
 /*
 
@@ -41,7 +41,7 @@ export function registerHelloWorld(...args) {
     if (args[0] instanceof FluencePeer) {
         peer = args[0];
     } else {
-        peer = FluencePeer.default;
+        peer = Fluence.getPeer();
     }
 
     if (typeof args[0] === 'string') {
@@ -111,7 +111,7 @@ export function callMeBack(...args) {
         callback = args[1];
         config = args[2];
     } else {
-        peer = FluencePeer.default;
+        peer = Fluence.getPeer();
         callback = args[0];
         config = args[1];
     }
@@ -137,7 +137,7 @@ export function callMeBack(...args) {
             )
             .configHandler((h) => {
                 h.on('getDataSrv', '-relay-', () => {
-                    return peer.connectionInfo.connectedRelay || null;
+                    return peer.getStatus().relayPeerId || null;
                 });
 
                 h.use((req, resp, next) => {

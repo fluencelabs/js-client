@@ -32,7 +32,7 @@ export const createInterpreter = (handler, peerId, logLevel: AvmLoglevel): Promi
  * @param { FluenceClient } peer - The Fluence Client instance.
  */
 export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<boolean> => {
-    if (!peer.connectionInfo.isConnected) {
+    if (!peer.getStatus().isConnected) {
         return false;
     }
 

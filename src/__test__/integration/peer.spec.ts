@@ -2,21 +2,91 @@ import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
 import log from 'loglevel';
-import { FluencePeer } from '../../index';
+import { Fluence, FluencePeer } from '../../index';
 import { checkConnection } from '../../internal/utils';
 
-const peer = new FluencePeer();
+const anotherPeer = new FluencePeer();
 
 describe('Typescript usage suite', () => {
     afterEach(async () => {
-        if (peer) {
-            await peer.uninit();
+        if (anotherPeer) {
+            await anotherPeer.stop();
         }
+    });
+
+    it('should perform test for FluencePeer class correctly', () => {
+        // arrange
+        const peer: any = new FluencePeer();
+        const number: any = 1;
+        const object: any = { str: 'Hello!' };
+        const undefinedVal: any = undefined;
+
+        // act
+        const isPeerPeer = FluencePeer.isInstance(peer);
+        const isNumberPeer = FluencePeer.isInstance(number);
+        const isObjectPeer = FluencePeer.isInstance(object);
+        const isUndefinedPeer = FluencePeer.isInstance(undefinedVal);
+
+        // act
+        expect(isPeerPeer).toBe(true);
+        expect(isNumberPeer).toBe(false);
+        expect(isObjectPeer).toBe(false);
+        expect(isUndefinedPeer).toBe(false);
+    });
+
+    describe('Should expose correct peer status', () => {
+        it('Should expose correct status for uninitialized peer', () => {
+            // arrange
+            const peer = new FluencePeer();
+
+            // act
+            const status = peer.getStatus();
+
+            // assert
+            expect(status.isConnected).toBe(false);
+            expect(status.isInitialized).toBe(false);
+            expect(status.peerId).toBe(null);
+            expect(status.relayPeerId).toBe(null);
+        });
+
+        it('Should expose correct status for initialized but not connected peer', async () => {
+            // arrange
+            const peer = new FluencePeer();
+            await peer.start();
+
+            // act
+            const status = peer.getStatus();
+
+            // assert
+            expect(status.isConnected).toBe(false);
+            expect(status.isInitialized).toBe(true);
+            expect(status.peerId).not.toBe(null);
+            expect(status.relayPeerId).toBe(null);
+
+            await peer.stop();
+        });
+
+        it('Should expose correct status for connected peer', async () => {
+            // arrnge
+            const peer = new FluencePeer();
+            await peer.start({ connectTo: nodes[0] });
+
+            // act
+            const status = peer.getStatus();
+
+            // assert
+            expect(status.isConnected).toBe(true);
+            expect(status.isInitialized).toBe(true);
+            expect(status.peerId).not.toBe(null);
+            expect(status.relayPeerId).not.toBe(null);
+
+            await peer.stop();
+        });
     });
 
     it('should make a call through network', async () => {
         // arrange
-        await peer.init({ connectTo: nodes[0] });
+        await anotherPeer.start({ connectTo: nodes[0] });
 
         // act
         const [request, promise] = new RequestFlowBuilder()
@@ -27,8 +97,7 @@ describe('Typescript usage suite', () => {
     )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await peer.internals.initiateFlow(request);
-        console.log(request.getParticle().script);
+        await anotherPeer.internals.initiateFlow(request);
 
         // assert
         const [result] = await promise;
@@ -36,17 +105,17 @@ describe('Typescript usage suite', () => {
     });
 
     it('check connection should work', async function () {
-        await peer.init({ connectTo: nodes[0] });
+        await anotherPeer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(peer);
+        let isConnected = await checkConnection(anotherPeer);
 
         expect(isConnected).toEqual(true);
     });
 
     it('check connection should work with ttl', async function () {
-        await peer.init({ connectTo: nodes[0] });
+        await anotherPeer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(peer, 10000);
+        let isConnected = await checkConnection(anotherPeer, 10000);
 
         expect(isConnected).toEqual(true);
     });
@@ -54,9 +123,9 @@ describe('Typescript usage suite', () => {
     it('two clients should work inside the same time browser', async () => {
         // arrange
         const peer1 = new FluencePeer();
-        await peer1.init({ connectTo: nodes[0] });
+        await peer1.start({ connectTo: nodes[0] });
         const peer2 = new FluencePeer();
-        await peer2.init({ connectTo: nodes[0] });
+        await peer2.start({ connectTo: nodes[0] });
 
         let resMakingPromise = new Promise((resolve) => {
             peer2.internals.callServiceHandler.onEvent('test', 'test', (args, _) => {
@@ -67,8 +136,8 @@ describe('Typescript usage suite', () => {
 
         let script = `
             (seq
-                (call "${peer1.connectionInfo.connectedRelay}" ("op" "identity") [])
-                (call "${peer2.connectionInfo.selfPeerId}" ("test" "test") [a b c d])
+                (call "${peer1.getStatus().relayPeerId}" ("op" "identity") [])
+                (call "${peer2.getStatus().peerId}" ("test" "test") [a b c d])
             )
         `;
 
@@ -83,8 +152,8 @@ describe('Typescript usage suite', () => {
         let res = await resMakingPromise;
         expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
 
-        await peer1.uninit();
-        await peer2.uninit();
+        await peer1.stop();
+        await peer2.stop();
     });
 
     describe('should make connection to network', () => {
@@ -93,8 +162,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -105,8 +174,8 @@ describe('Typescript usage suite', () => {
             const addr = new Multiaddr(nodes[0].multiaddr);
 
             // act
-            await peer.init({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -117,8 +186,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -129,8 +198,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -141,8 +210,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -153,8 +222,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr, dialTimeoutMs: 100000 });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr, dialTimeoutMs: 100000 });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -165,8 +234,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr, skipCheckConnection: true });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr, skipCheckConnection: true });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -177,8 +246,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await peer.init({ connectTo: addr, checkConnectionTimeoutMs: 1000 });
-            const isConnected = await checkConnection(peer);
+            await anotherPeer.start({ connectTo: addr, checkConnectionTimeoutMs: 1000 });
+            const isConnected = await checkConnection(anotherPeer);
 
             // assert
             expect(isConnected).toBeTruthy;
@@ -199,8 +268,8 @@ describe('Typescript usage suite', () => {
             .buildWithErrorHandling();
 
         // act
-        await peer.init({ connectTo: nodes[0] });
-        await peer.internals.initiateFlow(request);
+        await anotherPeer.start({ connectTo: nodes[0] });
+        await anotherPeer.internals.initiateFlow(request);
 
         // assert
         await expect(promise).rejects.toMatchObject({
@@ -226,8 +295,8 @@ describe('Typescript usage suite', () => {
             .buildWithErrorHandling();
 
         // act
-        await peer.init();
-        await peer.internals.initiateFlow(request);
+        await anotherPeer.start();
+        await anotherPeer.internals.initiateFlow(request);
 
         // assert
         await expect(promise).rejects.toMatch('service failed internally');
@@ -235,10 +304,10 @@ describe('Typescript usage suite', () => {
 
     it.skip('Should throw correct message when calling non existing local service', async function () {
         // arrange
-        await peer.init();
+        await anotherPeer.start();
 
         // act
-        const res = callIdentifyOnInitPeerId(peer);
+        const res = callIdentifyOnInitPeerId(anotherPeer);
 
         // assert
         await expect(res).rejects.toMatchObject({
@@ -251,7 +320,7 @@ describe('Typescript usage suite', () => {
 
     it('Should not crash if undefined is passed as a variable', async () => {
         // arrange
-        await peer.init();
+        await anotherPeer.start();
         const [request, promise] = new RequestFlowBuilder()
             .withRawScript(
                 `
@@ -265,7 +334,7 @@ describe('Typescript usage suite', () => {
             .buildAsFetch<any[]>('return', 'return');
 
         // act
-        await peer.internals.initiateFlow(request);
+        await anotherPeer.internals.initiateFlow(request);
         const [res] = await promise;
 
         // assert
@@ -274,14 +343,14 @@ describe('Typescript usage suite', () => {
 
     it('Should throw correct error when the client tries to send a particle not to the relay', async () => {
         // arrange
-        await peer.init();
+        await anotherPeer.start();
 
         // act
         const [req, promise] = new RequestFlowBuilder()
             .withRawScript('(call "incorrect_peer_id" ("any" "service") [])')
             .buildWithErrorHandling();
 
-        await peer.internals.initiateFlow(req);
+        await anotherPeer.internals.initiateFlow(req);
 
         // assert
         await expect(promise).rejects.toMatch(

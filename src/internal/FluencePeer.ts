@@ -40,6 +40,9 @@ export interface PeerConfig {
      */
     connectTo?: string | Multiaddr | Node;
 
+    /**
+     * Specify log level for Aqua VM running on the peer
+     */
     avmLogLevel?: AvmLoglevel;
 
     /**
@@ -71,7 +74,12 @@ export interface PeerConfig {
 /**
  * Information about Fluence Peer connection
  */
-interface ConnectionInfo {
+export interface PeerStatus {
+    /**
+     * Is the peer connected to network or not
+     */
+    isInitialized: Boolean;
+
     /**
      * Is the peer connected to network or not
      */
@@ -80,12 +88,12 @@ interface ConnectionInfo {
     /**
      * The Peer's identification in the Fluence network
      */
-    selfPeerId: PeerIdB58;
+    peerId: PeerIdB58 | null;
 
     /**
      * The relays's peer id to which the peer is connected to
      */
-    connectedRelay: PeerIdB58 | null;
+    relayPeerId: PeerIdB58 | null;
 }
 
 /**
@@ -94,20 +102,37 @@ interface ConnectionInfo {
  */
 export class FluencePeer {
     /**
-     * Creates a new Fluence Peer instance. Does not start the workflows.
-     * In order to work with the Peer it has to be initialized with the `init` method
+     * Creates a new Fluence Peer instance.
      */
     constructor() {}
 
     /**
-     * Get the information about Fluence Peer connections
+     * Checks whether the object is instance of FluencePeer class
+     * @param obj - object to check if it is FluencePeer
+     * @returns true if the object is FluencePeer false otherwise
      */
-    get connectionInfo(): ConnectionInfo {
-        const isConnected = this._connection?.isConnected();
+    static isInstance(obj: FluencePeer): boolean {
+        if (obj && obj._isFluenceAwesome) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get the peer's status
+     */
+    getStatus(): PeerStatus {
+        let isConnected = false;
+        if (this._connection) {
+            isConnected = this._connection?.isConnected();
+        }
+        const hasKeyPair = this._keyPair !== undefined;
         return {
+            isInitialized: hasKeyPair,
             isConnected: isConnected,
-            selfPeerId: this._selfPeerId,
-            connectedRelay: this._relayPeerId || null,
+            peerId: this._selfPeerId,
+            relayPeerId: this._relayPeerId || null,
         };
     }
 
@@ -116,7 +141,7 @@ export class FluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async init(config?: PeerConfig): Promise<void> {
+    async start(config?: PeerConfig): Promise<void> {
         if (config?.KeyPair) {
             this._keyPair = config!.KeyPair;
         } else {
@@ -144,17 +169,9 @@ export class FluencePeer {
      * Uninitializes the peer: stops all the underltying workflows, stops the Aqua VM
      * and disconnects from the Fluence network
      */
-    async uninit() {
+    async stop() {
         await this._disconnect();
         this._callServiceHandler = null;
-    }
-
-    /**
-     * Get the default Fluence peer instance. The default peer is used automatically in all the functions generated
-     * by the Aqua compiler if not specified otherwise.
-     */
-    static get default(): FluencePeer {
-        return this._default;
     }
 
     // internal api
@@ -171,6 +188,11 @@ export class FluencePeer {
 
     // private
 
+    /**
+     *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
+     */
+    private _isFluenceAwesome = true;
+
     private async _initiateFlow(request: RequestFlow): Promise<void> {
         // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
         request.handler.on(loadVariablesService, loadRelayFn, () => {
@@ -186,8 +208,6 @@ export class FluencePeer {
     }
 
     private _callServiceHandler: CallServiceHandler;
-
-    private static _default: FluencePeer = new FluencePeer();
 
     private _keyPair: KeyPair;
     private _requests: Map<string, RequestFlow> = new Map();
@@ -233,12 +253,12 @@ export class FluencePeer {
         });
     }
 
-    private get _selfPeerId(): PeerIdB58 {
-        return this._keyPair.Libp2pPeerId.toB58String();
+    private get _selfPeerId(): PeerIdB58 | null {
+        return this._keyPair?.Libp2pPeerId?.toB58String() || null;
     }
 
-    private get _relayPeerId(): PeerIdB58 | undefined {
-        return this._connection?.nodePeerId.toB58String();
+    private get _relayPeerId(): PeerIdB58 | null {
+        return this._connection?.nodePeerId?.toB58String() || null;
     }
 
     private async _executeIncomingParticle(particle: Particle) {
