@@ -23,6 +23,7 @@ export type PeerIdB58 = string;
 
 /**
  * Additional information about a service call
+ * @typeparam ArgName
  */
 export interface CallParams<ArgName extends string | null> {
     /**
