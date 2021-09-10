@@ -123,7 +123,10 @@ export class FluencePeer {
      * Get the peer's status
      */
     getStatus(): PeerStatus {
-        const isConnected = this._connection?.isConnected();
+        let isConnected = false;
+        if (this._connection) {
+            isConnected = this._connection?.isConnected();
+        }
         const hasKeyPair = this._keyPair !== undefined;
         return {
             isInitialized: hasKeyPair,
@@ -247,12 +250,12 @@ export class FluencePeer {
         });
     }
 
-    private get _selfPeerId(): PeerIdB58 {
-        return this._keyPair.Libp2pPeerId.toB58String();
+    private get _selfPeerId(): PeerIdB58 | null {
+        return this._keyPair?.Libp2pPeerId?.toB58String() || null;
     }
 
-    private get _relayPeerId(): PeerIdB58 | undefined {
-        return this._connection?.nodePeerId.toB58String();
+    private get _relayPeerId(): PeerIdB58 | null {
+        return this._connection?.nodePeerId?.toB58String() || null;
     }
 
     private async _executeIncomingParticle(particle: Particle) {

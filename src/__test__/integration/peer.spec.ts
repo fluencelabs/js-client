@@ -34,6 +34,52 @@ describe('Typescript usage suite', () => {
         expect(isUndefinedPeer).toBe(false);
     });
 
+    describe('Should expose correct peer status', () => {
+        it('Should expose correct status for uninitialized peer', () => {
+            // arrnge
+            const peer = new FluencePeer();
+
+            // act
+            const status = peer.getStatus();
+
+            // act
+            expect(status.isConnected).toBe(false);
+            expect(status.isInitialized).toBe(false);
+            expect(status.peerId).toBe(null);
+            expect(status.relayPeerId).toBe(null);
+        });
+
+        it('Should expose correct status for initialized but not connected peer', async () => {
+            // arrnge
+            const peer = new FluencePeer();
+            await peer.start();
+
+            // act
+            const status = peer.getStatus();
+
+            // act
+            expect(status.isConnected).toBe(false);
+            expect(status.isInitialized).toBe(true);
+            expect(status.peerId).not.toBe(null);
+            expect(status.relayPeerId).toBe(null);
+        });
+
+        it('Should expose correct status for connected peer', async () => {
+            // arrnge
+            const peer = new FluencePeer();
+            await peer.start({ connectTo: nodes[0] });
+
+            // act
+            const status = peer.getStatus();
+
+            // act
+            expect(status.isConnected).toBe(true);
+            expect(status.isInitialized).toBe(true);
+            expect(status.peerId).not.toBe(null);
+            expect(status.relayPeerId).not.toBe(null);
+        });
+    });
+
     it('should make a call through network', async () => {
         // arrange
         await anotherPeer.start({ connectTo: nodes[0] });
