@@ -28,6 +28,10 @@ describe('KeyPair tests', () => {
         // assert
         expect(seed).toStrictEqual(seed2);
     });
+
+    // it('create keypair from ed25519 private key', async function() {
+        
+    // });
 });
 
 /**
