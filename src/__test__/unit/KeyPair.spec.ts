@@ -15,6 +15,19 @@ describe('KeyPair tests', () => {
         // assert
         expect(sk2).toBe(sk);
     });
+
+    it('generate keypair from seed', async function () {
+        // arrange
+        const random = await KeyPair.randomEd25519();
+        const seed = peerIdToSeed(random.Libp2pPeerId);
+
+        // act
+        const keyPair = await KeyPair.fromSeed(seed);
+        const seed2 = peerIdToSeed(keyPair.Libp2pPeerId);
+
+        // assert
+        expect(seed).toStrictEqual(seed2);
+    });
 });
 
 /**
@@ -29,4 +42,13 @@ export const peerIdToEd25519SK = (peerId: PeerId): string => {
     // serialize private key as base64
     const b64 = base64.fromByteArray(pk);
     return b64;
+};
+
+/**
+ * Converts peer id to a string which can be used to restore back to peer id format with. @see {@link seedToPeerId}
+ * @param { PeerId } peerId - Peer id to convert to seed
+ * @returns { string } - Seed string
+ */
+export const peerIdToSeed = (peerId: PeerId): Uint8Array => {
+    return peerId.privKey.marshal().subarray(0, 32);
 };

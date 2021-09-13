@@ -34,16 +34,24 @@ export class KeyPair {
     }
 
     /**
-     * Generates new KeyPair from base64 string containing the 32 byte Ed25519 secret key
+     * Generates new KeyPair from base64 string containing the 32 byte Ed25519 private key
      * @returns - Promise with the created KeyPair
      */
-    static async fromEd25519SK(sk: string): Promise<KeyPair> {
-        // deserialize secret key from base64
-        const bytes = base64.toByteArray(sk);
+    static async fromEd25519SK(base64Key: string): Promise<KeyPair> {
+        // deserialize private key from base64
+        const key = base64.toByteArray(base64Key);
+        return await KeyPair.fromEd25519Key(key);
+    }
+
+    /**
+     * Generates new KeyPair from 32 byte Ed25519 private key
+     * @returns - Promise with the created KeyPair
+     */
+    static async fromEd25519Key(key: Uint8Array): Promise<KeyPair> {
         // calculate ed25519 public key
-        const publicKey = await ed.getPublicKey(bytes);
+        const publicKey = await ed.getPublicKey(key);
         // concatenate secret + public because that's what libp2p-crypto expects
-        const privateAndPublicKeysArray = new Uint8Array([...bytes, ...publicKey]);
+        const privateAndPublicKeysArray = new Uint8Array([...key, ...publicKey]);
         // deserialize keys.supportedKeys.Ed25519PrivateKey
         const privateKey = await keys.supportedKeys.ed25519.unmarshalEd25519PrivateKey(privateAndPublicKeysArray);
         // serialize it to protobuf encoding because that's what PeerId expects
@@ -54,12 +62,11 @@ export class KeyPair {
     }
 
     /**
-     * Generates new KeyPair from base58 string containing 32 byte seed
+     * Generates new KeyPair from 32 byte seed
      * @returns - Promise with the created KeyPair
      */
-    static async fromSeed(seed: string): Promise<KeyPair> {
-        const seedArr = decode(seed);
-        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
+    static async fromSeed(seed: Uint8Array): Promise<KeyPair> {
+        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', seed, 256);
         const lib2p2Pid = await PeerId.createFromPrivKey(privateKey.bytes);
         return new KeyPair(lib2p2Pid);
     }
@@ -72,4 +79,9 @@ export class KeyPair {
         const lib2p2Pid = await PeerId.create({ keyType: 'Ed25519' });
         return new KeyPair(lib2p2Pid);
     }
+
+    // TODO:
+    // toEd25519PrivateKey(this): Uint8Array {
+
+    // }
 }
