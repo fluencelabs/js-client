@@ -1,6 +1,5 @@
-import { encode } from 'bs58';
+import * as bs58 from 'bs58';
 import * as base64 from 'base64-js';
-import PeerId from 'peer-id';
 import { KeyPair } from '../../internal/KeyPair';
 
 describe('KeyPair tests', () => {
@@ -10,7 +9,8 @@ describe('KeyPair tests', () => {
 
         // act
         const keyPair = await KeyPair.fromEd25519SK(sk);
-        const sk2 = peerIdToEd25519SK(keyPair.Libp2pPeerId);
+        const privateKey = keyPair.toEd25519PrivateKey();
+        const sk2 = base64.fromByteArray(privateKey)
 
         // assert
         expect(sk2).toBe(sk);
@@ -19,40 +19,38 @@ describe('KeyPair tests', () => {
     it('generate keypair from seed', async function () {
         // arrange
         const random = await KeyPair.randomEd25519();
-        const seed = peerIdToSeed(random.Libp2pPeerId);
+        const privateKey = random.toEd25519PrivateKey();
 
         // act
-        const keyPair = await KeyPair.fromSeed(seed);
-        const seed2 = peerIdToSeed(keyPair.Libp2pPeerId);
+        const keyPair = await KeyPair.fromArray(privateKey);
+        const privateKey2 = keyPair.toEd25519PrivateKey();
 
         // assert
-        expect(seed).toStrictEqual(seed2);
+        expect(privateKey).toStrictEqual(privateKey2);
     });
 
-    // it('create keypair from ed25519 private key', async function() {
+    it('create keypair from ed25519 private key', async function() {
+        // arrange
+        const rustSK = "jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH";
+        const sk = bs58.decode(rustSK);
+
+        // act
+        const keyPair = await KeyPair.fromArray(sk);
+
+        // assert
+        const expectedPeerId = "12D3KooWH1W3VznVZ87JH4FwABK4mkntcspTVWJDta6c2xg9Pzbp";
+        expect(keyPair.Libp2pPeerId.toB58String()).toStrictEqual(expectedPeerId);
+    });
+
+    it('create keypair from a seed phrase', async function() {
+        // arrange
+        const seedArray = new Uint8Array(32).fill(1);
         
-    // });
+        // act
+        const keyPair = await KeyPair.fromArray(seedArray);
+
+        // assert
+        const expectedPeerId = "12D3KooWK99VoVxNE7XzyBwXEzW7xhK7Gpv85r9F3V3fyKSUKPH5";
+        expect(keyPair.Libp2pPeerId.toB58String()).toStrictEqual(expectedPeerId);
+    });
 });
-
-/**
- * Converts peer id into base64 string contatining the 32 byte Ed25519S secret key
- * @returns - base64 of Ed25519S secret key
- */
-export const peerIdToEd25519SK = (peerId: PeerId): string => {
-    // export as [...private, ...public] array
-    const privateAndPublicKeysArray = peerId.privKey.marshal();
-    // extract the private key
-    const pk = privateAndPublicKeysArray.slice(0, 32);
-    // serialize private key as base64
-    const b64 = base64.fromByteArray(pk);
-    return b64;
-};
-
-/**
- * Converts peer id to a string which can be used to restore back to peer id format with. @see {@link seedToPeerId}
- * @param { PeerId } peerId - Peer id to convert to seed
- * @returns { string } - Seed string
- */
-export const peerIdToSeed = (peerId: PeerId): Uint8Array => {
-    return peerId.privKey.marshal().subarray(0, 32);
-};
