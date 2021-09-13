@@ -43,9 +43,9 @@ export class KeyPair {
      * @param key - Any sequence of 32 bytes
      * @returns - Promise with the created KeyPair
      */
-    static async fromArray(key: Uint8Array): Promise<KeyPair> {
+    static async fromArray(arr: Uint8Array): Promise<KeyPair> {
         // generateKeyPairFromSeed takes seed and copies it to private key as is
-        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', key, 256);
+        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', arr, 256);
         const lib2p2Pid = await PeerId.createFromPrivKey(privateKey.bytes);
         return new KeyPair(lib2p2Pid);
     }
