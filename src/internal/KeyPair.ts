@@ -32,26 +32,10 @@ export class KeyPair {
      * Generates new KeyPair from base64 string containing the 32 byte Ed25519 private key
      * @returns - Promise with the created KeyPair
      */
-    // static async fromEd25519SK(base64Key: string): Promise<KeyPair> {
-    //     // deserialize private key from base64
-    //     const key = base64.toByteArray(base64Key);
-    //     return await KeyPair.fromBytes(key);
-    // }
-
-    static async fromEd25519SK(sk: string): Promise<KeyPair> {
-        // deserialize secret key from base64
-        const bytes = base64.toByteArray(sk);
-        // calculate ed25519 public key
-        const publicKey = await ed.getPublicKey(bytes);
-        // concatenate secret + public because that's what libp2p-crypto expects
-        const privateAndPublicKeysArray = new Uint8Array([...bytes, ...publicKey]);
-        // deserialize keys.supportedKeys.Ed25519PrivateKey
-        const privateKey = await keys.supportedKeys.ed25519.unmarshalEd25519PrivateKey(privateAndPublicKeysArray);
-        // serialize it to protobuf encoding because that's what PeerId expects
-        const protobuf = keys.marshalPrivateKey(privateKey);
-        // deserialize PeerId from protobuf encoding
-        const lib2p2Pid = await PeerId.createFromPrivKey(protobuf);
-        return new KeyPair(lib2p2Pid);
+    static async fromEd25519SK(base64Key: string): Promise<KeyPair> {
+        // deserialize private key from base64
+        const key = base64.toByteArray(base64Key);
+        return await KeyPair.fromBytes(key);
     }
 
     /**
