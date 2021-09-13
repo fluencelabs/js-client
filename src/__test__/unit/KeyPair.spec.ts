@@ -22,7 +22,7 @@ describe('KeyPair tests', () => {
         const privateKey = random.toEd25519PrivateKey();
 
         // act
-        const keyPair = await KeyPair.fromArray(privateKey);
+        const keyPair = await KeyPair.fromBytes(privateKey);
         const privateKey2 = keyPair.toEd25519PrivateKey();
 
         // assert
@@ -35,7 +35,7 @@ describe('KeyPair tests', () => {
         const sk = bs58.decode(rustSK);
 
         // act
-        const keyPair = await KeyPair.fromArray(sk);
+        const keyPair = await KeyPair.fromBytes(sk);
 
         // assert
         const expectedPeerId = "12D3KooWH1W3VznVZ87JH4FwABK4mkntcspTVWJDta6c2xg9Pzbp";
@@ -47,7 +47,7 @@ describe('KeyPair tests', () => {
         const seedArray = new Uint8Array(32).fill(1);
         
         // act
-        const keyPair = await KeyPair.fromArray(seedArray);
+        const keyPair = await KeyPair.fromBytes(seedArray);
 
         // assert
         const expectedPeerId = "12D3KooWK99VoVxNE7XzyBwXEzW7xhK7Gpv85r9F3V3fyKSUKPH5";
