@@ -17,7 +17,6 @@
 import * as PeerId from 'peer-id';
 import * as base64 from 'base64-js';
 import { keys } from 'libp2p-crypto';
-import * as ed from 'noble-ed25519';
 
 export class KeyPair {
     /**
