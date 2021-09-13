@@ -18,6 +18,7 @@ import * as PeerId from 'peer-id';
 import * as base64 from 'base64-js';
 import * as ed from 'noble-ed25519';
 import { keys } from 'libp2p-crypto';
+import { decode } from 'bs58';
 
 export class KeyPair {
     /**
@@ -26,8 +27,14 @@ export class KeyPair {
      */
     public Libp2pPeerId: PeerId;
 
+    constructor(libp2pPeerId: PeerId) {
+        return {
+            Libp2pPeerId: libp2pPeerId
+        };
+    }
+
     /**
-     * Generates a new KeyPair from base64 string contatining the 32 byte Ed25519 secret key
+     * Generates new KeyPair from base64 string containing the 32 byte Ed25519 secret key
      * @returns - Promise with the created KeyPair
      */
     static async fromEd25519SK(sk: string): Promise<KeyPair> {
@@ -43,18 +50,26 @@ export class KeyPair {
         const protobuf = keys.marshalPrivateKey(privateKey);
         // deserialize PeerId from protobuf encoding
         const lib2p2Pid = await PeerId.createFromPrivKey(protobuf);
-        const res = new KeyPair();
-        res.Libp2pPeerId = lib2p2Pid;
-        return res;
+        return new KeyPair(lib2p2Pid);
     }
 
     /**
-     * Generates a new KeyPair with random secret key
+     * Generates new KeyPair from base58 string containing 32 byte seed
+     * @returns - Promise with the created KeyPair
+     */
+    static async fromSeed(seed: string): Promise<KeyPair> {
+        const seedArr = decode(seed);
+        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', Uint8Array.from(seedArr), 256);
+        const lib2p2Pid = await PeerId.createFromPrivKey(privateKey.bytes);
+        return new KeyPair(lib2p2Pid);
+    }
+
+    /**
+     * Generates new KeyPair with a random secret key
      * @returns - Promise with the created KeyPair
      */
     static async randomEd25519(): Promise<KeyPair> {
-        const res = new KeyPair();
-        res.Libp2pPeerId = await PeerId.create({ keyType: 'Ed25519' });
-        return res;
+        const lib2p2Pid = await PeerId.create({ keyType: 'Ed25519' });
+        return new KeyPair(lib2p2Pid);
     }
 }
