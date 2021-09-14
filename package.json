@@ -34,7 +34,6 @@
         "libp2p-websockets": "0.16.1",
         "loglevel": "1.7.0",
         "multiaddr": "10.0.0",
-        "noble-ed25519": "^1.2.5",
         "peer-id": "0.15.3",
         "uuid": "8.3.0"
     },

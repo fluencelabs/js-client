@@ -17,9 +17,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Extract branch name
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-
+      - name: Get branch name
+        run: |
+          BRANCH=${GITHUB_REF#refs/*/}
+          SANITIZED=$(echo "$BRANCH" | sed -e 's/[^a-zA-Z0-9-]/-/g')
+          echo "BRANCH_NAME=$SANITIZED" >> $GITHUB_ENV
       ### Set version
       - name: Set version
         run: npm version prerelease --no-git-tag-version --preid ${{ env.BRANCH_NAME }}-${{ github.run_number }}
