@@ -1,4 +1,4 @@
-import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
+import { AirInterpreter, CallServiceResult, LogLevel, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { Multiaddr } from 'multiaddr';
 import PeerId from 'peer-id';
@@ -286,48 +286,6 @@ export class FluencePeer {
             this._currentRequestId = null;
         }
     }
-
-    private _interpreterCallback: ParticleHandler = async (
-        serviceId: string,
-        fnName: string,
-        args: any[],
-        tetraplets: SecurityTetraplet[][],
-    ): Promise<CallServiceResult> => {
-        if (this._currentRequestId === null) {
-            throw Error('current request can`t be null here');
-        }
-
-        const request = this._requests.get(this._currentRequestId);
-        const particle = request.getParticle();
-        if (particle === null) {
-            throw new Error("particle can't be null here, current request id: " + this._currentRequestId);
-        }
-        const res = await request.handler.execute({
-            serviceId,
-            fnName,
-            args,
-            tetraplets,
-            particleContext: {
-                particleId: request.id,
-                initPeerId: particle.init_peer_id,
-                timestamp: particle.timestamp,
-                ttl: particle.ttl,
-                signature: particle.signature,
-            },
-        });
-
-        if (res.result === undefined) {
-            log.error(
-                `Call to serviceId=${serviceId} fnName=${fnName} unexpectedly returned undefined result, falling back to null. Particle id=${request.id}`,
-            );
-            res.result = null;
-        }
-
-        return {
-            retCode: res.retCode,
-            result: JSON.stringify(res.result),
-        };
-    };
 
     private _initWatchDog() {
         this._watchdog = setInterval(() => {

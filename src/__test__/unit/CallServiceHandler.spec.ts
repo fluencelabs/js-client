@@ -15,10 +15,6 @@ const req = (): CallServiceData => ({
     },
 });
 
-const res = () => ({
-    res,
-});
-
 describe('Call service handler tests', () => {
     it('Should work without middlewares', async () => {
         // arrange

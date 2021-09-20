@@ -99,20 +99,6 @@ type CallParams = ParticleContext & {
     wrappedArgs: CallServiceArg<any>[];
 };
 
-export class CallServiceArg<T> {
-    val: T;
-    tetraplet: SecurityTetraplet[];
-
-    constructor(val: T, tetraplet: SecurityTetraplet[]) {
-        this.val = val;
-        this.tetraplet = tetraplet;
-    }
-}
-
-type CallParams = ParticleContext & {
-    wrappedArgs: CallServiceArg<any>[];
-};
-
 /**
  * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
  * The return value of the handler is passed back to AVM
@@ -123,7 +109,7 @@ type CallParams = ParticleContext & {
 export const fnHandler = (
     serviceId: string,
     fnName: string,
-    handler: (args: any[], callParams: CallParams) => Promise<CallServiceResultType>,
+    handler: (args: any[], callParams: CallParams) => Promise<CallServiceResultType> | CallServiceResultType,
 ) => {
     return async (req: CallServiceData, resp: CallServiceResult, next: Function): Promise<void> => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
@@ -145,7 +131,7 @@ export const fnHandler = (
 export const fnAsEventHandler = (
     serviceId: string, // force format
     fnName: string,
-    handler: (args: any[], callParams: CallParams) => Promise<void>,
+    handler: (args: any[], callParams: CallParams) => Promise<void> | void,
 ) => {
     return async (req: CallServiceData, resp: CallServiceResult, next: Function): Promise<void> => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
@@ -209,7 +195,7 @@ export class CallServiceHandler {
     on(
         serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], callParams: CallParams) => Promise<CallServiceResultType>,
+        handler: (args: any[], callParams: CallParams) => Promise<CallServiceResultType> | CallServiceResultType,
     ): Function {
         const mw = fnHandler(serviceId, fnName, handler);
         this.use(mw);
@@ -224,7 +210,7 @@ export class CallServiceHandler {
     onEvent(
         serviceId: string, // force format
         fnName: string,
-        handler: (args: any[], callParams: CallParams) => Promise<void>,
+        handler: (args: any[], callParams: CallParams) => Promise<void> | void,
     ): Function {
         const mw = fnAsEventHandler(serviceId, fnName, handler);
         this.use(mw);

@@ -198,7 +198,7 @@ relay peer id: ${this.relayPeerId}
                 particleContext: {
                     particleId: this.id,
                     initPeerId: particle.init_peer_id,
-                    timeStamp: particle.timestamp,
+                    timestamp: particle.timestamp,
                     ttl: particle.ttl,
                     signature: particle.signature,
                 },
