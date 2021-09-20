@@ -1,15 +1,15 @@
-import { FluencePeer } from '../../..';
+import { Fluence, FluencePeer } from '../../..';
 import { RequestFlowBuilder } from '../../../internal/RequestFlowBuilder';
 import { callMeBack, registerHelloWorld } from './gen1';
 
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {
         // arrange
-        await FluencePeer.default.init();
+        await Fluence.start();
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(async (arg0, arg1, params) => {
+            callMeBack((arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -39,21 +39,21 @@ describe('Compiler support infrastructure tests', () => {
             },
         });
 
-        await FluencePeer.default.uninit();
+        await Fluence.stop();
     });
 
     it('Compiled code for service should work', async () => {
         // arrange
-        await FluencePeer.default.init();
+        await Fluence.start();
 
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld('hello_world', {
-                sayHello: async (s, params) => {
+                sayHello: (s, params) => {
                     const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: async (params) => {
+                getNumber: (params) => {
                     // ctx.tetraplets should be {}
                     return 42;
                 },
@@ -71,23 +71,23 @@ describe('Compiler support infrastructure tests', () => {
                 )`,
             )
             .buildAsFetch<[string]>('callback', 'callback');
-        await FluencePeer.default.internals.initiateFlow(request);
+        await Fluence.getPeer().internals.initiateFlow(request);
 
         // assert
         expect(await helloPromise).toBe('hello world!');
         expect(await getNumberPromise).toStrictEqual([42]);
 
-        await FluencePeer.default.uninit();
+        await Fluence.stop();
     });
 
-    it('Compiled code for function should work2', async () => {
+    it('Compiled code for function should work with another peer', async () => {
         // arrange
         const peer = new FluencePeer();
-        await peer.init();
+        await peer.start();
 
         // act
         const res = new Promise((resolve) => {
-            callMeBack(peer, async (arg0, arg1, params) => {
+            callMeBack(peer, (arg0, arg1, params) => {
                 resolve({
                     arg0: arg0,
                     arg1: arg1,
@@ -117,22 +117,22 @@ describe('Compiler support infrastructure tests', () => {
             },
         });
 
-        await peer.uninit();
+        await peer.stop();
     });
 
-    it('Compiled code for service should work2', async () => {
+    it('Compiled code for service should work another peer', async () => {
         // arrange
         const peer = new FluencePeer();
-        await peer.init();
+        await peer.start();
 
         // act
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld(peer, 'hello_world', {
-                sayHello: async (s, params) => {
+                sayHello: (s, params) => {
                     const tetrapelt = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
-                getNumber: async (params) => {
+                getNumber: (params) => {
                     // ctx.tetraplets should be {}
                     return 42;
                 },
@@ -156,6 +156,6 @@ describe('Compiler support infrastructure tests', () => {
         expect(await helloPromise).toBe('hello world!');
         expect(await getNumberPromise).toStrictEqual([42]);
 
-        await peer.uninit();
+        await peer.stop();
     });
 });

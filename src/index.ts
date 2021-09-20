@@ -15,6 +15,11 @@
  */
 
 import log, { LogLevelDesc } from 'loglevel';
+import { FluencePeer, PeerConfig } from './internal/FluencePeer';
+
+export { KeyPair } from './internal/KeyPair';
+export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
+export { PeerIdB58, CallParams } from './internal/commonTypes';
 
 export { peerIdFromEd25519SK, peerIdToEd25519SK, randomPeerId } from './internal/peerIdUtils';
 export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
@@ -25,3 +30,43 @@ export const setLogLevel = (level: LogLevelDesc) => {
 };
 
 log.setDefaultLevel('WARN');
+
+const defaultPeer = new FluencePeer();
+
+/**
+ * Public interface to Fluence JS SDK
+ */
+export const Fluence = {
+    /**
+     * Initializes the default peer: starts the Aqua VM, initializes the default call service handlers
+     * and (optionally) connect to the Fluence network
+     * @param config - object specifying peer configuration
+     */
+    start: (config?: PeerConfig): Promise<void> => {
+        return defaultPeer.start(config);
+    },
+
+    /**
+     * Uninitializes the default peer: stops all the underltying workflows, stops the Aqua VM
+     * and disconnects from the Fluence network
+     */
+    stop: (): Promise<void> => {
+        return defaultPeer.stop();
+    },
+
+    /**
+     * Get the default peer's status
+     * @returns Default peer's status
+     */
+    getStatus: () => {
+        return defaultPeer.getStatus();
+    },
+
+    /**
+     * Get the default peer instance
+     * @returns the default peer instance
+     */
+    getPeer: (): FluencePeer => {
+        return defaultPeer;
+    },
+};

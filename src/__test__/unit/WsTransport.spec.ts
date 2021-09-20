@@ -1,7 +1,7 @@
 import { FluenceConnection } from '../../internal/FluenceConnection';
 import Peer from 'libp2p';
 import { Multiaddr } from 'multiaddr';
-import { randomPeerId } from '../../internal/peerIdUtils';
+import { KeyPair } from '../../internal/KeyPair';
 
 describe('Ws Transport', () => {
     // TODO:: fix test
@@ -10,7 +10,7 @@ describe('Ws Transport', () => {
         let multiaddr = new Multiaddr(
             '/ip4/127.0.0.1/tcp/1234/ws/p2p/12D3KooWMJ78GJrtCxVUpjLEedbPtnLDxkFQJ2wuefEdrxq6zwSs',
         );
-        let peerId = await randomPeerId();
+        let peerId = (await KeyPair.randomEd25519()).Libp2pPeerId;
         const connection = new FluenceConnection(multiaddr, peerId, peerId, (_) => {});
         await (connection as any).createPeer();
         let node = (connection as any).node as Peer;

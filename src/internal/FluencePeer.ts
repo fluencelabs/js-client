@@ -1,13 +1,13 @@
-import { AirInterpreter, CallServiceResult, InterpreterResult, LogLevel, SecurityTetraplet } from '@fluencelabs/avm';
+import { AirInterpreter, CallServiceResult, LogLevel, ParticleHandler, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
-import { Multiaddr as MA } from 'multiaddr';
-import PeerId, { isPeerId } from 'peer-id';
+import { Multiaddr } from 'multiaddr';
+import PeerId from 'peer-id';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 import { logParticle, Particle } from './particle';
-import { randomPeerId, peerIdFromEd25519SK } from './peerIdUtils';
+import { KeyPair } from './KeyPair';
 import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
@@ -21,14 +21,6 @@ type Node = {
 };
 
 /**
- * Represents all the possible types which can used to specify the connection point. Can be in the form of:
- * * string - multiaddr in string format
- * * Multiaddr - multiaddr object, @see https://github.com/multiformats/js-multiaddr
- * * Node - node structure, @see Node
- */
-export type ConnectionSpec = string | MA | Node;
-
-/**
  * Enum representing the log level used in Aqua VM.
  * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
  */
@@ -40,25 +32,31 @@ export type AvmLoglevel = LogLevel;
 export interface PeerConfig {
     /**
      * Node in Fluence network to connect to.
+     * Can be in the form of:
+     * - string: multiaddr in string format
+     * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
+     * - Node: node structure, @see Node
      * If not specified the will work locally and would not be able to send or receive particles.
      */
-    connectTo?: ConnectionSpec | Array<ConnectionSpec>;
+    connectTo?: string | Multiaddr | Node;
 
+    /**
+     * Specify log level for Aqua VM running on the peer
+     */
     avmLogLevel?: AvmLoglevel;
 
     /**
-     * Specify the peer id to be used to identify the Fluence Peer .
-     * Specified either as PeerId structure or as seed string
+     * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
-    peerId?: string;
+    KeyPair?: KeyPair;
 
     /**
      * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
      * The options allows to specify the timeout for that message in milliseconds.
      * If not specified the default timeout will be used
      */
-    checkConnectionTimoutMs?: number;
+    checkConnectionTimeoutMs?: number;
 
     /**
      * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
@@ -76,7 +74,12 @@ export interface PeerConfig {
 /**
  * Information about Fluence Peer connection
  */
-interface ConnectionInfo {
+export interface PeerStatus {
+    /**
+     * Is the peer connected to network or not
+     */
+    isInitialized: Boolean;
+
     /**
      * Is the peer connected to network or not
      */
@@ -85,12 +88,12 @@ interface ConnectionInfo {
     /**
      * The Peer's identification in the Fluence network
      */
-    selfPeerId: PeerIdB58;
+    peerId: PeerIdB58 | null;
 
     /**
-     * The list of relays's peer ids to which the peer is connected to
+     * The relays's peer id to which the peer is connected to
      */
-    connectedRelays: Array<PeerIdB58>;
+    relayPeerId: PeerIdB58 | null;
 }
 
 /**
@@ -98,27 +101,38 @@ interface ConnectionInfo {
  * It provides all the necessary features to communicate with Fluence network
  */
 export class FluencePeer {
-    // TODO:: implement api alongside with multi-relay implementation
-    //async addConnection(relays: Array<ConnectionSpec>): Promise<void> {}
-
-    // TODO:: implement api alongside with multi-relay implementation
-    //async removeConnections(relays: Array<ConnectionSpec>): Promise<void> {}
-
     /**
-     * Creates a new Fluence Peer instance. Does not start the workflows.
-     * In order to work with the Peer it has to be initialized with the `init` method
+     * Creates a new Fluence Peer instance.
      */
     constructor() {}
 
     /**
-     * Get the information about Fluence Peer connections
+     * Checks whether the object is instance of FluencePeer class
+     * @param obj - object to check if it is FluencePeer
+     * @returns true if the object is FluencePeer false otherwise
      */
-    get connectionInfo(): ConnectionInfo {
-        const isConnected = this._connection?.isConnected();
+    static isInstance(obj: FluencePeer): boolean {
+        if (obj && obj._isFluenceAwesome) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get the peer's status
+     */
+    getStatus(): PeerStatus {
+        let isConnected = false;
+        if (this._connection) {
+            isConnected = this._connection?.isConnected();
+        }
+        const hasKeyPair = this._keyPair !== undefined;
         return {
+            isInitialized: hasKeyPair,
             isConnected: isConnected,
-            selfPeerId: this._selfPeerId,
-            connectedRelays: this._relayPeerId ? [this._relayPeerId] : [],
+            peerId: this._selfPeerId,
+            relayPeerId: this._relayPeerId || null,
         };
     }
 
@@ -127,38 +141,24 @@ export class FluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async init(config?: PeerConfig): Promise<void> {
-        let peerId;
-        const peerIdOrSeed = config?.peerId;
-        if (!peerIdOrSeed) {
-            peerId = await randomPeerId();
-        } else if (isPeerId(peerIdOrSeed)) {
-            // keep unchanged
-            peerId = peerIdOrSeed;
+    async start(config?: PeerConfig): Promise<void> {
+        if (config?.KeyPair) {
+            this._keyPair = config!.KeyPair;
         } else {
-            // peerId is string, therefore seed
-            peerId = await peerIdFromEd25519SK(peerIdOrSeed);
+            this._keyPair = await KeyPair.randomEd25519();
         }
-        this._selfPeerIdFull = peerId;
 
         await this._initAirInterpreter(config?.avmLogLevel || 'off');
 
         this._callServiceHandler = makeDefaultClientHandler();
 
         if (config?.connectTo) {
-            let connectTo;
-            if (Array.isArray(config!.connectTo)) {
-                connectTo = config!.connectTo;
-            } else {
-                connectTo = [config!.connectTo];
-            }
-
-            let theAddress: ConnectionSpec;
-            let fromNode = (connectTo[0] as any).multiaddr;
+            let theAddress: Multiaddr;
+            let fromNode = (config.connectTo as any).multiaddr;
             if (fromNode) {
-                theAddress = new MA(fromNode);
+                theAddress = new Multiaddr(fromNode);
             } else {
-                theAddress = new MA(connectTo[0] as string);
+                theAddress = new Multiaddr(config.connectTo as string);
             }
 
             await this._connect(theAddress);
@@ -169,17 +169,9 @@ export class FluencePeer {
      * Uninitializes the peer: stops all the underltying workflows, stops the Aqua VM
      * and disconnects from the Fluence network
      */
-    async uninit() {
+    async stop() {
         await this._disconnect();
         this._callServiceHandler = null;
-    }
-
-    /**
-     * Get the default Fluence peer instance. The default peer is used automatically in all the functions generated
-     * by the Aqua compiler if not specified otherwise.
-     */
-    static get default(): FluencePeer {
-        return this._default;
     }
 
     // internal api
@@ -196,12 +188,17 @@ export class FluencePeer {
 
     // private
 
+    /**
+     *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
+     */
+    private _isFluenceAwesome = true;
+
     private async _initiateFlow(request: RequestFlow): Promise<void> {
         // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
-        request.handler.on(loadVariablesService, loadRelayFn, async () => {
+        request.handler.on(loadVariablesService, loadRelayFn, () => {
             return this._relayPeerId || '';
         });
-        await request.initState(this._selfPeerIdFull);
+        await request.initState(this._keyPair.Libp2pPeerId);
 
         logParticle(log.debug, 'executing local particle', request.getParticle());
         request.handler.combineWith(this._callServiceHandler);
@@ -212,11 +209,10 @@ export class FluencePeer {
 
     private _callServiceHandler: CallServiceHandler;
 
-    private static _default: FluencePeer = new FluencePeer();
-
-    private _selfPeerIdFull: PeerId;
+    private _keyPair: KeyPair;
     private _requests: Map<string, RequestFlow> = new Map();
-    private _watchDog;
+    private _currentRequestId: string | null = null;
+    private _watchdog;
 
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
@@ -225,7 +221,7 @@ export class FluencePeer {
         this._interpreter = await createInterpreter(logLevel);
     }
 
-    private async _connect(multiaddr: MA, options?: FluenceConnectionOptions): Promise<void> {
+    private async _connect(multiaddr: Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
         const nodePeerId = multiaddr.getPeerId();
         if (!nodePeerId) {
             throw Error("'multiaddr' did not contain a valid peer id");
@@ -239,7 +235,7 @@ export class FluencePeer {
         const connection = new FluenceConnection(
             multiaddr,
             node,
-            this._selfPeerIdFull,
+            this._keyPair.Libp2pPeerId,
             this._executeIncomingParticle.bind(this),
         );
         await connection.connect(options);
@@ -257,16 +253,16 @@ export class FluencePeer {
         });
     }
 
-    private get _selfPeerId(): PeerIdB58 {
-        return this._selfPeerIdFull.toB58String();
+    private get _selfPeerId(): PeerIdB58 | null {
+        return this._keyPair?.Libp2pPeerId?.toB58String() || null;
     }
 
-    private get _relayPeerId(): PeerIdB58 | undefined {
-        return this._connection?.nodePeerId.toB58String();
+    private get _relayPeerId(): PeerIdB58 | null {
+        return this._connection?.nodePeerId?.toB58String() || null;
     }
 
     private async _executeIncomingParticle(particle: Particle) {
-        logParticle(log.debug, 'external particle received', particle);
+        logParticle(log.debug, 'incoming particle received', particle);
 
         let request = this._requests.get(particle.id);
         if (request) {
@@ -282,23 +278,68 @@ export class FluencePeer {
 
     private async _processRequest(request: RequestFlow) {
         try {
-            await request.execute(this._interpreter, this._connection, this._selfPeerId, this._relayPeerId);
+            this._currentRequestId = request.id;
+            await request.execute(this._interpreter, this._connection, this._relayPeerId);
         } catch (err) {
             log.error('particle processing failed: ' + err);
+        } finally {
+            this._currentRequestId = null;
         }
     }
 
+    private _interpreterCallback: ParticleHandler = async (
+        serviceId: string,
+        fnName: string,
+        args: any[],
+        tetraplets: SecurityTetraplet[][],
+    ): Promise<CallServiceResult> => {
+        if (this._currentRequestId === null) {
+            throw Error('current request can`t be null here');
+        }
+
+        const request = this._requests.get(this._currentRequestId);
+        const particle = request.getParticle();
+        if (particle === null) {
+            throw new Error("particle can't be null here, current request id: " + this._currentRequestId);
+        }
+        const res = await request.handler.execute({
+            serviceId,
+            fnName,
+            args,
+            tetraplets,
+            particleContext: {
+                particleId: request.id,
+                initPeerId: particle.init_peer_id,
+                timestamp: particle.timestamp,
+                ttl: particle.ttl,
+                signature: particle.signature,
+            },
+        });
+
+        if (res.result === undefined) {
+            log.error(
+                `Call to serviceId=${serviceId} fnName=${fnName} unexpectedly returned undefined result, falling back to null. Particle id=${request.id}`,
+            );
+            res.result = null;
+        }
+
+        return {
+            retCode: res.retCode,
+            result: JSON.stringify(res.result),
+        };
+    };
+
     private _initWatchDog() {
-        this._watchDog = setInterval(() => {
+        this._watchdog = setInterval(() => {
             for (let key in this._requests.keys) {
                 if (this._requests.get(key).hasExpired()) {
                     this._requests.delete(key);
                 }
             }
-        }, 5000);
+        }, 5000); // TODO: make configurable
     }
 
     private _clearWathcDog() {
-        clearInterval(this._watchDog);
+        clearInterval(this._watchdog);
     }
 }

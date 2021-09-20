@@ -16,7 +16,7 @@ interface ParticleContext {
      */
     particleId: string;
     initPeerId: PeerIdB58;
-    timeStamp: number;
+    timestamp: number;
     ttl: number;
     signature: string;
 }
@@ -84,6 +84,20 @@ export interface CallServiceResult {
  * @param { Function } next - function which invokes next middleware in chain
  */
 export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => Promise<void>;
+
+export class CallServiceArg<T> {
+    val: T;
+    tetraplet: SecurityTetraplet[];
+
+    constructor(val: T, tetraplet: SecurityTetraplet[]) {
+        this.val = val;
+        this.tetraplet = tetraplet;
+    }
+}
+
+type CallParams = ParticleContext & {
+    wrappedArgs: CallServiceArg<any>[];
+};
 
 export class CallServiceArg<T> {
     val: T;
