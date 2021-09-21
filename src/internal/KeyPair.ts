@@ -24,26 +24,16 @@ export class KeyPair {
      */
     public Libp2pPeerId: PeerId;
 
-    constructor(libp2pPeerId: PeerId) {        
-        this.Libp2pPeerId = libp2pPeerId
+    constructor(libp2pPeerId: PeerId) {
+        this.Libp2pPeerId = libp2pPeerId;
     }
 
     /**
-     * Generates new KeyPair from base64 string containing the 32 byte Ed25519 private key
-     * @returns - Promise with the created KeyPair
-     */
-    static async fromEd25519SK(base64Key: string): Promise<KeyPair> {
-        // deserialize private key from base64
-        const key = base64.toByteArray(base64Key);
-        return await KeyPair.fromBytes(key);
-    }
-
-    /**
-     * Generates new KeyPair from a 32 byte array
+     * Generates new KeyPair from ed25519 private key represented as a 32 byte array
      * @param key - Any sequence of 32 bytes
      * @returns - Promise with the created KeyPair
      */
-    static async fromBytes(arr: Uint8Array): Promise<KeyPair> {
+    static async fromEd25519SK(arr: Uint8Array): Promise<KeyPair> {
         // generateKeyPairFromSeed takes seed and copies it to private key as is
         const privateKey = await keys.generateKeyPairFromSeed('Ed25519', arr, 256);
         const lib2p2Pid = await PeerId.createFromPrivKey(privateKey.bytes);
