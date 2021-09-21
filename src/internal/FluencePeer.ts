@@ -6,7 +6,7 @@ import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
-import { logParticle, Particle } from './particle';
+import { logParticle, ParticleOld } from './particle';
 import { KeyPair } from './KeyPair';
 import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
@@ -123,15 +123,11 @@ export class FluencePeer {
      * Get the peer's status
      */
     getStatus(): PeerStatus {
-        let isConnected = false;
-        if (this._connection) {
-            isConnected = this._connection?.isConnected();
-        }
         const hasKeyPair = this._keyPair !== undefined;
         return {
             isInitialized: hasKeyPair,
-            isConnected: isConnected,
-            peerId: this._selfPeerId,
+            isConnected: this._connection !== undefined,
+            peerId: this._keyPair?.Libp2pPeerId?.toB58String() || null,
             relayPeerId: this._relayPeerId || null,
         };
     }
@@ -161,6 +157,7 @@ export class FluencePeer {
                 theAddress = new Multiaddr(config.connectTo as string);
             }
 
+            this._relayPeerId = theAddress.getPeerId();
             await this._connect(theAddress);
         }
     }
@@ -170,6 +167,7 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
+        this._relayPeerId = null;
         await this._disconnect();
         this._callServiceHandler = null;
     }
@@ -232,13 +230,13 @@ export class FluencePeer {
         }
 
         const node = PeerId.createFromB58String(nodePeerId);
-        const connection = new FluenceConnection(
-            multiaddr,
-            node,
-            this._keyPair.Libp2pPeerId,
-            this._executeIncomingParticle.bind(this),
-        );
-        await connection.connect(options);
+        const connection = await FluenceConnection.createConnection({
+            peerId: this._keyPair.Libp2pPeerId,
+            relayAddress: multiaddr,
+            handleParticle: this._executeIncomingParticle.bind(this),
+            dialTimeout: options?.dialTimeout,
+        });
+
         this._connection = connection;
         this._initWatchDog();
     }
@@ -253,15 +251,9 @@ export class FluencePeer {
         });
     }
 
-    private get _selfPeerId(): PeerIdB58 | null {
-        return this._keyPair?.Libp2pPeerId?.toB58String() || null;
-    }
+    private _relayPeerId: PeerIdB58 | null = null;
 
-    private get _relayPeerId(): PeerIdB58 | null {
-        return this._connection?.nodePeerId?.toB58String() || null;
-    }
-
-    private async _executeIncomingParticle(particle: Particle) {
+    private async _executeIncomingParticle(particle: ParticleOld) {
         logParticle(log.debug, 'incoming particle received', particle);
 
         let request = this._requests.get(particle.id);

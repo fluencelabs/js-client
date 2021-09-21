@@ -20,7 +20,48 @@ import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import log, { LogLevel } from 'loglevel';
 
-export interface Particle {
+export class Particle {
+    id: string;
+    init_peer_id: string;
+    timestamp: number;
+    ttl: number;
+    script: string;
+    signature: string;
+    data: Uint8Array;
+
+    static fromString(str: string): Particle {
+        const json = JSON.parse(str);
+
+        return {
+            id: json.id,
+            init_peer_id: json.init_peer_id,
+            timestamp: json.timestamp,
+            ttl: json.ttl,
+            script: json.script,
+            signature: json.signature,
+            data: toByteArray(json.data),
+        };
+    }
+
+    toString(): string {
+        const particle = this;
+        const payload = {
+            action: 'Particle',
+            id: particle.id,
+            init_peer_id: particle.init_peer_id,
+            timestamp: particle.timestamp,
+            ttl: particle.ttl,
+            script: particle.script,
+            // TODO: copy signature from a particle after signatures will be implemented on nodes
+            signature: [],
+            data: fromByteArray(particle.data),
+        };
+
+        return JSON.stringify(payload);
+    }
+}
+
+export interface ParticleOld {
     id: string;
     init_peer_id: string;
     timestamp: number;
@@ -31,7 +72,7 @@ export interface Particle {
     data: Uint8Array;
 }
 
-export const logParticle = (fn: Function, message: string, particle: Particle) => {
+export const logParticle = (fn: Function, message: string, particle: ParticleOld) => {
     const toLog = { ...particle };
     delete toLog.data;
     fn(message, toLog);
@@ -40,7 +81,7 @@ export const logParticle = (fn: Function, message: string, particle: Particle) =
 /**
  * Represents particle action to send to a node
  */
-interface ParticlePayload {
+interface ParticlePayloadOld {
     action: 'Particle';
     id: string;
     init_peer_id: string;
@@ -54,7 +95,7 @@ interface ParticlePayload {
 /**
  * Creates an action to send to a node.
  */
-export function toPayload(particle: Particle): ParticlePayload {
+export function toPayload(particle: ParticleOld): ParticlePayloadOld {
     return {
         action: 'Particle',
         id: particle.id,
@@ -68,7 +109,7 @@ export function toPayload(particle: Particle): ParticlePayload {
     };
 }
 
-export function parseParticle(str: string): Particle {
+export function parseParticle(str: string): ParticleOld {
     let json = JSON.parse(str);
 
     return {

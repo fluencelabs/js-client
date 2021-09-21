@@ -4,7 +4,7 @@ import { AirInterpreter, CallServiceResult, CallRequest, InterpreterResult } fro
 import { CallServiceData, CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
-import { Particle, genUUID, logParticle } from './particle';
+import { ParticleOld, genUUID, logParticle } from './particle';
 import { ParticleDataToString } from './utils';
 
 export const DEFAULT_TTL = 7000;
@@ -17,7 +17,7 @@ export const DEFAULT_TTL = 7000;
  * After the combination middlewares from RequestFlow are executed before client handler's middlewares.
  */
 export class RequestFlow {
-    private state: Particle;
+    private state: ParticleOld;
     private prevData: Uint8Array = Buffer.from([]);
     private onTimeoutHandlers = [];
     private onErrorHandlers = [];
@@ -31,7 +31,7 @@ export class RequestFlow {
     ttl: number = DEFAULT_TTL;
     relayPeerId?: PeerIdB58;
 
-    static createExternal(particle: Particle): RequestFlow {
+    static createExternal(particle: ParticleOld): RequestFlow {
         const res = new RequestFlow(true, particle.id, particle.script);
         res.ttl = particle.ttl;
         res.state = particle;
@@ -115,7 +115,7 @@ relay peer id: ${this.relayPeerId}
         const id = this.id;
         let currentTime = Date.now();
 
-        const particle: Particle = {
+        const particle: ParticleOld = {
             id: id,
             init_peer_id: peerId.toB58String(),
             timestamp: currentTime,
@@ -129,7 +129,7 @@ relay peer id: ${this.relayPeerId}
         this.timeoutHandle = setTimeout(this.raiseTimeout.bind(this), particle.ttl);
     }
 
-    receiveUpdate(particle: Particle) {
+    receiveUpdate(particle: ParticleOld) {
         this.state.data = particle.data;
         log.debug('Received update');
     }
