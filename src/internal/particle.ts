@@ -20,6 +20,8 @@ import PeerId from 'peer-id';
 import { encode } from 'bs58';
 import log, { LogLevel } from 'loglevel';
 
+const DefaultTTL = 7000;
+
 export class Particle {
     id: string;
     init_peer_id: string;
@@ -28,6 +30,17 @@ export class Particle {
     script: string;
     signature: string;
     data: Uint8Array;
+
+    static createNew(script: string, ttlMs?: number): Particle {
+        const res = new Particle();
+        res.id = genUUID();
+        res.script = script;
+        res.ttl = ttlMs || DefaultTTL;
+        res.data = Buffer.from([]);
+        res.timestamp = Date.now();
+
+        return res;
+    }
 
     static fromString(str: string): Particle {
         const json = JSON.parse(str);

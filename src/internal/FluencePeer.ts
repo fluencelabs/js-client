@@ -1,4 +1,4 @@
-import { AirInterpreter, CallServiceResult, LogLevel, SecurityTetraplet } from '@fluencelabs/avm';
+import { AirInterpreter, CallRequest, CallServiceResult, LogLevel, SecurityTetraplet } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { Multiaddr } from 'multiaddr';
 import PeerId from 'peer-id';
@@ -6,11 +6,12 @@ import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
-import { logParticle, ParticleOld } from './particle';
+import { logParticle, Particle, ParticleOld } from './particle';
 import { KeyPair } from './KeyPair';
 import { RequestFlow } from './RequestFlow';
 import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
+import { ParticleExecFlow } from './ParticleExecFlow';
 
 /**
  * Node of the Fluence detwork specified as a pair of node's multiaddr and it's peer id
@@ -160,6 +161,8 @@ export class FluencePeer {
             this._relayPeerId = theAddress.getPeerId();
             await this._connect(theAddress);
         }
+
+        this._startLoops();
     }
 
     /**
@@ -167,6 +170,7 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
+        this._cancelLoops();
         this._relayPeerId = null;
         await this._disconnect();
         this._callServiceHandler = null;
@@ -185,6 +189,75 @@ export class FluencePeer {
     }
 
     // private
+
+    // new
+
+    private _timers: NodeJS.Timer[];
+
+    private _startLoops() {
+        this._timers.push(
+            setInterval(this._sendOutgoingParticle.bind(this), 1000),
+            setInterval(this._sendOutgoingParticle.bind(this), 1000),
+        );
+    }
+
+    private async _processParticle() {
+        const executing = this._executingParticlesQueue.pop();
+        if (executing) {
+            const res = this._runInterpreter(executing);
+        } else {
+            const newIncoming = this._incomingParticlesQueue.pop();
+            if (newIncoming) {
+                this._executingParticlesQueue.push();
+            }
+        }
+
+        return this._processParticle();
+    }
+
+    private _runInterpreter(particle: ParticleExecFlow) {
+        const cbResults = await this.execCallbacks(callRequestsToExec);
+
+        const interpreterResult = this._interpreter.invoke(
+            this.state.script,
+            this.prevData,
+            this.state.data,
+            {
+                initPeerId: this.state.init_peer_id,
+                currentPeerId: selfPeerId,
+            },
+            cbResults,
+        );
+        log.debug('new data: ', ParticleDataToString(interpreterResult.data));
+        log.debug(`ret code=${interpreterResult.retCode}, error message=${interpreterResult.errorMessage}`);
+        log.debug('---------------------');
+
+        this.prevData = interpreterResult.data;
+        this.state.data = Buffer.from([]);
+        callRequestsToExec = interpreterResult.callRequests;
+    }
+
+    private async _sendOutgoingParticle() {
+        const particle = this._outgoingParticlesQueue.pop();
+        if (particle) {
+            await this._connection.sendParticle(particle);
+        }
+        return this._sendOutgoingParticle();
+    }
+
+    private _cancelLoops() {
+        for (let item of this._timers) {
+            clearInterval(item);
+        }
+    }
+
+    private _incomingParticlesQueue: Particle[] = [];
+
+    private _executingParticlesQueue: ParticleExecFlow[] = [];
+
+    private _outgoingParticlesQueue: Particle[] = [];
+
+    // end new
 
     /**
      *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
@@ -233,7 +306,9 @@ export class FluencePeer {
         const connection = await FluenceConnection.createConnection({
             peerId: this._keyPair.Libp2pPeerId,
             relayAddress: multiaddr,
-            handleParticle: this._executeIncomingParticle.bind(this),
+            handleParticle: (incoming) => {
+                this._incomingParticlesQueue.push(incoming);
+            },
             dialTimeout: options?.dialTimeout,
         });
 
