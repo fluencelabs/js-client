@@ -16,9 +16,6 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
-import PeerId from 'peer-id';
-import { encode } from 'bs58';
-import log, { LogLevel } from 'loglevel';
 
 const DefaultTTL = 7000;
 
@@ -30,6 +27,14 @@ export class Particle {
     script: string;
     signature: string;
     data: Uint8Array;
+
+    actualTtl(): number {
+        return this.timestamp + this.ttl - Date.now();
+    }
+
+    hasExpired(): boolean {
+        return this.actualTtl() <= 0;
+    }
 
     static createNew(script: string, ttlMs?: number): Particle {
         const res = new Particle();
@@ -44,16 +49,16 @@ export class Particle {
 
     static fromString(str: string): Particle {
         const json = JSON.parse(str);
+        const res = new Particle();
+        res.id = json.id;
+        res.init_peer_id = json.init_peer_id;
+        res.timestamp = json.timestamp;
+        res.ttl = json.ttl;
+        res.script = json.script;
+        res.signature = json.signature;
+        res.data = toByteArray(json.data);
 
-        return {
-            id: json.id,
-            init_peer_id: json.init_peer_id,
-            timestamp: json.timestamp,
-            ttl: json.ttl,
-            script: json.script,
-            signature: json.signature,
-            data: toByteArray(json.data),
-        };
+        return res 
     }
 
     toString(): string {

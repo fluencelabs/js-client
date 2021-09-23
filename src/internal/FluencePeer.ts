@@ -1,17 +1,16 @@
-import { AirInterpreter, CallRequest, CallServiceResult, LogLevel, SecurityTetraplet } from '@fluencelabs/avm';
-import log from 'loglevel';
+import { AirInterpreter, LogLevel } from '@fluencelabs/avm';
+import { match } from 'ts-pattern';
 import { Multiaddr } from 'multiaddr';
-import PeerId from 'peer-id';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
-import { logParticle, Particle, ParticleOld } from './particle';
+import { Particle } from './particle';
 import { KeyPair } from './KeyPair';
-import { RequestFlow } from './RequestFlow';
-import { loadRelayFn, loadVariablesService } from './RequestFlowBuilder';
 import { createInterpreter } from './utils';
-import { ParticleExecFlow } from './ParticleExecFlow';
+import { ParticleOp, ParticleExecFlow } from './ParticleExecFlow';
+import { filter, map, mergeMap, Subject, timer } from 'rxjs';
+import { RequestFlow } from './compilerSupport/v1';
 
 /**
  * Node of the Fluence detwork specified as a pair of node's multiaddr and it's peer id
@@ -162,7 +161,7 @@ export class FluencePeer {
             await this._connect(theAddress);
         }
 
-        this._startLoops();
+        this._startInternals();
     }
 
     /**
@@ -170,7 +169,7 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
-        this._cancelLoops();
+        this._stopInternals();
         this._relayPeerId = null;
         await this._disconnect();
         this._callServiceHandler = null;
@@ -183,108 +182,126 @@ export class FluencePeer {
      */
     get internals() {
         return {
-            initiateFlow: this._initiateFlow.bind(this),
+            initiateFlow: (reqest: RequestFlow) => {
+                this._executingQueue.next({ op: 'incoming', particle: reqest.getParticle() });
+            },
             callServiceHandler: this._callServiceHandler,
         };
     }
 
     // private
 
-    // new
-
-    private _timers: NodeJS.Timer[];
-
-    private _startLoops() {
-        this._timers.push(
-            setInterval(this._sendOutgoingParticle.bind(this), 1000),
-            setInterval(this._sendOutgoingParticle.bind(this), 1000),
-        );
-    }
-
-    private async _processParticle() {
-        const executing = this._executingParticlesQueue.pop();
-        if (executing) {
-            const res = this._runInterpreter(executing);
-        } else {
-            const newIncoming = this._incomingParticlesQueue.pop();
-            if (newIncoming) {
-                this._executingParticlesQueue.push();
-            }
-        }
-
-        return this._processParticle();
-    }
-
-    private _runInterpreter(particle: ParticleExecFlow) {
-        const cbResults = await this.execCallbacks(callRequestsToExec);
-
-        const interpreterResult = this._interpreter.invoke(
-            this.state.script,
-            this.prevData,
-            this.state.data,
-            {
-                initPeerId: this.state.init_peer_id,
-                currentPeerId: selfPeerId,
-            },
-            cbResults,
-        );
-        log.debug('new data: ', ParticleDataToString(interpreterResult.data));
-        log.debug(`ret code=${interpreterResult.retCode}, error message=${interpreterResult.errorMessage}`);
-        log.debug('---------------------');
-
-        this.prevData = interpreterResult.data;
-        this.state.data = Buffer.from([]);
-        callRequestsToExec = interpreterResult.callRequests;
-    }
-
-    private async _sendOutgoingParticle() {
-        const particle = this._outgoingParticlesQueue.pop();
-        if (particle) {
-            await this._connection.sendParticle(particle);
-        }
-        return this._sendOutgoingParticle();
-    }
-
-    private _cancelLoops() {
-        for (let item of this._timers) {
-            clearInterval(item);
-        }
-    }
-
-    private _incomingParticlesQueue: Particle[] = [];
-
-    private _executingParticlesQueue: ParticleExecFlow[] = [];
-
-    private _outgoingParticlesQueue: Particle[] = [];
-
-    // end new
-
     /**
      *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
      */
     private _isFluenceAwesome = true;
 
-    private async _initiateFlow(request: RequestFlow): Promise<void> {
-        // setting `relayVariableName` here. If the client is not connected (i.e it is created as local) then there is no relay
-        request.handler.on(loadVariablesService, loadRelayFn, () => {
-            return this._relayPeerId || '';
-        });
-        await request.initState(this._keyPair.Libp2pPeerId);
+    private _executingQueue = new Subject<ParticleOp>();
 
-        logParticle(log.debug, 'executing local particle', request.getParticle());
-        request.handler.combineWith(this._callServiceHandler);
-        this._requests.set(request.id, request);
+    private _startInternals() {
+        this._connection.incomingParticles
+            .pipe(
+                map((x) => ({
+                    op: 'incoming' as const,
+                    particle: x,
+                })),
+            )
+            .subscribe(this._executingQueue);
 
-        await this._processRequest(request);
+        this._connection.incomingParticles
+            .pipe(
+                filter((x) => !x.hasExpired()),
+                mergeMap((x) =>
+                    // force new line
+                    timer(x.actualTtl()).pipe(
+                        map((_) => ({
+                            op: 'expired' as const,
+                            particleId: x.id,
+                        })),
+                    ),
+                ),
+            )
+            .subscribe(this._executingQueue);
+
+        this._executingQueue.subscribe(this._processParticle);
     }
+
+    private _state = new Map<string, ParticleExecFlow>();
+
+    private _processParticle(particle: ParticleOp) {
+        match(particle)
+            .with({ op: 'incoming' }, ({ particle }) => {
+                let ef = this._state.get(particle.id);
+                if (ef) {
+                    ef.mergeWithIncoming(particle);
+                } else {
+                    ef = new ParticleExecFlow(particle);
+                    this._state.set(particle.id, ef);
+                }
+
+                this._executingQueue.next({
+                    op: 'shouldCallInterpreter',
+                    particleId: particle.id,
+                });
+            })
+            .with({ op: 'expired' }, ({ particleId }) => {
+                this._state.delete(particleId);
+            })
+            .with({ op: 'callbackFinished' }, (x) => {
+                const ef = this._state.get(x.particleId);
+                if (ef) {
+                    ef.mergeInterpreterResult;
+                }
+            })
+            .with({ op: 'interpreterResult' }, ({ particleId, interpreterResult }) => {
+                const ef = this._state.get(particleId);
+                if (ef) {
+                    ef.mergeInterpreterResult(interpreterResult);
+                }
+                if (ef.processingDone()) {
+                    this._connection.outgoingParticles.next(ef.getParticle());
+                } else {
+                    this._executingQueue.next({
+                        op: 'shouldCallInterpreter',
+                        particleId: particleId,
+                    });
+                }
+            })
+            .with({ op: 'shouldCallInterpreter' }, ({ particleId }) => {
+                const ef = this._state.get(particleId);
+                if (ef) {
+                    ef.mergeInterpreterResult;
+                }
+                const res = this._runInterpreter(ef.getParticle(), ef.prevData, ef.callResults);
+                this._executingQueue.next(res);
+            })
+            .exhaustive();
+    }
+
+    private _runInterpreter(particle: Particle, prevData, callResults): ParticleOp {
+        const interpreterResult = this._interpreter.invoke(
+            particle.script,
+            prevData,
+            particle.data,
+            {
+                initPeerId: particle.init_peer_id,
+                currentPeerId: this.getStatus().peerId,
+            },
+            callResults,
+        );
+
+        return {
+            op: 'interpreterResult',
+            particleId: particle.id,
+            interpreterResult: interpreterResult,
+        };
+    }
+
+    private _stopInternals() {}
 
     private _callServiceHandler: CallServiceHandler;
 
     private _keyPair: KeyPair;
-    private _requests: Map<string, RequestFlow> = new Map();
-    private _currentRequestId: string | null = null;
-    private _watchdog;
-
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
 
@@ -302,69 +319,20 @@ export class FluencePeer {
             await this._connection.disconnect();
         }
 
-        const node = PeerId.createFromB58String(nodePeerId);
         const connection = await FluenceConnection.createConnection({
             peerId: this._keyPair.Libp2pPeerId,
             relayAddress: multiaddr,
-            handleParticle: (incoming) => {
-                this._incomingParticlesQueue.push(incoming);
-            },
             dialTimeout: options?.dialTimeout,
         });
 
         this._connection = connection;
-        this._initWatchDog();
     }
 
     private async _disconnect(): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
         }
-        this._clearWathcDog();
-        this._requests.forEach((r) => {
-            r.cancel();
-        });
     }
 
     private _relayPeerId: PeerIdB58 | null = null;
-
-    private async _executeIncomingParticle(particle: ParticleOld) {
-        logParticle(log.debug, 'incoming particle received', particle);
-
-        let request = this._requests.get(particle.id);
-        if (request) {
-            await request.receiveUpdate(particle);
-        } else {
-            request = RequestFlow.createExternal(particle);
-            request.handler.combineWith(this._callServiceHandler);
-        }
-        this._requests.set(request.id, request);
-
-        await this._processRequest(request);
-    }
-
-    private async _processRequest(request: RequestFlow) {
-        try {
-            this._currentRequestId = request.id;
-            await request.execute(this._interpreter, this._connection, this._relayPeerId);
-        } catch (err) {
-            log.error('particle processing failed: ' + err);
-        } finally {
-            this._currentRequestId = null;
-        }
-    }
-
-    private _initWatchDog() {
-        this._watchdog = setInterval(() => {
-            for (let key in this._requests.keys) {
-                if (this._requests.get(key).hasExpired()) {
-                    this._requests.delete(key);
-                }
-            }
-        }, 5000); // TODO: make configurable
-    }
-
-    private _clearWathcDog() {
-        clearInterval(this._watchdog);
-    }
 }

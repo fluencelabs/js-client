@@ -60,7 +60,7 @@ export function registerHelloWorld(...args) {
         service = args[2];
     }
 
-    peer.internals.callServiceHandler.use((req, resp, next) => {
+    peer.internals.callServiceHandler.use(async (req, resp, next) => {
         if (req.serviceId !== serviceId) {
             next();
             return;

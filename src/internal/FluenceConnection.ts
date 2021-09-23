@@ -26,6 +26,7 @@ import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
+import { Subject } from 'rxjs';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -47,15 +48,14 @@ export interface FluenceConnectionOptions {
      * @property {number} [dialTimeout] - How long a dial attempt is allowed to take.
      */
     dialTimeout?: number;
-
-    handleParticle: (incoming: Particle) => void;
 }
 
 export class FluenceConnection {
-    private _lib2p2Peer: Lib2p2Peer;
-    private _connection: Connection;
-
     constructor() {}
+
+    incomingParticles: Subject<Particle> = new Subject<Particle>();
+
+    outgoingParticles: Subject<Particle> = new Subject<Particle>();
 
     static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
         const res = new FluenceConnection();
@@ -80,7 +80,11 @@ export class FluenceConnection {
             },
         });
 
-        await res._start(options.relayAddress, options.handleParticle);
+        res.outgoingParticles.subscribe((p) => {
+            res._sendParticle(p);
+        });
+
+        await res._start(options.relayAddress);
 
         return res;
     }
@@ -89,7 +93,7 @@ export class FluenceConnection {
         await this._lib2p2Peer.stop();
     }
 
-    async sendParticle(particle: Particle): Promise<void> {
+    private async _sendParticle(particle: Particle): Promise<void> {
         logParticle(log.debug, 'send particle: \n', particle);
 
         if (this._connection.streams.length !== 1) {
@@ -106,7 +110,10 @@ export class FluenceConnection {
         );
     }
 
-    private async _start(address: Multiaddr, handleParticle) {
+    private _lib2p2Peer: Lib2p2Peer;
+    private _connection: Connection;
+
+    private async _start(address: Multiaddr) {
         await this._lib2p2Peer.start();
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
@@ -127,9 +134,9 @@ export class FluenceConnection {
             pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
                 for await (const msg of source) {
                     try {
-                        const particle = parseParticle(msg);
+                        const particle = Particle.fromString(msg);
                         logParticle(log.debug, 'Particle is received:', particle);
-                        handleParticle(particle);
+                        this.incomingParticles.next(particle);
                     } catch (e) {
                         log.error('error on handling a new incoming message: ' + e);
                     }

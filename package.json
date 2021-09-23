@@ -36,6 +36,8 @@
         "multiaddr": "10.0.0",
         "noble-ed25519": "^1.2.5",
         "peer-id": "0.15.3",
+        "rxjs": "^7.3.0",
+        "ts-pattern": "^3.3.1",
         "uuid": "8.3.0"
     },
     "devDependencies": {
@@ -44,6 +46,6 @@
         "ts-jest": "^26.5.4",
         "typedoc": "^0.21.9",
         "typedoc-plugin-markdown": "^3.10.4",
-        "typescript": "^4.0.0"
+        "typescript": "^4.2.0"
     }
 }
