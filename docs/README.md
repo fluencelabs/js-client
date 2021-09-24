@@ -1,3 +1,5 @@
+@fluencelabs/fluence / [Exports](modules.md)
+
 # Fluence JS
 
 To start developing applications with Fluence JS refer to the official [gitbook page](https://doc.fluence.dev/docs/js-sdk)
