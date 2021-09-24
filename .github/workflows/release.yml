@@ -50,7 +50,7 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v1
         with:
-          name: JS SDK ${{ env.RELEASE_VERSION }}
+          name: Fluence JS ${{ env.RELEASE_VERSION }}
           tag_name: ${{ env.RELEASE_VERSION }}
           body: ${{steps.changelog.outputs.changelog}}
           draft: false

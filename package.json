@@ -1,7 +1,7 @@
 {
     "name": "@fluencelabs/fluence",
     "version": "0.10.3",
-    "description": "JS SDK for the Fluence network",
+    "description": "JS-based implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
