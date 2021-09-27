@@ -31,7 +31,7 @@ log.setDefaultLevel('WARN');
 const defaultPeer = new FluencePeer();
 
 /**
- * Public interface to Fluence JS SDK
+ * Public interface to Fluence JS
  */
 export const Fluence = {
     /**

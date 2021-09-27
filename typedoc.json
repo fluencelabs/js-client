@@ -1,0 +1,7 @@
+{
+    "readme": "./typedoc.md",
+    "theme": "default",
+    "out": "docs",
+    "excludePrivate": true,
+    "entryPoints": ["src/index.ts"]
+}
