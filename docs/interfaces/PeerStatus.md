@@ -23,7 +23,7 @@ Is the peer connected to network or not
 
 #### Defined in
 
-[internal/FluencePeer.ts:86](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L86)
+[internal/FluencePeer.ts:86](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L86)
 
 ___
 
@@ -35,7 +35,7 @@ Is the peer connected to network or not
 
 #### Defined in
 
-[internal/FluencePeer.ts:81](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L81)
+[internal/FluencePeer.ts:81](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L81)
 
 ___
 
@@ -47,7 +47,7 @@ The Peer's identification in the Fluence network
 
 #### Defined in
 
-[internal/FluencePeer.ts:91](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L91)
+[internal/FluencePeer.ts:91](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L91)
 
 ___
 
@@ -59,4 +59,4 @@ The relays's peer id to which the peer is connected to
 
 #### Defined in
 
-[internal/FluencePeer.ts:96](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L96)
+[internal/FluencePeer.ts:96](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L96)

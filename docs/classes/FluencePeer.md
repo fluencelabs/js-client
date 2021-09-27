@@ -32,7 +32,7 @@ Creates a new Fluence Peer instance.
 
 #### Defined in
 
-[internal/FluencePeer.ts:107](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L107)
+[internal/FluencePeer.ts:107](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L107)
 
 ## Accessors
 
@@ -40,7 +40,7 @@ Creates a new Fluence Peer instance.
 
 • `get` **internals**(): `Object`
 
-Does not intended to be used manually. Subject to change
+Is not intended to be used manually. Subject to change
 
 #### Returns
 
@@ -53,7 +53,7 @@ Does not intended to be used manually. Subject to change
 
 #### Defined in
 
-[internal/FluencePeer.ts:182](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L182)
+[internal/FluencePeer.ts:182](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L182)
 
 ## Methods
 
@@ -69,7 +69,7 @@ Get the peer's status
 
 #### Defined in
 
-[internal/FluencePeer.ts:125](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L125)
+[internal/FluencePeer.ts:125](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L125)
 
 ___
 
@@ -92,7 +92,7 @@ and (optionally) connect to the Fluence network
 
 #### Defined in
 
-[internal/FluencePeer.ts:144](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L144)
+[internal/FluencePeer.ts:144](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L144)
 
 ___
 
@@ -109,7 +109,7 @@ and disconnects from the Fluence network
 
 #### Defined in
 
-[internal/FluencePeer.ts:172](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L172)
+[internal/FluencePeer.ts:172](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L172)
 
 ___
 
@@ -133,4 +133,4 @@ true if the object is FluencePeer false otherwise
 
 #### Defined in
 
-[internal/FluencePeer.ts:114](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L114)
+[internal/FluencePeer.ts:114](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L114)

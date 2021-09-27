@@ -4,15 +4,15 @@
 
 To start developing applications with Fluence JS refer to the official [gitbook page](https://doc.fluence.dev/docs/js-sdk)
 
-Fluence JS is the implementation of a Fluence protocol for JS-based environments. It can be used to connect browsers, Node.js applications and so on to the Fluence p2p network.
+Fluence JS is an implementation of the Fluence protocol for JavaScript-based environments. It can connect browsers, Node.js applications, and so on to the Fluence p2p network.
 
-Similar to reference node implementation it provides:
+Similar to the [Rust Fluence Peer implementation](https://github.com/fluencelabs/fluence) it includes:
 
-- Peer-to-peer communication layer
-- Marine interpreter
-- Aqua VM
-- Builtin services
+-   Peer-to-peer communication layer (via [js-libp2p](https://github.com/libp2p/js-libp2p))
+-   [Aqua VM](https://github.com/fluencelabs/aquavm)
+-   Builtin services
 
-Unlike reference implementation Fluence JS does not allow to run Marine services. Instead it can expose APIs directly from Typescript and Javascript by taking advantage of functions generated with Aqua compiler.
+Fluence JS can call services and functions on the Fluence network, and expose new APIs to the p2p network directly from TypeScript and JavaScript.
+[Aqua language](https://github.com/fluencelabs/aqua) uses Fluence JS as a compilation target, and they are designed to [work in tandem](https://doc.fluence.dev/docs/js-sdk/3_in_depth#understanding-the-aqua-compiler-output).
 
 Fluence JS can be used with any framework of your choice \(or even without frameworks\).

@@ -38,7 +38,7 @@ Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
 
 #### Defined in
 
-[internal/FluencePeer.ts:27](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/FluencePeer.ts#L27)
+[internal/FluencePeer.ts:27](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/FluencePeer.ts#L27)
 
 ___
 
@@ -50,7 +50,7 @@ Peer ID's id as a base58 string (multihash/CIDv0).
 
 #### Defined in
 
-[internal/commonTypes.ts:22](https://github.com/fluencelabs/fluence-js/blob/0786493/src/internal/commonTypes.ts#L22)
+[internal/commonTypes.ts:22](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/commonTypes.ts#L22)
 
 ## Variables
 
@@ -71,7 +71,7 @@ Public interface to Fluence JS
 
 #### Defined in
 
-[index.ts:36](https://github.com/fluencelabs/fluence-js/blob/0786493/src/index.ts#L36)
+[index.ts:36](https://github.com/fluencelabs/fluence-js/blob/8655605/src/index.ts#L36)
 
 ## Functions
 
@@ -91,4 +91,4 @@ Public interface to Fluence JS
 
 #### Defined in
 
-[index.ts:25](https://github.com/fluencelabs/fluence-js/blob/0786493/src/index.ts#L25)
+[index.ts:25](https://github.com/fluencelabs/fluence-js/blob/8655605/src/index.ts#L25)
