@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[internal/KeyPair.ts:27](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/KeyPair.ts#L27)
+[internal/KeyPair.ts:27](https://github.com/fluencelabs/fluence-js/blob/ac8b613/src/internal/KeyPair.ts#L27)
 
 ## Properties
 
@@ -44,7 +44,7 @@ Key pair in libp2p format. Used for backward compatibility with the current Flue
 
 #### Defined in
 
-[internal/KeyPair.ts:25](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/KeyPair.ts#L25)
+[internal/KeyPair.ts:25](https://github.com/fluencelabs/fluence-js/blob/ac8b613/src/internal/KeyPair.ts#L25)
 
 ## Methods
 
@@ -60,7 +60,7 @@ Key pair in libp2p format. Used for backward compatibility with the current Flue
 
 #### Defined in
 
-[internal/KeyPair.ts:55](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/KeyPair.ts#L55)
+[internal/KeyPair.ts:55](https://github.com/fluencelabs/fluence-js/blob/ac8b613/src/internal/KeyPair.ts#L55)
 
 ___
 
@@ -84,7 +84,7 @@ Generates new KeyPair from ed25519 private key represented as a 32 byte array
 
 #### Defined in
 
-[internal/KeyPair.ts:36](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/KeyPair.ts#L36)
+[internal/KeyPair.ts:36](https://github.com/fluencelabs/fluence-js/blob/ac8b613/src/internal/KeyPair.ts#L36)
 
 ___
 
@@ -102,4 +102,4 @@ Generates new KeyPair with a random secret key
 
 #### Defined in
 
-[internal/KeyPair.ts:47](https://github.com/fluencelabs/fluence-js/blob/8655605/src/internal/KeyPair.ts#L47)
+[internal/KeyPair.ts:47](https://github.com/fluencelabs/fluence-js/blob/ac8b613/src/internal/KeyPair.ts#L47)

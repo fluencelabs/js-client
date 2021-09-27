@@ -1,6 +1,6 @@
 # Fluence JS
 
-To start developing applications with Fluence JS refer to the official [gitbook page](https://doc.fluence.dev/docs/js-sdk)
+To start developing applications with Fluence JS refer to the official [documentation](https://doc.fluence.dev/docs/js-sdk)
 
 Fluence JS is an implementation of the Fluence protocol for JavaScript-based environments. It can connect browsers, Node.js applications, and so on to the Fluence p2p network.
 
