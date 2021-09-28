@@ -185,8 +185,9 @@ export class CallServiceHandler {
      * @param { CallServiceHandler } other - CallServiceHandler to be combined with
      */
     combineWith(other: CallServiceHandler): CallServiceHandler {
-        this.middlewares = [...this.middlewares, ...other.middlewares];
-        return this;
+        const res = new CallServiceHandler();
+        res.middlewares = [...this.middlewares, ...other.middlewares];
+        return res;
     }
 
     /**

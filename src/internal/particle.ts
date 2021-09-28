@@ -16,6 +16,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
+import { CallResultsArray } from '@fluencelabs/avm';
+import { CallServiceHandler } from './CallServiceHandler';
 
 const DefaultTTL = 7000;
 
@@ -27,6 +29,12 @@ export class Particle {
     script: string;
     signature: string;
     data: Uint8Array;
+    callResults: CallResultsArray = [];
+    meta: {
+        handler: CallServiceHandler;
+        timeout: () => void;
+        error: (reason?: any) => void;
+    };
 
     actualTtl(): number {
         return this.timestamp + this.ttl - Date.now();
@@ -34,6 +42,19 @@ export class Particle {
 
     hasExpired(): boolean {
         return this.actualTtl() <= 0;
+    }
+
+    clone(): Particle {
+        const res = new Particle();
+        res.id = this.id;
+        res.init_peer_id = this.init_peer_id;
+        res.timestamp = this.timestamp;
+        res.ttl = this.ttl;
+        res.script = this.script;
+        res.signature = this.signature;
+        res.data = this.data;
+        res.callResults = this.callResults;
+        return res;
     }
 
     static createNew(script: string, ttlMs?: number): Particle {
@@ -58,7 +79,7 @@ export class Particle {
         res.signature = json.signature;
         res.data = toByteArray(json.data);
 
-        return res 
+        return res;
     }
 
     toString(): string {

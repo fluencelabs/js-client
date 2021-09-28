@@ -1,37 +1,52 @@
+import { CallServiceHandler } from '../../internal/CallServiceHandler';
 import { Particle } from '../particle';
 
 export { FluencePeer } from '../FluencePeer';
 export { ResultCodes } from '../../internal/CallServiceHandler';
 export { CallParams } from '../commonTypes';
 
-export class RequestFlow {
-    getParticle(): Particle {
-        return new Particle();
-    }
-}
+export type RequestFlow = Particle;
+
+const DEFAULT_TTL = 7000;
 
 export class RequestFlowBuilder {
+    private _ttl?: number;
+    private _script?: string;
+    private _configs: any = [];
+    private _error: (reason?: any) => void = () => {};
+    private _timeout: () => void = () => {};
+
     build(): RequestFlow {
-        throw new Error('Method not implemented.');
+        const res = Particle.createNew(this._script!, this._ttl || DEFAULT_TTL);
+        let h = new CallServiceHandler();
+        for (let c of this._configs) {
+            h = c(h);
+        }
+        res.meta = {
+            handler: h,
+            timeout: this._timeout,
+            error: this._error,
+        };
+        return res;
     }
 
-    withTTL(ttl: any): RequestFlowBuilder {
-        throw new Error('Method not implemented.');
+    withTTL(ttl: number): RequestFlowBuilder {
+        this._ttl = ttl;
         return this;
     }
 
-    handleTimeout(handler: () => void): RequestFlowBuilder {
-        throw new Error('Method not implemented.');
+    handleTimeout(timeout: () => void): RequestFlowBuilder {
+        this._timeout = timeout;
         return this;
     }
 
     handleScriptError(reject: (reason?: any) => void): RequestFlowBuilder {
-        throw new Error('Method not implemented.');
+        this._error = reject;
         return this;
     }
 
     withRawScript(script: string): RequestFlowBuilder {
-        throw new Error('Method not implemented.');
+        this._script = script;
         return this;
     }
 
@@ -39,8 +54,8 @@ export class RequestFlowBuilder {
         return this;
     }
 
-    configHandler(h) {
-        throw new Error('Method not implemented.');
+    configHandler(h: (handler: CallServiceHandler) => void) {
+        this._configs.push(h);
         return this;
     }
 }

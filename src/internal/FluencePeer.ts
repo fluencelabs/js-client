@@ -1,5 +1,4 @@
-import { AirInterpreter, LogLevel } from '@fluencelabs/avm';
-import { match } from 'ts-pattern';
+import { AirInterpreter, CallRequestsArray, CallResultsArray, InterpreterResult, LogLevel } from '@fluencelabs/avm';
 import { Multiaddr } from 'multiaddr';
 import { CallServiceHandler } from './CallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
@@ -8,12 +7,11 @@ import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection
 import { Particle } from './particle';
 import { KeyPair } from './KeyPair';
 import { createInterpreter } from './utils';
-import { ParticleOp, ParticleExecFlow } from './ParticleExecFlow';
-import { filter, map, mergeMap, Subject, timer } from 'rxjs';
+import { filter, map, Subject } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 
 /**
- * Node of the Fluence detwork specified as a pair of node's multiaddr and it's peer id
+ * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
  */
 type Node = {
     peerId: PeerIdB58;
@@ -182,8 +180,8 @@ export class FluencePeer {
      */
     get internals() {
         return {
-            initiateFlow: (reqest: RequestFlow) => {
-                this._executingQueue.next({ op: 'incoming', particle: reqest.getParticle() });
+            initiateFlow: (request: RequestFlow) => {
+                this._connection.incomingParticles.next(request);
             },
             callServiceHandler: this._callServiceHandler,
         };
@@ -196,89 +194,99 @@ export class FluencePeer {
      */
     private _isFluenceAwesome = true;
 
-    private _executingQueue = new Subject<ParticleOp>();
-
     private _startInternals() {
-        this._connection.incomingParticles
-            .pipe(
-                map((x) => ({
-                    op: 'incoming' as const,
-                    particle: x,
-                })),
-            )
-            .subscribe(this._executingQueue);
+        const particles = new Map<
+            string,
+            {
+                subject: Subject<Particle>;
+                meta: Particle['meta'];
+            }
+        >();
 
         this._connection.incomingParticles
             .pipe(
                 filter((x) => !x.hasExpired()),
-                mergeMap((x) =>
-                    // force new line
-                    timer(x.actualTtl()).pipe(
-                        map((_) => ({
-                            op: 'expired' as const,
-                            particleId: x.id,
-                        })),
-                    ),
-                ),
+                map((x) => x),
             )
-            .subscribe(this._executingQueue);
+            .subscribe((p) => {
+                let existing = particles.get(p.id);
 
-        this._executingQueue.subscribe(this._processParticle);
+                if (!existing) {
+                    const subj = {
+                        subject: new Subject<Particle>(),
+                        meta: p.meta,
+                    };
+                    let prevData: Uint8Array = Buffer.from([]);
+
+                    subj.subject
+                        .pipe(
+                            filter((x) => !x.hasExpired()),
+                            map((x) => x),
+                        )
+                        .subscribe((x) => {
+                            const result = this._runInterpreter(x, prevData);
+
+                            prevData = result.data;
+
+                            if (result.nextPeerPks.length > 0) {
+                                this._connection.outgoingParticles.next(p);
+                            }
+
+                            if (result.callRequests.length > 0) {
+                                this._execRequests(x, p.meta, result.callRequests).then((callResults) => {
+                                    const newParticle = p.clone();
+                                    newParticle.callResults = callResults;
+                                    newParticle.data = Buffer.from([]);
+
+                                    subj.subject.next(newParticle);
+                                });
+                            }
+                        });
+
+                    particles.set(p.id, subj);
+
+                    setTimeout(() => {
+                        particles.delete(p.id);
+                        if (p?.meta?.timeout) {
+                            p.meta.timeout();
+                        }
+                    }, p.actualTtl());
+                }
+
+                existing.subject.next(p);
+            });
     }
 
-    private _state = new Map<string, ParticleExecFlow>();
+    private async _execRequests(
+        p: Particle,
+        meta: Particle['meta'],
+        callRequests: CallRequestsArray,
+    ): Promise<CallResultsArray> {
+        const promises = callRequests.map(([key, callRequest]) => {
+            const req = {
+                fnName: callRequest.functionName,
+                args: callRequest.arguments,
+                serviceId: callRequest.serviceId,
+                tetraplets: callRequest.tetraplets,
+                particleContext: {
+                    initPeerId: p.init_peer_id,
+                    particleId: p.id,
+                    signature: p.signature,
+                    timestamp: p.timestamp,
+                    ttl: p.ttl,
+                },
+            };
 
-    private _processParticle(particle: ParticleOp) {
-        match(particle)
-            .with({ op: 'incoming' }, ({ particle }) => {
-                let ef = this._state.get(particle.id);
-                if (ef) {
-                    ef.mergeWithIncoming(particle);
-                } else {
-                    ef = new ParticleExecFlow(particle);
-                    this._state.set(particle.id, ef);
-                }
+            const h = meta.handler.combineWith(this._callServiceHandler);
+            const promise = h.execute(req).then((res) => [key, res] as const);
 
-                this._executingQueue.next({
-                    op: 'shouldCallInterpreter',
-                    particleId: particle.id,
-                });
-            })
-            .with({ op: 'expired' }, ({ particleId }) => {
-                this._state.delete(particleId);
-            })
-            .with({ op: 'callbackFinished' }, (x) => {
-                const ef = this._state.get(x.particleId);
-                if (ef) {
-                    ef.mergeInterpreterResult;
-                }
-            })
-            .with({ op: 'interpreterResult' }, ({ particleId, interpreterResult }) => {
-                const ef = this._state.get(particleId);
-                if (ef) {
-                    ef.mergeInterpreterResult(interpreterResult);
-                }
-                if (ef.processingDone()) {
-                    this._connection.outgoingParticles.next(ef.getParticle());
-                } else {
-                    this._executingQueue.next({
-                        op: 'shouldCallInterpreter',
-                        particleId: particleId,
-                    });
-                }
-            })
-            .with({ op: 'shouldCallInterpreter' }, ({ particleId }) => {
-                const ef = this._state.get(particleId);
-                if (ef) {
-                    ef.mergeInterpreterResult;
-                }
-                const res = this._runInterpreter(ef.getParticle(), ef.prevData, ef.callResults);
-                this._executingQueue.next(res);
-            })
-            .exhaustive();
+            return promise;
+        });
+        const res: any = await Promise.all(promises);
+        return res;
     }
 
-    private _runInterpreter(particle: Particle, prevData, callResults): ParticleOp {
+    private _runInterpreter(particle: Particle, prevData: Uint8Array): InterpreterResult {
         const interpreterResult = this._interpreter.invoke(
             particle.script,
             prevData,
@@ -287,14 +295,10 @@ export class FluencePeer {
                 initPeerId: particle.init_peer_id,
                 currentPeerId: this.getStatus().peerId,
             },
-            callResults,
+            particle.callResults,
         );
 
-        return {
-            op: 'interpreterResult',
-            particleId: particle.id,
-            interpreterResult: interpreterResult,
-        };
+        return interpreterResult;
     }
 
     private _stopInternals() {}

@@ -304,10 +304,10 @@ describe('Call service handler tests', () => {
                 return 'overridden';
             });
 
-            base.combineWith(another);
+            const combined = base.combineWith(another);
 
             // act
-            const res = await base.execute({
+            const res = await combined.execute({
                 ...req(),
                 serviceId: 'service',
                 fnName: 'function',
