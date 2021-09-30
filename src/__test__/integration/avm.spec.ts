@@ -1,5 +1,6 @@
 import { Fluence, FluencePeer } from '../../index';
-import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
+import { CallServiceHandler } from '../../internal/CallServiceHandler';
+import { Particle } from '../../internal/particle';
 
 const anotherPeer = new FluencePeer();
 
@@ -10,16 +11,41 @@ describe('Avm spec', () => {
         }
     });
 
-    it('Par execution should work', async () => {
+    it('Simple call', async () => {
         // arrange
-        await Fluence.start();
+        await anotherPeer.start();
 
-        let request;
+        // act
+        const promise = new Promise<string[]>((resolve) => {
+            const script = `
+                (call %init_peer_id% ("print" "print") ["1"])
+            `;
+            const particle = Particle.createNew(script);
+            const h = new CallServiceHandler();
+            h.onEvent('print', 'print', async (args) => {
+                const [res] = args;
+                resolve(res);
+            });
+            particle.meta = {
+                handler: h,
+            };
+
+            anotherPeer.internals.initiateFlow(particle);
+        });
+
+        // assert
+        const res = await promise;
+        expect(res).toBe('1');
+    });
+
+    it('Par call', async () => {
+        // arrange
+        await anotherPeer.start();
+
+        // act
         const promise = new Promise<string[]>((resolve) => {
             let res = [];
-            request = new RequestFlowBuilder()
-                .withRawScript(
-                    `
+            const script = `
                 (seq
                     (par
                         (call %init_peer_id% ("print" "print") ["1"])
@@ -27,24 +53,24 @@ describe('Avm spec', () => {
                     )
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
-            `,
-                )
-                .configHandler((h) => {
-                    h.onEvent('print', 'print', async (args) => {
-                        res.push(args[0]);
-                        if (res.length == 2) {
-                            resolve(res);
-                        }
-                    });
-                })
-                .build();
+            `;
+            const particle = Particle.createNew(script);
+            const h = new CallServiceHandler();
+            h.onEvent('print', 'print', async (args) => {
+                res.push(args[0]);
+                if (res.length == 2) {
+                    resolve(res);
+                }
+            });
+            particle.meta = {
+                handler: h,
+            };
+
+            anotherPeer.internals.initiateFlow(particle);
         });
 
-        // act
-        await Fluence.getPeer().internals.initiateFlow(request);
-        const res = await promise;
-
         // assert
+        const res = await promise;
         expect(res).toStrictEqual(['1', '2']);
     });
 });

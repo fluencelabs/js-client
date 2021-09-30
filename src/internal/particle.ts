@@ -32,8 +32,8 @@ export class Particle {
     callResults: CallResultsArray = [];
     meta: {
         handler: CallServiceHandler;
-        timeout: () => void;
-        error: (reason?: any) => void;
+        timeout?: () => void;
+        error?: (reason?: any) => void;
     };
 
     actualTtl(): number {
@@ -55,6 +55,10 @@ export class Particle {
         res.data = this.data;
         res.callResults = this.callResults;
         return res;
+    }
+
+    viewData(): string {
+        return new TextDecoder().decode(this.data);
     }
 
     static createNew(script: string, ttlMs?: number): Particle {

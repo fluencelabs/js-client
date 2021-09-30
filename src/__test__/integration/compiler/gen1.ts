@@ -140,7 +140,7 @@ export function callMeBack(...args) {
                     return peer.getStatus().relayPeerId || null;
                 });
 
-                h.use((req, resp, next) => {
+                h.use(async (req, resp, next) => {
                     if (req.serviceId === 'callbackSrv' && req.fnName === 'callback') {
                         const callParams = {
                             ...req.particleContext,

@@ -3,7 +3,7 @@ import { PeerIdB58 } from './commonTypes';
 
 export enum ResultCodes {
     success = 0,
-    unkownError = 1,
+    unknownError = 1,
     exceptionInHandler = 2,
 }
 
@@ -240,8 +240,8 @@ export class CallServiceHandler {
      */
     async execute(req: CallServiceData): Promise<CallServiceResult> {
         const res: CallServiceResult = {
-            retCode: ResultCodes.unkownError,
-            result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+            retCode: undefined,
+            result: undefined,
         };
         const fn = this.buildFunction();
         await fn(req, res);

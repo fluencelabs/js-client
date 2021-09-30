@@ -1,6 +1,8 @@
 import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
+import { CallServiceHandler } from './CallServiceHandler';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
+import { Particle } from './particle';
 
 export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
     const logFn = (level: AvmLogLevel, msg: string) => {
@@ -31,40 +33,64 @@ export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter
  * @param { FluenceClient } peer - The Fluence Client instance.
  */
 export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<boolean> => {
-    return true;
-    // if (!peer.getStatus().isConnected) {
-    //     return false;
-    // }
+    if (!peer.getStatus().isConnected) {
+        return false;
+    }
 
-    // const msg = Math.random().toString(36).substring(7);
-    // const callbackFn = 'checkConnection';
-    // const callbackService = '_callback';
+    const msg = Math.random().toString(36).substring(7);
 
-    // const [request, promise] = new RequestFlowBuilder()
-    //     .withRawScript(
-    //         `(seq
-    //     (call init_relay ("op" "identity") [msg] result)
-    //     (call %init_peer_id% ("${callbackService}" "${callbackFn}") [result])
-    // )`,
-    //     )
-    //     .withTTL(ttl)
-    //     .withVariables({
-    //         msg,
-    //     })
-    //     .buildAsFetch<[string]>(callbackService, callbackFn);
+    const promise = new Promise<string>((resolve, reject) => {
+        const script = `
+    (xor
+        (seq
+            (call %init_peer_id% ("load" "relay") [] init_relay)
+            (seq
+                (call %init_peer_id% ("load" "msg") [] msg)
+                (seq 
+                    (call init_relay ("op" "identity") [msg] result)
+                    (call %init_peer_id% ("callback" "callback") [result])
+                )
+            )
+        )
+        (seq 
+            (call init_relay ("op" "identity") [])
+            (call %init_peer_id% ("callback" "error") [%last_error%])
+        )
+    )`;
+        const particle = Particle.createNew(script, ttl);
+        const h = new CallServiceHandler();
+        h.on('load', 'relay', () => {
+            return peer.getStatus().relayPeerId;
+        });
+        h.on('load', 'msg', () => {
+            return msg;
+        });
+        h.onEvent('callback', 'callback', (args) => {
+            const [val] = args;
+            resolve(val);
+        });
+        h.onEvent('callback', 'error', (args) => {
+            const [error] = args;
+            reject(error);
+        });
+        particle.meta = {
+            handler: h,
+            // timeout: reject,
+        };
 
-    // await peer.internals.initiateFlow(request);
+        peer.internals.initiateFlow(particle);
+    });
 
-    // try {
-    //     const [result] = await promise;
-    //     if (result != msg) {
-    //         log.warn("unexpected behavior. 'identity' must return the passed arguments.");
-    //     }
-    //     return true;
-    // } catch (e) {
-    //     log.error('Error on establishing connection: ', e);
-    //     return false;
-    // }
+    try {
+        const [result] = await promise;
+        if (result != msg) {
+            log.warn("unexpected behavior. 'identity' must return the passed arguments.");
+        }
+        return true;
+    } catch (e) {
+        log.error('Error on establishing connection: ', e);
+        return false;
+    }
 };
 
 export const ParticleDataToString = (data: Uint8Array): string => {
