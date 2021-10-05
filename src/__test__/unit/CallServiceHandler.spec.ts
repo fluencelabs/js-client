@@ -148,7 +148,7 @@ describe('Call service handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ResultCodes.unkownError,
+                retCode: ResultCodes.unknownError,
             });
         });
 
@@ -194,7 +194,7 @@ describe('Call service handler tests', () => {
 
             // assert
             expect(res).toMatchObject({
-                retCode: ResultCodes.unkownError,
+                retCode: ResultCodes.unknownError,
             });
         });
 

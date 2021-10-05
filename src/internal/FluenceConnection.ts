@@ -51,6 +51,8 @@ export interface FluenceConnectionOptions {
 }
 
 export class FluenceConnection {
+    private _address;
+
     constructor() {}
 
     incomingParticles: Subject<Particle> = new Subject<Particle>();
@@ -96,16 +98,20 @@ export class FluenceConnection {
     private async _sendParticle(particle: Particle): Promise<void> {
         logParticle(log.debug, 'send particle: \n', particle);
 
-        // if (this._connection.streams.length !== 1) {
-        if (this._connection.streams.length < 1) {
+        /*
+        if (this._connection.streams.length !== 1) {
             throw 'Incorrect number of streams in FluenceConnection';
         }
 
         const sink = this._connection.streams[0].sink;
+        */
+
+        const conn = await this._lib2p2Peer.dialProtocol(this._address, PROTOCOL_NAME);
+        const sink = conn.stream.sink;
 
         pipe(
+            // force new line
             [Buffer.from(particle.toString(), 'utf8')],
-            // at first, make a message varint
             encode(),
             sink,
         );
@@ -116,6 +122,7 @@ export class FluenceConnection {
 
     private async _start(address: Multiaddr) {
         await this._lib2p2Peer.start();
+        this._address = address;
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
 
