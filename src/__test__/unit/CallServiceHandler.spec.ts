@@ -130,7 +130,7 @@ describe('Call service handler tests', () => {
             });
         });
 
-        it('Should UNregister service function', async () => {
+        it.skip('Should UNregister service function', async () => {
             // arrange
             const handler = new CallServiceHandler();
             const unreg = handler.on('service', 'function', async (args) => {
@@ -176,7 +176,7 @@ describe('Call service handler tests', () => {
             await expect(returnPromise).resolves.toMatchObject({ called: ['hello', 'world'] });
         });
 
-        it('Should UNregister event', async () => {
+        it.skip('Should UNregister event', async () => {
             // arrange
             const handler = new CallServiceHandler();
             const unreg = handler.onEvent('service', 'function', async (args) => {

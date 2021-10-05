@@ -20,7 +20,7 @@ export class RequestFlowBuilder {
         const res = Particle.createNew(this._script!, this._ttl || DEFAULT_TTL);
         let h = new CallServiceHandler();
         for (let c of this._configs) {
-            h = c(h);
+            c(h);
         }
         res.meta = {
             handler: h,

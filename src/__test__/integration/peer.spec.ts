@@ -4,6 +4,8 @@ import log from 'loglevel';
 import { Fluence, FluencePeer } from '../../index';
 import { checkConnection } from '../../internal/utils';
 import { RequestFlowBuilder } from '../../internal/compilerSupport/v1';
+import { Particle } from '../../internal/particle';
+import { CallServiceHandler } from '../../internal/CallServiceHandler';
 
 const anotherPeer = new FluencePeer();
 
@@ -85,21 +87,50 @@ describe('Typescript usage suite', () => {
     });
 
     it('should make a call through network', async () => {
-        //     // arrange
-        //     await anotherPeer.start({ connectTo: nodes[0] });
-        //     // act
-        //     const [request, promise] = new RequestFlowBuilder()
-        //         .withRawScript(
-        //             `(seq
-        //     (call init_relay ("op" "identity") ["hello world!"] result)
-        //     (call %init_peer_id% ("callback" "callback") [result])
-        // )`,
-        //         )
-        //         .buildAsFetch<[string]>('callback', 'callback');
-        //     await anotherPeer.internals.initiateFlow(request);
-        //     // assert
-        //     const [result] = await promise;
-        //     expect(result).toBe('hello world!');
+        // arrange
+        await anotherPeer.start({ connectTo: nodes[0] });
+
+        // act
+        const promise = new Promise<string[]>((resolve, reject) => {
+            const script = `
+    (xor
+        (seq
+            (call %init_peer_id% ("load" "relay") [] init_relay)
+            (seq
+                (call init_relay ("op" "identity") ["hello world!"] result)
+                (call %init_peer_id% ("callback" "callback") [result])
+            )
+        )
+        (seq 
+            (call init_relay ("op" "identity") [])
+            (call %init_peer_id% ("callback" "error") [%last_error%])
+        )
+    )`;
+            const particle = Particle.createNew(script);
+            const h = new CallServiceHandler();
+            h.on('load', 'relay', () => {
+                return anotherPeer.getStatus().relayPeerId;
+            });
+
+            h.onEvent('callback', 'callback', (args) => {
+                const [val] = args;
+                resolve(val);
+            });
+            h.onEvent('callback', 'error', (args) => {
+                const [error] = args;
+                reject(error);
+            });
+            particle.meta = {
+                handler: h,
+                // timeout: reject,
+            };
+
+            anotherPeer.internals.initiateFlow(particle);
+        });
+
+        // assert
+        const result = await promise;
+        expect(result).toBe('hello world!');
     });
 
     it('check connection should work', async function () {
@@ -119,32 +150,34 @@ describe('Typescript usage suite', () => {
     });
 
     it('two clients should work inside the same time browser', async () => {
-        // // arrange
-        // const peer1 = new FluencePeer();
-        // await peer1.start({ connectTo: nodes[0] });
-        // const peer2 = new FluencePeer();
-        // await peer2.start({ connectTo: nodes[0] });
-        // let resMakingPromise = new Promise((resolve) => {
-        //     peer2.internals.callServiceHandler.onEvent('test', 'test', (args, _) => {
-        //         resolve([...args]);
-        //     });
-        // });
-        // let script = `
-        //     (seq
-        //         (call "${peer1.getStatus().relayPeerId}" ("op" "identity") [])
-        //         (call "${peer2.getStatus().peerId}" ("test" "test") [a b c d])
-        //     )
-        // `;
-        // let data: Map<string, any> = new Map();
-        // data.set('a', 'some a');
-        // data.set('b', 'some b');
-        // data.set('c', 'some c');
-        // data.set('d', 'some d');
-        // await peer1.internals.initiateFlow(new RequestFlowBuilder().withRawScript(script).withVariables(data).build());
-        // let res = await resMakingPromise;
-        // expect(res).toEqual(['some a', 'some b', 'some c', 'some d']);
-        // await peer1.stop();
-        // await peer2.stop();
+        // arrange
+        const peer1 = new FluencePeer();
+        await peer1.start({ connectTo: nodes[0] });
+        const peer2 = new FluencePeer();
+        await peer2.start({ connectTo: nodes[0] });
+
+        // act
+        const resMakingPromise = new Promise((resolve) => {
+            peer2.internals.callServiceHandler.onEvent('test', 'test', (args, _) => {
+                resolve(args[0]);
+            });
+        });
+
+        const script = `
+            (seq
+                (call "${peer1.getStatus().relayPeerId}" ("op" "identity") [])
+                (call "${peer2.getStatus().peerId}" ("test" "test") ["test"])
+            )
+        `;
+        const particle = Particle.createNew(script);
+        await peer1.internals.initiateFlow(particle);
+
+        // assert
+        const res = await resMakingPromise;
+        expect(res).toEqual('test');
+
+        await peer1.stop();
+        await peer2.stop();
     });
 
     describe('should make connection to network', () => {
@@ -245,112 +278,127 @@ describe('Typescript usage suite', () => {
         });
     });
 
-    it('xor handling should work with connected client', async function () {
+    it('Should throw correct message when calling non existing local service', async function () {
         // arrange
-        // const [request, promise] = new RequestFlowBuilder()
-        //     .withRawScript(
-        //         `
-        //     (seq
-        //         (call init_relay ("op" "identity") [])
-        //         (call init_relay ("incorrect" "service") ["incorrect_arg"])
-        //     )
-        // `,
-        //     )
-        //     .buildWithErrorHandling();
-        // // act
-        // await anotherPeer.start({ connectTo: nodes[0] });
-        // await anotherPeer.internals.initiateFlow(request);
-        // // assert
-        // await expect(promise).rejects.toMatchObject({
-        //     msg: expect.stringContaining("Service with id 'incorrect' not found"),
-        //     instruction: expect.stringContaining('incorrect'),
-        // });
-    });
+        await anotherPeer.start({ connectTo: nodes[0] });
 
-    it('xor handling should work with local client', async function () {
-        // arrange
-        // const [request, promise] = new RequestFlowBuilder()
-        //     .withRawScript(
-        //         `
-        //     (call %init_peer_id% ("service" "fails") [])
-        //     `,
-        //     )
-        //     .configHandler((h) => {
-        //         h.use(async (req, res, _) => {
-        //             res.retCode = 1;
-        //             res.result = 'service failed internally';
-        //         });
-        //     })
-        //     .buildWithErrorHandling();
-        // // act
-        // await anotherPeer.start();
-        // await anotherPeer.internals.initiateFlow(request);
-        // // assert
-        // await expect(promise).rejects.toMatch('service failed internally');
-    });
+        // act
+        const res = callIdentifyOnInitPeerId(anotherPeer);
 
-    it.skip('Should throw correct message when calling non existing local service', async function () {
-        // arrange
-        // await anotherPeer.start();
-        // // act
-        // const res = callIdentifyOnInitPeerId(anotherPeer);
-        // // assert
-        // await expect(res).rejects.toMatchObject({
-        //     msg: expect.stringContaining(
-        //         `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'`,
-        //     ),
-        //     instruction: 'call %init_peer_id% ("peer" "identify") [] res',
-        // });
+        // assert
+        await expect(res).rejects.toMatchObject({
+            msg: expect.stringContaining(
+                `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'`,
+            ),
+            instruction: 'call %init_peer_id% ("peer" "identify") [] res',
+        });
     });
 
     it('Should not crash if undefined is passed as a variable', async () => {
-        // arrange
-        // await anotherPeer.start();
-        // const [request, promise] = new RequestFlowBuilder()
-        //     .withRawScript(
-        //         `
-        //         (seq
-        //          (call %init_peer_id% ("op" "identity") [arg] res)
-        //          (call %init_peer_id% ("return" "return") [res])
-        //         )
-        //     `,
-        //     )
-        //     .withVariable('arg', undefined as any)
-        //     .buildAsFetch<any[]>('return', 'return');
-        // // act
-        // await anotherPeer.internals.initiateFlow(request);
-        // const [res] = await promise;
-        // // assert
-        // expect(res).toBe(null);
+        // arrange;
+        await anotherPeer.start();
+
+        // act
+        const promise = new Promise<any>((resolve, reject) => {
+            const script = `
+        (seq
+            (call %init_peer_id% ("load" "arg") [] arg)
+            (seq
+                (call %init_peer_id% ("op" "identity") [arg] res)
+                (call %init_peer_id% ("callback" "callback") [res])
+            )
+        )`;
+            const particle = Particle.createNew(script);
+            const h = new CallServiceHandler();
+            h.on('load', 'arg', () => {
+                return undefined;
+            });
+            h.onEvent('callback', 'callback', (args) => {
+                const [val] = args;
+                resolve(val);
+            });
+            h.onEvent('callback', 'error', (args) => {
+                const [error] = args;
+                reject(error);
+            });
+            particle.meta = {
+                handler: h,
+                // timeout: reject,
+            };
+
+            anotherPeer.internals.initiateFlow(particle);
+        });
+
+        // assert
+        const res = await promise;
+        expect(res).toBe(null);
     });
 
     it('Should throw correct error when the client tries to send a particle not to the relay', async () => {
-        // arrange
-        // await anotherPeer.start();
-        // // act
-        // const [req, promise] = new RequestFlowBuilder()
-        //     .withRawScript('(call "incorrect_peer_id" ("any" "service") [])')
-        //     .buildWithErrorHandling();
-        // await anotherPeer.internals.initiateFlow(req);
-        // // assert
-        // await expect(promise).rejects.toMatch(
-        //     'Particle is expected to be sent to only the single peer (relay which client is connected to)',
-        // );
+        // arrange;
+        await anotherPeer.start({ connectTo: nodes[0] });
+
+        // act
+        const promise = new Promise((resolve, reject) => {
+            const script = `
+    (xor
+        (call "incorrect_peer_id" ("any" "service") [])
+        (call %init_peer_id% ("callback" "error") [%last_error%])
+    )`;
+            const particle = Particle.createNew(script);
+            const h = new CallServiceHandler();
+
+            h.onEvent('callback', 'error', (args) => {
+                const [error] = args;
+                reject(error);
+            });
+            particle.meta = {
+                handler: h,
+                // timeout: reject,
+            };
+
+            anotherPeer.internals.initiateFlow(particle);
+        });
+
+        // assert
+        await expect(promise).rejects.toMatch(
+            'Particle is expected to be sent to only the single peer (relay which client is connected to)',
+        );
     });
 });
 
 async function callIdentifyOnInitPeerId(peer: FluencePeer): Promise<string[]> {
-    let request;
-    const promise = new Promise<string[]>((resolve, reject) => {
-        request = new RequestFlowBuilder()
-            .withRawScript(
-                `
-  (call %init_peer_id% ("peer" "identify") [] res)
-            `,
-            )
-            .handleScriptError(reject)
-            .build();
+    const promise = new Promise<any[]>((resolve, reject) => {
+        const script = `
+    (xor
+        (seq
+            (call %init_peer_id% ("load" "relay") [] init_relay)
+            (call %init_peer_id% ("peer" "identify") [] res)
+        )
+        (seq 
+            (call init_relay ("op" "identity") [])
+            (call %init_peer_id% ("callback" "error") [%last_error%])
+        )
+    )`;
+        const particle = Particle.createNew(script);
+        const h = new CallServiceHandler();
+        h.on('load', 'relay', () => {
+            return peer.getStatus().relayPeerId;
+        });
+        h.onEvent('callback', 'callback', (args) => {
+            resolve(args);
+        });
+        h.onEvent('callback', 'error', (args) => {
+            const [error] = args;
+            reject(error);
+        });
+        particle.meta = {
+            handler: h,
+            // timeout: reject,
+        };
+
+        peer.internals.initiateFlow(particle);
     });
-    await peer.internals.initiateFlow(request);
+
     return promise;
 }

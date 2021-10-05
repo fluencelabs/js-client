@@ -1,5 +1,6 @@
 import { Fluence, FluencePeer } from '../../..';
 import { RequestFlowBuilder } from '../../../internal/compilerSupport/v1';
+import { nodes } from '../../connection';
 import { callMeBack, registerHelloWorld } from './gen1';
 
 describe('Compiler support infrastructure tests', () => {

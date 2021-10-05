@@ -314,11 +314,15 @@ export class FluencePeer {
             res = await this._callServiceHandler.execute(req);
         }
 
-        if (res.retCode === undefined || res.result === undefined) {
+        if (res.retCode === undefined) {
             res = {
                 retCode: ResultCodes.unknownError,
                 result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
             };
+        }
+
+        if (res.result === undefined) {
+            res.result = null;
         }
 
         return {
