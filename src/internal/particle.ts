@@ -16,8 +16,9 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
-import { CallResultsArray } from '@fluencelabs/avm';
+import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import { CallServiceHandler } from './CallServiceHandler';
+import log from 'loglevel';
 
 const DefaultTTL = 7000;
 
@@ -102,6 +103,38 @@ export class Particle {
 
         return JSON.stringify(payload);
     }
+
+    logTo(level: LogLevel, message: string) {
+        let fn;
+        switch (level) {
+            case 'debug':
+                fn = log.debug;
+                break;
+            case 'error':
+                fn = log.error;
+                break;
+            case 'info':
+                fn = log.info;
+                break;
+            case 'trace':
+                fn = log.trace;
+                break;
+            case 'warn':
+                fn = log.warn;
+                break;
+            default:
+                return;
+        }
+
+        fn(message, {
+            id: this.id,
+            init_peer_id: this.init_peer_id,
+            timestamp: this.timestamp,
+            ttl: this.ttl,
+            script: this.script,
+            signature: this.signature,
+        });
+    }
 }
 
 export interface ParticleOld {
@@ -168,4 +201,8 @@ export function parseParticle(str: string): ParticleOld {
 
 export function genUUID() {
     return uuidv4();
+}
+
+export function dataToString(data: Uint8Array) {
+    return new TextDecoder().decode(Buffer.from(data));
 }

@@ -96,7 +96,7 @@ export class FluenceConnection {
     }
 
     private async _sendParticle(particle: Particle): Promise<void> {
-        logParticle(log.debug, 'send particle: \n', particle);
+        particle.logTo('debug', 'sending particle:');
 
         /*
         if (this._connection.streams.length !== 1) {

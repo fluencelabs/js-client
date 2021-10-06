@@ -11,10 +11,10 @@ import { CallServiceData, CallServiceHandler, ResultCodes } from './CallServiceH
 import { PeerIdB58 } from './commonTypes';
 import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
-import { Particle } from './particle';
+import { dataToString, Particle } from './particle';
 import { KeyPair } from './KeyPair';
 import { createInterpreter } from './utils';
-import { filter, map, Subject } from 'rxjs';
+import { filter, map, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 
@@ -222,6 +222,7 @@ export class FluencePeer {
 
         this._incomingParticles
             .pipe(
+                tap((x) => x.logTo('debug', 'particle received:')),
                 filter((x) => !x.hasExpired()),
                 map((x) => x),
             )
@@ -301,6 +302,8 @@ export class FluencePeer {
             return promise;
         });
         const res: any = await Promise.all(promises);
+        p.logTo('debug', 'Executed call service for particle');
+        log.debug('Call service results: ', res);
         return res;
     }
 
@@ -332,6 +335,9 @@ export class FluencePeer {
     }
 
     private _runInterpreter(particle: Particle, prevData: Uint8Array): InterpreterResult {
+        particle.logTo('debug', 'Sending particle to interpreter');
+        log.debug('prevData: ', dataToString(prevData));
+        log.debug('data: ', dataToString(particle.data));
         const interpreterResult = this._interpreter.invoke(
             particle.script,
             prevData,
@@ -343,6 +349,9 @@ export class FluencePeer {
             particle.callResults,
         );
 
+        const toLog: any = { ...interpreterResult };
+        toLog.data = dataToString(toLog.data);
+        log.debug('Interpreter result: ', toLog);
         return interpreterResult;
     }
 
