@@ -17,6 +17,7 @@
 import log, { LogLevelDesc } from 'loglevel';
 import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
+export { PeerStatus } from './internal/FluencePeer';
 export { KeyPair } from './internal/KeyPair';
 export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
 export { PeerIdB58, CallParams } from './internal/commonTypes';
@@ -30,7 +31,7 @@ log.setDefaultLevel('WARN');
 const defaultPeer = new FluencePeer();
 
 /**
- * Public interface to Fluence JS SDK
+ * Public interface to Fluence JS
  */
 export const Fluence = {
     /**

@@ -1,12 +1,12 @@
-# Fluence JS SDK
+# Fluence JS
 
 [![npm](https://img.shields.io/npm/v/@fluencelabs/fluence)](https://www.npmjs.com/package/@fluencelabs/fluence)
 
-Official SDK providing javascript-based implementation of the Fluence Peer.
+Official TypeScript implementation of the Fluence Peer.
 
 ## Getting started
 
-To start developing applications with JS SDK refer to the official [gitbook page](https://doc.fluence.dev/docs/js-sdk)
+To start developing applications with Fluence JS refer to the official [documentation](https://doc.fluence.dev/docs/js-sdk)
 
 ## Contributing
 

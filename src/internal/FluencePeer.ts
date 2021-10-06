@@ -184,7 +184,7 @@ export class FluencePeer {
     // internal api
 
     /**
-     * Does not intended to be used manually. Subject to change
+     * Is not intended to be used manually. Subject to change
      */
     get internals() {
         return {
