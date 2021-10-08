@@ -6,112 +6,74 @@
  * Aqua version: 0.3.0-226
  *
  */
- import { Fluence, FluencePeer } from '../../../index';
- import {
-     ResultCodes,
-     RequestFlow,
-     RequestFlowBuilder,
-     CallParams,
- } from '../../../internal/compilerSupport/v1';
- 
- // Services
- 
- export interface CustomIdDef {
-     id: (s: string, callParams: CallParams<'s'>) => string;
- }
- 
- export function registerCustomId(service: CustomIdDef): void;
- export function registerCustomId(serviceId: string, service: CustomIdDef): void;
- export function registerCustomId(peer: FluencePeer, service: CustomIdDef): void;
- export function registerCustomId(peer: FluencePeer, serviceId: string, service: CustomIdDef): void;
- export function registerCustomId(...args: any) {
-     let peer: FluencePeer;
-     let serviceId: any;
-     let service: any;
-     if (FluencePeer.isInstance(args[0])) {
-         peer = args[0];
-     } else {
-         peer = Fluence.getPeer();
-     }
- 
-     if (typeof args[0] === 'string') {
-         serviceId = args[0];
-     } else if (typeof args[1] === 'string') {
-         serviceId = args[1];
-     } else {
-         serviceId = 'cid';
-     }
- 
-     // Figuring out which overload is the service.
-     // If the first argument is not Fluence Peer and it is an object, then it can only be the service def
-     // If the first argument is peer, we are checking further. The second argument might either be
-     // an object, that it must be the service object
-     // or a string, which is the service id. In that case the service is the third argument
-     if (!FluencePeer.isInstance(args[0]) && typeof args[0] === 'object') {
-         service = args[0];
-     } else if (typeof args[1] === 'object') {
-         service = args[1];
-     } else {
-         service = args[2];
-     }
- 
-     peer.internals.callServiceHandler.use(async (req, resp, next) => {
-         if (req.serviceId !== serviceId) {
-             await next();
-             return;
-         }
- 
-         if (req.fnName === 'id') {
-             const callParams = {
-                 ...req.particleContext,
-                 tetraplets: {
-                     s: req.tetraplets[0],
-                 },
-             };
-             resp.retCode = ResultCodes.success;
-             resp.result = service.id(req.args[0], callParams);
-         }
- 
-         await next();
-     });
- }
- 
- // Functions
- 
- export function viaArr(
-     node_id: string,
-     viaAr: string[],
-     config?: { ttl?: number },
- ): Promise<{ external_addresses: string[] }>;
- export function viaArr(
-     peer: FluencePeer,
-     node_id: string,
-     viaAr: string[],
-     config?: { ttl?: number },
- ): Promise<{ external_addresses: string[] }>;
- export function viaArr(...args: any) {
-     let peer: FluencePeer;
-     let node_id: any;
-     let viaAr: any;
-     let config: any;
-     if (FluencePeer.isInstance(args[0])) {
-         peer = args[0];
-         node_id = args[1];
-         viaAr = args[2];
-         config = args[3];
-     } else {
-         peer = Fluence.getPeer();
-         node_id = args[0];
-         viaAr = args[1];
-         config = args[2];
-     }
- 
-     let request: RequestFlow;
-     const promise = new Promise<{ external_addresses: string[] }>((resolve, reject) => {
-         const r = new RequestFlowBuilder()
-             .disableInjections()
-             .withRawScript(
-                 `
+import { Fluence, FluencePeer } from '../../../index';
+import {
+    extractFunctionArgs,
+    CallParams,
+    ResultCodes,
+    registerParticleSpecificHandler,
+    handleTimeout,
+    extractServiceArgs,
+    registerHandler,
+} from '../../../internal/compilerSupport/v2';
+import { Particle } from '../../../internal/particle';
+
+// Services
+
+export interface CustomIdDef {
+    id: (s: string, callParams: CallParams<'s'>) => string;
+}
+
+export function registerCustomId(service: CustomIdDef): void;
+export function registerCustomId(serviceId: string, service: CustomIdDef): void;
+export function registerCustomId(peer: FluencePeer, service: CustomIdDef): void;
+export function registerCustomId(peer: FluencePeer, serviceId: string, service: CustomIdDef): void;
+export function registerCustomId(...args1: any) {
+    const { peer, serviceId, service } = extractServiceArgs(args1);
+
+    registerHandler(peer, serviceId, 'id', (args, callParams) => {
+        return service.id(args[0], callParams);
+    });
+
+    peer.internals.callServiceHandler.use(async (req, resp, next) => {
+        if (req.serviceId !== serviceId) {
+            await next();
+            return;
+        }
+
+        if (req.fnName === 'id') {
+            const callParams = {
+                ...req.particleContext,
+                tetraplets: {
+                    s: req.tetraplets[0],
+                },
+            };
+            resp.retCode = ResultCodes.success;
+            resp.result = service.id(req.args[0], callParams);
+        }
+
+        await next();
+    });
+}
+
+// Functions
+
+export function viaArr(
+    node_id: string,
+    viaAr: string[],
+    config?: { ttl?: number },
+): Promise<{ external_addresses: string[] }>;
+export function viaArr(
+    peer: FluencePeer,
+    node_id: string,
+    viaAr: string[],
+    config?: { ttl?: number },
+): Promise<{ external_addresses: string[] }>;
+export function viaArr(...args1: any) {
+    const { peer, config, args } = extractFunctionArgs(args1, 2);
+
+    return new Promise<{ external_addresses: string[] }>((resolve, reject) => {
+        const script = `
       (xor
   (seq
    (seq
@@ -169,77 +131,80 @@
    )
   )
   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
- )
- 
-                  `,
-             )
-             .configHandler((h) => {
-                 h.on('getDataSrv', '-relay-', () => {
-                     return peer.getStatus().relayPeerId;
-                 });
-                 h.on('getDataSrv', 'node_id', () => {
-                     return node_id;
-                 });
-                 h.on('getDataSrv', 'viaAr', () => {
-                     return viaAr;
-                 });
-                 h.onEvent('callbackSrv', 'response', (args) => {
-                     const [res] = args;
-                     resolve(res);
-                 });
- 
-                 h.onEvent('errorHandlingSrv', 'error', (args) => {
-                     const [err] = args;
-                     reject(err);
-                 });
-             })
-             .handleScriptError(reject)
-             .handleTimeout(() => {
-                 reject('Request timed out for viaArr');
-             });
-         if (config && config.ttl) {
-             r.withTTL(config.ttl);
-         }
-         request = r.build();
-     });
-     peer.internals.initiateFlow(request!);
-     return promise;
- }
- 
- export function viaStream(
-     node_id: string,
-     viaStr: string[],
-     config?: { ttl?: number },
- ): Promise<{ external_addresses: string[] }>;
- export function viaStream(
-     peer: FluencePeer,
-     node_id: string,
-     viaStr: string[],
-     config?: { ttl?: number },
- ): Promise<{ external_addresses: string[] }>;
- export function viaStream(...args: any) {
-     let peer: FluencePeer;
-     let node_id: any;
-     let viaStr: any;
-     let config: any;
-     if (FluencePeer.isInstance(args[0])) {
-         peer = args[0];
-         node_id = args[1];
-         viaStr = args[2];
-         config = args[3];
-     } else {
-         peer = Fluence.getPeer();
-         node_id = args[0];
-         viaStr = args[1];
-         config = args[2];
-     }
- 
-     let request: RequestFlow;
-     const promise = new Promise<{ external_addresses: string[] }>((resolve, reject) => {
-         const r = new RequestFlowBuilder()
-             .disableInjections()
-             .withRawScript(
-                 `
+ )`;
+        const particle = Particle.createNew(script, config?.ttl);
+
+        registerParticleSpecificHandler(peer, particle.id, 'getDataSrv', '-relay-', () => {
+            return peer.getStatus().relayPeerId;
+        });
+
+        registerParticleSpecificHandler(peer, particle.id, 'getDataSrv', 'node_id', () => {
+            return args[0];
+        });
+
+        registerParticleSpecificHandler(peer, particle.id, 'getDataSrv', 'viaAr', () => {
+            return args[1];
+        });
+
+        registerParticleSpecificHandler(peer, particle.id, 'callbackSrv', 'response', (args) => {
+            const [res] = args;
+            setTimeout(() => {
+                resolve(res);
+            }, 0);
+            return {};
+        });
+
+        registerParticleSpecificHandler(peer, particle.id, 'errorHandlingSrv', 'error', (args) => {
+            const [err] = args;
+            setTimeout(() => {
+                reject(err);
+            }, 0);
+            return {};
+        });
+
+        handleTimeout(peer, particle.id, () => {
+            reject('Request timed out for viaArr');
+        });
+
+        peer.internals.initiateFlow(particle);
+    });
+}
+
+/*
+export function viaStream(
+    node_id: string,
+    viaStr: string[],
+    config?: { ttl?: number },
+): Promise<{ external_addresses: string[] }>;
+export function viaStream(
+    peer: FluencePeer,
+    node_id: string,
+    viaStr: string[],
+    config?: { ttl?: number },
+): Promise<{ external_addresses: string[] }>;
+export function viaStream(...args: any) {
+    let peer: FluencePeer;
+    let node_id: any;
+    let viaStr: any;
+    let config: any;
+    if (FluencePeer.isInstance(args[0])) {
+        peer = args[0];
+        node_id = args[1];
+        viaStr = args[2];
+        config = args[3];
+    } else {
+        peer = Fluence.getPeer();
+        node_id = args[0];
+        viaStr = args[1];
+        config = args[2];
+    }
+
+    let request: RequestFlow;
+    const promise = new Promise<{ external_addresses: string[] }>((resolve, reject) => {
+        const r = new RequestFlowBuilder()
+            .disableInjections()
+            .withRawScript(
+                `
       (xor
   (seq
    (seq
@@ -308,79 +273,79 @@
  )
  
                   `,
-             )
-             .configHandler((h) => {
-                 h.on('getDataSrv', '-relay-', () => {
-                     return peer.getStatus().relayPeerId;
-                 });
-                 h.on('getDataSrv', 'node_id', () => {
-                     return node_id;
-                 });
-                 h.on('getDataSrv', 'viaStr', () => {
-                     return viaStr;
-                 });
-                 h.onEvent('callbackSrv', 'response', (args) => {
-                     const [res] = args;
-                     resolve(res);
-                 });
- 
-                 h.onEvent('errorHandlingSrv', 'error', (args) => {
-                     const [err] = args;
-                     reject(err);
-                 });
-             })
-             .handleScriptError(reject)
-             .handleTimeout(() => {
-                 reject('Request timed out for viaStream');
-             });
-         if (config && config.ttl) {
-             r.withTTL(config.ttl);
-         }
-         request = r.build();
-     });
-     peer.internals.initiateFlow(request!);
-     return promise;
- }
- 
- export function viaOpt(
-     relay: string,
-     node_id: string,
-     viaOpt: string | null,
-     config?: { ttl?: number },
- ): Promise<{ external_addresses: string[] }>;
- export function viaOpt(
-     peer: FluencePeer,
-     relay: string,
-     node_id: string,
-     viaOpt: string | null,
-     config?: { ttl?: number },
- ): Promise<{ external_addresses: string[] }>;
- export function viaOpt(...args: any) {
-     let peer: FluencePeer;
-     let relay: any;
-     let node_id: any;
-     let viaOpt: any;
-     let config: any;
-     if (FluencePeer.isInstance(args[0])) {
-         peer = args[0];
-         relay = args[1];
-         node_id = args[2];
-         viaOpt = args[3];
-         config = args[4];
-     } else {
-         peer = Fluence.getPeer();
-         relay = args[0];
-         node_id = args[1];
-         viaOpt = args[2];
-         config = args[3];
-     }
- 
-     let request: RequestFlow;
-     const promise = new Promise<{ external_addresses: string[] }>((resolve, reject) => {
-         const r = new RequestFlowBuilder()
-             .disableInjections()
-             .withRawScript(
-                 `
+            )
+            .configHandler((h) => {
+                h.on('getDataSrv', '-relay-', () => {
+                    return peer.getStatus().relayPeerId;
+                });
+                h.on('getDataSrv', 'node_id', () => {
+                    return node_id;
+                });
+                h.on('getDataSrv', 'viaStr', () => {
+                    return viaStr;
+                });
+                h.onEvent('callbackSrv', 'response', (args) => {
+                    const [res] = args;
+                    resolve(res);
+                });
+
+                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                    const [err] = args;
+                    reject(err);
+                });
+            })
+            .handleScriptError(reject)
+            .handleTimeout(() => {
+                reject('Request timed out for viaStream');
+            });
+        if (config && config.ttl) {
+            r.withTTL(config.ttl);
+        }
+        request = r.build();
+    });
+    peer.internals.initiateFlow(request!);
+    return promise;
+}
+
+export function viaOpt(
+    relay: string,
+    node_id: string,
+    viaOpt: string | null,
+    config?: { ttl?: number },
+): Promise<{ external_addresses: string[] }>;
+export function viaOpt(
+    peer: FluencePeer,
+    relay: string,
+    node_id: string,
+    viaOpt: string | null,
+    config?: { ttl?: number },
+): Promise<{ external_addresses: string[] }>;
+export function viaOpt(...args: any) {
+    let peer: FluencePeer;
+    let relay: any;
+    let node_id: any;
+    let viaOpt: any;
+    let config: any;
+    if (FluencePeer.isInstance(args[0])) {
+        peer = args[0];
+        relay = args[1];
+        node_id = args[2];
+        viaOpt = args[3];
+        config = args[4];
+    } else {
+        peer = Fluence.getPeer();
+        relay = args[0];
+        node_id = args[1];
+        viaOpt = args[2];
+        config = args[3];
+    }
+
+    let request: RequestFlow;
+    const promise = new Promise<{ external_addresses: string[] }>((resolve, reject) => {
+        const r = new RequestFlowBuilder()
+            .disableInjections()
+            .withRawScript(
+                `
       (xor
   (seq
    (seq
@@ -444,40 +409,40 @@
  )
  
                   `,
-             )
-             .configHandler((h) => {
-                 h.on('getDataSrv', '-relay-', () => {
-                     return peer.getStatus().relayPeerId;
-                 });
-                 h.on('getDataSrv', 'relay', () => {
-                     return relay;
-                 });
-                 h.on('getDataSrv', 'node_id', () => {
-                     return node_id;
-                 });
-                 h.on('getDataSrv', 'viaOpt', () => {
-                     return viaOpt === null ? [] : [viaOpt];
-                 });
-                 h.onEvent('callbackSrv', 'response', (args) => {
-                     const [res] = args;
-                     resolve(res);
-                 });
- 
-                 h.onEvent('errorHandlingSrv', 'error', (args) => {
-                     const [err] = args;
-                     reject(err);
-                 });
-             })
-             .handleScriptError(reject)
-             .handleTimeout(() => {
-                 reject('Request timed out for viaOpt');
-             });
-         if (config && config.ttl) {
-             r.withTTL(config.ttl);
-         }
-         request = r.build();
-     });
-     peer.internals.initiateFlow(request!);
-     return promise;
- }
- 
+            )
+            .configHandler((h) => {
+                h.on('getDataSrv', '-relay-', () => {
+                    return peer.getStatus().relayPeerId;
+                });
+                h.on('getDataSrv', 'relay', () => {
+                    return relay;
+                });
+                h.on('getDataSrv', 'node_id', () => {
+                    return node_id;
+                });
+                h.on('getDataSrv', 'viaOpt', () => {
+                    return viaOpt === null ? [] : [viaOpt];
+                });
+                h.onEvent('callbackSrv', 'response', (args) => {
+                    const [res] = args;
+                    resolve(res);
+                });
+
+                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                    const [err] = args;
+                    reject(err);
+                });
+            })
+            .handleScriptError(reject)
+            .handleTimeout(() => {
+                reject('Request timed out for viaOpt');
+            });
+        if (config && config.ttl) {
+            r.withTTL(config.ttl);
+        }
+        request = r.build();
+    });
+    peer.internals.initiateFlow(request!);
+    return promise;
+}
+*/

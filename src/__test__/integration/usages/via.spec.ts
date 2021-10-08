@@ -67,6 +67,8 @@ async function viaCall(): Promise<string[][]> {
 
 setLogLevel('debug');
 
+jest.setTimeout(99999);
+
 describe('Testing examples', () => {
     beforeAll(async () => {
         await Fluence.start({ connectTo: krasnodar[0] });
@@ -85,16 +87,16 @@ describe('Testing examples', () => {
             },
         });
 
-        let res = await viaArr(krasnodar[4].peerId, [krasnodar[2].peerId, krasnodar[1].peerId]);
-        let res2 = await viaOpt(relayPeerId, krasnodar[4].peerId, krasnodar[2].peerId);
-        let res3 = await viaOpt(relayPeerId, krasnodar[4].peerId, krasnodar[2].peerId || null);
-        let res4 = await viaStream(krasnodar[4].peerId, [krasnodar[2].peerId, krasnodar[1].peerId]);
+        let res = await viaArr(krasnodar[4].peerId, [krasnodar[2].peerId, krasnodar[1].peerId], { ttl: 999999 });
+        // let res2 = await viaOpt(relayPeerId, krasnodar[4].peerId, krasnodar[2].peerId);
+        //let res3 = await viaOpt(relayPeerId, krasnodar[4].peerId, krasnodar[2].peerId || null);
+        //let res4 = await viaStream(krasnodar[4].peerId, [krasnodar[2].peerId, krasnodar[1].peerId]);
 
         const resAll = [
-            res.external_addresses,
-            res2.external_addresses,
-            res3.external_addresses,
-            res4.external_addresses,
+            // res.external_addresses,
+            //res2.external_addresses,
+            //res3.external_addresses,
+            // res4.external_addresses,
         ];
 
         expect(resAll).toBe('not_correct');

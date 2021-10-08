@@ -54,7 +54,7 @@ export interface CallServiceData {
 }
 
 /**
- * Type for all the possible ovjects that can be return to the AVM
+ * Type for all the possible objects that can be return to the AVM
  */
 export type CallServiceResultType = object | boolean | number | string | null;
 

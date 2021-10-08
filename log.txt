@@ -1,0 +1,785 @@
+  console.log
+    dialing to the node with client's address: 12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY
+
+      at FluenceConnection.<anonymous> (src/internal/FluenceConnection.ts:127:13)
+
+  console.log
+    particle received: {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    Sending particle to interpreter {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    prevData:
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:339:13)
+
+  console.log
+    data:
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:340:13)
+
+  console.log
+    Interpreter result:  {
+      retCode: 0,
+      errorMessage: '',
+      data: '{"trace":[{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY: 1"}}],"streams":{},"version":"0.2.1","lcid":1}',
+      nextPeerPks: [],
+      callRequests: [ [ '1', [Object] ] ]
+    }
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:354:13)
+
+  console.log
+    Executed call service for particle {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    Call service results:  [
+      [
+        '1',
+        {
+          result: '"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"',
+          retCode: 0
+        }
+      ]
+    ]
+
+      at FluencePeer.<anonymous> (src/internal/FluencePeer.ts:306:13)
+
+  console.log
+    Sending particle to interpreter {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    prevData:  {"trace":[{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY: 1"}}],"streams":{},"version":"0.2.1","lcid":1}
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:339:13)
+
+  console.log
+    data:
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:340:13)
+
+  console.log
+    Interpreter result:  {
+      retCode: 0,
+      errorMessage: '',
+      data: '{"trace":[{"call":{"executed":{"scalar":"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"}}},{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY: 2"}}],"streams":{},"version":"0.2.1","lcid":2}',
+      nextPeerPks: [],
+      callRequests: [ [ '2', [Object] ] ]
+    }
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:354:13)
+
+  console.log
+    Executed call service for particle {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    Call service results:  [
+      [
+        '2',
+        {
+          result: '"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE"',
+          retCode: 0
+        }
+      ]
+    ]
+
+      at FluencePeer.<anonymous> (src/internal/FluencePeer.ts:306:13)
+
+  console.log
+    Sending particle to interpreter {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    prevData:  {"trace":[{"call":{"executed":{"scalar":"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"}}},{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY: 2"}}],"streams":{},"version":"0.2.1","lcid":2}
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:339:13)
+
+  console.log
+    data:
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:340:13)
+
+  console.log
+    Interpreter result:  {
+      retCode: 0,
+      errorMessage: '',
+      data: '{"trace":[{"call":{"executed":{"scalar":"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"}}},{"call":{"executed":{"scalar":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE"}}},{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY: 3"}}],"streams":{},"version":"0.2.1","lcid":3}',
+      nextPeerPks: [],
+      callRequests: [ [ '3', [Object] ] ]
+    }
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:354:13)
+
+  console.log
+    Executed call service for particle {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    Call service results:  [
+      [
+        '3',
+        {
+          result: '["12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA","12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51"]',
+          retCode: 0
+        }
+      ]
+    ]
+
+      at FluencePeer.<anonymous> (src/internal/FluencePeer.ts:306:13)
+
+  console.log
+    Sending particle to interpreter {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: ''
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
+  console.log
+    prevData:  {"trace":[{"call":{"executed":{"scalar":"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"}}},{"call":{"executed":{"scalar":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE"}}},{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY: 3"}}],"streams":{},"version":"0.2.1","lcid":3}
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:339:13)
+
+  console.log
+    data:
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:340:13)
+
+  console.log
+    Interpreter result:  {
+      retCode: 0,
+      errorMessage: '',
+      data: '{"trace":[{"call":{"executed":{"scalar":"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"}}},{"call":{"executed":{"scalar":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE"}}},{"call":{"executed":{"scalar":["12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA","12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51"]}}},{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY"}}],"streams":{},"version":"0.2.1","lcid":3}',
+      nextPeerPks: [ '12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e' ],
+      callRequests: []
+    }
+
+      at FluencePeer.Object.<anonymous>.FluencePeer._runInterpreter (src/internal/FluencePeer.ts:354:13)
+
+  console.log
+    sending particle: {
+      id: '44c0a430-c8f8-4991-80c0-feeeb19ef1c1',
+      init_peer_id: '12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY',
+      timestamp: 1633537749659,
+      ttl: 7000,
+      script: '\n' +
+        '      (xor\n' +
+        '  (seq\n' +
+        '   (seq\n' +
+        '    (seq\n' +
+        '     (seq\n' +
+        '      (seq\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)\n' +
+        '          (call %init_peer_id% ("getDataSrv" "node_id") [] node_id)\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("getDataSrv" "viaAr") [] viaAr)\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '       (fold viaAr -via-peer-\n' +
+        '        (seq\n' +
+        '         (call -via-peer- ("op" "noop") [])\n' +
+        '         (next -via-peer-)\n' +
+        '        )\n' +
+        '       )\n' +
+        '      )\n' +
+        '      (xor\n' +
+        '       (call node_id ("peer" "identify") [] p)\n' +
+        '       (seq\n' +
+        '        (seq\n' +
+        '         (seq\n' +
+        '          (fold viaAr -via-peer-\n' +
+        '           (seq\n' +
+        '            (call -via-peer- ("op" "noop") [])\n' +
+        '            (next -via-peer-)\n' +
+        '           )\n' +
+        '          )\n' +
+        '          (call -relay- ("op" "noop") [])\n' +
+        '         )\n' +
+        '         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])\n' +
+        '        )\n' +
+        '        (call -relay- ("op" "noop") [])\n' +
+        '       )\n' +
+        '      )\n' +
+        '     )\n' +
+        '     (fold viaAr -via-peer-\n' +
+        '      (seq\n' +
+        '       (call -via-peer- ("op" "noop") [])\n' +
+        '       (next -via-peer-)\n' +
+        '      )\n' +
+        '     )\n' +
+        '    )\n' +
+        '    (call -relay- ("op" "noop") [])\n' +
+        '   )\n' +
+        '   (xor\n' +
+        '    (call %init_peer_id% ("callbackSrv" "response") [p])\n' +
+        '    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])\n' +
+        '   )\n' +
+        '  )\n' +
+        '  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])\n' +
+        ' )\n' +
+        ' \n' +
+        '                  ',
+      signature: undefined,
+      data: '{"trace":[{"call":{"executed":{"scalar":"12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"}}},{"call":{"executed":{"scalar":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE"}}},{"call":{"executed":{"scalar":["12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA","12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51"]}}},{"call":{"sent_by":"12D3KooWQfJH2eSyoADjAhioJaZdvtQRhEgSQjDkoxw3Kwn5mXSY"}}],"streams":{},"version":"0.2.1","lcid":3}'
+    }
+
+      at Particle.Object.<anonymous>.Particle.logTo (src/internal/particle.ts:129:9)
+
