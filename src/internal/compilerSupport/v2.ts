@@ -7,6 +7,10 @@ export { FluencePeer } from '../FluencePeer';
 export { ResultCodes } from '../../internal/CallServiceHandler';
 export { CallParams } from '../commonTypes';
 
+function missingFields(obj: any, fields: string[]): string[] {
+    return fields.filter((f) => !(f in obj));
+}
+
 export const extractFunctionArgs = (
     args: any[],
     numberOfExpectedArgs: number,
@@ -95,6 +99,73 @@ interface Arg {
     isOptional: boolean;
 }
 
-export function makeFnCall(peer: FluencePeer, script, args: Arg[]) {}
+export function callFunction(data: {
+    functionName: string;
+    rawFnArgs: any[];
+    script: string;
+    args: Arg[];
+    functions: any[];
+    names: {
+        relay: string;
+        getDataSrv: string;
+        callbackService: string;
+        response: string;
+        errorHandlingSrv: string;
+        error: string;
+    };
+}) {
+    const { args, peer, config } = extractFunctionArgs(data.rawFnArgs, data.args.length);
 
-export function makeServiceReg() {}
+    return new Promise((resolve, reject) => {
+        const particle = Particle.createNew(data.script, config?.ttl);
+
+        for (let i = 0; i < data.args.length; i++) {
+            const arg = data.args[i];
+            registerParticleSpecificHandler(peer, particle.id, data.names.getDataSrv, arg.name, () => {
+                if (arg.isOptional) {
+                    // TODO: convert to array and so on
+                } else {
+                    return args[i];
+                }
+            });
+        }
+
+        registerParticleSpecificHandler(peer, particle.id, data.names.callbackService, data.names.response, (args) => {
+            const [res] = args;
+            setTimeout(() => {
+                resolve(res);
+            }, 0);
+            return {};
+        });
+
+        registerParticleSpecificHandler(peer, particle.id, data.names.errorHandlingSrv, data.names.error, (args) => {
+            const [err] = args;
+            setTimeout(() => {
+                resolve(err);
+            }, 0);
+            return {};
+        });
+
+        handleTimeout(peer, particle.id, () => {
+            reject(`Request timed out for ${data.functionName}`);
+        });
+
+        peer.internals.newMethodToStartParticles(particle);
+    });
+}
+
+export function regService(data: { rawFnArgs: any[] }) {
+    const { peer, service, serviceId } = extractServiceArgs(data.rawFnArgs);
+
+    const incorrectServiceDefinitions = missingFields(service, Object.keys(service));
+    if (!!incorrectServiceDefinitions.length) {
+        throw new Error(
+            'Error registering service SomeS: missing functions: ' +
+                incorrectServiceDefinitions.map((d) => "'" + d + "'").join(', '),
+        );
+    }
+
+    for (let name in service) {
+        registerHandler(peer, serviceId, name, service[name]);
+    }
+}

@@ -15,6 +15,8 @@ import {
     handleTimeout,
     extractServiceArgs,
     registerHandler,
+    callFunction,
+    regService,
 } from '../../../internal/compilerSupport/v2';
 import { Particle } from '../../../internal/particle';
 
@@ -28,31 +30,9 @@ export function registerCustomId(service: CustomIdDef): void;
 export function registerCustomId(serviceId: string, service: CustomIdDef): void;
 export function registerCustomId(peer: FluencePeer, service: CustomIdDef): void;
 export function registerCustomId(peer: FluencePeer, serviceId: string, service: CustomIdDef): void;
-export function registerCustomId(...args1: any) {
-    const { peer, serviceId, service } = extractServiceArgs(args1);
-
-    registerHandler(peer, serviceId, 'id', (args, callParams) => {
-        return service.id(args[0], callParams);
-    });
-
-    peer.internals.callServiceHandler.use(async (req, resp, next) => {
-        if (req.serviceId !== serviceId) {
-            await next();
-            return;
-        }
-
-        if (req.fnName === 'id') {
-            const callParams = {
-                ...req.particleContext,
-                tetraplets: {
-                    s: req.tetraplets[0],
-                },
-            };
-            resp.retCode = ResultCodes.success;
-            resp.result = service.id(req.args[0], callParams);
-        }
-
-        await next();
+export function registerCustomId(...args: any) {
+    regService({
+        rawFnArgs: args,
     });
 }
 
@@ -69,11 +49,21 @@ export function viaArr(
     viaAr: string[],
     config?: { ttl?: number },
 ): Promise<{ external_addresses: string[] }>;
-export function viaArr(...args1: any) {
-    const { peer, config, args } = extractFunctionArgs(args1, 2);
-
-    return new Promise<{ external_addresses: string[] }>((resolve, reject) => {
-        const script = `
+export function viaArr(...args: any) {
+    return callFunction({
+        rawFnArgs: args,
+        functions: [],
+        args: [],
+        functionName: 'viaArr',
+        names: {
+            relay: '-relay-',
+            getDataSrv: 'getDataSrv',
+            callbackService: 'callbackSrv',
+            errorHandlingSrv: 'errorHandlingSrv',
+            error: 'error',
+            response: 'response',
+        },
+        script: `
       (xor
   (seq
    (seq
@@ -131,42 +121,7 @@ export function viaArr(...args1: any) {
    )
   )
   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
- )`;
-        const particle = Particle.createNew(script, config?.ttl);
-
-        registerParticleSpecificHandler(peer, particle.id, 'getDataSrv', '-relay-', () => {
-            return peer.getStatus().relayPeerId;
-        });
-
-        registerParticleSpecificHandler(peer, particle.id, 'getDataSrv', 'node_id', () => {
-            return args[0];
-        });
-
-        registerParticleSpecificHandler(peer, particle.id, 'getDataSrv', 'viaAr', () => {
-            return args[1];
-        });
-
-        registerParticleSpecificHandler(peer, particle.id, 'callbackSrv', 'response', (args) => {
-            const [res] = args;
-            setTimeout(() => {
-                resolve(res);
-            }, 0);
-            return {};
-        });
-
-        registerParticleSpecificHandler(peer, particle.id, 'errorHandlingSrv', 'error', (args) => {
-            const [err] = args;
-            setTimeout(() => {
-                reject(err);
-            }, 0);
-            return {};
-        });
-
-        handleTimeout(peer, particle.id, () => {
-            reject('Request timed out for viaArr');
-        });
-
-        peer.internals.initiateFlow(particle);
+ )`,
     });
 }
 

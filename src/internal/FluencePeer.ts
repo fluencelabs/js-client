@@ -188,11 +188,15 @@ export class FluencePeer {
      */
     get internals() {
         return {
+            newMethodToStartParticles: (particle: Particle): void => {
+                // TODO::
+            },
             initiateFlow: (request: RequestFlow): void => {
-                if (request.init_peer_id === undefined) {
-                    request.init_peer_id = this.getStatus().peerId;
+                if (request.particle.init_peer_id === undefined) {
+                    request.particle.init_peer_id = this.getStatus().peerId;
                 }
-                this._incomingParticles.next(request);
+                // TODO: register handlers here
+                this._incomingParticles.next(request.particle);
             },
             callServiceHandler: this._callServiceHandler,
         };

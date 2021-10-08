@@ -5,7 +5,10 @@ export { FluencePeer } from '../FluencePeer';
 export { ResultCodes } from '../../internal/CallServiceHandler';
 export { CallParams } from '../commonTypes';
 
-export type RequestFlow = Particle;
+export interface RequestFlow {
+    particle: Particle;
+    meta: {};
+}
 
 const DEFAULT_TTL = 7000;
 
@@ -27,7 +30,10 @@ export class RequestFlowBuilder {
             timeout: this._timeout,
             error: this._error,
         };
-        return res;
+        return {
+            particle: res,
+            meta: {},
+        };
     }
 
     withTTL(ttl: number): RequestFlowBuilder {
