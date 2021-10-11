@@ -1,10 +1,9 @@
-import { Fluence, FluencePeer } from 'src';
-import { CallServiceResultType } from '../../internal/CallServiceHandler';
-import { CallServiceHandler } from '../../internal/CallServiceHandler2';
+import { CallParams, Fluence, FluencePeer } from 'src';
+import { CallServiceData, CallServiceResultType, GenericCallServiceHandler, ResultCodes } from '../CallServiceHandler';
 import { Particle } from '../particle';
 
 export { FluencePeer } from '../FluencePeer';
-export { ResultCodes } from '../../internal/CallServiceHandler';
+export { ResultCodes } from '../CallServiceHandler';
 export { CallParams } from '../commonTypes';
 
 function missingFields(obj: any, fields: string[]): string[] {
@@ -82,36 +81,50 @@ export function registerParticleSpecificHandler(
     particleId: string,
     serviceId: string,
     fnName: string,
-    handler: (args: any[], callParams) => CallServiceResultType,
-) {}
+    handler: GenericCallServiceHandler,
+) {
+    peer.internals.registerParticleSpecificHandler(particleId, serviceId, fnName, handler);
+}
 
-export function handleTimeout(peer: FluencePeer, particleId: string, timeoutHandler: () => void) {}
+export function handleTimeout(peer: FluencePeer, particleId: string, timeoutHandler: () => void) {
+    peer.internals.registerTimeoutHandler(particleId, timeoutHandler);
+}
 
-export function registerHandler(
+export function registerCommonHandler(
     peer: FluencePeer,
     serviceId: string,
     fnName: string,
-    handler: (args: any[], callParams) => CallServiceResultType,
-) {}
+    handler: GenericCallServiceHandler,
+) {
+    peer.internals.registerCommonHandler(serviceId, fnName, handler);
+}
 
-interface Arg {
+interface ArgDef {
     name: string;
     isOptional: boolean;
+    isCallback: boolean;
+    callBackDef: CallbackDef;
+}
+
+interface CallbackDef {
+    fnName: string;
+    argNames: Array<string>;
+    isVoid: boolean;
 }
 
 export function callFunction(data: {
     functionName: string;
-    rawFnArgs: any[];
+    rawFnArgs: Array<any>;
     script: string;
-    args: Arg[];
-    functions: any[];
+    args: Array<ArgDef>;
     names: {
         relay: string;
         getDataSrv: string;
-        callbackService: string;
-        response: string;
+        callbackSrv: string;
+        responseSrv: string;
+        responseFnName: string;
         errorHandlingSrv: string;
-        error: string;
+        errorFnName: string;
     };
 }) {
     const { args, peer, config } = extractFunctionArgs(data.rawFnArgs, data.args.length);
@@ -120,52 +133,114 @@ export function callFunction(data: {
         const particle = Particle.createNew(data.script, config?.ttl);
 
         for (let i = 0; i < data.args.length; i++) {
-            const arg = data.args[i];
-            registerParticleSpecificHandler(peer, particle.id, data.names.getDataSrv, arg.name, () => {
-                if (arg.isOptional) {
-                    // TODO: convert to array and so on
-                } else {
-                    return args[i];
-                }
-            });
+            const argDef = data.args[i];
+            const arg = args[i];
+
+            if (argDef.isCallback) {
+                registerParticleSpecificHandler(peer, particle.id, data.names.callbackSrv, argDef.name, async (req) => {
+                    const args = [...req.args, extractCallParams(req, argDef.callBackDef.argNames)];
+                    const result = await arg.apply(null, args);
+
+                    return {
+                        retCode: ResultCodes.success,
+                        result: argDef.callBackDef.isVoid ? {} : result,
+                    };
+                });
+            } else if (argDef.isOptional) {
+                registerParticleSpecificHandler(peer, particle.id, data.names.getDataSrv, argDef.name, (req) => {
+                    // TODO: convert optional stuff bla bla
+                    return {
+                        retCode: ResultCodes.success,
+                        result: arg,
+                    };
+                });
+            } else {
+                registerParticleSpecificHandler(peer, particle.id, data.names.getDataSrv, argDef.name, (req) => {
+                    return {
+                        retCode: ResultCodes.success,
+                        result: arg,
+                    };
+                });
+            }
         }
 
-        registerParticleSpecificHandler(peer, particle.id, data.names.callbackService, data.names.response, (args) => {
-            const [res] = args;
+        registerParticleSpecificHandler(peer, particle.id, data.names.responseSrv, data.names.responseFnName, (req) => {
+            const [res] = req.args;
             setTimeout(() => {
                 resolve(res);
             }, 0);
-            return {};
+            return {
+                retCode: ResultCodes.success,
+                result: {},
+            };
         });
 
-        registerParticleSpecificHandler(peer, particle.id, data.names.errorHandlingSrv, data.names.error, (args) => {
-            const [err] = args;
-            setTimeout(() => {
-                resolve(err);
-            }, 0);
-            return {};
-        });
+        registerParticleSpecificHandler(
+            peer,
+            particle.id,
+            data.names.errorHandlingSrv,
+            data.names.errorFnName,
+            (req) => {
+                const [err] = req.args;
+                setTimeout(() => {
+                    resolve(err);
+                }, 0);
+                return {
+                    retCode: ResultCodes.success,
+                    result: {},
+                };
+            },
+        );
 
         handleTimeout(peer, particle.id, () => {
             reject(`Request timed out for ${data.functionName}`);
         });
 
-        peer.internals.newMethodToStartParticles(particle);
+        peer.internals.initiateParticle(particle);
     });
 }
 
-export function regService(data: { rawFnArgs: any[] }) {
+export function regService(data: { rawFnArgs: any[]; serviceFunctionTypes: Array<CallbackDef> }) {
     const { peer, service, serviceId } = extractServiceArgs(data.rawFnArgs);
 
     const incorrectServiceDefinitions = missingFields(service, Object.keys(service));
     if (!!incorrectServiceDefinitions.length) {
         throw new Error(
-            'Error registering service SomeS: missing functions: ' +
+            `Error registering service ${serviceId}: missing functions: ` +
                 incorrectServiceDefinitions.map((d) => "'" + d + "'").join(', '),
         );
     }
 
-    for (let name in service) {
-        registerHandler(peer, serviceId, name, service[name]);
+    for (let singleFunction of data.serviceFunctionTypes) {
+        // has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
+        const userDefinedHandler = service[singleFunction.fnName];
+
+        registerCommonHandler(peer, serviceId, singleFunction.fnName, async (req) => {
+            const args = [...req.args, extractCallParams(req, singleFunction.argNames)];
+            const result = await userDefinedHandler.apply(null, args);
+
+            return {
+                retCode: ResultCodes.success,
+                result: singleFunction.isVoid ? {} : result,
+            };
+        });
     }
 }
+
+const extractCallParams = (req: CallServiceData, argNames: Array<string>): CallParams<any> => {
+    let tetraplets: any = {};
+    for (let i = 0; i < req.args.length; i++) {
+        if (argNames[i]) {
+            tetraplets[argNames[i]] = req.tetraplets[i];
+        }
+    }
+
+    const callParams = {
+        ...req.particleContext,
+        tetraplets: {
+            tetraplets,
+        },
+    };
+
+    return callParams;
+};

@@ -1,8 +1,6 @@
 import { Fluence, FluencePeer } from '../../..';
-import { CallServiceHandler } from '../../../internal/CallServiceHandler';
-import { RequestFlowBuilder } from '../../../internal/compilerSupport/v1';
 import { Particle } from '../../../internal/particle';
-import { nodes } from '../../connection';
+import { registerHandlersHelper } from '../../../internal/utils';
 import { callMeBack, registerHelloWorld } from './gen1';
 
 describe('Compiler support infrastructure tests', () => {
@@ -73,18 +71,17 @@ describe('Compiler support infrastructure tests', () => {
                 (call %init_peer_id% ("callback" "callback") [result])
             )`;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
-            h.onEvent('callback', 'callback', (args) => {
-                const [val] = args;
-                resolve(val);
+            registerHandlersHelper(Fluence.getPeer(), particle, {
+                callback: {
+                    callback: async (args) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                },
+                _timeout: reject,
             });
 
-            particle.meta = {
-                handler: h,
-                // timeout: reject,
-            };
-
-            Fluence.getPeer().internals.initiateFlow(particle);
+            Fluence.getPeer().internals.initiateParticle(particle);
         });
 
         // assert
@@ -162,18 +159,16 @@ describe('Compiler support infrastructure tests', () => {
                 (call %init_peer_id% ("callback" "callback") [result])
             )`;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
-            h.onEvent('callback', 'callback', (args) => {
-                const [val] = args;
-                resolve(val);
+            registerHandlersHelper(Fluence.getPeer(), particle, {
+                callback: {
+                    callback: async (args) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                },
+                _timeout: reject,
             });
-
-            particle.meta = {
-                handler: h,
-                // timeout: reject,
-            };
-
-            anotherPeer.internals.initiateFlow(particle);
+            anotherPeer.internals.initiateParticle(particle);
         });
 
         // assert

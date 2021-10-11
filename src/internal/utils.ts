@@ -28,6 +28,18 @@ export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter
     return AirInterpreter.create(logLevel, logFn);
 };
 
+export const registerHandlersHelper = (peer: FluencePeer, particle: Particle, handlers) => {
+    const { _timeout, ...rest } = handlers;
+    if (_timeout) {
+        peer.internals.registerTimeoutHandler(particle.id, _timeout);
+    }
+    for (let serviceId in rest) {
+        for (let fnName in rest[serviceId]) {
+            peer.internals.registerParticleSpecificHandler(particle.id, serviceId, fnName, rest[serviceId][fnName]);
+        }
+    }
+};
+
 /**
  * Checks the network connection by sending a ping-like request to relat node
  * @param { FluenceClient } peer - The Fluence Client instance.
@@ -58,27 +70,29 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         )
     )`;
         const particle = Particle.createNew(script, ttl);
-        const h = new CallServiceHandler();
-        h.on('load', 'relay', () => {
-            return peer.getStatus().relayPeerId;
+        registerHandlersHelper(peer, particle, {
+            load: {
+                relay: () => {
+                    peer.getStatus().relayPeerId;
+                },
+                msg: () => {
+                    return msg;
+                },
+            },
+            callback: {
+                callback: (args) => {
+                    const [val] = args;
+                    resolve(val);
+                },
+                error: (args) => {
+                    const [error] = args;
+                    reject(error);
+                },
+            },
+            _timeout: reject,
         });
-        h.on('load', 'msg', () => {
-            return msg;
-        });
-        h.onEvent('callback', 'callback', (args) => {
-            const [val] = args;
-            resolve(val);
-        });
-        h.onEvent('callback', 'error', (args) => {
-            const [error] = args;
-            reject(error);
-        });
-        particle.meta = {
-            handler: h,
-            // timeout: reject,
-        };
 
-        peer.internals.initiateFlow(particle);
+        peer.internals.initiateParticle(particle);
     });
 
     try {

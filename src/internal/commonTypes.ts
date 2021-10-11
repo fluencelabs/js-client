@@ -39,7 +39,7 @@ export interface CallParams<ArgName extends string | null> {
     /**
      * Particle's timestamp when it was created
      */
-    timeStamp: number;
+    timestamp: number;
 
     /**
      * Time to live in milliseconds. The time after the particle should be expired

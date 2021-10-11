@@ -55,11 +55,11 @@ export class FluenceConnection {
 
     constructor() {}
 
-    incomingParticles: Subject<Particle> = new Subject<Particle>();
-
-    outgoingParticles: Subject<Particle> = new Subject<Particle>();
-
-    static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
+    static async createConnection(
+        options: FluenceConnectionOptions,
+        incomingParticles: Subject<Particle>,
+        outgoingParticles: Subject<Particle>,
+    ): Promise<FluenceConnection> {
         const res = new FluenceConnection();
 
         const transportKey = Websockets.prototype[Symbol.toStringTag];
@@ -82,11 +82,11 @@ export class FluenceConnection {
             },
         });
 
-        res.outgoingParticles.subscribe((p) => {
+        outgoingParticles.subscribe((p) => {
             res._sendParticle(p);
         });
 
-        await res._start(options.relayAddress);
+        await res._start(options.relayAddress, incomingParticles);
 
         return res;
     }
@@ -120,7 +120,7 @@ export class FluenceConnection {
     private _lib2p2Peer: Lib2p2Peer;
     private _connection: Connection;
 
-    private async _start(address: Multiaddr) {
+    private async _start(address: Multiaddr, incomingParticles: Subject<Particle>) {
         await this._lib2p2Peer.start();
         this._address = address;
 
@@ -144,7 +144,7 @@ export class FluenceConnection {
                     try {
                         const particle = Particle.fromString(msg);
                         logParticle(log.debug, 'Particle is received:', particle);
-                        this.incomingParticles.next(particle);
+                        incomingParticles.next(particle);
                     } catch (e) {
                         log.error('error on handling a new incoming message: ' + e);
                     }

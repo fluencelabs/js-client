@@ -2,7 +2,7 @@ import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import log from 'loglevel';
 import { Fluence, FluencePeer } from '../../index';
-import { checkConnection } from '../../internal/utils';
+import { checkConnection, registerHandlersHelper } from '../../internal/utils';
 import { RequestFlowBuilder } from '../../internal/compilerSupport/v1';
 import { Particle } from '../../internal/particle';
 import { CallServiceHandler } from '../../internal/CallServiceHandler';
@@ -69,7 +69,7 @@ describe('Typescript usage suite', () => {
         });
 
         it('Should expose correct status for connected peer', async () => {
-            // arrnge
+            // arrange
             const peer = new FluencePeer();
             await peer.start({ connectTo: nodes[0] });
 
@@ -107,25 +107,26 @@ describe('Typescript usage suite', () => {
         )
     )`;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
-            h.on('load', 'relay', () => {
-                return anotherPeer.getStatus().relayPeerId;
+            registerHandlersHelper(Fluence.getPeer(), particle, {
+                load: {
+                    relay: (args) => {
+                        return anotherPeer.getStatus().relayPeerId;
+                    },
+                },
+                callback: {
+                    callback: (args) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                    error: (args) => {
+                        const [error] = args;
+                        reject(error);
+                    },
+                },
+                _timeout: reject,
             });
 
-            h.onEvent('callback', 'callback', (args) => {
-                const [val] = args;
-                resolve(val);
-            });
-            h.onEvent('callback', 'error', (args) => {
-                const [error] = args;
-                reject(error);
-            });
-            particle.meta = {
-                handler: h,
-                // timeout: reject,
-            };
-
-            anotherPeer.internals.initiateFlow(particle);
+            anotherPeer.internals.initiateParticle(particle);
         });
 
         // assert
@@ -170,7 +171,7 @@ describe('Typescript usage suite', () => {
             )
         `;
         const particle = Particle.createNew(script);
-        await peer1.internals.initiateFlow(particle);
+        await peer1.internals.initiateParticle(particle);
 
         // assert
         const res = await resMakingPromise;
@@ -309,24 +310,27 @@ describe('Typescript usage suite', () => {
             )
         )`;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
-            h.on('load', 'arg', () => {
-                return undefined;
-            });
-            h.onEvent('callback', 'callback', (args) => {
-                const [val] = args;
-                resolve(val);
-            });
-            h.onEvent('callback', 'error', (args) => {
-                const [error] = args;
-                reject(error);
-            });
-            particle.meta = {
-                handler: h,
-                // timeout: reject,
-            };
 
-            anotherPeer.internals.initiateFlow(particle);
+            registerHandlersHelper(Fluence.getPeer(), particle, {
+                load: {
+                    arg: (args) => {
+                        return undefined;
+                    },
+                },
+                callback: {
+                    callback: (args) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                    error: (args) => {
+                        const [error] = args;
+                        reject(error);
+                    },
+                },
+                _timeout: reject,
+            });
+
+            anotherPeer.internals.initiateParticle(particle);
         });
 
         // assert
@@ -348,16 +352,16 @@ describe('Typescript usage suite', () => {
             const particle = Particle.createNew(script);
             const h = new CallServiceHandler();
 
-            h.onEvent('callback', 'error', (args) => {
-                const [error] = args;
-                reject(error);
+            registerHandlersHelper(Fluence.getPeer(), particle, {
+                callback: {
+                    error: (args) => {
+                        const [error] = args;
+                        reject(error);
+                    },
+                },
             });
-            particle.meta = {
-                handler: h,
-                // timeout: reject,
-            };
 
-            anotherPeer.internals.initiateFlow(particle);
+            anotherPeer.internals.initiateParticle(particle);
         });
 
         // assert
@@ -381,23 +385,26 @@ async function callIdentifyOnInitPeerId(peer: FluencePeer): Promise<string[]> {
         )
     )`;
         const particle = Particle.createNew(script);
-        const h = new CallServiceHandler();
-        h.on('load', 'relay', () => {
-            return peer.getStatus().relayPeerId;
-        });
-        h.onEvent('callback', 'callback', (args) => {
-            resolve(args);
-        });
-        h.onEvent('callback', 'error', (args) => {
-            const [error] = args;
-            reject(error);
-        });
-        particle.meta = {
-            handler: h,
-            // timeout: reject,
-        };
 
-        peer.internals.initiateFlow(particle);
+        registerHandlersHelper(Fluence.getPeer(), particle, {
+            load: {
+                arg: (relay) => {
+                    return peer.getStatus().relayPeerId;
+                },
+            },
+            callback: {
+                callback: (args) => {
+                    resolve(args);
+                },
+                error: (args) => {
+                    const [error] = args;
+                    reject(error);
+                },
+            },
+            _timeout: reject,
+        });
+
+        peer.internals.initiateParticle(particle);
     });
 
     return promise;

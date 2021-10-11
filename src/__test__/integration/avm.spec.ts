@@ -1,6 +1,6 @@
-import { Fluence, FluencePeer } from '../../index';
-import { CallServiceHandler } from '../../internal/CallServiceHandler';
+import { FluencePeer } from '../../index';
 import { Particle } from '../../internal/particle';
+import { registerHandlersHelper } from '../../internal/utils';
 
 const anotherPeer = new FluencePeer();
 
@@ -16,21 +16,22 @@ describe('Avm spec', () => {
         await anotherPeer.start();
 
         // act
-        const promise = new Promise<string[]>((resolve) => {
+        const promise = new Promise<string[]>((resolve, reject) => {
             const script = `
                 (call %init_peer_id% ("print" "print") ["1"])
             `;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
-            h.onEvent('print', 'print', async (args) => {
-                const [res] = args;
-                resolve(res);
+            registerHandlersHelper(anotherPeer, particle, {
+                print: {
+                    print: async (args) => {
+                        const [res] = args;
+                        resolve(res);
+                    },
+                },
+                _timeout: reject,
             });
-            particle.meta = {
-                handler: h,
-            };
 
-            anotherPeer.internals.initiateFlow(particle);
+            anotherPeer.internals.initiateParticle(particle);
         });
 
         // assert
@@ -43,7 +44,7 @@ describe('Avm spec', () => {
         await anotherPeer.start();
 
         // act
-        const promise = new Promise<string[]>((resolve) => {
+        const promise = new Promise<string[]>((resolve, reject) => {
             let res = [];
             const script = `
                 (seq
@@ -55,18 +56,19 @@ describe('Avm spec', () => {
                 )
             `;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
-            h.onEvent('print', 'print', async (args) => {
-                res.push(args[0]);
-                if (res.length == 2) {
-                    resolve(res);
-                }
+            registerHandlersHelper(anotherPeer, particle, {
+                print: {
+                    print: async (args) => {
+                        res.push(args[0]);
+                        if (res.length == 2) {
+                            resolve(res);
+                        }
+                    },
+                },
+                _timeout: reject,
             });
-            particle.meta = {
-                handler: h,
-            };
 
-            anotherPeer.internals.initiateFlow(particle);
+            anotherPeer.internals.initiateParticle(particle);
         });
 
         // assert

@@ -31,11 +31,6 @@ export class Particle {
     signature: string;
     data: Uint8Array;
     callResults: CallResultsArray = [];
-    meta: {
-        handler: CallServiceHandler;
-        timeout?: () => void;
-        error?: (reason?: any) => void;
-    };
 
     actualTtl(): number {
         return this.timestamp + this.ttl - Date.now();

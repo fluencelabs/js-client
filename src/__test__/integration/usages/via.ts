@@ -14,7 +14,7 @@ import {
     registerParticleSpecificHandler,
     handleTimeout,
     extractServiceArgs,
-    registerHandler,
+    registerCommonHandler,
     callFunction,
     regService,
 } from '../../../internal/compilerSupport/v2';
@@ -23,7 +23,7 @@ import { Particle } from '../../../internal/particle';
 // Services
 
 export interface CustomIdDef {
-    id: (s: string, callParams: CallParams<'s'>) => string;
+    id: (s: string, callParams: CallParams<'s'>) => string | Promise<string>;
 }
 
 export function registerCustomId(service: CustomIdDef): void;
@@ -33,6 +33,7 @@ export function registerCustomId(peer: FluencePeer, serviceId: string, service: 
 export function registerCustomId(...args: any) {
     regService({
         rawFnArgs: args,
+        serviceFunctionTypes: [{}],
     });
 }
 
@@ -52,16 +53,16 @@ export function viaArr(
 export function viaArr(...args: any) {
     return callFunction({
         rawFnArgs: args,
-        functions: [],
         args: [],
         functionName: 'viaArr',
         names: {
             relay: '-relay-',
             getDataSrv: 'getDataSrv',
-            callbackService: 'callbackSrv',
+            callbackSrv: 'callbackSrv',
+            responseSrv: 'response',
             errorHandlingSrv: 'errorHandlingSrv',
-            error: 'error',
-            response: 'response',
+            errorFnName: 'error',
+            responseFnName: 'response',
         },
         script: `
       (xor

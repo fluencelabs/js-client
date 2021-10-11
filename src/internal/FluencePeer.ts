@@ -1,15 +1,14 @@
-import {
-    AirInterpreter,
-    CallRequestsArray,
-    CallResultsArray,
-    InterpreterResult,
-    LogLevel,
-    CallServiceResult,
-} from '@fluencelabs/avm';
+import { AirInterpreter, CallRequestsArray, CallResultsArray, InterpreterResult, LogLevel } from '@fluencelabs/avm';
 import { Multiaddr } from 'multiaddr';
-import { CallServiceData, CallServiceHandler, ResultCodes } from './CallServiceHandler';
+import {
+    CallServiceData,
+    CallServiceHandler,
+    CallServiceResult,
+    GenericCallServiceHandler,
+    ResultCodes,
+} from './CallServiceHandler';
+import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
-import makeDefaultClientHandler from './defaultClientHandler';
 import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
 import { dataToString, Particle } from './particle';
 import { KeyPair } from './KeyPair';
@@ -152,8 +151,6 @@ export class FluencePeer {
 
         await this._initAirInterpreter(config?.avmLogLevel || 'off');
 
-        this._callServiceHandler = makeDefaultClientHandler();
-
         if (config?.connectTo) {
             let theAddress: Multiaddr;
             let fromNode = (config.connectTo as any).multiaddr;
@@ -167,6 +164,7 @@ export class FluencePeer {
             await this._connect(theAddress);
         }
 
+        this._legacyCallServiceHandler = new LegacyCallServiceHandler();
         this._startInternals();
     }
 
@@ -178,7 +176,7 @@ export class FluencePeer {
         this._stopInternals();
         this._relayPeerId = null;
         await this._disconnect();
-        this._callServiceHandler = null;
+        this._legacyCallServiceHandler = null;
     }
 
     // internal api
@@ -188,41 +186,70 @@ export class FluencePeer {
      */
     get internals() {
         return {
-            newMethodToStartParticles: (particle: Particle): void => {
-                // TODO::
-            },
-            initiateFlow: (request: RequestFlow): void => {
-                if (request.particle.init_peer_id === undefined) {
-                    request.particle.init_peer_id = this.getStatus().peerId;
+            initiateParticle: (particle: Particle): void => {
+                if (particle.init_peer_id === undefined) {
+                    particle.init_peer_id = this.getStatus().peerId;
                 }
-                // TODO: register handlers here
+
+                this._incomingParticles.next(particle);
+            },
+            registerCommonHandler: this._callServiceHandler.registerCommonHandler.bind(this._callServiceHandler),
+            registerParticleSpecificHandler: this._callServiceHandler.registerParticleSpecificHandler.bind(
+                this._callServiceHandler,
+            ),
+            registerTimeoutHandler: this._callServiceHandler.registerTimeoutHandler.bind(this._callServiceHandler),
+
+            /**
+             * @deprecated
+             */
+            initiateFlow: (request: RequestFlow): void => {
+                const particle = request.particle;
+                if (particle.init_peer_id === undefined) {
+                    particle.init_peer_id = this.getStatus().peerId;
+                }
+
+                this._legacyParticleSpecificHandlers.set(particle.id, {
+                    handler: request.handler,
+                    error: request.error,
+                    timeout: request.timeout,
+                });
+
                 this._incomingParticles.next(request.particle);
             },
-            callServiceHandler: this._callServiceHandler,
+
+            /**
+             * @deprecated
+             */
+            callServiceHandler: this._legacyCallServiceHandler,
         };
     }
 
+    // deprecated
+
+    private _legacyParticleSpecificHandlers = new Map<
+        string,
+        {
+            handler: LegacyCallServiceHandler;
+            timeout?: () => void;
+            error?: (reason?: any) => void;
+        }
+    >();
+
+    private _legacyCallServiceHandler: LegacyCallServiceHandler;
+
     // private
+
+    private _incomingParticles = new Subject<Particle>();
+    private _outgoingParticles = new Subject<Particle>();
+    private _callServiceHandler = new CallServiceHandler();
 
     /**
      *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
      */
     private _isFluenceAwesome = true;
 
-    private _incomingParticles = new Subject<Particle>();
-
     private _startInternals() {
-        const particles = new Map<
-            string,
-            {
-                subject: Subject<Particle>;
-                meta: Particle['meta'];
-            }
-        >();
-
-        if (this._connection) {
-            this._connection.incomingParticles.subscribe(this._incomingParticles);
-        }
+        const particles = new Map<string, Subject<Particle>>();
 
         this._incomingParticles
             .pipe(
@@ -234,13 +261,10 @@ export class FluencePeer {
                 let existing = particles.get(p.id);
 
                 if (!existing) {
-                    existing = {
-                        subject: new Subject<Particle>(),
-                        meta: p.meta,
-                    };
+                    existing = new Subject<Particle>();
                     let prevData: Uint8Array = Buffer.from([]);
 
-                    existing.subject
+                    existing
                         .pipe(
                             filter((x) => !x.hasExpired()),
                             map((x) => x),
@@ -251,18 +275,18 @@ export class FluencePeer {
                             prevData = Buffer.from(result.data);
 
                             if (result.nextPeerPks.length > 0) {
-                                const newP = p.clone();
-                                newP.data = prevData;
-                                this._connection.outgoingParticles.next(newP);
+                                const newParticle = p.clone();
+                                newParticle.data = prevData;
+                                this._outgoingParticles.next(newParticle);
                             }
 
                             if (result.callRequests.length > 0) {
-                                this._execRequests(x, p.meta, result.callRequests).then((callResults) => {
+                                this._execRequests(x, result.callRequests).then((callResults) => {
                                     const newParticle = p.clone();
                                     newParticle.callResults = callResults;
                                     newParticle.data = Buffer.from([]);
 
-                                    existing.subject.next(newParticle);
+                                    existing.next(newParticle);
                                 });
                             }
                         });
@@ -277,15 +301,11 @@ export class FluencePeer {
                     // }, p.actualTtl());
                 }
 
-                existing.subject.next(p);
+                existing.next(p);
             });
     }
 
-    private async _execRequests(
-        p: Particle,
-        meta: Particle['meta'],
-        callRequests: CallRequestsArray,
-    ): Promise<CallResultsArray> {
+    private async _execRequests(p: Particle, callRequests: CallRequestsArray): Promise<CallResultsArray> {
         const promises = callRequests.map(([key, callRequest]) => {
             const req = {
                 fnName: callRequest.functionName,
@@ -301,7 +321,7 @@ export class FluencePeer {
                 },
             };
 
-            const promise = this._execSingleRequest(req, meta).then((res) => [key, res] as const);
+            const promise = this._execSingleRequestEx(req).then((res) => [key, res] as const);
 
             return promise;
         });
@@ -311,25 +331,40 @@ export class FluencePeer {
         return res;
     }
 
-    private async _execSingleRequest(req: CallServiceData, meta: Particle['meta']): Promise<CallServiceResult> {
-        if (meta?.handler !== undefined) {
-            var res = await meta.handler.execute(req);
-        }
-        // trying particle-specific handler
-        if (res?.result === undefined) {
-            // if it didn't return any result trying to run the common handler
-            res = await this._callServiceHandler.execute(req);
-        }
-
-        if (res.retCode === undefined) {
-            res = {
-                retCode: ResultCodes.unknownError,
-                result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+    private async _execSingleRequestEx(req: CallServiceData): Promise<CallServiceResult> {
+        try {
+            return this._execSingleRequest(req);
+        } catch (err) {
+            return {
+                retCode: ResultCodes.exceptionInHandler,
+                result: `Handler failed. fnName="${req.fnName}" serviceId="${req.serviceId}" error: ${err.toString()}`,
             };
         }
+    }
 
-        if (res.result === undefined) {
-            res.result = null;
+    private async _execSingleRequest(req: CallServiceData): Promise<CallServiceResult> {
+        const particleId = req.particleContext.particleId;
+
+        // trying particle-specific handler
+        const lh = this._legacyParticleSpecificHandlers.get(particleId);
+        let res: CallServiceResult;
+        if (lh !== undefined) {
+            res = lh.handler.execute(req);
+        }
+
+        // if it didn't return any result trying to run the common handler
+        if (res?.result === undefined) {
+            res = this._legacyCallServiceHandler.execute(req);
+        }
+
+        // No result from legacy handler.
+        // TRying to execute async handler
+        if (res.retCode === undefined) {
+            res = await this._callServiceHandler.execute(req);
+        } else {
+            if (res.result === undefined) {
+                res.result = null;
+            }
         }
 
         return {
@@ -361,8 +396,6 @@ export class FluencePeer {
 
     private _stopInternals() {}
 
-    private _callServiceHandler: CallServiceHandler;
-
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
@@ -381,11 +414,15 @@ export class FluencePeer {
             await this._connection.disconnect();
         }
 
-        const connection = await FluenceConnection.createConnection({
-            peerId: this._keyPair.Libp2pPeerId,
-            relayAddress: multiaddr,
-            dialTimeout: options?.dialTimeout,
-        });
+        const connection = await FluenceConnection.createConnection(
+            {
+                peerId: this._keyPair.Libp2pPeerId,
+                relayAddress: multiaddr,
+                dialTimeout: options?.dialTimeout,
+            },
+            this._incomingParticles,
+            this._outgoingParticles,
+        );
 
         this._connection = connection;
     }

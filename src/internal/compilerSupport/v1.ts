@@ -1,13 +1,15 @@
-import { CallServiceHandler } from '../../internal/CallServiceHandler';
+import { CallServiceHandler } from './LegacyCallServiceHandler';
 import { Particle } from '../particle';
 
 export { FluencePeer } from '../FluencePeer';
-export { ResultCodes } from '../../internal/CallServiceHandler';
+export { ResultCodes } from '../CallServiceHandler';
 export { CallParams } from '../commonTypes';
 
 export interface RequestFlow {
     particle: Particle;
-    meta: {};
+    handler: CallServiceHandler;
+    timeout?: () => void;
+    error?: (reason?: any) => void;
 }
 
 const DEFAULT_TTL = 7000;
@@ -20,19 +22,16 @@ export class RequestFlowBuilder {
     private _timeout: () => void = () => {};
 
     build(): RequestFlow {
-        const res = Particle.createNew(this._script!, this._ttl || DEFAULT_TTL);
         let h = new CallServiceHandler();
         for (let c of this._configs) {
             c(h);
         }
-        res.meta = {
+
+        return {
+            particle: Particle.createNew(this._script!, this._ttl || DEFAULT_TTL),
             handler: h,
             timeout: this._timeout,
             error: this._error,
-        };
-        return {
-            particle: res,
-            meta: {},
         };
     }
 
