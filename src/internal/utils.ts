@@ -1,6 +1,6 @@
 import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
-import { CallServiceHandler } from './CallServiceHandler';
+import { CallServiceHandler, ResultCodes } from './CallServiceHandler';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { Particle } from './particle';
 
@@ -35,7 +35,15 @@ export const registerHandlersHelper = (peer: FluencePeer, particle: Particle, ha
     }
     for (let serviceId in rest) {
         for (let fnName in rest[serviceId]) {
-            peer.internals.registerParticleSpecificHandler(particle.id, serviceId, fnName, rest[serviceId][fnName]);
+            // of type [args] => result
+            const h = rest[serviceId][fnName];
+            peer.internals.registerParticleSpecificHandler(particle.id, serviceId, fnName, (req) => {
+                const res = h(req.args);
+                return {
+                    retCode: ResultCodes.success,
+                    result: res || null,
+                };
+            });
         }
     }
 };
@@ -73,7 +81,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         registerHandlersHelper(peer, particle, {
             load: {
                 relay: () => {
-                    peer.getStatus().relayPeerId;
+                    return peer.getStatus().relayPeerId;
                 },
                 msg: () => {
                     return msg;

@@ -73,7 +73,7 @@ describe('Compiler support infrastructure tests', () => {
             const particle = Particle.createNew(script);
             registerHandlersHelper(Fluence.getPeer(), particle, {
                 callback: {
-                    callback: async (args) => {
+                    callback: (args) => {
                         const [val] = args;
                         resolve(val);
                     },
@@ -159,9 +159,9 @@ describe('Compiler support infrastructure tests', () => {
                 (call %init_peer_id% ("callback" "callback") [result])
             )`;
             const particle = Particle.createNew(script);
-            registerHandlersHelper(Fluence.getPeer(), particle, {
+            registerHandlersHelper(anotherPeer, particle, {
                 callback: {
-                    callback: async (args) => {
+                    callback: (args) => {
                         const [val] = args;
                         resolve(val);
                     },

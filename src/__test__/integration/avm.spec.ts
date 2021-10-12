@@ -58,7 +58,7 @@ describe('Avm spec', () => {
             const particle = Particle.createNew(script);
             registerHandlersHelper(anotherPeer, particle, {
                 print: {
-                    print: async (args) => {
+                    print: (args) => {
                         res.push(args[0]);
                         if (res.length == 2) {
                             resolve(res);

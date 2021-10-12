@@ -131,7 +131,7 @@ export class CallServiceHandler {
     resolveHandler(particleId: string, serviceId: string, fnName: string): GenericCallServiceHandler | null {
         const id = this._id(serviceId, fnName);
         const psh = this._particleSpecificHandlers.get(particleId);
-        const res = psh === undefined ? psh.get(id) : this._commonHandlers.get(id);
+        const res = psh === undefined ? this._commonHandlers.get(id) : psh.get(id);
 
         return res || null;
     }

@@ -1,11 +1,8 @@
 import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
-import log from 'loglevel';
 import { Fluence, FluencePeer } from '../../index';
 import { checkConnection, registerHandlersHelper } from '../../internal/utils';
-import { RequestFlowBuilder } from '../../internal/compilerSupport/v1';
 import { Particle } from '../../internal/particle';
-import { CallServiceHandler } from '../../internal/CallServiceHandler';
 
 const anotherPeer = new FluencePeer();
 
@@ -107,7 +104,7 @@ describe('Typescript usage suite', () => {
         )
     )`;
             const particle = Particle.createNew(script);
-            registerHandlersHelper(Fluence.getPeer(), particle, {
+            registerHandlersHelper(anotherPeer, particle, {
                 load: {
                     relay: (args) => {
                         return anotherPeer.getStatus().relayPeerId;
@@ -311,7 +308,7 @@ describe('Typescript usage suite', () => {
         )`;
             const particle = Particle.createNew(script);
 
-            registerHandlersHelper(Fluence.getPeer(), particle, {
+            registerHandlersHelper(anotherPeer, particle, {
                 load: {
                     arg: (args) => {
                         return undefined;
@@ -327,6 +324,11 @@ describe('Typescript usage suite', () => {
                         reject(error);
                     },
                 },
+                op: {
+                    identity: (args) => {
+                        return args[0];
+                    },
+                },
                 _timeout: reject,
             });
 
@@ -338,7 +340,7 @@ describe('Typescript usage suite', () => {
         expect(res).toBe(null);
     });
 
-    it('Should throw correct error when the client tries to send a particle not to the relay', async () => {
+    it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
         // arrange;
         await anotherPeer.start({ connectTo: nodes[0] });
 
@@ -350,9 +352,8 @@ describe('Typescript usage suite', () => {
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
             const particle = Particle.createNew(script);
-            const h = new CallServiceHandler();
 
-            registerHandlersHelper(Fluence.getPeer(), particle, {
+            registerHandlersHelper(anotherPeer, particle, {
                 callback: {
                     error: (args) => {
                         const [error] = args;
@@ -375,23 +376,12 @@ async function callIdentifyOnInitPeerId(peer: FluencePeer): Promise<string[]> {
     const promise = new Promise<any[]>((resolve, reject) => {
         const script = `
     (xor
-        (seq
-            (call %init_peer_id% ("load" "relay") [] init_relay)
-            (call %init_peer_id% ("peer" "identify") [] res)
-        )
-        (seq 
-            (call init_relay ("op" "identity") [])
-            (call %init_peer_id% ("callback" "error") [%last_error%])
-        )
+        (call %init_peer_id% ("peer" "identify") [] res)
+        (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
         const particle = Particle.createNew(script);
 
-        registerHandlersHelper(Fluence.getPeer(), particle, {
-            load: {
-                arg: (relay) => {
-                    return peer.getStatus().relayPeerId;
-                },
-            },
+        registerHandlersHelper(peer, particle, {
             callback: {
                 callback: (args) => {
                     resolve(args);

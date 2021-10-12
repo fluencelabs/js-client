@@ -347,7 +347,10 @@ export class FluencePeer {
 
         // trying particle-specific handler
         const lh = this._legacyParticleSpecificHandlers.get(particleId);
-        let res: CallServiceResult;
+        let res: CallServiceResult = {
+            result: undefined,
+            retCode: undefined,
+        };
         if (lh !== undefined) {
             res = lh.handler.execute(req);
         }
