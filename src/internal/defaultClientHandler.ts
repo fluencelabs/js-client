@@ -1,12 +1,6 @@
 import { encode, decode } from 'bs58';
-import {
-    CallServiceData,
-    CallServiceHandler,
-    CallServiceResult,
-    CallServiceResultType,
-    Middleware,
-} from './CallServiceHandler';
-import { errorHandler } from './defaultMiddlewares';
+import { CallServiceData, CallServiceResult, CallServiceResultType } from './CallServiceHandler';
+import { CallServiceHandler, Middleware } from './compilerSupport/LegacyCallServiceHandler';
 
 const makeDefaultClientHandler = (): CallServiceHandler => {
     const success = (resp: CallServiceResult, result: CallServiceResultType) => {
@@ -89,7 +83,6 @@ const makeDefaultClientHandler = (): CallServiceHandler => {
     };
 
     const res = new CallServiceHandler();
-    res.use(errorHandler);
     res.use(mw);
     return res;
 };
