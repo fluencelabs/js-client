@@ -276,6 +276,40 @@ describe('Typescript usage suite', () => {
         });
     });
 
+    it('Should successfully call identity on local peer', async function () {
+        // arrange
+        await anotherPeer.start();
+
+        // act
+        const promise = new Promise<string>((resolve, reject) => {
+            const script = `
+            (seq
+                (call %init_peer_id% ("op" "identity") ["test"] res)
+                (call %init_peer_id% ("callback" "callback") [res])
+            )
+            `;
+            const particle = Particle.createNew(script);
+            registerHandlersHelper(anotherPeer, particle, {
+                callback: {
+                    callback: async (args) => {
+                        const [res] = args;
+                        resolve(res);
+                    },
+                },
+                // op: {
+                //     identity: (req) => {},
+                // },
+                _timeout: reject,
+            });
+
+            anotherPeer.internals.initiateParticle(particle);
+        });
+
+        // assert
+        const res = await promise;
+        expect(res).toBe('test');
+    });
+
     it('Should throw correct message when calling non existing local service', async function () {
         // arrange
         await anotherPeer.start({ connectTo: nodes[0] });

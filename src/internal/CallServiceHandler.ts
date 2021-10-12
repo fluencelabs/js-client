@@ -1,4 +1,5 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
+import { of } from 'rxjs';
 import { CallParams, PeerIdB58 } from './commonTypes';
 
 export enum ResultCodes {
@@ -131,7 +132,14 @@ export class CallServiceHandler {
     resolveHandler(particleId: string, serviceId: string, fnName: string): GenericCallServiceHandler | null {
         const id = this._id(serviceId, fnName);
         const psh = this._particleSpecificHandlers.get(particleId);
-        const res = psh === undefined ? this._commonHandlers.get(id) : psh.get(id);
+        let res: GenericCallServiceHandler;
+        if (psh !== undefined) {
+            res = psh.get(id);
+        }
+
+        if (res === undefined) {
+            res = this._commonHandlers.get(id);
+        }
 
         return res || null;
     }

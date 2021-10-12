@@ -1,6 +1,6 @@
 import each from 'jest-each';
-import { CallServiceData } from '../../internal/CallServiceHandler';
-import makeDefaultClientHandler from '../../internal/defaultClientHandler';
+import { FluencePeer } from '../..';
+import { CallServiceData, CallServiceHandler } from '../../internal/CallServiceHandler';
 
 describe('Tests for default handler', () => {
     // prettier-ignore
@@ -51,7 +51,10 @@ describe('Tests for default handler', () => {
             };
 
             // act
-            const res = await makeDefaultClientHandler().execute(req);
+            const peer = new FluencePeer();
+            await peer.start();
+            const csh: CallServiceHandler = (peer as any)._callServiceHandler;
+            const res = await csh.execute(req);
 
             // assert
             expect(res).toMatchObject({

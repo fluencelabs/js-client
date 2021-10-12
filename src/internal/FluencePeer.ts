@@ -16,6 +16,7 @@ import { createInterpreter } from './utils';
 import { filter, map, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
+import { registerDefaultServices } from './defaultServices';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -165,6 +166,9 @@ export class FluencePeer {
         }
 
         this._legacyCallServiceHandler = new LegacyCallServiceHandler();
+        this._callServiceHandler = new CallServiceHandler();
+        registerDefaultServices(this);
+
         this._startInternals();
     }
 
@@ -177,6 +181,7 @@ export class FluencePeer {
         this._relayPeerId = null;
         await this._disconnect();
         this._legacyCallServiceHandler = null;
+        this._callServiceHandler = null;
     }
 
     // internal api
@@ -241,7 +246,7 @@ export class FluencePeer {
 
     private _incomingParticles = new Subject<Particle>();
     private _outgoingParticles = new Subject<Particle>();
-    private _callServiceHandler = new CallServiceHandler();
+    private _callServiceHandler: CallServiceHandler;
 
     /**
      *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
