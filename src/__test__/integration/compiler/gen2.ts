@@ -1,5 +1,5 @@
-import { ResultCodes, CallParams, regService, callFunction } from '../../../internal/compilerSupport/v2';
-import { Fluence, FluencePeer } from '../../../index';
+import { CallParams, registerService, callFunction } from '../../../internal/compilerSupport/v2';
+import { FluencePeer } from '../../../index';
 
 /*
 
@@ -57,8 +57,7 @@ export function registerServiceWithDefaultId(
     service: ServiceWithDefaultIdDef,
 ): void;
 export function registerServiceWithDefaultId(...args: any) {
-    regService({
-        rawFnArgs: args,
+    registerService(args, {
         serviceFunctionTypes: [
             {
                 fnName: 'hello',
@@ -80,8 +79,7 @@ export function registerServiceWithOUTDefaultId(
     service: ServiceWithOUTDefaultIdDef,
 ): void;
 export function registerServiceWithOUTDefaultId(...args: any) {
-    regService({
-        rawFnArgs: args,
+    registerService(args, {
         serviceFunctionTypes: [
             {
                 fnName: 'hello',
@@ -103,8 +101,7 @@ export interface MoreMembersDef {
 export function registerMoreMembers(serviceId: string, service: MoreMembersDef): void;
 export function registerMoreMembers(peer: FluencePeer, serviceId: string, service: MoreMembersDef): void;
 export function registerMoreMembers(...args: any) {
-    regService({
-        rawFnArgs: args,
+    registerService(args, {
         serviceFunctionTypes: [
             {
                 fnName: 'member1',
@@ -147,8 +144,7 @@ export function f1(
     config?: { ttl?: number },
 ): Promise<void>;
 export function f1(...args: any) {
-    return callFunction({
-        rawFnArgs: args,
+    return callFunction(args, {
         functionName: 'f1',
         isVoid: true,
         args: [
@@ -156,7 +152,7 @@ export function f1(...args: any) {
                 isOptional: false,
                 name: 'callback',
                 isCallback: true,
-                callBackDef: {
+                callbackDef: {
                     fnName: 'callback',
                     isVoid: true,
                     argNames: ['arg0', 'arg1'],
@@ -199,8 +195,7 @@ export function f2(
     config?: { ttl?: number },
 ): Promise<void>;
 export function f2(...args: any) {
-    return callFunction({
-        rawFnArgs: args,
+    return callFunction(args, {
         functionName: 'f2',
         isVoid: true,
         args: [
@@ -213,7 +208,7 @@ export function f2(...args: any) {
                 isOptional: false,
                 name: 'callback',
                 isCallback: true,
-                callBackDef: {
+                callbackDef: {
                     fnName: 'callback',
                     isVoid: true,
                     argNames: ['arg0', 'arg1'],
@@ -259,8 +254,7 @@ export function f3(
     config?: { ttl?: number },
 ): Promise<string>;
 export function f3(...args: any) {
-    return callFunction({
-        rawFnArgs: args,
+    return callFunction(args, {
         functionName: 'f3',
         isVoid: false,
         args: [
@@ -273,7 +267,7 @@ export function f3(...args: any) {
                 isOptional: false,
                 name: 'callback',
                 isCallback: true,
-                callBackDef: {
+                callbackDef: {
                     fnName: 'callback',
                     isVoid: true,
                     argNames: ['arg0', 'arg1'],
@@ -323,8 +317,7 @@ export function callBackZeroArgs(
     config?: { ttl?: number },
 ): Promise<void>;
 export function callBackZeroArgs(...args: any) {
-    return callFunction({
-        rawFnArgs: args,
+    return callFunction(args, {
         functionName: 'callBackZeroArgs',
         isVoid: false,
         args: [
@@ -332,7 +325,7 @@ export function callBackZeroArgs(...args: any) {
                 isOptional: false,
                 name: 'callback',
                 isCallback: true,
-                callBackDef: {
+                callbackDef: {
                     fnName: 'callback',
                     isVoid: true,
                     argNames: [],
