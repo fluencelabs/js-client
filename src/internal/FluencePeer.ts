@@ -186,6 +186,10 @@ export class FluencePeer {
         registerDefaultServices(this);
 
         this._startInternals();
+
+        this._outgoingParticles.subscribe((p) => {
+            this._connection.sendParticle(p);
+        });
     }
 
     /**
@@ -444,8 +448,7 @@ export class FluencePeer {
                 relayAddress: multiaddr,
                 dialTimeout: options?.dialTimeout,
             },
-            this._incomingParticles,
-            this._outgoingParticles,
+            (p) => this._incomingParticles.next(p),
         );
 
         this._connection = connection;

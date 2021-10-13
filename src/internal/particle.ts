@@ -143,12 +143,6 @@ export interface ParticleOld {
     data: Uint8Array;
 }
 
-export const logParticle = (fn: Function, message: string, particle: ParticleOld) => {
-    const toLog = { ...particle };
-    delete toLog.data;
-    fn(message, toLog);
-};
-
 /**
  * Represents particle action to send to a node
  */

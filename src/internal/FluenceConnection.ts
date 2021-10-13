@@ -20,7 +20,7 @@ import Lib2p2Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
-import { logParticle, Particle } from './particle';
+import { Particle } from './particle';
 import { NOISE } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
@@ -55,8 +55,7 @@ export class FluenceConnection {
 
     static async createConnection(
         options: FluenceConnectionOptions,
-        incomingParticles: Subject<Particle>,
-        outgoingParticles: Subject<Particle>,
+        onIncomingParticle: (p: Particle) => void,
     ): Promise<FluenceConnection> {
         const res = new FluenceConnection();
 
@@ -80,11 +79,21 @@ export class FluenceConnection {
             },
         });
 
-        outgoingParticles.subscribe((p) => {
-            res._sendParticle(p);
+        res._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+            pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
+                for await (const msg of source) {
+                    try {
+                        const particle = Particle.fromString(msg);
+                        particle.logTo('debug', 'Particle is received:');
+                        onIncomingParticle(particle);
+                    } catch (e) {
+                        log.error('error on handling a new incoming message: ' + e);
+                    }
+                }
+            });
         });
 
-        await res._start(options.relayAddress, incomingParticles);
+        await res._start(options.relayAddress);
 
         return res;
     }
@@ -93,7 +102,7 @@ export class FluenceConnection {
         await this._lib2p2Peer.stop();
     }
 
-    private async _sendParticle(particle: Particle): Promise<void> {
+    public async sendParticle(particle: Particle): Promise<void> {
         particle.logTo('debug', 'sending particle:');
 
         /*
@@ -115,7 +124,7 @@ export class FluenceConnection {
         );
     }
 
-    private async _start(address: Multiaddr, incomingParticles: Subject<Particle>) {
+    private async _start(address: Multiaddr) {
         await this._lib2p2Peer.start();
         this._relayAddress = address;
 
@@ -132,20 +141,6 @@ export class FluenceConnection {
                 throw e;
             }
         }
-
-        this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
-            pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
-                for await (const msg of source) {
-                    try {
-                        const particle = Particle.fromString(msg);
-                        logParticle(log.debug, 'Particle is received:', particle);
-                        incomingParticles.next(particle);
-                    } catch (e) {
-                        log.error('error on handling a new incoming message: ' + e);
-                    }
-                }
-            });
-        });
     }
 
     private _lib2p2Peer: Lib2p2Peer;
