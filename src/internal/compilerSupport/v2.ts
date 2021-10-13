@@ -24,7 +24,6 @@ export { CallParams } from '../commonTypes';
 interface ArgDef {
     name: string;
     isOptional: boolean;
-    isCallback: boolean;
     callbackDef?: CallbackDef;
 }
 
@@ -66,7 +65,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             const argDef = def.argDefs[i];
             const arg = args[i];
 
-            if (argDef.isCallback) {
+            if (argDef.callbackDef) {
                 registerParticleSpecificHandler(peer, particle.id, def.names.callbackSrv, argDef.name, async (req) => {
                     const args = convertArgsFromReqToUserCall(req, argDef.callbackDef.argDefs);
                     let result = await arg.apply(null, args);
