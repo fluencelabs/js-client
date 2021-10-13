@@ -103,7 +103,7 @@ interface ArgDef {
     name: string;
     isOptional: boolean;
     isCallback: boolean;
-    callBackDef: CallbackDef;
+    callBackDef?: CallbackDef;
 }
 
 interface CallbackDef {
@@ -114,6 +114,7 @@ interface CallbackDef {
 
 export function callFunction(data: {
     functionName: string;
+    isVoid: boolean;
     rawFnArgs: Array<any>;
     script: string;
     args: Array<ArgDef>;
