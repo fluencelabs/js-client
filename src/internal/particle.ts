@@ -17,7 +17,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
-import { CallServiceHandler } from './CallServiceHandler';
 import log from 'loglevel';
 
 const DefaultTTL = 7000;

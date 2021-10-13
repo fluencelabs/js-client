@@ -20,7 +20,7 @@ import Lib2p2Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
-import { logParticle, parseParticle, Particle, ParticleOld, toPayload } from './particle';
+import { logParticle, Particle } from './particle';
 import { NOISE } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
@@ -51,8 +51,6 @@ export interface FluenceConnectionOptions {
 }
 
 export class FluenceConnection {
-    private _address;
-
     constructor() {}
 
     static async createConnection(
@@ -106,7 +104,7 @@ export class FluenceConnection {
         const sink = this._connection.streams[0].sink;
         */
 
-        const conn = await this._lib2p2Peer.dialProtocol(this._address, PROTOCOL_NAME);
+        const conn = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
         const sink = conn.stream.sink;
 
         pipe(
@@ -117,12 +115,9 @@ export class FluenceConnection {
         );
     }
 
-    private _lib2p2Peer: Lib2p2Peer;
-    private _connection: Connection;
-
     private async _start(address: Multiaddr, incomingParticles: Subject<Particle>) {
         await this._lib2p2Peer.start();
-        this._address = address;
+        this._relayAddress = address;
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
 
@@ -152,4 +147,8 @@ export class FluenceConnection {
             });
         });
     }
+
+    private _lib2p2Peer: Lib2p2Peer;
+    private _connection: Connection;
+    private _relayAddress: Multiaddr;
 }

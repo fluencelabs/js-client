@@ -36,7 +36,6 @@
         "multiaddr": "10.0.0",
         "peer-id": "0.15.3",
         "rxjs": "^7.3.0",
-        "ts-pattern": "^3.3.1",
         "uuid": "8.3.0"
     },
     "devDependencies": {
