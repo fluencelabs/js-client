@@ -26,7 +26,6 @@ import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
-import { Subject } from 'rxjs';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -45,18 +44,20 @@ export interface FluenceConnectionOptions {
     relayAddress: Multiaddr;
 
     /**
-     * @property {number} [dialTimeout] - How long a dial attempt is allowed to take.
+     * The dialing timeout in milliseconds
      */
-    dialTimeout?: number;
+    dialTimeoutMs?: number;
+
+    /**
+     * Handler for incoming particles from the connection
+     */
+    onIncomingParticle: (p: Particle) => void;
 }
 
 export class FluenceConnection {
     constructor() {}
 
-    static async createConnection(
-        options: FluenceConnectionOptions,
-        onIncomingParticle: (p: Particle) => void,
-    ): Promise<FluenceConnection> {
+    static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
         const res = new FluenceConnection();
 
         const transportKey = Websockets.prototype[Symbol.toStringTag];
@@ -75,7 +76,7 @@ export class FluenceConnection {
                 },
             },
             dialer: {
-                dialTimeout: options?.dialTimeout,
+                dialTimeout: options?.dialTimeoutMs,
             },
         });
 
@@ -85,7 +86,7 @@ export class FluenceConnection {
                     try {
                         const particle = Particle.fromString(msg);
                         particle.logTo('debug', 'Particle is received:');
-                        onIncomingParticle(particle);
+                        options.onIncomingParticle(particle);
                     } catch (e) {
                         log.error('error on handling a new incoming message: ' + e);
                     }
@@ -93,7 +94,7 @@ export class FluenceConnection {
             });
         });
 
-        await res._start(options.relayAddress);
+        res._relayAddress = options.relayAddress;
 
         return res;
     }
@@ -124,19 +125,18 @@ export class FluenceConnection {
         );
     }
 
-    private async _start(address: Multiaddr) {
+    public async connect() {
         await this._lib2p2Peer.start();
-        this._relayAddress = address;
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
 
         try {
-            this._connection = await this._lib2p2Peer.dial(address);
+            this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e1) {
             const e = e1 as any;
             if (e.name === 'AggregateError' && e._errors.length === 1) {
                 const error = e._errors[0];
-                throw `Error dialing node ${address}:\n${error.code}\n${error.message}`;
+                throw `Error dialing node ${this._relayAddress}:\n${error.code}\n${error.message}`;
             } else {
                 throw e;
             }

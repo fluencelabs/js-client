@@ -169,16 +169,28 @@ export class FluencePeer {
         await this._initAirInterpreter(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
-            let theAddress: Multiaddr;
+            let connectToMultiAddr: Multiaddr;
             let fromNode = (config.connectTo as any).multiaddr;
             if (fromNode) {
-                theAddress = new Multiaddr(fromNode);
+                connectToMultiAddr = new Multiaddr(fromNode);
             } else {
-                theAddress = new Multiaddr(config.connectTo as string);
+                connectToMultiAddr = new Multiaddr(config.connectTo as string);
             }
 
-            this._relayPeerId = theAddress.getPeerId();
-            await this._connect(theAddress);
+            this._relayPeerId = connectToMultiAddr.getPeerId();
+
+            if (this._connection) {
+                await this._connection.disconnect();
+            }
+
+            this._connection = await FluenceConnection.createConnection({
+                peerId: this._keyPair.Libp2pPeerId,
+                relayAddress: connectToMultiAddr,
+                dialTimeoutMs: config.dialTimeoutMs,
+                onIncomingParticle: (p) => this._incomingParticles.next(p),
+            });
+
+            await this._connect();
         }
 
         this._legacyCallServiceHandler = new LegacyCallServiceHandler();
@@ -186,10 +198,6 @@ export class FluencePeer {
         registerDefaultServices(this);
 
         this._startInternals();
-
-        this._outgoingParticles.subscribe((p) => {
-            this._connection.sendParticle(p);
-        });
     }
 
     /**
@@ -264,6 +272,18 @@ export class FluencePeer {
 
     // private
 
+    // TODO:: make public
+    private async _connect(): Promise<void> {
+        return this._connection?.connect();
+    }
+
+    // TODO:: make public
+    private async _disconnect(): Promise<void> {
+        if (this._connection) {
+            return this._connection.disconnect();
+        }
+    }
+
     private _incomingParticles = new Subject<Particle>();
     private _outgoingParticles = new Subject<Particle>();
     private _callServiceHandler: CallServiceHandler;
@@ -328,6 +348,10 @@ export class FluencePeer {
 
                 existing.next(p);
             });
+
+        this._outgoingParticles.subscribe((p) => {
+            this._connection.sendParticle(p);
+        });
     }
 
     private async _execRequests(p: Particle, callRequests: CallRequestsArray): Promise<CallResultsArray> {
@@ -386,7 +410,7 @@ export class FluencePeer {
         }
 
         // No result from legacy handler.
-        // TRying to execute async handler
+        // Trying to execute async handler
         if (res.retCode === undefined) {
             res = await this._callServiceHandler.execute(req);
         } else {
@@ -430,34 +454,6 @@ export class FluencePeer {
 
     private async _initAirInterpreter(logLevel: AvmLoglevel): Promise<void> {
         this._interpreter = await createInterpreter(logLevel);
-    }
-
-    private async _connect(multiaddr: Multiaddr, options?: FluenceConnectionOptions): Promise<void> {
-        const nodePeerId = multiaddr.getPeerId();
-        if (!nodePeerId) {
-            throw Error("'multiaddr' did not contain a valid peer id");
-        }
-
-        if (this._connection) {
-            await this._connection.disconnect();
-        }
-
-        const connection = await FluenceConnection.createConnection(
-            {
-                peerId: this._keyPair.Libp2pPeerId,
-                relayAddress: multiaddr,
-                dialTimeout: options?.dialTimeout,
-            },
-            (p) => this._incomingParticles.next(p),
-        );
-
-        this._connection = connection;
-    }
-
-    private async _disconnect(): Promise<void> {
-        if (this._connection) {
-            await this._connection.disconnect();
-        }
     }
 
     private _relayPeerId: PeerIdB58 | null = null;
