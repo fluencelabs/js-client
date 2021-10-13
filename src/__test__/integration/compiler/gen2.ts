@@ -240,7 +240,6 @@ export function f1(...args: any) {
                     name: 'callback',
                     isCallback: true,
                     callbackDef: {
-                        functionName: 'callback',
                         returnType: {
                             isVoid: true,
                             isOptional: false,
@@ -316,7 +315,6 @@ export function f2(...args: any) {
                     name: 'callback',
                     isCallback: true,
                     callbackDef: {
-                        functionName: 'callback',
                         returnType: {
                             isVoid: true,
                             isOptional: false,
@@ -395,7 +393,6 @@ export function f3(...args: any) {
                     name: 'callback',
                     isCallback: true,
                     callbackDef: {
-                        functionName: 'callback',
                         returnType: {
                             isVoid: true,
                             isOptional: false,
@@ -473,7 +470,6 @@ export function callBackZeroArgs(...args: any) {
                     name: 'callback',
                     isCallback: true,
                     callbackDef: {
-                        functionName: 'callback',
                         returnType: {
                             isVoid: true,
                             isOptional: false,

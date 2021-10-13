@@ -13,7 +13,6 @@ interface ArgDef {
 }
 
 interface CallbackDef {
-    functionName: string;
     argDefs: Array<ArgDef>;
     returnType: {
         isVoid: boolean;
@@ -21,7 +20,11 @@ interface CallbackDef {
     };
 }
 
-interface FunctionCallDef extends CallbackDef {
+interface FunctionBodyDef extends CallbackDef {
+    functionName: string;
+}
+
+interface FunctionCallDef extends FunctionBodyDef {
     names: {
         relay: string;
         getDataSrv: string;
@@ -34,7 +37,7 @@ interface FunctionCallDef extends CallbackDef {
 }
 
 interface ServiceDef {
-    functions: Array<CallbackDef>;
+    functions: Array<FunctionBodyDef>;
 }
 
 export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script: string) {
