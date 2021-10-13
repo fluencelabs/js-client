@@ -58,11 +58,20 @@ export function registerServiceWithDefaultId(
 ): void;
 export function registerServiceWithDefaultId(...args: any) {
     registerService(args, {
-        serviceFunctionTypes: [
+        functions: [
             {
-                fnName: 'hello',
-                argNames: ['s'],
-                isVoid: true,
+                functionName: 'hello',
+                argDefs: [
+                    {
+                        name: 's',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                ],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
         ],
     });
@@ -80,11 +89,20 @@ export function registerServiceWithOUTDefaultId(
 ): void;
 export function registerServiceWithOUTDefaultId(...args: any) {
     registerService(args, {
-        serviceFunctionTypes: [
+        functions: [
             {
-                fnName: 'hello',
-                argNames: ['s'],
-                isVoid: true,
+                functionName: 'hello',
+                argDefs: [
+                    {
+                        name: 's',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                ],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
         ],
     });
@@ -102,31 +120,95 @@ export function registerMoreMembers(serviceId: string, service: MoreMembersDef):
 export function registerMoreMembers(peer: FluencePeer, serviceId: string, service: MoreMembersDef): void;
 export function registerMoreMembers(...args: any) {
     registerService(args, {
-        serviceFunctionTypes: [
+        functions: [
             {
-                fnName: 'member1',
-                argNames: [],
-                isVoid: true,
+                functionName: 'member1',
+                argDefs: [],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
             {
-                fnName: 'member2',
-                argNames: ['s1'],
-                isVoid: true,
+                functionName: 'member2',
+                argDefs: [
+                    {
+                        name: 's',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                ],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
             {
-                fnName: 'member3',
-                argNames: ['s1', 's2'],
-                isVoid: true,
+                functionName: 'member3',
+                argDefs: [
+                    {
+                        name: 's1',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                    {
+                        name: 's2',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                ],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
             {
-                fnName: 'member4',
-                argNames: ['s1', 's2', 'i'],
-                isVoid: false,
+                functionName: 'member4',
+                argDefs: [
+                    {
+                        name: 's1',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                    {
+                        name: 's2',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                    {
+                        name: 'i',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                ],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
             {
-                fnName: 'member5',
-                argNames: ['s1', 's2', 'i'],
-                isVoid: false,
+                functionName: 'member5',
+                argDefs: [
+                    {
+                        name: 's1',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                    {
+                        name: 's2',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                    {
+                        name: 'i',
+                        isOptional: false,
+                        isCallback: false,
+                    },
+                ],
+                returnType: {
+                    isVoid: true,
+                    isOptional: false,
+                },
             },
         ],
     });
@@ -144,31 +226,51 @@ export function f1(
     config?: { ttl?: number },
 ): Promise<void>;
 export function f1(...args: any) {
-    return callFunction(args, {
-        functionName: 'f1',
-        isVoid: true,
-        args: [
-            {
+    return callFunction(
+        args,
+        {
+            functionName: 'f1',
+            returnType: {
+                isVoid: true,
                 isOptional: false,
-                name: 'callback',
-                isCallback: true,
-                callbackDef: {
-                    fnName: 'callback',
-                    isVoid: true,
-                    argNames: ['arg0', 'arg1'],
-                },
             },
-        ],
-        names: {
-            relay: '-relay-',
-            getDataSrv: 'getDataSrv',
-            callbackSrv: 'callbackSrv',
-            responseSrv: 'response',
-            errorHandlingSrv: 'errorHandlingSrv',
-            errorFnName: 'error',
-            responseFnName: 'response',
+            argDefs: [
+                {
+                    isOptional: false,
+                    name: 'callback',
+                    isCallback: true,
+                    callbackDef: {
+                        functionName: 'callback',
+                        returnType: {
+                            isVoid: true,
+                            isOptional: false,
+                        },
+                        argDefs: [
+                            {
+                                name: 'arg0',
+                                isOptional: false,
+                                isCallback: false,
+                            },
+                            {
+                                name: 'arg1',
+                                isOptional: false,
+                                isCallback: false,
+                            },
+                        ],
+                    },
+                },
+            ],
+            names: {
+                relay: '-relay-',
+                getDataSrv: 'getDataSrv',
+                callbackSrv: 'callbackSrv',
+                responseSrv: 'response',
+                errorHandlingSrv: 'errorHandlingSrv',
+                errorFnName: 'error',
+                responseFnName: 'response',
+            },
         },
-        script: `
+        `
                     (xor
                      (seq
                       (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
@@ -180,7 +282,7 @@ export function f1(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
                 `,
-    });
+    );
 }
 
 export function f2(
@@ -195,36 +297,56 @@ export function f2(
     config?: { ttl?: number },
 ): Promise<void>;
 export function f2(...args: any) {
-    return callFunction(args, {
-        functionName: 'f2',
-        isVoid: true,
-        args: [
-            {
+    return callFunction(
+        args,
+        {
+            functionName: 'f2',
+            returnType: {
+                isVoid: true,
                 isOptional: false,
-                isCallback: false,
-                name: 'num',
             },
-            {
-                isOptional: false,
-                name: 'callback',
-                isCallback: true,
-                callbackDef: {
-                    fnName: 'callback',
-                    isVoid: true,
-                    argNames: ['arg0', 'arg1'],
+            argDefs: [
+                {
+                    isOptional: false,
+                    isCallback: false,
+                    name: 'num',
                 },
+                {
+                    isOptional: false,
+                    name: 'callback',
+                    isCallback: true,
+                    callbackDef: {
+                        functionName: 'callback',
+                        returnType: {
+                            isVoid: true,
+                            isOptional: false,
+                        },
+                        argDefs: [
+                            {
+                                name: 'arg0',
+                                isOptional: false,
+                                isCallback: false,
+                            },
+                            {
+                                name: 'arg1',
+                                isOptional: false,
+                                isCallback: false,
+                            },
+                        ],
+                    },
+                },
+            ],
+            names: {
+                relay: '-relay-',
+                getDataSrv: 'getDataSrv',
+                callbackSrv: 'callbackSrv',
+                responseSrv: 'response',
+                errorHandlingSrv: 'errorHandlingSrv',
+                errorFnName: 'error',
+                responseFnName: 'response',
             },
-        ],
-        names: {
-            relay: '-relay-',
-            getDataSrv: 'getDataSrv',
-            callbackSrv: 'callbackSrv',
-            responseSrv: 'response',
-            errorHandlingSrv: 'errorHandlingSrv',
-            errorFnName: 'error',
-            responseFnName: 'response',
         },
-        script: `
+        `
                     (xor
                      (seq
                       (seq
@@ -239,7 +361,7 @@ export function f2(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
                 `,
-    });
+    );
 }
 
 export function f3(
@@ -254,36 +376,56 @@ export function f3(
     config?: { ttl?: number },
 ): Promise<string>;
 export function f3(...args: any) {
-    return callFunction(args, {
-        functionName: 'f3',
-        isVoid: false,
-        args: [
-            {
+    return callFunction(
+        args,
+        {
+            functionName: 'f3',
+            returnType: {
+                isVoid: true,
                 isOptional: false,
-                isCallback: false,
-                name: 'num',
             },
-            {
-                isOptional: false,
-                name: 'callback',
-                isCallback: true,
-                callbackDef: {
-                    fnName: 'callback',
-                    isVoid: true,
-                    argNames: ['arg0', 'arg1'],
+            argDefs: [
+                {
+                    isOptional: false,
+                    isCallback: false,
+                    name: 'num',
                 },
+                {
+                    isOptional: false,
+                    name: 'callback',
+                    isCallback: true,
+                    callbackDef: {
+                        functionName: 'callback',
+                        returnType: {
+                            isVoid: true,
+                            isOptional: false,
+                        },
+                        argDefs: [
+                            {
+                                name: 'arg0',
+                                isOptional: false,
+                                isCallback: false,
+                            },
+                            {
+                                name: 'arg1',
+                                isOptional: false,
+                                isCallback: false,
+                            },
+                        ],
+                    },
+                },
+            ],
+            names: {
+                relay: '-relay-',
+                getDataSrv: 'getDataSrv',
+                callbackSrv: 'callbackSrv',
+                responseSrv: 'response',
+                errorHandlingSrv: 'errorHandlingSrv',
+                errorFnName: 'error',
+                responseFnName: 'response',
             },
-        ],
-        names: {
-            relay: '-relay-',
-            getDataSrv: 'getDataSrv',
-            callbackSrv: 'callbackSrv',
-            responseSrv: 'response',
-            errorHandlingSrv: 'errorHandlingSrv',
-            errorFnName: 'error',
-            responseFnName: 'response',
         },
-        script: `
+        `
                     (xor
                      (seq
                       (seq
@@ -304,7 +446,7 @@ export function f3(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
                     )
                 `,
-    });
+    );
 }
 
 export function callBackZeroArgs(
@@ -317,31 +459,40 @@ export function callBackZeroArgs(
     config?: { ttl?: number },
 ): Promise<void>;
 export function callBackZeroArgs(...args: any) {
-    return callFunction(args, {
-        functionName: 'callBackZeroArgs',
-        isVoid: false,
-        args: [
-            {
+    return callFunction(
+        args,
+        {
+            functionName: 'callBackZeroArgs',
+            returnType: {
+                isVoid: true,
                 isOptional: false,
-                name: 'callback',
-                isCallback: true,
-                callbackDef: {
-                    fnName: 'callback',
-                    isVoid: true,
-                    argNames: [],
-                },
             },
-        ],
-        names: {
-            relay: '-relay-',
-            getDataSrv: 'getDataSrv',
-            callbackSrv: 'callbackSrv',
-            responseSrv: 'response',
-            errorHandlingSrv: 'errorHandlingSrv',
-            errorFnName: 'error',
-            responseFnName: 'response',
+            argDefs: [
+                {
+                    isOptional: false,
+                    name: 'callback',
+                    isCallback: true,
+                    callbackDef: {
+                        functionName: 'callback',
+                        returnType: {
+                            isVoid: true,
+                            isOptional: false,
+                        },
+                        argDefs: [],
+                    },
+                },
+            ],
+            names: {
+                relay: '-relay-',
+                getDataSrv: 'getDataSrv',
+                callbackSrv: 'callbackSrv',
+                responseSrv: 'response',
+                errorHandlingSrv: 'errorHandlingSrv',
+                errorFnName: 'error',
+                responseFnName: 'response',
+            },
         },
-        script: `
+        `
                     (xor
                      (seq
                       (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
@@ -353,5 +504,5 @@ export function callBackZeroArgs(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
                 `,
-    });
+    );
 }

@@ -13,16 +13,15 @@ interface ArgDef {
 }
 
 interface CallbackDef {
-    fnName: string;
-    argNames: Array<string>;
-    isVoid: boolean;
+    functionName: string;
+    argDefs: Array<ArgDef>;
+    returnType: {
+        isVoid: boolean;
+        isOptional: boolean;
+    };
 }
 
-interface FunctionCallDef {
-    functionName: string;
-    isVoid: boolean;
-    script: string;
-    args: Array<ArgDef>;
+interface FunctionCallDef extends CallbackDef {
     names: {
         relay: string;
         getDataSrv: string;
@@ -34,32 +33,38 @@ interface FunctionCallDef {
     };
 }
 
-export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef) {
-    const { args, peer, config } = extractFunctionArgs(rawFnArgs, def.args.length);
+interface ServiceDef {
+    functions: Array<CallbackDef>;
+}
+
+export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script: string) {
+    const { args, peer, config } = extractFunctionArgs(rawFnArgs, def.argDefs.length);
 
     return new Promise((resolve, reject) => {
-        const particle = Particle.createNew(def.script, config?.ttl);
+        const particle = Particle.createNew(script, config?.ttl);
 
-        for (let i = 0; i < def.args.length; i++) {
-            const argDef = def.args[i];
+        for (let i = 0; i < def.argDefs.length; i++) {
+            const argDef = def.argDefs[i];
             const arg = args[i];
 
             if (argDef.isCallback) {
                 registerParticleSpecificHandler(peer, particle.id, def.names.callbackSrv, argDef.name, async (req) => {
-                    const args = [...req.args, extractCallParams(req, argDef.callbackDef.argNames)];
-                    const result = await arg.apply(null, args);
-
+                    const args = convertArgsFromReqToUserCall(req, argDef.callbackDef.argDefs);
+                    let result = await arg.apply(null, args);
+                    if (argDef.callbackDef.returnType.isOptional) {
+                        result = result ? [] : [result];
+                    }
                     return {
                         retCode: ResultCodes.success,
-                        result: argDef.callbackDef.isVoid ? {} : result,
+                        result: argDef.callbackDef.returnType.isVoid ? {} : result,
                     };
                 });
             } else if (argDef.isOptional) {
                 registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
-                    // TODO: convert optional stuff bla bla
+                    const res = arg ? [arg] : [];
                     return {
                         retCode: ResultCodes.success,
-                        result: arg,
+                        result: res,
                     };
                 });
             } else {
@@ -102,7 +107,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef) {
     });
 }
 
-export function registerService(args: any[], data: { serviceFunctionTypes: Array<CallbackDef> }) {
+export function registerService(args: any[], def: ServiceDef) {
     const { peer, service, serviceId } = extractRegisterServiceArgs(args);
 
     const incorrectServiceDefinitions = missingFields(service, Object.keys(service));
@@ -113,27 +118,41 @@ export function registerService(args: any[], data: { serviceFunctionTypes: Array
         );
     }
 
-    for (let singleFunction of data.serviceFunctionTypes) {
+    for (let singleFunction of def.functions) {
         // has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
-        const userDefinedHandler = service[singleFunction.fnName];
+        const userDefinedHandler = service[singleFunction.functionName];
 
-        registerCommonHandler(peer, serviceId, singleFunction.fnName, async (req) => {
-            const args = [...req.args, extractCallParams(req, singleFunction.argNames)];
-            const result = await userDefinedHandler.apply(null, args);
-
+        registerCommonHandler(peer, serviceId, singleFunction.functionName, async (req) => {
+            const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
+            let result = await userDefinedHandler.apply(null, args);
+            if (singleFunction.returnType.isOptional) {
+                result = result ? [] : [result];
+            }
             return {
                 retCode: ResultCodes.success,
-                result: singleFunction.isVoid ? {} : result,
+                result: singleFunction.returnType.isVoid ? {} : result,
             };
         });
     }
 }
 
-const extractCallParams = (req: CallServiceData, argNames: Array<string>): CallParams<any> => {
+const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef>) => {
+    const argsAccountedForOptional = req.args.map((x, index) => {
+        if (args[index].isOptional) {
+            return x.length === 0 ? null : x[0];
+        } else {
+            return x;
+        }
+    });
+
+    return [...argsAccountedForOptional, extractCallParams(req, args)];
+};
+
+const extractCallParams = (req: CallServiceData, args: Array<ArgDef>): CallParams<any> => {
     let tetraplets: any = {};
     for (let i = 0; i < req.args.length; i++) {
-        if (argNames[i]) {
-            tetraplets[argNames[i]] = req.tetraplets[i];
+        if (args[i]) {
+            tetraplets[args[i].name] = req.tetraplets[i];
         }
     }
 
