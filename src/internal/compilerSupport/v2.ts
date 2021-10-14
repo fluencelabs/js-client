@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CallParams, Fluence, FluencePeer } from 'src';
+import { CallParams, Fluence, FluencePeer } from '../../index';
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../CallServiceHandler';
 import { Particle } from '../particle';
 
