@@ -52,6 +52,7 @@ interface FunctionCallDef extends FunctionBodyDef {
 }
 
 interface ServiceDef {
+    defaultServiceId?: string;
     functions: Array<FunctionBodyDef>;
 }
 
@@ -106,10 +107,17 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             };
         });
 
+        registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, def.names.relay, (req) => {
+            return {
+                retCode: ResultCodes.success,
+                result: peer.getStatus().relayPeerId,
+            };
+        });
+
         registerParticleSpecificHandler(peer, particle.id, def.names.errorHandlingSrv, def.names.errorFnName, (req) => {
-            const [err] = req.args;
+            const [err, whatNumber] = req.args;
             setTimeout(() => {
-                resolve(err);
+                reject(err);
             }, 0);
             return {
                 retCode: ResultCodes.success,
@@ -126,7 +134,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 }
 
 export function registerService(args: any[], def: ServiceDef) {
-    const { peer, service, serviceId } = extractRegisterServiceArgs(args);
+    const { peer, service, serviceId } = extractRegisterServiceArgs(args, def.defaultServiceId);
 
     const incorrectServiceDefinitions = missingFields(service, Object.keys(service));
     if (!!incorrectServiceDefinitions.length) {
@@ -216,7 +224,10 @@ const extractFunctionArgs = (
     };
 };
 
-const extractRegisterServiceArgs = (args: any[]): { peer: FluencePeer; serviceId: string; service: any } => {
+const extractRegisterServiceArgs = (
+    args: any[],
+    defaultServiceId?: string,
+): { peer: FluencePeer; serviceId: string; service: any } => {
     let peer: FluencePeer;
     let serviceId: any;
     let service: any;
@@ -231,7 +242,7 @@ const extractRegisterServiceArgs = (args: any[]): { peer: FluencePeer; serviceId
     } else if (typeof args[1] === 'string') {
         serviceId = args[1];
     } else {
-        serviceId = 'cid';
+        serviceId = defaultServiceId;
     }
 
     // Figuring out which overload is the service.

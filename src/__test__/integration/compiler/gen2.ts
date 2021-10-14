@@ -65,7 +65,6 @@ export function registerServiceWithDefaultId(...args: any) {
                     {
                         name: 's',
                         isOptional: false,
-                        isCallback: false,
                     },
                 ],
                 returnType: {
@@ -96,7 +95,6 @@ export function registerServiceWithOUTDefaultId(...args: any) {
                     {
                         name: 's',
                         isOptional: false,
-                        isCallback: false,
                     },
                 ],
                 returnType: {
@@ -135,7 +133,6 @@ export function registerMoreMembers(...args: any) {
                     {
                         name: 's',
                         isOptional: false,
-                        isCallback: false,
                     },
                 ],
                 returnType: {
@@ -149,12 +146,10 @@ export function registerMoreMembers(...args: any) {
                     {
                         name: 's1',
                         isOptional: false,
-                        isCallback: false,
                     },
                     {
                         name: 's2',
                         isOptional: false,
-                        isCallback: false,
                     },
                 ],
                 returnType: {
@@ -168,17 +163,14 @@ export function registerMoreMembers(...args: any) {
                     {
                         name: 's1',
                         isOptional: false,
-                        isCallback: false,
                     },
                     {
                         name: 's2',
                         isOptional: false,
-                        isCallback: false,
                     },
                     {
                         name: 'i',
                         isOptional: false,
-                        isCallback: false,
                     },
                 ],
                 returnType: {
@@ -192,17 +184,14 @@ export function registerMoreMembers(...args: any) {
                     {
                         name: 's1',
                         isOptional: false,
-                        isCallback: false,
                     },
                     {
                         name: 's2',
                         isOptional: false,
-                        isCallback: false,
                     },
                     {
                         name: 'i',
                         isOptional: false,
-                        isCallback: false,
                     },
                 ],
                 returnType: {
@@ -238,7 +227,6 @@ export function f1(...args: any) {
                 {
                     isOptional: false,
                     name: 'callback',
-                    isCallback: true,
                     callbackDef: {
                         returnType: {
                             isVoid: true,
@@ -248,12 +236,10 @@ export function f1(...args: any) {
                             {
                                 name: 'arg0',
                                 isOptional: false,
-                                isCallback: false,
                             },
                             {
                                 name: 'arg1',
                                 isOptional: false,
-                                isCallback: false,
                             },
                         ],
                     },
@@ -307,13 +293,11 @@ export function f2(...args: any) {
             argDefs: [
                 {
                     isOptional: false,
-                    isCallback: false,
                     name: 'num',
                 },
                 {
                     isOptional: false,
                     name: 'callback',
-                    isCallback: true,
                     callbackDef: {
                         returnType: {
                             isVoid: true,
@@ -323,12 +307,10 @@ export function f2(...args: any) {
                             {
                                 name: 'arg0',
                                 isOptional: false,
-                                isCallback: false,
                             },
                             {
                                 name: 'arg1',
                                 isOptional: false,
-                                isCallback: false,
                             },
                         ],
                     },
@@ -385,13 +367,11 @@ export function f3(...args: any) {
             argDefs: [
                 {
                     isOptional: false,
-                    isCallback: false,
                     name: 'num',
                 },
                 {
                     isOptional: false,
                     name: 'callback',
-                    isCallback: true,
                     callbackDef: {
                         returnType: {
                             isVoid: true,
@@ -401,12 +381,10 @@ export function f3(...args: any) {
                             {
                                 name: 'arg0',
                                 isOptional: false,
-                                isCallback: false,
                             },
                             {
                                 name: 'arg1',
                                 isOptional: false,
-                                isCallback: false,
                             },
                         ],
                     },
@@ -468,7 +446,6 @@ export function callBackZeroArgs(...args: any) {
                 {
                     isOptional: false,
                     name: 'callback',
-                    isCallback: true,
                     callbackDef: {
                         returnType: {
                             isVoid: true,
