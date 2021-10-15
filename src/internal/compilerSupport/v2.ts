@@ -59,7 +59,7 @@ interface ServiceDef {
 export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script: string) {
     const { args, peer, config } = extractFunctionArgs(rawFnArgs, def.argDefs.length);
 
-    return new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
         const particle = Particle.createNew(script, config?.ttl);
 
         for (let i = 0; i < def.argDefs.length; i++) {
@@ -131,6 +131,12 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 
         peer.internals.initiateParticle(particle);
     });
+
+    if (def.returnType.isVoid) {
+        return Promise.resolve(promise);
+    } else {
+        return promise;
+    }
 }
 
 export function registerService(args: any[], def: ServiceDef) {
