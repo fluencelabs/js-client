@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SecurityTetraplet } from '@fluencelabs/avm';
+import { CallRequest, SecurityTetraplet } from '@fluencelabs/avm';
 import { PeerIdB58 } from './commonTypes';
 
 export enum ResultCodes {
@@ -102,7 +102,7 @@ export class CallServiceHandler {
         if (h === null) {
             return {
                 retCode: ResultCodes.unknownError,
-                result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+                result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
             };
         }
         return await h(req);

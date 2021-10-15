@@ -1,6 +1,6 @@
 import { Fluence, FluencePeer } from '../../..';
 import { Particle } from '../../../internal/particle';
-import { registerHandlersHelper } from '../../../internal/utils';
+import { registerHandlersHelper } from '../../util';
 import { callMeBack, registerHelloWorld } from './gen1';
 
 describe('Compiler support infrastructure tests', () => {

@@ -1,8 +1,9 @@
 import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import { Fluence, FluencePeer } from '../../index';
-import { checkConnection, registerHandlersHelper } from '../../internal/utils';
+import { checkConnection } from '../../internal/utils';
 import { Particle } from '../../internal/particle';
+import { registerHandlersHelper } from '../util';
 
 const anotherPeer = new FluencePeer();
 
@@ -320,7 +321,7 @@ describe('Typescript usage suite', () => {
         // assert
         await expect(res).rejects.toMatchObject({
             msg: expect.stringContaining(
-                `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='peer' fnName='identify' args=''\"'`,
+                `No handler has been registered for serviceId='peer' fnName='identify' args=''\"'`,
             ),
             instruction: 'call %init_peer_id% ("peer" "identify") [] res',
         });

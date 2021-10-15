@@ -16,7 +16,13 @@
 
 import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
-import { CallServiceHandler, ResultCodes } from './CallServiceHandler';
+import {
+    CallServiceData,
+    CallServiceHandler,
+    CallServiceResult,
+    CallServiceResultType,
+    ResultCodes,
+} from './CallServiceHandler';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { Particle } from './particle';
 
@@ -44,24 +50,13 @@ export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter
     return AirInterpreter.create(logLevel, logFn);
 };
 
-export const registerHandlersHelper = (peer: FluencePeer, particle: Particle, handlers) => {
-    const { _timeout, ...rest } = handlers;
-    if (_timeout) {
-        peer.internals.registerTimeoutHandler(particle.id, _timeout);
-    }
-    for (let serviceId in rest) {
-        for (let fnName in rest[serviceId]) {
-            // of type [args] => result
-            const h = rest[serviceId][fnName];
-            peer.internals.registerParticleSpecificHandler(particle.id, serviceId, fnName, (req) => {
-                const res = h(req.args);
-                return {
-                    retCode: ResultCodes.success,
-                    result: res || null,
-                };
-            });
-        }
-    }
+export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
+    return (req: CallServiceData): CallServiceResult => {
+        return {
+            retCode: ResultCodes.success,
+            result: fn(req.args),
+        };
+    };
 };
 
 /**
@@ -94,27 +89,49 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         )
     )`;
         const particle = Particle.createNew(script, ttl);
-        registerHandlersHelper(peer, particle, {
-            load: {
-                relay: () => {
-                    return peer.getStatus().relayPeerId;
-                },
-                msg: () => {
-                    return msg;
-                },
-            },
-            callback: {
-                callback: (args) => {
-                    const [val] = args;
+        peer.internals.registerParticleSpecificHandler(
+            particle.id,
+            'load',
+            'relay',
+            MakeServiceCall(() => {
+                return peer.getStatus().relayPeerId;
+            }),
+        );
+
+        peer.internals.registerParticleSpecificHandler(
+            particle.id,
+            'load',
+            'msg',
+            MakeServiceCall(() => {
+                return msg;
+            }),
+        );
+
+        peer.internals.registerParticleSpecificHandler(
+            particle.id,
+            'callback',
+            'callback',
+            MakeServiceCall((args) => {
+                const [val] = args;
+                setTimeout(() => {
                     resolve(val);
-                },
-                error: (args) => {
-                    const [error] = args;
+                }, 0);
+                return {};
+            }),
+        );
+
+        peer.internals.registerParticleSpecificHandler(
+            particle.id,
+            'callback',
+            'error',
+            MakeServiceCall((args) => {
+                const [error] = args;
+                setTimeout(() => {
                     reject(error);
-                },
-            },
-            _timeout: reject,
-        });
+                }, 0);
+                return {};
+            }),
+        );
 
         peer.internals.initiateParticle(particle);
     });
@@ -129,8 +146,4 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         log.error('Error on establishing connection: ', e);
         return false;
     }
-};
-
-export const ParticleDataToString = (data: Uint8Array): string => {
-    return new TextDecoder().decode(Buffer.from(data));
 };
