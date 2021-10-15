@@ -85,7 +85,6 @@ export class FluenceConnection {
                 for await (const msg of source) {
                     try {
                         const particle = Particle.fromString(msg);
-                        particle.logTo('debug', 'Particle is received:');
                         options.onIncomingParticle(particle);
                     } catch (e) {
                         log.error('error on handling a new incoming message: ' + e);

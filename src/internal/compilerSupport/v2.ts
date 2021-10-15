@@ -272,11 +272,11 @@ function registerParticleSpecificHandler(
     fnName: string,
     handler: GenericCallServiceHandler,
 ) {
-    peer.internals.registerParticleSpecificHandler(particleId, serviceId, fnName, handler);
+    peer.internals.regHandler.forParticle(particleId, serviceId, fnName, handler);
 }
 
 function handleTimeout(peer: FluencePeer, particleId: string, timeoutHandler: () => void) {
-    peer.internals.registerTimeoutHandler(particleId, timeoutHandler);
+    peer.internals.regHandler.timeout(particleId, timeoutHandler);
 }
 
 function registerCommonHandler(
@@ -285,5 +285,5 @@ function registerCommonHandler(
     fnName: string,
     handler: GenericCallServiceHandler,
 ) {
-    peer.internals.registerCommonHandler(serviceId, fnName, handler);
+    peer.internals.regHandler.common(serviceId, fnName, handler);
 }

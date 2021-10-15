@@ -141,6 +141,10 @@ export class CallServiceHandler {
         this._timeoutHandlers.delete(particleId);
     }
 
+    resolveTimeout(particleId: string) {
+        return this._timeoutHandlers.get(particleId);
+    }
+
     resolveHandler(particleId: string, serviceId: string, fnName: string): GenericCallServiceHandler | null {
         const id = this._id(serviceId, fnName);
         const psh = this._particleSpecificHandlers.get(particleId);

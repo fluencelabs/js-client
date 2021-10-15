@@ -89,7 +89,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         )
     )`;
         const particle = Particle.createNew(script, ttl);
-        peer.internals.registerParticleSpecificHandler(
+        peer.internals.regHandler.forParticle(
             particle.id,
             'load',
             'relay',
@@ -98,7 +98,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
             }),
         );
 
-        peer.internals.registerParticleSpecificHandler(
+        peer.internals.regHandler.forParticle(
             particle.id,
             'load',
             'msg',
@@ -107,7 +107,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
             }),
         );
 
-        peer.internals.registerParticleSpecificHandler(
+        peer.internals.regHandler.forParticle(
             particle.id,
             'callback',
             'callback',
@@ -120,7 +120,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
             }),
         );
 
-        peer.internals.registerParticleSpecificHandler(
+        peer.internals.regHandler.forParticle(
             particle.id,
             'callback',
             'error',

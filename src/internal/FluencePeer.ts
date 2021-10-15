@@ -226,11 +226,11 @@ export class FluencePeer {
 
                 this._incomingParticles.next(particle);
             },
-            registerCommonHandler: this._callServiceHandler.registerCommonHandler.bind(this._callServiceHandler),
-            registerParticleSpecificHandler: this._callServiceHandler.registerParticleSpecificHandler.bind(
-                this._callServiceHandler,
-            ),
-            registerTimeoutHandler: this._callServiceHandler.registerTimeoutHandler.bind(this._callServiceHandler),
+            regHandler: {
+                common: this._callServiceHandler.registerCommonHandler.bind(this._callServiceHandler),
+                forParticle: this._callServiceHandler.registerParticleSpecificHandler.bind(this._callServiceHandler),
+                timeout: this._callServiceHandler.registerTimeoutHandler.bind(this._callServiceHandler),
+            },
 
             /**
              * @deprecated
@@ -293,8 +293,10 @@ export class FluencePeer {
      */
     private _isFluenceAwesome = true;
 
+    private _timeouts: Array<NodeJS.Timeout> = [];
+
     private _startInternals() {
-        const particles = new Map<string, Subject<Particle>>();
+        const particleQueues = new Map<string, Subject<Particle>>();
 
         this._incomingParticles
             .pipe(
@@ -303,7 +305,7 @@ export class FluencePeer {
                 map((x) => x),
             )
             .subscribe((p) => {
-                let existing = particles.get(p.id);
+                let existing = particleQueues.get(p.id);
 
                 if (!existing) {
                     existing = new Subject<Particle>();
@@ -336,14 +338,18 @@ export class FluencePeer {
                             }
                         });
 
-                    particles.set(p.id, existing);
+                    particleQueues.set(p.id, existing);
 
-                    // setTimeout(() => {
-                    //     particles.delete(p.id);
-                    //     if (p?.meta?.timeout) {
-                    //         p.meta.timeout();
-                    //     }
-                    // }, p.actualTtl());
+                    const timeout = setTimeout(() => {
+                        particleQueues.delete(p.id);
+                        const timeoutHandler = this._callServiceHandler.resolveTimeout(p.id);
+                        if (timeoutHandler) {
+                            timeoutHandler();
+                        }
+                        this._callServiceHandler.removeParticleHandlers(p.id);
+                    }, p.actualTtl());
+
+                    this._timeouts.push(timeout);
                 }
 
                 existing.next(p);
@@ -446,7 +452,11 @@ export class FluencePeer {
         return interpreterResult;
     }
 
-    private _stopInternals() {}
+    private _stopInternals() {
+        for (let item of this._timeouts) {
+            clearTimeout(item);
+        }
+    }
 
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;

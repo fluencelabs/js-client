@@ -26,7 +26,7 @@ const registerHandlersHelper = (
     for (let serviceId in handlers) {
         for (let fnName in handlers[serviceId]) {
             const h = handlers[serviceId][fnName];
-            peer.internals.registerCommonHandler(serviceId, fnName, h);
+            peer.internals.regHandler.common(serviceId, fnName, h);
         }
     }
 };
