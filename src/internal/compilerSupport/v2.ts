@@ -133,7 +133,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
     });
 
     if (def.returnType.isVoid) {
-        return Promise.resolve(promise);
+        return Promise.resolve([promise]);
     } else {
         return promise;
     }
