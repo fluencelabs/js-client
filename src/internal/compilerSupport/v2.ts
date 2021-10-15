@@ -56,6 +56,32 @@ interface ServiceDef {
     functions: Array<FunctionBodyDef>;
 }
 
+const tsToAquaOpt = (arg: unknown | null) => {
+    return arg === null || arg === undefined ? [] : [arg];
+};
+
+const aquaOptToTs = (opt: Array<unknown>) => {
+    return opt.length === 0 ? null : opt[0];
+};
+
+const returnArg = (
+    arg: any,
+    returnType: {
+        isVoid: boolean;
+        isOptional: boolean;
+    },
+) => {
+    if (returnType.isVoid) {
+        return {};
+    }
+
+    if (returnType.isOptional) {
+        return tsToAquaOpt(arg);
+    }
+
+    return arg;
+};
+
 export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script: string) {
     const { args, peer, config } = extractFunctionArgs(rawFnArgs, def.argDefs.length);
 
@@ -69,18 +95,15 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             if (argDef.callbackDef) {
                 registerParticleSpecificHandler(peer, particle.id, def.names.callbackSrv, argDef.name, async (req) => {
                     const args = convertArgsFromReqToUserCall(req, argDef.callbackDef.argDefs);
-                    let result = await arg.apply(null, args);
-                    if (argDef.callbackDef.returnType.isOptional) {
-                        result = result ? [] : [result];
-                    }
+                    const result = await arg.apply(null, args);
                     return {
                         retCode: ResultCodes.success,
-                        result: argDef.callbackDef.returnType.isVoid ? {} : result,
+                        result: returnArg(result, argDef.callbackDef.returnType),
                     };
                 });
             } else if (argDef.isOptional) {
                 registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
-                    const res = arg ? [arg] : [];
+                    const res = tsToAquaOpt(arg);
                     return {
                         retCode: ResultCodes.success,
                         result: res,
@@ -97,7 +120,8 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         }
 
         registerParticleSpecificHandler(peer, particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
-            const [res] = req.args;
+            const [resRaw] = req.args;
+            const res = def.returnType.isOptional ? aquaOptToTs(resRaw) : resRaw;
             setTimeout(() => {
                 resolve(res);
             }, 0);
@@ -156,13 +180,10 @@ export function registerService(args: any[], def: ServiceDef) {
 
         registerCommonHandler(peer, serviceId, singleFunction.functionName, async (req) => {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
-            let result = await userDefinedHandler.apply(null, args);
-            if (singleFunction.returnType.isOptional) {
-                result = result ? [] : [result];
-            }
+            const result = await userDefinedHandler.apply(null, args);
             return {
                 retCode: ResultCodes.success,
-                result: singleFunction.returnType.isVoid ? {} : result,
+                result: returnArg(result, singleFunction.returnType),
             };
         });
     }
@@ -171,7 +192,7 @@ export function registerService(args: any[], def: ServiceDef) {
 const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef>) => {
     const argsAccountedForOptional = req.args.map((x, index) => {
         if (args[index].isOptional) {
-            return x.length === 0 ? null : x[0];
+            return aquaOptToTs(x);
         } else {
             return x;
         }
