@@ -462,10 +462,10 @@ export class FluencePeer {
                       retCode: ResultCodes.unknownError,
                       result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
                   };
-        } else {
-            if (res.result === undefined) {
-                res.result = null;
-            }
+        }
+
+        if (res.result === undefined) {
+            res.result = null;
         }
 
         return {

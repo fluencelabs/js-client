@@ -1,6 +1,6 @@
 import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
-import { Fluence, FluencePeer } from '../../index';
+import { Fluence, FluencePeer, setLogLevel } from '../../index';
 import { checkConnection } from '../../internal/utils';
 import { Particle } from '../../internal/particle';
 import { registerHandlersHelper } from '../util';
@@ -357,11 +357,6 @@ describe('Typescript usage suite', () => {
                     error: (args) => {
                         const [error] = args;
                         reject(error);
-                    },
-                },
-                op: {
-                    identity: (args) => {
-                        return args[0];
                     },
                 },
                 _timeout: reject,
