@@ -1,4 +1,4 @@
-import { CallServiceData, ResultCodes } from '../../internal/CallServiceHandler';
+import { CallServiceData, ResultCodes } from '../../internal/commonTypes';
 import { CallServiceHandler } from '../../internal/compilerSupport/LegacyCallServiceHandler';
 
 const req = (): CallServiceData => ({

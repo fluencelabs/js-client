@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../CallServiceHandler';
+import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../commonTypes';
 
 export const callLegacyCallServiceHandler = (
     req: CallServiceData,

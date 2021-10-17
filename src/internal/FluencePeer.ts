@@ -16,16 +16,10 @@
 
 import { AirInterpreter, CallRequestsArray, CallResultsArray, InterpreterResult, LogLevel } from '@fluencelabs/avm';
 import { Multiaddr } from 'multiaddr';
-import {
-    CallServiceData,
-    CallServiceHandler,
-    CallServiceResult,
-    GenericCallServiceHandler,
-    ResultCodes,
-} from './CallServiceHandler';
+import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
-import { FluenceConnection, FluenceConnectionOptions } from './FluenceConnection';
+import { FluenceConnection } from './FluenceConnection';
 import { dataToString, Particle } from './particle';
 import { KeyPair } from './KeyPair';
 import { createInterpreter } from './utils';
@@ -194,7 +188,6 @@ export class FluencePeer {
         }
 
         this._legacyCallServiceHandler = new LegacyCallServiceHandler();
-        this._callServiceHandler = new CallServiceHandler();
         registerDefaultServices(this);
 
         this._startInternals();
@@ -209,7 +202,10 @@ export class FluencePeer {
         this._relayPeerId = null;
         await this._disconnect();
         this._legacyCallServiceHandler = null;
-        this._callServiceHandler = null;
+
+        this._particleSpecificHandlers.clear();
+        this._commonHandlers.clear();
+        this._timeoutHandlers.clear();
     }
 
     // internal api
@@ -220,16 +216,38 @@ export class FluencePeer {
     get internals() {
         return {
             initiateParticle: (particle: Particle): void => {
-                if (particle.init_peer_id === undefined) {
-                    particle.init_peer_id = this.getStatus().peerId;
+                if (particle.initPeerId === undefined) {
+                    particle.initPeerId = this.getStatus().peerId;
                 }
 
                 this._incomingParticles.next(particle);
             },
             regHandler: {
-                common: this._callServiceHandler.registerCommonHandler.bind(this._callServiceHandler),
-                forParticle: this._callServiceHandler.registerParticleSpecificHandler.bind(this._callServiceHandler),
-                timeout: this._callServiceHandler.registerTimeoutHandler.bind(this._callServiceHandler),
+                common: (
+                    // force new line
+                    serviceId: string,
+                    fnName: string,
+                    handler: GenericCallServiceHandler,
+                ) => {
+                    this._commonHandlers.set(serviceFnKey(serviceId, fnName), handler);
+                },
+                forParticle: (
+                    particleId: string,
+                    serviceId: string,
+                    fnName: string,
+                    handler: GenericCallServiceHandler,
+                ) => {
+                    let psh = this._particleSpecificHandlers.get(particleId);
+                    if (psh === undefined) {
+                        psh = new Map<string, GenericCallServiceHandler>();
+                        this._particleSpecificHandlers.set(particleId, psh);
+                    }
+
+                    psh.set(serviceFnKey(serviceId, fnName), handler);
+                },
+                timeout: (particleId: string, handler: () => void) => {
+                    this._timeoutHandlers.set(particleId, handler);
+                },
             },
 
             /**
@@ -237,8 +255,8 @@ export class FluencePeer {
              */
             initiateFlow: (request: RequestFlow): void => {
                 const particle = request.particle;
-                if (particle.init_peer_id === undefined) {
-                    particle.init_peer_id = this.getStatus().peerId;
+                if (particle.initPeerId === undefined) {
+                    particle.initPeerId = this.getStatus().peerId;
                 }
 
                 this._legacyParticleSpecificHandlers.set(particle.id, {
@@ -257,8 +275,11 @@ export class FluencePeer {
         };
     }
 
-    // deprecated
+    // private
 
+    /**
+     * @deprecated
+     */
     private _legacyParticleSpecificHandlers = new Map<
         string,
         {
@@ -268,9 +289,10 @@ export class FluencePeer {
         }
     >();
 
+    /**
+     * @deprecated
+     */
     private _legacyCallServiceHandler: LegacyCallServiceHandler;
-
-    // private
 
     // TODO:: make public
     private async _connect(): Promise<void> {
@@ -286,7 +308,10 @@ export class FluencePeer {
 
     private _incomingParticles = new Subject<Particle>();
     private _outgoingParticles = new Subject<Particle>();
-    private _callServiceHandler: CallServiceHandler;
+
+    private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
+    private _commonHandlers = new Map<string, GenericCallServiceHandler>();
+    private _timeoutHandlers = new Map<string, () => void>();
 
     /**
      *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
@@ -342,11 +367,12 @@ export class FluencePeer {
 
                     const timeout = setTimeout(() => {
                         particleQueues.delete(p.id);
-                        const timeoutHandler = this._callServiceHandler.resolveTimeout(p.id);
+                        const timeoutHandler = this._timeoutHandlers.get(p.id);
                         if (timeoutHandler) {
                             timeoutHandler();
                         }
-                        this._callServiceHandler.removeParticleHandlers(p.id);
+                        this._particleSpecificHandlers.delete(p.id);
+                        this._timeoutHandlers.delete(p.id);
                     }, p.actualTtl());
 
                     this._timeouts.push(timeout);
@@ -367,13 +393,7 @@ export class FluencePeer {
                 args: callRequest.arguments,
                 serviceId: callRequest.serviceId,
                 tetraplets: callRequest.tetraplets,
-                particleContext: {
-                    initPeerId: p.init_peer_id,
-                    particleId: p.id,
-                    signature: p.signature,
-                    timestamp: p.timestamp,
-                    ttl: p.ttl,
-                },
+                particleContext: p.getParticleContext(),
             };
 
             const promise = this._execSingleRequestEx(req).then((res) => [key, res] as const);
@@ -418,7 +438,30 @@ export class FluencePeer {
         // No result from legacy handler.
         // Trying to execute async handler
         if (res.retCode === undefined) {
-            res = await this._callServiceHandler.execute(req);
+            const key = serviceFnKey(req.serviceId, req.fnName);
+            const psh = this._particleSpecificHandlers.get(particleId);
+            let handler: GenericCallServiceHandler;
+
+            // we should prioritize handler for this particle if there is one
+            // if particle-specific handlers exist for this particle try getting handler there
+            if (psh !== undefined) {
+                handler = psh.get(key);
+            }
+
+            // then try to find a common handler for all particles with this service-fn key
+            // if there is no particle-specific handler, get one from common map
+            if (handler === undefined) {
+                handler = this._commonHandlers.get(key);
+            }
+
+            // if we found a handler, execute it
+            // otherwise return useful  error message to AVM
+            res = handler
+                ? await handler(req)
+                : {
+                      retCode: ResultCodes.unknownError,
+                      result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+                  };
         } else {
             if (res.result === undefined) {
                 res.result = null;
@@ -440,7 +483,7 @@ export class FluencePeer {
             prevData,
             particle.data,
             {
-                initPeerId: particle.init_peer_id,
+                initPeerId: particle.initPeerId,
                 currentPeerId: this.getStatus().peerId,
             },
             particle.callResults,
@@ -467,4 +510,8 @@ export class FluencePeer {
     }
 
     private _relayPeerId: PeerIdB58 | null = null;
+}
+
+function serviceFnKey(serviceId: string, fnName: string) {
+    return `${serviceId}/${fnName}`;
 }

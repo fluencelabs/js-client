@@ -16,13 +16,7 @@
 
 import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
-import {
-    CallServiceData,
-    CallServiceHandler,
-    CallServiceResult,
-    CallServiceResultType,
-    ResultCodes,
-} from './CallServiceHandler';
+import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { Particle } from './particle';
 

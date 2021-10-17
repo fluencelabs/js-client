@@ -15,7 +15,7 @@
  */
 
 import { CallParams, Fluence, FluencePeer } from '../../index';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../CallServiceHandler';
+import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { Particle } from '../particle';
 
 export { FluencePeer } from '../FluencePeer';

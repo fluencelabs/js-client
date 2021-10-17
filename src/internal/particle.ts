@@ -18,12 +18,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
+import { ParticleContext } from './commonTypes';
 
 const DefaultTTL = 7000;
 
 export class Particle {
     id: string;
-    init_peer_id: string;
+    initPeerId: string;
     timestamp: number;
     ttl: number;
     script: string;
@@ -46,7 +47,7 @@ export class Particle {
         const json = JSON.parse(str);
         const res = new Particle();
         res.id = json.id;
-        res.init_peer_id = json.init_peer_id;
+        res.initPeerId = json.init_peer_id;
         res.timestamp = json.timestamp;
         res.ttl = json.ttl;
         res.script = json.script;
@@ -54,6 +55,16 @@ export class Particle {
         res.data = toByteArray(json.data);
 
         return res;
+    }
+
+    getParticleContext(): ParticleContext {
+        return {
+            particleId: this.id,
+            initPeerId: this.initPeerId,
+            timestamp: this.timestamp,
+            ttl: this.ttl,
+            signature: this.signature,
+        };
     }
 
     actualTtl(): number {
@@ -67,7 +78,7 @@ export class Particle {
     clone(): Particle {
         const res = new Particle();
         res.id = this.id;
-        res.init_peer_id = this.init_peer_id;
+        res.initPeerId = this.initPeerId;
         res.timestamp = this.timestamp;
         res.ttl = this.ttl;
         res.script = this.script;
@@ -82,7 +93,7 @@ export class Particle {
         const payload = {
             action: 'Particle',
             id: particle.id,
-            init_peer_id: particle.init_peer_id,
+            init_peer_id: particle.initPeerId,
             timestamp: particle.timestamp,
             ttl: particle.ttl,
             script: particle.script,
@@ -120,7 +131,7 @@ export class Particle {
 
         fn(message, {
             id: this.id,
-            init_peer_id: this.init_peer_id,
+            init_peer_id: this.initPeerId,
             timestamp: this.timestamp,
             ttl: this.ttl,
             script: this.script,

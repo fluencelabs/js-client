@@ -17,7 +17,7 @@
 import { CallServiceResult } from '@fluencelabs/avm';
 import { encode, decode } from 'bs58';
 import { FluencePeer } from 'src';
-import { GenericCallServiceHandler, ResultCodes } from './CallServiceHandler';
+import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
 
 const registerHandlersHelper = (
     peer: FluencePeer,
@@ -45,7 +45,7 @@ const error = (error: string): CallServiceResult => {
     };
 };
 
-const defaultServices: { [serviceId in string]: { [fnName in string]: GenericCallServiceHandler } } = {
+export const defaultServices: { [serviceId in string]: { [fnName in string]: GenericCallServiceHandler } } = {
     op: {
         noop: (req) => {
             return success({});
