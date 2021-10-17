@@ -31,31 +31,6 @@ export class Particle {
     data: Uint8Array;
     callResults: CallResultsArray = [];
 
-    actualTtl(): number {
-        return this.timestamp + this.ttl - Date.now();
-    }
-
-    hasExpired(): boolean {
-        return this.actualTtl() <= 0;
-    }
-
-    clone(): Particle {
-        const res = new Particle();
-        res.id = this.id;
-        res.init_peer_id = this.init_peer_id;
-        res.timestamp = this.timestamp;
-        res.ttl = this.ttl;
-        res.script = this.script;
-        res.signature = this.signature;
-        res.data = this.data;
-        res.callResults = this.callResults;
-        return res;
-    }
-
-    viewData(): string {
-        return new TextDecoder().decode(this.data);
-    }
-
     static createNew(script: string, ttlMs?: number): Particle {
         const res = new Particle();
         res.id = genUUID();
@@ -81,6 +56,27 @@ export class Particle {
         return res;
     }
 
+    actualTtl(): number {
+        return this.timestamp + this.ttl - Date.now();
+    }
+
+    hasExpired(): boolean {
+        return this.actualTtl() <= 0;
+    }
+
+    clone(): Particle {
+        const res = new Particle();
+        res.id = this.id;
+        res.init_peer_id = this.init_peer_id;
+        res.timestamp = this.timestamp;
+        res.ttl = this.ttl;
+        res.script = this.script;
+        res.signature = this.signature;
+        res.data = this.data;
+        res.callResults = this.callResults;
+        return res;
+    }
+
     toString(): string {
         const particle = this;
         const payload = {
@@ -100,9 +96,11 @@ export class Particle {
 
     logTo(level: LogLevel, message: string) {
         let fn;
+        let data;
         switch (level) {
             case 'debug':
                 fn = log.debug;
+                data = dataToString(this.data);
                 break;
             case 'error':
                 fn = log.error;
@@ -127,65 +125,9 @@ export class Particle {
             ttl: this.ttl,
             script: this.script,
             signature: this.signature,
-            data: dataToString(this.data),
+            data: data,
         });
     }
-}
-
-export interface ParticleOld {
-    id: string;
-    init_peer_id: string;
-    timestamp: number;
-    ttl: number;
-    script: string;
-    // sign upper fields
-    signature: string;
-    data: Uint8Array;
-}
-
-/**
- * Represents particle action to send to a node
- */
-interface ParticlePayloadOld {
-    action: 'Particle';
-    id: string;
-    init_peer_id: string;
-    timestamp: number;
-    ttl: number;
-    script: string;
-    signature: number[];
-    data: string;
-}
-
-/**
- * Creates an action to send to a node.
- */
-export function toPayload(particle: ParticleOld): ParticlePayloadOld {
-    return {
-        action: 'Particle',
-        id: particle.id,
-        init_peer_id: particle.init_peer_id,
-        timestamp: particle.timestamp,
-        ttl: particle.ttl,
-        script: particle.script,
-        // TODO: copy signature from a particle after signatures will be implemented on nodes
-        signature: [],
-        data: fromByteArray(particle.data),
-    };
-}
-
-export function parseParticle(str: string): ParticleOld {
-    let json = JSON.parse(str);
-
-    return {
-        id: json.id,
-        init_peer_id: json.init_peer_id,
-        timestamp: json.timestamp,
-        ttl: json.ttl,
-        script: json.script,
-        signature: json.signature,
-        data: toByteArray(json.data),
-    };
 }
 
 export function genUUID() {

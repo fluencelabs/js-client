@@ -21,7 +21,7 @@ import { GenericCallServiceHandler, ResultCodes } from './CallServiceHandler';
 
 const registerHandlersHelper = (
     peer: FluencePeer,
-    handlers: { [key in string]: { [key2 in string]: GenericCallServiceHandler } },
+    handlers: { [serviceId in string]: { [fnName in string]: GenericCallServiceHandler } },
 ) => {
     for (let serviceId in handlers) {
         for (let fnName in handlers[serviceId]) {
@@ -45,7 +45,7 @@ const error = (error: string): CallServiceResult => {
     };
 };
 
-const defaultServices: { [key in string]: { [key2 in string]: GenericCallServiceHandler } } = {
+const defaultServices: { [serviceId in string]: { [fnName in string]: GenericCallServiceHandler } } = {
     op: {
         noop: (req) => {
             return success({});
