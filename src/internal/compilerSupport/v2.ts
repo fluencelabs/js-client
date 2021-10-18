@@ -162,11 +162,10 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                 .with({ tag: 'void' }, () => undefined)
                 .with({ tag: 'multiReturn' }, (mr) => {
                     mr.returnItems.map((x, index) => {
-                        if (x.tag === 'optional') {
-                            return aquaOptToTs(req.args[index]);
-                        } else {
-                            return req.args[index];
-                        }
+                        return match(x)
+                            .with({ tag: 'optional' }, () => aquaOptToTs(req.args[index]))
+                            .with({ tag: 'primitive' }, () => req.args[index])
+                            .exhaustive();
                     });
                 })
                 .exhaustive();
