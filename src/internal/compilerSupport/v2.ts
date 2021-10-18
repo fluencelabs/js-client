@@ -17,7 +17,7 @@
 import { match } from 'ts-pattern';
 import { CallParams, Fluence, FluencePeer } from '../../index';
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
-import { Particle } from '../particle';
+import { Particle } from '../Particle';
 
 export { FluencePeer } from '../FluencePeer';
 export { CallParams } from '../commonTypes';

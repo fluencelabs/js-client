@@ -20,7 +20,7 @@ import Lib2p2Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
 import * as log from 'loglevel';
-import { Particle } from './particle';
+import { Particle } from './Particle';
 import { NOISE } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';

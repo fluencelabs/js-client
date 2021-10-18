@@ -27,9 +27,9 @@ import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCo
 import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
-import { dataToString, Particle } from './particle';
+import { Particle } from './Particle';
 import { KeyPair } from './KeyPair';
-import { createInterpreter } from './utils';
+import { createInterpreter, dataToString } from './utils';
 import { filter, map, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';

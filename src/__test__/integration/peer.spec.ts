@@ -2,7 +2,7 @@ import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import { Fluence, FluencePeer, setLogLevel } from '../../index';
 import { checkConnection } from '../../internal/utils';
-import { Particle } from '../../internal/particle';
+import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
 const anotherPeer = new FluencePeer();

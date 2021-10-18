@@ -15,7 +15,7 @@
  */
 
 import { CallServiceHandler } from './LegacyCallServiceHandler';
-import { Particle } from '../particle';
+import { Particle } from '../Particle';
 
 export { FluencePeer } from '../FluencePeer';
 export { CallParams, ResultCodes } from '../commonTypes';

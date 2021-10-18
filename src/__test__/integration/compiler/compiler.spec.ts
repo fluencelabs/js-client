@@ -1,5 +1,5 @@
 import { Fluence, FluencePeer } from '../../..';
-import { Particle } from '../../../internal/particle';
+import { Particle } from '../../../internal/Particle';
 import { registerHandlersHelper } from '../../util';
 import { callMeBack, registerHelloWorld } from './gen1';
 

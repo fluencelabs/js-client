@@ -19,6 +19,7 @@ import { fromByteArray, toByteArray } from 'base64-js';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
+import { dataToString } from './utils';
 
 const DefaultTTL = 7000;
 
@@ -141,10 +142,6 @@ export class Particle {
     }
 }
 
-export function genUUID() {
+function genUUID() {
     return uuidv4();
-}
-
-export function dataToString(data: Uint8Array) {
-    return new TextDecoder().decode(Buffer.from(data));
 }

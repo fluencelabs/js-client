@@ -18,7 +18,7 @@ import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
-import { Particle } from './particle';
+import { Particle } from './Particle';
 
 export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
     const logFn = (level: AvmLogLevel, msg: string) => {
@@ -141,3 +141,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         return false;
     }
 };
+
+export function dataToString(data: Uint8Array) {
+    return new TextDecoder().decode(Buffer.from(data));
+}

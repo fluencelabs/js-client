@@ -1,5 +1,5 @@
 import { FluencePeer } from '../../index';
-import { Particle } from '../../internal/particle';
+import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
 describe('Avm spec', () => {
