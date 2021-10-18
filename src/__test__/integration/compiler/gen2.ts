@@ -64,6 +64,10 @@ export function registerServiceWithDefaultId(...args: any) {
                 argDefs: [
                     {
                         name: 's',
+                        argType: {
+                            type: 'z',
+                            
+                        }
                         isOptional: false,
                     },
                 ],

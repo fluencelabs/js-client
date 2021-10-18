@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { match } from 'ts-pattern';
 import { CallParams, Fluence, FluencePeer } from '../../index';
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { Particle } from '../particle';
@@ -95,24 +96,6 @@ const aquaOptToTs = (opt: Array<unknown>) => {
     return opt.length === 0 ? null : opt[0];
 };
 
-const returnArg = (
-    arg: any,
-    returnType: {
-        isVoid: boolean;
-        isOptional: boolean;
-    },
-) => {
-    if (returnType.isVoid) {
-        return {};
-    }
-
-    if (returnType.isOptional) {
-        return tsToAquaOpt(arg);
-    }
-
-    return arg;
-};
-
 export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script: string) {
     const { args, peer, config } = extractFunctionArgs(rawFnArgs, def.argDefs.length);
 
@@ -123,19 +106,18 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             const argDef = def.argDefs[i];
             const arg = args[i];
 
-            switch (argDef.argType.type) {
-                case 'callback':
-                    const callbackDef = argDef.argType.def;
+            match(argDef.argType)
+                .with({ type: 'callback' }, (callbackDef) => {
                     registerParticleSpecificHandler(
                         peer,
                         particle.id,
                         def.names.callbackSrv,
                         argDef.name,
                         async (req) => {
-                            const args = convertArgsFromReqToUserCall(req, callbackDef.argDefs);
+                            const args = convertArgsFromReqToUserCall(req, callbackDef.def.argDefs);
                             const result = await arg.apply(null, args);
                             let res;
-                            switch (callbackDef.returnType.type) {
+                            switch (callbackDef.def.returnType.type) {
                                 case 'void':
                                     res = {};
                                     break;
@@ -152,9 +134,8 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                             };
                         },
                     );
-                    break;
-
-                case 'optional':
+                })
+                .with({ type: 'optional' }, () => {
                     registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
                         const res = tsToAquaOpt(arg);
                         return {
@@ -162,41 +143,33 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                             result: res,
                         };
                     });
-                    break;
-
-                case 'primitive':
+                })
+                .with({ type: 'primitive' }, () => {
                     registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
                         return {
                             retCode: ResultCodes.success,
                             result: arg,
                         };
                     });
-                    break;
-            }
+                })
+                .exhaustive();
         }
 
         registerParticleSpecificHandler(peer, particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
-            let userFunctionReturn;
-            switch (def.returnType.type) {
-                case 'primitive':
-                    userFunctionReturn = req.args[0];
-                    break;
-                case 'optional':
-                    userFunctionReturn = aquaOptToTs(req.args[0]);
-                    break;
-                case 'void':
-                    userFunctionReturn = undefined;
-                    break;
-                case 'multiReturn':
-                    userFunctionReturn = def.returnType.returnItems.map((x, index) => {
+            const userFunctionReturn = match(def.returnType)
+                .with({ type: 'primitive' }, () => req.args[0])
+                .with({ type: 'optional' }, () => aquaOptToTs(req.args[0]))
+                .with({ type: 'void' }, () => undefined)
+                .with({ type: 'multiReturn' }, (mr) => {
+                    mr.returnItems.map((x, index) => {
                         if (x.type === 'optional') {
                             return aquaOptToTs(req.args[index]);
                         } else {
                             return req.args[index];
                         }
                     });
-                    break;
-            }
+                })
+                .exhaustive();
 
             setTimeout(() => {
                 resolve(userFunctionReturn);
@@ -257,22 +230,16 @@ export function registerService(args: any[], def: ServiceDef) {
 
         registerCommonHandler(peer, serviceId, singleFunction.functionName, async (req) => {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
-            const result = await userDefinedHandler.apply(null, args);
-            let returnArg;
-            switch (singleFunction.returnType.type) {
-                case 'primitive':
-                    returnArg = req.args[0];
-                    break;
-                case 'optional':
-                    returnArg = aquaOptToTs(req.args[0]);
-                    break;
-                case 'void':
-                    returnArg = undefined;
-                    break;
-            }
+            const rawResult = await userDefinedHandler.apply(null, args);
+            const result = match(singleFunction.returnType)
+                .with({ type: 'primitive' }, () => rawResult)
+                .with({ type: 'optional' }, () => tsToAquaOpt(rawResult))
+                .with({ type: 'void' }, () => ({}))
+                .exhaustive();
+
             return {
                 retCode: ResultCodes.success,
-                result: returnArg(result, returnArg),
+                result: result,
             };
         });
     }
@@ -280,11 +247,10 @@ export function registerService(args: any[], def: ServiceDef) {
 
 const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef<OptionalType | PrimitiveType>>) => {
     const argsAccountedForOptional = req.args.map((x, index) => {
-        if (args[index].argType.type === 'optional') {
-            return aquaOptToTs(x);
-        } else {
-            return x;
-        }
+        return match(args[index].argType)
+            .with({ type: 'optional' }, () => aquaOptToTs(x))
+            .with({ type: 'primitive' }, () => x)
+            .exhaustive();
     });
 
     return [...argsAccountedForOptional, extractCallParams(req, args)];
