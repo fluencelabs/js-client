@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { CallServiceResult } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 import { CallParams, Fluence, FluencePeer } from '../../index';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
+import { CallServiceData, GenericCallServiceHandler, CallServiceResult, ResultCodes } from '../commonTypes';
 import { Particle } from '../Particle';
 
 export { FluencePeer } from '../FluencePeer';
@@ -99,6 +98,10 @@ const aquaOptToTs = (opt: Array<unknown>) => {
 
 export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script: string) {
     const { args, peer, config } = extractFunctionArgs(rawFnArgs, def.argDefs.length);
+
+    if (args.length !== def.argDefs.length) {
+        throw new Error('Incorrect number of arguments. Expecting ${def.argDefs.length}');
+    }
 
     const promise = new Promise((resolve, reject) => {
         const particle = Particle.createNew(script, config?.ttl);
@@ -186,7 +189,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         });
 
         peer.internals.regHandler.forParticle(particle.id, def.names.errorHandlingSrv, def.names.errorFnName, (req) => {
-            const [err, whatNumber] = req.args;
+            const [err, _] = req.args;
             setTimeout(() => {
                 reject(err);
             }, 0);
@@ -222,7 +225,7 @@ export function registerService(args: any[], def: ServiceDef) {
     }
 
     for (let singleFunction of def.functions) {
-        // has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
+        // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
         const userDefinedHandler = service[singleFunction.functionName];
 
         peer.internals.regHandler.common(serviceId, singleFunction.functionName, async (req) => {
@@ -242,25 +245,29 @@ export function registerService(args: any[], def: ServiceDef) {
     }
 }
 
-const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef<OptionalType | PrimitiveType>>) => {
+const convertArgsFromReqToUserCall = (req: CallServiceData, argDefs: Array<ArgDef<OptionalType | PrimitiveType>>) => {
+    if (req.args.length !== argDefs.length) {
+        throwForReq(req, `incorrect number of arguments, expected ${argDefs.length}`);
+    }
+
     const argsAccountedForOptional = req.args.map((x, index) => {
-        return match(args[index].argType)
+        return match(argDefs[index].argType)
             .with({ tag: 'optional' }, () => aquaOptToTs(x))
             .with({ tag: 'primitive' }, () => x)
             .exhaustive();
     });
 
-    return [...argsAccountedForOptional, extractCallParams(req, args)];
+    return [...argsAccountedForOptional, extractCallParams(req, argDefs)];
 };
 
 const extractCallParams = (
     req: CallServiceData,
-    args: Array<ArgDef<OptionalType | PrimitiveType>>,
+    argDefs: Array<ArgDef<OptionalType | PrimitiveType>>,
 ): CallParams<any> => {
     let tetraplets: any = {};
     for (let i = 0; i < req.args.length; i++) {
-        if (args[i]) {
-            tetraplets[args[i].name] = req.tetraplets[i];
+        if (argDefs[i]) {
+            tetraplets[argDefs[i].name] = req.tetraplets[i];
         }
     }
 
@@ -346,3 +353,7 @@ const extractRegisterServiceArgs = (
         service: service,
     };
 };
+
+function throwForReq(req: CallServiceData, message: string) {
+    throw new Error(`${message}, serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`);
+}
