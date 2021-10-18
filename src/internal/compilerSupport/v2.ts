@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { CallServiceResult } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 import { CallParams, Fluence, FluencePeer } from '../../index';
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
@@ -88,7 +89,7 @@ interface ServiceDef {
     functions: Array<FunctionBodyDef>;
 }
 
-const tsToAquaOpt = (arg: unknown | null) => {
+const tsToAquaOpt = (arg: unknown | null): any => {
     return arg === null || arg === undefined ? [] : [arg];
 };
 
@@ -106,56 +107,53 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             const argDef = def.argDefs[i];
             const arg = args[i];
 
-            match(argDef.argType)
+            const [serviceId, fnName, cb] = match(argDef.argType)
                 .with({ tag: 'callback' }, (callbackDef) => {
-                    registerParticleSpecificHandler(
-                        peer,
-                        particle.id,
-                        def.names.callbackSrv,
-                        argDef.name,
-                        async (req) => {
-                            const args = convertArgsFromReqToUserCall(req, callbackDef.callback.argDefs);
-                            const result = await arg.apply(null, args);
-                            let res;
-                            switch (callbackDef.callback.returnType.tag) {
-                                case 'void':
-                                    res = {};
-                                    break;
-                                case 'primitive':
-                                    res = result;
-                                    break;
-                                case 'optional':
-                                    res = tsToAquaOpt(result);
-                                    break;
-                            }
-                            return {
-                                retCode: ResultCodes.success,
-                                result: res,
-                            };
-                        },
-                    );
+                    const fn = async (req: CallServiceData): Promise<CallServiceResult> => {
+                        const args = convertArgsFromReqToUserCall(req, callbackDef.callback.argDefs);
+                        const result = await arg.apply(null, args);
+                        let res;
+                        switch (callbackDef.callback.returnType.tag) {
+                            case 'void':
+                                res = {};
+                                break;
+                            case 'primitive':
+                                res = result;
+                                break;
+                            case 'optional':
+                                res = tsToAquaOpt(result);
+                                break;
+                        }
+                        return {
+                            retCode: ResultCodes.success,
+                            result: res,
+                        };
+                    };
+                    return [def.names.callbackSrv, argDef.name, fn] as const;
                 })
                 .with({ tag: 'optional' }, () => {
-                    registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
+                    const fn = (req: CallServiceData): CallServiceResult => {
                         const res = tsToAquaOpt(arg);
                         return {
                             retCode: ResultCodes.success,
                             result: res,
                         };
-                    });
+                    };
+                    return [def.names.getDataSrv, argDef.name, fn] as const;
                 })
                 .with({ tag: 'primitive' }, () => {
-                    registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
-                        return {
-                            retCode: ResultCodes.success,
-                            result: arg,
-                        };
+                    const fn = (req: CallServiceData): CallServiceResult => ({
+                        retCode: ResultCodes.success,
+                        result: arg,
                     });
+                    return [def.names.getDataSrv, argDef.name, fn] as const;
                 })
                 .exhaustive();
+
+            peer.internals.regHandler.forParticle(particle.id, serviceId, fnName, cb);
         }
 
-        registerParticleSpecificHandler(peer, particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
+        peer.internals.regHandler.forParticle(particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
             const userFunctionReturn = match(def.returnType)
                 .with({ tag: 'primitive' }, () => req.args[0])
                 .with({ tag: 'optional' }, () => aquaOptToTs(req.args[0]))
@@ -180,14 +178,14 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             };
         });
 
-        registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, def.names.relay, (req) => {
+        peer.internals.regHandler.forParticle(particle.id, def.names.getDataSrv, def.names.relay, (req) => {
             return {
                 retCode: ResultCodes.success,
                 result: peer.getStatus().relayPeerId,
             };
         });
 
-        registerParticleSpecificHandler(peer, particle.id, def.names.errorHandlingSrv, def.names.errorFnName, (req) => {
+        peer.internals.regHandler.forParticle(particle.id, def.names.errorHandlingSrv, def.names.errorFnName, (req) => {
             const [err, whatNumber] = req.args;
             setTimeout(() => {
                 reject(err);
@@ -198,7 +196,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             };
         });
 
-        handleTimeout(peer, particle.id, () => {
+        peer.internals.regHandler.timeout(particle.id, () => {
             reject(`Request timed out for ${def.functionName}`);
         });
 
@@ -227,7 +225,7 @@ export function registerService(args: any[], def: ServiceDef) {
         // has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
         const userDefinedHandler = service[singleFunction.functionName];
 
-        registerCommonHandler(peer, serviceId, singleFunction.functionName, async (req) => {
+        peer.internals.regHandler.common(serviceId, singleFunction.functionName, async (req) => {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
             const rawResult = await userDefinedHandler.apply(null, args);
             const result = match(singleFunction.returnType)
@@ -348,26 +346,3 @@ const extractRegisterServiceArgs = (
         service: service,
     };
 };
-
-function registerParticleSpecificHandler(
-    peer: FluencePeer,
-    particleId: string,
-    serviceId: string,
-    fnName: string,
-    handler: GenericCallServiceHandler,
-) {
-    peer.internals.regHandler.forParticle(particleId, serviceId, fnName, handler);
-}
-
-function handleTimeout(peer: FluencePeer, particleId: string, timeoutHandler: () => void) {
-    peer.internals.regHandler.timeout(particleId, timeoutHandler);
-}
-
-function registerCommonHandler(
-    peer: FluencePeer,
-    serviceId: string,
-    fnName: string,
-    handler: GenericCallServiceHandler,
-) {
-    peer.internals.regHandler.common(serviceId, fnName, handler);
-}
