@@ -16,20 +16,7 @@
 
 import { CallServiceResult } from '@fluencelabs/avm';
 import { encode, decode } from 'bs58';
-import { FluencePeer } from 'src';
 import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
-
-const registerHandlersHelper = (
-    peer: FluencePeer,
-    handlers: { [serviceId in string]: { [fnName in string]: GenericCallServiceHandler } },
-) => {
-    for (let serviceId in handlers) {
-        for (let fnName in handlers[serviceId]) {
-            const h = handlers[serviceId][fnName];
-            peer.internals.regHandler.common(serviceId, fnName, h);
-        }
-    }
-};
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -110,8 +97,4 @@ export const defaultServices: { [serviceId in string]: { [fnName in string]: Gen
             }
         },
     },
-};
-
-export const registerDefaultServices = (peer: FluencePeer) => {
-    registerHandlersHelper(peer, defaultServices);
 };

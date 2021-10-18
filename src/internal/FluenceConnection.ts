@@ -106,6 +106,7 @@ export class FluenceConnection {
         particle.logTo('debug', 'sending particle:');
 
         /*
+        TODO:: find out why this doesn't work and a new connection has to be established each time
         if (this._connection.streams.length !== 1) {
             throw 'Incorrect number of streams in FluenceConnection';
         }

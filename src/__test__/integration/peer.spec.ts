@@ -370,6 +370,44 @@ describe('Typescript usage suite', () => {
         expect(res).toBe(null);
     });
 
+    it('Should not crash if an error ocurred in user-defined handler', async () => {
+        // arrange;
+        setLogLevel('trace');
+        await anotherPeer.start();
+
+        // act
+        const promise = new Promise<any>((resolve, reject) => {
+            const script = `
+        (xor
+            (call %init_peer_id% ("load" "arg") [] arg)
+            (call %init_peer_id% ("callback" "error") [%last_error%])
+        )`;
+            const particle = Particle.createNew(script);
+
+            registerHandlersHelper(anotherPeer, particle, {
+                load: {
+                    arg: (args) => {
+                        throw 'my super custom error message';
+                    },
+                },
+                callback: {
+                    error: (args) => {
+                        const [error] = args;
+                        reject(error);
+                    },
+                },
+                _timeout: reject,
+            });
+
+            anotherPeer.internals.initiateParticle(particle);
+        });
+
+        // assert
+        await expect(promise).rejects.toMatchObject({
+            msg: expect.stringContaining('my super custom error message'),
+        });
+    });
+
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
         // arrange;
         await anotherPeer.start({ connectTo: nodes[0] });

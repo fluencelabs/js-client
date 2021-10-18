@@ -1,7 +1,6 @@
 import each from 'jest-each';
-import { FluencePeer } from '../..';
 import { CallServiceData } from '../../internal/commonTypes';
-import { defaultServices, registerDefaultServices } from '../../internal/defaultServices';
+import { defaultServices } from '../../internal/defaultServices';
 
 describe('Tests for default handler', () => {
     // prettier-ignore
