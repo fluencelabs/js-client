@@ -23,27 +23,27 @@ export { FluencePeer } from '../FluencePeer';
 export { CallParams } from '../commonTypes';
 
 type OptionalType = {
-    type: 'optional';
+    tag: 'optional';
 };
 
 type VoidType = {
-    type: 'void';
+    tag: 'void';
 };
 
 type PrimitiveType = {
-    type: 'primitive';
+    tag: 'primitive';
 };
 
 type CallbackType = {
-    type: 'callback';
-    def: {
+    tag: 'callback';
+    callback: {
         argDefs: Array<ArgDef<OptionalType | PrimitiveType>>;
         returnType: VoidType | OptionalType | PrimitiveType;
     };
 };
 
 type MultiReturnType = {
-    type: 'multiReturn';
+    tag: 'multiReturn';
     returnItems: Array<OptionalType | PrimitiveType>;
 };
 
@@ -107,17 +107,17 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             const arg = args[i];
 
             match(argDef.argType)
-                .with({ type: 'callback' }, (callbackDef) => {
+                .with({ tag: 'callback' }, (callbackDef) => {
                     registerParticleSpecificHandler(
                         peer,
                         particle.id,
                         def.names.callbackSrv,
                         argDef.name,
                         async (req) => {
-                            const args = convertArgsFromReqToUserCall(req, callbackDef.def.argDefs);
+                            const args = convertArgsFromReqToUserCall(req, callbackDef.callback.argDefs);
                             const result = await arg.apply(null, args);
                             let res;
-                            switch (callbackDef.def.returnType.type) {
+                            switch (callbackDef.callback.returnType.tag) {
                                 case 'void':
                                     res = {};
                                     break;
@@ -135,7 +135,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                         },
                     );
                 })
-                .with({ type: 'optional' }, () => {
+                .with({ tag: 'optional' }, () => {
                     registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
                         const res = tsToAquaOpt(arg);
                         return {
@@ -144,7 +144,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                         };
                     });
                 })
-                .with({ type: 'primitive' }, () => {
+                .with({ tag: 'primitive' }, () => {
                     registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
                         return {
                             retCode: ResultCodes.success,
@@ -157,12 +157,12 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 
         registerParticleSpecificHandler(peer, particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
             const userFunctionReturn = match(def.returnType)
-                .with({ type: 'primitive' }, () => req.args[0])
-                .with({ type: 'optional' }, () => aquaOptToTs(req.args[0]))
-                .with({ type: 'void' }, () => undefined)
-                .with({ type: 'multiReturn' }, (mr) => {
+                .with({ tag: 'primitive' }, () => req.args[0])
+                .with({ tag: 'optional' }, () => aquaOptToTs(req.args[0]))
+                .with({ tag: 'void' }, () => undefined)
+                .with({ tag: 'multiReturn' }, (mr) => {
                     mr.returnItems.map((x, index) => {
-                        if (x.type === 'optional') {
+                        if (x.tag === 'optional') {
                             return aquaOptToTs(req.args[index]);
                         } else {
                             return req.args[index];
@@ -206,7 +206,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         peer.internals.initiateParticle(particle);
     });
 
-    if (def.returnType.type === 'void') {
+    if (def.returnType.tag === 'void') {
         return Promise.resolve([promise]);
     } else {
         return promise;
@@ -232,9 +232,9 @@ export function registerService(args: any[], def: ServiceDef) {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
             const rawResult = await userDefinedHandler.apply(null, args);
             const result = match(singleFunction.returnType)
-                .with({ type: 'primitive' }, () => rawResult)
-                .with({ type: 'optional' }, () => tsToAquaOpt(rawResult))
-                .with({ type: 'void' }, () => ({}))
+                .with({ tag: 'primitive' }, () => rawResult)
+                .with({ tag: 'optional' }, () => tsToAquaOpt(rawResult))
+                .with({ tag: 'void' }, () => ({}))
                 .exhaustive();
 
             return {
@@ -248,8 +248,8 @@ export function registerService(args: any[], def: ServiceDef) {
 const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef<OptionalType | PrimitiveType>>) => {
     const argsAccountedForOptional = req.args.map((x, index) => {
         return match(args[index].argType)
-            .with({ type: 'optional' }, () => aquaOptToTs(x))
-            .with({ type: 'primitive' }, () => x)
+            .with({ tag: 'optional' }, () => aquaOptToTs(x))
+            .with({ tag: 'primitive' }, () => x)
             .exhaustive();
     });
 
