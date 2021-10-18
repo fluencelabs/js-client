@@ -27,15 +27,12 @@ interface ArgDef {
     callbackDef?: CallbackDef;
 }
 
-interface ReturnTypeDef {
-    isVoid: boolean;
-    isOptional: boolean;
-    multiReturn?: Array<{ isOptional: boolean }>;
-}
-
 interface CallbackDef {
     argDefs: Array<ArgDef>;
-    returnType: ReturnTypeDef;
+    returnType: {
+        isVoid: boolean;
+        isOptional: boolean;
+    };
 }
 
 interface FunctionBodyDef extends CallbackDef {
@@ -43,6 +40,7 @@ interface FunctionBodyDef extends CallbackDef {
 }
 
 interface FunctionCallDef extends FunctionBodyDef {
+    multiReturn?: Array<{ isOptional: boolean }>;
     names: {
         relay: string;
         getDataSrv: string;
@@ -67,17 +65,13 @@ const aquaOptToTs = (opt: Array<unknown>) => {
     return opt.length === 0 ? null : opt[0];
 };
 
-const returnArg = (arg: any, returnType: ReturnTypeDef) => {
-    if (returnType.multiReturn) {
-        return returnType.multiReturn.map((x, index) => {
-            if (x.isOptional) {
-                return aquaOptToTs(arg[index]);
-            } else {
-                return arg[index];
-            }
-        });
-    }
-
+const returnArg = (
+    arg: any,
+    returnType: {
+        isVoid: boolean;
+        isOptional: boolean;
+    },
+) => {
     if (returnType.isVoid) {
         return {};
     }
@@ -128,8 +122,8 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 
         registerParticleSpecificHandler(peer, particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
             let res;
-            if (def.returnType.multiReturn) {
-                res = def.returnType.multiReturn.map((x, index) => {
+            if (def.multiReturn) {
+                res = def.multiReturn.map((x, index) => {
                     if (x.isOptional) {
                         return aquaOptToTs(req.args[index]);
                     } else {
