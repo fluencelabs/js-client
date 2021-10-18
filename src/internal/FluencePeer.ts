@@ -22,7 +22,7 @@ import {
     LogLevel,
     CallServiceResult as AvmCallServiceResult,
 } from '@fluencelabs/avm';
-import { Multiaddr, resolvers } from 'multiaddr';
+import { Multiaddr } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
@@ -222,6 +222,10 @@ export class FluencePeer {
      */
     get internals() {
         return {
+            /**
+             * Initiates a new particle execution starting from local peer
+             * @param particle - particle to start execution of
+             */
             initiateParticle: (particle: Particle): void => {
                 if (particle.initPeerId === undefined) {
                     particle.initPeerId = this.getStatus().peerId;
@@ -229,7 +233,13 @@ export class FluencePeer {
 
                 this._incomingParticles.next(particle);
             },
+            /**
+             * Register Call Service handler functions
+             */
             regHandler: {
+                /**
+                 * Register handler for all particles
+                 */
                 common: (
                     // force new line
                     serviceId: string,
@@ -238,6 +248,9 @@ export class FluencePeer {
                 ) => {
                     this._commonHandlers.set(serviceFnKey(serviceId, fnName), handler);
                 },
+                /**
+                 * Register handler which will be called only for particle with the specific id
+                 */
                 forParticle: (
                     particleId: string,
                     serviceId: string,
@@ -252,6 +265,9 @@ export class FluencePeer {
 
                     psh.set(serviceFnKey(serviceId, fnName), handler);
                 },
+                /**
+                 * Register handler which will be called upon particle timeout
+                 */
                 timeout: (particleId: string, handler: () => void) => {
                     this._timeoutHandlers.set(particleId, handler);
                 },
@@ -289,32 +305,36 @@ export class FluencePeer {
      */
     private _isFluenceAwesome = true;
 
-    // TODO:: make public
+    // TODO:: make public when full connection\disconnection cycle is implemented properly
     private async _connect(): Promise<void> {
         return this._connection?.connect();
     }
 
-    // TODO:: make public
+    // TODO:: make public when full connection\disconnection cycle is implemented properly
     private async _disconnect(): Promise<void> {
         if (this._connection) {
             return this._connection.disconnect();
         }
     }
 
+    // Queues for incoming and outgoing particles
+
     private _incomingParticles = new Subject<Particle>();
     private _outgoingParticles = new Subject<Particle>();
+
+    // Call service handler
 
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
     private _timeoutHandlers = new Map<string, () => void>();
 
-    private _timeouts: Array<NodeJS.Timeout> = [];
+    // Internal peer state
 
+    private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
-
-    private _relayPeerId: PeerIdB58 | null = null;
+    private _timeouts: Array<NodeJS.Timeout> = [];
 
     private _startParticleProcessing() {
         const particleQueues = new Map<string, Subject<Particle>>();
@@ -367,12 +387,15 @@ export class FluencePeer {
 
                 prevData = Buffer.from(result.data);
 
+                // send particle further if requested
                 if (result.nextPeerPks.length > 0) {
                     const newParticle = x.clone();
                     newParticle.data = prevData;
                     this._outgoingParticles.next(newParticle);
                 }
 
+                // execute call requests if needed
+                // and put particle with the results back to queue
                 if (result.callRequests.length > 0) {
                     this._execCallRequests(x, result.callRequests).then((callResults) => {
                         const newParticle = x.clone();
@@ -388,6 +411,7 @@ export class FluencePeer {
     }
 
     private async _execCallRequests(p: Particle, callRequests: CallRequestsArray): Promise<CallResultsArray> {
+        // execute all requests asynchronously
         const promises = callRequests.map(([key, callRequest]) => {
             const req = {
                 fnName: callRequest.functionName,
@@ -397,6 +421,7 @@ export class FluencePeer {
                 particleContext: p.getParticleContext(),
             };
 
+            // execute single requests and catch possible errors
             const promise = this._execSingleCallRequest(req)
                 .catch(
                     (err): CallServiceResult => ({
@@ -416,6 +441,7 @@ export class FluencePeer {
 
             return promise;
         });
+        // don't block
         const res = await Promise.all(promises);
         log.debug(`Executed call service for particle id=${p.id}, Call service results: `, res);
         return res;
@@ -476,6 +502,7 @@ export class FluencePeer {
     }
 
     private _stopParticleProcessing() {
+        // do not hang if the peer has been stopped while some of the timeouts are still being executed
         for (let item of this._timeouts) {
             clearTimeout(item);
         }
