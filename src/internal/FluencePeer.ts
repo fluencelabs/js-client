@@ -412,13 +412,12 @@ export class FluencePeer {
                         retCode: res.retCode,
                     }),
                 )
-                .then((res) => [key, res] as const);
+                .then((res): [key: number, res: AvmCallServiceResult] => [key, res]);
 
             return promise;
         });
-        const res: any = await Promise.all(promises);
-        log.debug('Executed call service for particle id=', p.id);
-        log.debug('Call service results: ', res);
+        const res = await Promise.all(promises);
+        log.debug(`Executed call service for particle id=${p.id}, Call service results: `, res);
         return res;
     }
 
