@@ -161,7 +161,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                 .with({ tag: 'optional' }, () => aquaOptToTs(req.args[0]))
                 .with({ tag: 'void' }, () => undefined)
                 .with({ tag: 'multiReturn' }, (mr) => {
-                    mr.returnItems.map((x, index) => {
+                    return mr.returnItems.map((x, index) => {
                         return match(x)
                             .with({ tag: 'optional' }, () => aquaOptToTs(req.args[index]))
                             .with({ tag: 'primitive' }, () => req.args[index])
