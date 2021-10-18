@@ -21,26 +21,56 @@ import { Particle } from '../particle';
 export { FluencePeer } from '../FluencePeer';
 export { CallParams } from '../commonTypes';
 
-interface ArgDef {
-    name: string;
-    isOptional: boolean;
-    callbackDef?: CallbackDef;
-}
+type OptionalType = {
+    type: 'optional';
+};
 
-interface CallbackDef {
-    argDefs: Array<ArgDef>;
-    returnType: {
-        isVoid: boolean;
-        isOptional: boolean;
+type VoidType = {
+    type: 'void';
+};
+
+type PrimitiveType = {
+    type: 'primitive';
+};
+
+type CallbackType = {
+    type: 'callback';
+    def: {
+        argDefs: Array<ArgDef<OptionalType | PrimitiveType>>;
+        returnType: VoidType | OptionalType | PrimitiveType;
     };
+};
+
+type MultiReturnType = {
+    type: 'multiReturn';
+    returnItems: Array<OptionalType | PrimitiveType>;
+};
+
+interface ArgDef<ArgType> {
+    name: string;
+    argType: ArgType;
 }
 
-interface FunctionBodyDef extends CallbackDef {
+interface CallbackDef<ArgType, ReturnType> {
+    argDefs: Array<ArgDef<ArgType>>;
+    returnType: ReturnType;
+}
+
+interface FunctionBodyDef
+    extends CallbackDef<
+        // force new line
+        OptionalType | PrimitiveType,
+        VoidType | OptionalType | PrimitiveType
+    > {
     functionName: string;
 }
 
-interface FunctionCallDef extends FunctionBodyDef {
-    multiReturn?: Array<{ isOptional: boolean }>;
+interface FunctionCallDef
+    extends CallbackDef<
+        OptionalType | PrimitiveType | CallbackType,
+        VoidType | OptionalType | PrimitiveType | MultiReturnType
+    > {
+    functionName: string;
     names: {
         relay: string;
         getDataSrv: string;
@@ -93,52 +123,85 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             const argDef = def.argDefs[i];
             const arg = args[i];
 
-            if (argDef.callbackDef) {
-                registerParticleSpecificHandler(peer, particle.id, def.names.callbackSrv, argDef.name, async (req) => {
-                    const args = convertArgsFromReqToUserCall(req, argDef.callbackDef.argDefs);
-                    const result = await arg.apply(null, args);
-                    return {
-                        retCode: ResultCodes.success,
-                        result: returnArg(result, argDef.callbackDef.returnType),
-                    };
-                });
-            } else if (argDef.isOptional) {
-                registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
-                    const res = tsToAquaOpt(arg);
-                    return {
-                        retCode: ResultCodes.success,
-                        result: res,
-                    };
-                });
-            } else {
-                registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
-                    return {
-                        retCode: ResultCodes.success,
-                        result: arg,
-                    };
-                });
+            switch (argDef.argType.type) {
+                case 'callback':
+                    const callbackDef = argDef.argType.def;
+                    registerParticleSpecificHandler(
+                        peer,
+                        particle.id,
+                        def.names.callbackSrv,
+                        argDef.name,
+                        async (req) => {
+                            const args = convertArgsFromReqToUserCall(req, callbackDef.argDefs);
+                            const result = await arg.apply(null, args);
+                            let res;
+                            switch (callbackDef.returnType.type) {
+                                case 'void':
+                                    res = {};
+                                    break;
+                                case 'primitive':
+                                    res = result;
+                                    break;
+                                case 'optional':
+                                    res = tsToAquaOpt(result);
+                                    break;
+                            }
+                            return {
+                                retCode: ResultCodes.success,
+                                result: res,
+                            };
+                        },
+                    );
+                    break;
+
+                case 'optional':
+                    registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
+                        const res = tsToAquaOpt(arg);
+                        return {
+                            retCode: ResultCodes.success,
+                            result: res,
+                        };
+                    });
+                    break;
+
+                case 'primitive':
+                    registerParticleSpecificHandler(peer, particle.id, def.names.getDataSrv, argDef.name, (req) => {
+                        return {
+                            retCode: ResultCodes.success,
+                            result: arg,
+                        };
+                    });
+                    break;
             }
         }
 
         registerParticleSpecificHandler(peer, particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
-            let res;
-            if (def.multiReturn) {
-                res = def.multiReturn.map((x, index) => {
-                    if (x.isOptional) {
-                        return aquaOptToTs(req.args[index]);
-                    } else {
-                        return req.args[index];
-                    }
-                });
-            } else if (def.returnType.isOptional) {
-                res = aquaOptToTs(req.args[0]);
-            } else {
-                res = req.args[0];
+            let userFunctionReturn;
+            switch (def.returnType.type) {
+                case 'primitive':
+                    userFunctionReturn = req.args[0];
+                    break;
+                case 'optional':
+                    userFunctionReturn = aquaOptToTs(req.args[0]);
+                    break;
+                case 'void':
+                    userFunctionReturn = undefined;
+                    break;
+                case 'multiReturn':
+                    userFunctionReturn = def.returnType.returnItems.map((x, index) => {
+                        if (x.type === 'optional') {
+                            return aquaOptToTs(req.args[index]);
+                        } else {
+                            return req.args[index];
+                        }
+                    });
+                    break;
             }
 
             setTimeout(() => {
-                resolve(res);
+                resolve(userFunctionReturn);
             }, 0);
+
             return {
                 retCode: ResultCodes.success,
                 result: {},
@@ -170,7 +233,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         peer.internals.initiateParticle(particle);
     });
 
-    if (def.returnType.isVoid) {
+    if (def.returnType.type === 'void') {
         return Promise.resolve([promise]);
     } else {
         return promise;
@@ -195,17 +258,29 @@ export function registerService(args: any[], def: ServiceDef) {
         registerCommonHandler(peer, serviceId, singleFunction.functionName, async (req) => {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
             const result = await userDefinedHandler.apply(null, args);
+            let returnArg;
+            switch (singleFunction.returnType.type) {
+                case 'primitive':
+                    returnArg = req.args[0];
+                    break;
+                case 'optional':
+                    returnArg = aquaOptToTs(req.args[0]);
+                    break;
+                case 'void':
+                    returnArg = undefined;
+                    break;
+            }
             return {
                 retCode: ResultCodes.success,
-                result: returnArg(result, singleFunction.returnType),
+                result: returnArg(result, returnArg),
             };
         });
     }
 }
 
-const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef>) => {
+const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef<OptionalType | PrimitiveType>>) => {
     const argsAccountedForOptional = req.args.map((x, index) => {
-        if (args[index].isOptional) {
+        if (args[index].argType.type === 'optional') {
             return aquaOptToTs(x);
         } else {
             return x;
@@ -215,7 +290,10 @@ const convertArgsFromReqToUserCall = (req: CallServiceData, args: Array<ArgDef>)
     return [...argsAccountedForOptional, extractCallParams(req, args)];
 };
 
-const extractCallParams = (req: CallServiceData, args: Array<ArgDef>): CallParams<any> => {
+const extractCallParams = (
+    req: CallServiceData,
+    args: Array<ArgDef<OptionalType | PrimitiveType>>,
+): CallParams<any> => {
     let tetraplets: any = {};
     for (let i = 0; i < req.args.length; i++) {
         if (args[i]) {
