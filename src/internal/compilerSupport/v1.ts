@@ -21,7 +21,8 @@ export { FluencePeer } from '../FluencePeer';
 export { CallParams, ResultCodes } from '../commonTypes';
 
 /**
- * @deprecated
+ * @deprecated This class exists to glue legacy RequestFlowBuilder api with restructured async FluencePeer.
+ * v2 version of compiler support should be used instead
  */
 export interface RequestFlow {
     particle: Particle;
@@ -31,7 +32,8 @@ export interface RequestFlow {
 }
 
 /**
- * @deprecated
+ * @deprecated This class exists to glue legacy RequestFlowBuilder api with restructured async FluencePeer.
+ * v2 version of compiler support should be used instead
  */
 export class RequestFlowBuilder {
     private _ttl?: number;

@@ -16,6 +16,10 @@
 
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../commonTypes';
 
+/**
+ * @deprecated This class exists to glue legacy RequestFlowBuilder api with restructured async FluencePeer.
+ * v2 version of compiler support should be used instead
+ */
 export const callLegacyCallServiceHandler = (
     req: CallServiceData,
     commonHandler: CallServiceHandler,
@@ -46,6 +50,7 @@ export const callLegacyCallServiceHandler = (
 };
 
 /**
+ * @deprecated
  * Type for the middleware used in CallServiceHandler middleware chain.
  * In a nutshell middleware is a function of request, response and function to trigger the next middleware in chain.
  * Each middleware is free to write additional properties to either request or response object.
@@ -56,9 +61,13 @@ export const callLegacyCallServiceHandler = (
  */
 export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => void;
 
+/**
+ * @deprecated
+ */
 type CallParams = any;
 
 /**
+ * @deprecated
  * Convenience middleware factory. Registers a handler for a pair of 'serviceId/fnName'.
  * The return value of the handler is passed back to AVM
  * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
@@ -81,6 +90,7 @@ export const fnHandler = (
 };
 
 /**
+ * @deprecated
  * Convenience middleware factory. Registers a handler for a pair of 'serviceId/fnName'.
  * Similar to @see { @link fnHandler } but instead returns and empty object immediately runs the handler asynchronously
  * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
@@ -105,9 +115,13 @@ export const fnAsEventHandler = (
     };
 };
 
+/**
+ * @deprecated
+ */
 type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => void;
 
 /**
+ * @deprecated
  * Class defines the handling of a `call` air instruction executed by AVM on the local peer.
  * All the execution process is defined by the chain of middlewares - architecture popular among backend web frameworks.
  * Each middleware has the form of `(req: Call, resp: CallServiceResult, next: Function) => void;`
