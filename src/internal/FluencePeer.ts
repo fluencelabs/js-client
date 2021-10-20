@@ -569,19 +569,6 @@ function runInterpreter(
     return interpreterResult;
 }
 
-/*
-function filterExpiredParticles(stream: Observable<Particle>): Observable<Particle> {
-    return stream.pipe(
-        tap((p) => {
-            if (p.hasExpired) {
-                log.debug(`particle ${p.id} has expired`);
-            }
-        }),
-        filter((x) => !x.hasExpired()),
-    );
-}
-*/
-
 function filterExpiredParticles() {
     return pipe(
         tap((p: Particle) => {
