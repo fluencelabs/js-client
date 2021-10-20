@@ -1,5 +1,5 @@
-import { CallServiceData, CallServiceHandler, ResultCodes } from '../../internal/CallServiceHandler';
-import { errorHandler } from '../../internal/defaultMiddlewares';
+import { CallServiceData, ResultCodes } from '../../internal/commonTypes';
+import { CallServiceHandler } from '../../internal/compilerSupport/LegacyCallServiceHandler';
 
 const req = (): CallServiceData => ({
     serviceId: 'service',
@@ -92,25 +92,6 @@ describe('Call service handler tests', () => {
         });
     });
 
-    it('Should work with provided error handling middleware', () => {
-        // arrange
-        const handler = new CallServiceHandler();
-
-        handler.use(errorHandler);
-        handler.use((req, res, next) => {
-            throw new Error('some error');
-        });
-
-        // act
-        const res = handler.execute(req());
-
-        // assert
-        expect(res).toMatchObject({
-            retCode: ResultCodes.exceptionInHandler,
-            result: 'Handler failed. fnName="fn name" serviceId="service" error: Error: some error',
-        });
-    });
-
     describe('Service handler tests', () => {
         it('Should register service function', () => {
             // arrange
@@ -131,28 +112,6 @@ describe('Call service handler tests', () => {
             expect(res).toMatchObject({
                 retCode: ResultCodes.success,
                 result: { called: ['hello', 'world'] },
-            });
-        });
-
-        it('Should UNregister service function', () => {
-            // arrange
-            const handler = new CallServiceHandler();
-            const unreg = handler.on('service', 'function', (args) => {
-                return { called: args };
-            });
-            unreg();
-
-            // act
-            const res = handler.execute({
-                ...req(),
-                serviceId: 'service',
-                fnName: 'function',
-                args: ['hello', 'world'],
-            });
-
-            // assert
-            expect(res).toMatchObject({
-                retCode: ResultCodes.unkownError,
             });
         });
 
@@ -178,28 +137,6 @@ describe('Call service handler tests', () => {
 
             // assert
             await expect(returnPromise).resolves.toMatchObject({ called: ['hello', 'world'] });
-        });
-
-        it('Should UNregister event', () => {
-            // arrange
-            const handler = new CallServiceHandler();
-            const unreg = handler.onEvent('service', 'function', (args) => {
-                // don't care
-            });
-            unreg();
-
-            // act
-            const res = handler.execute({
-                ...req(),
-                serviceId: 'service',
-                fnName: 'function',
-                args: ['hello', 'world'],
-            });
-
-            // assert
-            expect(res).toMatchObject({
-                retCode: ResultCodes.unkownError,
-            });
         });
 
         it('Should register multiple service functions', () => {

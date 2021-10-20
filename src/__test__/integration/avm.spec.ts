@@ -1,25 +1,48 @@
-import { Fluence, FluencePeer } from '../../index';
-import { RequestFlowBuilder } from '../../internal/RequestFlowBuilder';
-
-const anotherPeer = new FluencePeer();
+import { FluencePeer } from '../../index';
+import { Particle } from '../../internal/Particle';
+import { registerHandlersHelper } from '../util';
 
 describe('Avm spec', () => {
-    afterEach(async () => {
-        if (anotherPeer) {
-            await anotherPeer.stop();
-        }
+    it('Simple call', async () => {
+        // arrange
+        const peer = new FluencePeer();
+        await peer.start();
+
+        // act
+        const promise = new Promise<string[]>((resolve, reject) => {
+            const script = `
+                (call %init_peer_id% ("print" "print") ["1"])
+            `;
+            const particle = Particle.createNew(script);
+            registerHandlersHelper(peer, particle, {
+                print: {
+                    print: async (args) => {
+                        const [res] = args;
+                        resolve(res);
+                    },
+                },
+                _timeout: reject,
+            });
+
+            peer.internals.initiateParticle(particle);
+        });
+
+        // assert
+        const res = await promise;
+        expect(res).toBe('1');
+
+        await peer.stop();
     });
 
-    it('Par execution should work', async () => {
+    it('Par call', async () => {
         // arrange
-        await Fluence.start();
+        const peer = new FluencePeer();
+        await peer.start();
 
-        let request;
-        const promise = new Promise<string[]>((resolve) => {
+        // act
+        const promise = new Promise<string[]>((resolve, reject) => {
             let res = [];
-            request = new RequestFlowBuilder()
-                .withRawScript(
-                    `
+            const script = `
                 (seq
                     (par
                         (call %init_peer_id% ("print" "print") ["1"])
@@ -27,24 +50,27 @@ describe('Avm spec', () => {
                     )
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
-            `,
-                )
-                .configHandler((h) => {
-                    h.onEvent('print', 'print', async (args) => {
+            `;
+            const particle = Particle.createNew(script);
+            registerHandlersHelper(peer, particle, {
+                print: {
+                    print: (args) => {
                         res.push(args[0]);
                         if (res.length == 2) {
                             resolve(res);
                         }
-                    });
-                })
-                .build();
+                    },
+                },
+                _timeout: reject,
+            });
+
+            peer.internals.initiateParticle(particle);
         });
 
-        // act
-        await Fluence.getPeer().internals.initiateFlow(request);
-        const res = await promise;
-
         // assert
+        const res = await promise;
         expect(res).toStrictEqual(['1', '2']);
+
+        await peer.stop();
     });
 });

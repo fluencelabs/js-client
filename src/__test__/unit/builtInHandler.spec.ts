@@ -1,6 +1,6 @@
 import each from 'jest-each';
-import { CallServiceData } from '../../internal/CallServiceHandler';
-import makeDefaultClientHandler from '../../internal/defaultClientHandler';
+import { CallServiceData } from '../../internal/commonTypes';
+import { defaultServices } from '../../internal/defaultServices';
 
 describe('Tests for default handler', () => {
     // prettier-ignore
@@ -34,7 +34,7 @@ describe('Tests for default handler', () => {
 `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
-        ({ fnName, args, retCode, result }) => {
+        async ({ fnName, args, retCode, result }) => {
             // arrange
             const req: CallServiceData = {
                 serviceId: 'op',
@@ -51,14 +51,41 @@ describe('Tests for default handler', () => {
             };
 
             // act
-            const res = makeDefaultClientHandler().execute(req);
+            const fn = defaultServices[req.serviceId][req.fnName];
+            const res = await fn(req);
 
             // assert
             expect(res).toMatchObject({
                 retCode: retCode,
                 result: result,
             });
-            const handler = makeDefaultClientHandler();
         },
     );
+
+    it('should return correct error message for identiy service', async () => {
+        // arrange
+        const req: CallServiceData = {
+            serviceId: 'peer',
+            fnName: 'identify',
+            args: [],
+            tetraplets: [],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: 'init peer id',
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        // act
+        const fn = defaultServices[req.serviceId][req.fnName];
+        const res = await fn(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 1,
+            result: 'The JS implementation of Peer does not support identify',
+        });
+    });
 });

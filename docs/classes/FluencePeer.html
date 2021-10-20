@@ -121,7 +121,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/c0acd41/src/internal/FluencePeer.ts#L107">internal/FluencePeer.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9f81458/src/internal/FluencePeer.ts#L132">internal/FluencePeer.ts:132</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -140,13 +140,13 @@
 					<a name="internals" class="tsd-anchor"></a>
 					<h3>internals</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> internals<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>callServiceHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CallServiceHandler</span><span class="tsd-signature-symbol">; </span>initiateFlow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> internals<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>callServiceHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CallServiceHandler</span><span class="tsd-signature-symbol">; </span>initiateFlow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>initiateParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>regHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>common<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>forParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> }</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/c0acd41/src/internal/FluencePeer.ts#L182">internal/FluencePeer.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9f81458/src/internal/FluencePeer.ts#L225">internal/FluencePeer.ts:225</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -154,27 +154,175 @@
 									<p>Is not intended to be used manually. Subject to change</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>callServiceHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CallServiceHandler</span><span class="tsd-signature-symbol">; </span>initiateFlow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>callServiceHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CallServiceHandler</span><span class="tsd-signature-symbol">; </span>initiateFlow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>initiateParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>regHandler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>common<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>forParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> }</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter">
 									<h5>call<wbr>Service<wbr>Handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">CallServiceHandler</span></h5>
 								</li>
 								<li class="tsd-parameter">
-									<h5>initiate<wbr>Flow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>initiate<wbr>Flow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-signature">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>request<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestFlow</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
+													<div class="tsd-comment tsd-typography">
+														<dl class="tsd-comment-tags">
+															<dt>deprecated</dt>
+															<dd></dd>
+														</dl>
+													</div>
 													<h4 class="tsd-parameters-title">Parameters</h4>
 													<ul class="tsd-parameters">
 														<li>
 															<h5>request: <span class="tsd-signature-type">RequestFlow</span></h5>
 														</li>
 													</ul>
-													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li class="tsd-parameter">
+									<h5>initiate<wbr>Particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Particle</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<div class="tsd-comment tsd-typography">
+														<div class="lead">
+															<p>Initiates a new particle execution starting from local peer</p>
+														</div>
+													</div>
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>particle: <span class="tsd-signature-type">Particle</span></h5>
+															<div class="tsd-comment tsd-typography">
+																<p>particle to start execution of</p>
+															</div>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li class="tsd-parameter">
+									<h5>reg<wbr>Handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>common<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>forParticle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> }</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>common<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+											<ul class="tsd-parameters">
+												<li class="tsd-parameter-signature">
+													<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
+														<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<div class="tsd-comment tsd-typography">
+																<div class="lead">
+																	<p>Register handler for all particles</p>
+																</div>
+															</div>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>serviceId: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>fnName: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>handler: <span class="tsd-signature-type">GenericCallServiceHandler</span></h5>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+										<li class="tsd-parameter">
+											<h5>for<wbr>Particle<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+											<ul class="tsd-parameters">
+												<li class="tsd-parameter-signature">
+													<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
+														<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fnName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GenericCallServiceHandler</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<div class="tsd-comment tsd-typography">
+																<div class="lead">
+																	<p>Register handler which will be called only for particle with the specific id</p>
+																</div>
+															</div>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>particleId: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>serviceId: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>fnName: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>handler: <span class="tsd-signature-type">GenericCallServiceHandler</span></h5>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+										<li class="tsd-parameter">
+											<h5>timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+											<ul class="tsd-parameters">
+												<li class="tsd-parameter-signature">
+													<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
+														<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>particleId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+													</ul>
+													<ul class="tsd-descriptions">
+														<li class="tsd-description">
+															<div class="tsd-comment tsd-typography">
+																<div class="lead">
+																	<p>Register handler which will be called upon particle timeout</p>
+																</div>
+															</div>
+															<h4 class="tsd-parameters-title">Parameters</h4>
+															<ul class="tsd-parameters">
+																<li>
+																	<h5>particleId: <span class="tsd-signature-type">string</span></h5>
+																</li>
+																<li>
+																	<h5>handler: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
+																	<ul class="tsd-parameters">
+																		<li class="tsd-parameter-signature">
+																			<ul class="tsd-signatures tsd-kind-type-literal">
+																				<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+																			</ul>
+																			<ul class="tsd-descriptions">
+																				<li class="tsd-description">
+																					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+																				</li>
+																			</ul>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+														</li>
+													</ul>
 												</li>
 											</ul>
 										</li>
@@ -197,7 +345,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/c0acd41/src/internal/FluencePeer.ts#L125">internal/FluencePeer.ts:125</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9f81458/src/internal/FluencePeer.ts#L150">internal/FluencePeer.ts:150</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -219,7 +367,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/c0acd41/src/internal/FluencePeer.ts#L144">internal/FluencePeer.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9f81458/src/internal/FluencePeer.ts#L165">internal/FluencePeer.ts:165</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -251,12 +399,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/c0acd41/src/internal/FluencePeer.ts#L172">internal/FluencePeer.ts:172</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9f81458/src/internal/FluencePeer.ts#L209">internal/FluencePeer.ts:209</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Uninitializes the peer: stops all the underltying workflows, stops the Aqua VM
+									<p>Un-initializes the peer: stops all the underlying workflows, stops the Aqua VM
 									and disconnects from the Fluence network</p>
 								</div>
 							</div>
@@ -274,7 +422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/c0acd41/src/internal/FluencePeer.ts#L114">internal/FluencePeer.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9f81458/src/internal/FluencePeer.ts#L139">internal/FluencePeer.ts:139</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

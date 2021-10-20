@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SecurityTetraplet } from '@fluencelabs/avm';
+import { CallRequest, SecurityTetraplet } from '@fluencelabs/avm';
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
@@ -39,7 +39,7 @@ export interface CallParams<ArgName extends string | null> {
     /**
      * Particle's timestamp when it was created
      */
-    timeStamp: number;
+    timestamp: number;
 
     /**
      * Time to live in milliseconds. The time after the particle should be expired
@@ -55,4 +55,79 @@ export interface CallParams<ArgName extends string | null> {
      * Security tetraplets
      */
     tetraplets: { [key in ArgName]: SecurityTetraplet[] };
+}
+
+export enum ResultCodes {
+    success = 0,
+    unknownError = 1,
+    exceptionInHandler = 2,
+}
+
+/**
+ * Particle context. Contains additional information about particle which triggered `call` air instruction from AVM
+ */
+export interface ParticleContext {
+    /**
+     * The particle ID
+     */
+    particleId: string;
+    initPeerId: PeerIdB58;
+    timestamp: number;
+    ttl: number;
+    signature: string;
+}
+
+/**
+ * Represents the information passed from AVM when a `call` air instruction is executed on the local peer
+ */
+export interface CallServiceData {
+    /**
+     * Service ID as specified in `call` air instruction
+     */
+    serviceId: string;
+
+    /**
+     * Function name as specified in `call` air instruction
+     */
+    fnName: string;
+
+    /**
+     * Arguments as specified in `call` air instruction
+     */
+    args: any[];
+
+    /**
+     * Security Tetraplets received from AVM
+     */
+    tetraplets: SecurityTetraplet[][];
+
+    /**
+     * Particle context, @see {@link ParticleContext}
+     */
+    particleContext: ParticleContext;
+}
+
+/**
+ * Type for all the possible objects that can be return to the AVM
+ */
+export type CallServiceResultType = object | boolean | number | string | null;
+
+/**
+ * Generic call service handler
+ */
+export type GenericCallServiceHandler = (req: CallServiceData) => CallServiceResult | Promise<CallServiceResult>;
+
+/**
+ * Represents the result of the `call` air instruction to be returned into AVM
+ */
+export interface CallServiceResult {
+    /**
+     * Return code to be returned to AVM
+     */
+    retCode: ResultCodes;
+
+    /**
+     * Result object to be returned to AVM
+     */
+    result: CallServiceResultType;
 }

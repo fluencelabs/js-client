@@ -1,82 +1,58 @@
-import { SecurityTetraplet } from '@fluencelabs/avm';
-import { PeerIdB58 } from './commonTypes';
-
-export enum ResultCodes {
-    success = 0,
-    unkownError = 1,
-    exceptionInHandler = 2,
-}
-
-/**
- * Particle context. Contains additional information about particle which triggered `call` air instruction from AVM
+/*
+ * Copyright 2021 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-interface ParticleContext {
-    /**
-     * The particle ID
-     */
-    particleId: string;
-    initPeerId: PeerIdB58;
-    timestamp: number;
-    ttl: number;
-    signature: string;
-}
+
+import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../commonTypes';
 
 /**
- * Represents the information passed from AVM when a `call` air instruction is executed on the local peer
+ * @deprecated This class exists to glue legacy RequestFlowBuilder api with restructured async FluencePeer.
+ * v2 version of compiler support should be used instead
  */
-export interface CallServiceData {
-    /**
-     * Service ID as specified in `call` air instruction
-     */
-    serviceId: string;
+export const callLegacyCallServiceHandler = (
+    req: CallServiceData,
+    commonHandler: CallServiceHandler,
+    particleSpecificHandler?: CallServiceHandler,
+): CallServiceResult => {
+    // trying particle-specific handler
+    if (particleSpecificHandler !== undefined) {
+        var res = particleSpecificHandler.execute(req);
+    }
 
-    /**
-     * Function name as specified in `call` air instruction
-     */
-    fnName: string;
+    if (res?.result === undefined) {
+        // if it didn't return any result trying to run the common handler
+        res = commonHandler.execute(req);
+    }
 
-    /**
-     * Arguments as specified in `call` air instruction
-     */
-    args: any[];
+    if (res.retCode === undefined) {
+        res = {
+            retCode: ResultCodes.unknownError,
+            result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+        };
+    }
 
-    /**
-     * Security Tetraplets recieved from AVM
-     */
-    tetraplets: SecurityTetraplet[][];
+    if (res.result === undefined) {
+        res.result = null;
+    }
 
-    /**
-     * Particle context, @see {@link ParticleContext}
-     */
-    particleContext: ParticleContext;
-
-    [x: string]: any;
-}
-
-/**
- * Type for all the possible ovjects that can be return to the AVM
- */
-export type CallServiceResultType = object | boolean | number | string | null;
+    return res;
+};
 
 /**
- * Represents the result of the `call` air instruction to be returned into AVM
- */
-export interface CallServiceResult {
-    /**
-     * Return code to be returned to AVM
-     */
-    retCode: ResultCodes;
-
-    /**
-     * Result object to be returned to AVM
-     */
-    result: CallServiceResultType;
-    [x: string]: any;
-}
-
-/**
+ * @deprecated
  * Type for the middleware used in CallServiceHandler middleware chain.
- * In a nutshell middelware is a function of request, response and function to trigger the next middleware in chain.
+ * In a nutshell middleware is a function of request, response and function to trigger the next middleware in chain.
  * Each middleware is free to write additional properties to either request or response object.
  * When the chain finishes the response is passed back to AVM
  * @param { CallServiceData } req - information about the air `call` instruction
@@ -85,22 +61,14 @@ export interface CallServiceResult {
  */
 export type Middleware = (req: CallServiceData, resp: CallServiceResult, next: Function) => void;
 
-export class CallServiceArg<T> {
-    val: T;
-    tetraplet: SecurityTetraplet[];
-
-    constructor(val: T, tetraplet: SecurityTetraplet[]) {
-        this.val = val;
-        this.tetraplet = tetraplet;
-    }
-}
-
-type CallParams = ParticleContext & {
-    wrappedArgs: CallServiceArg<any>[];
-};
+/**
+ * @deprecated
+ */
+type CallParams = any;
 
 /**
- * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
+ * @deprecated
+ * Convenience middleware factory. Registers a handler for a pair of 'serviceId/fnName'.
  * The return value of the handler is passed back to AVM
  * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
  * @param { string } fnName - The identifier of function which would be used to make calls from AVM
@@ -113,7 +81,7 @@ export const fnHandler = (
 ) => {
     return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
-            const res = handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
+            const res = handler(req.args, req.particleContext);
             resp.retCode = ResultCodes.success;
             resp.result = res;
         }
@@ -122,7 +90,8 @@ export const fnHandler = (
 };
 
 /**
- * Convenience middleware factory. Registeres a handler for a pair of 'serviceId/fnName'.
+ * @deprecated
+ * Convenience middleware factory. Registers a handler for a pair of 'serviceId/fnName'.
  * Similar to @see { @link fnHandler } but instead returns and empty object immediately runs the handler asynchronously
  * @param { string } serviceId - The identifier of service which would be used to make calls from AVM
  * @param { string } fnName - The identifier of function which would be used to make calls from AVM
@@ -136,7 +105,7 @@ export const fnAsEventHandler = (
     return (req: CallServiceData, resp: CallServiceResult, next: Function): void => {
         if (req.fnName === fnName && req.serviceId === serviceId) {
             setTimeout(() => {
-                handler(req.args, { ...req.particleContext, wrappedArgs: req.wrappedArgs });
+                handler(req.args, req.particleContext);
             }, 0);
 
             resp.retCode = ResultCodes.success;
@@ -146,10 +115,14 @@ export const fnAsEventHandler = (
     };
 };
 
+/**
+ * @deprecated
+ */
 type CallServiceFunction = (req: CallServiceData, resp: CallServiceResult) => void;
 
 /**
- * Class defines the handling of a `call` air intruction executed by AVM on the local peer.
+ * @deprecated
+ * Class defines the handling of a `call` air instruction executed by AVM on the local peer.
  * All the execution process is defined by the chain of middlewares - architecture popular among backend web frameworks.
  * Each middleware has the form of `(req: Call, resp: CallServiceResult, next: Function) => void;`
  * A handler starts with an empty middleware chain and does nothing.
@@ -180,7 +153,7 @@ export class CallServiceHandler {
     }
 
     /**
-     * Combine handler with another one. Combintaion is done by copying middleware chain from the argument's handler into current one.
+     * Combine handler with another one. Combination is done by copying middleware chain from the argument's handler into current one.
      * Please note, that current handler's middlewares take precedence over the ones from handler to be combined with
      * @param { CallServiceHandler } other - CallServiceHandler to be combined with
      */
@@ -190,7 +163,7 @@ export class CallServiceHandler {
     }
 
     /**
-     * Convinience method for registring @see { @link fnHandler } middleware
+     * Convenience method for registering @see { @link fnHandler } middleware
      */
     on(
         serviceId: string, // force format
@@ -205,7 +178,7 @@ export class CallServiceHandler {
     }
 
     /**
-     * Convinience method for registring @see { @link fnAsEventHandler } middleware
+     * Convenience method for registering @see { @link fnAsEventHandler } middleware
      */
     onEvent(
         serviceId: string, // force format
@@ -240,8 +213,8 @@ export class CallServiceHandler {
      */
     execute(req: CallServiceData): CallServiceResult {
         const res: CallServiceResult = {
-            retCode: ResultCodes.unkownError,
-            result: `The handler did not set any result. Make sure you are calling the right peer and the handler has been registered. Original request data was: serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+            retCode: undefined,
+            result: undefined,
         };
         this.buildFunction()(req, res);
         return res;

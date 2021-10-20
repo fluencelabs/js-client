@@ -1,5 +1,6 @@
 import { Fluence, FluencePeer } from '../../..';
-import { RequestFlowBuilder } from '../../../internal/RequestFlowBuilder';
+import { Particle } from '../../../internal/Particle';
+import { registerHandlersHelper } from '../../util';
 import { callMeBack, registerHelloWorld } from './gen1';
 
 describe('Compiler support infrastructure tests', () => {
@@ -50,7 +51,7 @@ describe('Compiler support infrastructure tests', () => {
         const helloPromise = new Promise((resolve) => {
             registerHelloWorld('hello_world', {
                 sayHello: (s, params) => {
-                    const tetrapelt = params.tetraplets.s; // completion should work here
+                    const tetraplet = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
                 getNumber: (params) => {
@@ -60,23 +61,32 @@ describe('Compiler support infrastructure tests', () => {
             });
         });
 
-        const [request, getNumberPromise] = new RequestFlowBuilder()
-            .withRawScript(
-                `(seq
-                    (seq
-                        (call %init_peer_id% ("hello_world" "sayHello") ["hello world!"])
-                        (call %init_peer_id% ("hello_world" "getNumber") [] result)
-                    )
-                    (call %init_peer_id% ("callback" "callback") [result])
-                )`,
-            )
-            .buildAsFetch<[string]>('callback', 'callback');
-        await Fluence.getPeer().internals.initiateFlow(request);
+        const getNumberPromise = new Promise<string>((resolve, reject) => {
+            const script = `
+            (seq
+                (seq
+                    (call %init_peer_id% ("hello_world" "sayHello") ["hello world!"])
+                    (call %init_peer_id% ("hello_world" "getNumber") [] result)
+                )
+                (call %init_peer_id% ("callback" "callback") [result])
+            )`;
+            const particle = Particle.createNew(script);
+            registerHandlersHelper(Fluence.getPeer(), particle, {
+                callback: {
+                    callback: (args) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                },
+                _timeout: reject,
+            });
+
+            Fluence.getPeer().internals.initiateParticle(particle);
+        });
 
         // assert
         expect(await helloPromise).toBe('hello world!');
-        expect(await getNumberPromise).toStrictEqual([42]);
-
+        expect(await getNumberPromise).toBe(42);
         await Fluence.stop();
     });
 
@@ -122,14 +132,14 @@ describe('Compiler support infrastructure tests', () => {
 
     it('Compiled code for service should work another peer', async () => {
         // arrange
-        const peer = new FluencePeer();
-        await peer.start();
+        const anotherPeer = new FluencePeer();
+        await anotherPeer.start();
 
         // act
         const helloPromise = new Promise((resolve) => {
-            registerHelloWorld(peer, 'hello_world', {
+            registerHelloWorld(anotherPeer, 'hello_world', {
                 sayHello: (s, params) => {
-                    const tetrapelt = params.tetraplets.s; // completion should work here
+                    const tetraplet = params.tetraplets.s; // completion should work here
                     resolve(s);
                 },
                 getNumber: (params) => {
@@ -139,23 +149,32 @@ describe('Compiler support infrastructure tests', () => {
             });
         });
 
-        const [request, getNumberPromise] = new RequestFlowBuilder()
-            .withRawScript(
-                `(seq
-                    (seq
-                        (call %init_peer_id% ("hello_world" "sayHello") ["hello world!"])
-                        (call %init_peer_id% ("hello_world" "getNumber") [] result)
-                    )
-                    (call %init_peer_id% ("callback" "callback") [result])
-                )`,
-            )
-            .buildAsFetch<[string]>('callback', 'callback');
-        await peer.internals.initiateFlow(request);
+        const getNumberPromise = new Promise<string>((resolve, reject) => {
+            const script = `
+            (seq
+                (seq
+                    (call %init_peer_id% ("hello_world" "sayHello") ["hello world!"])
+                    (call %init_peer_id% ("hello_world" "getNumber") [] result)
+                )
+                (call %init_peer_id% ("callback" "callback") [result])
+            )`;
+            const particle = Particle.createNew(script);
+            registerHandlersHelper(anotherPeer, particle, {
+                callback: {
+                    callback: (args) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                },
+                _timeout: reject,
+            });
+            anotherPeer.internals.initiateParticle(particle);
+        });
 
         // assert
         expect(await helloPromise).toBe('hello world!');
-        expect(await getNumberPromise).toStrictEqual([42]);
+        expect(await getNumberPromise).toBe(42);
 
-        await peer.stop();
+        await anotherPeer.stop();
     });
 });
