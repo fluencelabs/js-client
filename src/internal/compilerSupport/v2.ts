@@ -339,7 +339,7 @@ export function registerService(args: any[], def: ServiceDef) {
 
     // Checking for missing keys
     const requiredKeys = def.functions.map((x) => x.functionName);
-    const incorrectServiceDefinitions = Object.keys(service).filter((f) => !(f in requiredKeys));
+    const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));
     if (!!incorrectServiceDefinitions.length) {
         throw new Error(
             `Error registering service ${serviceId}: missing functions: ` +
