@@ -20,6 +20,9 @@ import { Particle } from '../Particle';
 export { FluencePeer } from '../FluencePeer';
 export { CallParams, ResultCodes } from '../commonTypes';
 
+/**
+ * @deprecated
+ */
 export interface RequestFlow {
     particle: Particle;
     handler: CallServiceHandler;
@@ -27,8 +30,9 @@ export interface RequestFlow {
     error?: (reason?: any) => void;
 }
 
-const DEFAULT_TTL = 7000;
-
+/**
+ * @deprecated
+ */
 export class RequestFlowBuilder {
     private _ttl?: number;
     private _script?: string;
@@ -43,7 +47,7 @@ export class RequestFlowBuilder {
         }
 
         return {
-            particle: Particle.createNew(this._script!, this._ttl || DEFAULT_TTL),
+            particle: Particle.createNew(this._script!, this._ttl),
             handler: h,
             timeout: this._timeout,
             error: this._error,

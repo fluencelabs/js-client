@@ -49,6 +49,8 @@ type Node = {
  */
 export type AvmLoglevel = LogLevel;
 
+const DEFAULT_TTL = 7000;
+
 /**
  * Configuration used when initiating Fluence Peer
  */
@@ -231,6 +233,10 @@ export class FluencePeer {
                     particle.initPeerId = this.getStatus().peerId;
                 }
 
+                if (particle.ttl === undefined) {
+                    particle.ttl = DEFAULT_TTL;
+                }
+
                 this._incomingParticles.next(particle);
             },
             /**
@@ -278,9 +284,6 @@ export class FluencePeer {
              */
             initiateFlow: (request: RequestFlow): void => {
                 const particle = request.particle;
-                if (particle.initPeerId === undefined) {
-                    particle.initPeerId = this.getStatus().peerId;
-                }
 
                 this._legacyParticleSpecificHandlers.set(particle.id, {
                     handler: request.handler,
@@ -288,7 +291,7 @@ export class FluencePeer {
                     timeout: request.timeout,
                 });
 
-                this._incomingParticles.next(request.particle);
+                this.internals.initiateParticle(particle);
             },
 
             /**

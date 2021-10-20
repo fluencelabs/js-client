@@ -31,8 +31,6 @@ describe('Tests for default handler', () => {
   ${'bytes_from_b58'}  | ${["3yZe7d"]}                  | ${0}    | ${[116, 101, 115, 116]}
   ${'bytes_from_b58'}  | ${["3yZe7d", 1]}               | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
 
-  ${'identify'}        | ${[]}                          | ${1}    | ${"The JS implementation of Peer does not support identify"}
-
 `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
@@ -63,4 +61,31 @@ describe('Tests for default handler', () => {
             });
         },
     );
+
+    it('should return correct error message for identiy service', async () => {
+        // arrange
+        const req: CallServiceData = {
+            serviceId: 'peer',
+            fnName: 'identify',
+            args: [],
+            tetraplets: [],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: 'init peer id',
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        // act
+        const fn = defaultServices[req.serviceId][req.fnName];
+        const res = await fn(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 1,
+            result: 'The JS implementation of Peer does not support identify',
+        });
+    });
 });

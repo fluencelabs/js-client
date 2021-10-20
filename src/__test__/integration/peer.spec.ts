@@ -316,14 +316,14 @@ describe('Typescript usage suite', () => {
         await anotherPeer.start({ connectTo: nodes[0] });
 
         // act
-        const res = callIdentifyOnInitPeerId(anotherPeer);
+        const res = callIncorrectService(anotherPeer);
 
         // assert
         await expect(res).rejects.toMatchObject({
             msg: expect.stringContaining(
-                `No handler has been registered for serviceId='peer' fnName='identify' args=''\"'`,
+                `No handler has been registered for serviceId='incorrect' fnName='incorrect' args=''\"'`,
             ),
-            instruction: 'call %init_peer_id% ("peer" "identify") [] res',
+            instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
         });
     });
 
@@ -440,11 +440,11 @@ describe('Typescript usage suite', () => {
     });
 });
 
-async function callIdentifyOnInitPeerId(peer: FluencePeer): Promise<string[]> {
+async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
     const promise = new Promise<any[]>((resolve, reject) => {
         const script = `
     (xor
-        (call %init_peer_id% ("peer" "identify") [] res)
+        (call %init_peer_id% ("incorrect" "incorrect") [] res)
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
         const particle = Particle.createNew(script);

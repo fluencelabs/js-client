@@ -96,7 +96,9 @@ export const defaultServices: { [serviceId in string]: { [fnName in string]: Gen
                 return success(Array.from(decode(req.args[0])));
             }
         },
+    },
 
+    peer: {
         identify: (req) => {
             return error('The JS implementation of Peer does not support identify');
         },
