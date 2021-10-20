@@ -30,7 +30,7 @@ import { FluenceConnection } from './FluenceConnection';
 import { Particle } from './Particle';
 import { KeyPair } from './KeyPair';
 import { createInterpreter, dataToString } from './utils';
-import { filter, map, Subject, tap } from 'rxjs';
+import { filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { defaultServices } from './defaultServices';
@@ -342,8 +342,7 @@ export class FluencePeer {
         this._incomingParticles
             .pipe(
                 tap((x) => x.logTo('debug', 'particle received:')),
-                filter((x) => !x.hasExpired()),
-                map((x) => x),
+                filterExpiredParticles(),
             )
             .subscribe((p) => {
                 let particlesQueue = particleQueues.get(p.id);
@@ -353,6 +352,8 @@ export class FluencePeer {
                     particleQueues.set(p.id, particlesQueue);
 
                     const timeout = setTimeout(() => {
+                        log.debug(`particle ${p.id} has expired. Deleting particle-related queues and handlers`);
+
                         particleQueues.delete(p.id);
                         const timeoutHandler = this._timeoutHandlers.get(p.id);
                         if (timeoutHandler) {
@@ -379,8 +380,8 @@ export class FluencePeer {
 
         particlesQueue
             .pipe(
-                filter((x) => !x.hasExpired()),
-                map((x) => x),
+                // force new line
+                filterExpiredParticles(),
             )
             .subscribe((x) => {
                 const result = runInterpreter(this.getStatus().peerId, this._interpreter, x, prevData);
@@ -563,4 +564,28 @@ function runInterpreter(
     toLog.data = dataToString(toLog.data);
     log.debug('Interpreter result: ', toLog);
     return interpreterResult;
+}
+
+/*
+function filterExpiredParticles(stream: Observable<Particle>): Observable<Particle> {
+    return stream.pipe(
+        tap((p) => {
+            if (p.hasExpired) {
+                log.debug(`particle ${p.id} has expired`);
+            }
+        }),
+        filter((x) => !x.hasExpired()),
+    );
+}
+*/
+
+function filterExpiredParticles() {
+    return pipe(
+        tap((p: Particle) => {
+            if (p.hasExpired) {
+                log.debug(`particle ${p.id} has expired`);
+            }
+        }),
+        filter((x: Particle) => !x.hasExpired()),
+    );
 }

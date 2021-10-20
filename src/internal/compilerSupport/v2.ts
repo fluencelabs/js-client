@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 import { CallParams, Fluence, FluencePeer } from '../../index';
 import { CallServiceData, GenericCallServiceHandler, CallServiceResult, ResultCodes } from '../commonTypes';
@@ -264,7 +265,7 @@ const extractCallParams = (
     req: CallServiceData,
     argDefs: Array<ArgDef<OptionalType | PrimitiveType>>,
 ): CallParams<any> => {
-    let tetraplets: any = {};
+    let tetraplets: { [key in string]: SecurityTetraplet[] } = {};
     for (let i = 0; i < req.args.length; i++) {
         if (argDefs[i]) {
             tetraplets[argDefs[i].name] = req.tetraplets[i];
@@ -273,9 +274,7 @@ const extractCallParams = (
 
     const callParams = {
         ...req.particleContext,
-        tetraplets: {
-            tetraplets,
-        },
+        tetraplets,
     };
 
     return callParams;
