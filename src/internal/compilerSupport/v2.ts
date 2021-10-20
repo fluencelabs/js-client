@@ -44,7 +44,7 @@ type VoidType = {
 };
 
 /**
- * Represents all types other that Optional, Void, Callback and MultiReturn
+ * Represents all types other than Optional, Void, Callback and MultiReturn
  */
 type PrimitiveType = {
     /**
