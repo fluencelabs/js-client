@@ -94,6 +94,13 @@ export interface PeerConfig {
      * The dialing timeout in milliseconds
      */
     dialTimeoutMs?: number;
+
+    /**
+     * Sets the default TTL for all particles originating from the peer with no TTL specified.
+     * If the originating particle's TTL is defined then that value will be used
+     * If the options is not set default TTL will be 7000
+     */
+    defaultTtlMs?: number;
 }
 
 /**
@@ -169,6 +176,8 @@ export class FluencePeer {
             this._keyPair = await KeyPair.randomEd25519();
         }
 
+        this._defaultTTL = config?.defaultTtlMs | DEFAULT_TTL;
+
         this._interpreter = await createInterpreter(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
@@ -234,7 +243,7 @@ export class FluencePeer {
                 }
 
                 if (particle.ttl === undefined) {
-                    particle.ttl = DEFAULT_TTL;
+                    particle.ttl = this._defaultTTL;
                 }
 
                 this._incomingParticles.next(particle);
@@ -333,6 +342,7 @@ export class FluencePeer {
 
     // Internal peer state
 
+    private _defaultTTL: number;
     private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;

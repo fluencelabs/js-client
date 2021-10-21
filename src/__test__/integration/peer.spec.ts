@@ -275,6 +275,18 @@ describe('Typescript usage suite', () => {
             // assert
             expect(isConnected).toBeTruthy;
         });
+
+        it('With connection options: defaultTTL', async () => {
+            // arrange
+            const addr = nodes[0];
+
+            // act
+            await anotherPeer.start({ connectTo: addr, defaultTtlMs: 1000 });
+            const isConnected = await checkConnection(anotherPeer);
+
+            // assert
+            expect(isConnected).toBeTruthy;
+        });
     });
 
     it('Should successfully call identity on local peer', async function () {
