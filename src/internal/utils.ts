@@ -54,7 +54,7 @@ export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
 };
 
 /**
- * Checks the network connection by sending a ping-like request to relat node
+ * Checks the network connection by sending a ping-like request to relay node
  * @param { FluenceClient } peer - The Fluence Client instance.
  */
 export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<boolean> => {
@@ -127,11 +127,15 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
             }),
         );
 
+        peer.internals.regHandler.timeout(particle.id, () => {
+            reject('particle timed out');
+        });
+
         peer.internals.initiateParticle(particle);
     });
 
     try {
-        const [result] = await promise;
+        const result = await promise;
         if (result != msg) {
             log.warn("unexpected behavior. 'identity' must return the passed arguments.");
         }

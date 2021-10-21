@@ -189,7 +189,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('address as multiaddr', async () => {
@@ -201,7 +201,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('address as node', async () => {
@@ -213,7 +213,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('peerid as peer id', async () => {
@@ -225,7 +225,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('peerid as seed', async () => {
@@ -237,7 +237,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: dialTimeout', async () => {
@@ -249,7 +249,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: skipCheckConnection', async () => {
@@ -261,7 +261,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: checkConnectionTTL', async () => {
@@ -273,7 +273,7 @@ describe('Typescript usage suite', () => {
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: defaultTTL', async () => {
@@ -281,11 +281,11 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr, defaultTtlMs: 1000 });
+            await anotherPeer.start({ connectTo: addr, defaultTtlMs: 1 });
             const isConnected = await checkConnection(anotherPeer);
 
             // assert
-            expect(isConnected).toBeTruthy;
+            expect(isConnected).toBeFalsy();
         });
     });
 
@@ -309,9 +309,6 @@ describe('Typescript usage suite', () => {
                         resolve(res);
                     },
                 },
-                // op: {
-                //     identity: (req) => {},
-                // },
                 _timeout: reject,
             });
 
