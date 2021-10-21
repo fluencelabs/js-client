@@ -21,8 +21,6 @@ import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
 import { dataToString } from './utils';
 
-const DefaultTTL = 7000;
-
 export class Particle {
     id: string;
     initPeerId: string;
@@ -37,7 +35,7 @@ export class Particle {
         const res = new Particle();
         res.id = genUUID();
         res.script = script;
-        res.ttl = ttlMs || DefaultTTL;
+        res.ttl = ttlMs;
         res.data = Buffer.from([]);
         res.timestamp = Date.now();
 
