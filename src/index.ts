@@ -19,7 +19,7 @@ import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
 export { PeerStatus } from './internal/FluencePeer';
 export { KeyPair } from './internal/KeyPair';
-export { FluencePeer, AvmLoglevel } from './internal/FluencePeer';
+export { FluencePeer, AvmLoglevel, PeerConfig } from './internal/FluencePeer';
 export { PeerIdB58, CallParams } from './internal/commonTypes';
 
 export const setLogLevel = (level: LogLevelDesc) => {
