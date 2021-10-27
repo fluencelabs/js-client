@@ -381,7 +381,6 @@ describe('Typescript usage suite', () => {
 
     it('Should not crash if an error ocurred in user-defined handler', async () => {
         // arrange;
-        setLogLevel('trace');
         await anotherPeer.start();
 
         // act
@@ -415,6 +414,38 @@ describe('Typescript usage suite', () => {
         await expect(promise).rejects.toMatchObject({
             msg: expect.stringContaining('my super custom error message'),
         });
+    });
+
+    it('Should throw error if initiating particle for non-initiated peer', async () => {
+        // arrange;
+        const nonInitiatedPeer = new FluencePeer();
+
+        // act
+        const action = () => {
+            const script = `(null)`;
+            const particle = Particle.createNew(script);
+
+            nonInitiatedPeer.internals.initiateParticle(particle);
+        };
+
+        // assert
+        await expect(action).toThrow('Cannon initiate new particle: peer is no initialized');
+    });
+
+    it('Should throw error if particle with incorrect AIR script is initiated', async () => {
+        // arrange;
+        await anotherPeer.start();
+
+        // act
+        const action = () => {
+            const script = `incorrect air script`;
+            const particle = Particle.createNew(script);
+
+            anotherPeer.internals.initiateParticle(particle);
+        };
+
+        // assert
+        await expect(action).toThrow(/incorrect air script/);
     });
 
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {

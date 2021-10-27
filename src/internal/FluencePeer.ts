@@ -239,12 +239,21 @@ export class FluencePeer {
              * @param particle - particle to start execution of
              */
             initiateParticle: (particle: Particle): void => {
+                if (!this.getStatus().isInitialized) {
+                    throw 'Cannon initiate new particle: peer is no initialized';
+                }
+
                 if (particle.initPeerId === undefined) {
                     particle.initPeerId = this.getStatus().peerId;
                 }
 
                 if (particle.ttl === undefined) {
                     particle.ttl = this._defaultTTL;
+                }
+
+                const res: string = this._interpreter.parseAirScript(particle.script);
+                if (res.startsWith('error:')) {
+                    throw res;
                 }
 
                 this._incomingParticles.next(particle);
