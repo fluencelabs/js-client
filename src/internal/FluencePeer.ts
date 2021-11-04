@@ -99,7 +99,6 @@ export interface PeerConfig {
      * Sets the default TTL for all particles originating from the peer with no TTL specified.
      * If the originating particle's TTL is defined then that value will be used
      * If the option is not set default TTL will be 7000
-     * Value 0 (zero) is treated as if the option was not set
      */
     defaultTtlMs?: number;
 }
@@ -177,7 +176,10 @@ export class FluencePeer {
             this._keyPair = await KeyPair.randomEd25519();
         }
 
-        this._defaultTTL = config?.defaultTtlMs || DEFAULT_TTL;
+        this._defaultTTL =
+            config?.defaultTtlMs !== undefined // don't miss value 0 (zero)
+                ? config?.defaultTtlMs
+                : DEFAULT_TTL;
 
         this._interpreter = await createInterpreter(config?.avmLogLevel || 'off');
 

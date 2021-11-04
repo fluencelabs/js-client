@@ -195,7 +195,6 @@ export interface FnConfig {
     /**
      * Sets the TTL (time to live) for particle responsible for the function execution
      * If the option is not set the default TTL from FluencePeer config is used
-     * Value 0 (zero) is treated as if the option was not set
      */
     ttl?: number;
 }
@@ -216,7 +215,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
     }
 
     const promise = new Promise((resolve, reject) => {
-        const particle = Particle.createNew(script, config?.ttl || undefined);
+        const particle = Particle.createNew(script, config?.ttl);
 
         for (let i = 0; i < def.argDefs.length; i++) {
             const argDef = def.argDefs[i];
