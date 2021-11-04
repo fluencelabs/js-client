@@ -189,6 +189,17 @@ interface ServiceDef {
 }
 
 /**
+ * Options to configure Aqua function execution
+ */
+export interface FnConfig {
+    /**
+     * Sets the TTL (time to live) for particle responsible for the function execution
+     * If the option is not set the default TTL from FluencePeer config is used
+     */
+    ttl?: number;
+}
+
+/**
  * Convenience function to support Aqua `func` generation backend
  * The compiler only need to generate a call the function and provide the corresponding definitions and the air script
  *
@@ -437,7 +448,7 @@ const extractFunctionArgs = (
     numberOfExpectedArgs: number,
 ): {
     peer: FluencePeer;
-    config?: { ttl?: number };
+    config?: FnConfig;
     args: any[];
 } => {
     let peer: FluencePeer;
