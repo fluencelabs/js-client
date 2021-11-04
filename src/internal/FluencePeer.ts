@@ -27,13 +27,14 @@ import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCo
 import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
-import { Particle } from './Particle';
+import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
 import { createInterpreter, dataToString } from './utils';
 import { filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { defaultServices } from './defaultServices';
+import { instanceOf } from 'ts-pattern';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -200,7 +201,7 @@ export class FluencePeer {
                 peerId: this._keyPair.Libp2pPeerId,
                 relayAddress: connectToMultiAddr,
                 dialTimeoutMs: config.dialTimeoutMs,
-                onIncomingParticle: (p) => this._incomingParticles.next(p),
+                onIncomingParticle: (p) => this._incomingParticles.next({ particle: p, onStateChange: () => {} }),
             });
 
             await this._connect();
@@ -251,12 +252,10 @@ export class FluencePeer {
                     particle.ttl = this._defaultTTL;
                 }
 
-                const res: string = this._interpreter.parseAirScript(particle.script);
-                if (res.startsWith('error:')) {
-                    throw res;
-                }
-
-                this._incomingParticles.next(particle);
+                this._incomingParticles.next({
+                    particle: particle,
+                    onStateChange: () => {},
+                });
             },
             /**
              * Register Call Service handler functions
@@ -341,8 +340,8 @@ export class FluencePeer {
 
     // Queues for incoming and outgoing particles
 
-    private _incomingParticles = new Subject<Particle>();
-    private _outgoingParticles = new Subject<Particle>();
+    private _incomingParticles = new Subject<ParticleQueueItem>();
+    private _outgoingParticles = new Subject<ParticleQueueItem>();
 
     // Call service handler
 
@@ -358,15 +357,18 @@ export class FluencePeer {
     private _connection: FluenceConnection;
     private _interpreter: AirInterpreter;
     private _timeouts: Array<NodeJS.Timeout> = [];
-    private _particleQueues = new Map<string, Subject<Particle>>();
+    private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
     private _startParticleProcessing() {
         this._incomingParticles
             .pipe(
-                tap((x) => x.logTo('debug', 'particle received:')),
+                tap((x) => {
+                    x.particle.logTo('debug', 'particle received:');
+                }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
-            .subscribe((p) => {
+            .subscribe((item) => {
+                const p = item.particle;
                 let particlesQueue = this._particleQueues.get(p.id);
 
                 if (!particlesQueue) {
@@ -374,21 +376,23 @@ export class FluencePeer {
                     this._particleQueues.set(p.id, particlesQueue);
 
                     const timeout = setTimeout(() => {
-                        this._expireParticle(p.id);
+                        this._expireParticle(item);
                     }, p.actualTtl());
 
                     this._timeouts.push(timeout);
                 }
 
-                particlesQueue.next(p);
+                particlesQueue.next(item);
             });
 
-        this._outgoingParticles.subscribe((p) => {
-            this._connection.sendParticle(p);
+        this._outgoingParticles.subscribe(async (item) => {
+            await this._connection.sendParticle(item.particle);
+            item.onStateChange(ParticleExecutionStage.sent);
         });
     }
 
-    private _expireParticle(particleId: string) {
+    private _expireParticle(item: ParticleQueueItem) {
+        const particleId = item.particle.id;
         log.debug(`particle ${particleId} has expired. Deleting particle-related queues and handlers`);
 
         this._particleQueues.delete(particleId);
@@ -398,10 +402,11 @@ export class FluencePeer {
         }
         this._particleSpecificHandlers.delete(particleId);
         this._timeoutHandlers.delete(particleId);
+        item.onStateChange(ParticleExecutionStage.expired);
     }
 
     private _createParticlesProcessingQueue() {
-        let particlesQueue = new Subject<Particle>();
+        let particlesQueue = new Subject<ParticleQueueItem>();
         let prevData: Uint8Array = Buffer.from([]);
 
         particlesQueue
@@ -409,28 +414,34 @@ export class FluencePeer {
                 // force new line
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
-            .subscribe((x) => {
-                const result = runInterpreter(this.getStatus().peerId, this._interpreter, x, prevData);
+            .subscribe((item) => {
+                const particle = item.particle;
+                const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
+                setTimeout(() => {
+                    item.onStateChange(ParticleExecutionStage.interpreted);
+                }, 0);
 
                 prevData = Buffer.from(result.data);
 
                 // send particle further if requested
                 if (result.nextPeerPks.length > 0) {
-                    const newParticle = x.clone();
+                    const newParticle = particle.clone();
                     newParticle.data = prevData;
-                    this._outgoingParticles.next(newParticle);
+                    this._outgoingParticles.next({ ...item, particle: newParticle });
                 }
 
                 // execute call requests if needed
                 // and put particle with the results back to queue
                 if (result.callRequests.length > 0) {
-                    this._execCallRequests(x, result.callRequests).then((callResults) => {
-                        const newParticle = x.clone();
+                    this._execCallRequests(particle, result.callRequests).then((callResults) => {
+                        const newParticle = particle.clone();
                         newParticle.callResults = callResults;
                         newParticle.data = Buffer.from([]);
 
-                        particlesQueue.next(newParticle);
+                        particlesQueue.next({ ...item, particle: newParticle });
                     });
+                } else {
+                    item.onStateChange(ParticleExecutionStage.localWorkDone);
                 }
             });
 
@@ -593,13 +604,13 @@ function runInterpreter(
     return interpreterResult;
 }
 
-function filterExpiredParticles(onParticleExpiration: (particleId: string) => void) {
+function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) => void) {
     return pipe(
-        tap((p: Particle) => {
-            if (p.hasExpired()) {
-                onParticleExpiration(p.id);
+        tap((item: ParticleQueueItem) => {
+            if (item.particle.hasExpired()) {
+                onParticleExpiration(item);
             }
         }),
-        filter((x: Particle) => !x.hasExpired()),
+        filter((x: ParticleQueueItem) => !x.particle.hasExpired()),
     );
 }
