@@ -225,7 +225,6 @@ export class FluencePeer {
 
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
-        this._timeoutHandlers.clear();
     }
 
     // internal api
@@ -239,7 +238,7 @@ export class FluencePeer {
              * Initiates a new particle execution starting from local peer
              * @param particle - particle to start execution of
              */
-            initiateParticle: (particle: Particle, onStageChange?: (stage: ParticleExecutionStage) => void): void => {
+            initiateParticle: (particle: Particle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.getStatus().isInitialized) {
                     throw 'Cannon initiate new particle: peer is no initialized';
                 }
@@ -254,7 +253,7 @@ export class FluencePeer {
 
                 this._incomingParticles.next({
                     particle: particle,
-                    onStageChange: onStageChange || (() => {}),
+                    onStageChange: onStageChange,
                 });
             },
 
@@ -290,12 +289,6 @@ export class FluencePeer {
 
                     psh.set(serviceFnKey(serviceId, fnName), handler);
                 },
-                /**
-                 * Register handler which will be called upon particle timeout
-                 */
-                timeout: (particleId: string, handler: () => void) => {
-                    this._timeoutHandlers.set(particleId, handler);
-                },
             },
 
             /**
@@ -313,6 +306,10 @@ export class FluencePeer {
                 this.internals.initiateParticle(particle, (stage) => {
                     if (stage.stage === 'interpreterError') {
                         request?.error(stage.errorMessage);
+                    }
+
+                    if (stage.stage === 'expired') {
+                        request?.timeout();
                     }
                 });
             },
@@ -352,7 +349,6 @@ export class FluencePeer {
 
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
-    private _timeoutHandlers = new Map<string, () => void>();
 
     // Internal peer state
 
@@ -401,12 +397,8 @@ export class FluencePeer {
         log.debug(`particle ${particleId} has expired. Deleting particle-related queues and handlers`);
 
         this._particleQueues.delete(particleId);
-        const timeoutHandler = this._timeoutHandlers.get(particleId);
-        if (timeoutHandler) {
-            timeoutHandler();
-        }
         this._particleSpecificHandlers.delete(particleId);
-        this._timeoutHandlers.delete(particleId);
+
         item.onStageChange({ stage: 'expired' });
     }
 
@@ -422,12 +414,14 @@ export class FluencePeer {
             .subscribe((item) => {
                 const particle = item.particle;
                 const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
+
+                if (result.retCode !== 0 || result?.errorMessage?.length > 0) {
+                    item.onStageChange({ stage: 'interpreterError', errorMessage: result.errorMessage });
+                    return;
+                }
+
                 setTimeout(() => {
-                    if (result.retCode === 0) {
-                        item.onStageChange({ stage: 'interpreted' });
-                    } else {
-                        item.onStageChange({ stage: 'interpreterError', errorMessage: result.errorMessage });
-                    }
+                    item.onStageChange({ stage: 'interpreted' });
                 }, 0);
 
                 prevData = Buffer.from(result.data);

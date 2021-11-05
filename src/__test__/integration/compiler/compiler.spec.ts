@@ -3,6 +3,7 @@ import { Particle } from '../../../internal/Particle';
 import { registerHandlersHelper } from '../../util';
 import { callMeBack, registerHelloWorld } from './gen1';
 import { callFunction } from '../../../internal/compilerSupport/v2';
+import { handleTimeout } from '../../../internal/utils';
 
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {
@@ -79,10 +80,9 @@ describe('Compiler support infrastructure tests', () => {
                         resolve(val);
                     },
                 },
-                _timeout: reject,
             });
 
-            Fluence.getPeer().internals.initiateParticle(particle);
+            Fluence.getPeer().internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -167,9 +167,8 @@ describe('Compiler support infrastructure tests', () => {
                         resolve(val);
                     },
                 },
-                _timeout: reject,
             });
-            anotherPeer.internals.initiateParticle(particle);
+            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -185,28 +184,26 @@ describe('Compiler support infrastructure tests', () => {
         await anotherPeer.start();
 
         // act
-        const action = () => {
-            callFunction(
-                [anotherPeer],
-                {
-                    functionName: 'dontcare',
-                    argDefs: [],
-                    returnType: { tag: 'void' },
-                    names: {
-                        relay: '-relay-',
-                        getDataSrv: 'getDataSrv',
-                        callbackSrv: 'callbackSrv',
-                        responseSrv: 'callbackSrv',
-                        responseFnName: 'response',
-                        errorHandlingSrv: 'errorHandlingSrv',
-                        errorFnName: 'error',
-                    },
+        const action = callFunction(
+            [anotherPeer],
+            {
+                functionName: 'dontcare',
+                argDefs: [],
+                returnType: { tag: 'void' },
+                names: {
+                    relay: '-relay-',
+                    getDataSrv: 'getDataSrv',
+                    callbackSrv: 'callbackSrv',
+                    responseSrv: 'callbackSrv',
+                    responseFnName: 'response',
+                    errorHandlingSrv: 'errorHandlingSrv',
+                    errorFnName: 'error',
                 },
-                'incorrect air script',
-            );
-        };
+            },
+            'incorrect air script',
+        );
 
         // assert
-        await expect(action).toThrow(/incorrect air script/);
+        await expect(action).rejects.toMatch(/incorrect air script/);
     });
 });

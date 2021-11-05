@@ -1,7 +1,7 @@
 import { Multiaddr } from 'multiaddr';
 import { nodes } from '../connection';
 import { Fluence, FluencePeer, setLogLevel } from '../../index';
-import { checkConnection } from '../../internal/utils';
+import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
 import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
@@ -121,10 +121,9 @@ describe('Typescript usage suite', () => {
                         reject(error);
                     },
                 },
-                _timeout: reject,
             });
 
-            anotherPeer.internals.initiateParticle(particle);
+            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -169,7 +168,7 @@ describe('Typescript usage suite', () => {
             )
         `;
         const particle = Particle.createNew(script);
-        await peer1.internals.initiateParticle(particle);
+        await peer1.internals.initiateParticle(particle, doNothing);
 
         // assert
         const res = await resMakingPromise;
@@ -309,10 +308,9 @@ describe('Typescript usage suite', () => {
                         resolve(res);
                     },
                 },
-                _timeout: reject,
             });
 
-            anotherPeer.internals.initiateParticle(particle);
+            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -368,10 +366,9 @@ describe('Typescript usage suite', () => {
                         reject(error);
                     },
                 },
-                _timeout: reject,
             });
 
-            anotherPeer.internals.initiateParticle(particle);
+            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -404,10 +401,9 @@ describe('Typescript usage suite', () => {
                         reject(error);
                     },
                 },
-                _timeout: reject,
             });
 
-            anotherPeer.internals.initiateParticle(particle);
+            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -425,7 +421,7 @@ describe('Typescript usage suite', () => {
             const script = `(null)`;
             const particle = Particle.createNew(script);
 
-            nonInitiatedPeer.internals.initiateParticle(particle);
+            nonInitiatedPeer.internals.initiateParticle(particle, doNothing);
         };
 
         // assert
@@ -441,7 +437,7 @@ describe('Typescript usage suite', () => {
             const script = `(null)`;
             const particle = Particle.createNew(script);
 
-            stoppedPeer.internals.initiateParticle(particle);
+            stoppedPeer.internals.initiateParticle(particle, doNothing);
         };
 
         // assert
@@ -470,7 +466,7 @@ describe('Typescript usage suite', () => {
                 },
             });
 
-            anotherPeer.internals.initiateParticle(particle);
+            anotherPeer.internals.initiateParticle(particle, doNothing);
         });
 
         // assert
@@ -499,10 +495,9 @@ async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
                     reject(error);
                 },
             },
-            _timeout: reject,
         });
 
-        peer.internals.initiateParticle(particle);
+        peer.internals.initiateParticle(particle, handleTimeout(reject));
     });
 
     return promise;

@@ -68,12 +68,28 @@ export enum ResultCodes {
  */
 export interface ParticleContext {
     /**
-     * The particle ID
+     * The identifier of particle which triggered the call
      */
     particleId: string;
+
+    /**
+     * The peer id which created the particle
+     */
     initPeerId: PeerIdB58;
+
+    /**
+     * Particle's timestamp when it was created
+     */
     timestamp: number;
+
+    /**
+     * Time to live in milliseconds. The time after the particle should be expired
+     */
     ttl: number;
+
+    /**
+     * Particle's signature
+     */
     signature: string;
 }
 

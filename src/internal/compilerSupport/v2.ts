@@ -203,162 +203,128 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         throw new Error('Incorrect number of arguments. Expecting ${def.argDefs.length}');
     }
 
-    const isVoid = def.returnType.tag === 'void';
-
-    // if the function has void type we should resolve immediately for API symmetry with non-void types
-    // to help with debugging we are returning a promise which can be used to track particle errors
-    // we cannot return a bare promise because JS will lift it, so returning an array with the promise
-    // TODO::
-    const outerPromise = new Promise((outerResolve, outerReject) => {
+    const promise = new Promise((resolve, reject) => {
         const particle = Particle.createNew(script, config?.ttl);
 
-        const innerPromise = new Promise((_innerResolve, innerReject) => {
-            for (let i = 0; i < def.argDefs.length; i++) {
-                const argDef = def.argDefs[i];
-                const arg = args[i];
+        for (let i = 0; i < def.argDefs.length; i++) {
+            const argDef = def.argDefs[i];
+            const arg = args[i];
 
-                const [serviceId, fnName, cb] = match(argDef.argType)
-                    // for callback arguments we are registering particle-specific callback which executes the passed function
-                    .with({ tag: 'callback' }, (callbackDef) => {
-                        const fn = async (req: CallServiceData): Promise<CallServiceResult> => {
-                            const args = convertArgsFromReqToUserCall(req, callbackDef.callback.argDefs);
-                            // arg is function at this point
-                            const result = await arg.apply(null, args);
-                            let res;
-                            switch (callbackDef.callback.returnType.tag) {
-                                case 'void':
-                                    res = {};
-                                    break;
-                                case 'primitive':
-                                    res = result;
-                                    break;
-                                case 'optional':
-                                    res = tsToAquaOpt(result);
-                                    break;
-                            }
-                            return {
-                                retCode: ResultCodes.success,
-                                result: res,
-                            };
-                        };
-                        return [def.names.callbackSrv, argDef.name, fn] as const;
-                    })
-                    // for optional types we are converting value to array representation in air
-                    .with({ tag: 'optional' }, () => {
-                        const fn = (req: CallServiceData): CallServiceResult => {
-                            // arg is optional at this point
-                            const res = tsToAquaOpt(arg);
-                            return {
-                                retCode: ResultCodes.success,
-                                result: res,
-                            };
-                        };
-                        return [def.names.getDataSrv, argDef.name, fn] as const;
-                    })
-                    // for primitive types wre are simply passing the value
-                    .with({ tag: 'primitive' }, () => {
-                        // arg is primitive at this point
-                        const fn = (req: CallServiceData): CallServiceResult => ({
-                            retCode: ResultCodes.success,
-                            result: arg,
-                        });
-                        return [def.names.getDataSrv, argDef.name, fn] as const;
-                    })
-                    .exhaustive();
-
-                // registering handlers for every argument of the function
-                peer.internals.regHandler.forParticle(particle.id, serviceId, fnName, cb);
-            }
-
-            // registering handler for function response
-            peer.internals.regHandler.forParticle(
-                particle.id,
-                def.names.responseSrv,
-                def.names.responseFnName,
-                (req) => {
-                    const userFunctionReturn = match(def.returnType)
-                        .with({ tag: 'primitive' }, () => req.args[0])
-                        .with({ tag: 'optional' }, () => aquaOptToTs(req.args[0]))
-                        .with({ tag: 'void' }, () => undefined)
-                        .with({ tag: 'multiReturn' }, (mr) => {
-                            return mr.returnItems.map((x, index) => {
-                                return match(x)
-                                    .with({ tag: 'optional' }, () => aquaOptToTs(req.args[index]))
-                                    .with({ tag: 'primitive' }, () => req.args[index])
-                                    .exhaustive();
-                            });
-                        })
-                        .exhaustive();
-
-                    setTimeout(() => {
-                        outerResolve(userFunctionReturn);
-                    }, 0);
-
-                    return {
-                        retCode: ResultCodes.success,
-                        result: {},
-                    };
-                },
-            );
-
-            // registering handler for injecting relay variable
-            peer.internals.regHandler.forParticle(particle.id, def.names.getDataSrv, def.names.relay, (req) => {
-                return {
-                    retCode: ResultCodes.success,
-                    result: peer.getStatus().relayPeerId,
-                };
-            });
-
-            // registering handler for error reporting
-            peer.internals.regHandler.forParticle(
-                particle.id,
-                def.names.errorHandlingSrv,
-                def.names.errorFnName,
-                (req) => {
-                    const [err, _] = req.args;
-                    setTimeout(() => {
-                        //
-                        if (isVoid) {
-                            innerReject(err);
-                        } else {
-                            outerReject(err);
+            const [serviceId, fnName, cb] = match(argDef.argType)
+                // for callback arguments we are registering particle-specific callback which executes the passed function
+                .with({ tag: 'callback' }, (callbackDef) => {
+                    const fn = async (req: CallServiceData): Promise<CallServiceResult> => {
+                        const args = convertArgsFromReqToUserCall(req, callbackDef.callback.argDefs);
+                        // arg is function at this point
+                        const result = await arg.apply(null, args);
+                        let res;
+                        switch (callbackDef.callback.returnType.tag) {
+                            case 'void':
+                                res = {};
+                                break;
+                            case 'primitive':
+                                res = result;
+                                break;
+                            case 'optional':
+                                res = tsToAquaOpt(result);
+                                break;
                         }
-                    }, 0);
-                    return {
-                        retCode: ResultCodes.success,
-                        result: {},
+                        return {
+                            retCode: ResultCodes.success,
+                            result: res,
+                        };
                     };
-                },
-            );
+                    return [def.names.callbackSrv, argDef.name, fn] as const;
+                })
+                // for optional types we are converting value to array representation in air
+                .with({ tag: 'optional' }, () => {
+                    const fn = (req: CallServiceData): CallServiceResult => {
+                        // arg is optional at this point
+                        const res = tsToAquaOpt(arg);
+                        return {
+                            retCode: ResultCodes.success,
+                            result: res,
+                        };
+                    };
+                    return [def.names.getDataSrv, argDef.name, fn] as const;
+                })
+                // for primitive types wre are simply passing the value
+                .with({ tag: 'primitive' }, () => {
+                    // arg is primitive at this point
+                    const fn = (req: CallServiceData): CallServiceResult => ({
+                        retCode: ResultCodes.success,
+                        result: arg,
+                    });
+                    return [def.names.getDataSrv, argDef.name, fn] as const;
+                })
+                .exhaustive();
 
-            // registering handler for particle timeout
-            peer.internals.regHandler.timeout(particle.id, () => {
-                // failing after timeout only makes sense for functions with return value
-                // as they have a clear indication of completion
-                if (!isVoid) {
-                    outerReject(`Request timed out for ${def.functionName}`);
-                }
-            });
+            // registering handlers for every argument of the function
+            peer.internals.regHandler.forParticle(particle.id, serviceId, fnName, cb);
+        }
 
-            try {
-                peer.internals.initiateParticle(particle);
-            } catch (err) {
-                if (isVoid) {
-                    outerReject(err);
-                } else {
-                    innerReject(err);
-                }
-            }
+        // registering handler for function response
+        peer.internals.regHandler.forParticle(particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
+            const userFunctionReturn = match(def.returnType)
+                .with({ tag: 'primitive' }, () => req.args[0])
+                .with({ tag: 'optional' }, () => aquaOptToTs(req.args[0]))
+                .with({ tag: 'void' }, () => undefined)
+                .with({ tag: 'multiReturn' }, (mr) => {
+                    return mr.returnItems.map((x, index) => {
+                        return match(x)
+                            .with({ tag: 'optional' }, () => aquaOptToTs(req.args[index]))
+                            .with({ tag: 'primitive' }, () => req.args[index])
+                            .exhaustive();
+                    });
+                })
+                .exhaustive();
+
+            setTimeout(() => {
+                resolve(userFunctionReturn);
+            }, 0);
+
+            return {
+                retCode: ResultCodes.success,
+                result: {},
+            };
         });
 
-        // if the return type is void, that we resolve immediately
-        // returning the inner promise which will handle further execution errors
-        if (isVoid) {
-            outerResolve([innerPromise]);
-        }
+        // registering handler for injecting relay variable
+        peer.internals.regHandler.forParticle(particle.id, def.names.getDataSrv, def.names.relay, (req) => {
+            return {
+                retCode: ResultCodes.success,
+                result: peer.getStatus().relayPeerId,
+            };
+        });
+
+        // registering handler for error reporting
+        peer.internals.regHandler.forParticle(particle.id, def.names.errorHandlingSrv, def.names.errorFnName, (req) => {
+            const [err, _] = req.args;
+            setTimeout(() => {
+                reject(err);
+            }, 0);
+            return {
+                retCode: ResultCodes.success,
+                result: {},
+            };
+        });
+
+        peer.internals.initiateParticle(particle, (stage) => {
+            if (def.returnType.tag === 'void' && (stage.stage === 'interpreted' || stage.stage === 'localWorkDone')) {
+                resolve(undefined);
+            }
+
+            if (stage.stage === 'expired') {
+                reject(`Request timed out for ${def.functionName}`);
+            }
+
+            if (stage.stage === 'interpreterError') {
+                reject(stage.errorMessage);
+            }
+        });
     });
 
-    return outerPromise;
+    return promise;
 }
 
 /**
