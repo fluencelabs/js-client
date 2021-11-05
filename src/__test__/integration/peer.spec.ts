@@ -432,20 +432,20 @@ describe('Typescript usage suite', () => {
         await expect(action).toThrow('Cannon initiate new particle: peer is no initialized');
     });
 
-    it('Should throw error if particle with incorrect AIR script is initiated', async () => {
+    it('Should throw error if particle is initiated on a stopped peer', async () => {
         // arrange;
-        await anotherPeer.start();
+        const stoppedPeer = new FluencePeer();
 
         // act
         const action = () => {
-            const script = `incorrect air script`;
+            const script = `(null)`;
             const particle = Particle.createNew(script);
 
-            anotherPeer.internals.initiateParticle(particle);
+            stoppedPeer.internals.initiateParticle(particle);
         };
 
         // assert
-        await expect(action).toThrow(/incorrect air script/);
+        await expect(action).toThrow('Cannon initiate new particle: peer is no initialized');
     });
 
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {

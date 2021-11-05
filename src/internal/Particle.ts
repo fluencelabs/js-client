@@ -20,7 +20,6 @@ import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
 import { dataToString } from './utils';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 export class Particle {
     id: string;
@@ -141,16 +140,17 @@ export class Particle {
     }
 }
 
-export enum ParticleExecutionStage {
-    'received' = 1,
-    'interpreted' = 2,
-    'localWorkDone' = 3,
-    'sent' = 4,
-    'expired' = 5,
-}
+export type ParticleExecutionStage =
+    | { stage: 'received' }
+    | { stage: 'interpreted' }
+    | { stage: 'interpreterError'; errorMessage: string }
+    | { stage: 'localWorkDone' }
+    | { stage: 'sent' }
+    | { stage: 'expired' };
+
 export interface ParticleQueueItem {
     particle: Particle;
-    onStateChange: (state: ParticleExecutionStage) => void;
+    onStageChange: (state: ParticleExecutionStage) => void;
 }
 
 function genUUID() {

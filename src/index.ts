@@ -44,7 +44,7 @@ export const Fluence = {
     },
 
     /**
-     * Uninitializes the default peer: stops all the underltying workflows, stops the Aqua VM
+     * Un-initializes the default peer: stops all the underlying workflows, stops the Aqua VM
      * and disconnects from the Fluence network
      */
     stop: (): Promise<void> => {

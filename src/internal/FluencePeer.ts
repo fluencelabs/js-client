@@ -201,7 +201,7 @@ export class FluencePeer {
                 peerId: this._keyPair.Libp2pPeerId,
                 relayAddress: connectToMultiAddr,
                 dialTimeoutMs: config.dialTimeoutMs,
-                onIncomingParticle: (p) => this._incomingParticles.next({ particle: p, onStateChange: () => {} }),
+                onIncomingParticle: (p) => this._incomingParticles.next({ particle: p, onStageChange: () => {} }),
             });
 
             await this._connect();
@@ -239,7 +239,7 @@ export class FluencePeer {
              * Initiates a new particle execution starting from local peer
              * @param particle - particle to start execution of
              */
-            initiateParticle: (particle: Particle): void => {
+            initiateParticle: (particle: Particle, onStageChange?: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.getStatus().isInitialized) {
                     throw 'Cannon initiate new particle: peer is no initialized';
                 }
@@ -254,9 +254,10 @@ export class FluencePeer {
 
                 this._incomingParticles.next({
                     particle: particle,
-                    onStateChange: () => {},
+                    onStageChange: onStageChange || (() => {}),
                 });
             },
+
             /**
              * Register Call Service handler functions
              */
@@ -309,7 +310,11 @@ export class FluencePeer {
                     timeout: request.timeout,
                 });
 
-                this.internals.initiateParticle(particle);
+                this.internals.initiateParticle(particle, (stage) => {
+                    if (stage.stage === 'interpreterError') {
+                        request?.error(stage.errorMessage);
+                    }
+                });
             },
 
             /**
@@ -387,7 +392,7 @@ export class FluencePeer {
 
         this._outgoingParticles.subscribe(async (item) => {
             await this._connection.sendParticle(item.particle);
-            item.onStateChange(ParticleExecutionStage.sent);
+            item.onStageChange({ stage: 'sent' });
         });
     }
 
@@ -402,7 +407,7 @@ export class FluencePeer {
         }
         this._particleSpecificHandlers.delete(particleId);
         this._timeoutHandlers.delete(particleId);
-        item.onStateChange(ParticleExecutionStage.expired);
+        item.onStageChange({ stage: 'expired' });
     }
 
     private _createParticlesProcessingQueue() {
@@ -418,7 +423,11 @@ export class FluencePeer {
                 const particle = item.particle;
                 const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
                 setTimeout(() => {
-                    item.onStateChange(ParticleExecutionStage.interpreted);
+                    if (result.retCode === 0) {
+                        item.onStageChange({ stage: 'interpreted' });
+                    } else {
+                        item.onStageChange({ stage: 'interpreterError', errorMessage: result.errorMessage });
+                    }
                 }, 0);
 
                 prevData = Buffer.from(result.data);
@@ -441,7 +450,7 @@ export class FluencePeer {
                         particlesQueue.next({ ...item, particle: newParticle });
                     });
                 } else {
-                    item.onStateChange(ParticleExecutionStage.localWorkDone);
+                    item.onStageChange({ stage: 'localWorkDone' });
                 }
             });
 
@@ -600,7 +609,11 @@ function runInterpreter(
 
     const toLog: any = { ...interpreterResult };
     toLog.data = dataToString(toLog.data);
-    log.debug('Interpreter result: ', toLog);
+    if (interpreterResult.retCode === 0) {
+        log.debug('Interpreter result: ', toLog);
+    } else {
+        log.error('Interpreter failed: ', toLog);
+    }
     return interpreterResult;
 }
 
