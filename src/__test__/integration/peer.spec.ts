@@ -425,7 +425,7 @@ describe('Typescript usage suite', () => {
         };
 
         // assert
-        await expect(action).toThrow('Cannon initiate new particle: peer is no initialized');
+        await expect(action).toThrow('Cannot initiate new particle: peer is not initialized');
     });
 
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
