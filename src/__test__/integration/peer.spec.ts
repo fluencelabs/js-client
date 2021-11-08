@@ -412,22 +412,6 @@ describe('Typescript usage suite', () => {
         });
     });
 
-    it('Should throw error if initiating particle for non-initiated peer', async () => {
-        // arrange;
-        const nonInitiatedPeer = new FluencePeer();
-
-        // act
-        const action = () => {
-            const script = `(null)`;
-            const particle = Particle.createNew(script);
-
-            nonInitiatedPeer.internals.initiateParticle(particle, doNothing);
-        };
-
-        // assert
-        await expect(action).toThrow('Cannon initiate new particle: peer is no initialized');
-    });
-
     it('Should throw error if particle is initiated on a stopped peer', async () => {
         // arrange;
         const stoppedPeer = new FluencePeer();
