@@ -516,3 +516,7 @@ const extractRegisterServiceArgs = (
 function throwForReq(req: CallServiceData, message: string) {
     throw new Error(`${message}, serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`);
 }
+
+export const forTests = {
+    extractFunctionArgs,
+};
