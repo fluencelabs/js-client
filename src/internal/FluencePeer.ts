@@ -240,7 +240,7 @@ export class FluencePeer {
              */
             initiateParticle: (particle: Particle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.getStatus().isInitialized) {
-                    throw 'Cannon initiate new particle: peer is no initialized';
+                    throw 'Can't initiate new particle: peer is not initialized';
                 }
 
                 if (particle.initPeerId === undefined) {
