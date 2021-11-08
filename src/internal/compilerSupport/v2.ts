@@ -310,7 +310,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         });
 
         peer.internals.initiateParticle(particle, (stage) => {
-            if (def.returnType.tag === 'void' && (stage.stage === 'interpreted' || stage.stage === 'localWorkDone')) {
+            if (def.returnType.tag === 'void' && (stage.stage === 'sent' || stage.stage === 'localWorkDone')) {
                 resolve(undefined);
             }
 

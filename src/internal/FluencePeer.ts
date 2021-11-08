@@ -240,7 +240,7 @@ export class FluencePeer {
              */
             initiateParticle: (particle: Particle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.getStatus().isInitialized) {
-                    throw 'Can't initiate new particle: peer is not initialized';
+                    throw 'Cannot initiate new particle: peer is not initialized';
                 }
 
                 if (particle.initPeerId === undefined) {
@@ -404,7 +404,7 @@ export class FluencePeer {
 
     private _createParticlesProcessingQueue() {
         let particlesQueue = new Subject<ParticleQueueItem>();
-        let prevData: Uint8Array = Buffer.from([]);
+        let newData: Uint8Array = Buffer.from([]);
 
         particlesQueue
             .pipe(
@@ -413,7 +413,7 @@ export class FluencePeer {
             )
             .subscribe((item) => {
                 const particle = item.particle;
-                const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
+                const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, newData);
 
                 // Do not continue if there was an error in particle interpretation
                 if (isInterpretationSuccessful(result)) {
@@ -425,12 +425,12 @@ export class FluencePeer {
                     item.onStageChange({ stage: 'interpreted' });
                 }, 0);
 
-                prevData = Buffer.from(result.data);
+                newData = Buffer.from(result.data);
 
                 // send particle further if requested
                 if (result.nextPeerPks.length > 0) {
                     const newParticle = particle.clone();
-                    newParticle.data = prevData;
+                    newParticle.data = newData;
                     this._outgoingParticles.next({ ...item, particle: newParticle });
                 }
 
