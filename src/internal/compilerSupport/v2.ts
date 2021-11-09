@@ -320,22 +320,25 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             };
         });
 
-        // registering handler for particle timeout
-        peer.internals.regHandler.timeout(particle.id, () => {
-            reject(`Request timed out for ${def.functionName}`);
-        });
+        peer.internals.initiateParticle(particle, (stage) => {
+            // If function is void, then it's completed when one of the two conditions is met:
+            //  1. The particle is sent to the network (state 'sent')
+            //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
+            if (def.returnType.tag === 'void' && (stage.stage === 'sent' || stage.stage === 'localWorkDone')) {
+                resolve(undefined);
+            }
 
-        peer.internals.initiateParticle(particle);
+            if (stage.stage === 'expired') {
+                reject(`Request timed out after ${particle.ttl} for ${def.functionName}`);
+            }
+
+            if (stage.stage === 'interpreterError') {
+                reject(`Script interpretation failed for ${def.functionName}: ${stage.errorMessage}`);
+            }
+        });
     });
 
-    // if the function has void type we should resolve immediately for API symmetry with non-void types
-    // to help with debugging we are returning a promise which can be used to track particle errors
-    // we cannot return a bare promise because JS will lift it, so returning an array with the promise
-    if (def.returnType.tag === 'void') {
-        return Promise.resolve([promise]);
-    } else {
-        return promise;
-    }
+    return promise;
 }
 
 /**

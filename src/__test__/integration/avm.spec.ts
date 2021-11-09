@@ -1,5 +1,6 @@
 import { FluencePeer } from '../../index';
 import { Particle } from '../../internal/Particle';
+import { handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
 
 describe('Avm spec', () => {
@@ -21,10 +22,9 @@ describe('Avm spec', () => {
                         resolve(res);
                     },
                 },
-                _timeout: reject,
             });
 
-            peer.internals.initiateParticle(particle);
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -61,10 +61,9 @@ describe('Avm spec', () => {
                         }
                     },
                 },
-                _timeout: reject,
             });
 
-            peer.internals.initiateParticle(particle);
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert

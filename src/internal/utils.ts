@@ -18,7 +18,7 @@ import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
-import { Particle } from './Particle';
+import { Particle, ParticleExecutionStage } from './Particle';
 
 export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
     const logFn = (level: AvmLogLevel, msg: string) => {
@@ -52,6 +52,14 @@ export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
         };
     };
 };
+
+export const handleTimeout = (fn: Function) => (stage: ParticleExecutionStage) => {
+    if (stage.stage === 'expired') {
+        fn();
+    }
+};
+
+export const doNothing = (stage: ParticleExecutionStage) => {};
 
 /**
  * Checks the network connection by sending a ping-like request to relay node
@@ -127,11 +135,12 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
             }),
         );
 
-        peer.internals.regHandler.timeout(particle.id, () => {
-            reject('particle timed out');
-        });
-
-        peer.internals.initiateParticle(particle);
+        peer.internals.initiateParticle(
+            particle,
+            handleTimeout(() => {
+                reject('particle timed out');
+            }),
+        );
     });
 
     try {
