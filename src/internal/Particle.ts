@@ -140,6 +140,19 @@ export class Particle {
     }
 }
 
+export type ParticleExecutionStage =
+    | { stage: 'received' }
+    | { stage: 'interpreted' }
+    | { stage: 'interpreterError'; errorMessage: string }
+    | { stage: 'localWorkDone' }
+    | { stage: 'sent' }
+    | { stage: 'expired' };
+
+export interface ParticleQueueItem {
+    particle: Particle;
+    onStageChange: (state: ParticleExecutionStage) => void;
+}
+
 function genUUID() {
     return uuidv4();
 }
