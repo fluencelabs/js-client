@@ -420,7 +420,7 @@ export class FluencePeer {
                 const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
 
                 // Do not continue if there was an error in particle interpretation
-                if (isInterpretationUnSuccessful(result)) {
+                if (!isInterpretationSuccessful(result)) {
                     item.onStageChange({ stage: 'interpreterError', errorMessage: result.errorMessage });
                     return;
                 }
@@ -574,8 +574,8 @@ export class FluencePeer {
     private _legacyCallServiceHandler: LegacyCallServiceHandler;
 }
 
-function isInterpretationUnSuccessful(result: InterpreterResult) {
-    return result.retCode !== 0 || result?.errorMessage?.length > 0;
+function isInterpretationSuccessful(result: InterpreterResult) {
+    return result.retCode === 0 && (result?.errorMessage === undefined || result.errorMessage.length === 0);
 }
 
 function serviceFnKey(serviceId: string, fnName: string) {
@@ -614,7 +614,7 @@ function runInterpreter(
     const toLog: any = { ...interpreterResult };
     toLog.data = dataToString(toLog.data);
 
-    if (isInterpretationUnSuccessful(interpreterResult)) {
+    if (isInterpretationSuccessful(interpreterResult)) {
         log.debug('Interpreter result: ', toLog);
     } else {
         log.error('Interpreter failed: ', toLog);
