@@ -330,7 +330,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             }
 
             if (stage.stage === 'interpreterError') {
-                reject(stage.errorMessage);
+                reject(`Script interpretation failed for ${def.functionName}: ${stage.errorMessage}`);
             }
         });
     });
