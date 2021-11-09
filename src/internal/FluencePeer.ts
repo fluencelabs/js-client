@@ -396,7 +396,9 @@ export class FluencePeer {
 
     private _expireParticle(item: ParticleQueueItem) {
         const particleId = item.particle.id;
-        log.debug(`particle ${particleId} has expired. Deleting particle-related queues and handlers`);
+        log.debug(
+            `particle ${particleId} has expired after ${item.particle.ttl}. Deleting particle-related queues and handlers`,
+        );
 
         this._particleQueues.delete(particleId);
         this._particleSpecificHandlers.delete(particleId);

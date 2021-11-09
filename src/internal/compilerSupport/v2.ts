@@ -329,7 +329,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             }
 
             if (stage.stage === 'expired') {
-                reject(`Request timed out for ${def.functionName}`);
+                reject(`Request timed out after ${particle.ttl} for ${def.functionName}`);
             }
 
             if (stage.stage === 'interpreterError') {
