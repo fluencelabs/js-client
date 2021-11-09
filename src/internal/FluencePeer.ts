@@ -406,7 +406,7 @@ export class FluencePeer {
 
     private _createParticlesProcessingQueue() {
         let particlesQueue = new Subject<ParticleQueueItem>();
-        let newData: Uint8Array = Buffer.from([]);
+        let prevData: Uint8Array = Buffer.from([]);
 
         particlesQueue
             .pipe(
@@ -415,7 +415,7 @@ export class FluencePeer {
             )
             .subscribe((item) => {
                 const particle = item.particle;
-                const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, newData);
+                const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
 
                 // Do not continue if there was an error in particle interpretation
                 if (isInterpretationSuccessful(result)) {
@@ -427,7 +427,8 @@ export class FluencePeer {
                     item.onStageChange({ stage: 'interpreted' });
                 }, 0);
 
-                newData = Buffer.from(result.data);
+                const newData = Buffer.from(result.data);
+                prevData = newData;
 
                 // send particle further if requested
                 if (result.nextPeerPks.length > 0) {
