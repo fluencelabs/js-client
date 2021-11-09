@@ -321,6 +321,9 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         });
 
         peer.internals.initiateParticle(particle, (stage) => {
+            // If function is void, then it's completed when one of the two conditions is met:
+            //  1. The particle is sent to the network (state 'sent')
+            //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
             if (def.returnType.tag === 'void' && (stage.stage === 'sent' || stage.stage === 'localWorkDone')) {
                 resolve(undefined);
             }
