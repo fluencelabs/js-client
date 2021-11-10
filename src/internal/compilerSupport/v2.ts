@@ -460,11 +460,11 @@ const extractFunctionArgs = (
     if (FluencePeer.isInstance(args[0])) {
         peer = args[0];
         structuredArgs = args.slice(1, numberOfExpectedArgs + 1);
-        config = args[numberOfExpectedArgs + 2];
+        config = args[numberOfExpectedArgs + 1];
     } else {
         peer = Fluence.getPeer();
         structuredArgs = args.slice(0, numberOfExpectedArgs);
-        config = args[numberOfExpectedArgs + 1];
+        config = args[numberOfExpectedArgs];
     }
 
     return {
@@ -530,3 +530,7 @@ const extractRegisterServiceArgs = (
 function throwForReq(req: CallServiceData, message: string) {
     throw new Error(`${message}, serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`);
 }
+
+export const forTests = {
+    extractFunctionArgs,
+};

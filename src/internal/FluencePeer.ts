@@ -420,7 +420,7 @@ export class FluencePeer {
                 const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
 
                 // Do not continue if there was an error in particle interpretation
-                if (isInterpretationSuccessful(result)) {
+                if (!isInterpretationSuccessful(result)) {
                     item.onStageChange({ stage: 'interpreterError', errorMessage: result.errorMessage });
                     return;
                 }
@@ -575,7 +575,7 @@ export class FluencePeer {
 }
 
 function isInterpretationSuccessful(result: InterpreterResult) {
-    return result.retCode !== 0 || result?.errorMessage?.length > 0;
+    return result.retCode === 0;
 }
 
 function serviceFnKey(serviceId: string, fnName: string) {
