@@ -575,7 +575,7 @@ export class FluencePeer {
 }
 
 function isInterpretationSuccessful(result: InterpreterResult) {
-    return result.retCode === 0 && (result?.errorMessage === undefined || result.errorMessage.length === 0);
+    return result.retCode === 0;
 }
 
 function serviceFnKey(serviceId: string, fnName: string) {
