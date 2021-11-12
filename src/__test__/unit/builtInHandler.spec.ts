@@ -31,10 +31,10 @@ describe('Tests for default handler', () => {
   ${'op'}   | ${'bytes_from_b58'}  | ${["3yZe7d"]}                  | ${0}    | ${[116, 101, 115, 116]}
   ${'op'}   | ${'bytes_from_b58'}  | ${["3yZe7d", 1]}               | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
 
-  ${'peer'} | ${'timeout'}         | ${[200, []]}                   | ${0}    | ${{}}}
-  ${'peer'} | ${'timeout'}         | ${[200, ['test']]}             | ${0}    | ${'test'}}
-  ${'peer'} | ${'timeout'}         | ${[]}                          | ${1}    | ${'timeout accepts either a single number argument or exactly two arguments: number and string'}}
-  ${'peer'} | ${'timeout'}         | ${[200, 'test', 1]}            | ${1}    | ${'timeout accepts either a single number argument or exactly two arguments: number and string'}}
+  ${'peer'} | ${'timeout'}         | ${[200, []]}                   | ${0}    | ${[]}}
+  ${'peer'} | ${'timeout'}         | ${[200, ['test']]}             | ${0}    | ${['test']}}
+  ${'peer'} | ${'timeout'}         | ${[]}                          | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and an optional message string'}}
+  ${'peer'} | ${'timeout'}         | ${[200, 'test', 1]}            | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and an optional message string'}}
   
   `.test(
         //

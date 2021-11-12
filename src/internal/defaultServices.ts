@@ -106,7 +106,7 @@ export const defaultServices: { [serviceId in string]: { [fnName in string]: Gen
                 );
             }
             const durationMs = req.args[0];
-            const message = req.args[1].length === 0 ? {} : req.args[1][1];
+            const message = req.args[1];
 
             return new Promise((resolve) => {
                 setTimeout(() => {
