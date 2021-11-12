@@ -1,4 +1,4 @@
-import { FluencePeer } from '../../index';
+import { FluencePeer, setLogLevel } from '../../index';
 import { Particle } from '../../internal/Particle';
 import { handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
@@ -83,8 +83,8 @@ describe('Avm spec', () => {
             let res = [];
             const script = `
                 (par
-                    (seq 
-                        (call %init_peer_id% ("peer" "timeout") [200])
+                    (seq
+                        (call %init_peer_id% ("peer" "timeout") [200 []])
                         (call %init_peer_id% ("print" "print") ["1"])
                     )
                     (call %init_peer_id% ("print" "print") ["2"])
