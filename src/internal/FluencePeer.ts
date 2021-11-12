@@ -389,6 +389,11 @@ export class FluencePeer {
             });
 
         this._outgoingParticles.subscribe(async (item) => {
+            if (!this._connection) {
+                item.particle.logTo('error', 'cannot send particle, peer is not connected');
+                item.onStageChange({ stage: 'sendingError' });
+                return;
+            }
             await this._connection.sendParticle(item.particle);
             item.onStageChange({ stage: 'sent' });
         });
