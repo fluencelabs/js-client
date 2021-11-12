@@ -442,56 +442,43 @@ export class FluencePeer {
                 // execute call requests if needed
                 // and put particle with the results back to queue
                 if (result.callRequests.length > 0) {
-                    this._execCallRequests(particle, result.callRequests).then((callResults) => {
-                        const newParticle = particle.clone();
-                        newParticle.callResults = callResults;
-                        newParticle.data = Buffer.from([]);
+                    for (let [key, cr] of result.callRequests) {
+                        const req = {
+                            fnName: cr.functionName,
+                            args: cr.arguments,
+                            serviceId: cr.serviceId,
+                            tetraplets: cr.tetraplets,
+                            particleContext: particle.getParticleContext(),
+                        };
 
-                        particlesQueue.next({ ...item, particle: newParticle });
-                    });
+                        this._execSingleCallRequest(req)
+                            .catch(
+                                (err): CallServiceResult => ({
+                                    retCode: ResultCodes.exceptionInHandler,
+                                    result: `Handler failed. fnName="${req.fnName}" serviceId="${
+                                        req.serviceId
+                                    }" error: ${err.toString()}`,
+                                }),
+                            )
+                            .then((res) => {
+                                const serviceResult = {
+                                    result: JSON.stringify(res.result),
+                                    retCode: res.retCode,
+                                };
+
+                                const newParticle = particle.clone();
+                                newParticle.callResults = [[key, serviceResult]];
+                                newParticle.data = Buffer.from([]);
+
+                                particlesQueue.next({ ...item, particle: newParticle });
+                            });
+                    }
                 } else {
                     item.onStageChange({ stage: 'localWorkDone' });
                 }
             });
 
         return particlesQueue;
-    }
-
-    private async _execCallRequests(p: Particle, callRequests: CallRequestsArray): Promise<CallResultsArray> {
-        // execute all requests asynchronously
-        const promises = callRequests.map(([key, callRequest]) => {
-            const req = {
-                fnName: callRequest.functionName,
-                args: callRequest.arguments,
-                serviceId: callRequest.serviceId,
-                tetraplets: callRequest.tetraplets,
-                particleContext: p.getParticleContext(),
-            };
-
-            // execute single requests and catch possible errors
-            const promise = this._execSingleCallRequest(req)
-                .catch(
-                    (err): CallServiceResult => ({
-                        retCode: ResultCodes.exceptionInHandler,
-                        result: `Handler failed. fnName="${req.fnName}" serviceId="${
-                            req.serviceId
-                        }" error: ${err.toString()}`,
-                    }),
-                )
-                .then(
-                    (res): AvmCallServiceResult => ({
-                        result: JSON.stringify(res.result),
-                        retCode: res.retCode,
-                    }),
-                )
-                .then((res): [key: number, res: AvmCallServiceResult] => [key, res]);
-
-            return promise;
-        });
-        // don't block
-        const res = await Promise.all(promises);
-        log.debug(`Executed call service for particle id=${p.id}, Call service results: `, res);
-        return res;
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
@@ -546,7 +533,7 @@ export class FluencePeer {
             res.result = null;
         }
 
-        log.debug('executed call service handler, res is: ', res);
+        log.debug('executed call service handler, req and res are: ', req, res);
         return res;
     }
 
