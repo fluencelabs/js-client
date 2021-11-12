@@ -495,6 +495,7 @@ export class FluencePeer {
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
+        log.debug('executing call service handler', req);
         const particleId = req.particleContext.particleId;
 
         // trying particle-specific handler
@@ -545,6 +546,7 @@ export class FluencePeer {
             res.result = null;
         }
 
+        log.debug('executed call service handler, res is: ', res);
         return res;
     }
 

@@ -78,26 +78,26 @@ describe('Avm spec', () => {
         const peer = new FluencePeer();
         await peer.start();
 
+        setLogLevel('debug');
         // act
         const promise = new Promise((resolve, reject) => {
-            let res = [];
             const script = `
-                (par
+                (seq
+                    (call %init_peer_id% ("op" "identity") ["slow_result"] arg) 
                     (seq
-                        (call %init_peer_id% ("peer" "timeout") [200 []])
-                        (call %init_peer_id% ("print" "print") ["1"])
+                        (par
+                            (call %init_peer_id% ("peer" "timeout") [1000 arg] $result)
+                            (call %init_peer_id% ("op" "identity") ["fast_result"] $result)
+                        )
+                        (call %init_peer_id% ("return" "return") [$result.$[0]]) 
                     )
-                    (call %init_peer_id% ("print" "print") ["2"])
                 )
             `;
             const particle = Particle.createNew(script);
             registerHandlersHelper(peer, particle, {
-                print: {
-                    print: (args) => {
-                        res.push(args[0]);
-                        if (res.length == 2) {
-                            resolve(res);
-                        }
+                return: {
+                    return: (args) => {
+                        resolve(args[0]);
                     },
                 },
             });
@@ -107,7 +107,7 @@ describe('Avm spec', () => {
 
         // assert
         const res = await promise;
-        expect(res).toStrictEqual(['2', '1']);
+        expect(res).toBe('fast_result');
 
         await peer.stop();
     });
