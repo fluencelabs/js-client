@@ -5,39 +5,44 @@ import { defaultServices } from '../../internal/defaultServices';
 describe('Tests for default handler', () => {
     // prettier-ignore
     each`
-  fnName               | args                           | retCode | result
-  ${'identity'}        | ${[]}                          | ${0}    | ${{}}
-  ${'identity'}        | ${[1]}                         | ${0}    | ${1}
-  ${'identity'}        | ${[1, 2]}                      | ${1}    | ${'identity accepts up to 1 arguments, received 2 arguments'}
-                           
-  ${'noop'}            | ${[1, 2]}                      | ${0}    | ${{}}
-                          
-  ${'array'}           | ${[1, 2, 3]}                   | ${0}    | ${[1, 2, 3]}
-        
-  ${'concat'}          | ${[[1, 2], [3, 4], [5, 6]]}    | ${0}    | ${[1, 2, 3, 4, 5, 6]}
-  ${'concat'}          | ${[[1, 2]]}                    | ${0}    | ${[1, 2]}
-  ${'concat'}          | ${[]}                          | ${0}    | ${[]}
-  ${'concat'}          | ${[1, [1, 2], 1]}              | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
+  serviceId | fnName               | args                           | retCode | result
+  ${'op'}   | ${'identity'}        | ${[]}                          | ${0}    | ${{}}
+  ${'op'}   | ${'identity'}        | ${[1]}                         | ${0}    | ${1}
+  ${'op'}   | ${'identity'}        | ${[1, 2]}                      | ${1}    | ${'identity accepts up to 1 arguments, received 2 arguments'}
 
-  ${'string_to_b58'}   | ${["test"]}                    | ${0}    | ${"3yZe7d"}
-  ${'string_to_b58'}   | ${["test", 1]}                 | ${1}    | ${"string_to_b58 accepts only one string argument"}
-  
-  ${'string_from_b58'} | ${["3yZe7d"]}                  | ${0}    | ${"test"}
-  ${'string_from_b58'} | ${["3yZe7d", 1]}               | ${1}    | ${"string_from_b58 accepts only one string argument"}
-  
-  ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}      | ${0}    | ${"3yZe7d"}
-  ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}   | ${1}    | ${"bytes_to_b58 accepts only single argument: array of numbers"}
-  
-  ${'bytes_from_b58'}  | ${["3yZe7d"]}                  | ${0}    | ${[116, 101, 115, 116]}
-  ${'bytes_from_b58'}  | ${["3yZe7d", 1]}               | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
+  ${'op'}   | ${'noop'}            | ${[1, 2]}                      | ${0}    | ${{}}
 
-`.test(
+  ${'op'}   | ${'array'}           | ${[1, 2, 3]}                   | ${0}    | ${[1, 2, 3]}
+
+  ${'op'}   | ${'concat'}          | ${[[1, 2], [3, 4], [5, 6]]}    | ${0}    | ${[1, 2, 3, 4, 5, 6]}
+  ${'op'}   | ${'concat'}          | ${[[1, 2]]}                    | ${0}    | ${[1, 2]}
+  ${'op'}   | ${'concat'}          | ${[]}                          | ${0}    | ${[]}
+  ${'op'}   | ${'concat'}          | ${[1, [1, 2], 1]}              | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
+
+  ${'op'}   | ${'string_to_b58'}   | ${["test"]}                    | ${0}    | ${"3yZe7d"}
+  ${'op'}   | ${'string_to_b58'}   | ${["test", 1]}                 | ${1}    | ${"string_to_b58 accepts only one string argument"}
+
+  ${'op'}   | ${'string_from_b58'} | ${["3yZe7d"]}                  | ${0}    | ${"test"}
+  ${'op'}   | ${'string_from_b58'} | ${["3yZe7d", 1]}               | ${1}    | ${"string_from_b58 accepts only one string argument"}
+
+  ${'op'}   | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}      | ${0}    | ${"3yZe7d"}
+  ${'op'}   | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}   | ${1}    | ${"bytes_to_b58 accepts only single argument: array of numbers"}
+
+  ${'op'}   | ${'bytes_from_b58'}  | ${["3yZe7d"]}                  | ${0}    | ${[116, 101, 115, 116]}
+  ${'op'}   | ${'bytes_from_b58'}  | ${["3yZe7d", 1]}               | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
+
+  ${'peer'} | ${'timeout'}         | ${[200, []]}                   | ${0}    | ${[]}}
+  ${'peer'} | ${'timeout'}         | ${[200, ['test']]}             | ${0}    | ${['test']}}
+  ${'peer'} | ${'timeout'}         | ${[]}                          | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and an optional message string'}}
+  ${'peer'} | ${'timeout'}         | ${[200, 'test', 1]}            | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and an optional message string'}}
+  
+  `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
-        async ({ fnName, args, retCode, result }) => {
+        async ({ serviceId, fnName, args, retCode, result }) => {
             // arrange
             const req: CallServiceData = {
-                serviceId: 'op',
+                serviceId: serviceId,
                 fnName: fnName,
                 args: args,
                 tetraplets: [],

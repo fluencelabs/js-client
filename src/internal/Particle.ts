@@ -146,6 +146,7 @@ export type ParticleExecutionStage =
     | { stage: 'interpreterError'; errorMessage: string }
     | { stage: 'localWorkDone' }
     | { stage: 'sent' }
+    | { stage: 'sendingError' }
     | { stage: 'expired' };
 
 export interface ParticleQueueItem {

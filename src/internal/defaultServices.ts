@@ -99,6 +99,23 @@ export const defaultServices: { [serviceId in string]: { [fnName in string]: Gen
     },
 
     peer: {
+        timeout: (req) => {
+            if (req.args.length !== 2) {
+                return error(
+                    'timeout accepts exactly two arguments: timeout duration in ms and an optional message string',
+                );
+            }
+            const durationMs = req.args[0];
+            const message = req.args[1];
+
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const res = success(message);
+                    resolve(res);
+                }, durationMs);
+            });
+        },
+
         identify: (req) => {
             return error('The JS implementation of Peer does not support identify');
         },

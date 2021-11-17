@@ -328,6 +328,10 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                 resolve(undefined);
             }
 
+            if (stage.stage === 'sendingError') {
+                reject(`Could not send particle for ${def.functionName}: not connected`);
+            }
+
             if (stage.stage === 'expired') {
                 reject(`Request timed out after ${particle.ttl} for ${def.functionName}`);
             }
