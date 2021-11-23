@@ -33,8 +33,8 @@ describe('Tests for default handler', () => {
 
   ${'peer'} | ${'timeout'}         | ${[200, []]}                   | ${0}    | ${[]}}
   ${'peer'} | ${'timeout'}         | ${[200, ['test']]}             | ${0}    | ${['test']}}
-  ${'peer'} | ${'timeout'}         | ${[]}                          | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and an optional message string'}}
-  ${'peer'} | ${'timeout'}         | ${[200, 'test', 1]}            | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and an optional message string'}}
+  ${'peer'} | ${'timeout'}         | ${[]}                          | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
+  ${'peer'} | ${'timeout'}         | ${[200, 'test', 1]}            | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   
   `.test(
         //
