@@ -355,6 +355,12 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 export function registerService(args: any[], def: ServiceDef) {
     const { peer, service, serviceId } = extractRegisterServiceArgs(args, def.defaultServiceId);
 
+    if (!peer.getStatus().isInitialized) {
+        throw new Error(
+            'Could not register the service because the peer is not initialized. Are you passing the wrong peer to the register function?',
+        );
+    }
+
     // Checking for missing keys
     const requiredKeys = def.functions.map((x) => x.functionName);
     const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));
@@ -367,7 +373,8 @@ export function registerService(args: any[], def: ServiceDef) {
 
     for (let singleFunction of def.functions) {
         // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
-        const userDefinedHandler = service[singleFunction.functionName];
+        // Account for the fact that user service might be defined as a class - .bind(...)
+        const userDefinedHandler = service[singleFunction.functionName].bind(service);
 
         peer.internals.regHandler.common(serviceId, singleFunction.functionName, async (req) => {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
