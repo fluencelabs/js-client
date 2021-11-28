@@ -109,7 +109,7 @@ export interface PeerConfig {
  */
 export interface PeerStatus {
     /**
-     * Is the peer connected to network or not
+     * Is the peer initialized or not
      */
     isInitialized: Boolean;
 
