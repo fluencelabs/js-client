@@ -329,15 +329,17 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
             }
 
             if (stage.stage === 'sendingError') {
-                reject(`Could not send particle for ${def.functionName}: not connected`);
+                reject(`Could not send particle for ${def.functionName}: not connected  (particle id: ${particle.id})`);
             }
 
             if (stage.stage === 'expired') {
-                reject(`Request timed out after ${particle.ttl} for ${def.functionName}`);
+                reject(`Request timed out after ${particle.ttl} for ${def.functionName} (particle id: ${particle.id})`);
             }
 
             if (stage.stage === 'interpreterError') {
-                reject(`Script interpretation failed for ${def.functionName}: ${stage.errorMessage}`);
+                reject(
+                    `Script interpretation failed for ${def.functionName}: ${stage.errorMessage}  (particle id: ${particle.id})`,
+                );
             }
         });
     });
