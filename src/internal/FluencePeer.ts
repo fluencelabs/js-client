@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-import {
-    AirInterpreter,
-    CallRequestsArray,
-    CallResultsArray,
-    InterpreterResult,
-    LogLevel,
-    CallServiceResult as AvmCallServiceResult,
-} from '@fluencelabs/avm';
 import { Multiaddr } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
@@ -29,12 +21,13 @@ import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
-import { createInterpreter, dataToString } from './utils';
+import { dataToString, avmLogFunction } from './utils';
 import { filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { defaultServices } from './defaultServices';
-import { instanceOf } from 'ts-pattern';
+import { AvmWorker, InterpreterResult, LogLevel } from '@fluencelabs/avm-worker-common';
+import Worker from '@fluencelabs/avm-worker';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -102,6 +95,11 @@ export interface PeerConfig {
      * If the option is not set default TTL will be 7000
      */
     defaultTtlMs?: number;
+
+    /**
+     * Pluggable AVM worker implementation
+     */
+    avmWorker?: AvmWorker;
 }
 
 /**
@@ -182,7 +180,8 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
-        this._interpreter = await createInterpreter(config?.avmLogLevel || 'off');
+        this._worker = config?.avmWorker || new Worker(avmLogFunction);
+        await this._worker.init(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
             let connectToMultiAddr: Multiaddr;
@@ -358,7 +357,7 @@ export class FluencePeer {
     private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;
-    private _interpreter: AirInterpreter;
+    private _worker: AvmWorker;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
@@ -420,9 +419,9 @@ export class FluencePeer {
                 // force new line
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
-            .subscribe((item) => {
+            .subscribe(async (item) => {
                 const particle = item.particle;
-                const result = runInterpreter(this.getStatus().peerId, this._interpreter, particle, prevData);
+                const result = await runAvmWorker(this.getStatus().peerId, this._worker, particle, prevData);
 
                 // Do not continue if there was an error in particle interpretation
                 if (!isInterpretationSuccessful(result)) {
@@ -585,16 +584,16 @@ function registerDefaultServices(peer: FluencePeer) {
     }
 }
 
-function runInterpreter(
+async function runAvmWorker(
     currentPeerId: PeerIdB58,
-    interpreter: AirInterpreter,
+    worker: AvmWorker,
     particle: Particle,
     prevData: Uint8Array,
-): InterpreterResult {
+): Promise<InterpreterResult> {
     particle.logTo('debug', 'Sending particle to interpreter');
     log.debug('prevData: ', dataToString(prevData));
     log.debug('data: ', dataToString(particle.data));
-    const interpreterResult = interpreter.invoke(
+    const interpreterResult = await worker.run(
         particle.script,
         prevData,
         particle.data,

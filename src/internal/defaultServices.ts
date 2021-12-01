@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CallServiceResult } from '@fluencelabs/avm';
+import { CallServiceResult } from '@fluencelabs/avm-worker-common';
 import { encode, decode } from 'bs58';
 import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
 

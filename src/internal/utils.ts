@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
-import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
-import { AvmLoglevel, FluencePeer } from './FluencePeer';
+import { FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
+import { LogLevel as AvmLoglevel } from '@fluencelabs/avm-worker-common';
 
-export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
-    const logFn = (level: AvmLogLevel, msg: string) => {
-        switch (level) {
-            case 'error':
-                log.error(msg);
-                break;
+export const avmLogFunction = (level: AvmLoglevel, msg: string) => {
+    switch (level) {
+        case 'error':
+            log.error(msg);
+            break;
 
-            case 'warn':
-                log.warn(msg);
-                break;
+        case 'warn':
+            log.warn(msg);
+            break;
 
-            case 'info':
-                log.info(msg);
-                break;
+        case 'info':
+            log.info(msg);
+            break;
 
-            case 'debug':
-            case 'trace':
-                log.log(msg);
-                break;
-        }
-    };
-    return AirInterpreter.create(logLevel, logFn);
+        case 'debug':
+        case 'trace':
+            log.log(msg);
+            break;
+    }
 };
 
 export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {

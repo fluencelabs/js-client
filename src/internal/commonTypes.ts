@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CallRequest, SecurityTetraplet } from '@fluencelabs/avm';
+import { SecurityTetraplet } from '@fluencelabs/avm-worker-common';
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).

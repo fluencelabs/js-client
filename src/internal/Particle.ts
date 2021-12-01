@@ -16,7 +16,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
-import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
+import { CallResultsArray, LogLevel } from '@fluencelabs/avm-worker-common';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
 import { dataToString } from './utils';
