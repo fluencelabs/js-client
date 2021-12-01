@@ -5,7 +5,7 @@ import { checkConnection, doNothing, handleTimeout } from '../../internal/utils'
 import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
-import { krasnodar } from "@fluencelabs/fluence-network-environment";
+import { krasnodar, testNet } from "@fluencelabs/fluence-network-environment";
 
 const anotherPeer = new FluencePeer();
 
@@ -534,7 +534,7 @@ describe('Typescript usage suite', () => {
     it('Fold: incompatible results bug', async () => {
         // arrange
         const peer = new FluencePeer();
-        await peer.start({ connectTo: krasnodar[0] });
+        await peer.start({ connectTo: testNet[0], avmLogLevel: "info" });
 
         const promise = new Promise((resolve, reject) => {
             const script = `
@@ -621,7 +621,7 @@ describe('Typescript usage suite', () => {
             `;
             const particle = Particle.createNew(script);
 
-            let outer = ["1", "2", "3", "4", "5"];
+            let outer = ["1"];
             let returns = 0;
             registerHandlersHelper(peer, particle, {
                 getDataSrv: {
@@ -643,7 +643,10 @@ describe('Typescript usage suite', () => {
                         //     resolve(undefined);
                         // }
                     }
-                }
+                },
+                "callbackSrv": {
+                    "logNeighs": args => { console.log("logNeighs", JSON.stringify(args)) }
+                },
             });
 
             peer.internals.initiateParticle(particle, handleTimeout(reject));

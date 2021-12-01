@@ -52,6 +52,9 @@ export type AvmLoglevel = LogLevel;
 
 const DEFAULT_TTL = 7000;
 
+let file_name = 1;
+let interpreter_run = 1;
+
 /**
  * Configuration used when initiating Fluence Peer
  */
@@ -594,6 +597,12 @@ function runInterpreter(
     particle.logTo('debug', 'Sending particle to interpreter');
     log.debug('prevData: ', dataToString(prevData));
     log.debug('data: ', dataToString(particle.data));
+
+    let fs = require('fs');
+    let nn = `\n\ninterpreter run #${interpreter_run}:\n\n\n`;
+    fs.appendFileSync("./trace_instr.out", nn)
+    interpreter_run += 1;
+
     const interpreterResult = interpreter.invoke(
         particle.script,
         prevData,
@@ -611,7 +620,24 @@ function runInterpreter(
     if (isInterpretationSuccessful(interpreterResult)) {
         log.debug('Interpreter result: ', toLog);
     } else {
-        log.error('Interpreter failed: ', toLog);
+        /*
+        log.error('Interpreter failed_____: ', toLog);
+        log.error('prevData: ', dataToString(prevData));
+        log.error('data: ', dataToString(particle.data));
+
+         */
+
+        let str_1 = `Interpreter failed: ${JSON.stringify(toLog, null, 4)}\n\n`;
+        let str_2 = `prevData: ${JSON.stringify(dataToString(prevData), null, 4)}\n\n`;
+        let str_3 = `data: ${JSON.stringify(dataToString(particle.data), null, 4)}\n\n`;
+
+        const fs = require('fs');
+        let ff = `./${file_name}.out`;
+        fs.writeFileSync(ff, str_1 + str_2 + str_3);
+
+        file_name += 1;
+        process.exit(1);
+        // setTimeout(() => process.exit(1), 20000);
     }
     return interpreterResult;
 }

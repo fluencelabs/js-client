@@ -20,8 +20,12 @@ import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes 
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
 
+let fs = require('fs');
 export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
     const logFn = (level: AvmLogLevel, msg: string) => {
+        let msg_n = `${msg}\n`;
+        fs.appendFileSync("./trace_instr.out", msg_n);
+        /*
         switch (level) {
             case 'error':
                 log.error(msg);
@@ -40,6 +44,8 @@ export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter
                 log.log(msg);
                 break;
         }
+
+         */
     };
     return AirInterpreter.create(logLevel, logFn);
 };
