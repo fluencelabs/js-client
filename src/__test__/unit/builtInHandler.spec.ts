@@ -1,6 +1,14 @@
 import each from 'jest-each';
 import { CallServiceData } from '../../internal/commonTypes';
-import { defaultServices } from '../../internal/defaultServices';
+import { BuiltInServiceContext, builtInServices } from '../../internal/builtInServices';
+import { KeyPair } from '../../internal/KeyPair';
+
+const context = (async () => {
+    const res: BuiltInServiceContext = {
+        peerKeyPair: await KeyPair.randomEd25519(),
+    };
+    return res;
+})();
 
 describe('Tests for default handler', () => {
     // prettier-ignore
@@ -56,7 +64,7 @@ describe('Tests for default handler', () => {
             };
 
             // act
-            const fn = defaultServices[req.serviceId][req.fnName];
+            const fn = builtInServices(await context)[req.serviceId][req.fnName];
             const res = await fn(req);
 
             // assert
@@ -84,7 +92,7 @@ describe('Tests for default handler', () => {
         };
 
         // act
-        const fn = defaultServices[req.serviceId][req.fnName];
+        const fn = builtInServices(await context)[req.serviceId][req.fnName];
         const res = await fn(req);
 
         // assert
