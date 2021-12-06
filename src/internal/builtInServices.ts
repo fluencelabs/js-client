@@ -129,11 +129,19 @@ export function builtInServices(context: BuiltInServiceContext): {
 
         security: {
             sign: async (req) => {
+                if (req.args.length !== 1) {
+                    return error('sign accepts exactly one argument: data be signed in format of u8 array of bytes');
+                }
                 const [data] = req.args;
                 const signedData = await context.peerKeyPair.signBytes(Uint8Array.from(data));
                 return success(Array.from(signedData));
             },
             verify: async (req) => {
+                if (req.args.length !== 2) {
+                    return error(
+                        'verify accepts exactly two arguments: data and signature, both in format of u8 array of bytes',
+                    );
+                }
                 const [data, signature] = req.args;
                 const result = await context.peerKeyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
                 return success(result);

@@ -64,6 +64,8 @@ describe('Tests for default handler', () => {
   ${'security'} | ${'sign'}            | ${[testData]}                   | ${0}    | ${testDataSig}}
   ${'security'} | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
   ${'security'} | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
+  ${'security'} | ${'sign'}            | ${[]}                           | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
+  ${'security'} | ${'verify'}          | ${[testData]}                   | ${1}    | ${'verify accepts exactly two arguments: data and signature, both in format of u8 array of bytes'}}
   `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
