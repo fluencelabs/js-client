@@ -130,12 +130,12 @@ export function builtInServices(context: BuiltInServiceContext): {
         security: {
             sign: async (req) => {
                 const [data] = req.args;
-                const signedData = await context.peerKeyPair.signBytes(data);
-                return success(signedData);
+                const signedData = await context.peerKeyPair.signBytes(Uint8Array.from(data));
+                return success(Array.from(signedData));
             },
             verify: async (req) => {
                 const [data, signature] = req.args;
-                const result = await context.peerKeyPair.verify(data, signature);
+                const result = await context.peerKeyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
                 return success(result);
             },
         },
