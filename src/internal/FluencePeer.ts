@@ -97,7 +97,7 @@ export interface PeerConfig {
     defaultTtlMs?: number;
 
     /**
-     * Pluggable AVM worker implementation
+     * Plugable AVM worker implementation. If no specified a single-thread, ui-blocking worker will be used.
      */
     avmWorker?: AvmWorker;
 }
