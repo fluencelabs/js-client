@@ -8,8 +8,10 @@ const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
 
 const context = (async () => {
     const keyBytes = toUint8Array(key);
+    const kp = await KeyPair.fromEd25519SK(keyBytes);
     const res: BuiltInServiceContext = {
-        peerKeyPair: await KeyPair.fromEd25519SK(keyBytes),
+        peerKeyPair: kp,
+        peerId: kp.Libp2pPeerId.toB58String(),
     };
     return res;
 })();
@@ -61,7 +63,6 @@ describe('Tests for default handler', () => {
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
    
-  ${'security'} | ${'sign'}            | ${[testData]}                   | ${0}    | ${testDataSig}}
   ${'security'} | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
   ${'security'} | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
   ${'security'} | ${'sign'}            | ${[]}                           | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
@@ -121,6 +122,43 @@ describe('Tests for default handler', () => {
         expect(res).toMatchObject({
             retCode: 1,
             result: 'The JS implementation of Peer does not support identify',
+        });
+    });
+
+    it('sign should work', async () => {
+        // arrange
+        const ctx = await context;
+        const req: CallServiceData = {
+            serviceId: 'security',
+            fnName: 'sign',
+            args: [testData],
+            tetraplets: [
+                [
+                    {
+                        function_name: 'get_trust_bytes',
+                        json_path: '',
+                        peer_pk: '',
+                        service_id: 'TrustGraph',
+                    },
+                ],
+            ],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: ctx.peerId,
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        // act
+        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
+        const res = await fn(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 0,
+            result: testDataSig,
         });
     });
 });
