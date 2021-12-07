@@ -210,7 +210,10 @@ export class FluencePeer {
         }
 
         this._legacyCallServiceHandler = new LegacyCallServiceHandler();
-        registerDefaultServices(this, { peerKeyPair: this._keyPair });
+        registerDefaultServices(this, {
+            peerKeyPair: this._keyPair,
+            peerId: this.getStatus().peerId,
+        });
 
         this._startParticleProcessing();
     }

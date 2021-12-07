@@ -16,6 +16,7 @@
 
 import { CallServiceResult } from '@fluencelabs/avm';
 import { encode, decode } from 'bs58';
+import { PeerIdB58 } from 'src';
 import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { KeyPair } from './KeyPair';
 
@@ -35,6 +36,7 @@ const error = (error: string): CallServiceResult => {
 
 export interface BuiltInServiceContext {
     peerKeyPair: KeyPair;
+    peerId: PeerIdB58;
 }
 
 export function builtInServices(context: BuiltInServiceContext): {
@@ -132,10 +134,32 @@ export function builtInServices(context: BuiltInServiceContext): {
                 if (req.args.length !== 1) {
                     return error('sign accepts exactly one argument: data be signed in format of u8 array of bytes');
                 }
+
+                if (req.particleContext.initPeerId !== context.peerId) {
+                    return error('sign is only allowed to be called on the same peer the particle was initiated from');
+                }
+
+                const t = req.tetraplets[0][0];
+                const serviceFnPair = `${t.service_id}.${t.function_name}`;
+
+                const allowedServices = [
+                    'TrustGraph.get_trust_bytes',
+                    'TrustGraph.get_revocation_bytes',
+                    'Registry.get_key_bytes',
+                    'Registry.get_record_bytes',
+                ];
+
+                if (allowedServices.indexOf(serviceFnPair) === -1) {
+                    return error(
+                        'Only data from the following services is allowed to be signed: ' + allowedServices.join(', '),
+                    );
+                }
+
                 const [data] = req.args;
                 const signedData = await context.peerKeyPair.signBytes(Uint8Array.from(data));
                 return success(Array.from(signedData));
             },
+
             verify: async (req) => {
                 if (req.args.length !== 2) {
                     return error(
