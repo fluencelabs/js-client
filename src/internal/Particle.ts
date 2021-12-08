@@ -19,7 +19,7 @@ import { fromByteArray, toByteArray } from 'base64-js';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm-worker-common';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
-import { dataToString } from './utils';
+import { dataToString, w } from './utils';
 
 export class Particle {
     id: string;
@@ -130,7 +130,7 @@ export class Particle {
 
         fn(
             message,
-            JSON.stringify({
+            w({
                 id: this.id,
                 init_peer_id: this.initPeerId,
                 timestamp: this.timestamp,

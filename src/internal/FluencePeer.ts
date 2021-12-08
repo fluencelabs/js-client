@@ -21,7 +21,7 @@ import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
-import { dataToString, avmLogFunction } from './utils';
+import { dataToString, avmLogFunction, w } from './utils';
 import { filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
@@ -466,7 +466,7 @@ export class FluencePeer {
                             )
                             .then((res) => {
                                 const serviceResult = {
-                                    result: JSON.stringify(res.result),
+                                    result: w(res.result),
                                     retCode: res.retCode,
                                 };
 
@@ -486,7 +486,7 @@ export class FluencePeer {
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
-        log.debug('executing call service handler', req);
+        log.debug('executing call service handler', w(req));
         const particleId = req.particleContext.particleId;
 
         // trying particle-specific handler
@@ -531,7 +531,7 @@ export class FluencePeer {
                       retCode: ResultCodes.unknownError,
                       result:
                           `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' ` +
-                          `args='${JSON.stringify(req.args)}'`,
+                          `args='${w(req.args)}'`,
                   };
         }
 
@@ -539,7 +539,7 @@ export class FluencePeer {
             res.result = null;
         }
 
-        log.debug('executed call service handler, req and res are: ', JSON.stringify(req), JSON.stringify(res));
+        log.debug('executed call service handler, req and res are: ', w(req), w(res));
         return res;
     }
 
