@@ -609,9 +609,9 @@ async function runAvmWorker(
     toLog.data = dataToString(toLog.data);
 
     if (isInterpretationSuccessful(interpreterResult)) {
-        log.debug('Interpreter result: ', toLog);
+        log.debug('Interpreter result: ', w(toLog));
     } else {
-        log.error('Interpreter failed: ', toLog);
+        log.error('Interpreter failed: ', w(toLog));
     }
     return interpreterResult;
 }

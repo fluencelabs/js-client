@@ -153,7 +153,12 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
 };
 
 export function dataToString(data: Uint8Array) {
-    return new TextDecoder().decode(Buffer.from(data));
+    const text = new TextDecoder().decode(Buffer.from(data));
+    try {
+        return JSON.stringify(JSON.parse(text), null, 4);
+    } catch {
+        return text;
+    }
 }
 
 export function w(obj) {
