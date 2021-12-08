@@ -143,10 +143,10 @@ export function builtInServices(context: BuiltInServiceContext): {
                 const serviceFnPair = `${t.service_id}.${t.function_name}`;
 
                 const allowedServices = [
-                    'TrustGraph.get_trust_bytes',
-                    'TrustGraph.get_revocation_bytes',
-                    'Registry.get_key_bytes',
-                    'Registry.get_record_bytes',
+                    'trust-graph.get_trust_bytes',
+                    'trust-graph.get_revocation_bytes',
+                    'registry.get_key_bytes',
+                    'registry.get_record_bytes',
                 ];
 
                 if (allowedServices.indexOf(serviceFnPair) === -1) {

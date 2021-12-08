@@ -138,7 +138,7 @@ describe('Tests for default handler', () => {
                         function_name: 'get_trust_bytes',
                         json_path: '',
                         peer_pk: '',
-                        service_id: 'TrustGraph',
+                        service_id: 'trust-graph',
                     },
                 ],
             ],
