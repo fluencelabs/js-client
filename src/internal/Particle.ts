@@ -135,6 +135,7 @@ export class Particle {
             ttl: this.ttl,
             script: this.script,
             signature: this.signature,
+            callResults: this.callResults,
             data: data,
         });
     }
