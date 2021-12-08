@@ -128,16 +128,19 @@ export class Particle {
                 return;
         }
 
-        fn(message, {
-            id: this.id,
-            init_peer_id: this.initPeerId,
-            timestamp: this.timestamp,
-            ttl: this.ttl,
-            script: this.script,
-            signature: this.signature,
-            callResults: this.callResults,
-            data: data,
-        });
+        fn(
+            message,
+            JSON.stringify({
+                id: this.id,
+                init_peer_id: this.initPeerId,
+                timestamp: this.timestamp,
+                ttl: this.ttl,
+                script: this.script,
+                signature: this.signature,
+                callResults: this.callResults,
+                data: data,
+            }),
+        );
     }
 }
 

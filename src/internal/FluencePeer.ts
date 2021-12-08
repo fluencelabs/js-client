@@ -529,7 +529,9 @@ export class FluencePeer {
                 ? await handler(req)
                 : {
                       retCode: ResultCodes.unknownError,
-                      result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
+                      result:
+                          `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' ` +
+                          `args='${JSON.stringify(req.args)}'`,
                   };
         }
 
@@ -537,7 +539,7 @@ export class FluencePeer {
             res.result = null;
         }
 
-        log.debug('executed call service handler, req and res are: ', req, res);
+        log.debug('executed call service handler, req and res are: ', JSON.stringify(req), JSON.stringify(res));
         return res;
     }
 
@@ -592,7 +594,6 @@ async function runAvmWorker(
 ): Promise<InterpreterResult> {
     particle.logTo('debug', 'Sending particle to interpreter');
     log.debug('prevData: ', dataToString(prevData));
-    log.debug('data: ', dataToString(particle.data));
     const interpreterResult = await worker.run(
         particle.script,
         prevData,
