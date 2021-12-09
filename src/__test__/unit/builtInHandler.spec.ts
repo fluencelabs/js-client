@@ -1,5 +1,5 @@
-import each from 'jest-each';
 import { CallServiceData } from '../../internal/commonTypes';
+import each from 'jest-each';
 import { BuiltInServiceContext, builtInServices } from '../../internal/builtInServices';
 import { KeyPair } from '../../internal/KeyPair';
 import { toUint8Array } from 'js-base64';
@@ -162,6 +162,57 @@ describe('Tests for default handler', () => {
         expect(res).toMatchObject({
             retCode: 0,
             result: testDataSig,
+        });
+    });
+
+    it('sign-verify call chain should work', async () => {
+        const ctx = await context;
+        const signReq: CallServiceData = {
+            serviceId: 'sig',
+            fnName: 'sign',
+            args: [testData],
+            tetraplets: [
+                [
+                    {
+                        function_name: 'get_trust_bytes',
+                        json_path: '',
+                        peer_pk: '',
+                        service_id: 'trust-graph',
+                    },
+                ],
+            ],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: ctx.peerId,
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        const signFn = builtInServices(ctx)[signReq.serviceId][signReq.fnName];
+        const signRes = await signFn(signReq);
+
+        const verifyReq: CallServiceData = {
+            serviceId: 'sig',
+            fnName: 'verify',
+            args: [testData, signRes.result],
+            tetraplets: [],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: ctx.peerId,
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        const verifyFn = builtInServices(ctx)[verifyReq.serviceId][verifyReq.fnName];
+        const verifyRes = await verifyFn(verifyReq);
+
+        expect(verifyRes).toMatchObject({
+            retCode: 0,
+            result: true,
         });
     });
 
