@@ -129,7 +129,7 @@ export function builtInServices(context: BuiltInServiceContext): {
             },
         },
 
-        security: {
+        signer: {
             sign: async (req) => {
                 if (req.args.length !== 1) {
                     return error('sign accepts exactly one argument: data be signed in format of u8 array of bytes');
