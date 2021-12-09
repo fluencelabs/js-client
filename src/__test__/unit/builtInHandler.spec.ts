@@ -128,7 +128,7 @@ describe('Tests for default handler', () => {
         });
     });
 
-    it('sign should work', async () => {
+    it('sig.sign should create the correct signature', async () => {
         // arrange
         const ctx = await context;
         const req: CallServiceData = {
@@ -162,6 +162,80 @@ describe('Tests for default handler', () => {
         expect(res).toMatchObject({
             retCode: 0,
             result: testDataSig,
+        });
+    });
+
+    it('sig.sign should not allow data from incorrect services', async () => {
+        // arrange
+        const ctx = await context;
+        const req: CallServiceData = {
+            serviceId: 'sig',
+            fnName: 'sign',
+            args: [testData],
+            tetraplets: [
+                [
+                    {
+                        function_name: 'some-other-fn',
+                        json_path: '',
+                        peer_pk: '',
+                        service_id: 'cool-service',
+                    },
+                ],
+            ],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: ctx.peerId,
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        // act
+        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
+        const res = await fn(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 1,
+            result: expect.stringContaining("Only data from the following services is allowed to be signed:"),
+        });
+    });
+
+    it('sig.sign should not allow particles initiated from other peers', async () => {
+        // arrange
+        const ctx = await context;
+        const req: CallServiceData = {
+            serviceId: 'sig',
+            fnName: 'sign',
+            args: [testData],
+            tetraplets: [
+                [
+                    {
+                        function_name: 'some-other-fn',
+                        json_path: '',
+                        peer_pk: '',
+                        service_id: 'cool-service',
+                    },
+                ],
+            ],
+            particleContext: {
+                particleId: 'some',
+                initPeerId: (await KeyPair.randomEd25519()).Libp2pPeerId.toB58String(),
+                timestamp: 595951200,
+                ttl: 595961200,
+                signature: 'sig',
+            },
+        };
+
+        // act
+        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
+        const res = await fn(req);
+
+        // assert
+        expect(res).toMatchObject({
+            retCode: 1,
+            result: 'sign is only allowed to be called on the same peer the particle was initiated from',
         });
     });
 });
