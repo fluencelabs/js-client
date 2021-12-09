@@ -66,10 +66,10 @@ describe('Tests for default handler', () => {
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
    
-  ${'signer'}   | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
-  ${'signer'}   | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
-  ${'signer'}   | ${'sign'}            | ${[]}                           | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
-  ${'signer'}   | ${'verify'}          | ${[testData]}                   | ${1}    | ${'verify accepts exactly two arguments: data and signature, both in format of u8 array of bytes'}}
+  ${'sig'}      | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
+  ${'sig'}      | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
+  ${'sig'}      | ${'sign'}            | ${[]}                           | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
+  ${'sig'}      | ${'verify'}          | ${[testData]}                   | ${1}    | ${'verify accepts exactly two arguments: data and signature, both in format of u8 array of bytes'}}
   `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
@@ -132,7 +132,7 @@ describe('Tests for default handler', () => {
         // arrange
         const ctx = await context;
         const req: CallServiceData = {
-            serviceId: 'signer',
+            serviceId: 'sig',
             fnName: 'sign',
             args: [testData],
             tetraplets: [
