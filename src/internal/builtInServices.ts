@@ -30,7 +30,7 @@ const success = (result: any): CallServiceResult => {
 const error = (error: string): CallServiceResult => {
     return {
         result: error,
-        retCode: ResultCodes.unknownError,
+        retCode: ResultCodes.error,
     };
 };
 

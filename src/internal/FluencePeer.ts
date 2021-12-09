@@ -462,7 +462,7 @@ export class FluencePeer {
                         this._execSingleCallRequest(req)
                             .catch(
                                 (err): CallServiceResult => ({
-                                    retCode: ResultCodes.exceptionInHandler,
+                                    retCode: ResultCodes.error,
                                     result: `Handler failed. fnName="${req.fnName}" serviceId="${
                                         req.serviceId
                                     }" error: ${err.toString()}`,
@@ -532,7 +532,7 @@ export class FluencePeer {
             res = handler
                 ? await handler(req)
                 : {
-                      retCode: ResultCodes.unknownError,
+                      retCode: ResultCodes.error,
                       result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' args='${req.args}'`,
                   };
         }
