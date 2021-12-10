@@ -54,4 +54,12 @@ export class KeyPair {
     toEd25519PrivateKey(): Uint8Array {
         return this.Libp2pPeerId.privKey.marshal().subarray(0, 32);
     }
+
+    signBytes(data: Uint8Array): Promise<Uint8Array> {
+        return this.Libp2pPeerId.privKey.sign(data);
+    }
+
+    verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
+        return this.Libp2pPeerId.privKey.public.verify(data, signature);
+    }
 }
