@@ -59,8 +59,7 @@ export interface CallParams<ArgName extends string | null> {
 
 export enum ResultCodes {
     success = 0,
-    unknownError = 1,
-    exceptionInHandler = 2,
+    error = 1,
 }
 
 /**
