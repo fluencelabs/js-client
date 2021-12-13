@@ -161,6 +161,6 @@ export function dataToString(data: Uint8Array) {
     }
 }
 
-export function w(obj) {
+export function str(obj) {
     return JSON.stringify(obj, null, 4);
 }

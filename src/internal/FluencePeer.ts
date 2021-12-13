@@ -21,7 +21,7 @@ import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
-import { dataToString, avmLogFunction, w } from './utils';
+import { dataToString, avmLogFunction, str } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
@@ -480,7 +480,7 @@ export class FluencePeer {
                             )
                             .then((res) => {
                                 const serviceResult = {
-                                    result: w(res.result),
+                                    result: str(res.result),
                                     retCode: res.retCode,
                                 };
 
@@ -500,7 +500,7 @@ export class FluencePeer {
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
-        log.debug('executing call service handler', w(req));
+        log.debug('executing call service handler', str(req));
         const particleId = req.particleContext.particleId;
 
         // trying particle-specific handler
@@ -543,7 +543,9 @@ export class FluencePeer {
                 ? await handler(req)
                 : {
                       retCode: ResultCodes.error,
-                      result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${req.fnName}' args='${w(req.args)}'`,
+                      result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${
+                          req.fnName
+                      }' args='${str(req.args)}'`,
                   };
         }
 
@@ -551,7 +553,7 @@ export class FluencePeer {
             res.result = null;
         }
 
-        log.debug('executed call service handler, req and res are: ', w(req), w(res));
+        log.debug('executed call service handler, req and res are: ', str(req), str(res));
         return res;
     }
 
@@ -622,9 +624,9 @@ async function runAvmWorker(
     toLog.data = dataToString(toLog.data);
 
     if (isInterpretationSuccessful(interpreterResult)) {
-        log.debug('Interpreter result: ', w(toLog));
+        log.debug('Interpreter result: ', str(toLog));
     } else {
-        log.error('Interpreter failed: ', w(toLog));
+        log.error('Interpreter failed: ', str(toLog));
     }
     return interpreterResult;
 }
