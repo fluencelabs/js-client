@@ -22,7 +22,7 @@ import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
 import { dataToString, avmLogFunction, w } from './utils';
-import { filter, pipe, Subject, tap } from 'rxjs';
+import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { defaultServices } from './defaultServices';
@@ -418,14 +418,28 @@ export class FluencePeer {
             .pipe(
                 // force new line
                 filterExpiredParticles(this._expireParticle.bind(this)),
+
+                concatMap(async (item) => {
+                    // IMPORTANT!
+                    // AVM worker execution and prevData <-> newData swapping
+                    // MUST happen sequentially (in a critical section).
+                    // Otherwise the race between worker might occur corrupting the prevData
+
+                    const result = await runAvmWorker(this.getStatus().peerId, this._worker, item.particle, prevData);
+                    const newData = Buffer.from(result.data);
+                    prevData = newData;
+
+                    return {
+                        ...item,
+                        result: result,
+                        newData: newData,
+                    };
+                }),
             )
             .subscribe(async (item) => {
-                const particle = item.particle;
-                const result = await runAvmWorker(this.getStatus().peerId, this._worker, particle, prevData);
-
                 // Do not continue if there was an error in particle interpretation
-                if (!isInterpretationSuccessful(result)) {
-                    item.onStageChange({ stage: 'interpreterError', errorMessage: result.errorMessage });
+                if (!isInterpretationSuccessful(item.result)) {
+                    item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
 
@@ -433,26 +447,23 @@ export class FluencePeer {
                     item.onStageChange({ stage: 'interpreted' });
                 }, 0);
 
-                const newData = Buffer.from(result.data);
-                prevData = newData;
-
                 // send particle further if requested
-                if (result.nextPeerPks.length > 0) {
-                    const newParticle = particle.clone();
-                    newParticle.data = newData;
+                if (item.result.nextPeerPks.length > 0) {
+                    const newParticle = item.particle.clone();
+                    newParticle.data = item.newData;
                     this._outgoingParticles.next({ ...item, particle: newParticle });
                 }
 
                 // execute call requests if needed
                 // and put particle with the results back to queue
-                if (result.callRequests.length > 0) {
-                    for (let [key, cr] of result.callRequests) {
+                if (item.result.callRequests.length > 0) {
+                    for (let [key, cr] of item.result.callRequests) {
                         const req = {
                             fnName: cr.functionName,
                             args: cr.arguments,
                             serviceId: cr.serviceId,
                             tetraplets: cr.tetraplets,
-                            particleContext: particle.getParticleContext(),
+                            particleContext: item.particle.getParticleContext(),
                         };
 
                         this._execSingleCallRequest(req)
@@ -470,7 +481,7 @@ export class FluencePeer {
                                     retCode: res.retCode,
                                 };
 
-                                const newParticle = particle.clone();
+                                const newParticle = item.particle.clone();
                                 newParticle.callResults = [[key, serviceResult]];
                                 newParticle.data = Buffer.from([]);
 

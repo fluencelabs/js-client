@@ -328,7 +328,7 @@ describe('Typescript usage suite', () => {
         // assert
         await expect(res).rejects.toMatchObject({
             msg: expect.stringContaining(
-                `No handler has been registered for serviceId='incorrect' fnName='incorrect' args=''\"'`,
+                `No handler has been registered for serviceId='incorrect' fnName='incorrect' args='[]'\"'`,
             ),
             instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
         });
