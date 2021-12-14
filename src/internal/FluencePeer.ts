@@ -26,8 +26,8 @@ import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { BuiltInServiceContext, builtInServices } from './builtInServices';
-import { AvmWorker, InterpreterResult, LogLevel } from '@fluencelabs/avm-worker-common';
-import Worker from '@fluencelabs/avm-worker';
+import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
+import MainThreadRunner from '@fluencelabs/avm-runner-mainthread';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -97,9 +97,9 @@ export interface PeerConfig {
     defaultTtlMs?: number;
 
     /**
-     * Plugable AVM worker implementation. If no specified a single-thread, ui-blocking worker will be used.
+     * Plugable AVM runner implementation. If no specified a single-thread, ui-blocking runner will be used.
      */
-    avmWorker?: AvmWorker;
+    avmRunner?: AvmRunner;
 }
 
 /**
@@ -180,8 +180,8 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
-        this._worker = config?.avmWorker || new Worker(avmLogFunction);
-        await this._worker.init(config?.avmLogLevel || 'off');
+        this._avmRunner = config?.avmRunner || new MainThreadRunner(avmLogFunction);
+        await this._avmRunner.init(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
             let connectToMultiAddr: Multiaddr;
@@ -360,7 +360,7 @@ export class FluencePeer {
     private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;
-    private _worker: AvmWorker;
+    private _avmRunner: AvmRunner;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
@@ -428,7 +428,12 @@ export class FluencePeer {
                     // MUST happen sequentially (in a critical section).
                     // Otherwise the race between worker might occur corrupting the prevData
 
-                    const result = await runAvmWorker(this.getStatus().peerId, this._worker, item.particle, prevData);
+                    const result = await runAvmRunner(
+                        this.getStatus().peerId,
+                        this._avmRunner,
+                        item.particle,
+                        prevData,
+                    );
                     const newData = Buffer.from(result.data);
                     prevData = newData;
 
@@ -601,9 +606,9 @@ function registerDefaultServices(peer: FluencePeer, context: BuiltInServiceConte
     }
 }
 
-async function runAvmWorker(
+async function runAvmRunner(
     currentPeerId: PeerIdB58,
-    worker: AvmWorker,
+    worker: AvmRunner,
     particle: Particle,
     prevData: Uint8Array,
 ): Promise<InterpreterResult> {

@@ -89,7 +89,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#KeyPair" class="tsd-kind-icon">Key<wbr>Pair</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#avmLogLevel" class="tsd-kind-icon">avm<wbr>Log<wbr>Level</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#avmWorker" class="tsd-kind-icon">avm<wbr>Worker</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#avmRunner" class="tsd-kind-icon">avm<wbr>Runner</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#checkConnectionTimeoutMs" class="tsd-kind-icon">check<wbr>Connection<wbr>Timeout<wbr>Ms</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#connectTo" class="tsd-kind-icon">connect<wbr>To</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="PeerConfig.html#defaultTtlMs" class="tsd-kind-icon">default<wbr>Ttl<wbr>Ms</a></li>
@@ -108,7 +108,7 @@
 					<div class="tsd-signature tsd-kind-icon">Key<wbr>Pair<span class="tsd-signature-symbol">:</span> <a href="../classes/KeyPair.html" class="tsd-signature-type" data-tsd-kind="Class">KeyPair</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L71">internal/FluencePeer.ts:71</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L71">internal/FluencePeer.ts:71</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -124,7 +124,7 @@
 					<div class="tsd-signature tsd-kind-icon">avm<wbr>Log<wbr>Level<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LogLevel</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L65">internal/FluencePeer.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L65">internal/FluencePeer.ts:65</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -134,17 +134,17 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="avmWorker" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> avm<wbr>Worker</h3>
-					<div class="tsd-signature tsd-kind-icon">avm<wbr>Worker<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AvmWorker</span></div>
+					<a name="avmRunner" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> avm<wbr>Runner</h3>
+					<div class="tsd-signature tsd-kind-icon">avm<wbr>Runner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AvmRunner</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L102">internal/FluencePeer.ts:102</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L102">internal/FluencePeer.ts:102</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Plugable AVM worker implementation. If no specified a single-thread, ui-blocking worker will be used.</p>
+							<p>Plugable AVM runner implementation. If no specified a single-thread, ui-blocking runner will be used.</p>
 						</div>
 					</div>
 				</section>
@@ -154,7 +154,7 @@
 					<div class="tsd-signature tsd-kind-icon">check<wbr>Connection<wbr>Timeout<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L78">internal/FluencePeer.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L78">internal/FluencePeer.ts:78</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -171,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">connect<wbr>To<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Multiaddr</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Node</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L60">internal/FluencePeer.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L60">internal/FluencePeer.ts:60</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -193,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Ttl<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L97">internal/FluencePeer.ts:97</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L97">internal/FluencePeer.ts:97</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -210,7 +210,7 @@
 					<div class="tsd-signature tsd-kind-icon">dial<wbr>Timeout<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L90">internal/FluencePeer.ts:90</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L90">internal/FluencePeer.ts:90</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -225,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">skip<wbr>Check<wbr>Connection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/d6daaf0/src/internal/FluencePeer.ts#L85">internal/FluencePeer.ts:85</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/b40a131/src/internal/FluencePeer.ts#L85">internal/FluencePeer.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -269,7 +269,7 @@
 								<a href="PeerConfig.html#avmLogLevel" class="tsd-kind-icon">avm<wbr>Log<wbr>Level</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="PeerConfig.html#avmWorker" class="tsd-kind-icon">avm<wbr>Worker</a>
+								<a href="PeerConfig.html#avmRunner" class="tsd-kind-icon">avm<wbr>Runner</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="PeerConfig.html#checkConnectionTimeoutMs" class="tsd-kind-icon">check<wbr>Connection<wbr>Timeout<wbr>Ms</a>

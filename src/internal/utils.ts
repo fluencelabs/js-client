@@ -18,7 +18,7 @@ import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
-import { LogLevel as AvmLoglevel } from '@fluencelabs/avm-worker-common';
+import { LogLevel as AvmLoglevel } from '@fluencelabs/avm-runner-interface';
 
 export const avmLogFunction = (level: AvmLoglevel, msg: string) => {
     switch (level) {
