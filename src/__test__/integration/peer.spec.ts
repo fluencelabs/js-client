@@ -1,8 +1,9 @@
 import { Multiaddr } from 'multiaddr';
-import { nodes } from '../connection';
+
 import { Fluence, FluencePeer, setLogLevel } from '../../index';
-import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
 import { Particle } from '../../internal/Particle';
+import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
+import { nodes } from '../connection';
 import { registerHandlersHelper } from '../util';
 
 const anotherPeer = new FluencePeer();
@@ -134,7 +135,7 @@ describe('Typescript usage suite', () => {
     it('check connection should work', async function () {
         await anotherPeer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(anotherPeer);
+        const isConnected = await checkConnection(anotherPeer);
 
         expect(isConnected).toEqual(true);
     });
@@ -142,7 +143,7 @@ describe('Typescript usage suite', () => {
     it('check connection should work with ttl', async function () {
         await anotherPeer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(anotherPeer, 10000);
+        const isConnected = await checkConnection(anotherPeer, 10000);
 
         expect(isConnected).toEqual(true);
     });
@@ -328,7 +329,7 @@ describe('Typescript usage suite', () => {
         // assert
         await expect(res).rejects.toMatchObject({
             msg: expect.stringContaining(
-                `No handler has been registered for serviceId='incorrect' fnName='incorrect' args=''\"'`,
+                `No handler has been registered for serviceId='incorrect' fnName='incorrect' args=''"'`,
             ),
             instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
         });

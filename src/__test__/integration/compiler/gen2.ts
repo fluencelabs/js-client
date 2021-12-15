@@ -1,3 +1,4 @@
+/* eslint-disable  */
 import { CallParams, registerService, callFunction } from '../../../internal/compilerSupport/v2';
 import { FluencePeer } from '../../../index';
 

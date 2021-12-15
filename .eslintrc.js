@@ -14,7 +14,7 @@ module.exports = {
     rules: {
         indent: ['off'],
         'linebreak-style': ['error', 'unix'],
-        quotes: ['error', 'single', { avoidEscape: true }],
+        quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
         semi: ['error', 'always'],
         'no-empty-function': 'off',
         '@typescript-eslint/no-empty-function': ['off'],

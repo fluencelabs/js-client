@@ -1,9 +1,9 @@
 import { Fluence, FluencePeer } from '../../..';
+import { callFunction } from '../../../internal/compilerSupport/v2';
 import { Particle } from '../../../internal/Particle';
+import { handleTimeout } from '../../../internal/utils';
 import { registerHandlersHelper } from '../../util';
 import { callMeBack, registerHelloWorld } from './gen1';
-import { callFunction } from '../../../internal/compilerSupport/v2';
-import { handleTimeout } from '../../../internal/utils';
 
 describe('Compiler support infrastructure tests', () => {
     it('Compiled code for function should work', async () => {

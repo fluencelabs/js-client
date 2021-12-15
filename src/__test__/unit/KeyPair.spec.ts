@@ -1,5 +1,6 @@
-import * as bs58 from 'bs58';
 import * as base64 from 'base64-js';
+import * as bs58 from 'bs58';
+
 import { KeyPair } from '../../internal/KeyPair';
 
 describe('KeyPair tests', () => {

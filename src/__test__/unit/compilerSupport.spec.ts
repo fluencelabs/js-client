@@ -1,4 +1,5 @@
 import each from 'jest-each';
+
 import { Fluence, FluencePeer } from '../..';
 import { forTests } from '../../internal/compilerSupport/v2';
 

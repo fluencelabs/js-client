@@ -1,8 +1,9 @@
-import { CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
-import { BuiltInServiceContext, builtInServices } from '../../internal/builtInServices';
-import { KeyPair } from '../../internal/KeyPair';
 import { toUint8Array } from 'js-base64';
+
+import { BuiltInServiceContext, builtInServices } from '../../internal/builtInServices';
+import { CallServiceData } from '../../internal/commonTypes';
+import { KeyPair } from '../../internal/KeyPair';
 
 const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
 
@@ -49,17 +50,17 @@ describe('Tests for default handler', () => {
   ${'op'}       | ${'concat'}          | ${[]}                           | ${0}    | ${[]}
   ${'op'}       | ${'concat'}          | ${[1, [1, 2], 1]}               | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
      
-  ${'op'}       | ${'string_to_b58'}   | ${["test"]}                     | ${0}    | ${"3yZe7d"}
-  ${'op'}       | ${'string_to_b58'}   | ${["test", 1]}                  | ${1}    | ${"string_to_b58 accepts only one string argument"}
+  ${'op'}       | ${'string_to_b58'}   | ${['test']}                     | ${0}    | ${'3yZe7d'}
+  ${'op'}       | ${'string_to_b58'}   | ${['test', 1]}                  | ${1}    | ${'string_to_b58 accepts only one string argument'}
      
-  ${'op'}       | ${'string_from_b58'} | ${["3yZe7d"]}                   | ${0}    | ${"test"}
-  ${'op'}       | ${'string_from_b58'} | ${["3yZe7d", 1]}                | ${1}    | ${"string_from_b58 accepts only one string argument"}
+  ${'op'}       | ${'string_from_b58'} | ${['3yZe7d']}                   | ${0}    | ${'test'}
+  ${'op'}       | ${'string_from_b58'} | ${['3yZe7d', 1]}                | ${1}    | ${'string_from_b58 accepts only one string argument'}
      
-  ${'op'}       | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}       | ${0}    | ${"3yZe7d"}
-  ${'op'}       | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}    | ${1}    | ${"bytes_to_b58 accepts only single argument: array of numbers"}
+  ${'op'}       | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}       | ${0}    | ${'3yZe7d'}
+  ${'op'}       | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}    | ${1}    | ${'bytes_to_b58 accepts only single argument: array of numbers'}
      
-  ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d"]}                   | ${0}    | ${[116, 101, 115, 116]}
-  ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d", 1]}                | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
+  ${'op'}       | ${'bytes_from_b58'}  | ${['3yZe7d']}                   | ${0}    | ${[116, 101, 115, 116]}
+  ${'op'}       | ${'bytes_from_b58'}  | ${['3yZe7d', 1]}                | ${1}    | ${'bytes_from_b58 accepts only one string argument'}
      
   ${'peer'}     | ${'timeout'}         | ${[200, []]}                    | ${0}    | ${[]}}
   ${'peer'}     | ${'timeout'}         | ${[200, ['test']]}              | ${0}    | ${['test']}}
@@ -249,7 +250,7 @@ describe('Tests for default handler', () => {
         // assert
         expect(res).toMatchObject({
             retCode: 1,
-            result: expect.stringContaining("Only data from the following services is allowed to be signed:"),
+            result: expect.stringContaining('Only data from the following services is allowed to be signed:'),
         });
     });
 
