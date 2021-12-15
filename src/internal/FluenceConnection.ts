@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import Websockets from 'libp2p-websockets';
-import Mplex from 'libp2p-mplex';
-import Lib2p2Peer from 'libp2p';
+import { NOISE } from '@chainsafe/libp2p-noise';
 import { decode, encode } from 'it-length-prefixed';
 import pipe from 'it-pipe';
-import * as log from 'loglevel';
-import { Particle } from './Particle';
-import { NOISE } from '@chainsafe/libp2p-noise';
-import PeerId from 'peer-id';
-import { Multiaddr } from 'multiaddr';
-import { all as allow_all } from 'libp2p-websockets/src/filters';
+import Lib2p2Peer from 'libp2p';
 import { Connection } from 'libp2p-interfaces/src/topology';
+import Mplex from 'libp2p-mplex';
+import Websockets from 'libp2p-websockets';
+import { all as allow_all } from 'libp2p-websockets/src/filters';
+import * as log from 'loglevel';
+import { Multiaddr } from 'multiaddr';
+import PeerId from 'peer-id';
+
+import { Particle } from './Particle';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -128,7 +129,7 @@ export class FluenceConnection {
     public async connect() {
         await this._lib2p2Peer.start();
 
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
+        log.debug(`dialing to the node with client's address: ${this._lib2p2Peer.peerId.toB58String()}`);
 
         try {
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);

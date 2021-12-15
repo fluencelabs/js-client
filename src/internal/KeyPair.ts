@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import * as PeerId from 'peer-id';
 import { keys } from 'libp2p-crypto';
+import * as PeerId from 'peer-id';
 
 export class KeyPair {
     /**

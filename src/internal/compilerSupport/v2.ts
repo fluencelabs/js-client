@@ -16,12 +16,13 @@
 
 import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
+
 import { CallParams, Fluence, FluencePeer } from '../../index';
-import { CallServiceData, GenericCallServiceHandler, CallServiceResult, ResultCodes } from '../commonTypes';
+import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { Particle } from '../Particle';
 
-export { FluencePeer } from '../FluencePeer';
 export { CallParams } from '../commonTypes';
+export { FluencePeer } from '../FluencePeer';
 
 /**
  * Represents the Aqua Option type
@@ -227,7 +228,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
                     const fn = async (req: CallServiceData): Promise<CallServiceResult> => {
                         const args = convertArgsFromReqToUserCall(req, callbackDef.callback.argDefs);
                         // arg is function at this point
-                        const result = await arg.apply(null, args);
+                        const result = await arg(...args);
                         let res;
                         switch (callbackDef.callback.returnType.tag) {
                             case 'void':
@@ -366,6 +367,7 @@ export function registerService(args: any[], def: ServiceDef) {
     // Checking for missing keys
     const requiredKeys = def.functions.map((x) => x.functionName);
     const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));
+    // eslint-disable-next-line no-extra-boolean-cast
     if (!!incorrectServiceDefinitions.length) {
         throw new Error(
             `Error registering service ${serviceId}: missing functions: ` +
@@ -373,14 +375,14 @@ export function registerService(args: any[], def: ServiceDef) {
         );
     }
 
-    for (let singleFunction of def.functions) {
+    for (const singleFunction of def.functions) {
         // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
         // Account for the fact that user service might be defined as a class - .bind(...)
         const userDefinedHandler = service[singleFunction.functionName].bind(service);
 
         peer.internals.regHandler.common(serviceId, singleFunction.functionName, async (req) => {
             const args = convertArgsFromReqToUserCall(req, singleFunction.argDefs);
-            const rawResult = await userDefinedHandler.apply(null, args);
+            const rawResult = await userDefinedHandler(...args);
             const result = match(singleFunction.returnType)
                 .with({ tag: 'primitive' }, () => rawResult)
                 .with({ tag: 'optional' }, () => tsToAquaOpt(rawResult))
@@ -434,7 +436,7 @@ const extractCallParams = (
     req: CallServiceData,
     argDefs: Array<ArgDef<OptionalType | PrimitiveType>>,
 ): CallParams<any> => {
-    let tetraplets: { [key in string]: SecurityTetraplet[] } = {};
+    const tetraplets: { [key in string]: SecurityTetraplet[] } = {};
     for (let i = 0; i < req.args.length; i++) {
         if (argDefs[i]) {
             tetraplets[argDefs[i].name] = req.tetraplets[i];

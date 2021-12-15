@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /*
  * Copyright 2021 Fluence Labs Limited
  *
@@ -14,27 +15,20 @@
  * limitations under the License.
  */
 
-import {
-    AirInterpreter,
-    CallRequestsArray,
-    CallResultsArray,
-    InterpreterResult,
-    LogLevel,
-    CallServiceResult as AvmCallServiceResult,
-} from '@fluencelabs/avm';
-import { Multiaddr } from 'multiaddr';
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
-import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
-import { PeerIdB58 } from './commonTypes';
-import { FluenceConnection } from './FluenceConnection';
-import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { KeyPair } from './KeyPair';
-import { createInterpreter, dataToString } from './utils';
-import { filter, pipe, Subject, tap } from 'rxjs';
-import { RequestFlow } from './compilerSupport/v1';
+import { AirInterpreter, InterpreterResult, LogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
+import { Multiaddr } from 'multiaddr';
+import { filter, pipe, Subject, tap } from 'rxjs';
+
 import { BuiltInServiceContext, builtInServices } from './builtInServices';
-import { instanceOf } from 'ts-pattern';
+import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
+import { PeerIdB58 } from './commonTypes';
+import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
+import { RequestFlow } from './compilerSupport/v1';
+import { FluenceConnection } from './FluenceConnection';
+import { KeyPair } from './KeyPair';
+import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
+import { createInterpreter, dataToString } from './utils';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -111,12 +105,12 @@ export interface PeerStatus {
     /**
      * Is the peer initialized or not
      */
-    isInitialized: Boolean;
+    isInitialized: boolean;
 
     /**
      * Is the peer connected to network or not
      */
-    isConnected: Boolean;
+    isConnected: boolean;
 
     /**
      * The Peer's identification in the Fluence network
@@ -186,7 +180,7 @@ export class FluencePeer {
 
         if (config?.connectTo) {
             let connectToMultiAddr: Multiaddr;
-            let fromNode = (config.connectTo as any).multiaddr;
+            const fromNode = (config.connectTo as any).multiaddr;
             if (fromNode) {
                 connectToMultiAddr = new Multiaddr(fromNode);
             } else {
@@ -415,7 +409,7 @@ export class FluencePeer {
     }
 
     private _createParticlesProcessingQueue() {
-        let particlesQueue = new Subject<ParticleQueueItem>();
+        const particlesQueue = new Subject<ParticleQueueItem>();
         let prevData: Uint8Array = Buffer.from([]);
 
         particlesQueue
@@ -450,7 +444,7 @@ export class FluencePeer {
                 // execute call requests if needed
                 // and put particle with the results back to queue
                 if (result.callRequests.length > 0) {
-                    for (let [key, cr] of result.callRequests) {
+                    for (const [key, cr] of result.callRequests) {
                         const req = {
                             fnName: cr.functionName,
                             args: cr.arguments,
@@ -547,7 +541,7 @@ export class FluencePeer {
 
     private _stopParticleProcessing() {
         // do not hang if the peer has been stopped while some of the timeouts are still being executed
-        for (let item of this._timeouts) {
+        for (const item of this._timeouts) {
             clearTimeout(item);
         }
         this._particleQueues.clear();
@@ -581,8 +575,8 @@ function serviceFnKey(serviceId: string, fnName: string) {
 
 function registerDefaultServices(peer: FluencePeer, context: BuiltInServiceContext) {
     const ctx = builtInServices(context);
-    for (let serviceId in ctx) {
-        for (let fnName in ctx[serviceId]) {
+    for (const serviceId in ctx) {
+        for (const fnName in ctx[serviceId]) {
             const h = ctx[serviceId][fnName];
             peer.internals.regHandler.common(serviceId, fnName, h);
         }

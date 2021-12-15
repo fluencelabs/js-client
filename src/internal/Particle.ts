@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /*
  * Copyright 2020 Fluence Labs Limited
  *
@@ -14,10 +15,11 @@
  * limitations under the License.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { fromByteArray, toByteArray } from 'base64-js';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
+import { fromByteArray, toByteArray } from 'base64-js';
 import log from 'loglevel';
+import { v4 as uuidv4 } from 'uuid';
+
 import { ParticleContext } from './commonTypes';
 import { dataToString } from './utils';
 
@@ -88,17 +90,16 @@ export class Particle {
     }
 
     toString(): string {
-        const particle = this;
         const payload = {
             action: 'Particle',
-            id: particle.id,
-            init_peer_id: particle.initPeerId,
-            timestamp: particle.timestamp,
-            ttl: particle.ttl,
-            script: particle.script,
+            id: this.id,
+            init_peer_id: this.initPeerId,
+            timestamp: this.timestamp,
+            ttl: this.ttl,
+            script: this.script,
             // TODO: copy signature from a particle after signatures will be implemented on nodes
             signature: [],
-            data: fromByteArray(particle.data),
+            data: fromByteArray(this.data),
         };
 
         return JSON.stringify(payload);

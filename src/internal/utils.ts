@@ -16,6 +16,7 @@
 
 import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
+
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { AvmLoglevel, FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
@@ -53,7 +54,7 @@ export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
     };
 };
 
-export const handleTimeout = (fn: Function) => (stage: ParticleExecutionStage) => {
+export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage) => {
     if (stage.stage === 'expired') {
         fn();
     }

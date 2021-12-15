@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /*
  * Copyright 2021 Fluence Labs Limited
  *
@@ -27,6 +28,7 @@ export const callLegacyCallServiceHandler = (
 ): CallServiceResult => {
     // trying particle-specific handler
     if (particleSpecificHandler !== undefined) {
+        // eslint-disable-next-line no-var
         var res = particleSpecificHandler.execute(req);
     }
 

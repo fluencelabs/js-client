@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { CallServiceHandler } from './LegacyCallServiceHandler';
 import { Particle } from '../Particle';
+import { CallServiceHandler } from './LegacyCallServiceHandler';
 
-export { FluencePeer } from '../FluencePeer';
 export { CallParams, ResultCodes } from '../commonTypes';
+export { FluencePeer } from '../FluencePeer';
 
 /**
  * @deprecated This class exists to glue legacy RequestFlowBuilder api with restructured async FluencePeer.
@@ -43,8 +43,8 @@ export class RequestFlowBuilder {
     private _timeout: () => void = () => {};
 
     build(): RequestFlow {
-        let h = new CallServiceHandler();
-        for (let c of this._configs) {
+        const h = new CallServiceHandler();
+        for (const c of this._configs) {
             c(h);
         }
 

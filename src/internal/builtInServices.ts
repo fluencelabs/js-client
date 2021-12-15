@@ -15,9 +15,9 @@
  */
 
 import { CallServiceResult } from '@fluencelabs/avm';
-import { encode, decode } from 'bs58';
-import { PeerIdB58 } from 'src';
-import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
+import { decode, encode } from 'bs58';
+
+import { GenericCallServiceHandler, PeerIdB58, ResultCodes } from './commonTypes';
 import { KeyPair } from './KeyPair';
 
 const success = (result: any): CallServiceResult => {
@@ -70,7 +70,7 @@ export function builtInServices(context: BuiltInServiceContext): {
                     const str = incorrectArgIndices.join(', ');
                     return error(`All arguments of 'concat' must be arrays: arguments ${str} are not`);
                 } else {
-                    return success([].concat.apply([], req.args));
+                    return success([].concat(...req.args));
                 }
             },
 
