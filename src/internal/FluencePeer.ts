@@ -27,7 +27,7 @@ import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { BuiltInServiceContext, builtInServices } from './builtInServices';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
-import MainThreadRunner from '@fluencelabs/avm-runner-mainthread';
+import { AvmRunnerBackground } from '@fluencelabs/avm-runner-background';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -180,7 +180,7 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
-        this._avmRunner = config?.avmRunner || new MainThreadRunner(avmLogFunction);
+        this._avmRunner = config?.avmRunner || new AvmRunnerBackground();
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
