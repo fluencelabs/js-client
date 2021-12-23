@@ -224,6 +224,8 @@ export class FluencePeer {
     async stop() {
         this._stopParticleProcessing();
         await this._disconnect();
+        await this._avmRunner?.terminate();
+        this._avmRunner = undefined;
         this._relayPeerId = null;
         this._legacyCallServiceHandler = null;
 
