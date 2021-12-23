@@ -21,7 +21,7 @@ import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
-import { dataToString, avmLogFunction, str } from './utils';
+import { dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
@@ -97,7 +97,7 @@ export interface PeerConfig {
     defaultTtlMs?: number;
 
     /**
-     * Plugable AVM runner implementation. If no specified a single-thread, ui-blocking runner will be used.
+     * Plugable AVM runner implementation. If not specified AvmBackgroundRunner will be used
      */
     avmRunner?: AvmRunner;
 }
@@ -426,9 +426,9 @@ export class FluencePeer {
 
                 concatMap(async (item) => {
                     // IMPORTANT!
-                    // AVM worker execution and prevData <-> newData swapping
+                    // AVM runner execution and prevData <-> newData swapping
                     // MUST happen sequentially (in a critical section).
-                    // Otherwise the race between worker might occur corrupting the prevData
+                    // Otherwise the race between runner might occur corrupting the prevData
 
                     const result = await runAvmRunner(
                         this.getStatus().peerId,
@@ -487,7 +487,7 @@ export class FluencePeer {
                             )
                             .then((res) => {
                                 const serviceResult = {
-                                    result: str(res.result),
+                                    result: jsonify(res.result),
                                     retCode: res.retCode,
                                 };
 
@@ -507,7 +507,7 @@ export class FluencePeer {
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
-        log.debug('executing call service handler', str(req));
+        log.debug('executing call service handler', jsonify(req));
         const particleId = req.particleContext.particleId;
 
         // trying particle-specific handler
@@ -552,7 +552,7 @@ export class FluencePeer {
                       retCode: ResultCodes.error,
                       result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${
                           req.fnName
-                      }' args='${str(req.args)}'`,
+                      }' args='${jsonify(req.args)}'`,
                   };
         }
 
@@ -560,7 +560,7 @@ export class FluencePeer {
             res.result = null;
         }
 
-        log.debug('executed call service handler, req and res are: ', str(req), str(res));
+        log.debug('executed call service handler, req and res are: ', jsonify(req), jsonify(res));
         return res;
     }
 
@@ -610,13 +610,13 @@ function registerDefaultServices(peer: FluencePeer, context: BuiltInServiceConte
 
 async function runAvmRunner(
     currentPeerId: PeerIdB58,
-    worker: AvmRunner,
+    runner: AvmRunner,
     particle: Particle,
     prevData: Uint8Array,
 ): Promise<InterpreterResult> {
     particle.logTo('debug', 'Sending particle to interpreter');
     log.debug('prevData: ', dataToString(prevData));
-    const interpreterResult = await worker.run(
+    const interpreterResult = await runner.run(
         particle.script,
         prevData,
         particle.data,
@@ -631,9 +631,9 @@ async function runAvmRunner(
     toLog.data = dataToString(toLog.data);
 
     if (isInterpretationSuccessful(interpreterResult)) {
-        log.debug('Interpreter result: ', str(toLog));
+        log.debug('Interpreter result: ', jsonify(toLog));
     } else {
-        log.error('Interpreter failed: ', str(toLog));
+        log.error('Interpreter failed: ', jsonify(toLog));
     }
     return interpreterResult;
 }
