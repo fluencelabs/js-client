@@ -15,9 +15,13 @@
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
+    "bin": {
+        "copy-avm-public": "dist/tools/copyAvmPublic"
+    },
     "dependencies": {
         "@chainsafe/libp2p-noise": "4.0.0",
-        "@fluencelabs/avm-runner-background": "0.0.2-init-4.0",
+        "@fluencelabs/avm-runner-background": "0.0.2-init-7.0",
+        "@fluencelabs/avm": "0.19.0-dynamic-import-wasm.3",
         "@fluencelabs/avm-runner-interface": "^0.2.0",
         "async": "3.2.0",
         "bs58": "4.0.1",
@@ -36,7 +40,6 @@
         "uuid": "8.3.0"
     },
     "devDependencies": {
-        "@fluencelabs/avm": "0.19.0-dynamic-import-wasm.3",
         "@types/jest": "^26.0.22",
         "jest": "^26.6.3",
         "js-base64": "^3.7.2",
