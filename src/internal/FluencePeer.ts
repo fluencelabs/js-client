@@ -222,6 +222,7 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
+        this._keyPair = undefined;
         this._relayPeerId = null;
         this._stopParticleProcessing();
         await this._disconnect();
@@ -393,8 +394,8 @@ export class FluencePeer {
             });
 
         this._outgoingParticles.subscribe(async (item) => {
-            if (this.getStatus().isInitialized) {
-                return null;
+            if (!this.getStatus().isInitialized) {
+                return;
             }
 
             if (!this._connection) {
@@ -429,7 +430,7 @@ export class FluencePeer {
                 filterExpiredParticles(this._expireParticle.bind(this)),
 
                 concatMap(async (item) => {
-                    if (this.getStatus().isInitialized) {
+                    if (!this.getStatus().isInitialized) {
                         return null;
                     }
 
@@ -455,7 +456,7 @@ export class FluencePeer {
                 }),
             )
             .subscribe(async (item) => {
-                if (this.getStatus().isInitialized) {
+                if (!this.getStatus().isInitialized) {
                     return;
                 }
 

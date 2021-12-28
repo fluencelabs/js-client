@@ -5,13 +5,17 @@ import { checkConnection, doNothing, handleTimeout } from '../../internal/utils'
 import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
-const anotherPeer = new FluencePeer();
+let peer;
 
 describe('Typescript usage suite', () => {
     afterEach(async () => {
-        if (anotherPeer) {
-            await anotherPeer.stop();
+        if (peer) {
+            await peer.stop();
         }
+    });
+
+    beforeEach(() => {
+        peer = new FluencePeer();
     });
 
     it('should perform test for FluencePeer class correctly', () => {
@@ -37,10 +41,10 @@ describe('Typescript usage suite', () => {
     describe('Should expose correct peer status', () => {
         it('Should expose correct status for uninitialized peer', () => {
             // arrange
-            const peer = new FluencePeer();
+            const nonStartedPeer = new FluencePeer();
 
             // act
-            const status = peer.getStatus();
+            const status = nonStartedPeer.getStatus();
 
             // assert
             expect(status.isConnected).toBe(false);
@@ -51,7 +55,6 @@ describe('Typescript usage suite', () => {
 
         it('Should expose correct status for initialized but not connected peer', async () => {
             // arrange
-            const peer = new FluencePeer();
             await peer.start();
 
             // act
@@ -68,7 +71,6 @@ describe('Typescript usage suite', () => {
 
         it('Should expose correct status for connected peer', async () => {
             // arrange
-            const peer = new FluencePeer();
             await peer.start({ connectTo: nodes[0] });
 
             // act
@@ -86,7 +88,7 @@ describe('Typescript usage suite', () => {
 
     it('should make a call through network', async () => {
         // arrange
-        await anotherPeer.start({ connectTo: nodes[0] });
+        await peer.start({ connectTo: nodes[0] });
 
         // act
         const promise = new Promise<string[]>((resolve, reject) => {
@@ -105,10 +107,10 @@ describe('Typescript usage suite', () => {
         )
     )`;
             const particle = Particle.createNew(script);
-            registerHandlersHelper(anotherPeer, particle, {
+            registerHandlersHelper(peer, particle, {
                 load: {
                     relay: (args) => {
-                        return anotherPeer.getStatus().relayPeerId;
+                        return peer.getStatus().relayPeerId;
                     },
                 },
                 callback: {
@@ -123,7 +125,7 @@ describe('Typescript usage suite', () => {
                 },
             });
 
-            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -132,17 +134,17 @@ describe('Typescript usage suite', () => {
     });
 
     it('check connection should work', async function () {
-        await anotherPeer.start({ connectTo: nodes[0] });
+        await peer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(anotherPeer);
+        let isConnected = await checkConnection(peer);
 
         expect(isConnected).toEqual(true);
     });
 
     it('check connection should work with ttl', async function () {
-        await anotherPeer.start({ connectTo: nodes[0] });
+        await peer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(anotherPeer, 10000);
+        let isConnected = await checkConnection(peer, 10000);
 
         expect(isConnected).toEqual(true);
     });
@@ -184,8 +186,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -196,8 +198,8 @@ describe('Typescript usage suite', () => {
             const addr = new Multiaddr(nodes[0].multiaddr);
 
             // act
-            await anotherPeer.start({ connectTo: addr });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -208,8 +210,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -220,8 +222,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -232,8 +234,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -244,8 +246,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr, dialTimeoutMs: 100000 });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr, dialTimeoutMs: 100000 });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -256,8 +258,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr, skipCheckConnection: true });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr, skipCheckConnection: true });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -268,8 +270,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr, checkConnectionTimeoutMs: 1000 });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr, checkConnectionTimeoutMs: 1000 });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeTruthy();
@@ -280,8 +282,8 @@ describe('Typescript usage suite', () => {
             const addr = nodes[0];
 
             // act
-            await anotherPeer.start({ connectTo: addr, defaultTtlMs: 1 });
-            const isConnected = await checkConnection(anotherPeer);
+            await peer.start({ connectTo: addr, defaultTtlMs: 1 });
+            const isConnected = await checkConnection(peer);
 
             // assert
             expect(isConnected).toBeFalsy();
@@ -290,7 +292,7 @@ describe('Typescript usage suite', () => {
 
     it('Should successfully call identity on local peer', async function () {
         // arrange
-        await anotherPeer.start();
+        await peer.start();
 
         // act
         const promise = new Promise<string>((resolve, reject) => {
@@ -301,7 +303,7 @@ describe('Typescript usage suite', () => {
             )
             `;
             const particle = Particle.createNew(script);
-            registerHandlersHelper(anotherPeer, particle, {
+            registerHandlersHelper(peer, particle, {
                 callback: {
                     callback: async (args) => {
                         const [res] = args;
@@ -310,7 +312,7 @@ describe('Typescript usage suite', () => {
                 },
             });
 
-            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -320,10 +322,10 @@ describe('Typescript usage suite', () => {
 
     it('Should throw correct message when calling non existing local service', async function () {
         // arrange
-        await anotherPeer.start({ connectTo: nodes[0] });
+        await peer.start({ connectTo: nodes[0] });
 
         // act
-        const res = callIncorrectService(anotherPeer);
+        const res = callIncorrectService(peer);
 
         // assert
         await expect(res).rejects.toMatchObject({
@@ -336,7 +338,7 @@ describe('Typescript usage suite', () => {
 
     it('Should not crash if undefined is passed as a variable', async () => {
         // arrange;
-        await anotherPeer.start();
+        await peer.start();
 
         // act
         const promise = new Promise<any>((resolve, reject) => {
@@ -350,7 +352,7 @@ describe('Typescript usage suite', () => {
         )`;
             const particle = Particle.createNew(script);
 
-            registerHandlersHelper(anotherPeer, particle, {
+            registerHandlersHelper(peer, particle, {
                 load: {
                     arg: (args) => {
                         return undefined;
@@ -368,7 +370,7 @@ describe('Typescript usage suite', () => {
                 },
             });
 
-            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -378,7 +380,7 @@ describe('Typescript usage suite', () => {
 
     it('Should not crash if an error ocurred in user-defined handler', async () => {
         // arrange;
-        await anotherPeer.start();
+        await peer.start();
 
         // act
         const promise = new Promise<any>((resolve, reject) => {
@@ -389,7 +391,7 @@ describe('Typescript usage suite', () => {
         )`;
             const particle = Particle.createNew(script);
 
-            registerHandlersHelper(anotherPeer, particle, {
+            registerHandlersHelper(peer, particle, {
                 load: {
                     arg: (args) => {
                         throw 'my super custom error message';
@@ -403,7 +405,7 @@ describe('Typescript usage suite', () => {
                 },
             });
 
-            anotherPeer.internals.initiateParticle(particle, handleTimeout(reject));
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
         // assert
@@ -430,7 +432,7 @@ describe('Typescript usage suite', () => {
 
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
         // arrange;
-        await anotherPeer.start({ connectTo: nodes[0] });
+        await peer.start({ connectTo: nodes[0] });
 
         // act
         const promise = new Promise((resolve, reject) => {
@@ -441,7 +443,7 @@ describe('Typescript usage suite', () => {
     )`;
             const particle = Particle.createNew(script);
 
-            registerHandlersHelper(anotherPeer, particle, {
+            registerHandlersHelper(peer, particle, {
                 callback: {
                     error: (args) => {
                         const [error] = args;
@@ -450,7 +452,7 @@ describe('Typescript usage suite', () => {
                 },
             });
 
-            anotherPeer.internals.initiateParticle(particle, doNothing);
+            peer.internals.initiateParticle(particle, doNothing);
         });
 
         // assert
