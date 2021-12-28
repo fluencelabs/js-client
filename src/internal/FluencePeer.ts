@@ -222,11 +222,11 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
+        this._relayPeerId = null;
         this._stopParticleProcessing();
         await this._disconnect();
         await this._avmRunner?.terminate();
         this._avmRunner = undefined;
-        this._relayPeerId = null;
         this._legacyCallServiceHandler = null;
 
         this._particleSpecificHandlers.clear();
@@ -393,6 +393,10 @@ export class FluencePeer {
             });
 
         this._outgoingParticles.subscribe(async (item) => {
+            if (this.getStatus().isInitialized) {
+                return null;
+            }
+
             if (!this._connection) {
                 item.particle.logTo('error', 'cannot send particle, peer is not connected');
                 item.onStageChange({ stage: 'sendingError' });
@@ -425,6 +429,10 @@ export class FluencePeer {
                 filterExpiredParticles(this._expireParticle.bind(this)),
 
                 concatMap(async (item) => {
+                    if (this.getStatus().isInitialized) {
+                        return null;
+                    }
+
                     // IMPORTANT!
                     // AVM runner execution and prevData <-> newData swapping
                     // MUST happen sequentially (in a critical section).
@@ -447,6 +455,10 @@ export class FluencePeer {
                 }),
             )
             .subscribe(async (item) => {
+                if (this.getStatus().isInitialized) {
+                    return;
+                }
+
                 // Do not continue if there was an error in particle interpretation
                 if (!isInterpretationSuccessful(item.result)) {
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
