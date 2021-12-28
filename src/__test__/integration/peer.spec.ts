@@ -327,12 +327,14 @@ describe('Typescript usage suite', () => {
         // act
         const res = callIncorrectService(peer);
 
+        // console.log(await res);
+
         // assert
         await expect(res).rejects.toMatchObject({
-            msg: expect.stringContaining(
+            message: expect.stringContaining(
                 `No handler has been registered for serviceId='incorrect' fnName='incorrect' args='[]'\"'`,
             ),
-            instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
+            // instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
         });
     });
 
@@ -410,7 +412,7 @@ describe('Typescript usage suite', () => {
 
         // assert
         await expect(promise).rejects.toMatchObject({
-            msg: expect.stringContaining('my super custom error message'),
+            message: expect.stringContaining('my super custom error message'),
         });
     });
 
