@@ -3,10 +3,21 @@ import { Particle } from '../../internal/Particle';
 import { handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
 
+let peer: FluencePeer;
+
 describe('Avm spec', () => {
+    afterEach(async () => {
+        if (peer) {
+            await peer.stop();
+        }
+    });
+
+    beforeEach(() => {
+        peer = new FluencePeer();
+    });
+
     it('Simple call', async () => {
         // arrange
-        const peer = new FluencePeer();
         await peer.start();
 
         // act
@@ -36,7 +47,6 @@ describe('Avm spec', () => {
 
     it('Par call', async () => {
         // arrange
-        const peer = new FluencePeer();
         await peer.start();
 
         // act
@@ -75,7 +85,6 @@ describe('Avm spec', () => {
 
     it('Timeout in par call: race', async () => {
         // arrange
-        const peer = new FluencePeer();
         await peer.start();
 
         // act
@@ -113,7 +122,6 @@ describe('Avm spec', () => {
 
     it('Timeout in par call: wait', async () => {
         // arrange
-        const peer = new FluencePeer();
         await peer.start();
 
         // act

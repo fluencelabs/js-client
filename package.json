@@ -9,19 +9,20 @@
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
         "test:integration": "jest --testPathPattern=src/__test__/integration",
-        "test:node": "jest --env=node --watch",
-        "test:node:all": "jest --env=node",
-        "test:node:unit": "jest --env=node --testPathPattern=src/__test__/unit",
-        "test:node:integration": "jest --env=node --testPathPattern=src/__test__/integration",
         "build": "tsc",
         "build:docs": "typedoc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
+    "bin": {
+        "copy-avm-public": "dist/tools/copyAvmPublic.js"
+    },
     "dependencies": {
         "@chainsafe/libp2p-noise": "4.0.0",
-        "@fluencelabs/avm": "^0.19.3",
+        "@fluencelabs/avm-runner-background": "0.1.1",
+        "@fluencelabs/avm": "0.19.6",
+        "@fluencelabs/avm-runner-interface": "^0.2.0",
         "async": "3.2.0",
         "bs58": "4.0.1",
         "cids": "0.8.1",

@@ -16,10 +16,10 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
-import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
+import { CallResultsArray, LogLevel } from '@fluencelabs/avm-runner-interface';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
-import { dataToString } from './utils';
+import { dataToString, jsonify } from './utils';
 
 export class Particle {
     id: string;
@@ -119,7 +119,7 @@ export class Particle {
                 fn = log.info;
                 break;
             case 'trace':
-                fn = log.trace;
+                fn = log.info;
                 break;
             case 'warn':
                 fn = log.warn;
@@ -128,15 +128,19 @@ export class Particle {
                 return;
         }
 
-        fn(message, {
-            id: this.id,
-            init_peer_id: this.initPeerId,
-            timestamp: this.timestamp,
-            ttl: this.ttl,
-            script: this.script,
-            signature: this.signature,
-            data: data,
-        });
+        fn(
+            message,
+            jsonify({
+                id: this.id,
+                init_peer_id: this.initPeerId,
+                timestamp: this.timestamp,
+                ttl: this.ttl,
+                script: this.script,
+                signature: this.signature,
+                callResults: this.callResults,
+                data: data,
+            }),
+        );
     }
 }
 

@@ -205,5 +205,7 @@ describe('Compiler support infrastructure tests', () => {
 
         // assert
         await expect(action).rejects.toMatch(/incorrect air script/);
+
+        await anotherPeer.stop();
     });
 });

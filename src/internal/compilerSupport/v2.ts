@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SecurityTetraplet } from '@fluencelabs/avm';
+import { SecurityTetraplet } from '@fluencelabs/avm-runner-interface';
 import { match } from 'ts-pattern';
 import { CallParams, Fluence, FluencePeer } from '../../index';
 import { CallServiceData, GenericCallServiceHandler, CallServiceResult, ResultCodes } from '../commonTypes';

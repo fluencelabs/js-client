@@ -14,35 +14,11 @@
  * limitations under the License.
  */
 
-import { AirInterpreter, LogLevel as AvmLogLevel } from '@fluencelabs/avm';
 import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
-import { AvmLoglevel, FluencePeer } from './FluencePeer';
+import { FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
-
-export const createInterpreter = (logLevel: AvmLoglevel): Promise<AirInterpreter> => {
-    const logFn = (level: AvmLogLevel, msg: string) => {
-        switch (level) {
-            case 'error':
-                log.error(msg);
-                break;
-
-            case 'warn':
-                log.warn(msg);
-                break;
-
-            case 'info':
-                log.info(msg);
-                break;
-
-            case 'debug':
-            case 'trace':
-                log.log(msg);
-                break;
-        }
-    };
-    return AirInterpreter.create(logLevel, logFn);
-};
+import { LogLevel as AvmLoglevel } from '@fluencelabs/avm-runner-interface';
 
 export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
     return (req: CallServiceData): CallServiceResult => {
@@ -156,5 +132,15 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
 };
 
 export function dataToString(data: Uint8Array) {
-    return new TextDecoder().decode(Buffer.from(data));
+    const text = new TextDecoder().decode(Buffer.from(data));
+    // try to treat data as json and pretty-print it
+    try {
+        return JSON.stringify(JSON.parse(text), null, 4);
+    } catch {
+        return text;
+    }
+}
+
+export function jsonify(obj) {
+    return JSON.stringify(obj, null, 4);
 }
