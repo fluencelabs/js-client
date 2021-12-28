@@ -156,6 +156,7 @@ export class FluencePeer {
     getStatus(): PeerStatus {
         const hasKeyPair = this._keyPair !== undefined;
         return {
+            // TODO:: use explicit mechanism for peer's state
             isInitialized: hasKeyPair,
             isConnected: this._connection !== undefined,
             peerId: this._keyPair?.Libp2pPeerId?.toB58String() || null,
@@ -222,7 +223,7 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
-        this._keyPair = undefined;
+        this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
         this._relayPeerId = null;
         this._stopParticleProcessing();
         await this._disconnect();
@@ -394,6 +395,7 @@ export class FluencePeer {
             });
 
         this._outgoingParticles.subscribe(async (item) => {
+            // Do not send particle after the peer has been stopped
             if (!this.getStatus().isInitialized) {
                 return;
             }
@@ -430,6 +432,7 @@ export class FluencePeer {
                 filterExpiredParticles(this._expireParticle.bind(this)),
 
                 concatMap(async (item) => {
+                    // Is `.stop()` was called we need to stop particle processing immediately
                     if (!this.getStatus().isInitialized) {
                         return null;
                     }
@@ -456,6 +459,7 @@ export class FluencePeer {
                 }),
             )
             .subscribe(async (item) => {
+                // Is `.stop()` was called we need to stop particle processing immediately
                 if (!this.getStatus().isInitialized) {
                     return;
                 }
