@@ -25,9 +25,10 @@ import { dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
-import { BuiltInServiceContext, builtInServices } from './builtInServices';
+import { BuiltInServiceContext, builtInServices, Sig } from './builtInServices';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
 import { AvmRunnerBackground } from '@fluencelabs/avm-runner-background';
+import { registerSig } from './services/services';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -215,7 +216,18 @@ export class FluencePeer {
             peerId: this.getStatus().peerId,
         });
 
+        this._classServices = {
+            sig: new Sig(this._keyPair),
+        };
+        registerSig(this._classServices.sig);
+
         this._startParticleProcessing();
+    }
+
+    getServices() {
+        return {
+            ...this._classServices,
+        };
     }
 
     /**
@@ -357,6 +369,10 @@ export class FluencePeer {
 
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
+
+    private _classServices: {
+        sig: Sig;
+    };
 
     // Internal peer state
 

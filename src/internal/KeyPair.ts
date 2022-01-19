@@ -48,6 +48,10 @@ export class KeyPair {
         return new KeyPair(lib2p2Pid);
     }
 
+    toB58String(): string {
+        return this.Libp2pPeerId.toB58String();
+    }
+
     /**
      * @returns 32 byte private key
      */
