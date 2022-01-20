@@ -38,7 +38,7 @@ describe('Tests for default handler', () => {
   serviceId     | fnName               | args                            | retCode | result
   ${'op'}       | ${'identity'}        | ${[]}                           | ${0}    | ${{}}
   ${'op'}       | ${'identity'}        | ${[1]}                          | ${0}    | ${1}
-  ${'op'}       | ${'identity'}        | ${[1, 2]}                       | ${1}    | ${'identity accepts up to 1 arguments, received 2 arguments'}
+  ${'op'}       | ${'identity'}        | ${[1, 2]}                       | ${1}    | ${1}
      
   ${'op'}       | ${'noop'}            | ${[1, 2]}                       | ${0}    | ${{}}
      
@@ -249,7 +249,7 @@ describe('Tests for default handler', () => {
         // assert
         expect(res).toMatchObject({
             retCode: 1,
-            result: expect.stringContaining("Only data from the following services is allowed to be signed:"),
+            result: expect.stringContaining('Only data from the following services is allowed to be signed:'),
         });
     });
 

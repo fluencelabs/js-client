@@ -53,11 +53,7 @@ export function builtInServices(context: BuiltInServiceContext): {
             },
 
             identity: (req) => {
-                if (req.args.length > 1) {
-                    return error(`identity accepts up to 1 arguments, received ${req.args.length} arguments`);
-                } else {
-                    return success(req.args.length === 0 ? {} : req.args[0]);
-                }
+                return success(req.args.length === 0 ? {} : req.args[0]);
             },
 
             concat: (req) => {
