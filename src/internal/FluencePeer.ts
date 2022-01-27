@@ -223,6 +223,7 @@ export class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
+        await this._connection.unhandle();
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
         this._relayPeerId = null;
         this._stopParticleProcessing();

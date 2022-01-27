@@ -82,18 +82,18 @@ export class FluenceConnection {
 
         res._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
-                try {
-                    for await (const msg of source) {
-                        try {
-                            const particle = Particle.fromString(msg);
-                            options.onIncomingParticle(particle);
-                        } catch (e) {
-                            log.error('error on handling a new incoming message: ' + e);
-                        }
+                // try {
+                for await (const msg of source) {
+                    try {
+                        const particle = Particle.fromString(msg);
+                        options.onIncomingParticle(particle);
+                    } catch (e) {
+                        log.error('error on handling a new incoming message: ' + e);
                     }
-                } catch (e) {
-                    log.error('catching async iterable error: ' + e);
                 }
+                //} catch (e) {
+                //log.error('catching async iterable error: ' + e);
+                //}
             });
         });
 
@@ -102,8 +102,11 @@ export class FluenceConnection {
         return res;
     }
 
-    async disconnect() {
+    async unhandle() {
         this._lib2p2Peer.unhandle(PROTOCOL_NAME);
+    }
+
+    async disconnect() {
         await this._lib2p2Peer.stop();
     }
 
