@@ -92,7 +92,7 @@ export class FluenceConnection {
                         }
                     }
                 } catch (e) {
-                    log.error('catching async iterable error: ' + e);
+                    log.error('connection closed: ' + e);
                 }
             });
         });
@@ -103,7 +103,6 @@ export class FluenceConnection {
     }
 
     async disconnect() {
-        this._lib2p2Peer.unhandle(PROTOCOL_NAME);
         await this._lib2p2Peer.stop();
     }
 
