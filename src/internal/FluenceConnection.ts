@@ -99,6 +99,7 @@ export class FluenceConnection {
     }
 
     async disconnect() {
+        this._lib2p2Peer.unhandle(PROTOCOL_NAME);
         await this._lib2p2Peer.stop();
     }
 
