@@ -82,13 +82,17 @@ export class FluenceConnection {
 
         res._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
-                for await (const msg of source) {
-                    try {
-                        const particle = Particle.fromString(msg);
-                        options.onIncomingParticle(particle);
-                    } catch (e) {
-                        log.error('error on handling a new incoming message: ' + e);
+                try {
+                    for await (const msg of source) {
+                        try {
+                            const particle = Particle.fromString(msg);
+                            options.onIncomingParticle(particle);
+                        } catch (e) {
+                            log.error('error on handling a new incoming message: ' + e);
+                        }
                     }
+                } catch (e) {
+                    log.debug('connection closed: ' + e);
                 }
             });
         });
