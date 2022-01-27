@@ -28,7 +28,7 @@
         "cids": "0.8.1",
         "it-length-prefixed": "3.0.1",
         "it-pipe": "1.1.0",
-        "libp2p": "=0.34.0",
+        "libp2p": "=0.33.0",
         "libp2p-crypto": "=0.20.0",
         "libp2p-mplex": "=0.10.2",
         "libp2p-websockets": "^0.16.2",
