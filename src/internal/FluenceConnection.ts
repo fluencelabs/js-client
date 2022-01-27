@@ -92,7 +92,7 @@ export class FluenceConnection {
                         }
                     }
                 } catch (e) {
-                    log.error('connection closed: ' + e);
+                    log.debug('connection closed: ' + e);
                 }
             });
         });
