@@ -65,7 +65,9 @@ describe('Tests for default handler', () => {
   ${'peer'}     | ${'timeout'}         | ${[200, ['test']]}              | ${0}    | ${['test']}}
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
-   
+
+  ${'debug'}    | ${'stringify'}       | ${[{a: 10, b: 20}]}             | ${0}    | ${"{\"a\":10,\"b\":20}"}}
+  
   ${'sig'}      | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
   ${'sig'}      | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
   ${'sig'}      | ${'sign'}            | ${[]}                           | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
@@ -249,7 +251,7 @@ describe('Tests for default handler', () => {
         // assert
         expect(res).toMatchObject({
             retCode: 1,
-            result: expect.stringContaining("Only data from the following services is allowed to be signed:"),
+            result: expect.stringContaining('Only data from the following services is allowed to be signed:'),
         });
     });
 

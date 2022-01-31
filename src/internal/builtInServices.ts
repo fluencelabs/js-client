@@ -129,6 +129,16 @@ export function builtInServices(context: BuiltInServiceContext): {
             },
         },
 
+        debug: {
+            stringify: (req) => {
+                let arg = req.args[0];
+                if (arg === undefined) {
+                    arg = '';
+                }
+                return success(JSON.stringify(arg));
+            },
+        },
+
         sig: {
             sign: async (req) => {
                 if (req.args.length !== 1) {
