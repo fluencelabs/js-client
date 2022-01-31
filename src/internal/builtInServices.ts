@@ -131,11 +131,15 @@ export function builtInServices(context: BuiltInServiceContext): {
 
         debug: {
             stringify: (req) => {
-                let arg = req.args[0];
-                if (arg === undefined) {
-                    arg = '';
+                if(req.args.length === 0) {
+                    return success('<empty argument list>')
                 }
-                return success(JSON.stringify(arg));
+
+                if(req.args.length === 1) {
+                    return success(JSON.stringify(req.args[0]))
+                }
+
+                return success(JSON.stringify(req.args))
             },
         },
 
