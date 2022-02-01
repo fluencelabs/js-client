@@ -1,7 +1,8 @@
 import { CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
-import { BuiltInServiceContext, builtInServices } from '../../internal/builtInServices';
+import { BuiltInServiceContext, builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '../../internal/KeyPair';
+import { Sig, defaultSigGuard } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
 
 const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
@@ -127,166 +128,59 @@ describe('Tests for default handler', () => {
             result: 'The JS implementation of Peer does not support identify',
         });
     });
+});
 
-    it('sig.sign should create the correct signature', async () => {
-        // arrange
-        const ctx = await context;
-        const req: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'get_trust_bytes',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'trust-graph',
-                    },
+describe('Tests for default handler', () => {
+    // prettier-ignore
+    each`
+  fnName       | args                            | tetrapletFn | tetrapletService | sameInitPeerId | retCode | result
+  ${'verify'}  | ${[testData, testDataSig]}      |             |                  | ${true}        | ${0}    | ${true}}
+  ${'verify'}  | ${[testData, testDataWrongSig]} |             |                  | ${true}        | ${0}    | ${false}}
+  ${'sign'}    | ${[]}                           |             |                  | ${true}        | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
+  ${'verify'}  | ${[testData]}                   |             |                  | ${true}        | ${1}    | ${'verify accepts exactly two arguments: data and signature, both in format of u8 array of bytes'}}
+  `.test(
+        //
+        '$fnName with $args expected retcode: $retCode and result: $result',
+        async ({ fnName, args, tetrapletFn, tetrapletService, sameInitPeerId, retCode, result }) => {
+            // arrange
+            const ctx = await context;
+            const req: CallServiceData = {
+                serviceId: 'sig',
+                fnName: fnName,
+                args: args,
+                tetraplets: [
+                    [
+                        {
+                            function_name: tetrapletFn,
+                            json_path: '',
+                            peer_pk: '',
+                            service_id: tetrapletService,
+                        },
+                    ],
                 ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
+                particleContext: {
+                    particleId: 'some',
+                    initPeerId: sameInitPeerId
+                        ? ctx.peerId
+                        : (await KeyPair.randomEd25519()).Libp2pPeerId.toB58String(),
+                    timestamp: 595951200,
+                    ttl: 595961200,
+                    signature: 'sig',
+                },
+            };
 
-        // act
-        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
-        const res = await fn(req);
+            // act
+            const sig = new Sig(ctx.peerKeyPair);
+            sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-        // assert
-        expect(res).toMatchObject({
-            retCode: 0,
-            result: testDataSig,
-        });
-    });
+            const fn = sig[fnName].bind(sig);
+            const res = await fn(req);
 
-    it('sign-verify call chain should work', async () => {
-        const ctx = await context;
-        const signReq: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'get_trust_bytes',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'trust-graph',
-                    },
-                ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
-
-        const signFn = builtInServices(ctx)[signReq.serviceId][signReq.fnName];
-        const signRes = await signFn(signReq);
-
-        const verifyReq: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'verify',
-            args: [testData, signRes.result],
-            tetraplets: [],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
-
-        const verifyFn = builtInServices(ctx)[verifyReq.serviceId][verifyReq.fnName];
-        const verifyRes = await verifyFn(verifyReq);
-
-        expect(verifyRes).toMatchObject({
-            retCode: 0,
-            result: true,
-        });
-    });
-
-    it('sig.sign should not allow data from incorrect services', async () => {
-        // arrange
-        const ctx = await context;
-        const req: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'some-other-fn',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'cool-service',
-                    },
-                ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
-
-        // act
-        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
-        const res = await fn(req);
-
-        // assert
-        expect(res).toMatchObject({
-            retCode: 1,
-            result: expect.stringContaining("Only data from the following services is allowed to be signed:"),
-        });
-    });
-
-    it('sig.sign should not allow particles initiated from other peers', async () => {
-        // arrange
-        const ctx = await context;
-        const req: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'some-other-fn',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'cool-service',
-                    },
-                ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: (await KeyPair.randomEd25519()).Libp2pPeerId.toB58String(),
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
-
-        // act
-        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
-        const res = await fn(req);
-
-        // assert
-        expect(res).toMatchObject({
-            retCode: 1,
-            result: 'sign is only allowed to be called on the same peer the particle was initiated from',
-        });
-    });
+            // assert
+            expect(res).toMatchObject({
+                retCode: retCode,
+                result: result,
+            });
+        },
+    );
 });

@@ -15,12 +15,10 @@
  */
 
 import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
-import { CallParams } from '@fluencelabs/fluence';
 import { encode, decode } from 'bs58';
 import { PeerIdB58 } from 'src';
-import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
-import { KeyPair } from './KeyPair';
-import { SigDef } from './services/services';
+import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
+import { KeyPair } from '../KeyPair';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -131,43 +129,4 @@ export function builtInServices(context: BuiltInServiceContext): {
             },
         },
     };
-}
-
-export class Sig implements SigDef {
-    private _keyPair: KeyPair;
-
-    constructor(keyPair: KeyPair) {
-        this._keyPair = keyPair;
-    }
-
-    allowedServices: string[] = [
-        'trust-graph.get_trust_bytes',
-        'trust-graph.get_revocation_bytes',
-        'registry.get_key_bytes',
-        'registry.get_record_bytes',
-    ];
-
-    get_pub_key() {
-        return this._keyPair.toB58String();
-    }
-
-    async sign(data: number[], callParams: CallParams<'data'>): Promise<number[]> {
-        const t = callParams.tetraplets.data[0];
-        const serviceFnPair = `${t.service_id}.${t.function_name}`;
-
-        if (callParams.initPeerId !== this._keyPair.toB58String()) {
-            throw 'sign is only allowed to be called on the same peer the particle was initiated from';
-        }
-
-        if (this.allowedServices.indexOf(serviceFnPair) === -1) {
-            throw 'Only data from the following services is allowed to be signed: ' + this.allowedServices.join(', ');
-        }
-
-        const signedData = await this._keyPair.signBytes(Uint8Array.from(data));
-        return Array.from(signedData);
-    }
-
-    verify(signature: number[], data: number[]): Promise<boolean> {
-        return this._keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
-    }
 }

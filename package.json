@@ -5,7 +5,7 @@
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
-        "compile-aqua": "aqua -i ./aqua/ -o ./src/internal/services",
+        "compile-aqua": "aqua -i ./aqua/ -o ./src/internal/_aqua",
         "test": "jest --watch",
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",

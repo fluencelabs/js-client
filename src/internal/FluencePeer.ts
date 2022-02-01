@@ -25,10 +25,11 @@ import { dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
-import { BuiltInServiceContext, builtInServices, Sig } from './builtInServices';
+import { BuiltInServiceContext, builtInServices } from './builtins/common';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
 import { AvmRunnerBackground } from '@fluencelabs/avm-runner-background';
-import { registerSig } from './services/services';
+import { allowOnlyParticleOriginatedAt, allowServiceFn, and, defaultSigGuard, Sig } from './builtins/Sig';
+import { registerSig } from './_aqua/services';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -219,6 +220,7 @@ export class FluencePeer {
         this._classServices = {
             sig: new Sig(this._keyPair),
         };
+        this._classServices.sig.securityGuard = defaultSigGuard(this.getStatus().peerId);
         registerSig(this._classServices.sig);
 
         this._startParticleProcessing();

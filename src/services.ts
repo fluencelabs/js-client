@@ -1,2 +1,2 @@
-export { Sig } from './internal/builtInServices';
-export { registerSig } from './internal/services/services';
+export * from './internal/builtins/Sig';
+export { registerSig } from './internal/_aqua/services';
