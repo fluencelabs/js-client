@@ -2,7 +2,7 @@ import { CallParams, CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
 import { BuiltInServiceContext, builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '../../internal/KeyPair';
-import { Sig, defaultSigGuard } from '../../internal/builtins/Sig';
+import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
 
 describe('Tests for default handler', () => {
@@ -209,5 +209,23 @@ describe('Sig service tests', () => {
         );
 
         await expect(signature).rejects.toBe('Security guard validation failed');
+    });
+
+    it('changing securityGuard should work', async () => {
+        const ctx = await context;
+        const sig = new Sig(ctx.peerKeyPair);
+        sig.securityGuard = allowServiceFn('test', 'test');
+
+        const successful1 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
+        expect(successful1).toBeDefined();
+        const unSuccessful1 = sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
+        await expect(unSuccessful1).rejects.toBe('Security guard validation failed');
+
+        sig.securityGuard = allowServiceFn('wrong', 'wrong');
+        const successful2 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
+        expect(successful2).toBeDefined();
+        const unSuccessful2 = sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
+        await expect(unSuccessful2).rejects.toBe('Security guard validation failed');
+        expect(successful2).toBeDefined();
     });
 });

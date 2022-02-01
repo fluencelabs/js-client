@@ -1,6 +1,5 @@
 import { SecurityTetraplet } from '@fluencelabs/avm-runner-interface';
 import { CallParams, PeerIdB58 } from '../commonTypes';
-import { FluencePeer } from '../FluencePeer';
 import { KeyPair } from '../KeyPair';
 import { SigDef } from '../_aqua/services';
 
