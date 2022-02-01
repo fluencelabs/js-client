@@ -42,12 +42,14 @@ export const or = (...predicates: SigSecurityGuard[]): SigSecurityGuard => {
 export const defaultSigGuard = (peerId: PeerIdB58) => {
     return and(
         allowOnlyParticleOriginatedAt(peerId),
-        allowServiceFn('trust-graph', 'get_trust_bytes'),
-        allowServiceFn('trust-graph', 'get_revocation_bytes'),
-        allowServiceFn('registry', 'get_key_bytes'),
-        allowServiceFn('registry', 'get_record_bytes'),
+        or(
+            allowServiceFn('trust-graph', 'get_trust_bytes'),
+            allowServiceFn('trust-graph', 'get_revocation_bytes'),
+            allowServiceFn('registry', 'get_key_bytes'),
+            allowServiceFn('registry', 'get_record_bytes'),
+        ),
     );
-}
+};
 
 export class Sig implements SigDef {
     private _keyPair: KeyPair;
