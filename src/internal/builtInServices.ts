@@ -19,6 +19,7 @@ import { encode, decode } from 'bs58';
 import { PeerIdB58 } from 'src';
 import { GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { KeyPair } from './KeyPair';
+import { jsonify } from './utils';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -131,15 +132,17 @@ export function builtInServices(context: BuiltInServiceContext): {
 
         debug: {
             stringify: (req) => {
-                if(req.args.length === 0) {
-                    return success('<empty argument list>')
+                let out;
+
+                if (req.args.length === 0) {
+                    out = '<empty argument list>';
+                } else if (req.args.length === 1) {
+                    out = req.args[0];
+                } else {
+                    out = req.args;
                 }
 
-                if(req.args.length === 1) {
-                    return success(JSON.stringify(req.args[0]))
-                }
-
-                return success(JSON.stringify(req.args))
+                return success(jsonify(out));
             },
         },
 

@@ -32,6 +32,18 @@ const testDataWrongSig = [
     157, 159, 25, 109, 95, 160, 181, 65, 254, 238, 47, 156, 240, 151, 58, 14,
 ];
 
+const a10b20 = `{
+    "a": 10,
+    "b": 20
+}`;
+
+const oneTwoThreeFour = `[
+    1,
+    2,
+    3,
+    4
+]`;
+
 describe('Tests for default handler', () => {
     // prettier-ignore
     each`
@@ -66,9 +78,9 @@ describe('Tests for default handler', () => {
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
 
-  ${'debug'}    | ${'stringify'}       | ${[]}                           | ${0}    | ${"<empty argument list>"}}
-  ${'debug'}    | ${'stringify'}       | ${[{a: 10, b: 20}]}             | ${0}    | ${"{\"a\":10,\"b\":20}"}}
-  ${'debug'}    | ${'stringify'}       | ${[1, 2, 3, 4]}                 | ${0}    | ${"[1,2,3,4]"}}
+  ${'debug'}    | ${'stringify'}       | ${[]}                           | ${0}    | ${'"<empty argument list>"'}}
+  ${'debug'}    | ${'stringify'}       | ${[{a: 10, b: 20}]}             | ${0}    | ${a10b20}}
+  ${'debug'}    | ${'stringify'}       | ${[1, 2, 3, 4]}                 | ${0}    | ${oneTwoThreeFour}}
   
   ${'sig'}      | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
   ${'sig'}      | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
