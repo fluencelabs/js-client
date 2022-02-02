@@ -6,79 +6,72 @@
  * Aqua version: 0.5.3-258
  *
  */
-import { Fluence, FluencePeer } from '@fluencelabs/fluence';
-import {
-    CallParams,
-    callFunction,
-    registerService,
-} from '@fluencelabs/fluence/dist/internal/compilerSupport/v2';
-
+import { Fluence, FluencePeer } from '../../';
+import { CallParams, callFunction, registerService } from '../../internal/compilerSupport/v2';
 
 // Services
 
 export interface SigDef {
     get_pub_key: (callParams: CallParams<null>) => string | Promise<string>;
     sign: (data: number[], callParams: CallParams<'data'>) => number[] | Promise<number[]>;
-    verify: (signature: number[], data: number[], callParams: CallParams<'signature' | 'data'>) => boolean | Promise<boolean>;
+    verify: (
+        signature: number[],
+        data: number[],
+        callParams: CallParams<'signature' | 'data'>,
+    ) => boolean | Promise<boolean>;
 }
 export function registerSig(service: SigDef): void;
 export function registerSig(serviceId: string, service: SigDef): void;
 export function registerSig(peer: FluencePeer, service: SigDef): void;
 export function registerSig(peer: FluencePeer, serviceId: string, service: SigDef): void;
-       
 
 export function registerSig(...args: any) {
-    registerService(
-        args,
-        {
-    "defaultServiceId" : "sig",
-    "functions" : [
-        {
-            "functionName" : "get_pub_key",
-            "argDefs" : [
-            ],
-            "returnType" : {
-                "tag" : "primitive"
-            }
-        },
-        {
-            "functionName" : "sign",
-            "argDefs" : [
-                {
-                    "name" : "data",
-                    "argType" : {
-                        "tag" : "primitive"
-                    }
-                }
-            ],
-            "returnType" : {
-                "tag" : "primitive"
-            }
-        },
-        {
-            "functionName" : "verify",
-            "argDefs" : [
-                {
-                    "name" : "signature",
-                    "argType" : {
-                        "tag" : "primitive"
-                    }
+    registerService(args, {
+        defaultServiceId: 'sig',
+        functions: [
+            {
+                functionName: 'get_pub_key',
+                argDefs: [],
+                returnType: {
+                    tag: 'primitive',
                 },
-                {
-                    "name" : "data",
-                    "argType" : {
-                        "tag" : "primitive"
-                    }
-                }
-            ],
-            "returnType" : {
-                "tag" : "primitive"
-            }
-        }
-    ]
+            },
+            {
+                functionName: 'sign',
+                argDefs: [
+                    {
+                        name: 'data',
+                        argType: {
+                            tag: 'primitive',
+                        },
+                    },
+                ],
+                returnType: {
+                    tag: 'primitive',
+                },
+            },
+            {
+                functionName: 'verify',
+                argDefs: [
+                    {
+                        name: 'signature',
+                        argType: {
+                            tag: 'primitive',
+                        },
+                    },
+                    {
+                        name: 'data',
+                        argType: {
+                            tag: 'primitive',
+                        },
+                    },
+                ],
+                returnType: {
+                    tag: 'primitive',
+                },
+            },
+        ],
+    });
 }
-    );
-}
-      
-// Functions
 
+// Functions

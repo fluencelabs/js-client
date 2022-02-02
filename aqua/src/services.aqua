@@ -1,11 +1,12 @@
 -- import "@fluencelabs/aqua-lib/builtin.aqua"
 
--- export Sig
+export Sig
 
 service Sig("sig"):
-    -- Signs data with the current peer's key. 
-    -- Can only be called on %init_peer_id%
-    -- Accepts data only from the following sources:
+    -- Signs data with the service's private key. 
+    -- Depending on implementation the service might check call params to restrict usage for security reasons.
+    -- By default it is only allowed to be used on the same peer the particle was initiated
+    -- and accepts data only from the following sources:
     --   trust-graph.get_trust_bytes
     --   trust-graph.get_revocation_bytes
     --   registry.get_key_bytes
@@ -17,4 +18,5 @@ service Sig("sig"):
     -- Given the data and signature both as byte arrays, returns true if the signature is correct, false otherwise.
     verify(signature: []u8, data: []u8) -> bool
 
+    -- Gets the service's public key of.
     get_pub_key() -> string
