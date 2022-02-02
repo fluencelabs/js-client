@@ -13,7 +13,12 @@ import { CallParams, callFunction, registerService } from '../../internal/compil
 
 export interface SigDef {
     get_pub_key: (callParams: CallParams<null>) => string | Promise<string>;
-    sign: (data: number[], callParams: CallParams<'data'>) => number[] | Promise<number[]>;
+    sign: (
+        data: number[],
+        callParams: CallParams<'data'>,
+    ) =>
+        | { error: string | null; signature: number[] | null; success: boolean }
+        | Promise<{ error: string | null; signature: number[] | null; success: boolean }>;
     verify: (
         signature: number[],
         data: number[],

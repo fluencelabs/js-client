@@ -36,7 +36,12 @@ export function registerDataProvider(...args: any) {
 
 export interface SigDef {
     get_pub_key: (callParams: CallParams<null>) => string | Promise<string>;
-    sign: (data: number[], callParams: CallParams<'data'>) => number[] | Promise<number[]>;
+    sign: (
+        data: number[],
+        callParams: CallParams<'data'>,
+    ) =>
+        | { error: string | null; signature: number[] | null; success: boolean }
+        | Promise<{ error: string | null; signature: number[] | null; success: boolean }>;
     verify: (
         signature: number[],
         data: number[],
@@ -99,20 +104,10 @@ export function registerSig(...args: any) {
 
 // Functions
 
-export function callSig(
-    sigId: string,
-    success: (arg0: number[], callParams: CallParams<'arg0'>) => void | Promise<void>,
-    failure: (arg0: string, callParams: CallParams<'arg0'>) => void | Promise<void>,
-    config?: { ttl?: number },
-): Promise<string>;
+export type CallSigResult = { error: string | null; signature: number[] | null; success: boolean };
+export function callSig(sigId: string, config?: { ttl?: number }): Promise<CallSigResult>;
 
-export function callSig(
-    peer: FluencePeer,
-    sigId: string,
-    success: (arg0: number[], callParams: CallParams<'arg0'>) => void | Promise<void>,
-    failure: (arg0: string, callParams: CallParams<'arg0'>) => void | Promise<void>,
-    config?: { ttl?: number },
-): Promise<string>;
+export function callSig(peer: FluencePeer, sigId: string, config?: { ttl?: number }): Promise<CallSigResult>;
 
 export function callSig(...args: any) {
     let script = `
@@ -120,32 +115,20 @@ export function callSig(...args: any) {
                      (seq
                       (seq
                        (seq
-                        (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-                        (call %init_peer_id% ("getDataSrv" "sigId") [] sigId)
-                       )
-                       (xor
                         (seq
-                         (seq
-                          (call %init_peer_id% ("data" "provide_data") [] data)
-                          (call %init_peer_id% (sigId "sign") [data] signature)
-                         )
-                         (xor
-                          (call %init_peer_id% ("callbackSrv" "success") [signature])
-                          (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
-                         )
+                         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                         (call %init_peer_id% ("getDataSrv" "sigId") [] sigId)
                         )
-                        (xor
-                         (call %init_peer_id% ("callbackSrv" "failure") [%last_error%.$.message!])
-                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
-                        )
+                        (call %init_peer_id% ("data" "provide_data") [] data)
                        )
+                       (call %init_peer_id% (sigId "sign") [data] signature)
                       )
                       (xor
-                       (call %init_peer_id% ("callbackSrv" "response") ["finished"])
-                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                       (call %init_peer_id% ("callbackSrv" "response") [signature])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
                       )
                      )
-                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
     return callFunction(
@@ -160,44 +143,6 @@ export function callSig(...args: any) {
                     name: 'sigId',
                     argType: {
                         tag: 'primitive',
-                    },
-                },
-                {
-                    name: 'success',
-                    argType: {
-                        tag: 'callback',
-                        callback: {
-                            argDefs: [
-                                {
-                                    name: 'arg0',
-                                    argType: {
-                                        tag: 'primitive',
-                                    },
-                                },
-                            ],
-                            returnType: {
-                                tag: 'void',
-                            },
-                        },
-                    },
-                },
-                {
-                    name: 'failure',
-                    argType: {
-                        tag: 'callback',
-                        callback: {
-                            argDefs: [
-                                {
-                                    name: 'arg0',
-                                    argType: {
-                                        tag: 'primitive',
-                                    },
-                                },
-                            ],
-                            returnType: {
-                                tag: 'void',
-                            },
-                        },
                     },
                 },
             ],

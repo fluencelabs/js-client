@@ -1,6 +1,11 @@
 -- import "@fluencelabs/aqua-lib/builtin.aqua"
 
-export Sig
+export SignResult, Sig
+
+data SignResult:
+    success: bool
+    error: ?string
+    signature: ?[]u8
 
 service Sig("sig"):
     -- Signs data with the service's private key. 
@@ -12,8 +17,8 @@ service Sig("sig"):
     --   registry.get_key_bytes
     --   registry.get_record_bytes
     -- Argument: data - byte array to sign
-    -- Returns: signature as a byte array
-    sign(data: []u8) -> []u8
+    -- Returns: signature as SignResult structure
+    sign(data: []u8) -> SignResult
 
     -- Given the data and signature both as byte arrays, returns true if the signature is correct, false otherwise.
     verify(signature: []u8, data: []u8) -> bool

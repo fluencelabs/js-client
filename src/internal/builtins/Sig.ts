@@ -65,13 +65,25 @@ export class Sig implements SigDef {
         return this._keyPair.toB58String();
     }
 
-    async sign(data: number[], callParams: CallParams<'data'>): Promise<number[]> {
+    async sign(
+        data: number[],
+        callParams: CallParams<'data'>,
+    ): Promise<{ error: string | null; signature: number[] | null; success: boolean }> {
         if (!this.securityGuard(callParams)) {
-            throw 'Security guard validation failed';
+            return {
+                success: false,
+                error: 'Security guard validation failed',
+                signature: null,
+            };
         }
 
         const signedData = await this._keyPair.signBytes(Uint8Array.from(data));
-        return Array.from(signedData);
+
+        return {
+            success: true,
+            error: null,
+            signature: Array.from(signedData),
+        };
     }
 
     verify(signature: number[], data: number[]): Promise<boolean> {

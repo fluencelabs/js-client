@@ -1,16 +1,11 @@
-import Sig from "../src/services.aqua"
+import SignResult, Sig from "../src/services.aqua"
 export Sig
 
 service DataProvider("data"):
     provide_data() -> []u8
 
-func callSig(sigId: string, success: []u8 -> (), failure: string -> ()) -> string:
-    try:
-        data <- DataProvider.provide_data()
-        Sig sigId
-        signature <- Sig.sign(data)
-        success(signature)
-    catch err:
-        failure(err.message)
-
-    <- "finished"
+func callSig(sigId: string) -> SignResult:
+    data <- DataProvider.provide_data()
+    Sig sigId
+    signature <- Sig.sign(data)
+    <- signature

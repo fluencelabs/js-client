@@ -16,7 +16,7 @@ describe('Sig service test suite', () => {
         await peer.start();
     });
 
-    it('Use custom sig service', async () => {
+    it('Use custom sig service, success path', async () => {
         const peer = new FluencePeer();
         await peer.start();
 
@@ -34,23 +34,14 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('data', 'provide_data');
 
-        let result;
-        await callSig(
-            peer,
-            'CustomSig',
-            (res) => {
-                result = res;
-            },
-            (fail) => {
-                result = fail;
-            },
-        );
+        const result = await callSig(peer, 'CustomSig');
 
-        const isSigCorrect = await customSig.verify(result, data);
+        expect(result.success).toBe(true);
+        const isSigCorrect = await customSig.verify(result.signature, data);
         expect(isSigCorrect).toBe(true);
     });
 
-    it('Use custom sig service 1', async () => {
+    it('Use custom sig service, fail path', async () => {
         const peer = new FluencePeer();
         await peer.start();
 
@@ -68,18 +59,8 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('wrong', 'wrong');
 
-        let result;
-        await callSig(
-            peer,
-            'CustomSig',
-            (res) => {
-                result = res;
-            },
-            (fail) => {
-                result = fail;
-            },
-        );
+        const result = await callSig(peer, 'CustomSig');
 
-        expect(result).toBe('');
+        expect(result.success).toBe(false);
     });
 });

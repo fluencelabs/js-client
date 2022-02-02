@@ -147,7 +147,8 @@ describe('Sig service tests', () => {
 
         const res = await sig.sign(testData, makeTetraplet(ctx.peerId));
 
-        expect(res).toStrictEqual(testDataSig);
+        expect(res.success).toBe(true);
+        expect(res.signature).toStrictEqual(testDataSig);
     });
 
     it('sig.verify should return true for the correct signature', async () => {
@@ -173,7 +174,7 @@ describe('Sig service tests', () => {
         const sig = new Sig(ctx.peerKeyPair);
 
         const signature = await sig.sign(testData, makeTetraplet(ctx.peerId));
-        const res = await sig.verify(signature, testData);
+        const res = await sig.verify(signature.signature, testData);
 
         expect(res).toBe(true);
     });
@@ -193,9 +194,10 @@ describe('Sig service tests', () => {
         const sig = new Sig(ctx.peerKeyPair);
         sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-        const signature = sig.sign(testData, makeTetraplet(ctx.peerId, 'other_service', 'other_fn'));
+        const res = await sig.sign(testData, makeTetraplet(ctx.peerId, 'other_service', 'other_fn'));
 
-        await expect(signature).rejects.toBe('Security guard validation failed');
+        await expect(res.success).toBe(false);
+        await expect(res.error).toBe('Security guard validation failed');
     });
 
     it('sig.sign with defaultSigGuard should not allow particles initiated from other peers', async () => {
@@ -203,12 +205,13 @@ describe('Sig service tests', () => {
         const sig = new Sig(ctx.peerKeyPair);
         sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-        const signature = sig.sign(
+        const res = await sig.sign(
             testData,
             makeTetraplet((await KeyPair.randomEd25519()).toB58String(), 'registry', 'get_key_bytes'),
         );
 
-        await expect(signature).rejects.toBe('Security guard validation failed');
+        await expect(res.success).toBe(false);
+        await expect(res.error).toBe('Security guard validation failed');
     });
 
     it('changing securityGuard should work', async () => {
@@ -217,15 +220,16 @@ describe('Sig service tests', () => {
         sig.securityGuard = allowServiceFn('test', 'test');
 
         const successful1 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
-        expect(successful1).toBeDefined();
-        const unSuccessful1 = sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
-        await expect(unSuccessful1).rejects.toBe('Security guard validation failed');
+        const unSuccessful1 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
 
         sig.securityGuard = allowServiceFn('wrong', 'wrong');
+
         const successful2 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
-        expect(successful2).toBeDefined();
-        const unSuccessful2 = sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
-        await expect(unSuccessful2).rejects.toBe('Security guard validation failed');
-        expect(successful2).toBeDefined();
+        const unSuccessful2 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
+
+        expect(successful1.success).toBe(true);
+        expect(successful2.success).toBe(true);
+        expect(unSuccessful1.success).toBe(false);
+        expect(unSuccessful2.success).toBe(false);
     });
 });
