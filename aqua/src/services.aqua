@@ -3,8 +3,11 @@
 export SignResult, Sig
 
 data SignResult:
+    -- Was call successful or not
     success: bool
+    -- Error message. Will be null if the call is successful
     error: ?string
+    -- Signature as byte array. Will be null if the call is not successful
     signature: ?[]u8
 
 service Sig("sig"):
