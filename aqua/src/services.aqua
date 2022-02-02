@@ -1,6 +1,7 @@
 -- import "@fluencelabs/aqua-lib/builtin.aqua"
-
 export SignResult, Sig
+
+-- TODO: remove the code below and reference builtin.aqua when published
 
 data SignResult:
     -- Was call successful or not
