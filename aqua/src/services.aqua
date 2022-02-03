@@ -20,6 +20,7 @@ service Sig("sig"):
     --   trust-graph.get_revocation_bytes
     --   registry.get_key_bytes
     --   registry.get_record_bytes
+    --   registry.get_host_record_bytes
     -- Argument: data - byte array to sign
     -- Returns: signature as SignResult structure
     sign(data: []u8) -> SignResult

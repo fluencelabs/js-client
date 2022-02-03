@@ -69,6 +69,7 @@ export const defaultSigGuard = (peerId: PeerIdB58) => {
             allowServiceFn('trust-graph', 'get_revocation_bytes'),
             allowServiceFn('registry', 'get_key_bytes'),
             allowServiceFn('registry', 'get_record_bytes'),
+            allowServiceFn('registry', 'get_host_record_bytes'),
         ),
     );
 };
