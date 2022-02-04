@@ -25,9 +25,11 @@ import { dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
-import { BuiltInServiceContext, builtInServices } from './builtInServices';
+import { builtInServices } from './builtins/common';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
 import { AvmRunnerBackground } from '@fluencelabs/avm-runner-background';
+import { defaultSigGuard, Sig } from './builtins/Sig';
+import { registerSig } from './_aqua/services';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -210,12 +212,22 @@ export class FluencePeer {
         }
 
         this._legacyCallServiceHandler = new LegacyCallServiceHandler();
-        registerDefaultServices(this, {
-            peerKeyPair: this._keyPair,
-            peerId: this.getStatus().peerId,
-        });
+        registerDefaultServices(this);
+
+        this._classServices = {
+            sig: new Sig(this._keyPair),
+        };
+        this._classServices.sig.securityGuard = defaultSigGuard(this.getStatus().peerId);
+        registerSig(this, this._classServices.sig);
+        registerSig(this, this.getStatus().peerId, this._classServices.sig);
 
         this._startParticleProcessing();
+    }
+
+    getServices() {
+        return {
+            ...this._classServices,
+        };
     }
 
     /**
@@ -357,6 +369,10 @@ export class FluencePeer {
 
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
+
+    private _classServices: {
+        sig: Sig;
+    };
 
     // Internal peer state
 
@@ -615,11 +631,10 @@ function serviceFnKey(serviceId: string, fnName: string) {
     return `${serviceId}/${fnName}`;
 }
 
-function registerDefaultServices(peer: FluencePeer, context: BuiltInServiceContext) {
-    const ctx = builtInServices(context);
-    for (let serviceId in ctx) {
-        for (let fnName in ctx[serviceId]) {
-            const h = ctx[serviceId][fnName];
+function registerDefaultServices(peer: FluencePeer) {
+    for (let serviceId in builtInServices) {
+        for (let fnName in builtInServices[serviceId]) {
+            const h = builtInServices[serviceId][fnName];
             peer.internals.regHandler.common(serviceId, fnName, h);
         }
     }

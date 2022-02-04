@@ -5,6 +5,9 @@
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "scripts": {
+        "compile-aqua": "npm run compile-aqua:src && npm run compile-aqua:test",
+        "compile-aqua:src": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
+        "compile-aqua:test": "aqua -i ./aqua/tests/ -o ./src/__test__/_aqua",
         "test": "jest --watch",
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
@@ -40,6 +43,8 @@
         "uuid": "8.3.0"
     },
     "devDependencies": {
+        "@fluencelabs/aqua": "^0.5.3-258",
+        "@fluencelabs/aqua-lib": "^0.3.4",
         "@types/jest": "^26.0.22",
         "jest": "^26.6.3",
         "js-base64": "^3.7.2",

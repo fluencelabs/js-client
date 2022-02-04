@@ -1,36 +1,9 @@
-import { CallServiceData } from '../../internal/commonTypes';
+import { CallParams, CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
-import { BuiltInServiceContext, builtInServices } from '../../internal/builtInServices';
+import { builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '../../internal/KeyPair';
+import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
-
-const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
-
-const context = (async () => {
-    const keyBytes = toUint8Array(key);
-    const kp = await KeyPair.fromEd25519SK(keyBytes);
-    const res: BuiltInServiceContext = {
-        peerKeyPair: kp,
-        peerId: kp.Libp2pPeerId.toB58String(),
-    };
-    return res;
-})();
-
-const testData = [1, 2, 3, 4, 5, 6, 7, 9, 10];
-
-// signature produced by KeyPair created from key above (`key` variable)
-const testDataSig = [
-    224, 104, 245, 206, 140, 248, 27, 72, 68, 133, 111, 10, 164, 197, 242, 132, 107, 77, 224, 67, 99, 106, 76, 29, 144,
-    121, 122, 169, 36, 173, 58, 80, 170, 102, 137, 253, 157, 247, 168, 87, 162, 223, 188, 214, 203, 220, 52, 246, 29,
-    86, 77, 71, 224, 248, 16, 213, 254, 75, 78, 239, 243, 222, 241, 15,
-];
-
-// signature produced by KeyPair created from some random KeyPair
-const testDataWrongSig = [
-    116, 247, 189, 118, 236, 53, 147, 123, 219, 75, 176, 105, 101, 108, 233, 137, 97, 14, 146, 132, 252, 70, 51, 153,
-    237, 167, 156, 150, 36, 90, 229, 108, 166, 231, 255, 137, 8, 246, 125, 0, 213, 150, 83, 196, 237, 221, 131, 159,
-    157, 159, 25, 109, 95, 160, 181, 65, 254, 238, 47, 156, 240, 151, 58, 14,
-];
 
 describe('Tests for default handler', () => {
     // prettier-ignore
@@ -65,11 +38,7 @@ describe('Tests for default handler', () => {
   ${'peer'}     | ${'timeout'}         | ${[200, ['test']]}              | ${0}    | ${['test']}}
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
-   
-  ${'sig'}      | ${'verify'}          | ${[testData, testDataSig]}      | ${0}    | ${true}}
-  ${'sig'}      | ${'verify'}          | ${[testData, testDataWrongSig]} | ${0}    | ${false}}
-  ${'sig'}      | ${'sign'}            | ${[]}                           | ${1}    | ${'sign accepts exactly one argument: data be signed in format of u8 array of bytes'}}
-  ${'sig'}      | ${'verify'}          | ${[testData]}                   | ${1}    | ${'verify accepts exactly two arguments: data and signature, both in format of u8 array of bytes'}}
+  
   `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
@@ -90,7 +59,7 @@ describe('Tests for default handler', () => {
             };
 
             // act
-            const fn = builtInServices(await context)[req.serviceId][req.fnName];
+            const fn = builtInServices[req.serviceId][req.fnName];
             const res = await fn(req);
 
             // assert
@@ -118,7 +87,7 @@ describe('Tests for default handler', () => {
         };
 
         // act
-        const fn = builtInServices(await context)[req.serviceId][req.fnName];
+        const fn = builtInServices[req.serviceId][req.fnName];
         const res = await fn(req);
 
         // assert
@@ -127,166 +96,140 @@ describe('Tests for default handler', () => {
             result: 'The JS implementation of Peer does not support identify',
         });
     });
+});
 
-    it('sig.sign should create the correct signature', async () => {
-        // arrange
-        const ctx = await context;
-        const req: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'get_trust_bytes',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'trust-graph',
-                    },
-                ],
+const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
+
+const context = (async () => {
+    const keyBytes = toUint8Array(key);
+    const kp = await KeyPair.fromEd25519SK(keyBytes);
+    const res = {
+        peerKeyPair: kp,
+        peerId: kp.Libp2pPeerId.toB58String(),
+    };
+    return res;
+})();
+
+const testData = [1, 2, 3, 4, 5, 6, 7, 9, 10];
+
+// signature produced by KeyPair created from key above (`key` variable)
+const testDataSig = [
+    224, 104, 245, 206, 140, 248, 27, 72, 68, 133, 111, 10, 164, 197, 242, 132, 107, 77, 224, 67, 99, 106, 76, 29, 144,
+    121, 122, 169, 36, 173, 58, 80, 170, 102, 137, 253, 157, 247, 168, 87, 162, 223, 188, 214, 203, 220, 52, 246, 29,
+    86, 77, 71, 224, 248, 16, 213, 254, 75, 78, 239, 243, 222, 241, 15,
+];
+
+// signature produced by KeyPair created from some random KeyPair
+const testDataWrongSig = [
+    116, 247, 189, 118, 236, 53, 147, 123, 219, 75, 176, 105, 101, 108, 233, 137, 97, 14, 146, 132, 252, 70, 51, 153,
+    237, 167, 156, 150, 36, 90, 229, 108, 166, 231, 255, 137, 8, 246, 125, 0, 213, 150, 83, 196, 237, 221, 131, 159,
+    157, 159, 25, 109, 95, 160, 181, 65, 254, 238, 47, 156, 240, 151, 58, 14,
+];
+
+const makeTetraplet = (initPeerId: string, serviceId?: string, fnName?: string): CallParams<'data'> => {
+    return {
+        initPeerId: initPeerId,
+        tetraplets: {
+            data: [
+                {
+                    function_name: fnName,
+                    service_id: serviceId,
+                },
             ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
+        },
+    } as any;
+};
 
-        // act
-        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
-        const res = await fn(req);
+describe('Sig service tests', () => {
+    it('sig.sign should create the correct signature', async () => {
+        const ctx = await context;
+        const sig = new Sig(ctx.peerKeyPair);
 
-        // assert
-        expect(res).toMatchObject({
-            retCode: 0,
-            result: testDataSig,
-        });
+        const res = await sig.sign(testData, makeTetraplet(ctx.peerId));
+
+        expect(res.success).toBe(true);
+        expect(res.signature).toStrictEqual(testDataSig);
+    });
+
+    it('sig.verify should return true for the correct signature', async () => {
+        const ctx = await context;
+        const sig = new Sig(ctx.peerKeyPair);
+
+        const res = await sig.verify(testDataSig, testData);
+
+        expect(res).toBe(true);
+    });
+
+    it('sig.verify should return false for the incorrect signature', async () => {
+        const ctx = await context;
+        const sig = new Sig(ctx.peerKeyPair);
+
+        const res = await sig.verify(testDataWrongSig, testData);
+
+        expect(res).toBe(false);
     });
 
     it('sign-verify call chain should work', async () => {
         const ctx = await context;
-        const signReq: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'get_trust_bytes',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'trust-graph',
-                    },
-                ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
+        const sig = new Sig(ctx.peerKeyPair);
 
-        const signFn = builtInServices(ctx)[signReq.serviceId][signReq.fnName];
-        const signRes = await signFn(signReq);
+        const signature = await sig.sign(testData, makeTetraplet(ctx.peerId));
+        const res = await sig.verify(signature.signature, testData);
 
-        const verifyReq: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'verify',
-            args: [testData, signRes.result],
-            tetraplets: [],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
-
-        const verifyFn = builtInServices(ctx)[verifyReq.serviceId][verifyReq.fnName];
-        const verifyRes = await verifyFn(verifyReq);
-
-        expect(verifyRes).toMatchObject({
-            retCode: 0,
-            result: true,
-        });
+        expect(res).toBe(true);
     });
 
-    it('sig.sign should not allow data from incorrect services', async () => {
-        // arrange
+    it('sig.sign with defaultSigGuard should work for correct callParams', async () => {
         const ctx = await context;
-        const req: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'some-other-fn',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'cool-service',
-                    },
-                ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: ctx.peerId,
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
+        const sig = new Sig(ctx.peerKeyPair);
+        sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-        // act
-        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
-        const res = await fn(req);
+        const signature = await sig.sign(testData, makeTetraplet(ctx.peerId, 'registry', 'get_key_bytes'));
 
-        // assert
-        expect(res).toMatchObject({
-            retCode: 1,
-            result: expect.stringContaining("Only data from the following services is allowed to be signed:"),
-        });
+        await expect(signature).toBeDefined();
     });
 
-    it('sig.sign should not allow particles initiated from other peers', async () => {
-        // arrange
+    it('sig.sign with defaultSigGuard should not allow particles initiated from incorrect service', async () => {
         const ctx = await context;
-        const req: CallServiceData = {
-            serviceId: 'sig',
-            fnName: 'sign',
-            args: [testData],
-            tetraplets: [
-                [
-                    {
-                        function_name: 'some-other-fn',
-                        json_path: '',
-                        peer_pk: '',
-                        service_id: 'cool-service',
-                    },
-                ],
-            ],
-            particleContext: {
-                particleId: 'some',
-                initPeerId: (await KeyPair.randomEd25519()).Libp2pPeerId.toB58String(),
-                timestamp: 595951200,
-                ttl: 595961200,
-                signature: 'sig',
-            },
-        };
+        const sig = new Sig(ctx.peerKeyPair);
+        sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-        // act
-        const fn = builtInServices(ctx)[req.serviceId][req.fnName];
-        const res = await fn(req);
+        const res = await sig.sign(testData, makeTetraplet(ctx.peerId, 'other_service', 'other_fn'));
 
-        // assert
-        expect(res).toMatchObject({
-            retCode: 1,
-            result: 'sign is only allowed to be called on the same peer the particle was initiated from',
-        });
+        await expect(res.success).toBe(false);
+        await expect(res.error).toBe('Security guard validation failed');
+    });
+
+    it('sig.sign with defaultSigGuard should not allow particles initiated from other peers', async () => {
+        const ctx = await context;
+        const sig = new Sig(ctx.peerKeyPair);
+        sig.securityGuard = defaultSigGuard(ctx.peerId);
+
+        const res = await sig.sign(
+            testData,
+            makeTetraplet((await KeyPair.randomEd25519()).toB58String(), 'registry', 'get_key_bytes'),
+        );
+
+        await expect(res.success).toBe(false);
+        await expect(res.error).toBe('Security guard validation failed');
+    });
+
+    it('changing securityGuard should work', async () => {
+        const ctx = await context;
+        const sig = new Sig(ctx.peerKeyPair);
+        sig.securityGuard = allowServiceFn('test', 'test');
+
+        const successful1 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
+        const unSuccessful1 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
+
+        sig.securityGuard = allowServiceFn('wrong', 'wrong');
+
+        const successful2 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'wrong', 'wrong'));
+        const unSuccessful2 = await sig.sign(testData, makeTetraplet(ctx.peerId, 'test', 'test'));
+
+        expect(successful1.success).toBe(true);
+        expect(successful2.success).toBe(true);
+        expect(unSuccessful1.success).toBe(false);
+        expect(unSuccessful2.success).toBe(false);
     });
 });

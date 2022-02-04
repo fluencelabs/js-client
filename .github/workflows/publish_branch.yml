@@ -27,7 +27,7 @@ jobs:
       ### Publish to NPM registry
       - uses: actions/setup-node@v1
         with:
-          node-version: '15'
+          node-version: '16'
           registry-url: 'https://registry.npmjs.org'
 
       - run: cat package.json
