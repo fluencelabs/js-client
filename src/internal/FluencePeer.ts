@@ -25,10 +25,10 @@ import { dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
-import { BuiltInServiceContext, builtInServices } from './builtins/common';
+import { builtInServices } from './builtins/common';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
 import { AvmRunnerBackground } from '@fluencelabs/avm-runner-background';
-import { allowOnlyParticleOriginatedAt, allowServiceFn, and, defaultSigGuard, Sig } from './builtins/Sig';
+import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 
 /**
@@ -212,10 +212,7 @@ export class FluencePeer {
         }
 
         this._legacyCallServiceHandler = new LegacyCallServiceHandler();
-        registerDefaultServices(this, {
-            peerKeyPair: this._keyPair,
-            peerId: this.getStatus().peerId,
-        });
+        registerDefaultServices(this);
 
         this._classServices = {
             sig: new Sig(this._keyPair),
@@ -634,11 +631,10 @@ function serviceFnKey(serviceId: string, fnName: string) {
     return `${serviceId}/${fnName}`;
 }
 
-function registerDefaultServices(peer: FluencePeer, context: BuiltInServiceContext) {
-    const ctx = builtInServices(context);
-    for (let serviceId in ctx) {
-        for (let fnName in ctx[serviceId]) {
-            const h = ctx[serviceId][fnName];
+function registerDefaultServices(peer: FluencePeer) {
+    for (let serviceId in builtInServices) {
+        for (let fnName in builtInServices[serviceId]) {
+            const h = builtInServices[serviceId][fnName];
             peer.internals.regHandler.common(serviceId, fnName, h);
         }
     }

@@ -1,6 +1,6 @@
 import { CallParams, CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
-import { BuiltInServiceContext, builtInServices } from '../../internal/builtins/common';
+import { builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '../../internal/KeyPair';
 import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
@@ -59,7 +59,7 @@ describe('Tests for default handler', () => {
             };
 
             // act
-            const fn = builtInServices(undefined)[req.serviceId][req.fnName];
+            const fn = builtInServices[req.serviceId][req.fnName];
             const res = await fn(req);
 
             // assert
@@ -87,7 +87,7 @@ describe('Tests for default handler', () => {
         };
 
         // act
-        const fn = builtInServices(await context)[req.serviceId][req.fnName];
+        const fn = builtInServices[req.serviceId][req.fnName];
         const res = await fn(req);
 
         // assert
@@ -103,7 +103,7 @@ const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
 const context = (async () => {
     const keyBytes = toUint8Array(key);
     const kp = await KeyPair.fromEd25519SK(keyBytes);
-    const res: BuiltInServiceContext = {
+    const res = {
         peerKeyPair: kp,
         peerId: kp.Libp2pPeerId.toB58String(),
     };
