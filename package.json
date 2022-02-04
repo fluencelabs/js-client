@@ -44,7 +44,7 @@
     },
     "devDependencies": {
         "@fluencelabs/aqua": "^0.5.3-258",
-        "@fluencelabs/aqua-lib": "^0.3.2",
+        "@fluencelabs/aqua-lib": "^0.3.4",
         "@types/jest": "^26.0.22",
         "jest": "^26.6.3",
         "js-base64": "^3.7.2",

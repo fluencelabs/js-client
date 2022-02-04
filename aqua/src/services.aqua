@@ -1,7 +1,8 @@
--- import "@fluencelabs/aqua-lib/builtin.aqua"
-export SignResult, Sig
+-- import SignResult, Sig from "@fluencelabs/aqua-lib/builtin.aqua"
+-- export SignResult, Sig
 
--- TODO: remove the code below and reference builtin.aqua when published
+-- TODO:: fix this issue: https://github.com/fluencelabs/aqua-lib/issues/12
+-- and remove copy-paste
 
 data SignResult:
     -- Was call successful or not
@@ -11,6 +12,8 @@ data SignResult:
     -- Signature as byte array. Will be null if the call is not successful
     signature: ?[]u8
 
+-- Available only on FluenceJS peers
+-- The service can also be resolved by it's host peer id
 service Sig("sig"):
     -- Signs data with the service's private key. 
     -- Depending on implementation the service might check call params to restrict usage for security reasons.
@@ -28,5 +31,5 @@ service Sig("sig"):
     -- Given the data and signature both as byte arrays, returns true if the signature is correct, false otherwise.
     verify(signature: []u8, data: []u8) -> bool
 
-    -- Gets the service's public key of.
+    -- Gets service's public key.
     get_pub_key() -> string
