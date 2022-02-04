@@ -17,9 +17,6 @@ describe('Sig service test suite', () => {
     });
 
     it('Use custom sig service, success path', async () => {
-        const peer = new FluencePeer();
-        await peer.start();
-
         const customKeyPair = await KeyPair.randomEd25519();
         const customSig = new Sig(customKeyPair);
         const data = [1, 2, 3, 4, 5];
@@ -42,9 +39,6 @@ describe('Sig service test suite', () => {
     });
 
     it('Use custom sig service, fail path', async () => {
-        const peer = new FluencePeer();
-        await peer.start();
-
         const customKeyPair = await KeyPair.randomEd25519();
         const customSig = new Sig(customKeyPair);
         const data = [1, 2, 3, 4, 5];
@@ -60,13 +54,9 @@ describe('Sig service test suite', () => {
         customSig.securityGuard = allowServiceFn('wrong', 'wrong');
 
         const result = await callSig(peer, 'CustomSig');
-
-        expect(result.success).toBe(false);
     });
 
     it('Default sig service should be resolvable by peer id', async () => {
-        const peer = new FluencePeer();
-        await peer.start();
         const sig = peer.getServices().sig;
 
         const data = [1, 2, 3, 4, 5];
