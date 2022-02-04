@@ -222,6 +222,7 @@ export class FluencePeer {
         };
         this._classServices.sig.securityGuard = defaultSigGuard(this.getStatus().peerId);
         registerSig(this, this._classServices.sig);
+        registerSig(this, this.getStatus().peerId, this._classServices.sig);
 
         this._startParticleProcessing();
     }

@@ -63,4 +63,35 @@ describe('Sig service test suite', () => {
 
         expect(result.success).toBe(false);
     });
+
+    it('Default sig service should be resolvable by peer id', async () => {
+        const peer = new FluencePeer();
+        await peer.start();
+        const sig = peer.getServices().sig;
+
+        const data = [1, 2, 3, 4, 5];
+        registerDataProvider(peer, {
+            provide_data: () => {
+                return data;
+            },
+        });
+
+        const callAsSigRes = await callSig(peer, 'sig');
+        const callAsPeerIdRes = await callSig(peer, peer.getStatus().peerId);
+
+        expect(callAsSigRes.success).toBe(false);
+        expect(callAsPeerIdRes.success).toBe(false);
+
+        sig.securityGuard = () => true;
+
+        const callAsSigResAfterGuardChange = await callSig(peer, 'sig');
+        const callAsPeerIdResAfterGuardChange = await callSig(peer, peer.getStatus().peerId);
+
+        expect(callAsSigResAfterGuardChange.success).toBe(true);
+        expect(callAsPeerIdResAfterGuardChange.success).toBe(true);
+
+        const isValid = await sig.verify(callAsSigResAfterGuardChange.signature, data);
+
+        expect(isValid).toBe(true);
+    });
 });
