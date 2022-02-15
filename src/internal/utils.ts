@@ -18,7 +18,7 @@ import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
-import { LogLevel as AvmLoglevel } from '@fluencelabs/avm-runner-interface';
+import { Buffer } from 'buffer';
 
 export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
     return (req: CallServiceData): CallServiceResult => {
