@@ -18,6 +18,7 @@ import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
 import { sha256 } from 'js-sha256';
 import { ResultCodes } from '../commonTypes';
+import Buffer from '../Buffer'
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -108,12 +109,12 @@ export const builtInServices = {
 
         sha256_string: (req) => {
             if (req.args.length !== 1) {
-                return error('array_length accepts exactly one argument, found: ' + req.args.length);
+                return error('sha256_string accepts exactly one argument, found: ' + req.args.length);
             } else {
                 const hash = sha256.create();
                 hash.update(req.args[0]);
-                const buf = hash.arrayBuffer();
-                return success(encode(buf));
+                const outBuffer = Buffer.from(hash.arrayBuffer());
+                return success(encode(outBuffer));
             }
         },
 
