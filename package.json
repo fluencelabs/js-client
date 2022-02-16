@@ -41,7 +41,8 @@
         "peer-id": "=0.15.4",
         "rxjs": "^7.3.0",
         "ts-pattern": "^3.3.3",
-        "uuid": "8.3.0"
+        "uuid": "8.3.0",
+        "browser-or-node": "^2.0.0"
     },
     "devDependencies": {
         "@fluencelabs/aqua": "^0.5.3-258",

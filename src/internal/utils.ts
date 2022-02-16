@@ -18,7 +18,7 @@ import log from 'loglevel';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
-import { Buffer } from 'buffer';
+import Buffer from './Buffer';
 
 export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
     return (req: CallServiceData): CallServiceResult => {

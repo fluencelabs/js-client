@@ -20,7 +20,7 @@ import { CallResultsArray, LogLevel } from '@fluencelabs/avm-runner-interface';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
 import { dataToString, jsonify } from './utils';
-import { Buffer } from 'buffer';
+import Buffer from './Buffer';
 
 export class Particle {
     id: string;
