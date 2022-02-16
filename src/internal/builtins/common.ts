@@ -16,9 +16,8 @@
 
 import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
-import { PeerIdB58 } from 'src';
-import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
-import { KeyPair } from '../KeyPair';
+import { sha256 } from 'js-sha256';
+import { ResultCodes } from '../commonTypes';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -42,6 +41,14 @@ export const builtInServices = {
 
         array: (req) => {
             return success(req.args);
+        },
+
+        array_length: (req) => {
+            if (req.args.length !== 1) {
+                return error('array_length accepts exactly one argument, found: ' + req.args.length);
+            } else {
+                return success(req.args[0].length);
+            }
         },
 
         identity: (req) => {
@@ -97,6 +104,22 @@ export const builtInServices = {
             } else {
                 return success(Array.from(decode(req.args[0])));
             }
+        },
+
+        sha256_string: (req) => {
+            if (req.args.length !== 1) {
+                return error('array_length accepts exactly one argument, found: ' + req.args.length);
+            } else {
+                const hash = sha256.create();
+                hash.update(req.args[0]);
+                const buf = hash.arrayBuffer();
+                return success(encode(buf));
+            }
+        },
+
+        concat_strings: (req) => {
+            const res = ''.concat(...req.args);
+            return success(res);
         },
     },
 
