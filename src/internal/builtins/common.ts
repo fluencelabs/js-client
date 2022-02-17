@@ -16,9 +16,9 @@
 
 import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
-import { PeerIdB58 } from 'src';
-import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
-import { KeyPair } from '../KeyPair';
+import { sha256 } from 'multiformats/hashes/sha2';
+import { ResultCodes } from '../commonTypes';
+import Buffer from '../Buffer';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -42,6 +42,14 @@ export const builtInServices = {
 
         array: (req) => {
             return success(req.args);
+        },
+
+        array_length: (req) => {
+            if (req.args.length !== 1) {
+                return error('array_length accepts exactly one argument, found: ' + req.args.length);
+            } else {
+                return success(req.args[0].length);
+            }
         },
 
         identity: (req) => {
@@ -97,6 +105,26 @@ export const builtInServices = {
             } else {
                 return success(Array.from(decode(req.args[0])));
             }
+        },
+
+        sha256_string: async (req) => {
+            if (req.args.length < 1 || req.args.length > 3) {
+                return error('sha256_string accepts 1-3 arguments, found: ' + req.args.length);
+            } else {
+                const [input, digestOnly, asBytes] = req.args;
+                const inBuffer = Buffer.from(input);
+                const multihash = await sha256.digest(inBuffer);
+
+                const outBytes = digestOnly ? multihash.digest : multihash.bytes;
+                const res = asBytes ? Array.from(outBytes) : encode(outBytes);
+
+                return success(res);
+            }
+        },
+
+        concat_strings: (req) => {
+            const res = ''.concat(...req.args);
+            return success(res);
         },
     },
 
