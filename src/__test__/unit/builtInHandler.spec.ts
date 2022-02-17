@@ -37,7 +37,7 @@ describe('Tests for default handler', () => {
   ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d"]}                   | ${0}    | ${[116, 101, 115, 116]}
   ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d", 1]}                | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
 
-  ${'op'}       | ${'sha256_string'}   | ${["hello, world!"]}            | ${0}    | ${"84V7ZxLW7qKsx1Qvbd63BdGaHxUc3TfT2MBPqAXM7Wyu"}
+  ${'op'}       | ${'sha256_string'}   | ${["hello, world!"]}            | ${0}    | ${"QmVQ8pg6L1tpoWYeq6dpoWqnzZoSLCh7E96fCFXKvfKD3u"}
   ${'op'}       | ${'sha256_string'}   | ${[]}                           | ${1}    | ${"sha256_string accepts exactly one argument, found: 0"}
 
   ${'op'}       | ${'concat_strings'}  | ${[]}                           | ${0}    | ${""}

@@ -16,9 +16,9 @@
 
 import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
-import { sha256 } from 'js-sha256';
+import { sha256 } from 'multiformats/hashes/sha2';
 import { ResultCodes } from '../commonTypes';
-import Buffer from '../Buffer'
+import Buffer from '../Buffer';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -107,14 +107,13 @@ export const builtInServices = {
             }
         },
 
-        sha256_string: (req) => {
+        sha256_string: async (req) => {
             if (req.args.length !== 1) {
                 return error('sha256_string accepts exactly one argument, found: ' + req.args.length);
             } else {
-                const hash = sha256.create();
-                hash.update(req.args[0]);
-                const outBuffer = Buffer.from(hash.arrayBuffer());
-                return success(encode(outBuffer));
+                const inBuffer = Buffer.from(req.args[0]);
+                const digest = await sha256.digest(inBuffer);
+                return success(encode(digest));
             }
         },
 
