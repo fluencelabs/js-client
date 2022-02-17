@@ -108,12 +108,17 @@ export const builtInServices = {
         },
 
         sha256_string: async (req) => {
-            if (req.args.length !== 1) {
-                return error('sha256_string accepts exactly one argument, found: ' + req.args.length);
+            if (req.args.length < 1 || req.args.length > 3) {
+                return error('sha256_string accepts 1-3 arguments, found: ' + req.args.length);
             } else {
-                const inBuffer = Buffer.from(req.args[0]);
-                const digest = await sha256.digest(inBuffer);
-                return success(encode(digest.bytes));
+                const [input, digestOnly, asBytes] = req.args;
+                const inBuffer = Buffer.from(input);
+                const multihash = await sha256.digest(inBuffer);
+
+                const outBytes = digestOnly ? multihash.digest : multihash.bytes;
+                const res = asBytes ? Array.from(outBytes) : encode(outBytes);
+
+                return success(res);
             }
         },
 
