@@ -113,7 +113,7 @@ export const builtInServices = {
             } else {
                 const inBuffer = Buffer.from(req.args[0]);
                 const digest = await sha256.digest(inBuffer);
-                return success(encode(digest));
+                return success(encode(digest.bytes));
             }
         },
 
