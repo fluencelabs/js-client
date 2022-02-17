@@ -5,6 +5,18 @@ import { KeyPair } from '../../internal/KeyPair';
 import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
 
+const a10b20 = `{
+    "a": 10,
+    "b": 20
+}`;
+
+const oneTwoThreeFour = `[
+    1,
+    2,
+    3,
+    4
+]`;
+
 describe('Tests for default handler', () => {
     // prettier-ignore
     each`
@@ -48,6 +60,10 @@ describe('Tests for default handler', () => {
   ${'peer'}     | ${'timeout'}         | ${[200, ['test']]}              | ${0}    | ${['test']}}
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
+
+  ${'debug'}    | ${'stringify'}       | ${[]}                           | ${0}    | ${'"<empty argument list>"'}}
+  ${'debug'}    | ${'stringify'}       | ${[{a: 10, b: 20}]}             | ${0}    | ${a10b20}}
+  ${'debug'}    | ${'stringify'}       | ${[1, 2, 3, 4]}                 | ${0}    | ${oneTwoThreeFour}}
   
   `.test(
         //

@@ -18,6 +18,7 @@ import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { ResultCodes } from '../commonTypes';
+import { jsonify } from '../utils'
 import Buffer from '../Buffer';
 
 const success = (result: any): CallServiceResult => {
@@ -125,6 +126,22 @@ export const builtInServices = {
         concat_strings: (req) => {
             const res = ''.concat(...req.args);
             return success(res);
+        },
+    },
+
+    debug: {
+        stringify: (req) => {
+            let out;
+
+            if (req.args.length === 0) {
+                out = '<empty argument list>';
+            } else if (req.args.length === 1) {
+                out = req.args[0];
+            } else {
+                out = req.args;
+            }
+
+            return success(jsonify(out));
         },
     },
 
