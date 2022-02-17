@@ -26,6 +26,7 @@ import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
+import Buffer from './Buffer';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
