@@ -23,8 +23,9 @@
     },
     "dependencies": {
         "@chainsafe/libp2p-noise": "^4.1.1",
-        "@fluencelabs/avm": " 0.20.5",
-        "@fluencelabs/avm-runner-background": "0.1.2",
+        "@fluencelabs/avm": "0.20.8",
+        "@fluencelabs/marine-js": "0.1.0",
+        "@fluencelabs/avm-runner-background": "0.2.0",
         "@fluencelabs/avm-runner-interface": "^0.2.0",
         "async": "3.2.0",
         "browser-or-node": "^2.0.0",
