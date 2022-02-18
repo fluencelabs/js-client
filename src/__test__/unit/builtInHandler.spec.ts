@@ -5,6 +5,18 @@ import { KeyPair } from '../../internal/KeyPair';
 import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
 
+const a10b20 = `{
+    "a": 10,
+    "b": 20
+}`;
+
+const oneTwoThreeFour = `[
+    1,
+    2,
+    3,
+    4
+]`;
+
 describe('Tests for default handler', () => {
     // prettier-ignore
     each`
@@ -16,6 +28,9 @@ describe('Tests for default handler', () => {
   ${'op'}       | ${'noop'}            | ${[1, 2]}                       | ${0}    | ${{}}
      
   ${'op'}       | ${'array'}           | ${[1, 2, 3]}                    | ${0}    | ${[1, 2, 3]}
+  
+  ${'op'}       | ${'array_length'}    | ${[[1, 2, 3]]}                  | ${0}    | ${3}
+  ${'op'}       | ${'array_length'}    | ${[]}                           | ${1}    | ${'array_length accepts exactly one argument, found: 0'}
      
   ${'op'}       | ${'concat'}          | ${[[1, 2], [3, 4], [5, 6]]}     | ${0}    | ${[1, 2, 3, 4, 5, 6]}
   ${'op'}       | ${'concat'}          | ${[[1, 2]]}                     | ${0}    | ${[1, 2]}
@@ -33,11 +48,22 @@ describe('Tests for default handler', () => {
      
   ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d"]}                   | ${0}    | ${[116, 101, 115, 116]}
   ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d", 1]}                | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
+
+  ${'op'}       | ${'sha256_string'}   | ${["hello, world!"]}            | ${0}    | ${"QmVQ8pg6L1tpoWYeq6dpoWqnzZoSLCh7E96fCFXKvfKD3u"}
+  ${'op'}       | ${'sha256_string'}   | ${["hello, world!", true]}      | ${0}    | ${"84V7ZxLW7qKsx1Qvbd63BdGaHxUc3TfT2MBPqAXM7Wyu"}
+  ${'op'}       | ${'sha256_string'}   | ${[]}                           | ${1}    | ${"sha256_string accepts 1-3 arguments, found: 0"}
+
+  ${'op'}       | ${'concat_strings'}  | ${[]}                           | ${0}    | ${""}
+  ${'op'}       | ${'concat_strings'}  | ${["a", "b", "c"]}              | ${0}    | ${"abc"}
      
   ${'peer'}     | ${'timeout'}         | ${[200, []]}                    | ${0}    | ${[]}}
   ${'peer'}     | ${'timeout'}         | ${[200, ['test']]}              | ${0}    | ${['test']}}
   ${'peer'}     | ${'timeout'}         | ${[]}                           | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
   ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}             | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
+
+  ${'debug'}    | ${'stringify'}       | ${[]}                           | ${0}    | ${'"<empty argument list>"'}}
+  ${'debug'}    | ${'stringify'}       | ${[{a: 10, b: 20}]}             | ${0}    | ${a10b20}}
+  ${'debug'}    | ${'stringify'}       | ${[1, 2, 3, 4]}                 | ${0}    | ${oneTwoThreeFour}}
   
   `.test(
         //
