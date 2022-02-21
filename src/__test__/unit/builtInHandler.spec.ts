@@ -119,7 +119,7 @@ describe('Tests for default handler', () => {
         // assert
         expect(res).toMatchObject({
             retCode: 1,
-            result: 'The JS implementation of Peer does not support identify',
+            result: 'The JS implementation of Peer does not support "peer.identify"',
         });
     });
 });
