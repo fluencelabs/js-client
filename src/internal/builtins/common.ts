@@ -18,7 +18,7 @@ import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { ResultCodes } from '../commonTypes';
-import { jsonify } from '../utils'
+import { jsonify } from '../utils';
 import Buffer from '../Buffer';
 
 const success = (result: any): CallServiceResult => {
@@ -35,7 +35,148 @@ const error = (error: string): CallServiceResult => {
     };
 };
 
+const errorNotImpl = (methodName: string) => {
+    return error(`The JS implementation of Peer does not support "${methodName}"`);
+};
+
 export const builtInServices = {
+    peer: {
+        identify: (req) => {
+            return errorNotImpl('peer.identify');
+        },
+
+        timestamp_ms: (req) => {
+            return success(Date.now());
+        },
+
+        timestamp_sec: (req) => {
+            return success(Math.floor(Date.now() / 1000));
+        },
+
+        is_connected: (req) => {
+            return errorNotImpl('peer.is_connected');
+        },
+
+        connect: (req) => {
+            return errorNotImpl('peer.connect');
+        },
+
+        get_contact: (req) => {
+            return errorNotImpl('peer.get_contact');
+        },
+
+        timeout: (req) => {
+            if (req.args.length !== 2) {
+                return error('timeout accepts exactly two arguments: timeout duration in ms and a message string');
+            }
+            const durationMs = req.args[0];
+            const message = req.args[1];
+
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const res = success(message);
+                    resolve(res);
+                }, durationMs);
+            });
+        },
+    },
+
+    kad: {
+        neighborhood: (req) => {
+            return errorNotImpl('kad.neighborhood');
+        },
+
+        merge: (req) => {
+            return errorNotImpl('kad.merge');
+        },
+    },
+
+    srv: {
+        list: (req) => {
+            return errorNotImpl('srv.list');
+        },
+
+        create: (req) => {
+            return errorNotImpl('srv.create');
+        },
+
+        get_interface: (req) => {
+            return errorNotImpl('srv.get_interface');
+        },
+
+        resolve_alias: (req) => {
+            return errorNotImpl('srv.resolve_alias');
+        },
+
+        add_alias: (req) => {
+            return errorNotImpl('srv.add_alias');
+        },
+
+        remove: (req) => {
+            return errorNotImpl('srv.remove');
+        },
+    },
+
+    dist: {
+        add_module_from_vault: (req) => {
+            return errorNotImpl('dist.add_module_from_vault');
+        },
+
+        add_module: (req) => {
+            return errorNotImpl('dist.add_module');
+        },
+
+        add_blueprint: (req) => {
+            return errorNotImpl('dist.add_blueprint');
+        },
+
+        make_module_config: (req) => {
+            return errorNotImpl('dist.make_module_config');
+        },
+
+        load_module_config: (req) => {
+            return errorNotImpl('dist.load_module_config');
+        },
+
+        default_module_config: (req) => {
+            return errorNotImpl('dist.default_module_config');
+        },
+
+        make_blueprint: (req) => {
+            return errorNotImpl('dist.make_blueprint');
+        },
+
+        load_blueprint: (req) => {
+            return errorNotImpl('dist.load_blueprint');
+        },
+
+        list_modules: (req) => {
+            return errorNotImpl('dist.list_modules');
+        },
+
+        get_module_interface: (req) => {
+            return errorNotImpl('dist.get_module_interface');
+        },
+
+        list_blueprints: (req) => {
+            return errorNotImpl('dist.list_blueprints');
+        },
+    },
+
+    script: {
+        add: (req) => {
+            return errorNotImpl('script.add');
+        },
+
+        remove: (req) => {
+            return errorNotImpl('script.remove');
+        },
+
+        list: (req) => {
+            return errorNotImpl('script.list');
+        },
+    },
+
     op: {
         noop: (req) => {
             return success({});
@@ -145,24 +286,81 @@ export const builtInServices = {
         },
     },
 
-    peer: {
-        timeout: (req) => {
-            if (req.args.length !== 2) {
-                return error('timeout accepts exactly two arguments: timeout duration in ms and a message string');
-            }
-            const durationMs = req.args[0];
-            const message = req.args[1];
-
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const res = success(message);
-                    resolve(res);
-                }, durationMs);
-            });
+    math: {
+        add: (req) => {
+            return errorNotImpl('math.add');
         },
 
-        identify: (req) => {
-            return error('The JS implementation of Peer does not support identify');
+        sub: (req) => {
+            return errorNotImpl('math.sub');
+        },
+
+        mul: (req) => {
+            return errorNotImpl('math.mul');
+        },
+
+        fmul: (req) => {
+            return errorNotImpl('math.fmul');
+        },
+
+        div: (req) => {
+            return errorNotImpl('math.div');
+        },
+
+        rem: (req) => {
+            return errorNotImpl('math.rem');
+        },
+
+        pow: (req) => {
+            return errorNotImpl('math.pow');
+        },
+
+        log: (req) => {
+            return errorNotImpl('math.log');
+        },
+    },
+
+    cmp: {
+        gt: (req) => {
+            return errorNotImpl('cmp.gt');
+        },
+
+        gte: (req) => {
+            return errorNotImpl('cmp.gte');
+        },
+
+        lt: (req) => {
+            return errorNotImpl('cmp.lt');
+        },
+
+        lte: (req) => {
+            return errorNotImpl('cmp.lte');
+        },
+
+        cmp: (req) => {
+            return errorNotImpl('cmp.cmp');
+        },
+    },
+
+    array: {
+        sum: (req) => {
+            return errorNotImpl('array.sum');
+        },
+
+        dedup: (req) => {
+            return errorNotImpl('array.dedup');
+        },
+
+        intersect: (req) => {
+            return errorNotImpl('array.intersect');
+        },
+
+        diff: (req) => {
+            return errorNotImpl('array.diff');
+        },
+
+        sdiff: (req) => {
+            return errorNotImpl('array.sdiff');
         },
     },
 };
