@@ -23,7 +23,7 @@ import { Particle } from '../Particle';
 export { FluencePeer } from '../FluencePeer';
 export { CallParams } from '../commonTypes';
 
-type NonArrowType = NilType | ScalarType | OptionType | ArrayType;
+type NonArrowType = NilType | ScalarType | OptionType | ArrayType | StructType;
 
 type OptionType = {
     /**
@@ -60,13 +60,20 @@ type ScalarType = {
     name: ScalarNames;
 };
 
+type StructType = {
+    tag: 'struct';
+    name: string;
+
+    fields: Array<[string, NonArrowType]>;
+};
+
 type LabeledProductType<T> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
     tag: 'labeledProduct';
 
-    items: Array<[string, T]>;
+    fields: Array<[string, T]>;
 };
 
 type UnLabeledProductType<T> = {
