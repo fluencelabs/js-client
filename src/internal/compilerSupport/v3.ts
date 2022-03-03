@@ -87,7 +87,7 @@ type UnLabeledProductType<T> = {
 
 type ProductType<T> = UnLabeledProductType<T> | LabeledProductType<T>;
 
-type ArrowType<T> = {
+type ArrowType<T extends ProductType<unknown>> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
