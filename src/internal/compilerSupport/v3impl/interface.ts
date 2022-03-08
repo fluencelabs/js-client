@@ -65,7 +65,7 @@ export type LabeledProductType<T> = {
     fields: Array<[string, T]>;
 };
 
-export type UnLabeledProductType<T> = {
+export type UnlabeledProductType<T> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
@@ -74,7 +74,7 @@ export type UnLabeledProductType<T> = {
     items: Array<T>;
 };
 
-export type ProductType<T> = UnLabeledProductType<T> | LabeledProductType<T>;
+export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T>;
 
 export type ArrowType<T> = {
     /**
@@ -84,7 +84,7 @@ export type ArrowType<T> = {
 
     domain: ProductType<T>;
 
-    codomain: UnLabeledProductType<NonArrowType>;
+    codomain: UnlabeledProductType<NonArrowType>;
 };
 
 export type ArrowWithoutCallbacks = ArrowType<NonArrowType>;
