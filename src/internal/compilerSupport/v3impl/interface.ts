@@ -1,6 +1,20 @@
-type SomeNonArrowTypes = NilType | ScalarType | OptionType | ArrayType | StructType;
+type SomeNonArrowTypes = ScalarType | OptionType | ArrayType | StructType | TopType | BottomType;
 
 export type NonArrowType = SomeNonArrowTypes | ProductType<SomeNonArrowTypes>;
+
+export type TopType = {
+    /**
+     * Type descriptor. Used for pattern-matching
+     */
+    tag: 'topType';
+};
+
+export type BottomType = {
+    /**
+     * Type descriptor. Used for pattern-matching
+     */
+    tag: 'bottomType';
+};
 
 export type OptionType = {
     /**
@@ -74,7 +88,7 @@ export type UnlabeledProductType<T> = {
     items: Array<T>;
 };
 
-export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T>;
+export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T> | NilType;
 
 export type ArrowType<T> = {
     /**

@@ -1,9 +1,7 @@
-import { ResultCodes } from '../../commonTypes';
 import { FluencePeer } from '../../FluencePeer';
 import { Fluence } from '../../../index';
-import { aquaArgs2Ts, returnType2Aqua } from './conversions';
 import { ServiceDef } from './interface';
-import { registerServiceEx, registerServiceEx2, userHandlerService } from './misc';
+import { registerGlobalService, userHandlerService } from './misc';
 
 /**
  * Convenience function to support Aqua `service` generation backend
@@ -38,7 +36,7 @@ export function registerService(args: any[], def: ServiceDef) {
         const userDefinedHandler = service[name].bind(service);
 
         const serviceDescription = userHandlerService(serviceId, singleFunction, userDefinedHandler);
-        registerServiceEx2(peer, serviceDescription);
+        registerGlobalService(peer, serviceDescription);
     }
 }
 

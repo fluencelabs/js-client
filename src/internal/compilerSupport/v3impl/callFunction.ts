@@ -1,10 +1,14 @@
-import { CallServiceData, CallServiceResult, ResultCodes } from '../../commonTypes';
-import { ArrowWithoutCallbacks, FnConfig, FunctionCallDef, NonArrowType, FunctionCallConstants } from './interface';
+import { FnConfig, FunctionCallDef } from './interface';
 import { FluencePeer } from '../../FluencePeer';
 import { Fluence } from '../../../index';
 import { Particle } from '../../Particle';
-import { returnType2Aqua } from './conversions';
-import { injectRelayService, argToServiceDef, registerServiceEx, responseService, errorHandlingService } from './misc';
+import {
+    injectRelayService,
+    argToServiceDef,
+    registerParticleScopeService,
+    responseService,
+    errorHandlingService,
+} from './misc';
 
 /**
  * Convenience function to support Aqua `func` generation backend
@@ -33,14 +37,14 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         for (let i = 0; i < expectedNumberOfArguments; i++) {
             const [name, type] = argumentTypes[i];
             const service = argToServiceDef(args[i], name, type, def.names);
-            registerServiceEx(peer, particle, service);
+            registerParticleScopeService(peer, particle, service);
         }
 
-        registerServiceEx(peer, particle, responseService(def, resolve));
+        registerParticleScopeService(peer, particle, responseService(def, resolve));
 
-        registerServiceEx(peer, particle, injectRelayService(def, peer));
+        registerParticleScopeService(peer, particle, injectRelayService(def, peer));
 
-        registerServiceEx(peer, particle, errorHandlingService(def, reject));
+        registerParticleScopeService(peer, particle, errorHandlingService(def, reject));
 
         peer.internals.initiateParticle(particle, (stage) => {
             // If function is void, then it's completed when one of the two conditions is met:

@@ -1,46 +1,49 @@
+import { jsonify } from 'src/internal/utils';
 import { match } from 'ts-pattern';
 import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface';
-import { jsonify } from 'src/internal/utils';
 
 export const aqua2ts = (item: any, type: NonArrowType) => {
-    return match(type)
-        .with({ tag: 'nil' }, () => {
-            return null;
-        })
-        .with({ tag: 'option' }, (opt) => {
-            if (item.length === 0) {
+    return (
+        match(type)
+            .with({ tag: 'nil' }, () => {
                 return null;
-            } else {
-                return aqua2ts(item[0], opt.type);
-            }
-        })
-        .with({ tag: 'scalar' }, () => {
-            return item;
-        })
-        .with({ tag: 'array' }, (arr) => {
-            return item.map((y) => aqua2ts(y, arr.type));
-        })
-        .with({ tag: 'struct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
-                const val = aqua2ts(item[key], type);
-                return { ...agg, key: val };
-            }, {});
-        })
-        .with({ tag: 'labeledProduct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
-                const val = aqua2ts(item[key], type);
-                return { ...agg, key: val };
-            }, {});
-        })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
-            return x.items.map((type, index) => {
-                return aqua2ts(item[index], type);
-            });
-        })
-        .otherwise(() => {
-            throw new Error('Unexpected data type, when converting from aqua: ' + jsonify(type));
-        })
-        .exhaustive();
+            })
+            .with({ tag: 'option' }, (opt) => {
+                if (item.length === 0) {
+                    return null;
+                } else {
+                    return aqua2ts(item[0], opt.type);
+                }
+            })
+            .with({ tag: 'scalar' }, { tag: 'bottomType' }, { tag: 'topType' }, () => {
+                return item;
+            })
+            .with({ tag: 'array' }, (arr) => {
+                return item.map((y) => aqua2ts(y, arr.type));
+            })
+            .with({ tag: 'struct' }, (x) => {
+                return x.fields.reduce((agg, [key, type]) => {
+                    const val = aqua2ts(item[key], type);
+                    return { ...agg, key: val };
+                }, {});
+            })
+            .with({ tag: 'labeledProduct' }, (x) => {
+                return x.fields.reduce((agg, [key, type]) => {
+                    const val = aqua2ts(item[key], type);
+                    return { ...agg, key: val };
+                }, {});
+            })
+            .with({ tag: 'unlabeledProduct' }, (x) => {
+                return x.items.map((type, index) => {
+                    return aqua2ts(item[index], type);
+                });
+            })
+            // uncomment to check that every pattern in matched
+            // .exhaustive()
+            .otherwise(() => {
+                throw new Error('Unexpected tag: ' + jsonify(type));
+            })
+    );
 };
 
 export const aquaArgs2Ts = (args: any[], arrow: ArrowWithoutCallbacks) => {
@@ -51,10 +54,14 @@ export const aquaArgs2Ts = (args: any[], arrow: ArrowWithoutCallbacks) => {
         .with({ tag: 'unlabeledProduct' }, (x) => {
             return x.items;
         })
-        .otherwise(() => {
-            throw new Error('Unexpected data type, when converting from aqua: ' + jsonify(arrow));
+        .with({ tag: 'nil' }, (x) => {
+            return [];
         })
-        .exhaustive();
+        // uncomment to check that every pattern in matched
+        // .exhaustive()
+        .otherwise(() => {
+            throw new Error('Unexpected tag: ' + jsonify(arrow.domain));
+        });
 
     if (args.length !== argTypes.length) {
         throw new Error(`incorrect number of arguments, expected: ${argTypes.length}, got: ${args.length}`);
@@ -80,42 +87,45 @@ export const returnType2Aqua = (returnValue: any, arrow: ArrowType<any>) => {
 };
 
 export const ts2aqua = (item: any, type: NonArrowType) => {
-    return match(type)
-        .with({ tag: 'nil' }, () => {
-            return null;
-        })
-        .with({ tag: 'option' }, (opt) => {
-            if (item === null) {
-                return [];
-            } else {
-                return [ts2aqua(item, opt.type)];
-            }
-        })
-        .with({ tag: 'scalar' }, () => {
-            return item;
-        })
-        .with({ tag: 'array' }, (arr) => {
-            return item.map((y) => ts2aqua(y, arr.type));
-        })
-        .with({ tag: 'struct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
-                const val = ts2aqua(item[key], type);
-                return { ...agg, key: val };
-            }, {});
-        })
-        .with({ tag: 'labeledProduct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
-                const val = ts2aqua(item[key], type);
-                return { ...agg, key: val };
-            }, {});
-        })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
-            return x.items.map((type, index) => {
-                return ts2aqua(item[index], type);
-            });
-        })
-        .otherwise(() => {
-            throw new Error('');
-        })
-        .exhaustive();
+    return (
+        match(type)
+            .with({ tag: 'nil' }, () => {
+                return null;
+            })
+            .with({ tag: 'option' }, (opt) => {
+                if (item === null) {
+                    return [];
+                } else {
+                    return [ts2aqua(item, opt.type)];
+                }
+            })
+            .with({ tag: 'scalar' }, { tag: 'bottomType' }, { tag: 'topType' }, () => {
+                return item;
+            })
+            .with({ tag: 'array' }, (arr) => {
+                return item.map((y) => ts2aqua(y, arr.type));
+            })
+            .with({ tag: 'struct' }, (x) => {
+                return x.fields.reduce((agg, [key, type]) => {
+                    const val = ts2aqua(item[key], type);
+                    return { ...agg, key: val };
+                }, {});
+            })
+            .with({ tag: 'labeledProduct' }, (x) => {
+                return x.fields.reduce((agg, [key, type]) => {
+                    const val = ts2aqua(item[key], type);
+                    return { ...agg, key: val };
+                }, {});
+            })
+            .with({ tag: 'unlabeledProduct' }, (x) => {
+                return x.items.map((type, index) => {
+                    return ts2aqua(item[index], type);
+                });
+            })
+            // uncomment to check that every pattern in matched
+            // .exhaustive()
+            .otherwise(() => {
+                throw new Error('Unexpected tag: ' + jsonify(type));
+            })
+    );
 };

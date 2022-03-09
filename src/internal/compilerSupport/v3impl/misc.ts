@@ -115,10 +115,10 @@ export const argToServiceDef = (
     };
 };
 
-export const registerServiceEx = (peer: FluencePeer, particle: Particle, service: ServiceDescription) => {
+export const registerParticleScopeService = (peer: FluencePeer, particle: Particle, service: ServiceDescription) => {
     peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
 };
 
-export const registerServiceEx2 = (peer: FluencePeer, service: ServiceDescription) => {
+export const registerGlobalService = (peer: FluencePeer, service: ServiceDescription) => {
     peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
 };
