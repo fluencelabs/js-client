@@ -1,6 +1,6 @@
 import { Particle } from 'src/internal/Particle';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from '../../commonTypes';
-import { FluencePeer } from '../v1';
+import { FluencePeer } from '../../FluencePeer';
 import { aquaArgs2Ts, returnType2Aqua, ts2aqua } from './conversions';
 import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface';
 

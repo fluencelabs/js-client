@@ -16,14 +16,12 @@
 
 import { Multiaddr } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
-import { CallServiceHandler as LegacyCallServiceHandler } from './compilerSupport/LegacyCallServiceHandler';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
 import { dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
-import { RequestFlow } from './compilerSupport/v1';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
@@ -212,7 +210,6 @@ export class FluencePeer {
             await this._connect();
         }
 
-        this._legacyCallServiceHandler = new LegacyCallServiceHandler();
         registerDefaultServices(this);
 
         this._classServices = {
@@ -242,7 +239,6 @@ export class FluencePeer {
         await this._disconnect();
         await this._avmRunner?.terminate();
         this._avmRunner = undefined;
-        this._legacyCallServiceHandler = null;
 
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
@@ -311,34 +307,6 @@ export class FluencePeer {
                     psh.set(serviceFnKey(serviceId, fnName), handler);
                 },
             },
-
-            /**
-             * @deprecated
-             */
-            initiateFlow: (request: RequestFlow): void => {
-                const particle = request.particle;
-
-                this._legacyParticleSpecificHandlers.set(particle.id, {
-                    handler: request.handler,
-                    error: request.error,
-                    timeout: request.timeout,
-                });
-
-                this.internals.initiateParticle(particle, (stage) => {
-                    if (stage.stage === 'interpreterError') {
-                        request?.error(stage.errorMessage);
-                    }
-
-                    if (stage.stage === 'expired') {
-                        request?.timeout();
-                    }
-                });
-            },
-
-            /**
-             * @deprecated
-             */
-            callServiceHandler: this._legacyCallServiceHandler,
         };
     }
 
@@ -544,51 +512,34 @@ export class FluencePeer {
         log.debug('executing call service handler', jsonify(req));
         const particleId = req.particleContext.particleId;
 
-        // trying particle-specific handler
-        const lh = this._legacyParticleSpecificHandlers.get(particleId);
-        let res: CallServiceResult = {
-            result: undefined,
-            retCode: undefined,
-        };
-        if (lh !== undefined) {
-            res = lh.handler.execute(req);
+        const key = serviceFnKey(req.serviceId, req.fnName);
+        const psh = this._particleSpecificHandlers.get(particleId);
+        let handler: GenericCallServiceHandler;
+
+        // we should prioritize handler for this particle if there is one
+        // if particle-specific handlers exist for this particle try getting handler there
+        if (psh !== undefined) {
+            handler = psh.get(key);
         }
 
-        // if it didn't return any result trying to run the common handler
-        if (res?.result === undefined) {
-            res = this._legacyCallServiceHandler.execute(req);
+        // then try to find a common handler for all particles with this service-fn key
+        // if there is no particle-specific handler, get one from common map
+        if (handler === undefined) {
+            handler = this._commonHandlers.get(key);
         }
 
-        // No result from legacy handler.
-        // Trying to execute async handler
-        if (res.retCode === undefined) {
-            const key = serviceFnKey(req.serviceId, req.fnName);
-            const psh = this._particleSpecificHandlers.get(particleId);
-            let handler: GenericCallServiceHandler;
-
-            // we should prioritize handler for this particle if there is one
-            // if particle-specific handlers exist for this particle try getting handler there
-            if (psh !== undefined) {
-                handler = psh.get(key);
-            }
-
-            // then try to find a common handler for all particles with this service-fn key
-            // if there is no particle-specific handler, get one from common map
-            if (handler === undefined) {
-                handler = this._commonHandlers.get(key);
-            }
-
-            // if we found a handler, execute it
-            // otherwise return useful  error message to AVM
-            res = handler
-                ? await handler(req)
-                : {
-                      retCode: ResultCodes.error,
-                      result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${
-                          req.fnName
-                      }' args='${jsonify(req.args)}'`,
-                  };
+        // if no handler is found return useful error message to AVM
+        if (handler === undefined) {
+            return {
+                retCode: ResultCodes.error,
+                result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${
+                    req.fnName
+                }' args='${jsonify(req.args)}'`,
+            };
         }
+
+        // if we found a handler, execute it
+        const res = await handler(req);
 
         if (res.result === undefined) {
             res.result = null;
@@ -605,23 +556,6 @@ export class FluencePeer {
         }
         this._particleQueues.clear();
     }
-
-    /**
-     * @deprecated
-     */
-    private _legacyParticleSpecificHandlers = new Map<
-        string,
-        {
-            handler: LegacyCallServiceHandler;
-            timeout?: () => void;
-            error?: (reason?: any) => void;
-        }
-    >();
-
-    /**
-     * @deprecated
-     */
-    private _legacyCallServiceHandler: LegacyCallServiceHandler;
 }
 
 function isInterpretationSuccessful(result: InterpreterResult) {
