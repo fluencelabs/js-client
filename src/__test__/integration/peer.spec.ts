@@ -158,8 +158,12 @@ describe('Typescript usage suite', () => {
 
         // act
         const resMakingPromise = new Promise((resolve) => {
-            peer2.internals.callServiceHandler.onEvent('test', 'test', (args, _) => {
-                resolve(args[0]);
+            peer2.internals.regHandler.common('test', 'test', (req) => {
+                resolve(req.args[0]);
+                return {
+                    result: {},
+                    retCode: 0,
+                };
             });
         });
 
