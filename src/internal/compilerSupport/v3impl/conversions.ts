@@ -1,5 +1,6 @@
 import { match } from 'ts-pattern';
-import { ArrowType, ArrowWithCallbacks, ArrowWithoutCallbacks, NonArrowType } from './interface';
+import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface';
+import { jsonify } from 'src/internal/utils';
 
 export const aqua2ts = (item: any, type: NonArrowType) => {
     return match(type)
@@ -36,6 +37,9 @@ export const aqua2ts = (item: any, type: NonArrowType) => {
                 return aqua2ts(item[index], type);
             });
         })
+        .otherwise(() => {
+            throw new Error('Unexpected data type, when converting from aqua: ' + jsonify(type));
+        })
         .exhaustive();
 };
 
@@ -46,6 +50,9 @@ export const aquaArgs2Ts = (args: any[], arrow: ArrowWithoutCallbacks) => {
         })
         .with({ tag: 'unlabeledProduct' }, (x) => {
             return x.items;
+        })
+        .otherwise(() => {
+            throw new Error('Unexpected data type, when converting from aqua: ' + jsonify(arrow));
         })
         .exhaustive();
 
@@ -106,6 +113,9 @@ export const ts2aqua = (item: any, type: NonArrowType) => {
             return x.items.map((type, index) => {
                 return ts2aqua(item[index], type);
             });
+        })
+        .otherwise(() => {
+            throw new Error('');
         })
         .exhaustive();
 };

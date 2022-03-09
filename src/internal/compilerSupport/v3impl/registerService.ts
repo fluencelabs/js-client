@@ -1,8 +1,9 @@
 import { ResultCodes } from '../../commonTypes';
 import { FluencePeer } from '../../FluencePeer';
 import { Fluence } from '../../../index';
-import { aquaArgs2Ts, returnType2Aqua } from './convert';
+import { aquaArgs2Ts, returnType2Aqua } from './conversions';
 import { ServiceDef } from './interface';
+import { registerServiceEx, registerServiceEx2, userHandlerService } from './misc';
 
 /**
  * Convenience function to support Aqua `service` generation backend
@@ -36,16 +37,8 @@ export function registerService(args: any[], def: ServiceDef) {
         // Account for the fact that user service might be defined as a class - .bind(...)
         const userDefinedHandler = service[name].bind(service);
 
-        peer.internals.regHandler.common(serviceId, name, async (req) => {
-            const args = aquaArgs2Ts(req.args, type);
-            const rawResult = await userDefinedHandler.apply(null, args);
-            const result = returnType2Aqua(rawResult, type);
-
-            return {
-                retCode: ResultCodes.success,
-                result: result,
-            };
-        });
+        const serviceDescription = userHandlerService(serviceId, singleFunction, userDefinedHandler);
+        registerServiceEx2(peer, serviceDescription);
     }
 }
 

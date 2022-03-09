@@ -1,9 +1,10 @@
 import { CallServiceData, CallServiceResult, ResultCodes } from '../../commonTypes';
-import { FnConfig, FunctionCallDef } from './interface';
+import { ArrowWithoutCallbacks, FnConfig, FunctionCallDef, NonArrowType, FunctionCallConstants } from './interface';
 import { FluencePeer } from '../../FluencePeer';
 import { Fluence } from '../../../index';
 import { Particle } from '../../Particle';
-import { aquaArgs2Ts, returnType2Aqua, ts2aqua } from './convert';
+import { returnType2Aqua } from './conversions';
+import { injectRelayService, argToServiceDef, registerServiceEx, responseService, errorHandlingService } from './misc';
 
 /**
  * Convenience function to support Aqua `func` generation backend
@@ -18,83 +19,28 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         throw new Error('Should be impossible');
     }
 
-    const argDefs = def.arrow.domain.fields;
-    const argsDefLength = argDefs.length;
-    const { args, peer, config } = extractFunctionArgs(rawFnArgs, argsDefLength);
+    const argumentTypes = def.arrow.domain.fields;
+    const expectedNumberOfArguments = argumentTypes.length;
+    const { args, peer, config } = extractArgs(rawFnArgs, expectedNumberOfArguments);
 
-    if (args.length !== argsDefLength) {
+    if (args.length !== expectedNumberOfArguments) {
         throw new Error('Incorrect number of arguments. Expecting ${def.argDefs.length}');
     }
 
     const promise = new Promise((resolve, reject) => {
         const particle = Particle.createNew(script, config?.ttl);
 
-        for (let i = 0; i < argsDefLength; i++) {
-            const [argDefName, argDefType] = argDefs[i];
-            const arg = args[i];
-
-            let serviceId;
-            let fnName = argDefName;
-            let cb;
-            if (argDefType.tag === 'arrow') {
-                cb = async (req: CallServiceData): Promise<CallServiceResult> => {
-                    const args = aquaArgs2Ts(req.args, argDefType);
-                    // arg is function at this point
-                    const result = await arg.apply(null, args);
-                    return {
-                        retCode: ResultCodes.success,
-                        result: returnType2Aqua(result, argDefType),
-                    };
-                };
-                serviceId = def.names.callbackSrv;
-            } else {
-                cb = (req: CallServiceData): CallServiceResult => {
-                    const res = ts2aqua(arg, argDefType);
-                    return {
-                        retCode: ResultCodes.success,
-                        result: res,
-                    };
-                };
-                serviceId = def.names.getDataSrv;
-            }
-
-            // registering handlers for every argument of the function
-            peer.internals.regHandler.forParticle(particle.id, serviceId, fnName, cb);
+        for (let i = 0; i < expectedNumberOfArguments; i++) {
+            const [name, type] = argumentTypes[i];
+            const service = argToServiceDef(args[i], name, type, def.names);
+            registerServiceEx(peer, particle, service);
         }
 
-        // registering handler for function response
-        peer.internals.regHandler.forParticle(particle.id, def.names.responseSrv, def.names.responseFnName, (req) => {
-            const userFunctionReturn = returnType2Aqua(req.args, def.arrow);
+        registerServiceEx(peer, particle, responseService(def, resolve));
 
-            setTimeout(() => {
-                resolve(userFunctionReturn);
-            }, 0);
+        registerServiceEx(peer, particle, injectRelayService(def, peer));
 
-            return {
-                retCode: ResultCodes.success,
-                result: {},
-            };
-        });
-
-        // registering handler for injecting relay variable
-        peer.internals.regHandler.forParticle(particle.id, def.names.getDataSrv, def.names.relay, (req) => {
-            return {
-                retCode: ResultCodes.success,
-                result: peer.getStatus().relayPeerId,
-            };
-        });
-
-        // registering handler for error reporting
-        peer.internals.regHandler.forParticle(particle.id, def.names.errorHandlingSrv, def.names.errorFnName, (req) => {
-            const [err, _] = req.args;
-            setTimeout(() => {
-                reject(err);
-            }, 0);
-            return {
-                retCode: ResultCodes.success,
-                result: {},
-            };
-        });
+        registerServiceEx(peer, particle, errorHandlingService(def, reject));
 
         peer.internals.initiateParticle(particle, (stage) => {
             // If function is void, then it's completed when one of the two conditions is met:
@@ -137,7 +83,7 @@ const isReturnTypeVoid = (def: FunctionCallDef) => {
  * This function select the appropriate configuration and returns
  * arguments in a structured way of: { peer, config, args }
  */
-const extractFunctionArgs = (
+const extractArgs = (
     args: any[],
     numberOfExpectedArgs: number,
 ): {
