@@ -64,7 +64,11 @@ export type ScalarType = {
 };
 
 export type StructType = {
+    /**
+     * Type descriptor. Used for pattern-matching
+     */
     tag: 'struct';
+
     name: string;
 
     fields: Array<[string, NonArrowType]>;
