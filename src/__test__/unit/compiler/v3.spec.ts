@@ -14,21 +14,21 @@ const array_opt_i32 = { tag: 'array', type: opt_i32 };
 
 const labeledProduct = {
     tag: 'labeledProduct',
-    fields: [
-        ['a', i32],
-        ['b', opt_i32],
-        ['c', array_opt_i32],
-    ],
+    fields: {
+        a: i32,
+        b: opt_i32,
+        c: array_opt_i32,
+    },
 };
 
 const struct = {
     tag: 'struct',
     name: 'someStruct',
-    fields: [
-        ['a', i32],
-        ['b', opt_i32],
-        ['c', array_opt_i32],
-    ],
+    fields: {
+        a: i32,
+        b: opt_i32,
+        c: array_opt_i32,
+    },
 };
 
 const structs = [

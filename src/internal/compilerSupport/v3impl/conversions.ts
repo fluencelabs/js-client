@@ -21,13 +21,13 @@ export const aqua2ts = (item: any, type: NonArrowType) => {
             return item.map((y) => aqua2ts(y, arr.type));
         })
         .with({ tag: 'struct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
+            return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = aqua2ts(item[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
         .with({ tag: 'labeledProduct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
+            return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = aqua2ts(item[key], type);
                 return { ...agg, [key]: val };
             }, {});
@@ -48,7 +48,7 @@ export const aqua2ts = (item: any, type: NonArrowType) => {
 export const aquaArgs2Ts = (args: any[], arrow: ArrowWithoutCallbacks) => {
     const argTypes = match(arrow.domain)
         .with({ tag: 'labeledProduct' }, (x) => {
-            return x.fields.map(([key, type]) => type);
+            return Object.values(x.fields);
         })
         .with({ tag: 'unlabeledProduct' }, (x) => {
             return x.items;
@@ -72,6 +72,10 @@ export const aquaArgs2Ts = (args: any[], arrow: ArrowWithoutCallbacks) => {
 };
 
 export const returnType2Aqua = (returnValue: any, arrow: ArrowType<any>) => {
+    if (arrow.codomain.tag === 'nil') {
+        return {};
+    }
+
     if (arrow.codomain.items.length === 0) {
         return {};
     }
@@ -104,13 +108,13 @@ export const ts2aqua = (item: any, type: NonArrowType) => {
             return item.map((y) => ts2aqua(y, arr.type));
         })
         .with({ tag: 'struct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
+            return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = ts2aqua(item[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
         .with({ tag: 'labeledProduct' }, (x) => {
-            return x.fields.reduce((agg, [key, type]) => {
+            return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = ts2aqua(item[key], type);
                 return { ...agg, [key]: val };
             }, {});

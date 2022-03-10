@@ -71,7 +71,7 @@ export type StructType = {
 
     name: string;
 
-    fields: Array<[string, NonArrowType]>;
+    fields: { [key: string]: NonArrowType };
 };
 
 export type LabeledProductType<T> = {
@@ -80,7 +80,7 @@ export type LabeledProductType<T> = {
      */
     tag: 'labeledProduct';
 
-    fields: Array<[string, T]>;
+    fields: { [key: string]: T };
 };
 
 export type UnlabeledProductType<T> = {
@@ -102,7 +102,7 @@ export type ArrowType<T> = {
 
     domain: ProductType<T>;
 
-    codomain: UnlabeledProductType<NonArrowType>;
+    codomain: UnlabeledProductType<NonArrowType> | NilType;
 };
 
 export type ArrowWithoutCallbacks = ArrowType<NonArrowType>;

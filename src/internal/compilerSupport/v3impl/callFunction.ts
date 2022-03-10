@@ -23,7 +23,7 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
         throw new Error('Should be impossible');
     }
 
-    const argumentTypes = def.arrow.domain.fields;
+    const argumentTypes = Object.entries(def.arrow.domain.fields);
     const expectedNumberOfArguments = argumentTypes.length;
     const { args, peer, config } = extractArgs(rawFnArgs, expectedNumberOfArguments);
 
@@ -74,6 +74,10 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 }
 
 const isReturnTypeVoid = (def: FunctionCallDef) => {
+    if (def.arrow.codomain.tag === 'nil') {
+        return true;
+    }
+
     return def.arrow.codomain.items.length == 0;
 };
 
