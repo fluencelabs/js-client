@@ -23,13 +23,13 @@ export const aqua2ts = (item: any, type: NonArrowType) => {
         .with({ tag: 'struct' }, (x) => {
             return x.fields.reduce((agg, [key, type]) => {
                 const val = aqua2ts(item[key], type);
-                return { ...agg, key: val };
+                return { ...agg, [key]: val };
             }, {});
         })
         .with({ tag: 'labeledProduct' }, (x) => {
             return x.fields.reduce((agg, [key, type]) => {
                 const val = aqua2ts(item[key], type);
-                return { ...agg, key: val };
+                return { ...agg, [key]: val };
             }, {});
         })
         .with({ tag: 'unlabeledProduct' }, (x) => {
@@ -106,13 +106,13 @@ export const ts2aqua = (item: any, type: NonArrowType) => {
         .with({ tag: 'struct' }, (x) => {
             return x.fields.reduce((agg, [key, type]) => {
                 const val = ts2aqua(item[key], type);
-                return { ...agg, key: val };
+                return { ...agg, [key]: val };
             }, {});
         })
         .with({ tag: 'labeledProduct' }, (x) => {
             return x.fields.reduce((agg, [key, type]) => {
                 const val = ts2aqua(item[key], type);
-                return { ...agg, key: val };
+                return { ...agg, [key]: val };
             }, {});
         })
         .with({ tag: 'unlabeledProduct' }, (x) => {
