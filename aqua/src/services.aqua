@@ -21,7 +21,7 @@ service Sig("sig"):
     -- and accepts data only from the following sources:
     --   trust-graph.get_trust_bytes
     --   trust-graph.get_revocation_bytes
-    --   registry.get_key_bytes
+    --   registry.get_route_bytes
     --   registry.get_record_bytes
     --   registry.get_host_record_bytes
     -- Argument: data - byte array to sign

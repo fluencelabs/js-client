@@ -210,7 +210,7 @@ describe('Sig service tests', () => {
         const sig = new Sig(ctx.peerKeyPair);
         sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-        const signature = await sig.sign(testData, makeTetraplet(ctx.peerId, 'registry', 'get_key_bytes'));
+        const signature = await sig.sign(testData, makeTetraplet(ctx.peerId, 'registry', 'get_route_bytes'));
 
         await expect(signature).toBeDefined();
     });
