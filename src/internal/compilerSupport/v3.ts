@@ -15,6 +15,7 @@
  */
 
 export { FluencePeer } from '../FluencePeer';
+export { CallParams } from '../commonTypes';
 export * from './v3impl/interface';
 export * from './v3impl/callFunction';
 export * from './v3impl/registerService';

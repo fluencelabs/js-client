@@ -74,25 +74,29 @@ export type StructType = {
     fields: { [key: string]: NonArrowType };
 };
 
-export type LabeledProductType<T> = {
-    /**
-     * Type descriptor. Used for pattern-matching
-     */
-    tag: 'labeledProduct';
+export type LabeledProductType<T> =
+    | {
+          /**
+           * Type descriptor. Used for pattern-matching
+           */
+          tag: 'labeledProduct';
 
-    fields: { [key: string]: T };
-};
+          fields: { [key: string]: T };
+      }
+    | NilType;
 
-export type UnlabeledProductType<T> = {
-    /**
-     * Type descriptor. Used for pattern-matching
-     */
-    tag: 'unlabeledProduct';
+export type UnlabeledProductType<T> =
+    | {
+          /**
+           * Type descriptor. Used for pattern-matching
+           */
+          tag: 'unlabeledProduct';
 
-    items: Array<T>;
-};
+          items: Array<T>;
+      }
+    | NilType;
 
-export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T> | NilType;
+export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T>;
 
 export type ArrowType<T> = {
     /**

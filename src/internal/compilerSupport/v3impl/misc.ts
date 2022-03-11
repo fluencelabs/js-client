@@ -1,5 +1,13 @@
+import { SecurityTetraplet } from '@fluencelabs/avm-runner-interface';
 import { Particle } from 'src/internal/Particle';
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from '../../commonTypes';
+import { match } from 'ts-pattern';
+import {
+    CallParams,
+    CallServiceData,
+    CallServiceResult,
+    GenericCallServiceHandler,
+    ResultCodes,
+} from '../../commonTypes';
 import { FluencePeer } from '../../FluencePeer';
 import { aquaArgs2Ts, returnType2Aqua, ts2aqua } from './conversions';
 import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface';
@@ -65,7 +73,7 @@ export const userHandlerService = (serviceId: string, arrowType: [string, ArrowW
         serviceId,
         fnName,
         handler: async (req) => {
-            const args = aquaArgs2Ts(req.args, type);
+            const args = [...aquaArgs2Ts(req.args, type), extractCallParams(req, type)];
             const rawResult = await userHandler.apply(null, args);
             const result = returnType2Aqua(rawResult, type);
 
@@ -121,4 +129,32 @@ export const registerParticleScopeService = (peer: FluencePeer, particle: Partic
 
 export const registerGlobalService = (peer: FluencePeer, service: ServiceDescription) => {
     peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
+};
+
+const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): CallParams<any> => {
+    const names = match(arrow.domain)
+        .with({ tag: 'nil' }, () => {
+            return [] as string[];
+        })
+        .with({ tag: 'labeledProduct' }, (x) => {
+            return Object.keys(x.fields);
+        })
+        .with({ tag: 'unlabeledProduct' }, (x) => {
+            return x.items.map((_, index) => 'arg' + index);
+        })
+        .exhaustive();
+
+    let tetraplets: { [key in string]: SecurityTetraplet[] } = {};
+    for (let i = 0; i < req.args.length; i++) {
+        if (names[i]) {
+            tetraplets[names[i]] = req.tetraplets[i];
+        }
+    }
+
+    const callParams = {
+        ...req.particleContext,
+        tetraplets,
+    };
+
+    return callParams;
 };

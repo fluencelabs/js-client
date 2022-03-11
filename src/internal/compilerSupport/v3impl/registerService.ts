@@ -20,7 +20,7 @@ export function registerService(args: any[], def: ServiceDef) {
     }
 
     // Checking for missing keys
-    const requiredKeys = Object.keys(def.functions.fields);
+    const requiredKeys = def.functions.tag === 'nil' ? [] : Object.keys(def.functions.fields);
     const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));
     if (!!incorrectServiceDefinitions.length) {
         throw new Error(
@@ -29,7 +29,8 @@ export function registerService(args: any[], def: ServiceDef) {
         );
     }
 
-    for (let singleFunction of Object.entries(def.functions.fields)) {
+    const singleFunctions = def.functions.tag === 'nil' ? [] : Object.entries(def.functions.fields);
+    for (let singleFunction of singleFunctions) {
         let [name, type] = singleFunction;
         // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
         // Account for the fact that user service might be defined as a class - .bind(...)
