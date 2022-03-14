@@ -9,7 +9,7 @@ import {
     ResultCodes,
 } from '../../commonTypes';
 import { FluencePeer } from '../../FluencePeer';
-import { aquaArgs2Ts, returnType2Aqua, ts2aqua } from './conversions';
+import { aquaArgs2Ts, responseArgs2ts, returnType2Aqua, ts2aqua } from './conversions';
 import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface';
 
 export interface ServiceDescription {
@@ -36,7 +36,7 @@ export const responseService = (def: FunctionCallDef, resolve) => {
         serviceId: def.names.responseSrv,
         fnName: def.names.responseFnName,
         handler: (req) => {
-            const userFunctionReturn = returnType2Aqua(req.args, def.arrow);
+            const userFunctionReturn = responseArgs2ts(req.args, def.arrow.codomain);
 
             setTimeout(() => {
                 resolve(userFunctionReturn);

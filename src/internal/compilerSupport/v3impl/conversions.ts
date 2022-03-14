@@ -1,6 +1,6 @@
 import { jsonify } from '../../utils';
 import { match } from 'ts-pattern';
-import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface';
+import { ArrowType, ArrowWithoutCallbacks, NonArrowType, UnlabeledProductType } from './interface';
 
 export const aqua2ts = (item: any, type: NonArrowType) => {
     const res = match(type)
@@ -87,6 +87,25 @@ export const returnType2Aqua = (returnValue: any, arrow: ArrowType<any>) => {
     return arrow.codomain.items.map((type, index) => {
         return ts2aqua(returnValue[index], type);
     });
+};
+
+export const responseArgs2ts = (rawArgs: any[], codomain: UnlabeledProductType<NonArrowType>) => {
+    return match(codomain)
+        .with({ tag: 'nil' }, () => {
+            return null;
+        })
+        .with({ tag: 'unlabeledProduct' }, (x) => {
+            if (x.items.length === 0) {
+                return null;
+            }
+
+            if (x.items.length === 1) {
+                return aqua2ts(rawArgs[0], x.items[0]);
+            }
+
+            return rawArgs.map((y, index) => aqua2ts(y, x.items[index]));
+        })
+        .exhaustive();
 };
 
 export const ts2aqua = (item: any, type: NonArrowType) => {
