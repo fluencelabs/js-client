@@ -288,79 +288,109 @@ export const builtInServices = {
 
     math: {
         add: (req) => {
-            return errorNotImpl('math.add');
+            const [x, y] = req.args;
+            return success(x + y);
         },
 
         sub: (req) => {
-            return errorNotImpl('math.sub');
+            const [x, y] = req.args;
+            return success(x - y);
         },
 
         mul: (req) => {
-            return errorNotImpl('math.mul');
+            const [x, y] = req.args;
+            return success(x * y);
         },
 
         fmul: (req) => {
-            return errorNotImpl('math.fmul');
+            const [x, y] = req.args;
+            return success(Math.floor(x * y));
         },
 
         div: (req) => {
-            return errorNotImpl('math.div');
+            const [x, y] = req.args;
+            return success(Math.floor(x / y));
         },
 
         rem: (req) => {
-            return errorNotImpl('math.rem');
+            const [x, y] = req.args;
+            return success(x % y);
         },
 
         pow: (req) => {
-            return errorNotImpl('math.pow');
+            const [x, y] = req.args;
+            return success(Math.pow(x, y));
         },
 
         log: (req) => {
-            return errorNotImpl('math.log');
+            const [x, y] = req.args;
+            return success(Math.log(x) / Math.log(y));
         },
     },
 
     cmp: {
         gt: (req) => {
-            return errorNotImpl('cmp.gt');
+            const [x, y] = req.args;
+            return success(x > y);
         },
 
         gte: (req) => {
-            return errorNotImpl('cmp.gte');
+            const [x, y] = req.args;
+            return success(x >= y);
         },
 
         lt: (req) => {
-            return errorNotImpl('cmp.lt');
+            const [x, y] = req.args;
+            return success(x < y);
         },
 
         lte: (req) => {
-            return errorNotImpl('cmp.lte');
+            const [x, y] = req.args;
+            return success(x <= y);
         },
 
         cmp: (req) => {
-            return errorNotImpl('cmp.cmp');
+            const [x, y] = req.args;
+            return success(x === y ? 0 : x > y ? 1 : -1);
         },
     },
 
     array: {
         sum: (req) => {
-            return errorNotImpl('array.sum');
+            const [xs] = req.args;
+            return success(xs.reduce((agg, cur) => agg + cur, 0));
         },
 
         dedup: (req) => {
-            return errorNotImpl('array.dedup');
+            const [xs] = req.args;
+            const set = new Set(xs);
+            return success(Array.from(set));
         },
 
         intersect: (req) => {
-            return errorNotImpl('array.intersect');
+            const [xs, ys] = req.args;
+            const setx = new Set(xs);
+            const intersection = ys.filter((y) => setx.has(y));
+            return success(intersection);
         },
 
         diff: (req) => {
-            return errorNotImpl('array.diff');
+            const [xs, ys] = req.args;
+            const setx = new Set(xs);
+            const diff = ys.filter((y) => !setx.has(y));
+            return success(diff);
         },
 
         sdiff: (req) => {
-            return errorNotImpl('array.sdiff');
+            const [xs, ys] = req.args;
+            const setx = new Set(xs);
+            const sety = new Set(xs);
+            const sdiff = [
+                // force new line
+                ...ys.filter((x) => !setx.has(x)),
+                ...xs.filter((y) => !sety.has(y)),
+            ];
+            return success(sdiff);
         },
     },
 };
