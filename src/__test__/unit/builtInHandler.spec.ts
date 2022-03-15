@@ -66,6 +66,7 @@ describe('Tests for default handler', () => {
   ${'debug'}    | ${'stringify'}       | ${[1, 2, 3, 4]}                           | ${0}    | ${oneTwoThreeFour}}
   
   ${'math'}     | ${'add'}"            | ${[2, 2]}                                 | ${0}    | ${4}
+  ${'math'}     | ${'add'}"            | ${[2]}                                    | ${1}    | ${"Expected 2 argument(s). Got 1"}
 
   ${'math'}     | ${'sub'}"            | ${[2, 2]}                                 | ${0}    | ${0}
   ${'math'}     | ${'sub'}"            | ${[2, 3]}                                 | ${0}    | ${-1}

@@ -288,41 +288,73 @@ export const builtInServices = {
 
     math: {
         add: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x + y);
         },
 
         sub: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x - y);
         },
 
         mul: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x * y);
         },
 
         fmul: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(Math.floor(x * y));
         },
 
         div: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(Math.floor(x / y));
         },
 
         rem: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x % y);
         },
 
         pow: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(Math.pow(x, y));
         },
 
         log: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(Math.log(y) / Math.log(x));
         },
@@ -330,26 +362,46 @@ export const builtInServices = {
 
     cmp: {
         gt: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x > y);
         },
 
         gte: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x >= y);
         },
 
         lt: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x < y);
         },
 
         lte: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x <= y);
         },
 
         cmp: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [x, y] = req.args;
             return success(x === y ? 0 : x > y ? 1 : -1);
         },
@@ -357,29 +409,49 @@ export const builtInServices = {
 
     array: {
         sum: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
             const [xs] = req.args;
             return success(xs.reduce((agg, cur) => agg + cur, 0));
         },
 
         dedup: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
             const [xs] = req.args;
             const set = new Set(xs);
             return success(Array.from(set));
         },
 
         intersect: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [xs, ys] = req.args;
             const intersection = xs.filter((x) => ys.includes(x));
             return success(intersection);
         },
 
         diff: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [xs, ys] = req.args;
             const diff = xs.filter((x) => !ys.includes(x));
             return success(diff);
         },
 
         sdiff: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
             const [xs, ys] = req.args;
             const sdiff = [
                 // force new line
@@ -389,4 +461,10 @@ export const builtInServices = {
             return success(sdiff);
         },
     },
+};
+
+const checkForArgumentsCount = (req, count: number) => {
+    if (req.args.length !== count) {
+        return error(`Expected ${count} argument(s). Got ${req.args.length}`);
+    }
 };
