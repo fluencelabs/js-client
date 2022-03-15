@@ -288,79 +288,183 @@ export const builtInServices = {
 
     math: {
         add: (req) => {
-            return errorNotImpl('math.add');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x + y);
         },
 
         sub: (req) => {
-            return errorNotImpl('math.sub');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x - y);
         },
 
         mul: (req) => {
-            return errorNotImpl('math.mul');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x * y);
         },
 
         fmul: (req) => {
-            return errorNotImpl('math.fmul');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(Math.floor(x * y));
         },
 
         div: (req) => {
-            return errorNotImpl('math.div');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(Math.floor(x / y));
         },
 
         rem: (req) => {
-            return errorNotImpl('math.rem');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x % y);
         },
 
         pow: (req) => {
-            return errorNotImpl('math.pow');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(Math.pow(x, y));
         },
 
         log: (req) => {
-            return errorNotImpl('math.log');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(Math.log(y) / Math.log(x));
         },
     },
 
     cmp: {
         gt: (req) => {
-            return errorNotImpl('cmp.gt');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x > y);
         },
 
         gte: (req) => {
-            return errorNotImpl('cmp.gte');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x >= y);
         },
 
         lt: (req) => {
-            return errorNotImpl('cmp.lt');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x < y);
         },
 
         lte: (req) => {
-            return errorNotImpl('cmp.lte');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x <= y);
         },
 
         cmp: (req) => {
-            return errorNotImpl('cmp.cmp');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [x, y] = req.args;
+            return success(x === y ? 0 : x > y ? 1 : -1);
         },
     },
 
     array: {
         sum: (req) => {
-            return errorNotImpl('array.sum');
+            let err;
+            if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
+            const [xs] = req.args;
+            return success(xs.reduce((agg, cur) => agg + cur, 0));
         },
 
         dedup: (req) => {
-            return errorNotImpl('array.dedup');
+            let err;
+            if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
+            const [xs] = req.args;
+            const set = new Set(xs);
+            return success(Array.from(set));
         },
 
         intersect: (req) => {
-            return errorNotImpl('array.intersect');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [xs, ys] = req.args;
+            const intersection = xs.filter((x) => ys.includes(x));
+            return success(intersection);
         },
 
         diff: (req) => {
-            return errorNotImpl('array.diff');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [xs, ys] = req.args;
+            const diff = xs.filter((x) => !ys.includes(x));
+            return success(diff);
         },
 
         sdiff: (req) => {
-            return errorNotImpl('array.sdiff');
+            let err;
+            if ((err = checkForArgumentsCount(req, 2))) {
+                return err;
+            }
+            const [xs, ys] = req.args;
+            const sdiff = [
+                // force new line
+                ...xs.filter((y) => !ys.includes(y)),
+                ...ys.filter((x) => !xs.includes(x)),
+            ];
+            return success(sdiff);
         },
     },
+};
+
+const checkForArgumentsCount = (req, count: number) => {
+    if (req.args.length !== count) {
+        return error(`Expected ${count} argument(s). Got ${req.args.length}`);
+    }
 };
