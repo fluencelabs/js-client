@@ -324,7 +324,7 @@ export const builtInServices = {
 
         log: (req) => {
             const [x, y] = req.args;
-            return success(Math.log(x) / Math.log(y));
+            return success(Math.log(y) / Math.log(x));
         },
     },
 
@@ -369,26 +369,22 @@ export const builtInServices = {
 
         intersect: (req) => {
             const [xs, ys] = req.args;
-            const setx = new Set(xs);
-            const intersection = ys.filter((y) => setx.has(y));
+            const intersection = xs.filter((x) => ys.includes(x));
             return success(intersection);
         },
 
         diff: (req) => {
             const [xs, ys] = req.args;
-            const setx = new Set(xs);
-            const diff = ys.filter((y) => !setx.has(y));
+            const diff = xs.filter((x) => !ys.includes(x));
             return success(diff);
         },
 
         sdiff: (req) => {
             const [xs, ys] = req.args;
-            const setx = new Set(xs);
-            const sety = new Set(xs);
             const sdiff = [
                 // force new line
-                ...ys.filter((x) => !setx.has(x)),
-                ...xs.filter((y) => !sety.has(y)),
+                ...xs.filter((y) => !ys.includes(y)),
+                ...ys.filter((x) => !xs.includes(x)),
             ];
             return success(sdiff);
         },
