@@ -18,6 +18,9 @@ export interface ServiceDescription {
     handler: GenericCallServiceHandler;
 }
 
+/**
+ * Creates a service which injects relay's peer id into aqua
+ */
 export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
     return {
         serviceId: def.names.getDataSrv,
@@ -31,7 +34,10 @@ export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
     };
 };
 
-export const responseService = (def: FunctionCallDef, resolve) => {
+/**
+ *  Creates a service which is used to return value from aqua function into typescript space
+ */
+export const responseService = (def: FunctionCallDef, resolveCallback: Function) => {
     return {
         serviceId: def.names.responseSrv,
         fnName: def.names.responseFnName,
@@ -39,7 +45,7 @@ export const responseService = (def: FunctionCallDef, resolve) => {
             const userFunctionReturn = responseServiceValue2ts(req, def.arrow);
 
             setTimeout(() => {
-                resolve(userFunctionReturn);
+                resolveCallback(userFunctionReturn);
             }, 0);
 
             return {
@@ -50,14 +56,17 @@ export const responseService = (def: FunctionCallDef, resolve) => {
     };
 };
 
-export const errorHandlingService = (def: FunctionCallDef, reject) => {
+/**
+ * Creates a service which is used to return errors from aqua function into typescript space
+ */
+export const errorHandlingService = (def: FunctionCallDef, rejectCallback: Function) => {
     return {
         serviceId: def.names.errorHandlingSrv,
         fnName: def.names.errorFnName,
         handler: (req) => {
             const [err, _] = req.args;
             setTimeout(() => {
-                reject(err);
+                rejectCallback(err);
             }, 0);
             return {
                 retCode: ResultCodes.success,
@@ -67,6 +76,9 @@ export const errorHandlingService = (def: FunctionCallDef, reject) => {
     };
 };
 
+/**
+ * Creates a service for user-defined service function handler
+ */
 export const userHandlerService = (serviceId: string, arrowType: [string, ArrowWithoutCallbacks], userHandler) => {
     const [fnName, type] = arrowType;
     return {
@@ -85,6 +97,11 @@ export const userHandlerService = (serviceId: string, arrowType: [string, ArrowW
     };
 };
 
+/**
+ * Converts argument of aqua function to a corresponding service.
+ * For arguments of non-arrow types the resulting service injects the argument into aqua space.
+ * For arguments of arrow types the resulting service calls the corresponding function.
+ */
 export const argToServiceDef = (
     arg: any,
     argName: string,
@@ -123,14 +140,9 @@ export const argToServiceDef = (
     };
 };
 
-export const registerParticleScopeService = (peer: FluencePeer, particle: Particle, service: ServiceDescription) => {
-    peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
-};
-
-export const registerGlobalService = (peer: FluencePeer, service: ServiceDescription) => {
-    peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
-};
-
+/**
+ * Extracts call params from from call service data according to aqua type definition
+ */
 const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): CallParams<any> => {
     const names = match(arrow.domain)
         .with({ tag: 'nil' }, () => {
@@ -157,4 +169,12 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
     };
 
     return callParams;
+};
+
+export const registerParticleScopeService = (peer: FluencePeer, particle: Particle, service: ServiceDescription) => {
+    peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
+};
+
+export const registerGlobalService = (peer: FluencePeer, service: ServiceDescription) => {
+    peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
 };
