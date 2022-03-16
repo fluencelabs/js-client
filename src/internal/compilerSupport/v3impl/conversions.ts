@@ -80,7 +80,7 @@ export const aquaArgs2Ts = (req: CallServiceData, arrow: ArrowWithoutCallbacks) 
     }
 
     return req.args.map((arg, index) => {
-        return aqua2ts(arg, argTypes[0]);
+        return aqua2ts(arg, argTypes[index]);
     });
 };
 

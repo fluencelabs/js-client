@@ -101,7 +101,7 @@ export const userHandlerService = (serviceId: string, arrowType: [string, ArrowW
         serviceId,
         fnName,
         handler: async (req) => {
-            const args = [...aquaArgs2Ts(req.args, type), extractCallParams(req, type)];
+            const args = [...aquaArgs2Ts(req, type), extractCallParams(req, type)];
             const rawResult = await userHandler.apply(null, args);
             const result = returnType2Aqua(rawResult, type);
 
