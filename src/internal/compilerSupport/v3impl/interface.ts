@@ -22,6 +22,9 @@ export type OptionType = {
      */
     tag: 'option';
 
+    /**
+     * Underlying type of the option
+     */
     type: NonArrowType;
 };
 
@@ -38,9 +41,15 @@ export type ArrayType = {
      */
     tag: 'array';
 
+    /**
+     * Type of array elements
+     */
     type: NonArrowType;
 };
 
+/**
+ * All possible scalar type names
+ */
 export type ScalarNames =
     | 'u8'
     | 'u16'
@@ -60,6 +69,10 @@ export type ScalarType = {
      * Type descriptor. Used for pattern-matching
      */
     tag: 'scalar';
+
+    /**
+     * Name of the scalar type
+     */
     name: ScalarNames;
 };
 
@@ -69,8 +82,14 @@ export type StructType = {
      */
     tag: 'struct';
 
+    /**
+     * Struct name
+     */
     name: string;
 
+    /**
+     * Struct fields
+     */
     fields: { [key: string]: NonArrowType };
 };
 
@@ -81,6 +100,9 @@ export type LabelledProductType<T> =
            */
           tag: 'labelledProduct';
 
+          /**
+           * Labelled product fields
+           */
           fields: { [key: string]: T };
       }
     | NilType;
@@ -92,25 +114,44 @@ export type UnlabelledProductType<T> =
            */
           tag: 'unlabelledProduct';
 
+          /**
+           * Items in unlabelled product
+           */
           items: Array<T>;
       }
     | NilType;
 
 export type ProductType<T> = UnlabelledProductType<T> | LabelledProductType<T>;
 
+/**
+ * ArrowType is a profunctor pointing its domain to codomain.
+ * Profunctor means variance: Arrow is contravariant on domain, and variant on codomain.
+ */
 export type ArrowType<T> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
     tag: 'arrow';
 
+    /**
+     * Where this Arrow is defined
+     */
     domain: ProductType<T>;
 
+    /**
+     * Where this Arrow points to
+     */
     codomain: UnlabelledProductType<NonArrowType> | NilType;
 };
 
+/**
+ * Arrow which domain contains only non-arrow types
+ */
 export type ArrowWithoutCallbacks = ArrowType<NonArrowType>;
 
+/**
+ * Arrow which domain does can contain both non-arrow types and arrows (which themselves cannot contain arrows)
+ */
 export type ArrowWithCallbacks = ArrowType<NonArrowType | ArrowWithoutCallbacks>;
 
 export interface FunctionCallConstants {
@@ -159,6 +200,9 @@ export interface FunctionCallDef {
      */
     functionName: string;
 
+    /**
+     * Underlying arrow which represents function in aqua
+     */
     arrow: ArrowWithCallbacks;
 
     /**
