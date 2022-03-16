@@ -136,10 +136,10 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
         .with({ tag: 'nil' }, () => {
             return [] as string[];
         })
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: 'labelledProduct' }, (x) => {
             return Object.keys(x.fields);
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: 'unlabelledProduct' }, (x) => {
             return x.items.map((_, index) => 'arg' + index);
         })
         .exhaustive();

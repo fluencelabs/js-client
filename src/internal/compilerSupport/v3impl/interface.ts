@@ -74,29 +74,29 @@ export type StructType = {
     fields: { [key: string]: NonArrowType };
 };
 
-export type LabeledProductType<T> =
+export type LabelledProductType<T> =
     | {
           /**
            * Type descriptor. Used for pattern-matching
            */
-          tag: 'labeledProduct';
+          tag: 'labelledProduct';
 
           fields: { [key: string]: T };
       }
     | NilType;
 
-export type UnlabeledProductType<T> =
+export type UnlabelledProductType<T> =
     | {
           /**
            * Type descriptor. Used for pattern-matching
            */
-          tag: 'unlabeledProduct';
+          tag: 'unlabelledProduct';
 
           items: Array<T>;
       }
     | NilType;
 
-export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T>;
+export type ProductType<T> = UnlabelledProductType<T> | LabelledProductType<T>;
 
 export type ArrowType<T> = {
     /**
@@ -106,7 +106,7 @@ export type ArrowType<T> = {
 
     domain: ProductType<T>;
 
-    codomain: UnlabeledProductType<NonArrowType> | NilType;
+    codomain: UnlabelledProductType<NonArrowType> | NilType;
 };
 
 export type ArrowWithoutCallbacks = ArrowType<NonArrowType>;
@@ -179,7 +179,7 @@ export interface ServiceDef {
     /**
      * List of functions which the service consists of
      */
-    functions: LabeledProductType<ArrowWithoutCallbacks>;
+    functions: LabelledProductType<ArrowWithoutCallbacks>;
 }
 
 /**

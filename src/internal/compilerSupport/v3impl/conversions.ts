@@ -1,6 +1,6 @@
 import { jsonify } from '../../utils';
 import { match } from 'ts-pattern';
-import { ArrowType, ArrowWithoutCallbacks, NonArrowType, UnlabeledProductType } from './interface';
+import { ArrowType, ArrowWithoutCallbacks, NonArrowType, UnlabelledProductType } from './interface';
 
 export const aqua2ts = (item: any, type: NonArrowType) => {
     const res = match(type)
@@ -26,13 +26,13 @@ export const aqua2ts = (item: any, type: NonArrowType) => {
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: 'labelledProduct' }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = aqua2ts(item[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: 'unlabelledProduct' }, (x) => {
             return x.items.map((type, index) => {
                 return aqua2ts(item[index], type);
             });
@@ -47,10 +47,10 @@ export const aqua2ts = (item: any, type: NonArrowType) => {
 
 export const aquaArgs2Ts = (args: any[], arrow: ArrowWithoutCallbacks) => {
     const argTypes = match(arrow.domain)
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: 'labelledProduct' }, (x) => {
             return Object.values(x.fields);
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: 'unlabelledProduct' }, (x) => {
             return x.items;
         })
         .with({ tag: 'nil' }, (x) => {
@@ -89,12 +89,12 @@ export const returnType2Aqua = (returnValue: any, arrow: ArrowType<any>) => {
     });
 };
 
-export const responseArgs2ts = (rawArgs: any[], codomain: UnlabeledProductType<NonArrowType>) => {
+export const responseArgs2ts = (rawArgs: any[], codomain: UnlabelledProductType<NonArrowType>) => {
     return match(codomain)
         .with({ tag: 'nil' }, () => {
             return null;
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: 'unlabelledProduct' }, (x) => {
             if (x.items.length === 0) {
                 return null;
             }
@@ -132,13 +132,13 @@ export const ts2aqua = (item: any, type: NonArrowType) => {
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: 'labelledProduct' }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = ts2aqua(item[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: 'unlabelledProduct' }, (x) => {
             return x.items.map((type, index) => {
                 return ts2aqua(item[index], type);
             });
