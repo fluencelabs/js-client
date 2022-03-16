@@ -8,7 +8,7 @@ import {
     registerParticleScopeService,
     responseService,
     errorHandlingService,
-} from './misc';
+} from './services';
 
 /**
  * Convenience function to support Aqua `func` generation backend
