@@ -1,6 +1,6 @@
 import { jsonify } from '../../utils';
 import { match } from 'ts-pattern';
-import { ArrowType, ArrowWithoutCallbacks, NonArrowType, UnlabelledProductType } from './interface';
+import { ArrowType, ArrowWithoutCallbacks, NonArrowType, UnlabeledProductType } from './interface';
 import { CallServiceData } from 'src/internal/commonTypes';
 
 /**
@@ -33,13 +33,13 @@ export const aqua2ts = (value: any, type: NonArrowType) => {
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'labelledProduct' }, (x) => {
+        .with({ tag: 'labeledProduct' }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = aqua2ts(value[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'unlabelledProduct' }, (x) => {
+        .with({ tag: 'unlabeledProduct' }, (x) => {
             return x.items.map((type, index) => {
                 return aqua2ts(value[index], type);
             });
@@ -60,10 +60,10 @@ export const aqua2ts = (value: any, type: NonArrowType) => {
  */
 export const aquaArgs2Ts = (req: CallServiceData, arrow: ArrowWithoutCallbacks) => {
     const argTypes = match(arrow.domain)
-        .with({ tag: 'labelledProduct' }, (x) => {
+        .with({ tag: 'labeledProduct' }, (x) => {
             return Object.values(x.fields);
         })
-        .with({ tag: 'unlabelledProduct' }, (x) => {
+        .with({ tag: 'unlabeledProduct' }, (x) => {
             return x.items;
         })
         .with({ tag: 'nil' }, (x) => {
@@ -114,13 +114,13 @@ export const ts2aqua = (value: any, type: NonArrowType) => {
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'labelledProduct' }, (x) => {
+        .with({ tag: 'labeledProduct' }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = ts2aqua(value[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'unlabelledProduct' }, (x) => {
+        .with({ tag: 'unlabeledProduct' }, (x) => {
             return x.items.map((type, index) => {
                 return ts2aqua(value[index], type);
             });
@@ -169,7 +169,7 @@ export const responseServiceValue2ts = (req: CallServiceData, arrow: ArrowType<a
         .with({ tag: 'nil' }, () => {
             return null;
         })
-        .with({ tag: 'unlabelledProduct' }, (x) => {
+        .with({ tag: 'unlabeledProduct' }, (x) => {
             if (x.items.length === 0) {
                 return null;
             }

@@ -93,12 +93,12 @@ export type StructType = {
     fields: { [key: string]: NonArrowType };
 };
 
-export type LabelledProductType<T> =
+export type LabeledProductType<T> =
     | {
           /**
            * Type descriptor. Used for pattern-matching
            */
-          tag: 'labelledProduct';
+          tag: 'labeledProduct';
 
           /**
            * Labelled product fields
@@ -107,12 +107,12 @@ export type LabelledProductType<T> =
       }
     | NilType;
 
-export type UnlabelledProductType<T> =
+export type UnlabeledProductType<T> =
     | {
           /**
            * Type descriptor. Used for pattern-matching
            */
-          tag: 'unlabelledProduct';
+          tag: 'unlabeledProduct';
 
           /**
            * Items in unlabelled product
@@ -121,7 +121,7 @@ export type UnlabelledProductType<T> =
       }
     | NilType;
 
-export type ProductType<T> = UnlabelledProductType<T> | LabelledProductType<T>;
+export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T>;
 
 /**
  * ArrowType is a profunctor pointing its domain to codomain.
@@ -141,7 +141,7 @@ export type ArrowType<T> = {
     /**
      * Where this Arrow points to
      */
-    codomain: UnlabelledProductType<NonArrowType> | NilType;
+    codomain: UnlabeledProductType<NonArrowType> | NilType;
 };
 
 /**
@@ -223,7 +223,7 @@ export interface ServiceDef {
     /**
      * List of functions which the service consists of
      */
-    functions: LabelledProductType<ArrowWithoutCallbacks>;
+    functions: LabeledProductType<ArrowWithoutCallbacks>;
 }
 
 /**

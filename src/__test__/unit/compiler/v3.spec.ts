@@ -13,7 +13,7 @@ const array_i32 = { tag: 'array', type: i32 };
 const array_opt_i32 = { tag: 'array', type: opt_i32 };
 
 const labeledProduct = {
-    tag: 'labelledProduct',
+    tag: 'labeledProduct',
     fields: {
         a: i32,
         b: opt_i32,
@@ -61,7 +61,7 @@ const structs = [
 ];
 
 const labeledProduct2 = {
-    tag: 'labelledProduct',
+    tag: 'labeledProduct',
     fields: {
         x: i32,
         y: i32,
@@ -69,7 +69,7 @@ const labeledProduct2 = {
 };
 
 const nestedLabeledProductType = {
-    tag: 'labelledProduct',
+    tag: 'labeledProduct',
     fields: {
         a: labeledProduct2,
         b: {
