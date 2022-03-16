@@ -167,11 +167,11 @@ export const returnType2Aqua = (returnValue: any, arrowType: ArrowType<NonArrowT
 export const responseServiceValue2ts = (req: CallServiceData, arrow: ArrowType<any>) => {
     return match(arrow.codomain)
         .with({ tag: 'nil' }, () => {
-            return null;
+            return undefined;
         })
         .with({ tag: 'unlabeledProduct' }, (x) => {
             if (x.items.length === 0) {
-                return null;
+                return undefined;
             }
 
             if (x.items.length === 1) {

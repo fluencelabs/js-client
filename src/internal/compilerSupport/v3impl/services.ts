@@ -19,7 +19,7 @@ export interface ServiceDescription {
 }
 
 /**
- * Creates a service which injects relay's peer id into aqua
+ * Creates a service which injects relay's peer id into aqua space
  */
 export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
     return {
@@ -29,6 +29,22 @@ export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
             return {
                 retCode: ResultCodes.success,
                 result: peer.getStatus().relayPeerId,
+            };
+        },
+    };
+};
+
+/**
+ * Creates a service which injects plain value into aqua space
+ */
+export const injectValueService = (serviceId: string, fnName: string, valueType: NonArrowType, value: any) => {
+    return {
+        serviceId: serviceId,
+        fnName: fnName,
+        handler: (req) => {
+            return {
+                retCode: ResultCodes.success,
+                result: ts2aqua(value, valueType),
             };
         },
     };
@@ -108,36 +124,11 @@ export const argToServiceDef = (
     argType: NonArrowType | ArrowWithoutCallbacks,
     names: FunctionCallConstants,
 ): ServiceDescription => {
-    let serviceId;
-    let fnName = argName;
-    let handler;
     if (argType.tag === 'arrow') {
-        handler = async (req: CallServiceData): Promise<CallServiceResult> => {
-            const args = aquaArgs2Ts(req, argType);
-            // arg is function at this point
-            const result = await arg.apply(null, args);
-            return {
-                retCode: ResultCodes.success,
-                result: returnType2Aqua(result, argType),
-            };
-        };
-        serviceId = names.callbackSrv;
+        return userHandlerService(names.callbackSrv, [argName, argType], arg);
     } else {
-        handler = (req: CallServiceData): CallServiceResult => {
-            const res = ts2aqua(arg, argType);
-            return {
-                retCode: ResultCodes.success,
-                result: res,
-            };
-        };
-        serviceId = names.getDataSrv;
+        return injectValueService(names.getDataSrv, argName, arg, argType);
     }
-
-    return {
-        serviceId,
-        fnName,
-        handler,
-    };
 };
 
 /**

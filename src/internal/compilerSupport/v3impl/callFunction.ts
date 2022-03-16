@@ -8,6 +8,9 @@ import {
     registerParticleScopeService,
     responseService,
     errorHandlingService,
+    ServiceDescription,
+    userHandlerService,
+    injectValueService,
 } from './services';
 
 /**
@@ -36,7 +39,12 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
 
         for (let i = 0; i < expectedNumberOfArguments; i++) {
             const [name, type] = argumentTypes[i];
-            const service = argToServiceDef(args[i], name, type, def.names);
+            let service: ServiceDescription;
+            if (type.tag === 'arrow') {
+                service = userHandlerService(def.names.callbackSrv, [name, type], args[i]);
+            } else {
+                service = injectValueService(def.names.getDataSrv, name, type, args[i]);
+            }
             registerParticleScopeService(peer, particle, service);
         }
 
