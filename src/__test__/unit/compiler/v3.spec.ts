@@ -189,25 +189,35 @@ describe('Conversion from aqua to typescript', () => {
 describe('Conversion corner cases', () => {
     it('Should accept undefined in object entry', () => {
         // arrange
-        const type =  {
+        const type = {
             tag: 'labeledProduct',
             fields: {
                 x: opt_i32,
                 y: opt_i32,
             },
         } as const;
-        
-        const value = {
-            x: 1
-        }
+
+        const valueInTs = {
+            x: 1,
+        };
+        const valueinAqua = {
+            x: [1],
+            y: [],
+        };
 
         // act
-        const aqua = ts2aqua(value, type);
+        const aqua = ts2aqua(valueInTs, type);
+        const ts = aqua2ts(valueinAqua, type);
 
         // assert
         expect(aqua).toStrictEqual({
             x: [1],
-            y: []
+            y: [],
         });
-    })
-})
+
+        expect(ts).toStrictEqual({
+            x: 1,
+            y: null,
+        });
+    });
+});
