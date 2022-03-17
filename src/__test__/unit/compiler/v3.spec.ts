@@ -200,14 +200,14 @@ describe('Conversion corner cases', () => {
         const valueInTs = {
             x: 1,
         };
-        const valueinAqua = {
+        const valueInAqua = {
             x: [1],
             y: [],
         };
 
         // act
         const aqua = ts2aqua(valueInTs, type);
-        const ts = aqua2ts(valueinAqua, type);
+        const ts = aqua2ts(valueInAqua, type);
 
         // assert
         expect(aqua).toStrictEqual({
