@@ -96,7 +96,7 @@ export const ts2aqua = (value: any, type: NonArrowType) => {
             return null;
         })
         .with({ tag: 'option' }, (opt) => {
-            if (value === null) {
+            if (value === null || value === undefined) {
                 return [];
             } else {
                 return [ts2aqua(value, opt.type)];
