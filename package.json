@@ -47,7 +47,7 @@
         "uuid": "8.3.0"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "^0.5.3-258",
+        "@fluencelabs/aqua": "^0.7.0-285",
         "@fluencelabs/aqua-lib": "^0.3.4",
         "@types/jest": "^26.0.22",
         "jest": "^26.6.3",
