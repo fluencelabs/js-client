@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence",
-    "version": "0.0.0",
+    "version": "0.0.1-fix-sig.0",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -48,7 +48,7 @@
     },
     "devDependencies": {
         "@fluencelabs/aqua": "^0.7.0-285",
-        "@fluencelabs/aqua-lib": "^0.3.4",
+        "@fluencelabs/aqua-lib": "^0.4.3",
         "@types/jest": "^26.0.22",
         "jest": "^26.6.3",
         "js-base64": "^3.7.2",
