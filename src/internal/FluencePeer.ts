@@ -20,7 +20,7 @@ import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
-import { dataToString, jsonify } from './utils';
+import { throwIfNotSupported, dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
@@ -171,6 +171,8 @@ export class FluencePeer {
      * @param config - object specifying peer configuration
      */
     async start(config?: PeerConfig): Promise<void> {
+        throwIfNotSupported();
+
         if (config?.KeyPair) {
             this._keyPair = config!.KeyPair;
         } else {
