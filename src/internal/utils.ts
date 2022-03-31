@@ -151,7 +151,7 @@ export function throwIfNotSupported() {
         const version = platform.version.split('.').map(Number);
         const major = version[0];
         if (major < 16) {
-            throw new Error('FluenceJS requires node.js version >= "16.x"; Detected ' + platform.description);
+            throw new Error('FluenceJS requires node.js version >= "16.x"; Detected ' + platform.description + ' Please update node.js to version 16 or higher.\nYou can use https://nvm.sh utility to update node.js version: "nvm install 17 && nvm use 17 && nvm alias default 17"');
         }
     }
 }
