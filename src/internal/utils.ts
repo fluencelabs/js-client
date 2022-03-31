@@ -19,6 +19,7 @@ import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes 
 import { FluencePeer } from './FluencePeer';
 import { Particle, ParticleExecutionStage } from './Particle';
 import Buffer from './Buffer';
+import platform from 'platform';
 
 export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
     return (req: CallServiceData): CallServiceResult => {
@@ -143,4 +144,14 @@ export function dataToString(data: Uint8Array) {
 
 export function jsonify(obj) {
     return JSON.stringify(obj, null, 4);
+}
+
+export function throwIfNotSupported() {
+    if (platform.name === 'Node.js') {
+        const version = platform.version.split('.').map(Number);
+        const major = version[0];
+        if (major < 16) {
+            throw new Error('FluenceJS requires node.js version >= "16.x"; Detected ' + platform.description);
+        }
+    }
 }
