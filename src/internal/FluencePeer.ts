@@ -25,10 +25,11 @@ import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
-import { AvmRunnerBackground } from '@fluencelabs/avm-runner-background';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
+import { defaultNames, FluenceAppService, loadWasm } from '@fluencelabs/marine-js';
+import { AVM } from './avm';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -184,7 +185,12 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
-        this._avmRunner = config?.avmRunner || new AvmRunnerBackground();
+        this._fluenceAppService = new FluenceAppService();
+        const marineWasm = await loadWasm(defaultNames.marine);
+        const avmWasm = await loadWasm(defaultNames.avm);
+        await this._fluenceAppService.init(marineWasm);
+        await this._fluenceAppService.createService(avmWasm, 'avm');
+        this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
@@ -240,6 +246,7 @@ export class FluencePeer {
         this._stopParticleProcessing();
         await this._disconnect();
         await this._avmRunner?.terminate();
+        await this._fluenceAppService?.terminate();
         this._avmRunner = undefined;
 
         this._particleSpecificHandlers.clear();
@@ -352,6 +359,7 @@ export class FluencePeer {
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;
     private _avmRunner: AvmRunner;
+    private _fluenceAppService: FluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
