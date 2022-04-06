@@ -5,7 +5,7 @@ import { checkConnection, doNothing, handleTimeout } from '../../internal/utils'
 import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
-let peer;
+let peer: FluencePeer;
 
 describe('Typescript usage suite', () => {
     afterEach(async () => {

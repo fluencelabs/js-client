@@ -248,6 +248,7 @@ export class FluencePeer {
         await this._avmRunner?.terminate();
         await this._fluenceAppService?.terminate();
         this._avmRunner = undefined;
+        this._fluenceAppService = undefined;
 
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
