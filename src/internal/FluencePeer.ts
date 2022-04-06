@@ -102,7 +102,14 @@ export interface PeerConfig {
      */
     avmRunner?: AvmRunner;
 
+    /**
+     * Enables\disabled various debugging features
+     */
     debug?: {
+        /**
+         * If set to true, newly initiated particle ids will be printed to console.
+         * Useful to see what particle id is responsible for aqua function
+         */
         printParticleId?: boolean;
     };
 }
