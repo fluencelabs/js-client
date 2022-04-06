@@ -101,6 +101,10 @@ export interface PeerConfig {
      * Plugable AVM runner implementation. If not specified AvmBackgroundRunner will be used
      */
     avmRunner?: AvmRunner;
+
+    debug?: {
+        printParticleId?: boolean;
+    };
 }
 
 /**
@@ -177,6 +181,10 @@ export class FluencePeer {
             this._keyPair = config!.KeyPair;
         } else {
             this._keyPair = await KeyPair.randomEd25519();
+        }
+
+        if (config?.debug?.printParticleId) {
+            this._printParticleId = true;
         }
 
         this._defaultTTL =
@@ -260,6 +268,10 @@ export class FluencePeer {
             initiateParticle: (particle: Particle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.getStatus().isInitialized) {
                     throw 'Cannot initiate new particle: peer is not initialized';
+                }
+
+                if (this._printParticleId) {
+                    console.log('Particle id: ', particle.id);
                 }
 
                 if (particle.initPeerId === undefined) {
@@ -347,6 +359,7 @@ export class FluencePeer {
 
     // Internal peer state
 
+    private _printParticleId: boolean = false;
     private _defaultTTL: number;
     private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair;
