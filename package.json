@@ -19,7 +19,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "bin": {
-        "copy-avm-public": "dist/tools/copyAvmPublic.js"
+        "copy-marine": "dist/tools/copyMarine.js"
     },
     "dependencies": {
         "@chainsafe/libp2p-noise": "^4.1.1",
