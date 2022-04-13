@@ -28,8 +28,9 @@ import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
-import { defaultNames, FluenceAppService, loadWasm } from '@fluencelabs/marine-js';
+import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
 import { AVM } from './avm';
+import { isBrowser, isNode } from 'browser-or-node';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -102,6 +103,12 @@ export interface PeerConfig {
      * Plugable AVM runner implementation. If not specified AvmBackgroundRunner will be used
      */
     avmRunner?: AvmRunner;
+
+    marineJS?: {
+        workerScriptPath: string;
+        marineWasmPath: string;
+        avmWasmPath: string;
+    };
 
     /**
      * Enables\disabled various debugging features
@@ -200,11 +207,12 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
-        this._fluenceAppService = new FluenceAppService();
-        const marineWasm = await loadWasm(defaultNames.marine);
-        const avmWasm = await loadWasm(defaultNames.avm);
-        await this._fluenceAppService.init(marineWasm);
-        await this._fluenceAppService.createService(avmWasm, 'avm');
+        this._fluenceAppService = new FluenceAppService(config?.marineJS?.workerScriptPath);
+        const marineDeps = config?.marineJS
+            ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
+            : await loadDefaults();
+        await this._fluenceAppService.init(marineDeps.marine);
+        await this._fluenceAppService.createService(marineDeps.marine, 'avm');
         this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
@@ -690,4 +698,36 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
         }),
         filter((x: ParticleQueueItem) => !x.particle.hasExpired()),
     );
+}
+
+async function loadMarineAndAvm(
+    marinePath: string,
+    avmPath: string,
+): Promise<{
+    marine: SharedArrayBuffer | Buffer;
+    avm: SharedArrayBuffer | Buffer;
+}> {
+    let promises: [Promise<SharedArrayBuffer | Buffer>, Promise<SharedArrayBuffer | Buffer>];
+    // check if we are running inside the browser and instantiate worker with the corresponding script
+    if (isBrowser) {
+        promises = [
+            // force new line
+            loadWasmFromServer(marinePath),
+            loadWasmFromServer(avmPath),
+        ];
+    } else if (isNode) {
+        promises = [
+            // force new line
+            loadWasmFromFileSystem(marinePath),
+            loadWasmFromFileSystem(avmPath),
+        ];
+    } else {
+        throw new Error('Unknown environment');
+    }
+
+    const [marine, avm] = await Promise.all(promises);
+    return {
+        marine,
+        avm,
+    };
 }
