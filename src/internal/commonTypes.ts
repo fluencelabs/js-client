@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SecurityTetraplet } from '@fluencelabs/avm-runner-interface';
+import { SecurityTetraplet } from '@fluencelabs/avm';
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).

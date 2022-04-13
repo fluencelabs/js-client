@@ -24,13 +24,13 @@ import { throwIfNotSupported, dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
-import { AvmRunner, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
 import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
-import { AVM } from './avm';
+import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';
+import { InterpreterResult, LogLevel } from '@fluencelabs/avm';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
