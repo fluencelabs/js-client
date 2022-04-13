@@ -1,5 +1,5 @@
 import { AvmRunner, CallResultsArray, InterpreterResult, LogLevel } from '@fluencelabs/avm-runner-interface';
-import { runAvm } from '@fluencelabs/avm';
+import { callAvm } from '@fluencelabs/avm';
 import { FluenceAppService } from '@fluencelabs/marine-js';
 
 export class AVM implements AvmRunner {
@@ -20,12 +20,13 @@ export class AVM implements AvmRunner {
         params: { initPeerId: string; currentPeerId: string },
         callResults: CallResultsArray,
     ): Promise<InterpreterResult> {
-        return runAvm(
+        return callAvm(
             (args) => this._fluenceAppService.callService('avm', 'invoke', args, undefined),
+            params.initPeerId,
+            params.currentPeerId,
             air,
             prevData,
             data,
-            params,
             callResults,
         );
     }

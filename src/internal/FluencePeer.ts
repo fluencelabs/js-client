@@ -236,6 +236,19 @@ export class FluencePeer {
         };
     }
 
+    async registerMarineService(wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
+        if (this._containsService(serviceId)) {
+            throw new Error('Service with the same service id already exists');
+        }
+
+        await this._fluenceAppService.createService(wasm, serviceId);
+        this._marineServices.add(serviceId);
+    }
+
+    removeMarineService(serviceId: string): void {
+        this._marineServices.delete(serviceId);
+    }
+
     /**
      * Un-initializes the peer: stops all the underlying workflows, stops the Aqua VM
      * and disconnects from the Fluence network
@@ -252,6 +265,7 @@ export class FluencePeer {
 
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
+        this._marineServices.clear();
     }
 
     // internal api
@@ -346,12 +360,17 @@ export class FluencePeer {
 
     // Call service handler
 
+    private _marineServices = new Set<string>();
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
 
     private _classServices: {
         sig: Sig;
     };
+
+    private _containsService(serviceId: string): boolean {
+        return this._marineServices.has(serviceId) || this._commonHandlers.has(serviceId);
+    }
 
     // Internal peer state
 
@@ -522,6 +541,32 @@ export class FluencePeer {
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
         log.debug('executing call service handler', jsonify(req));
         const particleId = req.particleContext.particleId;
+
+        if (this._marineServices.has(req.serviceId)) {
+            const args = JSON.stringify(req.args);
+            const rawResult = await this._fluenceAppService.callService(req.serviceId, req.fnName, args, undefined);
+
+            try {
+                const result = JSON.parse(rawResult);
+                if (typeof result.error === 'string' && result.error.length > 0) {
+                    return {
+                        retCode: ResultCodes.error,
+                        result: result.error,
+                    };
+                }
+
+                if (!result.result) {
+                    throw 'Call to marine-js returned no error and empty result. Original request: ' + jsonify(req);
+                }
+
+                return {
+                    retCode: ResultCodes.success,
+                    result: result.result,
+                };
+            } catch (e) {
+                throw 'Call to marine-js. Result parsing error: ' + e + ', original text: ' + rawResult;
+            }
+        }
 
         const key = serviceFnKey(req.serviceId, req.fnName);
         const psh = this._particleSpecificHandlers.get(particleId);

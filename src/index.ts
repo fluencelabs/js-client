@@ -66,4 +66,12 @@ export const Fluence = {
     getPeer: (): FluencePeer => {
         return defaultPeer;
     },
+
+    registerMarineService: (wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> => {
+        return defaultPeer.registerMarineService(wasm, serviceId);
+    },
+
+    removeMarineService: (serviceId: string): void => {
+        defaultPeer.removeMarineService(serviceId);
+    },
 };
