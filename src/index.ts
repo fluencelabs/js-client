@@ -68,10 +68,23 @@ export const Fluence = {
         return defaultPeer;
     },
 
+    /**
+     * Registers marine service within the default Fluence peer from wasm file.
+     * Following helper functions can be used to load wasm files:
+     * * loadWasmFromFileSystem
+     * * loadWasmFromNpmPackage
+     * * loadWasmFromServer
+     * @param wasm - buffer with the wasm file for service
+     * @param serviceId - the service id by which the service can be accessed in aqua
+     */
     registerMarineService: (wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> => {
         return defaultPeer.registerMarineService(wasm, serviceId);
     },
 
+    /**
+     * Removes the specified marine service from the default Fluence peer
+     * @param serviceId - the service id to remove
+     */
     removeMarineService: (serviceId: string): void => {
         defaultPeer.removeMarineService(serviceId);
     },

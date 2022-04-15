@@ -100,13 +100,31 @@ export interface PeerConfig {
     defaultTtlMs?: number;
 
     /**
-     * Plugable AVM runner implementation. If not specified AvmBackgroundRunner will be used
+     * @deprecated. AVM run through marine-js infrastructure.
+     * @see marineJS option to configure AVM
      */
     avmRunner?: AvmRunner;
 
+    /**
+     * This option allows to specify the location of various dependencies needed for marine-js.
+     * Each key specifies the location of the corresponding dependency.
+     * If Fluence peer is started inside browser the location is treated as the path to the file relative to origin.
+     * IF Fluence peer is started in nodejs the location is treated as the full path to file on the file system.
+     */
     marineJS?: {
+        /**
+         * Configures path to the marine-js worker script.
+         */
         workerScriptPath: string;
+
+        /**
+         * Configures the path to marine-js control wasm module
+         */
         marineWasmPath: string;
+
+        /**
+         * Configures the path to AVM wasm module
+         */
         avmWasmPath: string;
     };
 
@@ -259,6 +277,15 @@ export class FluencePeer {
         };
     }
 
+    /**
+     * Registers marine service within the Fluence peer from wasm file.
+     * Following helper functions can be used to load wasm files:
+     * * loadWasmFromFileSystem
+     * * loadWasmFromNpmPackage
+     * * loadWasmFromServer
+     * @param wasm - buffer with the wasm file for service
+     * @param serviceId - the service id by which the service can be accessed in aqua
+     */
     async registerMarineService(wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
         if (this._containsService(serviceId)) {
             throw new Error('Service with the same service id already exists');
@@ -268,6 +295,10 @@ export class FluencePeer {
         this._marineServices.add(serviceId);
     }
 
+    /**
+     * Removes the specified marine service from the Fluence peer
+     * @param serviceId - the service id to remove
+     */
     removeMarineService(serviceId: string): void {
         this._marineServices.delete(serviceId);
     }
@@ -406,6 +437,10 @@ export class FluencePeer {
     private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair;
     private _connection: FluenceConnection;
+
+    /**
+     * @deprecated. AVM run through marine-js infrastructure. This field is needed for backward compatibility with the previous API
+     */
     private _avmRunner: AvmRunner;
     private _fluenceAppService: FluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
