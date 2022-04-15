@@ -102,6 +102,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="FluencePeer.html#getServices" class="tsd-kind-icon">get<wbr>Services</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="FluencePeer.html#getStatus" class="tsd-kind-icon">get<wbr>Status</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="FluencePeer.html#registerMarineService" class="tsd-kind-icon">register<wbr>Marine<wbr>Service</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="FluencePeer.html#removeMarineService" class="tsd-kind-icon">remove<wbr>Marine<wbr>Service</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="FluencePeer.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="FluencePeer.html#stop" class="tsd-kind-icon">stop</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="FluencePeer.html#isInstance" class="tsd-kind-icon">is<wbr>Instance</a></li>
@@ -122,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L150">internal/FluencePeer.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L176">src/internal/FluencePeer.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -147,7 +149,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L269">internal/FluencePeer.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L330">src/internal/FluencePeer.ts:330</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -296,7 +298,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L242">internal/FluencePeer.ts:242</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L274">src/internal/FluencePeer.ts:274</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>sig<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Sig</span><span class="tsd-signature-symbol"> }</span></h4>
@@ -318,7 +320,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L168">internal/FluencePeer.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L194">src/internal/FluencePeer.ts:194</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -327,6 +329,80 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/PeerStatus.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerStatus</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="registerMarineService" class="tsd-anchor"></a>
+					<h3>register<wbr>Marine<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Marine<wbr>Service<span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L289">src/internal/FluencePeer.ts:289</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Registers marine service within the Fluence peer from wasm file.
+									Following helper functions can be used to load wasm files:</p>
+									<ul>
+										<li>loadWasmFromFileSystem</li>
+										<li>loadWasmFromNpmPackage</li>
+										<li>loadWasmFromServer</li>
+									</ul>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>wasm: <span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>buffer with the wasm file for service</p>
+									</div>
+								</li>
+								<li>
+									<h5>serviceId: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the service id by which the service can be accessed in aqua</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="removeMarineService" class="tsd-anchor"></a>
+					<h3>remove<wbr>Marine<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Marine<wbr>Service<span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L302">src/internal/FluencePeer.ts:302</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Removes the specified marine service from the Fluence peer</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>serviceId: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the service id to remove</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -340,7 +416,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L184">internal/FluencePeer.ts:184</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L210">src/internal/FluencePeer.ts:210</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -372,7 +448,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L252">internal/FluencePeer.ts:252</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L310">src/internal/FluencePeer.ts:310</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -395,7 +471,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/0c32288/src/internal/FluencePeer.ts#L157">internal/FluencePeer.ts:157</a></li>
+									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L183">src/internal/FluencePeer.ts:183</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -447,6 +523,12 @@
 								<a href="FluencePeer.html#getStatus" class="tsd-kind-icon">get<wbr>Status</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="FluencePeer.html#registerMarineService" class="tsd-kind-icon">register<wbr>Marine<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="FluencePeer.html#removeMarineService" class="tsd-kind-icon">remove<wbr>Marine<wbr>Service</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="FluencePeer.html#start" class="tsd-kind-icon">start</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -479,6 +561,15 @@
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="../modules.html#Fluence" class="tsd-kind-icon">Fluence</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="../modules.html#loadWasmFromFileSystem" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>File<wbr>System</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="../modules.html#loadWasmFromNpmPackage" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Npm<wbr>Package</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="../modules.html#loadWasmFromServer" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Server</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="../modules.html#setLogLevel" class="tsd-kind-icon">set<wbr>Log<wbr>Level</a>
