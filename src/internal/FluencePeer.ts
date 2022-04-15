@@ -212,7 +212,7 @@ export class FluencePeer {
             ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
             : await loadDefaults();
         await this._fluenceAppService.init(marineDeps.marine);
-        await this._fluenceAppService.createService(marineDeps.marine, 'avm');
+        await this._fluenceAppService.createService(marineDeps.avm, 'avm');
         this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
