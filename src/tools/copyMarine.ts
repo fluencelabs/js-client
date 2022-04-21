@@ -15,10 +15,7 @@ if (!path.isAbsolute(destPath)) {
     destPath = path.join(process.cwd(), destPath);
 }
 
-console.log('ensure directory exists: ', destPath);
-fs.mkdirSync(destPath, { recursive: true });
-
-function copyFile(packageName: string, fileName: string) {
+async function copyFile(packageName: string, fileName: string) {
     const modulePath = require.resolve(packageName);
     const source = path.join(path.dirname(modulePath), fileName);
     const dest = path.join(destPath, fileName);
@@ -26,11 +23,22 @@ function copyFile(packageName: string, fileName: string) {
     console.log(`copying ${fileName}`);
     console.log('from: ', source);
     console.log('to: ', dest);
-    fs.copyFileSync(source, dest);
+    await fs.promises.copyFile(source, dest);
 }
 
-copyFile('@fluencelabs/marine-js', 'marine-js.web.js');
-copyFile('@fluencelabs/marine-js', 'marine-js.wasm');
-copyFile('@fluencelabs/avm', 'avm.wasm');
+async function main() {
+    console.log('ensure directory exists: ', destPath);
+    await fs.promises.mkdir(destPath, { recursive: true });
 
-console.log('done!');
+    await copyFile('@fluencelabs/marine-js', 'marine-js.web.js');
+    await copyFile('@fluencelabs/marine-js', 'marine-js.wasm');
+    await copyFile('@fluencelabs/avm', 'avm.wasm');
+}
+
+main()
+    .then(() => {
+        console.log('done!');
+    })
+    .catch((err) => {
+        console.error('Something went wrong!', err);
+    });

@@ -288,7 +288,7 @@ export class FluencePeer {
      */
     async registerMarineService(wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
         if (this._containsService(serviceId)) {
-            throw new Error('Service with the same service id already exists');
+            throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
         await this._fluenceAppService.createService(wasm, serviceId);
