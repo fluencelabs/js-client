@@ -16,11 +16,11 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
-import { CallResultsArray, LogLevel } from '@fluencelabs/avm-runner-interface';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
 import { dataToString, jsonify } from './utils';
 import Buffer from './Buffer';
+import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 
 export class Particle {
     id: string;

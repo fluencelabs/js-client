@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { CallServiceResult } from '@fluencelabs/avm-runner-interface';
 import { encode, decode } from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { ResultCodes } from '../commonTypes';
 import { jsonify } from '../utils';
 import Buffer from '../Buffer';
+import { CallServiceResult } from '@fluencelabs/avm';
 
 const success = (result: any): CallServiceResult => {
     return {

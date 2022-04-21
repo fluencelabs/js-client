@@ -1,4 +1,4 @@
-import { SecurityTetraplet } from '@fluencelabs/avm-runner-interface';
+import { SecurityTetraplet } from '@fluencelabs/avm';
 import { Particle } from 'src/internal/Particle';
 import { match } from 'ts-pattern';
 import {
