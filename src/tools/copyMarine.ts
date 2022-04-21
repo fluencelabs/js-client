@@ -30,9 +30,11 @@ async function main() {
     console.log('ensure directory exists: ', destPath);
     await fs.promises.mkdir(destPath, { recursive: true });
 
-    await copyFile('@fluencelabs/marine-js', 'marine-js.web.js');
-    await copyFile('@fluencelabs/marine-js', 'marine-js.wasm');
-    await copyFile('@fluencelabs/avm', 'avm.wasm');
+    await Promise.all([
+        copyFile('@fluencelabs/marine-js', 'marine-js.web.js'),
+        copyFile('@fluencelabs/marine-js', 'marine-js.wasm'),
+        copyFile('@fluencelabs/avm', 'avm.wasm'),
+    ]);
 }
 
 main()
