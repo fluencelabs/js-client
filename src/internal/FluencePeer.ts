@@ -618,7 +618,7 @@ export class FluencePeer {
                     };
                 }
 
-                if (!result.result) {
+                if (result.result === undefined) {
                     throw 'Call to marine-js returned no error and empty result. Original request: ' + jsonify(req);
                 }
 
