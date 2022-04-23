@@ -231,6 +231,10 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
+        if (config?.debug?.marineLogLevel) {
+            this._marineLogLevel = config.debug.marineLogLevel;
+        }
+
         this._fluenceAppService = new FluenceAppService(config?.marineJS?.workerScriptPath);
         const marineDeps = config?.marineJS
             ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
