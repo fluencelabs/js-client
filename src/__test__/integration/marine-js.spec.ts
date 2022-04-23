@@ -24,7 +24,8 @@ describe('Marine js tests', () => {
         expect(res).toBe('Hi, Hi, Hi, test');
     });
 
-    // TODO: make test working
+    // TODO: console printouts are happening inside web-worker\worker threads.
+    // Find a way to mock functions in background thread
     it.skip('logging should work', async () => {
         // arrange
         const peer = new FluencePeer();
