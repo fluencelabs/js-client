@@ -110,7 +110,7 @@
 					<div class="tsd-signature tsd-kind-icon">Key<wbr>Pair<span class="tsd-signature-symbol">:</span> <a href="../classes/KeyPair.html" class="tsd-signature-type" data-tsd-kind="Class">KeyPair</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L74">src/internal/FluencePeer.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L75">src/internal/FluencePeer.ts:75</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -126,13 +126,18 @@
 					<div class="tsd-signature tsd-kind-icon">avm<wbr>Log<wbr>Level<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LogLevel</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L68">src/internal/FluencePeer.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L69">src/internal/FluencePeer.ts:69</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Specify log level for Aqua VM running on the peer</p>
-						</div>
+						<dl class="tsd-comment-tags">
+							<dt>deprecated.</dt>
+							<dd><p>AVM run through marine-js infrastructure.</p>
+							</dd>
+							<dt>see</dt>
+							<dd><p>debug.marineLogLevel option to configure logging level of AVM</p>
+							</dd>
+						</dl>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -141,7 +146,7 @@
 					<div class="tsd-signature tsd-kind-icon">avm<wbr>Runner<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AvmRunner</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L106">src/internal/FluencePeer.ts:106</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L107">src/internal/FluencePeer.ts:107</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -161,7 +166,7 @@
 					<div class="tsd-signature tsd-kind-icon">check<wbr>Connection<wbr>Timeout<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L81">src/internal/FluencePeer.ts:81</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L82">src/internal/FluencePeer.ts:82</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -178,7 +183,7 @@
 					<div class="tsd-signature tsd-kind-icon">connect<wbr>To<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Multiaddr</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Node</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L63">src/internal/FluencePeer.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L63">src/internal/FluencePeer.ts:63</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -197,10 +202,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="debug" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> debug</h3>
-					<div class="tsd-signature tsd-kind-icon">debug<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>printParticleId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span></div>
+					<div class="tsd-signature tsd-kind-icon">debug<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>marineLogLevel<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">LogLevel</span><span class="tsd-signature-symbol">; </span>printParticleId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L134">src/internal/FluencePeer.ts:134</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L135">src/internal/FluencePeer.ts:135</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -211,6 +216,14 @@
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> marine<wbr>Log<wbr>Level<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">LogLevel</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<div class="lead">
+										<p>Log level for marine services. By default logging is turned off.</p>
+									</div>
+								</div>
+							</li>
 							<li class="tsd-parameter">
 								<h5><span class="tsd-flag ts-flagOptional">Optional</span> print<wbr>Particle<wbr>Id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5>
 								<div class="tsd-comment tsd-typography">
@@ -229,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">default<wbr>Ttl<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L100">src/internal/FluencePeer.ts:100</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L101">src/internal/FluencePeer.ts:101</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -246,7 +259,7 @@
 					<div class="tsd-signature tsd-kind-icon">dial<wbr>Timeout<wbr>Ms<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L93">src/internal/FluencePeer.ts:93</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L94">src/internal/FluencePeer.ts:94</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -261,7 +274,7 @@
 					<div class="tsd-signature tsd-kind-icon">marineJS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>avmWasmPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>marineWasmPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>workerScriptPath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L114">src/internal/FluencePeer.ts:114</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L115">src/internal/FluencePeer.ts:115</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -308,7 +321,7 @@
 					<div class="tsd-signature tsd-kind-icon">skip<wbr>Check<wbr>Connection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/9a26165/src/internal/FluencePeer.ts#L88">src/internal/FluencePeer.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L89">src/internal/FluencePeer.ts:89</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">

@@ -44,7 +44,7 @@ type Node = {
  * Enum representing the log level used in Aqua VM.
  * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
  */
-export type AvmLoglevel = LogLevel;
+export type MarineLoglevel = LogLevel;
 
 const DEFAULT_TTL = 7000;
 
@@ -63,9 +63,10 @@ export interface PeerConfig {
     connectTo?: string | Multiaddr | Node;
 
     /**
-     * Specify log level for Aqua VM running on the peer
+     * @deprecated. AVM run through marine-js infrastructure.
+     * @see debug.marineLogLevel option to configure logging level of AVM
      */
-    avmLogLevel?: AvmLoglevel;
+    avmLogLevel?: MarineLoglevel;
 
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
@@ -137,6 +138,11 @@ export interface PeerConfig {
          * Useful to see what particle id is responsible for aqua function
          */
         printParticleId?: boolean;
+
+        /**
+         * Log level for marine services. By default logging is turned off.
+         */
+        marineLogLevel?: LogLevel;
     };
 }
 
@@ -225,6 +231,10 @@ export class FluencePeer {
                 ? config?.defaultTtlMs
                 : DEFAULT_TTL;
 
+        if (config?.debug?.marineLogLevel) {
+            this._marineLogLevel = config.debug.marineLogLevel;
+        }
+
         this._fluenceAppService = new FluenceAppService(config?.marineJS?.workerScriptPath);
         const marineDeps = config?.marineJS
             ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
@@ -291,7 +301,8 @@ export class FluencePeer {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        await this._fluenceAppService.createService(wasm, serviceId);
+        const envs = this._marineLogLevel ? { WASM_LOG: this._marineLogLevel } : undefined;
+        await this._fluenceAppService.createService(wasm, serviceId, undefined, envs);
         this._marineServices.add(serviceId);
     }
 
@@ -419,6 +430,7 @@ export class FluencePeer {
     // Call service handler
 
     private _marineServices = new Set<string>();
+    private _marineLogLevel?: MarineLoglevel;
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
 
