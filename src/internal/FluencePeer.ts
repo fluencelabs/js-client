@@ -721,6 +721,8 @@ async function runAvmRunner(
         {
             initPeerId: particle.initPeerId,
             currentPeerId: currentPeerId,
+            timestamp: particle.timestamp,
+            ttl: particle.ttl,
         },
         particle.callResults,
     );
