@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { callAvm, CallResultsArray, InterpreterResult, LogLevel } from '@fluencelabs/avm';
+import { callAvm, CallResultsArray, InterpreterResult, LogLevel, RunParameters } from '@fluencelabs/avm';
 import { FluenceAppService } from '@fluencelabs/marine-js';
 
 /**
@@ -27,10 +27,7 @@ export type AvmRunner = {
         air: string,
         prevData: Uint8Array,
         data: Uint8Array,
-        params: {
-            initPeerId: string;
-            currentPeerId: string;
-        },
+        params: RunParameters,
         callResults: CallResultsArray,
     ) => Promise<InterpreterResult>;
 };
@@ -53,13 +50,12 @@ export class AVM implements AvmRunner {
         air: string,
         prevData: Uint8Array,
         data: Uint8Array,
-        params: { initPeerId: string; currentPeerId: string },
+        runParams: RunParameters,
         callResults: CallResultsArray,
     ): Promise<InterpreterResult> {
         return callAvm(
             (args) => this._fluenceAppService.callService('avm', 'invoke', args, undefined),
-            params.initPeerId,
-            params.currentPeerId,
+            runParams,
             air,
             prevData,
             data,
