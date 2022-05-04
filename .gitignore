@@ -16,3 +16,6 @@ jspm_packages/
 /dist/
 
 .idea
+
+playground_dist
+playground_public
