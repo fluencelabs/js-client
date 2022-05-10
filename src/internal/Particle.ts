@@ -23,36 +23,34 @@ import Buffer from './Buffer';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 
 export class Particle {
-    id: string;
-    initPeerId: string;
-    timestamp: number;
-    ttl: number;
-    script: string;
-    signature: string;
-    data: Uint8Array;
+    signature?: string;
     callResults: CallResultsArray = [];
 
-    static createNew(script: string, ttlMs?: number): Particle {
-        const res = new Particle();
-        res.id = genUUID();
-        res.script = script;
-        res.ttl = ttlMs;
-        res.data = Buffer.from([]);
-        res.timestamp = Date.now();
+    constructor(
+        public id: string,
+        public timestamp: number,
+        public script: string,
+        public data: Uint8Array,
+        public ttl: number,
+        public initPeerId: string,
+    ) {}
 
-        return res;
+    static createNew(script: string, ttl: number, initPeerId: string): Particle {
+        return new Particle(genUUID(), Date.now(), script, Buffer.from([]), ttl, initPeerId);
     }
 
     static fromString(str: string): Particle {
         const json = JSON.parse(str);
-        const res = new Particle();
-        res.id = json.id;
-        res.initPeerId = json.init_peer_id;
-        res.timestamp = json.timestamp;
-        res.ttl = json.ttl;
-        res.script = json.script;
+        const res = new Particle(
+            json.id,
+            json.timestamp,
+            json.script,
+            toByteArray(json.data),
+            json.ttl,
+            json.init_peer_id,
+        );
+
         res.signature = json.signature;
-        res.data = toByteArray(json.data);
 
         return res;
     }
@@ -76,38 +74,30 @@ export class Particle {
     }
 
     clone(): Particle {
-        const res = new Particle();
-        res.id = this.id;
-        res.initPeerId = this.initPeerId;
-        res.timestamp = this.timestamp;
-        res.ttl = this.ttl;
-        res.script = this.script;
+        const res = new Particle(this.id, this.timestamp, this.script, this.data, this.ttl, this.initPeerId);
+
         res.signature = this.signature;
-        res.data = this.data;
         res.callResults = this.callResults;
         return res;
     }
 
     toString(): string {
-        const particle = this;
-        const payload = {
+        return JSON.stringify({
             action: 'Particle',
-            id: particle.id,
-            init_peer_id: particle.initPeerId,
-            timestamp: particle.timestamp,
-            ttl: particle.ttl,
-            script: particle.script,
+            id: this.id,
+            init_peer_id: this.initPeerId,
+            timestamp: this.timestamp,
+            ttl: this.ttl,
+            script: this.script,
             // TODO: copy signature from a particle after signatures will be implemented on nodes
             signature: [],
-            data: fromByteArray(particle.data),
-        };
-
-        return JSON.stringify(payload);
+            data: this.data && fromByteArray(this.data),
+        });
     }
 
     logTo(level: LogLevel, message: string) {
         let fn;
-        let data;
+        let data: string | undefined;
         switch (level) {
             case 'debug':
                 fn = log.debug;
@@ -117,8 +107,6 @@ export class Particle {
                 fn = log.error;
                 break;
             case 'info':
-                fn = log.info;
-                break;
             case 'trace':
                 fn = log.info;
                 break;
@@ -139,7 +127,7 @@ export class Particle {
                 script: this.script,
                 signature: this.signature,
                 callResults: this.callResults,
-                data: data,
+                data,
             }),
         );
     }

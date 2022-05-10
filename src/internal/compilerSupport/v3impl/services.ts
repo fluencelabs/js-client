@@ -1,14 +1,10 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
-import { Particle } from 'src/internal/Particle';
 import { match } from 'ts-pattern';
-import {
-    CallParams,
-    CallServiceData,
-    CallServiceResult,
-    GenericCallServiceHandler,
-    ResultCodes,
-} from '../../commonTypes';
+
+import { Particle } from '../../Particle';
+import { CallParams, CallServiceData, GenericCallServiceHandler, ResultCodes } from '../../commonTypes';
 import { FluencePeer } from '../../FluencePeer';
+
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions';
 import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface';
 
@@ -25,7 +21,7 @@ export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
-        handler: (req) => {
+        handler: () => {
             return {
                 retCode: ResultCodes.success,
                 result: peer.getStatus().relayPeerId,
@@ -41,7 +37,7 @@ export const injectValueService = (serviceId: string, fnName: string, valueType:
     return {
         serviceId: serviceId,
         fnName: fnName,
-        handler: (req) => {
+        handler: () => {
             return {
                 retCode: ResultCodes.success,
                 result: ts2aqua(value, valueType),
@@ -57,7 +53,7 @@ export const responseService = (def: FunctionCallDef, resolveCallback: Function)
     return {
         serviceId: def.names.responseSrv,
         fnName: def.names.responseFnName,
-        handler: (req) => {
+        handler: (req: CallServiceData) => {
             const userFunctionReturn = responseServiceValue2ts(req, def.arrow);
 
             setTimeout(() => {
@@ -79,7 +75,7 @@ export const errorHandlingService = (def: FunctionCallDef, rejectCallback: Funct
     return {
         serviceId: def.names.errorHandlingSrv,
         fnName: def.names.errorFnName,
-        handler: (req) => {
+        handler: (req: CallServiceData) => {
             const [err, _] = req.args;
             setTimeout(() => {
                 rejectCallback(err);
@@ -95,12 +91,16 @@ export const errorHandlingService = (def: FunctionCallDef, rejectCallback: Funct
 /**
  * Creates a service for user-defined service function handler
  */
-export const userHandlerService = (serviceId: string, arrowType: [string, ArrowWithoutCallbacks], userHandler) => {
+export const userHandlerService = (
+    serviceId: string,
+    arrowType: [string, ArrowWithoutCallbacks],
+    userHandler: (...args: Array<unknown>) => Promise<unknown>,
+) => {
     const [fnName, type] = arrowType;
     return {
         serviceId,
         fnName,
-        handler: async (req) => {
+        handler: async (req: CallServiceData) => {
             const args = [...aquaArgs2Ts(req, type), extractCallParams(req, type)];
             const rawResult = await userHandler.apply(null, args);
             const result = returnType2Aqua(rawResult, type);
@@ -147,7 +147,7 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
         })
         .exhaustive();
 
-    let tetraplets: { [key in string]: SecurityTetraplet[] } = {};
+    const tetraplets: Record<string, SecurityTetraplet[]> = {};
     for (let i = 0; i < req.args.length; i++) {
         if (names[i]) {
             tetraplets[names[i]] = req.tetraplets[i];

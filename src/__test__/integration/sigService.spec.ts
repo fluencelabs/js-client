@@ -34,7 +34,7 @@ describe('Sig service test suite', () => {
         const result = await callSig(peer, 'CustomSig');
 
         expect(result.success).toBe(true);
-        const isSigCorrect = await customSig.verify(result.signature, data);
+        const isSigCorrect = await customSig.verify(result.signature as number[], data);
         expect(isSigCorrect).toBe(true);
     });
 
@@ -67,7 +67,7 @@ describe('Sig service test suite', () => {
         });
 
         const callAsSigRes = await callSig(peer, 'sig');
-        const callAsPeerIdRes = await callSig(peer, peer.getStatus().peerId);
+        const callAsPeerIdRes = await callSig(peer, peer.getStatus().peerId as string);
 
         expect(callAsSigRes.success).toBe(false);
         expect(callAsPeerIdRes.success).toBe(false);
@@ -75,12 +75,12 @@ describe('Sig service test suite', () => {
         sig.securityGuard = () => true;
 
         const callAsSigResAfterGuardChange = await callSig(peer, 'sig');
-        const callAsPeerIdResAfterGuardChange = await callSig(peer, peer.getStatus().peerId);
+        const callAsPeerIdResAfterGuardChange = await callSig(peer, peer.getStatus().peerId as string);
 
         expect(callAsSigResAfterGuardChange.success).toBe(true);
         expect(callAsPeerIdResAfterGuardChange.success).toBe(true);
 
-        const isValid = await sig.verify(callAsSigResAfterGuardChange.signature, data);
+        const isValid = await sig.verify(callAsSigResAfterGuardChange.signature as number[], data);
 
         expect(isValid).toBe(true);
     });

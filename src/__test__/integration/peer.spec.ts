@@ -1,8 +1,8 @@
 import { Multiaddr } from 'multiaddr';
+
 import { nodes } from '../connection';
-import { Fluence, FluencePeer, setLogLevel } from '../../index';
+import { FluencePeer } from '../../index';
 import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
-import { Particle } from '../../internal/Particle';
 import { registerHandlersHelper } from '../util';
 
 let peer: FluencePeer;
@@ -20,10 +20,9 @@ describe('Typescript usage suite', () => {
 
     it('should perform test for FluencePeer class correctly', () => {
         // arrange
-        const peer: any = new FluencePeer();
-        const number: any = 1;
-        const object: any = { str: 'Hello!' };
-        const undefinedVal: any = undefined;
+        const number = 1;
+        const object = { str: 'Hello!' };
+        const undefinedVal = undefined;
 
         // act
         const isPeerPeer = FluencePeer.isInstance(peer);
@@ -40,13 +39,8 @@ describe('Typescript usage suite', () => {
 
     describe('Should expose correct peer status', () => {
         it('Should expose correct status for uninitialized peer', () => {
-            // arrange
-            const nonStartedPeer = new FluencePeer();
+            const status = peer.getStatus();
 
-            // act
-            const status = nonStartedPeer.getStatus();
-
-            // assert
             expect(status.isConnected).toBe(false);
             expect(status.isInitialized).toBe(false);
             expect(status.peerId).toBe(null);
@@ -65,8 +59,6 @@ describe('Typescript usage suite', () => {
             expect(status.isInitialized).toBe(true);
             expect(status.peerId).not.toBe(null);
             expect(status.relayPeerId).toBe(null);
-
-            await peer.stop();
         });
 
         it('Should expose correct status for connected peer', async () => {
@@ -81,8 +73,6 @@ describe('Typescript usage suite', () => {
             expect(status.isInitialized).toBe(true);
             expect(status.peerId).not.toBe(null);
             expect(status.relayPeerId).not.toBe(null);
-
-            await peer.stop();
         });
     });
 
@@ -90,8 +80,7 @@ describe('Typescript usage suite', () => {
         // arrange
         await peer.start({ connectTo: nodes[0] });
 
-        // act
-        const promise = new Promise<string[]>((resolve, reject) => {
+        const result = await new Promise<string[]>((resolve, reject) => {
             const script = `
     (xor
         (seq
@@ -106,19 +95,24 @@ describe('Typescript usage suite', () => {
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )
     )`;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
+
             registerHandlersHelper(peer, particle, {
                 load: {
-                    relay: (args) => {
+                    relay: () => {
                         return peer.getStatus().relayPeerId;
                     },
                 },
                 callback: {
-                    callback: (args) => {
+                    callback: (args: any) => {
                         const [val] = args;
                         resolve(val);
                     },
-                    error: (args) => {
+                    error: (args: any) => {
                         const [error] = args;
                         reject(error);
                     },
@@ -128,15 +122,13 @@ describe('Typescript usage suite', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const result = await promise;
         expect(result).toBe('hello world!');
     });
 
     it('check connection should work', async function () {
         await peer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(peer);
+        const isConnected = await checkConnection(peer);
 
         expect(isConnected).toEqual(true);
     });
@@ -144,20 +136,18 @@ describe('Typescript usage suite', () => {
     it('check connection should work with ttl', async function () {
         await peer.start({ connectTo: nodes[0] });
 
-        let isConnected = await checkConnection(peer, 10000);
+        const isConnected = await checkConnection(peer, 10000);
 
         expect(isConnected).toEqual(true);
     });
 
     it('two clients should work inside the same time browser', async () => {
-        // arrange
         const peer1 = new FluencePeer();
         await peer1.start({ connectTo: nodes[0] });
         const peer2 = new FluencePeer();
         await peer2.start({ connectTo: nodes[0] });
 
-        // act
-        const resMakingPromise = new Promise((resolve) => {
+        const res = new Promise((resolve) => {
             peer2.internals.regHandler.common('test', 'test', (req) => {
                 resolve(req.args[0]);
                 return {
@@ -173,12 +163,15 @@ describe('Typescript usage suite', () => {
                 (call "${peer2.getStatus().peerId}" ("test" "test") ["test"])
             )
         `;
-        const particle = Particle.createNew(script);
-        await peer1.internals.initiateParticle(particle, doNothing);
+        const particle = peer1.internals.createNewParticle(script);
 
-        // assert
-        const res = await resMakingPromise;
-        expect(res).toEqual('test');
+        if (particle instanceof Error) {
+            throw particle;
+        }
+
+        peer1.internals.initiateParticle(particle, doNothing);
+
+        expect(await res).toEqual('test');
 
         await peer1.stop();
         await peer2.stop();
@@ -186,130 +179,74 @@ describe('Typescript usage suite', () => {
 
     describe('should make connection to network', () => {
         it('address as string', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr });
+            await peer.start({ connectTo: nodes[0].multiaddr });
             const isConnected = await checkConnection(peer);
 
-            // assert
             expect(isConnected).toBeTruthy();
         });
 
         it('address as multiaddr', async () => {
-            // arrange
-            const addr = new Multiaddr(nodes[0].multiaddr);
-
-            // act
-            await peer.start({ connectTo: addr });
+            await peer.start({ connectTo: new Multiaddr(nodes[0].multiaddr) });
             const isConnected = await checkConnection(peer);
 
-            // assert
             expect(isConnected).toBeTruthy();
         });
 
         it('address as node', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr });
+            await peer.start({ connectTo: nodes[0] });
             const isConnected = await checkConnection(peer);
 
-            // assert
-            expect(isConnected).toBeTruthy();
-        });
-
-        it('peerid as peer id', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
-
-            // assert
-            expect(isConnected).toBeTruthy();
-        });
-
-        it('peerid as seed', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr });
-            const isConnected = await checkConnection(peer);
-
-            // assert
             expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: dialTimeout', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr, dialTimeoutMs: 100000 });
+            await peer.start({ connectTo: nodes[0], dialTimeoutMs: 100000 });
             const isConnected = await checkConnection(peer);
 
-            // assert
             expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: skipCheckConnection', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr, skipCheckConnection: true });
+            await peer.start({ connectTo: nodes[0], skipCheckConnection: true });
             const isConnected = await checkConnection(peer);
 
-            // assert
             expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: checkConnectionTTL', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr, checkConnectionTimeoutMs: 1000 });
+            await peer.start({ connectTo: nodes[0], checkConnectionTimeoutMs: 1000 });
             const isConnected = await checkConnection(peer);
 
-            // assert
             expect(isConnected).toBeTruthy();
         });
 
         it('With connection options: defaultTTL', async () => {
-            // arrange
-            const addr = nodes[0];
-
-            // act
-            await peer.start({ connectTo: addr, defaultTtlMs: 1 });
+            await peer.start({ connectTo: nodes[0], defaultTtlMs: 1 });
             const isConnected = await checkConnection(peer);
 
-            // assert
             expect(isConnected).toBeFalsy();
         });
     });
 
     it('Should successfully call identity on local peer', async function () {
-        // arrange
         await peer.start();
 
-        // act
-        const promise = new Promise<string>((resolve, reject) => {
+        const res = await new Promise<string>((resolve, reject) => {
             const script = `
             (seq
                 (call %init_peer_id% ("op" "identity") ["test"] res)
                 (call %init_peer_id% ("callback" "callback") [res])
             )
             `;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
+
             registerHandlersHelper(peer, particle, {
                 callback: {
-                    callback: async (args) => {
+                    callback: async (args: any) => {
                         const [res] = args;
                         resolve(res);
                     },
@@ -319,21 +256,14 @@ describe('Typescript usage suite', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const res = await promise;
         expect(res).toBe('test');
     });
 
     it('Should throw correct message when calling non existing local service', async function () {
-        // arrange
         await peer.start({ connectTo: nodes[0] });
 
-        // act
         const res = callIncorrectService(peer);
 
-        // console.log(await res);
-
-        // assert
         await expect(res).rejects.toMatchObject({
             message: expect.stringContaining(
                 `No handler has been registered for serviceId='incorrect' fnName='incorrect' args='[]'\"'`,
@@ -343,11 +273,9 @@ describe('Typescript usage suite', () => {
     });
 
     it('Should not crash if undefined is passed as a variable', async () => {
-        // arrange;
         await peer.start();
 
-        // act
-        const promise = new Promise<any>((resolve, reject) => {
+        const res = await new Promise<any>((resolve, reject) => {
             const script = `
         (seq
             (call %init_peer_id% ("load" "arg") [] arg)
@@ -356,20 +284,22 @@ describe('Typescript usage suite', () => {
                 (call %init_peer_id% ("callback" "callback") [res])
             )
         )`;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
 
             registerHandlersHelper(peer, particle, {
                 load: {
-                    arg: (args) => {
-                        return undefined;
-                    },
+                    arg: () => undefined,
                 },
                 callback: {
-                    callback: (args) => {
+                    callback: (args: any) => {
                         const [val] = args;
                         resolve(val);
                     },
-                    error: (args) => {
+                    error: (args: any) => {
                         const [error] = args;
                         reject(error);
                     },
@@ -379,32 +309,32 @@ describe('Typescript usage suite', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const res = await promise;
         expect(res).toBe(null);
     });
 
     it('Should not crash if an error ocurred in user-defined handler', async () => {
-        // arrange;
         await peer.start();
 
-        // act
-        const promise = new Promise<any>((resolve, reject) => {
+        const promise = new Promise<any>((_resolve, reject) => {
             const script = `
         (xor
             (call %init_peer_id% ("load" "arg") [] arg)
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )`;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
 
             registerHandlersHelper(peer, particle, {
                 load: {
-                    arg: (args) => {
-                        throw 'my super custom error message';
+                    arg: () => {
+                        throw new Error('my super custom error message');
                     },
                 },
                 callback: {
-                    error: (args) => {
+                    error: (args: any) => {
                         const [error] = args;
                         reject(error);
                     },
@@ -414,44 +344,36 @@ describe('Typescript usage suite', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
         await expect(promise).rejects.toMatchObject({
             message: expect.stringContaining('my super custom error message'),
         });
     });
 
-    it('Should throw error if particle is initiated on a stopped peer', async () => {
-        // arrange;
-        const stoppedPeer = new FluencePeer();
+    it('Should return error if particle is created on a stopped peer', async () => {
+        await peer.stop();
+        const particle = peer.internals.createNewParticle(`(null)`);
 
-        // act
-        const action = () => {
-            const script = `(null)`;
-            const particle = Particle.createNew(script);
-
-            stoppedPeer.internals.initiateParticle(particle, doNothing);
-        };
-
-        // assert
-        await expect(action).toThrow('Cannot initiate new particle: peer is not initialized');
+        expect(particle instanceof Error).toBe(true);
     });
 
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
-        // arrange;
         await peer.start({ connectTo: nodes[0] });
 
-        // act
         const promise = new Promise((resolve, reject) => {
             const script = `
     (xor
         (call "incorrect_peer_id" ("any" "service") [])
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
 
             registerHandlersHelper(peer, particle, {
                 callback: {
-                    error: (args) => {
+                    error: (args: any) => {
                         const [error] = args;
                         reject(error);
                     },
@@ -461,7 +383,6 @@ describe('Typescript usage suite', () => {
             peer.internals.initiateParticle(particle, doNothing);
         });
 
-        // assert
         await expect(promise).rejects.toMatch(
             'Particle is expected to be sent to only the single peer (relay which client is connected to)',
         );
@@ -469,20 +390,24 @@ describe('Typescript usage suite', () => {
 });
 
 async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
-    const promise = new Promise<any[]>((resolve, reject) => {
+    return new Promise<any[]>((resolve, reject) => {
         const script = `
     (xor
         (call %init_peer_id% ("incorrect" "incorrect") [] res)
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
-        const particle = Particle.createNew(script);
+        const particle = peer.internals.createNewParticle(script);
+
+        if (particle instanceof Error) {
+            return reject(particle.message);
+        }
 
         registerHandlersHelper(peer, particle, {
             callback: {
-                callback: (args) => {
+                callback: (args: any) => {
                     resolve(args);
                 },
-                error: (args) => {
+                error: (args: any) => {
                     const [error] = args;
                     reject(error);
                 },
@@ -491,6 +416,4 @@ async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
 
         peer.internals.initiateParticle(particle, handleTimeout(reject));
     });
-
-    return promise;
 }

@@ -9,7 +9,7 @@ import { CallServiceData } from 'src/internal/commonTypes';
  * @param type - definition of the aqua type
  * @returns value represented in typescript
  */
-export const aqua2ts = (value: any, type: NonArrowType) => {
+export const aqua2ts = (value: any, type: NonArrowType): any => {
     const res = match(type)
         .with({ tag: 'nil' }, () => {
             return null;
@@ -25,7 +25,7 @@ export const aqua2ts = (value: any, type: NonArrowType) => {
             return value;
         })
         .with({ tag: 'array' }, (arr) => {
-            return value.map((y) => aqua2ts(y, arr.type));
+            return value.map((y: any) => aqua2ts(y, arr.type));
         })
         .with({ tag: 'struct' }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
@@ -90,7 +90,7 @@ export const aquaArgs2Ts = (req: CallServiceData, arrow: ArrowWithoutCallbacks) 
  * @param type - definition of the aqua type
  * @returns value represented in aqua
  */
-export const ts2aqua = (value: any, type: NonArrowType) => {
+export const ts2aqua = (value: any, type: NonArrowType): any => {
     const res = match(type)
         .with({ tag: 'nil' }, () => {
             return null;
@@ -106,7 +106,7 @@ export const ts2aqua = (value: any, type: NonArrowType) => {
             return value;
         })
         .with({ tag: 'array' }, (arr) => {
-            return value.map((y) => ts2aqua(y, arr.type));
+            return value.map((y: any) => ts2aqua(y, arr.type));
         })
         .with({ tag: 'struct' }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {

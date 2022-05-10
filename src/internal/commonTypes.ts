@@ -49,12 +49,12 @@ export interface CallParams<ArgName extends string | null> {
     /**
      * Particle's signature
      */
-    signature: string;
+    signature?: string;
 
     /**
      * Security tetraplets
      */
-    tetraplets: { [key in ArgName]: SecurityTetraplet[] };
+    tetraplets: ArgName extends string ? Record<ArgName, SecurityTetraplet[]> : Record<string, never>;
 }
 
 export enum ResultCodes {
@@ -89,7 +89,7 @@ export interface ParticleContext {
     /**
      * Particle's signature
      */
-    signature: string;
+    signature?: string;
 }
 
 /**
@@ -123,7 +123,7 @@ export interface CallServiceData {
 }
 
 /**
- * Type for all the possible objects that can be return to the AVM
+ * Type for all the possible objects that can be returned to the AVM
  */
 export type CallServiceResultType = object | boolean | number | string | null;
 

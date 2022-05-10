@@ -15,6 +15,7 @@
  */
 
 import log, { LogLevelDesc } from 'loglevel';
+
 import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
 export { PeerStatus } from './internal/FluencePeer';

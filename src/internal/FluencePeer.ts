@@ -149,27 +149,25 @@ export interface PeerConfig {
 /**
  * Information about Fluence Peer connection
  */
-export interface PeerStatus {
-    /**
-     * Is the peer initialized or not
-     */
-    isInitialized: Boolean;
-
-    /**
-     * Is the peer connected to network or not
-     */
-    isConnected: Boolean;
-
-    /**
-     * The Peer's identification in the Fluence network
-     */
-    peerId: PeerIdB58 | null;
-
-    /**
-     * The relays's peer id to which the peer is connected to
-     */
-    relayPeerId: PeerIdB58 | null;
-}
+export type PeerStatus =
+    | {
+          isInitialized: false;
+          peerId: null;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          relayPeerId: PeerIdB58;
+      };
 
 /**
  * This class implements the Fluence protocol for javascript-based environments.
@@ -177,34 +175,42 @@ export interface PeerStatus {
  */
 export class FluencePeer {
     /**
-     * Creates a new Fluence Peer instance.
-     */
-    constructor() {}
-
-    /**
      * Checks whether the object is instance of FluencePeer class
      * @param obj - object to check if it is FluencePeer
      * @returns true if the object is FluencePeer false otherwise
      */
-    static isInstance(obj: FluencePeer): boolean {
-        if (obj && obj._isFluenceAwesome) {
-            return true;
-        } else {
-            return false;
-        }
+    static isInstance(obj: unknown): obj is FluencePeer {
+        return obj instanceof FluencePeer;
     }
 
     /**
      * Get the peer's status
      */
     getStatus(): PeerStatus {
-        const hasKeyPair = this._keyPair !== undefined;
+        // TODO:: use explicit mechanism for peer's state
+        if (this._keyPair === undefined) {
+            return {
+                isInitialized: false,
+                peerId: null,
+                isConnected: false,
+                relayPeerId: null,
+            };
+        }
+
+        if (this._connection === undefined || this._relayPeerId === null) {
+            return {
+                isInitialized: true,
+                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                isConnected: false,
+                relayPeerId: null,
+            };
+        }
+
         return {
-            // TODO:: use explicit mechanism for peer's state
-            isInitialized: hasKeyPair,
-            isConnected: this._connection !== undefined,
-            peerId: this._keyPair?.Libp2pPeerId?.toB58String() || null,
-            relayPeerId: this._relayPeerId || null,
+            isInitialized: true,
+            peerId: this._keyPair.Libp2pPeerId.toB58String(),
+            isConnected: true,
+            relayPeerId: this._relayPeerId,
         };
     }
 
@@ -216,20 +222,16 @@ export class FluencePeer {
     async start(config?: PeerConfig): Promise<void> {
         throwIfNotSupported();
 
-        if (config?.KeyPair) {
-            this._keyPair = config!.KeyPair;
-        } else {
-            this._keyPair = await KeyPair.randomEd25519();
-        }
+        const keyPair = config?.KeyPair ?? (await KeyPair.randomEd25519());
+        this._keyPair = keyPair;
+
+        const peerId = keyPair.Libp2pPeerId.toB58String();
 
         if (config?.debug?.printParticleId) {
             this._printParticleId = true;
         }
 
-        this._defaultTTL =
-            config?.defaultTtlMs !== undefined // don't miss value 0 (zero)
-                ? config?.defaultTtlMs
-                : DEFAULT_TTL;
+        this._defaultTTL = config?.defaultTtlMs ?? DEFAULT_TTL;
 
         if (config?.debug?.marineLogLevel) {
             this._marineLogLevel = config.debug.marineLogLevel;
@@ -246,7 +248,7 @@ export class FluencePeer {
 
         if (config?.connectTo) {
             let connectToMultiAddr: Multiaddr;
-            let fromNode = (config.connectTo as any).multiaddr;
+            const fromNode = (config.connectTo as any).multiaddr;
             if (fromNode) {
                 connectToMultiAddr = new Multiaddr(fromNode);
             } else {
@@ -274,14 +276,17 @@ export class FluencePeer {
         this._classServices = {
             sig: new Sig(this._keyPair),
         };
-        this._classServices.sig.securityGuard = defaultSigGuard(this.getStatus().peerId);
+        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
         registerSig(this, this._classServices.sig);
-        registerSig(this, this.getStatus().peerId, this._classServices.sig);
+        registerSig(this, peerId, this._classServices.sig);
 
         this._startParticleProcessing();
     }
 
     getServices() {
+        if (this._classServices === undefined) {
+            throw new Error(`Can't get services: peer is not initialized`);
+        }
         return {
             ...this._classServices,
         };
@@ -297,6 +302,9 @@ export class FluencePeer {
      * @param serviceId - the service id by which the service can be accessed in aqua
      */
     async registerMarineService(wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
+        if (!this._fluenceAppService) {
+            throw new Error("Can't register marine service: peer is not initialized");
+        }
         if (this._containsService(serviceId)) {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
@@ -327,6 +335,7 @@ export class FluencePeer {
         await this._fluenceAppService?.terminate();
         this._avmRunner = undefined;
         this._fluenceAppService = undefined;
+        this._classServices = undefined;
 
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
@@ -340,13 +349,23 @@ export class FluencePeer {
      */
     get internals() {
         return {
+            createNewParticle: (script: string, ttl: number = this._defaultTTL) => {
+                const status = this.getStatus();
+
+                if (!status.isInitialized) {
+                    return new Error("Can't create new particle: peer is not initialized");
+                }
+
+                return Particle.createNew(script, ttl, status.peerId);
+            },
             /**
              * Initiates a new particle execution starting from local peer
              * @param particle - particle to start execution of
              */
             initiateParticle: (particle: Particle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
-                if (!this.getStatus().isInitialized) {
-                    throw 'Cannot initiate new particle: peer is not initialized';
+                const status = this.getStatus();
+                if (!status.isInitialized) {
+                    throw new Error('Cannot initiate new particle: peer is not initialized');
                 }
 
                 if (this._printParticleId) {
@@ -354,7 +373,7 @@ export class FluencePeer {
                 }
 
                 if (particle.initPeerId === undefined) {
-                    particle.initPeerId = this.getStatus().peerId;
+                    particle.initPeerId = status.peerId;
                 }
 
                 if (particle.ttl === undefined) {
@@ -405,21 +424,14 @@ export class FluencePeer {
 
     // private
 
-    /**
-     *  Used in `isInstance` to check if an object is of type FluencePeer. That's a hack to work around corner cases in JS type system
-     */
-    private _isFluenceAwesome = true;
-
     // TODO:: make public when full connection\disconnection cycle is implemented properly
-    private async _connect(): Promise<void> {
-        return this._connection?.connect();
+    private _connect(): Promise<void> {
+        return this._connection?.connect() || Promise.resolve();
     }
 
     // TODO:: make public when full connection\disconnection cycle is implemented properly
-    private async _disconnect(): Promise<void> {
-        if (this._connection) {
-            return this._connection.disconnect();
-        }
+    private _disconnect(): Promise<void> {
+        return this._connection?.disconnect() || Promise.resolve();
     }
 
     // Queues for incoming and outgoing particles
@@ -434,7 +446,7 @@ export class FluencePeer {
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
 
-    private _classServices: {
+    private _classServices?: {
         sig: Sig;
     };
 
@@ -444,17 +456,17 @@ export class FluencePeer {
 
     // Internal peer state
 
-    private _printParticleId: boolean = false;
-    private _defaultTTL: number;
+    private _printParticleId = false;
+    private _defaultTTL: number = DEFAULT_TTL;
     private _relayPeerId: PeerIdB58 | null = null;
-    private _keyPair: KeyPair;
-    private _connection: FluenceConnection;
+    private _keyPair: KeyPair | undefined;
+    private _connection?: FluenceConnection;
 
     /**
      * @deprecated. AVM run through marine-js infrastructure. This field is needed for backward compatibility with the previous API
      */
-    private _avmRunner: AvmRunner;
-    private _fluenceAppService: FluenceAppService;
+    private _avmRunner?: AvmRunner;
+    private _fluenceAppService?: FluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
@@ -484,7 +496,7 @@ export class FluencePeer {
                 particlesQueue.next(item);
             });
 
-        this._outgoingParticles.subscribe(async (item) => {
+        this._outgoingParticles.subscribe((item) => {
             // Do not send particle after the peer has been stopped
             if (!this.getStatus().isInitialized) {
                 return;
@@ -495,8 +507,14 @@ export class FluencePeer {
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            await this._connection.sendParticle(item.particle);
-            item.onStageChange({ stage: 'sent' });
+            this._connection.sendParticle(item.particle).then(
+                () => {
+                    item.onStageChange({ stage: 'sent' });
+                },
+                (e) => {
+                    log.error(e);
+                },
+            );
         });
     }
 
@@ -513,17 +531,17 @@ export class FluencePeer {
     }
 
     private _createParticlesProcessingQueue() {
-        let particlesQueue = new Subject<ParticleQueueItem>();
+        const particlesQueue = new Subject<ParticleQueueItem>();
         let prevData: Uint8Array = Buffer.from([]);
 
         particlesQueue
             .pipe(
-                // force new line
                 filterExpiredParticles(this._expireParticle.bind(this)),
 
                 concatMap(async (item) => {
-                    // Is `.stop()` was called we need to stop particle processing immediately
-                    if (!this.getStatus().isInitialized) {
+                    const status = this.getStatus();
+                    if (!status.isInitialized || this._avmRunner === undefined) {
+                        // If `.stop()` was called return null to stop particle processing immediately
                         return null;
                     }
 
@@ -532,12 +550,7 @@ export class FluencePeer {
                     // MUST happen sequentially (in a critical section).
                     // Otherwise the race between runner might occur corrupting the prevData
 
-                    const result = await runAvmRunner(
-                        this.getStatus().peerId,
-                        this._avmRunner,
-                        item.particle,
-                        prevData,
-                    );
+                    const result = await runAvmRunner(status.peerId, this._avmRunner, item.particle, prevData);
                     const newData = Buffer.from(result.data);
                     prevData = newData;
 
@@ -548,9 +561,9 @@ export class FluencePeer {
                     };
                 }),
             )
-            .subscribe(async (item) => {
-                // Is `.stop()` was called we need to stop particle processing immediately
-                if (!this.getStatus().isInitialized) {
+            .subscribe((item) => {
+                // If `.stop()` was called then item will be null and we need to stop particle processing immediately
+                if (item === null || !this.getStatus().isInitialized) {
                     return;
                 }
 
@@ -574,7 +587,7 @@ export class FluencePeer {
                 // execute call requests if needed
                 // and put particle with the results back to queue
                 if (item.result.callRequests.length > 0) {
-                    for (let [key, cr] of item.result.callRequests) {
+                    for (const [key, cr] of item.result.callRequests) {
                         const req = {
                             fnName: cr.functionName,
                             args: cr.arguments,
@@ -617,7 +630,7 @@ export class FluencePeer {
         log.debug('executing call service handler', jsonify(req));
         const particleId = req.particleContext.particleId;
 
-        if (this._marineServices.has(req.serviceId)) {
+        if (this._fluenceAppService && this._marineServices.has(req.serviceId)) {
             const args = JSON.stringify(req.args);
             const rawResult = await this._fluenceAppService.callService(req.serviceId, req.fnName, args, undefined);
 
@@ -631,7 +644,9 @@ export class FluencePeer {
                 }
 
                 if (result.result === undefined) {
-                    throw 'Call to marine-js returned no error and empty result. Original request: ' + jsonify(req);
+                    throw new Error(
+                        `Call to marine-js returned no error and empty result. Original request: ${jsonify(req)}`,
+                    );
                 }
 
                 return {
@@ -639,13 +654,13 @@ export class FluencePeer {
                     result: result.result,
                 };
             } catch (e) {
-                throw 'Call to marine-js. Result parsing error: ' + e + ', original text: ' + rawResult;
+                throw new Error(`Call to marine-js. Result parsing error: ${e}, original text: ${rawResult}`);
             }
         }
 
         const key = serviceFnKey(req.serviceId, req.fnName);
         const psh = this._particleSpecificHandlers.get(particleId);
-        let handler: GenericCallServiceHandler;
+        let handler: GenericCallServiceHandler | undefined;
 
         // we should prioritize handler for this particle if there is one
         // if particle-specific handlers exist for this particle try getting handler there
@@ -682,9 +697,9 @@ export class FluencePeer {
 
     private _stopParticleProcessing() {
         // do not hang if the peer has been stopped while some of the timeouts are still being executed
-        for (let item of this._timeouts) {
-            clearTimeout(item);
-        }
+        this._timeouts.forEach((timeout) => {
+            clearTimeout(timeout);
+        });
         this._particleQueues.clear();
     }
 }
@@ -698,12 +713,11 @@ function serviceFnKey(serviceId: string, fnName: string) {
 }
 
 function registerDefaultServices(peer: FluencePeer) {
-    for (let serviceId in builtInServices) {
-        for (let fnName in builtInServices[serviceId]) {
-            const h = builtInServices[serviceId][fnName];
-            peer.internals.regHandler.common(serviceId, fnName, h);
-        }
-    }
+    Object.entries(builtInServices).forEach(([serviceId, service]) => {
+        Object.entries(service).forEach(([fnName, fn]) => {
+            peer.internals.regHandler.common(serviceId, fnName, fn);
+        });
+    });
 }
 
 async function runAvmRunner(
@@ -727,8 +741,7 @@ async function runAvmRunner(
         particle.callResults,
     );
 
-    const toLog: any = { ...interpreterResult };
-    toLog.data = dataToString(toLog.data);
+    const toLog = { ...interpreterResult, data: dataToString(interpreterResult.data) };
 
     if (isInterpretationSuccessful(interpreterResult)) {
         log.debug('Interpreter result: ', jsonify(toLog));

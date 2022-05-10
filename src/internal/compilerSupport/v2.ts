@@ -215,7 +215,11 @@ export function callFunction(rawFnArgs: Array<any>, def: FunctionCallDef, script
     }
 
     const promise = new Promise((resolve, reject) => {
-        const particle = Particle.createNew(script, config?.ttl);
+        const particle = peer.internals.createNewParticle(script, config?.ttl);
+
+        if (particle instanceof Error) {
+            return reject(particle.message);
+        }
 
         for (let i = 0; i < def.argDefs.length; i++) {
             const argDef = def.argDefs[i];

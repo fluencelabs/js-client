@@ -1,34 +1,33 @@
-import { FluencePeer, setLogLevel } from '../../index';
-import { Particle } from '../../internal/Particle';
+import { FluencePeer } from '../../index';
 import { handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
 
 let peer: FluencePeer;
 
 describe('Avm spec', () => {
-    afterEach(async () => {
-        if (peer) {
-            await peer.stop();
-        }
+    beforeAll(async () => {
+        peer = new FluencePeer();
+        await peer.start();
     });
 
-    beforeEach(() => {
-        peer = new FluencePeer();
+    afterAll(async () => {
+        await peer.stop();
     });
 
     it('Simple call', async () => {
-        // arrange
-        await peer.start();
-
-        // act
-        const promise = new Promise<string[]>((resolve, reject) => {
+        const res = await new Promise<string[]>((resolve, reject) => {
             const script = `
                 (call %init_peer_id% ("print" "print") ["1"])
             `;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
+
             registerHandlersHelper(peer, particle, {
                 print: {
-                    print: async (args) => {
+                    print: (args: Array<Array<string>>) => {
                         const [res] = args;
                         resolve(res);
                     },
@@ -38,20 +37,12 @@ describe('Avm spec', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const res = await promise;
         expect(res).toBe('1');
-
-        await peer.stop();
     });
 
     it('Par call', async () => {
-        // arrange
-        await peer.start();
-
-        // act
-        const promise = new Promise<string[]>((resolve, reject) => {
-            let res = [];
+        const res = await new Promise<string[]>((resolve, reject) => {
+            const res: any[] = [];
             const script = `
                 (seq
                     (par
@@ -61,10 +52,15 @@ describe('Avm spec', () => {
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
             `;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
+
             registerHandlersHelper(peer, particle, {
                 print: {
-                    print: (args) => {
+                    print: (args: any) => {
                         res.push(args[0]);
                         if (res.length == 2) {
                             resolve(res);
@@ -76,19 +72,11 @@ describe('Avm spec', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const res = await promise;
         expect(res).toStrictEqual(['1', '2']);
-
-        await peer.stop();
     });
 
     it('Timeout in par call: race', async () => {
-        // arrange
-        await peer.start();
-
-        // act
-        const promise = new Promise((resolve, reject) => {
+        const res = await new Promise((resolve, reject) => {
             const script = `
                 (seq
                     (call %init_peer_id% ("op" "identity") ["slow_result"] arg) 
@@ -101,10 +89,15 @@ describe('Avm spec', () => {
                     )
                 )
             `;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
+
             registerHandlersHelper(peer, particle, {
                 return: {
-                    return: (args) => {
+                    return: (args: any) => {
                         resolve(args[0]);
                     },
                 },
@@ -113,19 +106,11 @@ describe('Avm spec', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const res = await promise;
         expect(res).toBe('fast_result');
-
-        await peer.stop();
     });
 
     it('Timeout in par call: wait', async () => {
-        // arrange
-        await peer.start();
-
-        // act
-        const promise = new Promise((resolve, reject) => {
+        const res = await new Promise((resolve, reject) => {
             const script = `
                 (seq
                     (call %init_peer_id% ("op" "identity") ["timeout_msg"] arg) 
@@ -146,10 +131,15 @@ describe('Avm spec', () => {
                     )
                 )
             `;
-            const particle = Particle.createNew(script);
+            const particle = peer.internals.createNewParticle(script);
+
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
+
             registerHandlersHelper(peer, particle, {
                 return: {
-                    return: (args) => {
+                    return: (args: any) => {
                         resolve(args[0]);
                     },
                 },
@@ -158,10 +148,6 @@ describe('Avm spec', () => {
             peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        // assert
-        const res = await promise;
         expect(res).toBe('failed_with_timeout');
-
-        await peer.stop();
     });
 });

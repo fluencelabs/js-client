@@ -15,28 +15,26 @@
  */
 
 import log from 'loglevel';
-import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
-import { FluencePeer } from './FluencePeer';
-import { Particle, ParticleExecutionStage } from './Particle';
-import Buffer from './Buffer';
 import platform from 'platform';
 
-export const MakeServiceCall = (fn: (args: any[]) => CallServiceResultType) => {
-    return (req: CallServiceData): CallServiceResult => {
-        return {
-            retCode: ResultCodes.success,
-            result: fn(req.args),
-        };
-    };
-};
+import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
+import { FluencePeer } from './FluencePeer';
+import { ParticleExecutionStage } from './Particle';
+import Buffer from './Buffer';
 
-export const handleTimeout = (fn: Function) => (stage: ParticleExecutionStage) => {
+export const MakeServiceCall =
+    (fn: (args: any[]) => CallServiceResultType) =>
+    (req: CallServiceData): CallServiceResult => ({
+        retCode: ResultCodes.success,
+        result: fn(req.args),
+    });
+
+export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage) => {
     if (stage.stage === 'expired') {
         fn();
     }
 };
-
-export const doNothing = (stage: ParticleExecutionStage) => {};
+export const doNothing = (..._args: Array<unknown>) => undefined;
 
 /**
  * Checks the network connection by sending a ping-like request to relay node
@@ -67,7 +65,12 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )
     )`;
-        const particle = Particle.createNew(script, ttl);
+        const particle = peer.internals.createNewParticle(script, ttl);
+
+        if (particle instanceof Error) {
+            return reject(particle.message);
+        }
+
         peer.internals.regHandler.forParticle(
             particle.id,
             'load',
@@ -142,12 +145,12 @@ export function dataToString(data: Uint8Array) {
     }
 }
 
-export function jsonify(obj) {
+export function jsonify(obj: unknown) {
     return JSON.stringify(obj, null, 4);
 }
 
 export function throwIfNotSupported() {
-    if (platform.name === 'Node.js') {
+    if (platform.name === 'Node.js' && platform.version) {
         const version = platform.version.split('.').map(Number);
         const major = version[0];
         if (major < 16) {

@@ -16,10 +16,11 @@
 
 import { encode, decode } from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
-import { ResultCodes } from '../commonTypes';
+import { CallServiceResult } from '@fluencelabs/avm';
+
+import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { jsonify } from '../utils';
 import Buffer from '../Buffer';
-import { CallServiceResult } from '@fluencelabs/avm';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -39,29 +40,29 @@ const errorNotImpl = (methodName: string) => {
     return error(`The JS implementation of Peer does not support "${methodName}"`);
 };
 
-export const builtInServices = {
+export const builtInServices: Record<string, Record<string, GenericCallServiceHandler>> = {
     peer: {
-        identify: (req) => {
+        identify: () => {
             return errorNotImpl('peer.identify');
         },
 
-        timestamp_ms: (req) => {
+        timestamp_ms: () => {
             return success(Date.now());
         },
 
-        timestamp_sec: (req) => {
+        timestamp_sec: () => {
             return success(Math.floor(Date.now() / 1000));
         },
 
-        is_connected: (req) => {
+        is_connected: () => {
             return errorNotImpl('peer.is_connected');
         },
 
-        connect: (req) => {
+        connect: () => {
             return errorNotImpl('peer.connect');
         },
 
-        get_contact: (req) => {
+        get_contact: () => {
             return errorNotImpl('peer.get_contact');
         },
 
@@ -82,103 +83,103 @@ export const builtInServices = {
     },
 
     kad: {
-        neighborhood: (req) => {
+        neighborhood: () => {
             return errorNotImpl('kad.neighborhood');
         },
 
-        merge: (req) => {
+        merge: () => {
             return errorNotImpl('kad.merge');
         },
     },
 
     srv: {
-        list: (req) => {
+        list: () => {
             return errorNotImpl('srv.list');
         },
 
-        create: (req) => {
+        create: () => {
             return errorNotImpl('srv.create');
         },
 
-        get_interface: (req) => {
+        get_interface: () => {
             return errorNotImpl('srv.get_interface');
         },
 
-        resolve_alias: (req) => {
+        resolve_alias: () => {
             return errorNotImpl('srv.resolve_alias');
         },
 
-        add_alias: (req) => {
+        add_alias: () => {
             return errorNotImpl('srv.add_alias');
         },
 
-        remove: (req) => {
+        remove: () => {
             return errorNotImpl('srv.remove');
         },
     },
 
     dist: {
-        add_module_from_vault: (req) => {
+        add_module_from_vault: () => {
             return errorNotImpl('dist.add_module_from_vault');
         },
 
-        add_module: (req) => {
+        add_module: () => {
             return errorNotImpl('dist.add_module');
         },
 
-        add_blueprint: (req) => {
+        add_blueprint: () => {
             return errorNotImpl('dist.add_blueprint');
         },
 
-        make_module_config: (req) => {
+        make_module_config: () => {
             return errorNotImpl('dist.make_module_config');
         },
 
-        load_module_config: (req) => {
+        load_module_config: () => {
             return errorNotImpl('dist.load_module_config');
         },
 
-        default_module_config: (req) => {
+        default_module_config: () => {
             return errorNotImpl('dist.default_module_config');
         },
 
-        make_blueprint: (req) => {
+        make_blueprint: () => {
             return errorNotImpl('dist.make_blueprint');
         },
 
-        load_blueprint: (req) => {
+        load_blueprint: () => {
             return errorNotImpl('dist.load_blueprint');
         },
 
-        list_modules: (req) => {
+        list_modules: () => {
             return errorNotImpl('dist.list_modules');
         },
 
-        get_module_interface: (req) => {
+        get_module_interface: () => {
             return errorNotImpl('dist.get_module_interface');
         },
 
-        list_blueprints: (req) => {
+        list_blueprints: () => {
             return errorNotImpl('dist.list_blueprints');
         },
     },
 
     script: {
-        add: (req) => {
+        add: () => {
             return errorNotImpl('script.add');
         },
 
-        remove: (req) => {
+        remove: () => {
             return errorNotImpl('script.remove');
         },
 
-        list: (req) => {
+        list: () => {
             return errorNotImpl('script.list');
         },
     },
 
     op: {
-        noop: (req) => {
+        noop: () => {
             return success({});
         },
 
@@ -251,7 +252,7 @@ export const builtInServices = {
 
         sha256_string: async (req) => {
             if (req.args.length < 1 || req.args.length > 3) {
-                return error('sha256_string accepts 1-3 arguments, found: ' + req.args.length);
+                return error(`sha256_string accepts 1-3 arguments, found: ${req.args.length}`);
             } else {
                 const [input, digestOnly, asBytes] = req.args;
                 const inBuffer = Buffer.from(input);
@@ -414,7 +415,7 @@ export const builtInServices = {
                 return err;
             }
             const [xs] = req.args;
-            return success(xs.reduce((agg, cur) => agg + cur, 0));
+            return success(xs.reduce((agg: any, cur: any) => agg + cur, 0));
         },
 
         dedup: (req) => {
@@ -433,7 +434,7 @@ export const builtInServices = {
                 return err;
             }
             const [xs, ys] = req.args;
-            const intersection = xs.filter((x) => ys.includes(x));
+            const intersection = xs.filter((x: any) => ys.includes(x));
             return success(intersection);
         },
 
@@ -443,7 +444,7 @@ export const builtInServices = {
                 return err;
             }
             const [xs, ys] = req.args;
-            const diff = xs.filter((x) => !ys.includes(x));
+            const diff = xs.filter((x: unknown) => !ys.includes(x));
             return success(diff);
         },
 
@@ -455,15 +456,15 @@ export const builtInServices = {
             const [xs, ys] = req.args;
             const sdiff = [
                 // force new line
-                ...xs.filter((y) => !ys.includes(y)),
-                ...ys.filter((x) => !xs.includes(x)),
+                ...xs.filter((y: unknown) => !ys.includes(y)),
+                ...ys.filter((x: unknown) => !xs.includes(x)),
             ];
             return success(sdiff);
         },
     },
-};
+} as const;
 
-const checkForArgumentsCount = (req, count: number) => {
+const checkForArgumentsCount = (req: { args: Array<unknown> }, count: number) => {
     if (req.args.length !== count) {
         return error(`Expected ${count} argument(s). Got ${req.args.length}`);
     }
