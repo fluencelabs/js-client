@@ -21,7 +21,7 @@ import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
 import { throwIfNotSupported, dataToString, jsonify } from './utils';
-import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
+import { bufferTime, concatMap, filter, interval, map, mapTo, pipe, Subject, tap, throttle } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';

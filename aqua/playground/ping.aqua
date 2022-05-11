@@ -1,0 +1,7 @@
+service Op("op"):
+    identity: string -> string
+
+func ping(arg: string) -> string:
+    on HOST_PEER_ID:
+        Op.identity(arg)
+    <- arg

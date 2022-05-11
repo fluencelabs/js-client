@@ -8,6 +8,7 @@
         "compile-aqua": "npm run compile-aqua:src && npm run compile-aqua:test",
         "compile-aqua:src": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
         "compile-aqua:test": "aqua -i ./aqua/tests/ -o ./src/__test__/_aqua",
+        "compile-aqua:playground": "aqua -i ./aqua/playground/ -o ./playground/_aqua",
         "test": "jest --watch",
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
