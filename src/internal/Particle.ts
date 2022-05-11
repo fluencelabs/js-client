@@ -23,6 +23,7 @@ import Buffer from './Buffer';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 
 export class Particle {
+    // TODO: make it not optional (should be added to the constructor)
     signature?: string;
     callResults: CallResultsArray = [];
 

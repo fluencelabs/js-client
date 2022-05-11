@@ -5,12 +5,12 @@ import { registerHandlersHelper } from '../util';
 let peer: FluencePeer;
 
 describe('Avm spec', () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
         peer = new FluencePeer();
         await peer.start();
     });
 
-    afterAll(async () => {
+    afterEach(async () => {
         await peer.stop();
     });
 
