@@ -246,7 +246,7 @@ describe('Sig service tests', () => {
         const sig = new Sig(ctx.peerKeyPair);
 
         const signature = await sig.sign(testData, makeTetraplet(ctx.peerId));
-        const res = await sig.verify(signature.signature, testData);
+        const res = await sig.verify(signature.signature as number[], testData);
 
         expect(res).toBe(true);
     });

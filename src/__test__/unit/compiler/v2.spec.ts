@@ -1,4 +1,5 @@
 import each from 'jest-each';
+
 import { Fluence, FluencePeer } from '../../..';
 import { forTests } from '../../../internal/compilerSupport/v2';
 
@@ -19,7 +20,7 @@ describe('Compiler support tests', () => {
 `.test(
         //
         'raw rawArgs: $rawArgs, numArgs: $numArgs. expected args: $expectedArgs, config: $expectedConfig, default peer?: $isExpectedPeerDefault',
-        async ({ rawArgs, numArgs, expectedArgs, expectedConfig, isExpectedPeerDefault }) => {
+        ({ rawArgs, numArgs, expectedArgs, expectedConfig, isExpectedPeerDefault }) => {
             // arrange
             const testFn = forTests.extractFunctionArgs;
 
