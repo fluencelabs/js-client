@@ -21,8 +21,8 @@ import Lib2p2Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import { pipe } from 'it-pipe';
 import * as log from 'loglevel';
+import { Noise } from '@chainsafe/libp2p-noise';
 import { Particle } from './Particle';
-import { NOISE } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 // @ts-ignore
@@ -70,7 +70,7 @@ export class FluenceConnection {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
                 // @ts-ignore
-                connEncryption: [NOISE],
+                connEncryption: [new Noise()],
             },
             config: {
                 transport: {
@@ -86,7 +86,6 @@ export class FluenceConnection {
 
         lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(
-                // force new line
                 stream.source,
                 // @ts-ignore
                 decode(),
@@ -132,8 +131,8 @@ export class FluenceConnection {
         const sink = conn.stream.sink;
 
         pipe(
-            // force new line
             [Buffer.from(particle.toString(), 'utf8')],
+            // @ts-ignore
             encode(),
             // @ts-ignore
             sink,
