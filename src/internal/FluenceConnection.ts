@@ -16,19 +16,16 @@
 
 import Websockets from 'libp2p-websockets';
 import Mplex from 'libp2p-mplex';
-import Lib2p2Peer, { MuxedStream } from 'libp2p';
+import Lib2p2Peer from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
-import pipe from 'it-pipe';
+import { pipe } from 'it-pipe';
 import * as log from 'loglevel';
 import { Particle } from './Particle';
 import { NOISE } from '@chainsafe/libp2p-noise';
-import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
 import Buffer from './Buffer';
-import ConnectionManager from 'libp2p/src/connection-manager';
-import { single } from 'rxjs';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -39,7 +36,7 @@ export interface FluenceConnectionOptions {
     /**
      * Peer id of the Fluence Peer
      */
-    peerId: PeerId;
+    peerId: any;
 
     /**
      * Multiaddress of the relay to make connection to
@@ -69,7 +66,7 @@ export class FluenceConnection {
             modules: {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
-                connEncryption: [NOISE],
+                connEncryption: [NOISE as any],
             },
             config: {
                 transport: {
@@ -90,6 +87,7 @@ export class FluenceConnection {
             pipe(
                 // force new line
                 stream.source,
+                // @ts-ignore
                 decode(),
                 async (source: AsyncIterable<string>) => {
                     try {
@@ -177,10 +175,11 @@ export class FluenceConnection {
         const { stream } = await this._connection.newStream(PROTOCOL_NAME);
         const sink = stream.sink;
 
-        stream.pipe(
+        pipe(
             // force new line
             [Buffer.from(particle.toString(), 'utf8')],
             encode(),
+            // @ts-ignore
             sink,
         );
 
@@ -212,7 +211,7 @@ export class FluenceConnection {
         }
     }
 
-    private _outStream: MuxedStream;
+    // private _outStream: MuxedStream;
     private _lib2p2Peer: Lib2p2Peer;
     private _connection: Connection;
     private _relayAddress: Multiaddr;

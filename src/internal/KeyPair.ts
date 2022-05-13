@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import * as PeerId from 'peer-id';
+import PeerId from 'peer-id';
 import { keys } from 'libp2p-crypto';
 
 export class KeyPair {
     /**
      * Key pair in libp2p format. Used for backward compatibility with the current FluencePeer implementation
      */
-    public Libp2pPeerId: PeerId;
+    public Libp2pPeerId: any;
 
-    constructor(libp2pPeerId: PeerId) {
+    constructor(libp2pPeerId: any) {
         this.Libp2pPeerId = libp2pPeerId;
     }
 

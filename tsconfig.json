@@ -1,9 +1,5 @@
 {
   "compilerOptions": {
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/libp2p-ts/types",
-    ],
     "outDir": "./dist/",
     "baseUrl": ".",
     "downlevelIteration": true,
@@ -13,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "pretty": true,
-    "target": "ES5",
+    "target": "ES6",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
@@ -23,6 +19,7 @@
     "noImplicitAny": false,
     "alwaysStrict": true,
     "noImplicitThis": true,
+    "skipLibCheck": true,
     "strictNullChecks": false
   },
   "exclude": [
