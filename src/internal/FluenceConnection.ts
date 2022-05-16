@@ -69,7 +69,6 @@ export class FluenceConnection {
             modules: {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
-                // @ts-ignore
                 connEncryption: [new Noise()],
             },
             config: {
@@ -131,10 +130,9 @@ export class FluenceConnection {
         const sink = conn.stream.sink;
 
         pipe(
+            // force new line
             [Buffer.from(particle.toString(), 'utf8')],
-            // @ts-ignore
             encode(),
-            // @ts-ignore
             sink,
         );
     }
