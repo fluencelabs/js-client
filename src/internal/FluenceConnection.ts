@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @ts-ignore
-import Websockets from 'libp2p-websockets';
-// @ts-ignore
-import Mplex from 'libp2p-mplex';
-import Lib2p2Peer from 'libp2p';
+
+import { WebSockets } from '@libp2p/websockets';
+import { Mplex } from '@libp2p/mplex';
+import { Libp2p as Lib2p2Peer, createLibp2p } from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import { pipe } from 'it-pipe';
-import * as log from 'loglevel';
 import { Noise } from '@chainsafe/libp2p-noise';
 import { Particle } from './Particle';
-import PeerId from 'peer-id';
-import { Multiaddr } from 'multiaddr';
-// @ts-ignore
-import { all as allow_all } from 'libp2p-websockets/src/filters';
-import { Connection } from 'libp2p-interfaces/src/topology';
+import { Multiaddr } from '@multiformats/multiaddr';
+import { PeerId } from '@libp2p/interfaces/peer-id/';
+import { Connection } from '@libp2p/interfaces/connection/';
 import Buffer from './Buffer';
+import * as log from 'loglevel';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -60,25 +57,13 @@ export interface FluenceConnectionOptions {
 export class FluenceConnection {
     constructor(private _lib2p2Peer: Lib2p2Peer, private _relayAddress: Multiaddr) {}
 
-    private _connection?: Connection;
-
     static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
-        const transportKey = Websockets.prototype[Symbol.toStringTag];
-        const lib2p2Peer = await Lib2p2Peer.create({
+        const lib2p2Peer = await createLibp2p({
             peerId: options.peerId,
-            modules: {
-                transport: [Websockets],
-                streamMuxer: [Mplex],
-                connEncryption: [new Noise()],
-            },
-            config: {
-                transport: {
-                    [transportKey]: {
-                        filter: allow_all,
-                    },
-                },
-            },
-            dialer: {
+            transports: [new WebSockets()],
+            streamMuxers: [new Mplex()],
+            connectionEncryption: [new Noise()],
+            connectionManager: {
                 dialTimeout: options?.dialTimeoutMs,
             },
         });
@@ -140,7 +125,7 @@ export class FluenceConnection {
     async connect() {
         await this._lib2p2Peer.start();
 
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
+        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId);
 
         try {
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
@@ -153,4 +138,6 @@ export class FluenceConnection {
             }
         }
     }
+
+    private _connection: Connection | undefined;
 }

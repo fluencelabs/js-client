@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Multiaddr } from 'multiaddr';
+import { Multiaddr } from '@multiformats/multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection } from './FluenceConnection';
@@ -200,7 +200,7 @@ export class FluencePeer {
         if (this._connection === undefined || this._relayPeerId === null) {
             return {
                 isInitialized: true,
-                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                peerId: this._keyPair.libp2pPeerId.toString(),
                 isConnected: false,
                 relayPeerId: null,
             };
@@ -208,7 +208,7 @@ export class FluencePeer {
 
         return {
             isInitialized: true,
-            peerId: this._keyPair.Libp2pPeerId.toB58String(),
+            peerId: this._keyPair.libp2pPeerId.toString(),
             isConnected: true,
             relayPeerId: this._relayPeerId,
         };
@@ -225,7 +225,7 @@ export class FluencePeer {
         const keyPair = config?.KeyPair ?? (await KeyPair.randomEd25519());
         this._keyPair = keyPair;
 
-        const peerId = keyPair.Libp2pPeerId.toB58String();
+        const peerId = keyPair.libp2pPeerId.toString();
 
         if (config?.debug?.printParticleId) {
             this._printParticleId = true;
@@ -262,7 +262,7 @@ export class FluencePeer {
             }
 
             this._connection = await FluenceConnection.createConnection({
-                peerId: this._keyPair.Libp2pPeerId,
+                peerId: this._keyPair.libp2pPeerId,
                 relayAddress: connectToMultiAddr,
                 dialTimeoutMs: config.dialTimeoutMs,
                 onIncomingParticle: (p) => this._incomingParticles.next({ particle: p, onStageChange: () => {} }),
