@@ -18,12 +18,11 @@ import Websockets from 'libp2p-websockets';
 // @ts-ignore
 import Mplex from 'libp2p-mplex';
 import Lib2p2Peer from 'libp2p';
-// @ts-ignore
 import { decode, encode } from 'it-length-prefixed';
-import pipe from 'it-pipe';
+import { pipe } from 'it-pipe';
 import * as log from 'loglevel';
+import { Noise } from '@chainsafe/libp2p-noise';
 import { Particle } from './Particle';
-import { NOISE } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
 import { Multiaddr } from 'multiaddr';
 // @ts-ignore
@@ -70,7 +69,7 @@ export class FluenceConnection {
             modules: {
                 transport: [Websockets],
                 streamMuxer: [Mplex],
-                connEncryption: [NOISE],
+                connEncryption: [new Noise()],
             },
             config: {
                 transport: {
@@ -85,20 +84,25 @@ export class FluenceConnection {
         });
 
         lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
-            pipe(stream.source, decode(), async (source: AsyncIterable<string>) => {
-                try {
-                    for await (const msg of source) {
-                        try {
-                            const particle = Particle.fromString(msg);
-                            options.onIncomingParticle(particle);
-                        } catch (e) {
-                            log.error('error on handling a new incoming message: ' + e);
+            pipe(
+                stream.source,
+                // @ts-ignore
+                decode(),
+                async (source: AsyncIterable<string>) => {
+                    try {
+                        for await (const msg of source) {
+                            try {
+                                const particle = Particle.fromString(msg);
+                                options.onIncomingParticle(particle);
+                            } catch (e) {
+                                log.error('error on handling a new incoming message: ' + e);
+                            }
                         }
+                    } catch (e) {
+                        log.debug('connection closed: ' + e);
                     }
-                } catch (e) {
-                    log.debug('connection closed: ' + e);
-                }
-            });
+                },
+            );
         });
 
         const relayAddress = options.relayAddress;
