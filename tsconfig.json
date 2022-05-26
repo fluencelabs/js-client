@@ -9,7 +9,7 @@
         "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
         "target": "ES5",
-        "module": "commonjs",
+        "module": "esnext",
         "moduleResolution": "node",
         "declaration": true,
         "esModuleInterop": true,
