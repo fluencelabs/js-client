@@ -2,10 +2,21 @@
     "name": "@fluencelabs/fluence",
     "version": "0.0.0",
     "description": "TypeScript implementation of Fluence Peer",
-    "exports": "./dist/index.js",
-    "typings": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "main": "dist/index.js",
+    "exports": {
+        ".": "./dist/esm/index.js",
+        "services": "./dist/esm/services.js",
+        "internal/compilerSupport/v2": "./dist/internal/compilerSupport/v2.ts",
+        "internal/compilerSupport/v3": "./dist/internal/compilerSupport/v3.ts"
+    },
+    "module": "./dist/esm/index.js",
+    "types": "./dist/cjs/index.d.ts",
     "engines": {
-        "node": ">=16.0"
+        "node": ">=16.0",
+        "pnpm": ">=3"
     },
     "scripts": {
         "compile-aqua": "npm run compile-aqua:src && npm run compile-aqua:test",
@@ -15,7 +26,7 @@
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
         "test:integration": "jest --testPathPattern=src/__test__/integration",
-        "build": "tsc",
+        "build": "rollup -c rollup.config.js",
         "build:docs": "typedoc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
