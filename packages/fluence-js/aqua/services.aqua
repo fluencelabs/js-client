@@ -1,0 +1,35 @@
+-- import SignResult, Sig from "@fluencelabs/aqua-lib/builtin.aqua"
+-- export SignResult, Sig
+
+-- TODO:: fix this issue: https://github.com/fluencelabs/aqua-lib/issues/12
+-- and remove copy-paste
+
+data SignResult:
+    -- Was call successful or not
+    success: bool
+    -- Error message. Will be null if the call is successful
+    error: ?string
+    -- Signature as byte array. Will be null if the call is not successful
+    signature: ?[]u8
+
+-- Available only on FluenceJS peers
+-- The service can also be resolved by it's host peer id
+service Sig("sig"):
+    -- Signs data with the service's private key. 
+    -- Depending on implementation the service might check call params to restrict usage for security reasons.
+    -- By default it is only allowed to be used on the same peer the particle was initiated
+    -- and accepts data only from the following sources:
+    --   trust-graph.get_trust_bytes
+    --   trust-graph.get_revocation_bytes
+    --   registry.get_route_bytes
+    --   registry.get_record_bytes
+    --   registry.get_host_record_bytes
+    -- Argument: data - byte array to sign
+    -- Returns: signature as SignResult structure
+    sign(data: []u8) -> SignResult
+
+    -- Given the data and signature both as byte arrays, returns true if the signature is correct, false otherwise.
+    verify(signature: []u8, data: []u8) -> bool
+
+    -- Gets service's public key.
+    get_pub_key() -> string

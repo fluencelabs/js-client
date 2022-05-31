@@ -13,19 +13,14 @@
         "internal/compilerSupport/v3": "./dist/internal/compilerSupport/v3.ts"
     },
     "module": "./dist/esm/index.js",
-    "types": "./dist/cjs/index.d.ts",
+    "types": "./dist/types/index.d.ts",
     "engines": {
         "node": ">=16.0",
         "pnpm": ">=3"
     },
     "scripts": {
-        "compile-aqua": "npm run compile-aqua:src && npm run compile-aqua:test",
-        "compile-aqua:src": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
-        "compile-aqua:test": "aqua -i ./aqua/tests/ -o ./src/__test__/_aqua",
-        "test": "jest --watch",
-        "test:all": "jest",
-        "test:unit": "jest --testPathPattern=src/__test__/unit",
-        "test:integration": "jest --testPathPattern=src/__test__/integration",
+        "compile-aqua": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
+        "test": "jest",
         "build": "rollup -c rollup.config.ts --configPlugin swc3",
         "build:docs": "typedoc"
     },

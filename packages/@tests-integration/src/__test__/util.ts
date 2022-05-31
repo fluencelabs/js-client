@@ -1,10 +1,8 @@
-import { FluencePeer } from '../index';
-import { Particle } from '../internal/Particle';
-import { MakeServiceCall } from '../internal/utils';
+import { FluencePeer } from '@fluencelabs/fluence';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
-    particle: Particle,
+    particle: any,
     handlers: Record<string, Record<string, any>>,
 ) => {
     Object.entries(handlers).forEach(([serviceId, service]) => {
@@ -13,3 +11,10 @@ export const registerHandlersHelper = (
         });
     });
 };
+
+export const MakeServiceCall =
+    (fn: (args: any[]) => any) =>
+    (req: any): any => ({
+        retCode: 0,
+        result: fn(req.args),
+    });

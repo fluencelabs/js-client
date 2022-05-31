@@ -1,8 +1,5 @@
 {
     "compilerOptions": {
-        "typeRoots": ["./node_modules/@types", "./node_modules/libp2p-ts/types"],
-        "outDir": "./dist/",
-        "baseUrl": ".",
         "downlevelIteration": true,
         "sourceMap": true,
         "inlineSources": true,
@@ -17,6 +14,6 @@
         "strict": true,
         "skipLibCheck": true
     },
-    "exclude": ["node_modules", "dist", "bundle"],
+    "exclude": ["node_modules", "dist"],
     "include": ["src/**/*"]
 }
