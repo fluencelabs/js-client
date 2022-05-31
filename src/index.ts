@@ -18,10 +18,11 @@ import log, { LogLevelDesc } from 'loglevel';
 
 import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
-export { PeerStatus } from './internal/FluencePeer';
+export type { PeerStatus } from './internal/FluencePeer';
 export { KeyPair } from './internal/KeyPair';
-export { FluencePeer, MarineLoglevel as AvmLoglevel, PeerConfig } from './internal/FluencePeer';
-export { PeerIdB58, CallParams } from './internal/commonTypes';
+export { FluencePeer } from './internal/FluencePeer';
+export type { MarineLoglevel as AvmLoglevel, PeerConfig } from './internal/FluencePeer';
+export type { PeerIdB58, CallParams } from './internal/commonTypes';
 export { loadWasmFromFileSystem, loadWasmFromNpmPackage, loadWasmFromServer } from '@fluencelabs/marine-js';
 
 export const setLogLevel = (level: LogLevelDesc) => {

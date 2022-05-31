@@ -22,8 +22,8 @@ import { pipe } from 'it-pipe';
 import { Noise } from '@chainsafe/libp2p-noise';
 import { Particle } from './Particle';
 import { Multiaddr } from '@multiformats/multiaddr';
-import { PeerId } from '@libp2p/interfaces/peer-id/';
-import { Connection } from '@libp2p/interfaces/connection/';
+import { PeerId } from '@libp2p/interfaces/peer-id';
+import { Connection } from '@libp2p/interfaces/connection';
 import Buffer from './Buffer';
 import * as log from 'loglevel';
 
@@ -60,7 +60,9 @@ export class FluenceConnection {
     static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
         const lib2p2Peer = await createLibp2p({
             peerId: options.peerId,
+            // @ts-ignore
             transports: [new WebSockets()],
+            // @ts-ignore
             streamMuxers: [new Mplex()],
             connectionEncryption: [new Noise()],
             connectionManager: {
@@ -128,6 +130,7 @@ export class FluenceConnection {
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId);
 
         try {
+            // @ts-ignore
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {

@@ -21,7 +21,7 @@ import { CallServiceData, GenericCallServiceHandler, CallServiceResult, ResultCo
 import { Particle } from '../Particle';
 
 export { FluencePeer } from '../FluencePeer';
-export { CallParams } from '../commonTypes';
+export type { CallParams } from '../commonTypes';
 
 /**
  * Represents the Aqua Option type
