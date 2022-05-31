@@ -26,7 +26,7 @@
         "test:all": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
         "test:integration": "jest --testPathPattern=src/__test__/integration",
-        "build": "rollup -c rollup.config.js",
+        "build": "rollup -c rollup.config.ts --configPlugin swc3",
         "build:docs": "typedoc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
@@ -78,13 +78,10 @@
         "multiformats": "^9.6.5",
         "rollup": "^2.74.1",
         "rollup-plugin-clear": "^2.0.7",
+        "rollup-plugin-dts": "^4.2.2",
         "rollup-plugin-preserve-shebang": "^1.0.1",
-        "rollup-plugin-swc": "^0.2.1",
         "rollup-plugin-swc3": "^0.3.0",
         "rollup-plugin-terser": "^7.0.2",
-        "rollup-plugin-ts": "^2.0.7",
-        "rollup-plugin-typescript": "^1.0.1",
-        "rollup-plugin-typescript2": "^0.31.2",
         "ts-jest": "^28.0.2",
         "typedoc": "^0.22.15",
         "typescript": "^4.0.0"
