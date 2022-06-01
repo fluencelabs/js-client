@@ -10,9 +10,12 @@ lerna-debug.log*
 build/Release
 bundle/
 
+dist
+esm
+types
+
 # Dependency directories
 node_modules/
 jspm_packages/
-/dist/
 
 .idea

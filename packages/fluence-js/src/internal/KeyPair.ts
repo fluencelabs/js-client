@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PeerId } from '@libp2p/interfaces/peer-id';
+import type { PeerId } from '@libp2p/interfaces/peer-id';
 import { peerIdFromBytes } from '@libp2p/peer-id';
 import { keys } from 'libp2p-crypto';
 

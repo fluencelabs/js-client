@@ -1,4 +1,9 @@
-import { FluencePeer } from '@fluencelabs/fluence';
+import { FluencePeer } from './FluencePeer';
+import { MakeServiceCall } from './utils';
+
+export type { CallServiceData } from './commonTypes';
+export { Sig, defaultSigGuard, allowServiceFn } from './builtins/Sig';
+export { handleTimeout, MakeServiceCall, checkConnection, doNothing } from './utils';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
@@ -11,10 +16,3 @@ export const registerHandlersHelper = (
         });
     });
 };
-
-export const MakeServiceCall =
-    (fn: (args: any[]) => any) =>
-    (req: any): any => ({
-        retCode: 0,
-        result: fn(req.args),
-    });

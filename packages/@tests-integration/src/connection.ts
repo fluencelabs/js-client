@@ -18,4 +18,4 @@ import { krasnodar } from '@fluencelabs/fluence-network-environment';
 docker run --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
 
  */
-export const nodes = krasnodar[4];
+export const nodes = krasnodar;

@@ -1,7 +1,7 @@
 import { jsonify } from '../../utils';
 import { match } from 'ts-pattern';
 import { ArrowType, ArrowWithoutCallbacks, NonArrowType, UnlabeledProductType } from './interface';
-import { CallServiceData } from 'src/internal/commonTypes';
+import type { CallServiceData } from '../../commonTypes';
 
 /**
  * Convert value from its representation in aqua language to representation in typescript
@@ -79,7 +79,7 @@ export const aquaArgs2Ts = (req: CallServiceData, arrow: ArrowWithoutCallbacks) 
         throw new Error(`incorrect number of arguments, expected: ${argTypes.length}, got: ${req.args.length}`);
     }
 
-    return req.args.map((arg, index) => {
+    return req.args.map((arg: any, index: any) => {
         return aqua2ts(arg, argTypes[index]);
     });
 };
@@ -178,7 +178,7 @@ export const responseServiceValue2ts = (req: CallServiceData, arrow: ArrowType<a
                 return aqua2ts(req.args[0], x.items[0]);
             }
 
-            return req.args.map((y, index) => aqua2ts(y, x.items[index]));
+            return req.args.map((y: any, index: any) => aqua2ts(y, x.items[index]));
         })
         .exhaustive();
 };

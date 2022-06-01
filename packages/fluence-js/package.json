@@ -3,17 +3,19 @@
     "version": "0.0.0",
     "description": "TypeScript implementation of Fluence Peer",
     "files": [
-        "dist"
+        "dist",
+        "esm",
+        "types"
     ],
     "main": "dist/index.js",
     "exports": {
-        ".": "./dist/esm/index.js",
-        "services": "./dist/esm/services.js",
-        "internal/compilerSupport/v2": "./dist/internal/compilerSupport/v2.ts",
-        "internal/compilerSupport/v3": "./dist/internal/compilerSupport/v3.ts"
+        ".": "./esm/index.js",
+        "services": "./esm/services.js",
+        "internal/compilerSupport/v2": "./esm/internal/compilerSupport/v2.ts",
+        "internal/compilerSupport/v3": "./esm/internal/compilerSupport/v3.ts"
     },
-    "module": "./dist/esm/index.js",
-    "types": "./dist/types/index.d.ts",
+    "module": "./esm/index.js",
+    "types": "./dist/index.d.ts",
     "engines": {
         "node": ">=16.0",
         "pnpm": ">=3"
@@ -74,6 +76,7 @@
         "rollup": "^2.74.1",
         "rollup-plugin-clear": "^2.0.7",
         "rollup-plugin-dts": "^4.2.2",
+        "rollup-plugin-flat-dts": "^1.6.0",
         "rollup-plugin-preserve-shebang": "^1.0.1",
         "rollup-plugin-swc3": "^0.3.0",
         "rollup-plugin-terser": "^7.0.2",

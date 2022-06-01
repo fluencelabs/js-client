@@ -4,6 +4,7 @@ import clear from 'rollup-plugin-clear';
 import shebang from 'rollup-plugin-preserve-shebang';
 import { swc, minify } from 'rollup-plugin-swc3';
 import dts from 'rollup-plugin-dts';
+// import flatDts from 'rollup-plugin-flat-dts';
 
 const commonPlugins = [
     swc({
@@ -11,13 +12,14 @@ const commonPlugins = [
     }),
     minify(),
     clear({
-        targets: ['dist'],
+        targets: ['dist', 'types', 'esm'],
     }),
 ];
 
 const commonInput = {
     index: 'src/index.ts',
     services: 'src/services.ts',
+    forTests: 'src/internal/forTests.ts',
     'internal/compilerSupport/v2': 'src/internal/compilerSupport/v2.ts',
     'internal/compilerSupport/v3': 'src/internal/compilerSupport/v3.ts',
 };
@@ -27,7 +29,7 @@ export default [
         input: commonInput,
         output: [
             {
-                dir: 'dist/types',
+                dir: 'dist',
             },
         ],
         plugins: [dts()],
@@ -37,14 +39,14 @@ export default [
         output: [
             {
                 sourcemap: true,
-                dir: 'dist/cjs',
+                dir: 'dist',
                 format: 'cjs',
             },
-            {
-                sourcemap: true,
-                dir: 'dist/esm',
-                format: 'esm',
-            },
+            // {
+            //     sourcemap: true,
+            //     dir: 'esm',
+            //     format: 'esm',
+            // },
         ],
         plugins: [nodeResolve(), commonjs(), ...commonPlugins],
     },

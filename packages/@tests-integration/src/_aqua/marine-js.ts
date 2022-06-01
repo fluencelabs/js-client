@@ -7,101 +7,85 @@
  *
  */
 import { Fluence, FluencePeer } from '@fluencelabs/fluence';
-import {
-    CallParams,
-    callFunction,
-    registerService,
-} from '@fluencelabs/fluence/dist/internal/compilerSupport/v3';
-
+import { CallParams, callFunction, registerService } from '@fluencelabs/fluence/dist/internal/compilerSupport/v3';
 
 // Services
 
 export interface GreetingDef {
     greeting: (name: string, callParams: CallParams<'name'>) => string | Promise<string>;
-    greeting_record: (callParams: CallParams<null>) => { num: number; str: string; } | Promise<{ num: number; str: string; }>;
+    greeting_record: (
+        callParams: CallParams<null>,
+    ) => { num: number; str: string } | Promise<{ num: number; str: string }>;
 }
 export function registerGreeting(service: GreetingDef): void;
 export function registerGreeting(serviceId: string, service: GreetingDef): void;
 export function registerGreeting(peer: FluencePeer, service: GreetingDef): void;
 export function registerGreeting(peer: FluencePeer, serviceId: string, service: GreetingDef): void;
-       
 
 export function registerGreeting(...args: any) {
-    registerService(
-        args,
-        {
-    "defaultServiceId" : "greeting",
-    "functions" : {
-        "tag" : "labeledProduct",
-        "fields" : {
-            "greeting" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "labeledProduct",
-                    "fields" : {
-                        "name" : {
-                            "tag" : "scalar",
-                            "name" : "string"
-                        }
-                    }
+    registerService(args, {
+        defaultServiceId: 'greeting',
+        functions: {
+            tag: 'labeledProduct',
+            fields: {
+                greeting: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'labeledProduct',
+                        fields: {
+                            name: {
+                                tag: 'scalar',
+                                name: 'string',
+                            },
+                        },
+                    },
+                    codomain: {
+                        tag: 'unlabeledProduct',
+                        items: [
+                            {
+                                tag: 'scalar',
+                                name: 'string',
+                            },
+                        ],
+                    },
                 },
-                "codomain" : {
-                    "tag" : "unlabeledProduct",
-                    "items" : [
-                        {
-                            "tag" : "scalar",
-                            "name" : "string"
-                        }
-                    ]
-                }
-            },
-            "greeting_record" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
-                },
-                "codomain" : {
-                    "tag" : "unlabeledProduct",
-                    "items" : [
-                        {
-                            "tag" : "struct",
-                            "name" : "GreetingRecord",
-                            "fields" : {
-                                "num" : {
-                                    "tag" : "scalar",
-                                    "name" : "i32"
+                greeting_record: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'unlabeledProduct',
+                        items: [
+                            {
+                                tag: 'struct',
+                                name: 'GreetingRecord',
+                                fields: {
+                                    num: {
+                                        tag: 'scalar',
+                                        name: 'i32',
+                                    },
+                                    str: {
+                                        tag: 'scalar',
+                                        name: 'string',
+                                    },
                                 },
-                                "str" : {
-                                    "tag" : "scalar",
-                                    "name" : "string"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    }
+                            },
+                        ],
+                    },
+                },
+            },
+        },
+    });
 }
-    );
-}
-      
+
 // Functions
- 
 
-export function call(
-    arg: string,
-    config?: {ttl?: number}
-): Promise<string>;
+export function call(arg: string, config?: { ttl?: number }): Promise<string>;
 
-export function call(
-    peer: FluencePeer,
-    arg: string,
-    config?: {ttl?: number}
-): Promise<string>;
+export function call(peer: FluencePeer, arg: string, config?: { ttl?: number }): Promise<string>;
 
 export function call(...args: any) {
-
     let script = `
                     (xor
                      (seq
@@ -125,42 +109,42 @@ export function call(...args: any) {
                      )
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
-    `
+    `;
     return callFunction(
         args,
         {
-    "functionName" : "call",
-    "arrow" : {
-        "tag" : "arrow",
-        "domain" : {
-            "tag" : "labeledProduct",
-            "fields" : {
-                "arg" : {
-                    "tag" : "scalar",
-                    "name" : "string"
-                }
-            }
+            functionName: 'call',
+            arrow: {
+                tag: 'arrow',
+                domain: {
+                    tag: 'labeledProduct',
+                    fields: {
+                        arg: {
+                            tag: 'scalar',
+                            name: 'string',
+                        },
+                    },
+                },
+                codomain: {
+                    tag: 'unlabeledProduct',
+                    items: [
+                        {
+                            tag: 'scalar',
+                            name: 'string',
+                        },
+                    ],
+                },
+            },
+            names: {
+                relay: '-relay-',
+                getDataSrv: 'getDataSrv',
+                callbackSrv: 'callbackSrv',
+                responseSrv: 'callbackSrv',
+                responseFnName: 'response',
+                errorHandlingSrv: 'errorHandlingSrv',
+                errorFnName: 'error',
+            },
         },
-        "codomain" : {
-            "tag" : "unlabeledProduct",
-            "items" : [
-                {
-                    "tag" : "scalar",
-                    "name" : "string"
-                }
-            ]
-        }
-    },
-    "names" : {
-        "relay" : "-relay-",
-        "getDataSrv" : "getDataSrv",
-        "callbackSrv" : "callbackSrv",
-        "responseSrv" : "callbackSrv",
-        "responseFnName" : "response",
-        "errorHandlingSrv" : "errorHandlingSrv",
-        "errorFnName" : "error"
-    }
-},
-        script
-    )
+        script,
+    );
 }

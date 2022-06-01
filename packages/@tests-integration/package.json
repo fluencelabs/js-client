@@ -6,13 +6,16 @@
         "compile-aqua": "aqua -i ./aqua  -o ./src/_aqua",
         "test": "jest",
         "prebuild": "compile-aqua",
-        "build": "tsc tsc"
+        "build": "tsc"
     },
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/fluence": "workspace:*",
-        "@fluencelabs/fluence-network-environment": "^1.0.13"
+        "@fluencelabs/fluence-network-environment": "^1.0.13",
+        "@multiformats/multiaddr": "^10.1.8",
+        "bs58": "5.0.0",
+        "js-base64": "^3.7.2"
     },
     "devDependencies": {
         "@fluencelabs/aqua": "^0.7.2-307",

@@ -7,17 +7,14 @@
  *
  */
 import { Fluence, FluencePeer } from '@fluencelabs/fluence';
-import {
-    CallParams,
-    callFunction,
-    registerService,
-} from '@fluencelabs/fluence/dist/internal/compilerSupport/v3';
-
+import { CallParams, callFunction, registerService } from '@fluencelabs/fluence/dist/internal/compilerSupport/v3';
 
 // Services
 
 export interface GreetingRecordDef {
-    greeting_record: (callParams: CallParams<null>) => { num: number; str: string; } | Promise<{ num: number; str: string; }>;
+    greeting_record: (
+        callParams: CallParams<null>,
+    ) => { num: number; str: string } | Promise<{ num: number; str: string }>;
     log_debug: (callParams: CallParams<null>) => void | Promise<void>;
     log_error: (callParams: CallParams<null>) => void | Promise<void>;
     log_info: (callParams: CallParams<null>) => void | Promise<void>;
@@ -27,116 +24,103 @@ export interface GreetingRecordDef {
 }
 export function registerGreetingRecord(serviceId: string, service: GreetingRecordDef): void;
 export function registerGreetingRecord(peer: FluencePeer, serviceId: string, service: GreetingRecordDef): void;
-       
 
 export function registerGreetingRecord(...args: any) {
-    registerService(
-        args,
-        {
-    "functions" : {
-        "tag" : "labeledProduct",
-        "fields" : {
-            "greeting_record" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
-                },
-                "codomain" : {
-                    "tag" : "unlabeledProduct",
-                    "items" : [
-                        {
-                            "tag" : "struct",
-                            "name" : "GreetingRecord",
-                            "fields" : {
-                                "num" : {
-                                    "tag" : "scalar",
-                                    "name" : "i32"
+    registerService(args, {
+        functions: {
+            tag: 'labeledProduct',
+            fields: {
+                greeting_record: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'unlabeledProduct',
+                        items: [
+                            {
+                                tag: 'struct',
+                                name: 'GreetingRecord',
+                                fields: {
+                                    num: {
+                                        tag: 'scalar',
+                                        name: 'i32',
+                                    },
+                                    str: {
+                                        tag: 'scalar',
+                                        name: 'string',
+                                    },
                                 },
-                                "str" : {
-                                    "tag" : "scalar",
-                                    "name" : "string"
-                                }
-                            }
-                        }
-                    ]
-                }
-            },
-            "log_debug" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
+                            },
+                        ],
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            },
-            "log_error" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
+                log_debug: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            },
-            "log_info" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
+                log_error: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            },
-            "log_trace" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
+                log_info: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            },
-            "log_warn" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
+                log_trace: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            },
-            "void_fn" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "nil"
+                log_warn: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            }
-        }
-    }
+                void_fn: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'nil',
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
+                },
+            },
+        },
+    });
 }
-    );
-}
-      
+
 // Functions
- 
 
-export function call_info(
-    srvId: string,
-    config?: {ttl?: number}
-): Promise<void>;
+export function call_info(srvId: string, config?: { ttl?: number }): Promise<void>;
 
-export function call_info(
-    peer: FluencePeer,
-    srvId: string,
-    config?: {ttl?: number}
-): Promise<void>;
+export function call_info(peer: FluencePeer, srvId: string, config?: { ttl?: number }): Promise<void>;
 
 export function call_info(...args: any) {
-
     let script = `
                     (xor
                      (seq
@@ -148,36 +132,36 @@ export function call_info(...args: any) {
                      )
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
                     )
-    `
+    `;
     return callFunction(
         args,
         {
-    "functionName" : "call_info",
-    "arrow" : {
-        "tag" : "arrow",
-        "domain" : {
-            "tag" : "labeledProduct",
-            "fields" : {
-                "srvId" : {
-                    "tag" : "scalar",
-                    "name" : "string"
-                }
-            }
+            functionName: 'call_info',
+            arrow: {
+                tag: 'arrow',
+                domain: {
+                    tag: 'labeledProduct',
+                    fields: {
+                        srvId: {
+                            tag: 'scalar',
+                            name: 'string',
+                        },
+                    },
+                },
+                codomain: {
+                    tag: 'nil',
+                },
+            },
+            names: {
+                relay: '-relay-',
+                getDataSrv: 'getDataSrv',
+                callbackSrv: 'callbackSrv',
+                responseSrv: 'callbackSrv',
+                responseFnName: 'response',
+                errorHandlingSrv: 'errorHandlingSrv',
+                errorFnName: 'error',
+            },
         },
-        "codomain" : {
-            "tag" : "nil"
-        }
-    },
-    "names" : {
-        "relay" : "-relay-",
-        "getDataSrv" : "getDataSrv",
-        "callbackSrv" : "callbackSrv",
-        "responseSrv" : "callbackSrv",
-        "responseFnName" : "response",
-        "errorHandlingSrv" : "errorHandlingSrv",
-        "errorFnName" : "error"
-    }
-},
-        script
-    )
+        script,
+    );
 }
