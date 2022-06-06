@@ -10,7 +10,7 @@ const commonPlugins = [
     swc({
         sourceMaps: true,
     }),
-    minify(),
+    // minify(),
     clear({
         targets: ['dist', 'types', 'esm'],
     }),
@@ -48,7 +48,13 @@ export default [
             //     format: 'esm',
             // },
         ],
-        plugins: [nodeResolve(), commonjs(), ...commonPlugins],
+        plugins: [
+            nodeResolve(),
+            commonjs({
+                ignoreDynamicRequires: true,
+            }),
+            ...commonPlugins,
+        ],
     },
     {
         input: 'src/tools/copyMarine.ts',
