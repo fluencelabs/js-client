@@ -18,7 +18,7 @@ describe('KeyPair tests', () => {
     it('create keypair from ed25519 private key', async function () {
         // arrange
         const rustSK = 'jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH';
-        const sk = bs58.decode(rustSK);
+        const sk = bs58.decode(rustSK).slice(0, 32);
 
         // act
         const keyPair = await KeyPair.fromEd25519SK(sk);

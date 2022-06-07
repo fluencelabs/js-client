@@ -15,26 +15,29 @@
  */
 
 import type { PeerId } from '@libp2p/interfaces/peer-id';
-import { peerIdFromBytes } from '@libp2p/peer-id';
-import { keys } from 'libp2p-crypto';
+import { peerIdFromKeys } from '@libp2p/peer-id';
+import { keys } from '@libp2p/crypto';
+import type { PrivateKey } from '@libp2p/interfaces/keys';
 
-type SK = keys.supportedKeys.ed25519.Ed25519PrivateKey;
 export class KeyPair {
-    constructor(public libp2pPeerId: PeerId, private secretKey: SK) {}
+    constructor(public libp2pPeerId: PeerId, private secretKey: PrivateKey) {}
 
-    private static async fromSk(sk: SK) {
-        const lib2p2Pid = await peerIdFromBytes(sk.bytes);
+    private static async fromSk(sk: PrivateKey) {
+        const lib2p2Pid = await peerIdFromKeys(sk.public.bytes, sk.bytes);
         return new KeyPair(lib2p2Pid, sk);
     }
 
     /**
      * Generates new KeyPair from ed25519 private key represented as a 32 byte array
-     * @param key - Any sequence of 32 bytes
+     * @param seed - Any sequence of 32 bytes
      * @returns - Promise with the created KeyPair
      */
-    static async fromEd25519SK(arr: Uint8Array): Promise<KeyPair> {
+    static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
+        if (seed.length !== 32) {
+            throw new Error('seed must have length of exactly 32 bytes, got ' + seed.length);
+        }
         // generateKeyPairFromSeed takes seed and copies it to private key as is
-        const sk = await keys.generateKeyPairFromSeed('Ed25519', arr, 256);
+        const sk = await keys.generateKeyPairFromSeed('Ed25519', seed, 32 * 8);
         return await this.fromSk(sk);
     }
 
@@ -55,7 +58,7 @@ export class KeyPair {
      * @returns 32 byte private key
      */
     toEd25519PrivateKey(): Uint8Array {
-        return this.secretKey.bytes;
+        return this.secretKey.marshal().slice(0, 32);
     }
 
     signBytes(data: Uint8Array): Promise<Uint8Array> {
