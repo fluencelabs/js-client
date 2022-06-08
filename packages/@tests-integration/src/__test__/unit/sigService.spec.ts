@@ -1,5 +1,5 @@
 import { KeyPair, CallParams } from '@fluencelabs/fluence';
-import { Sig, defaultSigGuard, allowServiceFn } from '@fluencelabs/fluence/dist/forTests';
+import { Sig, defaultSigGuard, allowServiceFn } from '@fluencelabs/fluence/dist/internal/forTests';
 import { toUint8Array } from 'js-base64';
 
 const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';

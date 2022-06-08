@@ -1,5 +1,5 @@
 import { FluencePeer } from '@fluencelabs/fluence';
-import { registerHandlersHelper, handleTimeout } from '@fluencelabs/fluence/dist/forTests';
+import { registerHandlersHelper, handleTimeout } from '@fluencelabs/fluence/dist/internal/forTests';
 
 let peer: FluencePeer;
 

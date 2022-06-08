@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Multiaddr } from '@multiformats/multiaddr';
+import { FluenceConnection } from '@fluencelabs/fluence-connection';
+import { KeyPair } from '@fluencelabs/fluence-keypair';
+import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
-import { FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { KeyPair } from './KeyPair';
 import { throwIfNotSupported, dataToString, jsonify } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
@@ -60,7 +60,7 @@ export interface PeerConfig {
      * - Node: node structure, @see Node
      * If not specified the will work locally and would not be able to send or receive particles.
      */
-    connectTo?: string | Multiaddr | Node;
+    connectTo?: string | MultiaddrInput | Node;
 
     /**
      * @deprecated. AVM run through marine-js infrastructure.
@@ -247,15 +247,13 @@ export class FluencePeer {
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
-            let connectToMultiAddr: Multiaddr;
+            let connectToMultiAddr: MultiaddrInput;
             const fromNode = (config.connectTo as any).multiaddr;
             if (fromNode) {
-                connectToMultiAddr = new Multiaddr(fromNode);
+                connectToMultiAddr = fromNode;
             } else {
-                connectToMultiAddr = new Multiaddr(config.connectTo as string);
+                connectToMultiAddr = config.connectTo as string;
             }
-
-            this._relayPeerId = connectToMultiAddr.getPeerId();
 
             if (this._connection) {
                 await this._connection.disconnect();
@@ -265,8 +263,13 @@ export class FluencePeer {
                 peerId: this._keyPair.libp2pPeerId,
                 relayAddress: connectToMultiAddr,
                 dialTimeoutMs: config.dialTimeoutMs,
-                onIncomingParticle: (p) => this._incomingParticles.next({ particle: p, onStageChange: () => {} }),
+                onIncomingParticle: (p) => {
+                    const particle = Particle.fromString(p);
+                    this._incomingParticles.next({ particle, onStageChange: () => {} });
+                },
             });
+
+            this._relayPeerId = this._connection!.getPeerId();
 
             await this._connect();
         }
@@ -507,7 +510,7 @@ export class FluencePeer {
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            this._connection.sendParticle(item.particle).then(
+            this._connection.sendParticle(item.particle.toString()).then(
                 () => {
                     item.onStageChange({ stage: 'sent' });
                 },

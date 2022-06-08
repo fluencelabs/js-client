@@ -19,7 +19,7 @@ import log, { LogLevelDesc } from 'loglevel';
 import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
 export type { PeerStatus } from './internal/FluencePeer';
-export { KeyPair } from './internal/KeyPair';
+export { KeyPair } from '@fluencelabs/fluence-keypair';
 export { FluencePeer } from './internal/FluencePeer';
 export type { MarineLoglevel as AvmLoglevel, PeerConfig } from './internal/FluencePeer';
 export type { PeerIdB58, CallParams } from './internal/commonTypes';

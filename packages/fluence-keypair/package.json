@@ -1,0 +1,41 @@
+{
+    "name": "@fluencelabs/fluence-keypair",
+    "version": "0.0.0",
+    "description": "Fluence keypair",
+    "files": [
+        "dist",
+        "types"
+    ],
+    "main": "dist/index.js",
+    "types": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=16.0",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "rollup -c rollup.config.ts --configPlugin swc3"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@libp2p/crypto": "^0.22.14",
+        "@libp2p/peer-id": "^1.1.10",
+        "loglevel": "1.8.0",
+        "regenerator-runtime": "^0.13.9"
+    },
+    "devDependencies": {
+        "@libp2p/interfaces": "^2.0.3",
+        "@rollup/plugin-commonjs": "^22.0.0",
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "@swc/core": "^1.2.194",
+        "rollup": "^2.74.1",
+        "rollup-plugin-clear": "^2.0.7",
+        "rollup-plugin-dts": "^4.2.2",
+        "rollup-plugin-flat-dts": "^1.6.0",
+        "rollup-plugin-preserve-shebang": "^1.0.1",
+        "rollup-plugin-swc3": "^0.3.0",
+        "rollup-plugin-terser": "^7.0.2",
+        "typescript": "^4.0.0"
+    }
+}

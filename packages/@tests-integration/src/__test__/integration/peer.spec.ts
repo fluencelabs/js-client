@@ -2,7 +2,12 @@ import { Multiaddr } from '@multiformats/multiaddr';
 
 import { nodes } from '../../connection';
 import { FluencePeer } from '@fluencelabs/fluence';
-import { checkConnection, doNothing, handleTimeout, registerHandlersHelper } from '@fluencelabs/fluence/dist/forTests';
+import {
+    checkConnection,
+    doNothing,
+    handleTimeout,
+    registerHandlersHelper,
+} from '@fluencelabs/fluence/dist/internal/forTests';
 
 let peer: FluencePeer;
 

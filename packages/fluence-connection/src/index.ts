@@ -20,11 +20,10 @@ import { Libp2p as Lib2p2Peer, createLibp2p } from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import { pipe } from 'it-pipe';
 import { Noise } from '@chainsafe/libp2p-noise';
-import { Particle } from './Particle';
+import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { Multiaddr } from '@multiformats/multiaddr';
 import { PeerId } from '@libp2p/interfaces/peer-id';
 import { Connection } from '@libp2p/interfaces/connection';
-import Buffer from './Buffer';
 import * as log from 'loglevel';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
@@ -41,7 +40,7 @@ export interface FluenceConnectionOptions {
     /**
      * Multiaddress of the relay to make connection to
      */
-    relayAddress: Multiaddr;
+    relayAddress: MultiaddrInput;
 
     /**
      * The dialing timeout in milliseconds
@@ -51,7 +50,7 @@ export interface FluenceConnectionOptions {
     /**
      * Handler for incoming particles from the connection
      */
-    onIncomingParticle: (p: Particle) => void;
+    onIncomingParticle: (particle: string) => void;
 }
 
 export class FluenceConnection {
@@ -72,14 +71,14 @@ export class FluenceConnection {
 
         lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(
-                stream.source,
+                // force new line
                 // @ts-ignore
+                stream.source,
                 decode(),
                 async (source: AsyncIterable<string>) => {
                     try {
-                        for await (const msg of source) {
+                        for await (const particle of source) {
                             try {
-                                const particle = Particle.fromString(msg);
                                 options.onIncomingParticle(particle);
                             } catch (e) {
                                 log.error('error on handling a new incoming message: ' + e);
@@ -94,16 +93,18 @@ export class FluenceConnection {
 
         const relayAddress = options.relayAddress;
 
-        return new FluenceConnection(lib2p2Peer, relayAddress);
+        return new FluenceConnection(lib2p2Peer, new Multiaddr(relayAddress));
+    }
+
+    getPeerId(): string {
+        return this._relayAddress.getPeerId()!;
     }
 
     async disconnect() {
         await this._lib2p2Peer.stop();
     }
 
-    async sendParticle(particle: Particle): Promise<void> {
-        particle.logTo('debug', 'sending particle:');
-
+    async sendParticle(particle: string): Promise<void> {
         /*
         TODO:: find out why this doesn't work and a new connection has to be established each time
         if (this._connection.streams.length !== 1) {
@@ -113,12 +114,13 @@ export class FluenceConnection {
         const sink = this._connection.streams[0].sink;
         */
 
-        const conn = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
+        const conn = await this._lib2p2Peer.dialProtocol(new Multiaddr(this._relayAddress), PROTOCOL_NAME);
+        // @ts-ignore
         const sink = conn.stream.sink;
 
         pipe(
             // force new line
-            [Buffer.from(particle.toString(), 'utf8')],
+            [Buffer.from(particle, 'utf8')],
             encode(),
             sink,
         );
@@ -130,7 +132,6 @@ export class FluenceConnection {
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId);
 
         try {
-            // @ts-ignore
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {
