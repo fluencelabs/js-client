@@ -2,45 +2,6 @@ lockfileVersion: 5.4
 
 importers:
 
-  packages/@tests-integration:
-    specifiers:
-      '@fluencelabs/aqua': ^0.7.2-307
-      '@fluencelabs/aqua-lib': ^0.5.1
-      '@fluencelabs/fluence': workspace:*
-      '@fluencelabs/fluence-network-environment': ^1.0.13
-      '@multiformats/multiaddr': ^10.1.8
-      '@types/jest': ^27.5.1
-      '@types/node': ^17.0.36
-      '@types/platform': ^1.3.4
-      '@types/uuid': ^8.3.4
-      add: ^2.0.6
-      bs58: 5.0.0
-      jest: ^28.1.0
-      jest-each: ^28.1.0
-      js-base64: ^3.7.2
-      ts-jest: ^28.0.2
-      ts-node: ^10.8.1
-      typescript: ^4.0.0
-    dependencies:
-      '@fluencelabs/fluence': link:../fluence-js
-      '@fluencelabs/fluence-network-environment': 1.0.13
-      '@multiformats/multiaddr': 10.1.8
-      bs58: 5.0.0
-      js-base64: 3.7.2
-    devDependencies:
-      '@fluencelabs/aqua': 0.7.2-314_7sa2e64agunq5kj4zcolhrnkbm
-      '@fluencelabs/aqua-lib': 0.5.1
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.36
-      '@types/platform': 1.3.4
-      '@types/uuid': 8.3.4
-      add: 2.0.6
-      jest: 28.1.0_5safgrhnvw3xobf557mvjg2uay
-      jest-each: 28.1.0
-      ts-jest: 28.0.3_7sa2e64agunq5kj4zcolhrnkbm
-      ts-node: 10.8.1_w6gfxie3xfwntbz3mwbbvycbdq
-      typescript: 4.7.2
-
   packages/fluence-connection:
     specifiers:
       '@chainsafe/libp2p-noise': ^6.1.1
@@ -55,7 +16,7 @@ importers:
       browser-or-node: ^2.0.0
       it-length-prefixed: 5.0.3
       it-pipe: 1.1.0
-      libp2p: fluencelabs/js-libp2p#no-nat-manager
+      libp2p: fluencelabs/js-libp2p#ae99a9dcdf73461ca00642f9592e416b9c5fbd1f
       loglevel: 1.8.0
       rollup: ^2.74.1
       rollup-plugin-clear: ^2.0.7
@@ -74,7 +35,7 @@ importers:
       browser-or-node: 2.0.0
       it-length-prefixed: 5.0.3
       it-pipe: 1.1.0
-      libp2p: github.com/fluencelabs/js-libp2p/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495_ghdhn57z7cu2fxsztxwq2v4ikm
+      libp2p: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_ghdhn57z7cu2fxsztxwq2v4ikm
       loglevel: 1.8.0
     devDependencies:
       '@libp2p/interfaces': 2.0.2
@@ -161,7 +122,7 @@ importers:
       cids: 1.1.9
       it-length-prefixed: 5.0.3
       it-pipe: 1.1.0
-      libp2p: github.com/fluencelabs/js-libp2p/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495_uluuwrprffmsiwy2zanpihzgue
+      libp2p: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_uluuwrprffmsiwy2zanpihzgue
       loglevel: 1.8.0
       platform: 1.3.6
       regenerator-runtime: 0.13.9
@@ -587,6 +548,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+    dev: false
 
   /@fluencelabs/aqua-ipfs/0.5.2:
     resolution: {integrity: sha512-vSZYH6mjCGly7Cifts1c84icAzeq6pQf3aspEW3ttA0AFVQTjDWlr86Imseg+p3I9oaNUykv/W+VqWX1ouj9Vg==}
@@ -629,6 +591,7 @@ packages:
 
   /@fluencelabs/fluence-network-environment/1.0.13:
     resolution: {integrity: sha512-2pci3T0sUHE08jwEs1r/vHKVT4XUh/A3j/QJ0eIhddsxyIjEksjdn05X7DF6STD14CF8GgBVOJEPgav8qaUMpA==}
+    dev: true
 
   /@fluencelabs/fluence/0.23.0_7sa2e64agunq5kj4zcolhrnkbm:
     resolution: {integrity: sha512-HbSmOzXnRaLKUfS75FreXJ6E1P4HA+Qi0yUFD1VfEyvN5p40ujzHGu5wv+6hHOQnBJPkWse9Lv4U9NQVdwUzvQ==}
@@ -734,49 +697,6 @@ packages:
       graceful-fs: 4.2.10
       jest-changed-files: 28.0.2
       jest-config: 28.1.0_@types+node@17.0.36
-      jest-haste-map: 28.1.0
-      jest-message-util: 28.1.0
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.0
-      jest-resolve-dependencies: 28.1.0
-      jest-runner: 28.1.0
-      jest-runtime: 28.1.0
-      jest-snapshot: 28.1.0
-      jest-util: 28.1.0
-      jest-validate: 28.1.0
-      jest-watcher: 28.1.0
-      micromatch: 4.0.5
-      pretty-format: 28.1.0
-      rimraf: 3.0.2
-      slash: 3.0.0
-      strip-ansi: 6.0.1
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-    dev: true
-
-  /@jest/core/28.1.0_ts-node@10.8.1:
-    resolution: {integrity: sha512-/2PTt0ywhjZ4NwNO4bUqD9IVJfmFVhVKGlhvSpmEfUCuxYf/3NHcKmRFI+I71lYzbTT3wMuYpETDCTHo81gC/g==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/console': 28.1.0
-      '@jest/reporters': 28.1.0
-      '@jest/test-result': 28.1.0
-      '@jest/transform': 28.1.0
-      '@jest/types': 28.1.0
-      '@types/node': 17.0.36
-      ansi-escapes: 4.3.2
-      chalk: 4.1.2
-      ci-info: 3.3.1
-      exit: 0.1.2
-      graceful-fs: 4.2.10
-      jest-changed-files: 28.0.2
-      jest-config: 28.1.0_5safgrhnvw3xobf557mvjg2uay
       jest-haste-map: 28.1.0
       jest-message-util: 28.1.0
       jest-regex-util: 28.0.2
@@ -997,6 +917,7 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.0.7
       '@jridgewell/sourcemap-codec': 1.4.13
+    dev: false
 
   /@libp2p/connection/2.0.3:
     resolution: {integrity: sha512-anzB0bZ0SA8+WiIkypZeTeh6V5gEtaE7RutGWOP3O1jroFXvQgkXyYxXm58ZnSIHhV6sKc6HWRPvb37fCtyT2Q==}
@@ -1762,15 +1683,19 @@ packages:
 
   /@tsconfig/node10/1.0.8:
     resolution: {integrity: sha512-6XFfSQmMgq0CFLY1MslA/CPUfhIL919M1rMsa5lP2P097N2Wd1sSX0tx1u4olM16fLNhtHZpRhedZJphNJqmZg==}
+    dev: false
 
   /@tsconfig/node12/1.0.9:
     resolution: {integrity: sha512-/yBMcem+fbvhSREH+s14YJi18sp7J9jpuhYByADT2rypfajMZZN4WQ6zBGgBKp53NKmqI36wFYDb3yaMPurITw==}
+    dev: false
 
   /@tsconfig/node14/1.0.1:
     resolution: {integrity: sha512-509r2+yARFfHHE7T6Puu2jjkoycftovhXRqW328PDXTVGKihlb1P8Z9mMZH04ebyajfRY7dedfGynlrFHJUQCg==}
+    dev: false
 
   /@tsconfig/node16/1.0.2:
     resolution: {integrity: sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==}
+    dev: false
 
   /@types/babel__core/7.1.19:
     resolution: {integrity: sha512-WEOTgRsbYkvA/KCsDwVEGkd7WAr1e3g31VHQ8zy5gul/V1qKullU/BU5I68X5v7V3GnB9eotmom4v5a5gjxorw==}
@@ -1934,6 +1859,7 @@ packages:
   /acorn-walk/8.2.0:
     resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
     engines: {node: '>=0.4.0'}
+    dev: false
 
   /acorn/8.7.1:
     resolution: {integrity: sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==}
@@ -2006,6 +1932,7 @@ packages:
 
   /arg/4.1.3:
     resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
+    dev: false
 
   /argparse/1.0.10:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
@@ -2421,6 +2348,7 @@ packages:
 
   /create-require/1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+    dev: false
 
   /cross-spawn/7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2506,6 +2434,7 @@ packages:
   /diff/4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
+    dev: false
 
   /dns-over-http-resolver/1.2.3:
     resolution: {integrity: sha512-miDiVSI6KSNbi4SVifzO/reD8rMnxgrlnkrlkugOLQpWQTe2qMdHsZp5DmfKjxNE+/T3VAAYLQUZMv9SMr6+AA==}
@@ -3553,33 +3482,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /jest-cli/28.1.0_5safgrhnvw3xobf557mvjg2uay:
-    resolution: {integrity: sha512-fDJRt6WPRriHrBsvvgb93OxgajHHsJbk4jZxiPqmZbMDRcHskfJBBfTyjFko0jjfprP544hOktdSi9HVgl4VUQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 28.1.0_ts-node@10.8.1
-      '@jest/test-result': 28.1.0
-      '@jest/types': 28.1.0
-      chalk: 4.1.2
-      exit: 0.1.2
-      graceful-fs: 4.2.10
-      import-local: 3.1.0
-      jest-config: 28.1.0_5safgrhnvw3xobf557mvjg2uay
-      jest-util: 28.1.0
-      jest-validate: 28.1.0
-      prompts: 2.4.2
-      yargs: 17.5.1
-    transitivePeerDependencies:
-      - '@types/node'
-      - supports-color
-      - ts-node
-
   /jest-cli/28.1.0_@types+node@17.0.36:
     resolution: {integrity: sha512-fDJRt6WPRriHrBsvvgb93OxgajHHsJbk4jZxiPqmZbMDRcHskfJBBfTyjFko0jjfprP544hOktdSi9HVgl4VUQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -3606,46 +3508,6 @@ packages:
       - '@types/node'
       - supports-color
       - ts-node
-    dev: true
-
-  /jest-config/28.1.0_5safgrhnvw3xobf557mvjg2uay:
-    resolution: {integrity: sha512-aOV80E9LeWrmflp7hfZNn/zGA4QKv/xsn2w8QCBP0t0+YqObuCWTSgNbHJ0j9YsTuCO08ZR/wsvlxqqHX20iUA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.18.2
-      '@jest/test-sequencer': 28.1.0
-      '@jest/types': 28.1.0
-      '@types/node': 17.0.36
-      babel-jest: 28.1.0_@babel+core@7.18.2
-      chalk: 4.1.2
-      ci-info: 3.3.1
-      deepmerge: 4.2.2
-      glob: 7.2.3
-      graceful-fs: 4.2.10
-      jest-circus: 28.1.0
-      jest-environment-node: 28.1.0
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.0
-      jest-runner: 28.1.0
-      jest-util: 28.1.0
-      jest-validate: 28.1.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 28.1.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.8.1_w6gfxie3xfwntbz3mwbbvycbdq
-    transitivePeerDependencies:
-      - supports-color
 
   /jest-config/28.1.0_@types+node@17.0.36:
     resolution: {integrity: sha512-aOV80E9LeWrmflp7hfZNn/zGA4QKv/xsn2w8QCBP0t0+YqObuCWTSgNbHJ0j9YsTuCO08ZR/wsvlxqqHX20iUA==}
@@ -3684,7 +3546,6 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /jest-diff/27.5.1:
     resolution: {integrity: sha512-m0NvkX55LDt9T4mctTEgnZk3fmEg3NRYutvMPWM/0iPnkFj2wIeF45O1718cMSOFO1vINkqmxqD8vE37uTEbqw==}
@@ -3991,24 +3852,6 @@ packages:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  /jest/28.1.0_5safgrhnvw3xobf557mvjg2uay:
-    resolution: {integrity: sha512-TZR+tHxopPhzw3c3560IJXZWLNHgpcz1Zh0w5A65vynLGNcg/5pZ+VildAd7+XGOu6jd58XMY/HNn0IkZIXVXg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
-    peerDependenciesMeta:
-      node-notifier:
-        optional: true
-    dependencies:
-      '@jest/core': 28.1.0_ts-node@10.8.1
-      import-local: 3.1.0
-      jest-cli: 28.1.0_5safgrhnvw3xobf557mvjg2uay
-    transitivePeerDependencies:
-      - '@types/node'
-      - supports-color
-      - ts-node
-
   /jest/28.1.0_@types+node@17.0.36:
     resolution: {integrity: sha512-TZR+tHxopPhzw3c3560IJXZWLNHgpcz1Zh0w5A65vynLGNcg/5pZ+VildAd7+XGOu6jd58XMY/HNn0IkZIXVXg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -4026,7 +3869,6 @@ packages:
       - '@types/node'
       - supports-color
       - ts-node
-    dev: true
 
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -4035,6 +3877,7 @@ packages:
 
   /js-base64/3.7.2:
     resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
+    dev: true
 
   /js-sha3/0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
@@ -5503,7 +5346,7 @@ packages:
     dev: true
 
   /truncate-utf8-bytes/1.0.2:
-    resolution: {integrity: sha1-QFkjkJWS1W94pYGENLC3hInKXys=}
+    resolution: {integrity: sha512-95Pu1QXQvruGEhv62XCMO3Mm90GscOCClvrIUwCM0PYOXK3kaF3l3sIHxx71ThJfcbM2O5Au6SO3AWCSEfW4mQ==}
     dependencies:
       utf8-byte-length: 1.0.4
 
@@ -5531,7 +5374,7 @@ packages:
       '@types/jest': 27.5.1
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0_5safgrhnvw3xobf557mvjg2uay
+      jest: 28.1.0_@types+node@17.0.36
       jest-util: 27.5.1
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -5564,7 +5407,7 @@ packages:
       '@types/jest': 27.5.1
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0_5safgrhnvw3xobf557mvjg2uay
+      jest: 28.1.0_@types+node@17.0.36
       jest-util: 28.1.0
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -5648,36 +5491,6 @@ packages:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: false
-
-  /ts-node/10.8.1_w6gfxie3xfwntbz3mwbbvycbdq:
-    resolution: {integrity: sha512-Wwsnao4DQoJsN034wePSg5nZiw4YKXf56mPIAeD6wVmiv+RytNSWqc2f3fKvcUoV+Yn2+yocD71VOfQHbmVX4g==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 17.0.36
-      acorn: 8.7.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.7.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
 
   /ts-node/7.0.1:
     resolution: {integrity: sha512-BVwVbPJRspzNh2yfslyT1PSbl5uIk03EZlb493RKHN4qej/D06n1cEhjlOJG69oFsE7OT8XjpTUcYf6pKTLMhw==}
@@ -5787,7 +5600,7 @@ packages:
     dev: true
 
   /utf8-byte-length/1.0.4:
-    resolution: {integrity: sha1-9F8VDExm7uloGGUFq5P8u4rWv2E=}
+    resolution: {integrity: sha512-4+wkEYLBbWxqTahEsWrhxepcoVOJ+1z5PGIjPZxRkytcdSUaNjIjBM7Xn8E+pdSuV7SzvWovBFA54FO0JSoqhA==}
 
   /util-deprecate/1.0.2:
     resolution: {integrity: sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=}
@@ -5810,6 +5623,7 @@ packages:
 
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
+    dev: false
 
   /v8-to-istanbul/9.0.0:
     resolution: {integrity: sha512-HcvgY/xaRm7isYmyx+lFKA4uQmfUbN0J4M0nNItvzTvH/iQ9kW5j/t4YSR+Ge323/lrgDAWJoF46tzGQHwBHFw==}
@@ -5955,17 +5769,18 @@ packages:
   /yn/3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
+    dev: false
 
   /yocto-queue/1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: false
 
-  github.com/fluencelabs/js-libp2p/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495_ghdhn57z7cu2fxsztxwq2v4ikm:
-    resolution: {tarball: https://codeload.github.com/fluencelabs/js-libp2p/tar.gz/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495}
-    id: github.com/fluencelabs/js-libp2p/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495
+  github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_ghdhn57z7cu2fxsztxwq2v4ikm:
+    resolution: {tarball: https://codeload.github.com/fluencelabs/js-libp2p/tar.gz/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f}
+    id: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f
     name: libp2p
-    version: 0.37.2
+    version: 0.37.3
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     prepare: true
     requiresBuild: true
@@ -6030,11 +5845,11 @@ packages:
       - undici
     dev: false
 
-  github.com/fluencelabs/js-libp2p/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495_uluuwrprffmsiwy2zanpihzgue:
-    resolution: {tarball: https://codeload.github.com/fluencelabs/js-libp2p/tar.gz/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495}
-    id: github.com/fluencelabs/js-libp2p/1b3cd8b401e2cff36b45527bc5dc6a66de0fb495
+  github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_uluuwrprffmsiwy2zanpihzgue:
+    resolution: {tarball: https://codeload.github.com/fluencelabs/js-libp2p/tar.gz/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f}
+    id: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f
     name: libp2p
-    version: 0.37.2
+    version: 0.37.3
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     prepare: true
     requiresBuild: true

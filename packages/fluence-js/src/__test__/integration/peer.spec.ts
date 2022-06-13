@@ -1,13 +1,9 @@
-import { Multiaddr } from '@multiformats/multiaddr';
+// import { Multiaddr } from '@multiformats/multiaddr';
 
-import { nodes } from '../../connection';
-import { FluencePeer } from '@fluencelabs/fluence';
-import {
-    checkConnection,
-    doNothing,
-    handleTimeout,
-    registerHandlersHelper,
-} from '@fluencelabs/fluence/dist/internal/forTests';
+import { nodes } from '../connection';
+import { FluencePeer } from '../../index';
+import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
+import { registerHandlersHelper } from '../util';
 
 let peer: FluencePeer;
 
@@ -189,12 +185,13 @@ describe('Typescript usage suite', () => {
             expect(isConnected).toBeTruthy();
         });
 
-        it('address as multiaddr', async () => {
-            await peer.start({ connectTo: new Multiaddr(nodes[0].multiaddr) });
-            const isConnected = await checkConnection(peer);
-
-            expect(isConnected).toBeTruthy();
-        });
+        // FIXME::
+        //it('address as multiaddr', async () => {
+        //    await peer.start({ connectTo: new Multiaddr(nodes[0].multiaddr) });
+        //    const isConnected = await checkConnection(peer);
+        //
+        //    expect(isConnected).toBeTruthy();
+        //});
 
         it('address as node', async () => {
             await peer.start({ connectTo: nodes[0] });

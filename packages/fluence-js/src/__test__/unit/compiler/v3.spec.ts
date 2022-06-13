@@ -1,5 +1,5 @@
 import each from 'jest-each';
-import { aqua2ts, ts2aqua } from '../../internal/compilerSupport/v3impl/conversions';
+import { aqua2ts, ts2aqua } from '../../../internal/compilerSupport/v3impl/conversions';
 
 const i32 = { tag: 'scalar', name: 'i32' } as const;
 

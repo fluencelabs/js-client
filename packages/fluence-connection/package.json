@@ -19,7 +19,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "libp2p": "fluencelabs/js-libp2p#no-nat-manager",
+        "libp2p": "fluencelabs/js-libp2p#ae99a9dcdf73461ca00642f9592e416b9c5fbd1f",
         "@chainsafe/libp2p-noise": "^6.1.1",
         "@libp2p/mplex": "^1.0.5",
         "@libp2p/peer-id": "^1.1.10",
