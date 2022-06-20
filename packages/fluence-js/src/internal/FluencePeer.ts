@@ -264,6 +264,8 @@ export class FluencePeer {
                 relayAddress: connectToMultiAddr,
                 dialTimeoutMs: config.dialTimeoutMs,
                 onIncomingParticle: (p) => {
+                    console.log('particle received \\/');
+                    console.log(p);
                     const particle = Particle.fromString(p);
                     this._incomingParticles.next({ particle, onStageChange: () => {} });
                 },
@@ -510,7 +512,13 @@ export class FluencePeer {
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            this._connection.sendParticle(item.particle.toString()).then(
+
+            item.particle.logTo('debug', 'sending particle:');
+
+            const particleToSend = item.particle.toString();
+
+            /*
+            this._connection.sendParticle(particleToSend).then(
                 () => {
                     item.onStageChange({ stage: 'sent' });
                 },
@@ -518,6 +526,9 @@ export class FluencePeer {
                     log.error(e);
                 },
             );
+            */
+
+            this._connection.sendParticle(particleToSend);
         });
     }
 

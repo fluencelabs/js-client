@@ -3,8 +3,7 @@
     "version": "0.0.0",
     "description": "TypeScript implementation of Fluence Peer",
     "files": [
-        "dist",
-        "types"
+        "dist"
     ],
     "main": "dist/index.js",
     "types": "./dist/index.d.ts",
@@ -16,7 +15,6 @@
         "compile-aqua": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
         "test": "jest",
         "build": "tsc",
-        "_build": "rollup -c rollup.config.ts --configPlugin swc3",
         "build:docs": "typedoc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",

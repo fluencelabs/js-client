@@ -22,8 +22,8 @@ import { pipe } from 'it-pipe';
 import { Noise } from '@chainsafe/libp2p-noise';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { Multiaddr } from '@multiformats/multiaddr';
-import { PeerId } from '@libp2p/interfaces/peer-id';
-import { Connection } from '@libp2p/interfaces/connection';
+import type { PeerId } from '@libp2p/interface-peer-id';
+import type { Connection } from '@libp2p/interface-connection';
 import * as log from 'loglevel';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
@@ -59,9 +59,9 @@ export class FluenceConnection {
     static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
         const lib2p2Peer = await createLibp2p({
             peerId: options.peerId,
-            // @ts-ignore
+            //@ts-ignore
             transports: [new WebSockets()],
-            // @ts-ignore
+            //@ts-ignore
             streamMuxers: [new Mplex()],
             connectionEncryption: [new Noise()],
             connectionManager: {
@@ -69,11 +69,12 @@ export class FluenceConnection {
             },
         });
 
-        lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+        lib2p2Peer.handle([PROTOCOL_NAME], async (arg: any) => {
+            const { connection, stream } = arg;
             pipe(
                 // force new line
-                // @ts-ignore
                 stream.source,
+                // @ts-ignore
                 decode(),
                 async (source: AsyncIterable<string>) => {
                     try {
@@ -101,10 +102,14 @@ export class FluenceConnection {
     }
 
     async disconnect() {
+        // @ts-ignore
         await this._lib2p2Peer.stop();
     }
 
     async sendParticle(particle: string): Promise<void> {
+        console.log('do send particle \\/');
+        console.log(particle);
+
         /*
         TODO:: find out why this doesn't work and a new connection has to be established each time
         if (this._connection.streams.length !== 1) {
@@ -114,24 +119,27 @@ export class FluenceConnection {
         const sink = this._connection.streams[0].sink;
         */
 
-        const conn = await this._lib2p2Peer.dialProtocol(new Multiaddr(this._relayAddress), PROTOCOL_NAME);
         // @ts-ignore
+        const conn = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
         const sink = conn.stream.sink;
 
         pipe(
             // force new line
             [Buffer.from(particle, 'utf8')],
+            // @ts-ignore
             encode(),
             sink,
         );
     }
 
     async connect() {
+        // @ts-ignore
         await this._lib2p2Peer.start();
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId);
 
         try {
+            // @ts-ignore
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {

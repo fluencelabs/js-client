@@ -1,9 +1,11 @@
 // import { Multiaddr } from '@multiformats/multiaddr';
 
 import { nodes } from '../connection';
-import { FluencePeer } from '../../index';
+import { FluencePeer, setLogLevel } from '../../index';
 import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
+
+setLogLevel('debug');
 
 let peer: FluencePeer;
 
@@ -35,45 +37,6 @@ describe('Typescript usage suite', () => {
         expect(isNumberPeer).toBe(false);
         expect(isObjectPeer).toBe(false);
         expect(isUndefinedPeer).toBe(false);
-    });
-
-    describe('Should expose correct peer status', () => {
-        it('Should expose correct status for uninitialized peer', () => {
-            const status = peer.getStatus();
-
-            expect(status.isConnected).toBe(false);
-            expect(status.isInitialized).toBe(false);
-            expect(status.peerId).toBe(null);
-            expect(status.relayPeerId).toBe(null);
-        });
-
-        it('Should expose correct status for initialized but not connected peer', async () => {
-            // arrange
-            await peer.start();
-
-            // act
-            const status = peer.getStatus();
-
-            // assert
-            expect(status.isConnected).toBe(false);
-            expect(status.isInitialized).toBe(true);
-            expect(status.peerId).not.toBe(null);
-            expect(status.relayPeerId).toBe(null);
-        });
-
-        it('Should expose correct status for connected peer', async () => {
-            // arrange
-            await peer.start({ connectTo: nodes[0] });
-
-            // act
-            const status = peer.getStatus();
-
-            // assert
-            expect(status.isConnected).toBe(true);
-            expect(status.isInitialized).toBe(true);
-            expect(status.peerId).not.toBe(null);
-            expect(status.relayPeerId).not.toBe(null);
-        });
     });
 
     it('should make a call through network', async () => {
@@ -124,6 +87,62 @@ describe('Typescript usage suite', () => {
 
         expect(result).toBe('hello world!');
     });
+});
+
+/*
+describe('Typescript usage suite', () => {
+    afterEach(async () => {
+        if (peer) {
+            await peer.stop();
+        }
+    });
+
+    beforeEach(() => {
+        peer = new FluencePeer();
+    });
+
+
+
+    describe('Should expose correct peer status', () => {
+        it('Should expose correct status for uninitialized peer', () => {
+            const status = peer.getStatus();
+
+            expect(status.isConnected).toBe(false);
+            expect(status.isInitialized).toBe(false);
+            expect(status.peerId).toBe(null);
+            expect(status.relayPeerId).toBe(null);
+        });
+
+        it('Should expose correct status for initialized but not connected peer', async () => {
+            // arrange
+            await peer.start();
+
+            // act
+            const status = peer.getStatus();
+
+            // assert
+            expect(status.isConnected).toBe(false);
+            expect(status.isInitialized).toBe(true);
+            expect(status.peerId).not.toBe(null);
+            expect(status.relayPeerId).toBe(null);
+        });
+
+        it('Should expose correct status for connected peer', async () => {
+            // arrange
+            await peer.start({ connectTo: nodes[0] });
+
+            // act
+            const status = peer.getStatus();
+
+            // assert
+            expect(status.isConnected).toBe(true);
+            expect(status.isInitialized).toBe(true);
+            expect(status.peerId).not.toBe(null);
+            expect(status.relayPeerId).not.toBe(null);
+        });
+    });
+
+    
 
     it('check connection should work', async function () {
         await peer.start({ connectTo: nodes[0] });
@@ -177,7 +196,7 @@ describe('Typescript usage suite', () => {
         await peer2.stop();
     });
 
-    describe('should make connection to network', () => {
+    describe.skip('should make connection to network', () => {
         it('address as string', async () => {
             await peer.start({ connectTo: nodes[0].multiaddr });
             const isConnected = await checkConnection(peer);
@@ -418,3 +437,4 @@ async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
         peer.internals.initiateParticle(particle, handleTimeout(reject));
     });
 }
+*/
