@@ -9,18 +9,22 @@ importers:
       '@libp2p/peer-id': ^1.1.10
       '@types/jest': ^27.5.1
       '@types/node': ^17.0.36
+      base64-js: ^1.5.1
       jest: ^28.1.0
       ts-jest: ^28.0.2
+      ts-node: ^10.8.1
       typescript: ^4.0.0
     dependencies:
       '@fluencelabs/fluence-connection': link:../fluence-connection
       '@fluencelabs/fluence-keypair': link:../fluence-keypair
       '@libp2p/peer-id': 1.1.11
+      base64-js: 1.5.1
     devDependencies:
       '@types/jest': 27.5.1
       '@types/node': 17.0.36
-      jest: 28.1.0_@types+node@17.0.36
+      jest: 28.1.0_5safgrhnvw3xobf557mvjg2uay
       ts-jest: 28.0.3_7sa2e64agunq5kj4zcolhrnkbm
+      ts-node: 10.8.1_w6gfxie3xfwntbz3mwbbvycbdq
       typescript: 4.7.2
 
   packages/fluence-connection:
@@ -35,11 +39,13 @@ importers:
       '@rollup/plugin-commonjs': ^22.0.0
       '@rollup/plugin-node-resolve': ^13.3.0
       '@swc/core': ^1.2.194
+      '@types/node': ^17.0.36
       browser-or-node: ^2.0.0
       it-length-prefixed: 7.0.1
       it-pipe: 2.0.3
       libp2p: fluencelabs/js-libp2p#ae99a9dcdf73461ca00642f9592e416b9c5fbd1f
       loglevel: 1.8.0
+      regenerator-runtime: ^0.13.9
       rollup: ^2.74.1
       rollup-plugin-clear: ^2.0.7
       rollup-plugin-dts: ^4.2.2
@@ -57,14 +63,16 @@ importers:
       browser-or-node: 2.0.0
       it-length-prefixed: 7.0.1
       it-pipe: 2.0.3
-      libp2p: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_ghdhn57z7cu2fxsztxwq2v4ikm
+      libp2p: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_uluuwrprffmsiwy2zanpihzgue
       loglevel: 1.8.0
+      regenerator-runtime: 0.13.9
     devDependencies:
       '@libp2p/interface-connection': 2.0.0
       '@libp2p/interface-peer-id': 1.0.2
       '@rollup/plugin-commonjs': 22.0.0_rollup@2.75.4
       '@rollup/plugin-node-resolve': 13.3.0_rollup@2.75.4
       '@swc/core': 1.2.196
+      '@types/node': 17.0.36
       rollup: 2.75.4
       rollup-plugin-clear: 2.0.7
       rollup-plugin-dts: 4.2.2_flgbp2mwh7cyq7tyxrigr47lze
@@ -571,7 +579,6 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
-    dev: false
 
   /@fluencelabs/aqua-ipfs/0.5.2:
     resolution: {integrity: sha512-vSZYH6mjCGly7Cifts1c84icAzeq6pQf3aspEW3ttA0AFVQTjDWlr86Imseg+p3I9oaNUykv/W+VqWX1ouj9Vg==}
@@ -739,6 +746,49 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - ts-node
+
+  /@jest/core/28.1.0_ts-node@10.8.1:
+    resolution: {integrity: sha512-/2PTt0ywhjZ4NwNO4bUqD9IVJfmFVhVKGlhvSpmEfUCuxYf/3NHcKmRFI+I71lYzbTT3wMuYpETDCTHo81gC/g==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/console': 28.1.0
+      '@jest/reporters': 28.1.0
+      '@jest/test-result': 28.1.0
+      '@jest/transform': 28.1.0
+      '@jest/types': 28.1.0
+      '@types/node': 17.0.36
+      ansi-escapes: 4.3.2
+      chalk: 4.1.2
+      ci-info: 3.3.1
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      jest-changed-files: 28.0.2
+      jest-config: 28.1.0_5safgrhnvw3xobf557mvjg2uay
+      jest-haste-map: 28.1.0
+      jest-message-util: 28.1.0
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.0
+      jest-resolve-dependencies: 28.1.0
+      jest-runner: 28.1.0
+      jest-runtime: 28.1.0
+      jest-snapshot: 28.1.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      jest-watcher: 28.1.0
+      micromatch: 4.0.5
+      pretty-format: 28.1.0
+      rimraf: 3.0.2
+      slash: 3.0.0
+      strip-ansi: 6.0.1
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+    dev: true
 
   /@jest/environment/28.1.0:
     resolution: {integrity: sha512-S44WGSxkRngzHslhV6RoAExekfF7Qhwa6R5+IYFa81mpcj0YgdBnRSmvHe3SNwOt64yXaE5GG8Y2xM28ii5ssA==}
@@ -940,7 +990,6 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.0.7
       '@jridgewell/sourcemap-codec': 1.4.13
-    dev: false
 
   /@libp2p/components/2.0.0:
     resolution: {integrity: sha512-7PrbrfDvaOHKtvkiUBWPAFQX6X57YhZpYh5oKFYYMzh485IO3Bum0xuyUwQOOPmBzWrIuP7QsbmOtyycAux/7w==}
@@ -1347,37 +1396,6 @@ packages:
       - undici
     dev: false
 
-  /@libp2p/peer-record/1.0.12_ghdhn57z7cu2fxsztxwq2v4ikm:
-    resolution: {integrity: sha512-1b4aeU4sduRBUH4RKDtYBHKOEXwohrlOoBrrNPKb1WFweLMnG3oznhGusMvKQ8YuXSOTpbNPHrbJ/iJnrBbVUQ==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      '@libp2p/crypto': 0.22.14
-      '@libp2p/interfaces': 2.0.3
-      '@libp2p/logger': 1.1.5
-      '@libp2p/peer-id': 1.1.11
-      '@libp2p/utils': 1.0.10_ghdhn57z7cu2fxsztxwq2v4ikm
-      '@multiformats/multiaddr': 10.2.0
-      err-code: 3.0.1
-      interface-datastore: 6.1.0
-      it-all: 1.0.6
-      it-filter: 1.0.3
-      it-foreach: 0.1.1
-      it-map: 1.0.6
-      it-pipe: 2.0.3
-      multiformats: 9.6.5
-      protons-runtime: 1.0.4
-      uint8arrays: 3.0.0
-      varint: 6.0.0
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - mocha
-      - supports-color
-      - typescript
-      - undici
-    dev: false
-
   /@libp2p/peer-record/1.0.12_uluuwrprffmsiwy2zanpihzgue:
     resolution: {integrity: sha512-1b4aeU4sduRBUH4RKDtYBHKOEXwohrlOoBrrNPKb1WFweLMnG3oznhGusMvKQ8YuXSOTpbNPHrbJ/iJnrBbVUQ==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -1399,36 +1417,6 @@ packages:
       protons-runtime: 1.0.4
       uint8arrays: 3.0.0
       varint: 6.0.0
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - mocha
-      - supports-color
-      - typescript
-      - undici
-    dev: false
-
-  /@libp2p/peer-store/1.0.16_ghdhn57z7cu2fxsztxwq2v4ikm:
-    resolution: {integrity: sha512-TSO4ARn7L+CKBp1+hLgW6N7Mn/o4d6mvjMm7zoxxdCFtxqnZa0385mZcjYRurvslwZzksiDflcLn+AKkXKdEhw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      '@libp2p/interfaces': 2.0.3
-      '@libp2p/logger': 1.1.5
-      '@libp2p/peer-id': 1.1.11
-      '@libp2p/peer-record': 1.0.12_ghdhn57z7cu2fxsztxwq2v4ikm
-      '@multiformats/multiaddr': 10.2.0
-      err-code: 3.0.1
-      interface-datastore: 6.1.0
-      it-all: 1.0.6
-      it-filter: 1.0.3
-      it-foreach: 0.1.1
-      it-map: 1.0.6
-      it-pipe: 2.0.3
-      mortice: 3.0.0
-      multiformats: 9.6.5
-      protons-runtime: 1.0.4
-      uint8arrays: 3.0.0
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -1479,44 +1467,20 @@ packages:
       - undici
     dev: false
 
-  /@libp2p/utils/1.0.10_ghdhn57z7cu2fxsztxwq2v4ikm:
-    resolution: {integrity: sha512-jlVLfac1IoBlgXL8V+XZYxNw0SOAkKweiLhXWolUbKOgRtMDquJzbwG1n8y9GtdiFKPlkiBwOB7l9xighcOR6w==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      '@achingbrain/ip-address': 8.1.0
-      '@libp2p/logger': 1.1.5
-      '@multiformats/multiaddr': 10.1.8
-      abortable-iterator: 4.0.2
-      err-code: 3.0.1
-      is-loopback-addr: 2.0.1
-      it-stream-types: 1.0.4
-      private-ip: 2.3.3
-      ts-mocha: 9.0.2
-      ts-node: 10.8.0_ghdhn57z7cu2fxsztxwq2v4ikm
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - mocha
-      - supports-color
-      - typescript
-      - undici
-    dev: false
-
   /@libp2p/utils/1.0.10_uluuwrprffmsiwy2zanpihzgue:
     resolution: {integrity: sha512-jlVLfac1IoBlgXL8V+XZYxNw0SOAkKweiLhXWolUbKOgRtMDquJzbwG1n8y9GtdiFKPlkiBwOB7l9xighcOR6w==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@achingbrain/ip-address': 8.1.0
       '@libp2p/logger': 1.1.5
-      '@multiformats/multiaddr': 10.1.8
+      '@multiformats/multiaddr': 10.2.0
       abortable-iterator: 4.0.2
       err-code: 3.0.1
       is-loopback-addr: 2.0.1
       it-stream-types: 1.0.4
       private-ip: 2.3.3
       ts-mocha: 9.0.2
-      ts-node: 10.8.0_uluuwrprffmsiwy2zanpihzgue
+      ts-node: 10.8.1_uluuwrprffmsiwy2zanpihzgue
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -1992,19 +1956,15 @@ packages:
 
   /@tsconfig/node10/1.0.8:
     resolution: {integrity: sha512-6XFfSQmMgq0CFLY1MslA/CPUfhIL919M1rMsa5lP2P097N2Wd1sSX0tx1u4olM16fLNhtHZpRhedZJphNJqmZg==}
-    dev: false
 
   /@tsconfig/node12/1.0.9:
     resolution: {integrity: sha512-/yBMcem+fbvhSREH+s14YJi18sp7J9jpuhYByADT2rypfajMZZN4WQ6zBGgBKp53NKmqI36wFYDb3yaMPurITw==}
-    dev: false
 
   /@tsconfig/node14/1.0.1:
     resolution: {integrity: sha512-509r2+yARFfHHE7T6Puu2jjkoycftovhXRqW328PDXTVGKihlb1P8Z9mMZH04ebyajfRY7dedfGynlrFHJUQCg==}
-    dev: false
 
   /@tsconfig/node16/1.0.2:
     resolution: {integrity: sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==}
-    dev: false
 
   /@types/babel__core/7.1.19:
     resolution: {integrity: sha512-WEOTgRsbYkvA/KCsDwVEGkd7WAr1e3g31VHQ8zy5gul/V1qKullU/BU5I68X5v7V3GnB9eotmom4v5a5gjxorw==}
@@ -2168,7 +2128,6 @@ packages:
   /acorn-walk/8.2.0:
     resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
     engines: {node: '>=0.4.0'}
-    dev: false
 
   /acorn/8.7.1:
     resolution: {integrity: sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==}
@@ -2241,7 +2200,6 @@ packages:
 
   /arg/4.1.3:
     resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
-    dev: false
 
   /argparse/1.0.10:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
@@ -2657,7 +2615,6 @@ packages:
 
   /create-require/1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
-    dev: false
 
   /cross-spawn/7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2743,7 +2700,6 @@ packages:
   /diff/4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
-    dev: false
 
   /dns-over-http-resolver/1.2.3:
     resolution: {integrity: sha512-miDiVSI6KSNbi4SVifzO/reD8rMnxgrlnkrlkugOLQpWQTe2qMdHsZp5DmfKjxNE+/T3VAAYLQUZMv9SMr6+AA==}
@@ -3794,6 +3750,34 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /jest-cli/28.1.0_5safgrhnvw3xobf557mvjg2uay:
+    resolution: {integrity: sha512-fDJRt6WPRriHrBsvvgb93OxgajHHsJbk4jZxiPqmZbMDRcHskfJBBfTyjFko0jjfprP544hOktdSi9HVgl4VUQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.0_ts-node@10.8.1
+      '@jest/test-result': 28.1.0
+      '@jest/types': 28.1.0
+      chalk: 4.1.2
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      import-local: 3.1.0
+      jest-config: 28.1.0_5safgrhnvw3xobf557mvjg2uay
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      prompts: 2.4.2
+      yargs: 17.5.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - supports-color
+      - ts-node
+    dev: true
+
   /jest-cli/28.1.0_@types+node@17.0.36:
     resolution: {integrity: sha512-fDJRt6WPRriHrBsvvgb93OxgajHHsJbk4jZxiPqmZbMDRcHskfJBBfTyjFko0jjfprP544hOktdSi9HVgl4VUQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -3820,6 +3804,46 @@ packages:
       - '@types/node'
       - supports-color
       - ts-node
+
+  /jest-config/28.1.0_5safgrhnvw3xobf557mvjg2uay:
+    resolution: {integrity: sha512-aOV80E9LeWrmflp7hfZNn/zGA4QKv/xsn2w8QCBP0t0+YqObuCWTSgNbHJ0j9YsTuCO08ZR/wsvlxqqHX20iUA==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    peerDependencies:
+      '@types/node': '*'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      '@babel/core': 7.18.2
+      '@jest/test-sequencer': 28.1.0
+      '@jest/types': 28.1.0
+      '@types/node': 17.0.36
+      babel-jest: 28.1.0_@babel+core@7.18.2
+      chalk: 4.1.2
+      ci-info: 3.3.1
+      deepmerge: 4.2.2
+      glob: 7.2.3
+      graceful-fs: 4.2.10
+      jest-circus: 28.1.0
+      jest-environment-node: 28.1.0
+      jest-get-type: 28.0.2
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.0
+      jest-runner: 28.1.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 28.1.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+      ts-node: 10.8.1_w6gfxie3xfwntbz3mwbbvycbdq
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /jest-config/28.1.0_@types+node@17.0.36:
     resolution: {integrity: sha512-aOV80E9LeWrmflp7hfZNn/zGA4QKv/xsn2w8QCBP0t0+YqObuCWTSgNbHJ0j9YsTuCO08ZR/wsvlxqqHX20iUA==}
@@ -4163,6 +4187,25 @@ packages:
       '@types/node': 17.0.36
       merge-stream: 2.0.0
       supports-color: 8.1.1
+
+  /jest/28.1.0_5safgrhnvw3xobf557mvjg2uay:
+    resolution: {integrity: sha512-TZR+tHxopPhzw3c3560IJXZWLNHgpcz1Zh0w5A65vynLGNcg/5pZ+VildAd7+XGOu6jd58XMY/HNn0IkZIXVXg==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.0_ts-node@10.8.1
+      import-local: 3.1.0
+      jest-cli: 28.1.0_5safgrhnvw3xobf557mvjg2uay
+    transitivePeerDependencies:
+      - '@types/node'
+      - supports-color
+      - ts-node
+    dev: true
 
   /jest/28.1.0_@types+node@17.0.36:
     resolution: {integrity: sha512-TZR+tHxopPhzw3c3560IJXZWLNHgpcz1Zh0w5A65vynLGNcg/5pZ+VildAd7+XGOu6jd58XMY/HNn0IkZIXVXg==}
@@ -5519,7 +5562,7 @@ packages:
       ansi-regex: 5.0.1
 
   /strip-bom/3.0.0:
-    resolution: {integrity: sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=}
+    resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
     engines: {node: '>=4'}
     dev: false
     optional: true
@@ -5719,7 +5762,7 @@ packages:
       '@types/jest': 27.5.1
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0_@types+node@17.0.36
+      jest: 28.1.0_5safgrhnvw3xobf557mvjg2uay
       jest-util: 28.1.0
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -5741,39 +5784,8 @@ packages:
       tsconfig-paths: 3.14.1
     dev: false
 
-  /ts-node/10.8.0_ghdhn57z7cu2fxsztxwq2v4ikm:
-    resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@swc/core': 1.2.196
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      acorn: 8.7.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.7.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: false
-
-  /ts-node/10.8.0_uluuwrprffmsiwy2zanpihzgue:
-    resolution: {integrity: sha512-/fNd5Qh+zTt8Vt1KbYZjRHCE9sI5i7nqfD/dzBBRDeVXZXS6kToW6R7tTU6Nd4XavFs0mAVCg29Q//ML7WsZYA==}
+  /ts-node/10.8.1_uluuwrprffmsiwy2zanpihzgue:
+    resolution: {integrity: sha512-Wwsnao4DQoJsN034wePSg5nZiw4YKXf56mPIAeD6wVmiv+RytNSWqc2f3fKvcUoV+Yn2+yocD71VOfQHbmVX4g==}
     hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
@@ -5803,6 +5815,37 @@ packages:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: false
+
+  /ts-node/10.8.1_w6gfxie3xfwntbz3mwbbvycbdq:
+    resolution: {integrity: sha512-Wwsnao4DQoJsN034wePSg5nZiw4YKXf56mPIAeD6wVmiv+RytNSWqc2f3fKvcUoV+Yn2+yocD71VOfQHbmVX4g==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
+      '@types/node': 17.0.36
+      acorn: 8.7.1
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.7.2
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    dev: true
 
   /ts-node/7.0.1:
     resolution: {integrity: sha512-BVwVbPJRspzNh2yfslyT1PSbl5uIk03EZlb493RKHN4qej/D06n1cEhjlOJG69oFsE7OT8XjpTUcYf6pKTLMhw==}
@@ -5935,7 +5978,6 @@ packages:
 
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
-    dev: false
 
   /v8-to-istanbul/9.0.0:
     resolution: {integrity: sha512-HcvgY/xaRm7isYmyx+lFKA4uQmfUbN0J4M0nNItvzTvH/iQ9kW5j/t4YSR+Ge323/lrgDAWJoF46tzGQHwBHFw==}
@@ -6074,87 +6116,17 @@ packages:
       yargs-parser: 21.0.1
 
   /yn/2.0.0:
-    resolution: {integrity: sha1-5a2ryKz0CPY4X8dklWhMiOavaJo=}
+    resolution: {integrity: sha512-uTv8J/wiWTgUTg+9vLTi//leUl5vDQS6uii/emeTb2ssY7vl6QWf2fFbIIGjnhjvbdKlU0ed7QPgY1htTC86jQ==}
     engines: {node: '>=4'}
     dev: false
 
   /yn/3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
-    dev: false
 
   /yocto-queue/1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
-    dev: false
-
-  github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_ghdhn57z7cu2fxsztxwq2v4ikm:
-    resolution: {tarball: https://codeload.github.com/fluencelabs/js-libp2p/tar.gz/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f}
-    id: github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f
-    name: libp2p
-    version: 0.37.3
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    prepare: true
-    requiresBuild: true
-    dependencies:
-      '@libp2p/connection': 2.0.3
-      '@libp2p/crypto': 0.22.14
-      '@libp2p/interfaces': 2.0.3
-      '@libp2p/logger': 1.1.5
-      '@libp2p/multistream-select': 1.0.6
-      '@libp2p/peer-collections': 1.0.3
-      '@libp2p/peer-id': 1.1.11
-      '@libp2p/peer-id-factory': 1.0.11
-      '@libp2p/peer-record': 1.0.12_ghdhn57z7cu2fxsztxwq2v4ikm
-      '@libp2p/peer-store': 1.0.16_ghdhn57z7cu2fxsztxwq2v4ikm
-      '@libp2p/tracked-map': 1.0.7
-      '@libp2p/utils': 1.0.10_ghdhn57z7cu2fxsztxwq2v4ikm
-      '@multiformats/mafmt': 11.0.2
-      '@multiformats/multiaddr': 10.1.8
-      abortable-iterator: 4.0.2
-      any-signal: 3.0.1
-      datastore-core: 7.0.1
-      err-code: 3.0.1
-      events: 3.3.0
-      hashlru: 2.3.0
-      interface-datastore: 6.1.0
-      it-all: 1.0.6
-      it-drain: 1.0.5
-      it-filter: 1.0.3
-      it-first: 1.0.7
-      it-foreach: 0.1.1
-      it-handshake: 3.0.1
-      it-length-prefixed: 7.0.1
-      it-map: 1.0.6
-      it-merge: 1.0.4
-      it-pair: 2.0.2
-      it-pipe: 2.0.3
-      it-sort: 1.0.1
-      it-stream-types: 1.0.4
-      merge-options: 3.0.4
-      multiformats: 9.6.5
-      mutable-proxy: 1.0.0
-      node-forge: 1.3.1
-      p-fifo: 1.0.0
-      p-retry: 5.1.1
-      p-settle: 5.0.0
-      private-ip: 2.3.3
-      protons-runtime: 1.0.4
-      retimer: 3.0.0
-      sanitize-filename: 1.6.3
-      set-delayed-interval: 1.0.0
-      timeout-abort-controller: 3.0.0
-      uint8arrays: 3.0.0
-      wherearewe: 1.0.2
-      xsalsa20: 1.2.0
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - mocha
-      - supports-color
-      - typescript
-      - undici
     dev: false
 
   github.com/fluencelabs/js-libp2p/ae99a9dcdf73461ca00642f9592e416b9c5fbd1f_uluuwrprffmsiwy2zanpihzgue:
@@ -6179,7 +6151,7 @@ packages:
       '@libp2p/tracked-map': 1.0.7
       '@libp2p/utils': 1.0.10_uluuwrprffmsiwy2zanpihzgue
       '@multiformats/mafmt': 11.0.2
-      '@multiformats/multiaddr': 10.1.8
+      '@multiformats/multiaddr': 10.2.0
       abortable-iterator: 4.0.2
       any-signal: 3.0.1
       datastore-core: 7.0.1

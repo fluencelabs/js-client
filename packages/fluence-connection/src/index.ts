@@ -78,6 +78,7 @@ export class FluenceConnection {
                 decode(),
                 async (source: AsyncIterable<string>) => {
                     try {
+                        console.log('incoming');
                         for await (const particle of source) {
                             try {
                                 options.onIncomingParticle(particle);
@@ -107,9 +108,6 @@ export class FluenceConnection {
     }
 
     async sendParticle(particle: string): Promise<void> {
-        console.log('do send particle \\/');
-        console.log(particle);
-
         /*
         TODO:: find out why this doesn't work and a new connection has to be established each time
         if (this._connection.streams.length !== 1) {
@@ -138,6 +136,7 @@ export class FluenceConnection {
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId);
 
+        /*
         try {
             // @ts-ignore
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
@@ -149,6 +148,7 @@ export class FluenceConnection {
                 throw e;
             }
         }
+        */
     }
 
     private _connection: Connection | undefined;
