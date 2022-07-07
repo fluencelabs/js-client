@@ -19,6 +19,7 @@ import platform from 'platform';
 
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
+import { LogLevel } from '@fluencelabs/avm';
 import { ParticleExecutionStage } from './Particle';
 import Buffer from './Buffer';
 
@@ -162,3 +163,12 @@ export function throwIfNotSupported() {
         }
     }
 }
+
+/**
+ * Enum representing the log level used in Aqua VM.
+ * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
+ */
+export type MarineLoglevel = LogLevel;
+
+export const marineLogLevelToEnvs = (marineLogLevel: MarineLoglevel | undefined) =>
+    marineLogLevel ? { WASM_LOG: marineLogLevel } : undefined;
