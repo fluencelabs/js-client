@@ -27,7 +27,7 @@ import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
-import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
+import {Env, FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer} from '@fluencelabs/marine-js';
 import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';
 import { InterpreterResult, LogLevel } from '@fluencelabs/avm';
@@ -242,7 +242,8 @@ export class FluencePeer {
             ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
             : await loadDefaults();
         await this._fluenceAppService.init(marineDeps.marine);
-        await this._fluenceAppService.createService(marineDeps.avm, 'avm');
+        const envs = this.getEnvs();
+        await this._fluenceAppService.createService(marineDeps.avm, 'avm', undefined, envs);
         this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
@@ -292,6 +293,11 @@ export class FluencePeer {
         };
     }
 
+    private getEnvs(): Env | undefined {
+        const envs = this._marineLogLevel ? { WASM_LOG: this._marineLogLevel } : undefined;
+        return envs
+    }
+    
     /**
      * Registers marine service within the Fluence peer from wasm file.
      * Following helper functions can be used to load wasm files:
@@ -309,7 +315,7 @@ export class FluencePeer {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        const envs = this._marineLogLevel ? { WASM_LOG: this._marineLogLevel } : undefined;
+        const envs = this.getEnvs();
         await this._fluenceAppService.createService(wasm, serviceId, undefined, envs);
         this._marineServices.add(serviceId);
     }
