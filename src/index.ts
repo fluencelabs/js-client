@@ -20,7 +20,8 @@ import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
 export { PeerStatus } from './internal/FluencePeer';
 export { KeyPair } from './internal/KeyPair';
-export { FluencePeer, MarineLoglevel as AvmLoglevel, PeerConfig } from './internal/FluencePeer';
+export { FluencePeer, PeerConfig } from './internal/FluencePeer';
+export { MarineLoglevel as AvmLoglevel } from './internal/utils';
 export { PeerIdB58, CallParams } from './internal/commonTypes';
 export { loadWasmFromFileSystem, loadWasmFromNpmPackage, loadWasmFromServer } from '@fluencelabs/marine-js';
 
