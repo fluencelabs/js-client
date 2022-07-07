@@ -1,4 +1,4 @@
-name: "publish-branch"
+name: Publish branch
 
 on:
   workflow_dispatch
