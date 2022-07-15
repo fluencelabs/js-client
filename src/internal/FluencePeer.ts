@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Multiaddr } from 'multiaddr';
+import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
-import { FluenceConnection } from './FluenceConnection';
+import { RelayConnection, FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
 import { throwIfNotSupported, dataToString, jsonify } from './utils';
@@ -31,6 +31,7 @@ import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromSe
 import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';
 import { InterpreterResult, LogLevel } from '@fluencelabs/avm';
+import { EphemeralNetwork } from './ephemeral';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -48,6 +49,8 @@ export type MarineLoglevel = LogLevel;
 
 const DEFAULT_TTL = 7000;
 
+export type ConnectionOption = string | MultiaddrInput | Node | FluenceConnection;
+
 /**
  * Configuration used when initiating Fluence Peer
  */
@@ -58,9 +61,10 @@ export interface PeerConfig {
      * - string: multiaddr in string format
      * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
      * - Node: node structure, @see Node
+     * - Implementation of
      * If not specified the will work locally and would not be able to send or receive particles.
      */
-    connectTo?: string | Multiaddr | Node;
+    connectTo?: ConnectionOption;
 
     /**
      * @deprecated. AVM run through marine-js infrastructure.
@@ -247,26 +251,32 @@ export class FluencePeer {
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
         if (config?.connectTo) {
-            let connectToMultiAddr: Multiaddr;
-            const fromNode = (config.connectTo as any).multiaddr;
-            if (fromNode) {
-                connectToMultiAddr = new Multiaddr(fromNode);
-            } else {
-                connectToMultiAddr = new Multiaddr(config.connectTo as string);
-            }
-
-            this._relayPeerId = connectToMultiAddr.getPeerId();
-
             if (this._connection) {
                 await this._connection.disconnect();
             }
 
-            this._connection = await FluenceConnection.createConnection({
-                peerId: this._keyPair.Libp2pPeerId,
-                relayAddress: connectToMultiAddr,
-                dialTimeoutMs: config.dialTimeoutMs,
-                onIncomingParticle: (p) => this._incomingParticles.next({ particle: p, onStageChange: () => {} }),
-            });
+            if (config.connectTo instanceof FluenceConnection) {
+                this._connection = config.connectTo;
+            } else {
+                let connectToMultiAddr: MultiaddrInput;
+                // figuring out what was specified as input
+                const tmp = config.connectTo as any;
+                if (tmp.multiaddr !== undefined) {
+                    // specified as FluenceNode (object with multiaddr and peerId props)
+                    connectToMultiAddr = tmp.multiaddr;
+                } else {
+                    // specified as MultiaddrInput
+                    connectToMultiAddr = tmp;
+                }
+
+                this._connection = await RelayConnection.createConnection({
+                    peerId: this._keyPair.Libp2pPeerId,
+                    relayAddress: connectToMultiAddr,
+                    dialTimeoutMs: config.dialTimeoutMs,
+                });
+
+                this._relayPeerId = this._connection.peerId;
+            }
 
             await this._connect();
         }
@@ -426,7 +436,7 @@ export class FluencePeer {
 
     // TODO:: make public when full connection\disconnection cycle is implemented properly
     private _connect(): Promise<void> {
-        return this._connection?.connect() || Promise.resolve();
+        return this._connection?.connect(this._onIncomingParticle.bind(this)) || Promise.resolve();
     }
 
     // TODO:: make public when full connection\disconnection cycle is implemented properly
@@ -437,7 +447,7 @@ export class FluencePeer {
     // Queues for incoming and outgoing particles
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
-    private _outgoingParticles = new Subject<ParticleQueueItem>();
+    private _outgoingParticles = new Subject<ParticleQueueItem & { nextPeerIds: PeerIdB58[] }>();
 
     // Call service handler
 
@@ -469,6 +479,11 @@ export class FluencePeer {
     private _fluenceAppService?: FluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
+
+    private _onIncomingParticle(p: string) {
+        const particle = Particle.fromString(p);
+        this._incomingParticles.next({ particle, onStageChange: () => {} });
+    }
 
     private _startParticleProcessing() {
         this._incomingParticles
@@ -507,7 +522,8 @@ export class FluencePeer {
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            this._connection.sendParticle(item.particle).then(
+            item.particle.logTo('debug', 'sending particle:');
+            this._connection.sendParticle(item.nextPeerIds, item.particle.toString()).then(
                 () => {
                     item.onStageChange({ stage: 'sent' });
                 },
@@ -581,7 +597,11 @@ export class FluencePeer {
                 if (item.result.nextPeerPks.length > 0) {
                     const newParticle = item.particle.clone();
                     newParticle.data = item.newData;
-                    this._outgoingParticles.next({ ...item, particle: newParticle });
+                    this._outgoingParticles.next({
+                        ...item,
+                        particle: newParticle,
+                        nextPeerIds: item.result.nextPeerPks,
+                    });
                 }
 
                 // execute call requests if needed
