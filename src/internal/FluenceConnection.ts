@@ -67,14 +67,14 @@ export class RelayConnection extends FluenceConnection {
         public peerId: PeerIdB58,
         private _lib2p2Peer: Lib2p2Peer,
         private _relayAddress: Multiaddr,
-        private _relayPeerId: PeerIdB58,
+        public readonly relayPeerId: PeerIdB58,
     ) {
         super();
     }
 
     private _connection?: Connection;
 
-    static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
+    static async createConnection(options: FluenceConnectionOptions): Promise<RelayConnection> {
         const transportKey = Websockets.prototype[Symbol.toStringTag];
         const lib2p2Peer = await Lib2p2Peer.create({
             peerId: options.peerId,
@@ -116,7 +116,7 @@ export class RelayConnection extends FluenceConnection {
     }
 
     async sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void> {
-        if (nextPeerIds.length !== 1 && nextPeerIds[0] !== this._relayPeerId) {
+        if (nextPeerIds.length !== 1 && nextPeerIds[0] !== this.relayPeerId) {
             throw new Error(
                 `Relay connection only accepts peer id of the connected relay. Got: ${JSON.stringify(
                     nextPeerIds,

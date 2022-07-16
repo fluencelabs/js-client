@@ -1,9 +1,7 @@
-import Relay from 'libp2p/src/circuit';
 import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection, ParticleHandler } from './FluenceConnection';
 import { FluencePeer } from './FluencePeer';
 import { KeyPair } from './KeyPair';
-import { throwIfNotSupported } from './utils';
 
 interface EphemeralConfig {
     peers: Array<{
@@ -30,54 +28,16 @@ export class EphemeralNetwork {
 
     constructor(public readonly config: EphemeralConfig) {}
 
-    /*
-    static async create(config: EphemeralConfig): Promise<EphemeralNetwork> {
-        let res: EphemeralNetwork | null = null;
-
-        const promises = new Array(count).map(async (x) => {
-            const peer = new FluencePeer();
-            let handler: ParticleHandler | null = null;
-            const connection = new (class extends FluenceConnection {
-                peerId: string = '';
-                async connect(onIncomingParticle: ParticleHandler): Promise<void> {
-                    handler = onIncomingParticle;
-                }
-                async disconnect(): Promise<void> {
-                    handler = null;
-                }
-                async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
-                    res!.send(this.peerId, nextPeerIds, particle);
-                }
-            })();
-
-            await peer.start({
-                connectTo: connection,
-            });
-            const peerId = peer.getStatus().peerId!;
-            connection.peerId = peerId;
-            const ephPeer: EphemeralPeer = {
-                peer: peer,
-                peerId: peerId,
-                handler: handler!,
-            };
-            return [peerId, ephPeer] as const;
-        });
-        const values = await Promise.all(promises);
-
-        const peers = new Map(values);
-
-        res = new EphemeralNetwork(peers);
-        return res;
-    }
-    */
-
     async up(): Promise<void> {
         const me = this;
         const promises = this.config.peers.map(async (x) => {
             const peer = new FluencePeer();
+            await peer.init({
+                KeyPair: x.peerKp,
+            });
+
             let handler: ParticleHandler | null = null;
             const connection = new (class extends FluenceConnection {
-                // peerId: string = '';
                 async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                     handler = onIncomingParticle;
                 }
@@ -89,12 +49,9 @@ export class EphemeralNetwork {
                 }
             })();
 
-            await peer.start({
-                connectTo: connection,
-                KeyPair: x.peerKp,
-            });
+            await peer.connect(connection);
+
             const peerId = peer.getStatus().peerId!;
-            // connection.peerId = peerId;
             const ephPeer: EphemeralPeer = {
                 peer: peer,
                 peerId: peerId,
@@ -106,11 +63,10 @@ export class EphemeralNetwork {
         this._ephemeralPeers = new Map(values);
     }
 
-    createRelayConnection(relay: PeerIdB58): FluenceConnection {
+    async connectToRelay(relay: PeerIdB58, peer: FluencePeer): Promise<void> {
         const me = this;
         let handler: ParticleHandler | null = null;
-        const res = new (class extends FluenceConnection {
-            // peerId: string;
+        const connection = new (class extends FluenceConnection {
             async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                 handler = onIncomingParticle;
             }
@@ -118,13 +74,20 @@ export class EphemeralNetwork {
                 handler = null;
             }
             async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
-                me.send('', nextPeerIds, particle);
+                me.send(peer.getStatus().peerId!, nextPeerIds, particle);
             }
         })();
 
-        this._connectedPeers.set();
+        await peer.connect(connection);
 
-        return res;
+        const peerId = peer.getStatus().peerId!;
+
+        this._connectedPeers.set(peerId, {
+            peer: peer,
+            handler: handler!,
+            peerId: peerId,
+            relay: relay,
+        });
     }
 
     async down(): Promise<void> {
