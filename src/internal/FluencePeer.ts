@@ -31,7 +31,6 @@ import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromSe
 import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';
 import { InterpreterResult, LogLevel } from '@fluencelabs/avm';
-import { EphemeralNetwork } from './ephemeral';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -385,7 +384,10 @@ export class FluencePeer {
     }
 
     public async init(config: PeerConfig) {
-        this._keyPair = config.KeyPair!;
+        if (!config.KeyPair) {
+            throw new Error('Key Pair is required');
+        }
+        this._keyPair = config.KeyPair;
 
         const peerId = this._keyPair.Libp2pPeerId.toB58String();
 

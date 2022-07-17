@@ -194,7 +194,6 @@ describe('Typescript usage suite', () => {
 
         it('address as node', async () => {
             await peer.start({ connectTo: nodes[0] });
-            console.log(peer.getStatus());
             const isConnected = await checkConnection(peer);
 
             expect(isConnected).toBeTruthy();
