@@ -164,8 +164,12 @@ describe('Tests for default handler', () => {
 
         // assert
         expect(res).toMatchObject({
-            retCode: 1,
-            result: 'The JS implementation of Peer does not support "peer.identify"',
+            retCode: 0,
+            result: {
+                external_addresses: [],
+                node_version: expect.stringContaining('js'),
+                air_version: expect.stringContaining('js'),
+            },
         });
     });
 });
