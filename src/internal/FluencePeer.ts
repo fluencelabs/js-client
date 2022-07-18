@@ -306,7 +306,7 @@ export class FluencePeer {
     // internal api
 
     /**
-     * Is not intended to be used manually. Subject to change
+     * @private Is not intended to be used manually. Subject to change
      */
     get internals() {
         return {
@@ -383,6 +383,9 @@ export class FluencePeer {
         };
     }
 
+    /**
+     * @private Subject to change. Do not use this method directly
+     */
     public async init(config: PeerConfig) {
         if (!config.KeyPair) {
             throw new Error('Key Pair is required');
@@ -422,6 +425,9 @@ export class FluencePeer {
         this._startParticleProcessing();
     }
 
+    /**
+     * @private Subject to change. Do not use this method directly
+     */
     public async connect(connection: FluenceConnection): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
@@ -432,6 +438,9 @@ export class FluencePeer {
         await this._connection.connect(this._onIncomingParticle.bind(this));
     }
 
+    /**
+     * @private Subject to change. Do not use this method directly
+     */
     public async disconnect(): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
