@@ -16,7 +16,7 @@ describe('Ephemeral networks tests', () => {
             KeyPair: await KeyPair.randomEd25519(),
         });
 
-        const conn = en.createRelayConnection(relay, peer);
+        const conn = en.getRelayConnection(relay, peer);
         await peer.connect(conn);
     });
 

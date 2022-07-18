@@ -2,6 +2,7 @@ import { PeerIdB58 } from './commonTypes';
 import { FluenceConnection, ParticleHandler } from './FluenceConnection';
 import { FluencePeer } from '../index';
 import { keyPairFromBase64Sk } from './KeyPair';
+import log from 'loglevel';
 
 interface EphemeralConfig {
     peers: Array<{
@@ -10,17 +11,12 @@ interface EphemeralConfig {
     }>;
 }
 
-interface EphemeralPeer {
+interface PeerAdapter {
+    isEphemeral: boolean;
     peer: FluencePeer;
     peerId: PeerIdB58;
     onIncoming: ParticleHandler;
-}
-
-interface ConnectedPeer {
-    peerId: PeerIdB58;
-    peer: FluencePeer;
-    onIncoming: ParticleHandler;
-    relay: PeerIdB58;
+    connections: Set<PeerIdB58>;
 }
 
 export const defaultConfig = {
@@ -108,38 +104,56 @@ export const defaultConfig = {
     ],
 };
 
+/**
+ * Ephemeral network implementation.
+ * Ephemeral network is a virtual network which runs locally and focuses on p2p interaction by removing connectivity layer out of the equation.
+ */
 export class EphemeralNetwork {
-    private _ephemeralPeers: Map<PeerIdB58, EphemeralPeer> = new Map();
-    private _connectedPeers: Map<PeerIdB58, ConnectedPeer> = new Map();
+    private _peers: Map<PeerIdB58, PeerAdapter> = new Map();
 
     constructor(public readonly config: EphemeralConfig) {}
 
+    /**
+     * Starts the Ephemeral network up
+     */
     async up(): Promise<void> {
+        log.debug('Starting ephemeral network up...');
+        const allPeerIds = this.config.peers.map((x) => x.peerId);
         const me = this;
         const promises = this.config.peers.map(async (x) => {
             const peer = new FluencePeer();
+            const kp = await keyPairFromBase64Sk(x.sk);
+            if (kp.toB58String() !== x.peerId) {
+                throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
+            }
+
             await peer.init({
-                KeyPair: await keyPairFromBase64Sk(x.sk),
+                KeyPair: kp,
             });
 
             let handler: ParticleHandler | null = null;
-            const connection = new (class extends FluenceConnection {
+            const connectionCtor = class extends FluenceConnection {
                 relayPeerId = null;
+
                 async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                     handler = onIncomingParticle;
                 }
+
                 async disconnect(): Promise<void> {
                     handler = null;
                 }
-                async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
-                    me.send(peer.getStatus().peerId!, nextPeerIds, particle);
-                }
-            })();
 
-            await peer.connect(connection);
+                async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
+                    me._send(peer.getStatus().peerId!, nextPeerIds, particle);
+                }
+            };
+
+            await peer.connect(new connectionCtor());
 
             const peerId = peer.getStatus().peerId!;
-            const ephPeer: EphemeralPeer = {
+            const ephPeer: PeerAdapter = {
+                isEphemeral: true,
+                connections: new Set(allPeerIds.filter((x) => x !== peerId)),
                 peer: peer,
                 peerId: peerId,
                 onIncoming: handler!,
@@ -147,59 +161,89 @@ export class EphemeralNetwork {
             return [peerId, ephPeer] as const;
         });
         const values = await Promise.all(promises);
-        this._ephemeralPeers = new Map(values);
+        this._peers = new Map(values);
+        log.debug('Ephemeral network started...');
     }
 
-    createRelayConnection(relay: PeerIdB58, peer: FluencePeer): FluenceConnection {
+    /**
+     * Shuts the ephemeral network down. Will disconnect all connected peers.
+     */
+    async down(): Promise<void> {
+        log.debug('Shutting down ephemeral network...');
+        const peers = Array.from(this._peers.entries());
+        const promises = peers.map(([k, p]) => {
+            return p.isEphemeral ? p.peer.stop() : p.peer.disconnect();
+        });
+        await Promise.all(promises);
+        this._peers.clear();
+        log.debug('Ephemeral network shut down');
+    }
+
+    /**
+     * Gets the FluenceConnection which can be used to connect to the ephemeral networks via the specified relay peer.
+     *
+     * @param relay
+     * @param peer
+     * @returns FluenceConnection which
+     */
+    getRelayConnection(relay: PeerIdB58, peer: FluencePeer): FluenceConnection {
         const me = this;
+        const relayPeer = this._peers.get(relay);
+        if (relayPeer === undefined) {
+            throw new Error(`Relay with peer Id: ${relay} has not been found in ephemeral network`);
+        }
+
         const connectionCtor = class extends FluenceConnection {
             relayPeerId = relay;
+
             async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
-                me._connectedPeers.set(peerId, {
+                me._peers.set(peerId, {
+                    isEphemeral: false,
                     peer: peer,
                     onIncoming: onIncomingParticle,
                     peerId: peerId,
-                    relay: relay,
+                    connections: new Set([relay]),
                 });
+                relayPeer.connections.add(peerId);
             }
+
             async disconnect(): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
-                me._connectedPeers.delete(peerId);
+                relayPeer.connections.delete(peerId);
+                me._peers.delete(peerId);
             }
+
             async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
-                me.send(peerId, nextPeerIds, particle);
+                me._send(peerId, nextPeerIds, particle);
             }
         };
 
         return new connectionCtor();
     }
 
-    async down(): Promise<void> {
-        const elements = Array.from(this._ephemeralPeers.entries());
-        const promises = elements.map(([k, p]) => {
-            return p.peer.stop();
-        });
-        await Promise.all(promises);
-        this._ephemeralPeers.clear();
-    }
+    private async _send(from: PeerIdB58, to: PeerIdB58[], particle: string) {
+        log.info(`Sending particle from ${from}, to ${JSON.stringify(to)}`);
+        const peer = this._peers.get(from);
+        if (peer === undefined) {
+            log.error(`Peer ${from}  cannot be found in ephemeral network`);
+            return;
+        }
 
-    async send(from: PeerIdB58, to: PeerIdB58[], particle: string) {
-        console.log(`sending particle from ${from}, to ${JSON.stringify(to)}`);
-        for (let peerId of to) {
-            const ephPeer = this._ephemeralPeers.get(peerId);
-            if (ephPeer) {
-                ephPeer.onIncoming(particle);
+        for (let dest of to) {
+            if (!peer.connections.has(dest)) {
+                log.error(`Peer ${from} has no connection with ${dest}`);
                 continue;
             }
 
-            const connectedPeer = this._connectedPeers.get(peerId);
-            if (connectedPeer) {
-                connectedPeer.onIncoming(particle);
+            const destPeer = this._peers.get(dest);
+            if (destPeer === undefined) {
+                log.error(`peer ${destPeer} cannot be found in ephemeral network`);
+                continue;
             }
 
-            console.log(`peer ${peerId} cannot be found in ephemeral`);
+            destPeer.onIncoming(particle);
         }
     }
 }
