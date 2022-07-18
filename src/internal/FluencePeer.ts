@@ -48,7 +48,7 @@ export type MarineLoglevel = LogLevel;
 
 const DEFAULT_TTL = 7000;
 
-export type ConnectionOption = string | MultiaddrInput | Node | FluenceConnection;
+export type ConnectionOption = string | MultiaddrInput | Node;
 
 /**
  * Configuration used when initiating Fluence Peer
@@ -239,7 +239,6 @@ export class FluencePeer {
         const conn = await configToConnection(config.KeyPair, config?.connectTo, config?.dialTimeoutMs);
         if (conn !== null) {
             const [conn1, relay] = conn;
-            this._relayPeerId = relay;
             await this.connect(conn1);
         }
     }
@@ -433,6 +432,7 @@ export class FluencePeer {
             await this._connection.disconnect();
         }
 
+        this._relayPeerId = connection.relayPeerId;
         this._connection = connection;
 
         await this._connection.connect(this._onIncomingParticle.bind(this));

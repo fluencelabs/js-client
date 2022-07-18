@@ -11,19 +11,12 @@ describe('Ephemeral networks tests', () => {
         const ephPeers = en.peersInfo().map((x) => x.peerId);
         const relay = ephPeers[0];
 
-        console.log(1);
-
         const peer = new FluencePeer();
         await peer.init({
             KeyPair: await KeyPair.randomEd25519(),
         });
 
-        console.log(2);
-
         en.connectToRelay(relay, peer);
-        const peerId = peer.getStatus().peerId!;
-
-        console.log(3);
 
         const script = `
         (seq 
@@ -50,14 +43,10 @@ describe('Ephemeral networks tests', () => {
         )
         `;
 
-        console.log(4);
-
         const particle = peer.internals.createNewParticle(script);
         if (particle instanceof Error) {
             throw particle;
         }
-
-        console.log(5);
 
         const promise = new Promise<string>((resolve) => {
             peer.internals.regHandler.forParticle(particle.id, 'test', 'test', (req) => {
@@ -68,8 +57,6 @@ describe('Ephemeral networks tests', () => {
                 };
             });
         });
-
-        console.log(6);
 
         peer.internals.initiateParticle(particle, () => {});
 

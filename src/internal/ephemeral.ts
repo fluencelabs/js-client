@@ -156,6 +156,7 @@ export class EphemeralNetwork {
 
             let handler: ParticleHandler | null = null;
             const connection = new (class extends FluenceConnection {
+                relayPeerId = null;
                 async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                     handler = onIncomingParticle;
                 }
@@ -185,6 +186,7 @@ export class EphemeralNetwork {
         const me = this;
         let handler: ParticleHandler | null = null;
         const connection = new (class extends FluenceConnection {
+            relayPeerId = relay;
             async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                 handler = onIncomingParticle;
             }

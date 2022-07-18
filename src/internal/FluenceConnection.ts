@@ -56,7 +56,7 @@ export interface FluenceConnectionOptions {
 export type ParticleHandler = (particle: string) => void;
 
 export abstract class FluenceConnection {
-    // abstract readonly peerId: PeerIdB58;
+    abstract readonly relayPeerId: PeerIdB58 | null;
     abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
     abstract disconnect(): Promise<void>;
     abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
