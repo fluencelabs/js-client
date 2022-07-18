@@ -12,15 +12,15 @@ interface EphemeralConfig {
 }
 
 interface EphemeralPeer {
-    peerId: PeerIdB58;
     peer: FluencePeer;
-    handler: ParticleHandler;
+    peerId: PeerIdB58;
+    onIncoming: ParticleHandler;
 }
 
 interface ConnectedPeer {
     peerId: PeerIdB58;
     peer: FluencePeer;
-    handler: ParticleHandler;
+    onIncoming: ParticleHandler;
     relay: PeerIdB58;
 }
 
@@ -138,14 +138,6 @@ export class EphemeralNetwork {
 
     constructor(public readonly config: EphemeralConfig) {}
 
-    peersInfo() {
-        return Array.from(this._ephemeralPeers.entries()).map(([k, v]) => {
-            return {
-                peerId: v.peerId,
-            };
-        });
-    }
-
     async up(): Promise<void> {
         const me = this;
         const promises = this.config.peers.map(async (x) => {
@@ -174,7 +166,7 @@ export class EphemeralNetwork {
             const ephPeer: EphemeralPeer = {
                 peer: peer,
                 peerId: peerId,
-                handler: handler!,
+                onIncoming: handler!,
             };
             return [peerId, ephPeer] as const;
         });
@@ -182,32 +174,30 @@ export class EphemeralNetwork {
         this._ephemeralPeers = new Map(values);
     }
 
-    async connectToRelay(relay: PeerIdB58, peer: FluencePeer): Promise<void> {
+    createRelayConnection(relay: PeerIdB58, peer: FluencePeer): FluenceConnection {
         const me = this;
-        let handler: ParticleHandler | null = null;
-        const connection = new (class extends FluenceConnection {
+        const connectionCtor = class extends FluenceConnection {
             relayPeerId = relay;
             async connect(onIncomingParticle: ParticleHandler): Promise<void> {
-                handler = onIncomingParticle;
+                const peerId = peer.getStatus().peerId!;
+                me._connectedPeers.set(peerId, {
+                    peer: peer,
+                    onIncoming: onIncomingParticle,
+                    peerId: peerId,
+                    relay: relay,
+                });
             }
             async disconnect(): Promise<void> {
-                handler = null;
+                const peerId = peer.getStatus().peerId!;
+                me._connectedPeers.delete(peerId);
             }
             async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
-                me.send(peer.getStatus().peerId!, nextPeerIds, particle);
+                const peerId = peer.getStatus().peerId!;
+                me.send(peerId, nextPeerIds, particle);
             }
-        })();
+        };
 
-        await peer.connect(connection);
-
-        const peerId = peer.getStatus().peerId!;
-
-        this._connectedPeers.set(peerId, {
-            peer: peer,
-            handler: handler!,
-            peerId: peerId,
-            relay: relay,
-        });
+        return new connectionCtor();
     }
 
     async down(): Promise<void> {
@@ -220,17 +210,20 @@ export class EphemeralNetwork {
     }
 
     async send(from: PeerIdB58, to: PeerIdB58[], particle: string) {
-        console.log(`sending particle from ${from}, to ${to}`);
+        console.log(`sending particle from ${from}, to ${JSON.stringify(to)}`);
         for (let peerId of to) {
-            let peer = this._ephemeralPeers.get(peerId);
-            if (peer === undefined) {
-                console.log(`peer ${peerId} cannot be found in ephemeral`);
-                peer = this._connectedPeers.get(peerId);
-                if (peer === undefined) {
-                    throw new Error();
-                }
+            const ephPeer = this._ephemeralPeers.get(peerId);
+            if (ephPeer) {
+                ephPeer.onIncoming(particle);
+                continue;
             }
-            peer.handler(particle);
+
+            const connectedPeer = this._connectedPeers.get(peerId);
+            if (connectedPeer) {
+                connectedPeer.onIncoming(particle);
+            }
+
+            console.log(`peer ${peerId} cannot be found in ephemeral`);
         }
     }
 }

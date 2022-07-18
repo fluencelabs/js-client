@@ -1,36 +1,51 @@
-import { createConfig, EphemeralNetwork } from '../../internal/ephemeral';
+import { createConfig, EphemeralNetwork, preGeneratedPeers } from '../../internal/ephemeral';
 import { FluencePeer, KeyPair } from '../../index';
-import { Particle } from '../../internal/Particle';
 import { ResultCodes } from '../../internal/commonTypes';
 
-describe('Ephemeral networks tests', () => {
-    it('smoke test', async function () {
-        const config = await createConfig(5);
-        const en = new EphemeralNetwork(config);
-        await en.up();
-        const ephPeers = en.peersInfo().map((x) => x.peerId);
-        const relay = ephPeers[0];
+let en: EphemeralNetwork;
+let peer: FluencePeer;
 
-        const peer = new FluencePeer();
+describe('Ephemeral networks tests', () => {
+    beforeEach(async () => {
+        const config = await createConfig(5);
+        en = new EphemeralNetwork(config);
+        await en.up();
+        const relay = preGeneratedPeers[0].peerId;
+
+        peer = new FluencePeer();
         await peer.init({
             KeyPair: await KeyPair.randomEd25519(),
         });
 
-        en.connectToRelay(relay, peer);
+        const conn = en.createRelayConnection(relay, peer);
+        await peer.connect(conn);
+    });
+
+    afterEach(async () => {
+        if (peer) {
+            await peer.stop();
+        }
+        if (en) {
+            await en.down();
+        }
+    });
+
+    it('smoke test', async function () {
+        const relay = peer.getStatus().relayPeerId!;
 
         const script = `
         (seq 
             (call "${relay}" ("op" "noop") [])
             (seq            
-                (call "${ephPeers[0]}" ("op" "noop") [])
+                (call "${preGeneratedPeers[0].peerId}" ("op" "noop") [])
                 (seq            
-                    (call "${ephPeers[1]}" ("op" "noop") [])
+                    (call "${preGeneratedPeers[1].peerId}" ("op" "noop") [])
                     (seq            
-                        (call "${ephPeers[2]}" ("op" "noop") [])
+                        (call "${preGeneratedPeers[2].peerId}" ("op" "noop") [])
                         (seq            
-                            (call "${ephPeers[3]}" ("op" "noop") [])
+                            (call "${preGeneratedPeers[3].peerId}" ("op" "noop") [])
                             (seq            
-                                (call "${ephPeers[4]}" ("op" "noop") [])
+                                (call "${preGeneratedPeers[4].peerId}" ("op" "noop") [])
                                 (seq
                                     (call "${relay}" ("op" "noop") [])
                                     (call %init_peer_id% ("test" "test") [])
