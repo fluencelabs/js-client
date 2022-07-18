@@ -23,28 +23,6 @@ interface ConnectedPeer {
     relay: PeerIdB58;
 }
 
-/*
-const generatedPeers = [
-    'a6CGFT4i4h2rMBP4oQ1jieXakdq6+//z1obBK3YB4gc=',
-    '9lbdHoKCF0NBGFxnj3cUWFKk5t4y/ZlX5ewLfllZsgc=',
-    'sKwaUqg43bHH53vxJfYI/lVEHMVxdIQYNerOOk+a1Qc=',
-    'sLzAAxyd0UvePyB3GrPB87lY5bkjp+3BbXG5ixUK2QQ=',
-    '9x5Cma3FSm/SqfxN8aJTHy6NL+IWQr5T961kbYNPAQY=',
-    '6efr4zMdEhv5Q3PyoPT/hMtsX41J3LGhKZ3lLZ/B3ws=',
-    '7nhML421dFLy5RP49ZhHXLg0oe4+6HwI0jPXepzDcgA=',
-    'ev1PXNnoSz2kXlXQKWRg4X5pK4afYx/2PsO/oBzGhgk=',
-    'w19kebiDnooq7FP0it8vXqYKMZcuSsnCv+rr6B//UwQ=',
-    'uO/EebZhA+iN3RW1gNi+pE/jU2BaBryoMhWJI3mS5AM=',
-    'HBsNTO+IiD/TJm/770GvU1Fi2S55eK4nIm2DnFpBagQ=',
-    '5MCa/XPZXA/vr7t8KfqJtfvMuY5gtRlWZs1+uGT2sAQ=',
-    'HiRPeDBLAS/jUCF1Hk+ZXCOhyq0RUCqoUQfu4R+7zwI=',
-    'ZX0V0uqkbM6fxCc9lPDvrZHfCiWBpwYcKfYMABnSVAc=',
-    'trAeB26g28HYv+yBiAtVMaugCn8Yzz721rW0gbcUmQE=',
-    'fa3IC2xdrYhUXWRWwklmFjB1bWBBw7Q7poCbJMODDwM=',
-    '6MylTuWs7a5WTV4yPDPheTDfMNK0/o54D0hbfChpowM=',
-    '13TR5ANabrHmVlHyJXVT8tnNbjJgsCuiLi76WraRYgQ=',
-];*/
-
 const generatedSks = [
     'dWNAHhDVuFj9bEieILMu6TcCFRxBJdOPIvAWmf4sZQI=',
     'dOmaxAeu4Th+MJ22vRDLMFTNbiDgKNXar9fW9ofAMgQ=',
@@ -69,6 +47,19 @@ const generatedSks = [
     'R9c4DX+eIP0e9k/EsfRM2dL2nJOHmV6s04RJ0afpyg4=',
     'TFpPX7wEfznbefYjdecip3E/Dv2TmQyf6I3M+CKEowg=',
 ];
+
+export const generatedSksToNodes = async () => {
+    const promises = generatedSks.map(async (x) => {
+        const arr = toUint8Array(x);
+        const kp = await KeyPair.fromEd25519SK(arr);
+        const peerId = kp.toB58String();
+        return {
+            peerId: peerId,
+            multiaddr: '',
+        };
+    });
+    return Promise.all(promises);
+};
 
 export const createConfig = async (numberOfPeers: number): Promise<EphemeralConfig> => {
     const candidatePeers = generatedSks.slice(undefined, numberOfPeers);
