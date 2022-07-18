@@ -43,7 +43,12 @@ const errorNotImpl = (methodName: string) => {
 export const builtInServices: Record<string, Record<string, GenericCallServiceHandler>> = {
     peer: {
         identify: () => {
-            return errorNotImpl('peer.identify');
+            return success({
+                external_addresses: [],
+                // TODO: remove hardcoded values
+                node_version: 'js-0.23.0',
+                air_version: 'js-0.24.2',
+            });
         },
 
         timestamp_ms: () => {
