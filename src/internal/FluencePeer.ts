@@ -20,7 +20,7 @@ import { PeerIdB58 } from './commonTypes';
 import { RelayConnection, FluenceConnection } from './FluenceConnection';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
 import { KeyPair } from './KeyPair';
-import { throwIfNotSupported, dataToString, jsonify } from './utils';
+import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
@@ -39,12 +39,6 @@ type Node = {
     peerId: PeerIdB58;
     multiaddr: string;
 };
-
-/**
- * Enum representing the log level used in Aqua VM.
- * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
- */
-export type MarineLoglevel = LogLevel;
 
 const DEFAULT_TTL = 7000;
 
@@ -269,8 +263,12 @@ export class FluencePeer {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        const envs = this._marineLogLevel ? { WASM_LOG: this._marineLogLevel } : undefined;
-        await this._fluenceAppService.createService(wasm, serviceId, undefined, envs);
+        await this._fluenceAppService.createService(
+            wasm,
+            serviceId,
+            undefined,
+            marineLogLevelToEnvs(this._marineLogLevel),
+        );
         this._marineServices.add(serviceId);
     }
 
@@ -408,7 +406,12 @@ export class FluencePeer {
             ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
             : await loadDefaults();
         await this._fluenceAppService.init(marineDeps.marine);
-        await this._fluenceAppService.createService(marineDeps.avm, 'avm');
+        await this._fluenceAppService.createService(
+            marineDeps.avm,
+            'avm',
+            undefined,
+            marineLogLevelToEnvs(this._marineLogLevel),
+        );
         this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
         await this._avmRunner.init(config?.avmLogLevel || 'off');
 
