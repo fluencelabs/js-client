@@ -69,8 +69,7 @@ export class KeyPair {
     }
 }
 
-export const keyPairFromBase64Sk = async (sk: string) => {
+export const keyPairFromBase64Sk = (sk: string): Promise<KeyPair> => {
     const arr = toUint8Array(sk);
-    const kp = await KeyPair.fromEd25519SK(arr);
-    return kp;
+    return KeyPair.fromEd25519SK(arr);
 };
