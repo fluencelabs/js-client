@@ -119,9 +119,11 @@ export class EphemeralNetwork {
     async up(): Promise<void> {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
-        const me = this;
         const promises = this.config.peers.map(async (x) => {
             const peer = new FluencePeer();
+            const sendParticle = async (nextPeerIds: string[], particle: string): Promise<void> => {
+                this._send(peer.getStatus().peerId!, nextPeerIds, particle);
+            };
             const kp = await keyPairFromBase64Sk(x.sk);
             if (kp.toB58String() !== x.peerId) {
                 throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
@@ -143,9 +145,7 @@ export class EphemeralNetwork {
                     handler = null;
                 }
 
-                async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
-                    me._send(peer.getStatus().peerId!, nextPeerIds, particle);
-                }
+                sendParticle = sendParticle;
             };
 
             await peer.connect(new connectionCtor());
@@ -181,10 +181,6 @@ export class EphemeralNetwork {
 
     /**
      * Gets the FluenceConnection which can be used to connect to the ephemeral networks via the specified relay peer.
-     *
-     * @param relay
-     * @param peer
-     * @returns FluenceConnection which
      */
     getRelayConnection(relay: PeerIdB58, peer: FluencePeer): FluenceConnection {
         const me = this;

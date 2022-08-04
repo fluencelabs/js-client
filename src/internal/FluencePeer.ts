@@ -54,7 +54,7 @@ export interface PeerConfig {
      * - string: multiaddr in string format
      * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
      * - Node: node structure, @see Node
-     * - Implementation of
+     * - Implementation of FluenceConnection class, @see FluenceConnection
      * If not specified the will work locally and would not be able to send or receive particles.
      */
     connectTo?: ConnectionOption;
@@ -201,7 +201,7 @@ export class FluencePeer {
             };
         }
 
-        if (this._connection === undefined || this._relayPeerId === null) {
+        if (this._connection === undefined) {
             return {
                 isInitialized: true,
                 peerId: this._keyPair.Libp2pPeerId.toB58String(),
@@ -210,11 +210,21 @@ export class FluencePeer {
             };
         }
 
+        if (this._connection.relayPeerId === null) {
+            return {
+                isInitialized: true,
+                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                isConnected: true,
+                isDirect: true,
+                relayPeerId: null,
+            };
+        }
+
         return {
             isInitialized: true,
             peerId: this._keyPair.Libp2pPeerId.toB58String(),
             isConnected: true,
-            relayPeerId: this._relayPeerId,
+            relayPeerId: this._connection.relayPeerId,
         };
     }
 
@@ -223,17 +233,15 @@ export class FluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async start(config?: PeerConfig): Promise<void> {
+    async start(config: PeerConfig = {}): Promise<void> {
         throwIfNotSupported();
-        config = config ?? {};
         config.KeyPair = config.KeyPair ?? (await KeyPair.randomEd25519());
 
-        await this.init(config);
+        await this.init(config as PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>);
 
         const conn = await configToConnection(config.KeyPair, config?.connectTo, config?.dialTimeoutMs);
         if (conn !== null) {
-            const [conn1, relay] = conn;
-            await this.connect(conn1);
+            await this.connect(conn);
         }
     }
 
@@ -286,7 +294,6 @@ export class FluencePeer {
      */
     async stop() {
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
-        this._relayPeerId = null;
         this._stopParticleProcessing();
         await this.disconnect();
         await this._avmRunner?.terminate();
@@ -411,7 +418,7 @@ export class FluencePeer {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    public async init(config: PeerConfig) {
+    async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
         if (!config.KeyPair) {
             throw new Error('Key Pair is required');
         }
@@ -458,12 +465,11 @@ export class FluencePeer {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    public async connect(connection: FluenceConnection): Promise<void> {
+    async connect(connection: FluenceConnection): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
         }
 
-        this._relayPeerId = connection.relayPeerId;
         this._connection = connection;
 
         await this._connection.connect(this._onIncomingParticle.bind(this));
@@ -472,7 +478,7 @@ export class FluencePeer {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    public async disconnect(): Promise<void> {
+    async disconnect(): Promise<void> {
         if (this._connection) {
             await this._connection.disconnect();
             this._connection = undefined;
@@ -505,7 +511,6 @@ export class FluencePeer {
 
     private _printParticleId = false;
     private _defaultTTL: number = DEFAULT_TTL;
-    private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair | undefined;
     private _connection?: FluenceConnection;
 
@@ -765,13 +770,13 @@ async function configToConnection(
     keyPair: KeyPair,
     connection?: ConnectionOption,
     dialTimeoutMs?: number,
-): Promise<[connection: FluenceConnection, relayPeerId: PeerIdB58 | null] | null> {
+): Promise<FluenceConnection | null> {
     if (!connection) {
         return null;
     }
 
     if (connection instanceof FluenceConnection) {
-        return [connection, null];
+        return connection;
     }
 
     let connectToMultiAddr: MultiaddrInput;
@@ -790,7 +795,7 @@ async function configToConnection(
         relayAddress: connectToMultiAddr,
         dialTimeoutMs: dialTimeoutMs,
     });
-    return [res, res.relayPeerId];
+    return res;
 }
 
 function isInterpretationSuccessful(result: InterpreterResult) {

@@ -55,6 +55,9 @@ export interface FluenceConnectionOptions {
 
 export type ParticleHandler = (particle: string) => void;
 
+/**
+ * Base class for connectivity layer to Fluence Network
+ */
 export abstract class FluenceConnection {
     abstract readonly relayPeerId: PeerIdB58 | null;
     abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
@@ -62,6 +65,9 @@ export abstract class FluenceConnection {
     abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
 }
 
+/**
+ * Implementation for JS peers which connect to Fluence through relay node
+ */
 export class RelayConnection extends FluenceConnection {
     constructor(
         public peerId: PeerIdB58,
