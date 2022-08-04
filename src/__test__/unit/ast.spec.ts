@@ -10,7 +10,6 @@ describe('Parse ast tests', () => {
     });
 
     it('Correct ast should be parsed correctly', async function () {
-        await Fluence.start();
         const peer = Fluence.getPeer();
         const air = `(null)`;
         const res = await peer.internals.parseAst(air);
@@ -22,7 +21,6 @@ describe('Parse ast tests', () => {
     });
 
     it('Incorrect ast should result in corresponding error', async function () {
-        await Fluence.start();
         const peer = Fluence.getPeer();
         const air = `(null`;
         const res = await peer.internals.parseAst(air);
