@@ -307,6 +307,34 @@ export class FluencePeer {
      */
     get internals() {
         return {
+            parseAst: async (air: string): Promise<{ success: boolean; data: any }> => {
+                const status = this.getStatus();
+
+                if (!status.isInitialized) {
+                    new Error("Can't use avm: peer is not initialized");
+                }
+
+                const args = JSON.stringify([air]);
+                const rawRes = await this._fluenceAppService!.callService('avm', 'ast', args, undefined);
+                let res;
+                try {
+                    res = JSON.parse(rawRes);
+                    res = res.result as string;
+                    if (res.startsWith('error')) {
+                        return {
+                            success: false,
+                            data: res,
+                        };
+                    } else {
+                        return {
+                            success: true,
+                            data: JSON.parse(res),
+                        };
+                    }
+                } catch (err) {
+                    throw new Error('Failed to call avm. Raw result: ' + rawRes + '. Error: ' + err);
+                }
+            },
             createNewParticle: (script: string, ttl: number = this._defaultTTL) => {
                 const status = this.getStatus();
 
