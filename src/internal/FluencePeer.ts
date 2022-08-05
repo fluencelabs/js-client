@@ -144,7 +144,13 @@ export interface PeerConfig {
 }
 
 /**
- * Information about Fluence Peer connection
+ * Information about Fluence Peer connection.
+ * Represented as object with the following keys:
+ * - `isInitialized`: Is the peer initialized or not.
+ * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
+ * - `isConnected`: Is the peer connected to network or not
+ * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
+ * - `isDirect`: True if the peer is connected to the network directly (not through relay)
  */
 export type PeerStatus =
     | {
