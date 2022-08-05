@@ -1,536 +1,69 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@fluencelabs/fluence</title>
-	<meta name="description" content="Documentation for @fluencelabs/fluence">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script async src="assets/js/search.js" id="search-script"></script>
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">@fluencelabs/fluence</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<h1>@fluencelabs/fluence</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
-				<section class="tsd-panel tsd-index-panel">
-					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Classes</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-class"><a href="classes/FluencePeer.html" class="tsd-kind-icon">Fluence<wbr>Peer</a></li>
-								<li class="tsd-kind-class"><a href="classes/KeyPair.html" class="tsd-kind-icon">Key<wbr>Pair</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Interfaces</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/CallParams.html" class="tsd-kind-icon">Call<wbr>Params</a></li>
-								<li class="tsd-kind-interface"><a href="interfaces/PeerConfig.html" class="tsd-kind-icon">Peer<wbr>Config</a></li>
-								<li class="tsd-kind-interface"><a href="interfaces/PeerStatus.html" class="tsd-kind-icon">Peer<wbr>Status</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Type aliases</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias"><a href="modules.html#AvmLoglevel" class="tsd-kind-icon">Avm<wbr>Loglevel</a></li>
-								<li class="tsd-kind-type-alias"><a href="modules.html#PeerIdB58" class="tsd-kind-icon">Peer<wbr>IdB58</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Variables</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable"><a href="modules.html#Fluence" class="tsd-kind-icon">Fluence</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Functions</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromFileSystem" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>File<wbr>System</a></li>
-								<li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromNpmPackage" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Npm<wbr>Package</a></li>
-								<li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromServer" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Server</a></li>
-								<li class="tsd-kind-function"><a href="modules.html#setLogLevel" class="tsd-kind-icon">set<wbr>Log<wbr>Level</a></li>
-							</ul>
-						</section>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Type aliases</h2>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias">
-					<a name="AvmLoglevel" class="tsd-anchor"></a>
-					<h3>Avm<wbr>Loglevel</h3>
-					<div class="tsd-signature tsd-kind-icon">Avm<wbr>Loglevel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LogLevel</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/FluencePeer.ts#L47">src/internal/FluencePeer.ts:47</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Enum representing the log level used in Aqua VM.
-							Possible values: &#39;info&#39;, &#39;trace&#39;, &#39;debug&#39;, &#39;info&#39;, &#39;warn&#39;, &#39;error&#39;, &#39;off&#39;;</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-type-alias">
-					<a name="PeerIdB58" class="tsd-anchor"></a>
-					<h3>Peer<wbr>IdB58</h3>
-					<div class="tsd-signature tsd-kind-icon">Peer<wbr>IdB58<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/internal/commonTypes.ts#L22">src/internal/commonTypes.ts:22</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Peer ID&#39;s id as a base58 string (multihash/CIDv0).</p>
-						</div>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable">
-					<a name="Fluence" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> Fluence</h3>
-					<div class="tsd-signature tsd-kind-icon">Fluence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>getPeer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a><span class="tsd-signature-symbol">; </span>getStatus<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="interfaces/PeerStatus.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerStatus</a><span class="tsd-signature-symbol">; </span>registerMarineService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>removeMarineService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>stop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/index.ts#L37">src/index.ts:37</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Public interface to Fluence JS</p>
-						</div>
-					</div>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>get<wbr>Peer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<div class="tsd-comment tsd-typography">
-													<div class="lead">
-														<p>Get the default peer instance</p>
-													</div>
-												</div>
-												<h4 class="tsd-returns-title">Returns <a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a></h4>
-												<p>the default peer instance</p>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class="tsd-parameter">
-								<h5>get<wbr>Status<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="interfaces/PeerStatus.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerStatus</a></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/PeerStatus.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerStatus</a></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<div class="tsd-comment tsd-typography">
-													<div class="lead">
-														<p>Get the default peer&#39;s status</p>
-													</div>
-												</div>
-												<h4 class="tsd-returns-title">Returns <a href="interfaces/PeerStatus.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerStatus</a></h4>
-												<p>Default peer&#39;s status</p>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class="tsd-parameter">
-								<h5>register<wbr>Marine<wbr>Service<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<div class="tsd-comment tsd-typography">
-													<div class="lead">
-														<p>Registers marine service within the default Fluence peer from wasm file.
-														Following helper functions can be used to load wasm files:</p>
-														<ul>
-															<li>loadWasmFromFileSystem</li>
-															<li>loadWasmFromNpmPackage</li>
-															<li>loadWasmFromServer</li>
-														</ul>
-													</div>
-												</div>
-												<h4 class="tsd-parameters-title">Parameters</h4>
-												<ul class="tsd-parameters">
-													<li>
-														<h5>wasm: <span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span></h5>
-														<div class="tsd-comment tsd-typography">
-															<p>buffer with the wasm file for service</p>
-														</div>
-													</li>
-													<li>
-														<h5>serviceId: <span class="tsd-signature-type">string</span></h5>
-														<div class="tsd-comment tsd-typography">
-															<p>the service id by which the service can be accessed in aqua</p>
-														</div>
-													</li>
-												</ul>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class="tsd-parameter">
-								<h5>remove<wbr>Marine<wbr>Service<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<div class="tsd-comment tsd-typography">
-													<div class="lead">
-														<p>Removes the specified marine service from the default Fluence peer</p>
-													</div>
-												</div>
-												<h4 class="tsd-parameters-title">Parameters</h4>
-												<ul class="tsd-parameters">
-													<li>
-														<h5>serviceId: <span class="tsd-signature-type">string</span></h5>
-														<div class="tsd-comment tsd-typography">
-															<p>the service id to remove</p>
-														</div>
-													</li>
-												</ul>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class="tsd-parameter">
-								<h5>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<div class="tsd-comment tsd-typography">
-													<div class="lead">
-														<p>Initializes the default peer: starts the Aqua VM, initializes the default call service handlers
-														and (optionally) connect to the Fluence network</p>
-													</div>
-												</div>
-												<h4 class="tsd-parameters-title">Parameters</h4>
-												<ul class="tsd-parameters">
-													<li>
-														<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a></h5>
-														<div class="tsd-comment tsd-typography">
-															<p>object specifying peer configuration</p>
-														</div>
-													</li>
-												</ul>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li class="tsd-parameter">
-								<h5>stop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter-signature">
-										<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal">
-											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-										</ul>
-										<ul class="tsd-descriptions">
-											<li class="tsd-description">
-												<div class="tsd-comment tsd-typography">
-													<div class="lead">
-														<p>Un-initializes the default peer: stops all the underlying workflows, stops the Aqua VM
-														and disconnects from the Fluence network</p>
-													</div>
-												</div>
-												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-external">
-					<a name="loadWasmFromFileSystem" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> load<wbr>Wasm<wbr>From<wbr>File<wbr>System</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>File<wbr>System<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in node_modules/@fluencelabs/marine-js/dist/loadWasmHelpers.d.ts:28</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Load wasm file from the file system. Only works in nodejs environment.
-									The functions returns SharedArrayBuffer compatible with FluenceAppService methods.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>filePath: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>path to the wasm file</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>SharedArrayBuffer with the wasm file</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-external">
-					<a name="loadWasmFromNpmPackage" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> load<wbr>Wasm<wbr>From<wbr>Npm<wbr>Package</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Npm<wbr>Package<span class="tsd-signature-symbol">(</span>source<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>package<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in node_modules/@fluencelabs/marine-js/dist/loadWasmHelpers.d.ts:18</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Load wasm file from npm package. Only works in nodejs environment.
-									The function returns SharedArrayBuffer compatible with FluenceAppService methods.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>source: <span class="tsd-signature-symbol">{ </span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>package<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>object specifying the source of the file. Consist two fields: package name and file path.</p>
-									</div>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-										</li>
-										<li class="tsd-parameter">
-											<h5>package<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-										</li>
-									</ul>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>SharedArrayBuffer with the wasm file</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-external">
-					<a name="loadWasmFromServer" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> load<wbr>Wasm<wbr>From<wbr>Server</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Server<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in node_modules/@fluencelabs/marine-js/dist/loadWasmHelpers.d.ts:11</li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Load wasm file from the server. Only works in browsers.
-										The function will try load file into SharedArrayBuffer if the site is cross-origin isolated.
-										Otherwise the return value fallbacks to Buffer which is less performant but is still compatible with FluenceAppService methods.
-										We strongly recommend to set-up cross-origin headers. For more details see: See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements</a>
-									Filename is relative to current origin.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>filePath: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>path to the wasm file relative to current origin</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Either SharedArrayBuffer or Buffer with the wasm file</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function">
-					<a name="setLogLevel" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> set<wbr>Log<wbr>Level</h3>
-					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Log<wbr>Level<span class="tsd-signature-symbol">(</span>level<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LogLevelDesc</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/4fcb39b/src/index.ts#L26">src/index.ts:26</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>level: <span class="tsd-signature-type">LogLevelDesc</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class="current ">
-						<a href="modules.html">Exports</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-class">
-						<a href="classes/FluencePeer.html" class="tsd-kind-icon">Fluence<wbr>Peer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/KeyPair.html" class="tsd-kind-icon">Key<wbr>Pair</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/CallParams.html" class="tsd-kind-icon">Call<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/PeerConfig.html" class="tsd-kind-icon">Peer<wbr>Config</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/PeerStatus.html" class="tsd-kind-icon">Peer<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="modules.html#AvmLoglevel" class="tsd-kind-icon">Avm<wbr>Loglevel</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="modules.html#PeerIdB58" class="tsd-kind-icon">Peer<wbr>IdB58</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="modules.html#Fluence" class="tsd-kind-icon">Fluence</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-external">
-						<a href="modules.html#loadWasmFromFileSystem" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>File<wbr>System</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-external">
-						<a href="modules.html#loadWasmFromNpmPackage" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Npm<wbr>Package</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-external">
-						<a href="modules.html#loadWasmFromServer" class="tsd-kind-icon">load<wbr>Wasm<wbr>From<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#setLogLevel" class="tsd-kind-icon">set<wbr>Log<wbr>Level</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-</body>
-</html>
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@fluencelabs/fluence</title><meta name="description" content="Documentation for @fluencelabs/fluence"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">@fluencelabs/fluence</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>@fluencelabs/fluence </h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><section class="tsd-panel-group tsd-index-group"><h2>Index</h2><section class="tsd-panel tsd-index-panel"><div class="tsd-index-content"><section class="tsd-index-section "><h3>Classes</h3><ul class="tsd-index-list"><li class="tsd-kind-class"><a href="classes/FluencePeer.html" class="tsd-kind-icon">Fluence<wbr/>Peer</a></li><li class="tsd-kind-class"><a href="classes/KeyPair.html" class="tsd-kind-icon">Key<wbr/>Pair</a></li></ul></section><section class="tsd-index-section "><h3>Interfaces</h3><ul class="tsd-index-list"><li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/CallParams.html" class="tsd-kind-icon">Call<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/PeerConfig.html" class="tsd-kind-icon">Peer<wbr/>Config</a></li></ul></section><section class="tsd-index-section "><h3>Type aliases</h3><ul class="tsd-index-list"><li class="tsd-kind-type-alias"><a href="modules.html#AvmLoglevel" class="tsd-kind-icon">Avm<wbr/>Loglevel</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PeerIdB58" class="tsd-kind-icon">Peer<wbr/>Id<wbr/>B58</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PeerStatus" class="tsd-kind-icon">Peer<wbr/>Status</a></li></ul></section><section class="tsd-index-section "><h3>Variables</h3><ul class="tsd-index-list"><li class="tsd-kind-variable"><a href="modules.html#Fluence" class="tsd-kind-icon">Fluence</a></li></ul></section><section class="tsd-index-section "><h3>Functions</h3><ul class="tsd-index-list"><li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromFileSystem" class="tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>File<wbr/>System</a></li><li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromNpmPackage" class="tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>Npm<wbr/>Package</a></li><li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromServer" class="tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>Server</a></li><li class="tsd-kind-function"><a href="modules.html#setLogLevel" class="tsd-kind-icon">set<wbr/>Log<wbr/>Level</a></li></ul></section></div></section></section><section class="tsd-panel-group tsd-member-group "><h2>Type aliases</h2><section class="tsd-panel tsd-member tsd-kind-type-alias"><a id="AvmLoglevel" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Avm<wbr/>Loglevel<a href="#AvmLoglevel" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><div class="tsd-signature tsd-kind-icon">Avm<wbr/>Loglevel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LogLevel</span></div><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/fea91db/src/internal/utils.ts#L171">src/internal/utils.ts:171</a></li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Enum representing the log level used in Aqua VM.
+Possible values: &#39;info&#39;, &#39;trace&#39;, &#39;debug&#39;, &#39;info&#39;, &#39;warn&#39;, &#39;error&#39;, &#39;off&#39;;</p>
+</div></div></section><section class="tsd-panel tsd-member tsd-kind-type-alias"><a id="PeerIdB58" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Peer<wbr/>Id<wbr/>B58<a href="#PeerIdB58" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><div class="tsd-signature tsd-kind-icon">Peer<wbr/>Id<wbr/>B58<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/fea91db/src/internal/commonTypes.ts#L22">src/internal/commonTypes.ts:22</a></li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Peer ID&#39;s id as a base58 string (multihash/CIDv0).</p>
+</div></div></section><section class="tsd-panel tsd-member tsd-kind-type-alias"><a id="PeerStatus" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Peer<wbr/>Status<a href="#PeerStatus" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><div class="tsd-signature tsd-kind-icon">Peer<wbr/>Status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>isConnected<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">; </span>isInitialized<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">; </span>peerId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">; </span>relayPeerId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>isConnected<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">; </span>isInitialized<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">; </span>peerId<span class="tsd-signature-symbol">: </span><a href="modules.html#PeerIdB58" class="tsd-signature-type" data-tsd-kind="Type alias">PeerIdB58</a><span class="tsd-signature-symbol">; </span>relayPeerId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>isConnected<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">; </span>isInitialized<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">; </span>peerId<span class="tsd-signature-symbol">: </span><a href="modules.html#PeerIdB58" class="tsd-signature-type" data-tsd-kind="Type alias">PeerIdB58</a><span class="tsd-signature-symbol">; </span>relayPeerId<span class="tsd-signature-symbol">: </span><a href="modules.html#PeerIdB58" class="tsd-signature-type" data-tsd-kind="Type alias">PeerIdB58</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>isConnected<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">; </span>isDirect<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">; </span>isInitialized<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol">; </span>peerId<span class="tsd-signature-symbol">: </span><a href="modules.html#PeerIdB58" class="tsd-signature-type" data-tsd-kind="Type alias">PeerIdB58</a><span class="tsd-signature-symbol">; </span>relayPeerId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> }</span></div><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/fea91db/src/internal/FluencePeer.ts#L155">src/internal/FluencePeer.ts:155</a></li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Information about Fluence Peer connection.
+Represented as object with the following keys:</p>
+<ul>
+<li><code>isInitialized</code>: Is the peer initialized or not.</li>
+<li><code>peerId</code>: Peer Id of the peer. Null if the peer is not initialized</li>
+<li><code>isConnected</code>: Is the peer connected to network or not</li>
+<li><code>relayPeerId</code>: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null</li>
+<li><code>isDirect</code>: True if the peer is connected to the network directly (not through relay)</li>
+</ul>
+</div></div></section></section><section class="tsd-panel-group tsd-member-group "><h2>Variables</h2><section class="tsd-panel tsd-member tsd-kind-variable"><a id="Fluence" class="tsd-anchor"></a><h3 class="tsd-anchor-link"><span class="tsd-flag ts-flagConst">Const</span> Fluence<a href="#Fluence" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><div class="tsd-signature tsd-kind-icon">Fluence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>getPeer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a><span class="tsd-signature-symbol">; </span>getStatus<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="modules.html#PeerStatus" class="tsd-signature-type" data-tsd-kind="Type alias">PeerStatus</a><span class="tsd-signature-symbol">; </span>registerMarineService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>removeMarineService<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">; </span>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>stop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/fea91db/src/index.ts#L39">src/index.ts:39</a></li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Public interface to Fluence JS</p>
+</div></div><div class="tsd-type-declaration"><h4>Type declaration</h4><ul class="tsd-parameters"><li class="tsd-parameter"><h5>get<wbr/>Peer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a></h5><ul class="tsd-parameters"><li class="tsd-parameter-signature"><ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal"><li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Get the default peer instance</p>
+</div></div><h4 class="tsd-returns-title">Returns <a href="classes/FluencePeer.html" class="tsd-signature-type" data-tsd-kind="Class">FluencePeer</a></h4><div><p>the default peer instance</p>
+</div></li></ul></li></ul></li><li class="tsd-parameter"><h5>get<wbr/>Status<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="modules.html#PeerStatus" class="tsd-signature-type" data-tsd-kind="Type alias">PeerStatus</a></h5><ul class="tsd-parameters"><li class="tsd-parameter-signature"><ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal"><li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="modules.html#PeerStatus" class="tsd-signature-type" data-tsd-kind="Type alias">PeerStatus</a></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Get the default peer&#39;s status</p>
+</div></div><h4 class="tsd-returns-title">Returns <a href="modules.html#PeerStatus" class="tsd-signature-type" data-tsd-kind="Type alias">PeerStatus</a></h4><div><p>Default peer&#39;s status</p>
+</div></li></ul></li></ul></li><li class="tsd-parameter"><h5>register<wbr/>Marine<wbr/>Service<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5><ul class="tsd-parameters"><li class="tsd-parameter-signature"><ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal"><li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>wasm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span>, serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Registers marine service within the default Fluence peer from wasm file.
+Following helper functions can be used to load wasm files:</p>
+<ul>
+<li>loadWasmFromFileSystem</li>
+<li>loadWasmFromNpmPackage</li>
+<li>loadWasmFromServer</li>
+</ul>
+</div></div><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>wasm: <span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>buffer with the wasm file for service</p>
+</div></div></li><li><h5>serviceId: <span class="tsd-signature-type">string</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>the service id by which the service can be accessed in aqua</p>
+</div></div></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li><li class="tsd-parameter"><h5>remove<wbr/>Marine<wbr/>Service<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></h5><ul class="tsd-parameters"><li class="tsd-parameter-signature"><ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal"><li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>serviceId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Removes the specified marine service from the default Fluence peer</p>
+</div></div><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>serviceId: <span class="tsd-signature-type">string</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>the service id to remove</p>
+</div></div></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></li></ul></li><li class="tsd-parameter"><h5>start<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5><ul class="tsd-parameters"><li class="tsd-parameter-signature"><ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal"><li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Initializes the default peer: starts the Aqua VM, initializes the default call service handlers
+and (optionally) connect to the Fluence network</p>
+</div></div><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="interfaces/PeerConfig.html" class="tsd-signature-type" data-tsd-kind="Interface">PeerConfig</a></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>object specifying peer configuration</p>
+</div></div></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li><li class="tsd-parameter"><h5>stop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h5><ul class="tsd-parameters"><li class="tsd-parameter-signature"><ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-literal"><li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Un-initializes the default peer: stops all the underlying workflows, stops the Aqua VM
+and disconnects from the Fluence network</p>
+</div></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div></section></section><section class="tsd-panel-group tsd-member-group "><h2>Functions</h2><section class="tsd-panel tsd-member tsd-kind-function tsd-is-external"><a id="loadWasmFromFileSystem" class="tsd-anchor"></a><h3 class="tsd-anchor-link">load<wbr/>Wasm<wbr/>From<wbr/>File<wbr/>System<a href="#loadWasmFromFileSystem" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><ul class="tsd-signatures tsd-kind-function tsd-is-external"><li class="tsd-signature tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>File<wbr/>System<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><aside class="tsd-sources"><ul><li>Defined in node_modules/@fluencelabs/marine-js/dist/loadWasmHelpers.d.ts:28</li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Load wasm file from the file system. Only works in nodejs environment.
+The functions returns SharedArrayBuffer compatible with FluenceAppService methods.</p>
+</div></div><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>filePath: <span class="tsd-signature-type">string</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>path to the wasm file</p>
+</div></div></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4><div><p>SharedArrayBuffer with the wasm file</p>
+</div></li></ul></section><section class="tsd-panel tsd-member tsd-kind-function tsd-is-external"><a id="loadWasmFromNpmPackage" class="tsd-anchor"></a><h3 class="tsd-anchor-link">load<wbr/>Wasm<wbr/>From<wbr/>Npm<wbr/>Package<a href="#loadWasmFromNpmPackage" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><ul class="tsd-signatures tsd-kind-function tsd-is-external"><li class="tsd-signature tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>Npm<wbr/>Package<span class="tsd-signature-symbol">(</span>source<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>package<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><aside class="tsd-sources"><ul><li>Defined in node_modules/@fluencelabs/marine-js/dist/loadWasmHelpers.d.ts:18</li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Load wasm file from npm package. Only works in nodejs environment.
+The function returns SharedArrayBuffer compatible with FluenceAppService methods.</p>
+</div></div><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>source: <span class="tsd-signature-symbol">{ </span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>package<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>object specifying the source of the file. Consist two fields: package name and file path.</p>
+</div></div><ul class="tsd-parameters"><li class="tsd-parameter"><h5>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li><li class="tsd-parameter"><h5>package<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li></ul></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4><div><p>SharedArrayBuffer with the wasm file</p>
+</div></li></ul></section><section class="tsd-panel tsd-member tsd-kind-function tsd-is-external"><a id="loadWasmFromServer" class="tsd-anchor"></a><h3 class="tsd-anchor-link">load<wbr/>Wasm<wbr/>From<wbr/>Server<a href="#loadWasmFromServer" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><ul class="tsd-signatures tsd-kind-function tsd-is-external"><li class="tsd-signature tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>Server<span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><aside class="tsd-sources"><ul><li>Defined in node_modules/@fluencelabs/marine-js/dist/loadWasmHelpers.d.ts:11</li></ul></aside><div class="tsd-comment tsd-typography"><div class="lead">
+<p>Load wasm file from the server. Only works in browsers.
+The function will try load file into SharedArrayBuffer if the site is cross-origin isolated.
+Otherwise the return value fallbacks to Buffer which is less performant but is still compatible with FluenceAppService methods.
+We strongly recommend to set-up cross-origin headers. For more details see: See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements</a>
+Filename is relative to current origin.</p>
+</div></div><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>filePath: <span class="tsd-signature-type">string</span></h5><div class="tsd-comment tsd-typography"><div class="lead">
+<p>path to the wasm file relative to current origin</p>
+</div></div></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SharedArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">&gt;</span></h4><div><p>Either SharedArrayBuffer or Buffer with the wasm file</p>
+</div></li></ul></section><section class="tsd-panel tsd-member tsd-kind-function"><a id="setLogLevel" class="tsd-anchor"></a><h3 class="tsd-anchor-link">set<wbr/>Log<wbr/>Level<a href="#setLogLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg></a></h3><ul class="tsd-signatures tsd-kind-function"><li class="tsd-signature tsd-kind-icon">set<wbr/>Log<wbr/>Level<span class="tsd-signature-symbol">(</span>level<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LogLevelDesc</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li></ul><ul class="tsd-descriptions"><li class="tsd-description"><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/fluencelabs/fluence-js/blob/fea91db/src/index.ts#L28">src/index.ts:28</a></li></ul></aside><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameters"><li><h5>level: <span class="tsd-signature-type">LogLevelDesc</span></h5></li></ul><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></section></section></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/FluencePeer.html" class="tsd-kind-icon">Fluence<wbr/>Peer</a></li><li class="tsd-kind-class"><a href="classes/KeyPair.html" class="tsd-kind-icon">Key<wbr/>Pair</a></li><li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/CallParams.html" class="tsd-kind-icon">Call<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/PeerConfig.html" class="tsd-kind-icon">Peer<wbr/>Config</a></li><li class="tsd-kind-type-alias"><a href="modules.html#AvmLoglevel" class="tsd-kind-icon">Avm<wbr/>Loglevel</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PeerIdB58" class="tsd-kind-icon">Peer<wbr/>Id<wbr/>B58</a></li><li class="tsd-kind-type-alias"><a href="modules.html#PeerStatus" class="tsd-kind-icon">Peer<wbr/>Status</a></li><li class="tsd-kind-variable"><a href="modules.html#Fluence" class="tsd-kind-icon">Fluence</a></li><li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromFileSystem" class="tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>File<wbr/>System</a></li><li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromNpmPackage" class="tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>Npm<wbr/>Package</a></li><li class="tsd-kind-function tsd-is-external"><a href="modules.html#loadWasmFromServer" class="tsd-kind-icon">load<wbr/>Wasm<wbr/>From<wbr/>Server</a></li><li class="tsd-kind-function"><a href="modules.html#setLogLevel" class="tsd-kind-icon">set<wbr/>Log<wbr/>Level</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
