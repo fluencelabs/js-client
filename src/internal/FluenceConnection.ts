@@ -66,7 +66,7 @@ export abstract class FluenceConnection {
 }
 
 /**
- * Implementation for JS peers which connect to Fluence through relay node
+ * Implementation for JS peers which connects to Fluence through relay node
  */
 export class RelayConnection extends FluenceConnection {
     constructor(

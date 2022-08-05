@@ -235,11 +235,12 @@ export class FluencePeer {
      */
     async start(config: PeerConfig = {}): Promise<void> {
         throwIfNotSupported();
-        config.KeyPair = config.KeyPair ?? (await KeyPair.randomEd25519());
+        const keyPair = config.KeyPair ?? (await KeyPair.randomEd25519());
+        const newConfig = { ...config, KeyPair: keyPair };
 
-        await this.init(config as PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>);
+        await this.init(newConfig);
 
-        const conn = await configToConnection(config.KeyPair, config?.connectTo, config?.dialTimeoutMs);
+        const conn = await configToConnection(newConfig.KeyPair, config?.connectTo, config?.dialTimeoutMs);
         if (conn !== null) {
             await this.connect(conn);
         }
@@ -419,9 +420,6 @@ export class FluencePeer {
      * @private Subject to change. Do not use this method directly
      */
     async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
-        if (!config.KeyPair) {
-            throw new Error('Key Pair is required');
-        }
         this._keyPair = config.KeyPair;
 
         const peerId = this._keyPair.Libp2pPeerId.toB58String();
