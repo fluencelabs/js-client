@@ -1,0 +1,23 @@
+[package]
+name = "libp2p-wasm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib", "rlib"]
+[workspace]
+
+[dependencies]
+libp2p = { version = "0.45.0", default-features = false, features = ["wasm-bindgen", "mplex", "noise", "identify", "yamux", "ping", "wasm-ext", "wasm-ext-websocket"] }
+console_error_panic_hook = "0.1.7"
+wasm-rs-dbg = "0.1.2"
+tokio = { version = "1.17.0", features = ["macros", "sync"] }
+wasm-bindgen-futures = { version = "0.4.30"}
+wasm-bindgen = "0.2.82"
+
+web-sys = { version = "0.3.57"}
+js-sys = {version = "0.3.57"}
+
+[patch.crates-io]
+gloo-timers = {version = "0.2.4", path = "../../gloo/crates/timers"}

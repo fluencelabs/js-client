@@ -29,6 +29,7 @@ import { Multiaddr } from 'multiaddr';
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
 import Buffer from './Buffer';
+import {test, initSync} from '../../libp2p-wasm/npm-package'
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -63,6 +64,10 @@ export class FluenceConnection {
     private _connection?: Connection;
 
     static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
+        let fs = require('fs')
+        let data = fs.readFileSync("libp2p-wasm/pkg/libp2p_wasm_bg.wasm")
+        initSync(data);
+        test();
         const transportKey = Websockets.prototype[Symbol.toStringTag];
         const lib2p2Peer = await Lib2p2Peer.create({
             peerId: options.peerId,
