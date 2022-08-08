@@ -19,6 +19,7 @@ use libp2p::yamux::YamuxConfig;
 use libp2p::{identity, noise, Multiaddr, NetworkBehaviour, PeerId, Swarm, Transport};
 use libp2p::swarm::SwarmEvent;
 use wasm_bindgen::throw_str;
+use wasm_rs_dbg::dbg;
 
 pub const PROTOCOL_NAME: &'static str = "/fluence/particle/2.0.0";
 
@@ -46,16 +47,19 @@ pub fn test() {
 
             Swarm::new(transport, behaviour, local_peer_id)
         };
+        let event = swarm.select_next_some();
 
         let addr = Multiaddr::from_str("/dns4/kras-00.fluence.dev/tcp/19990/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e")
             .unwrap_or_else(|_| panic!("failed to parse multiaddr"));
         swarm.dial(addr).unwrap_or_else(|_| panic!("failed to dial"));
-        wasm_rs_dbg::dbg!("dial succeed");
+        dbg!("dial succeed");
         loop {
             select! {
                 event = swarm.select_next_some() => {
                     if let SwarmEvent::NewListenAddr { address, .. } = event {
-                        println!("Listening on {:?}", address);
+                        dbg!("Listening on {:?}", address);
+                    } else {
+
                     }
                 }
             }

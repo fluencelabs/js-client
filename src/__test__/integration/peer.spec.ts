@@ -128,7 +128,16 @@ describe('Typescript usage suite', () => {
     it('check connection should work', async function () {
         await peer.start({ connectTo: nodes[0] });
 
+        function delay(t: any) {
+            return new Promise(function(resolve) {
+                setTimeout(function() {
+                    resolve(0);
+                }, t);
+            });
+        }
+
         const isConnected = await checkConnection(peer);
+        await delay(5000);
 
         expect(isConnected).toEqual(true);
     });
