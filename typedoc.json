@@ -3,5 +3,5 @@
     "theme": "default",
     "out": "docs",
     "excludePrivate": true,
-    "entryPoints": ["src/index.ts"]
+    "entryPoints": ["packages/fluence-js/src/index.ts"]
 }
