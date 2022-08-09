@@ -69,3 +69,8 @@ export class KeyPair {
         return this.secretKey.public.verify(data, signature);
     }
 }
+
+export const keyPairFromBase64Sk = (sk: string): Promise<KeyPair> => {
+    const arr = toUint8Array(sk);
+    return KeyPair.fromEd25519SK(arr);
+};

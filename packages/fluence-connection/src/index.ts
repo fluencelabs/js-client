@@ -20,11 +20,14 @@ import { Libp2p as Lib2p2Peer, createLibp2p } from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import { pipe } from 'it-pipe';
 import { Noise } from '@chainsafe/libp2p-noise';
-import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { Multiaddr } from '@multiformats/multiaddr';
-import type { PeerId } from '@libp2p/interface-peer-id';
-import type { Connection } from '@libp2p/interface-connection';
-import * as log from 'loglevel';
+import PeerId from 'peer-id';
+import type { MultiaddrInput } from 'multiaddr';
+import { Multiaddr } from 'multiaddr';
+// @ts-ignore
+import { all as allow_all } from 'libp2p-websockets/src/filters';
+import { Connection } from 'libp2p-interfaces/src/topology';
+import Buffer from './Buffer';
+import { PeerIdB58 } from './commonTypes';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -46,18 +49,38 @@ export interface FluenceConnectionOptions {
      * The dialing timeout in milliseconds
      */
     dialTimeoutMs?: number;
-
-    /**
-     * Handler for incoming particles from the connection
-     */
-    onIncomingParticle: (particle: string) => void;
 }
 
-export class FluenceConnection {
-    constructor(private _lib2p2Peer: Lib2p2Peer, private _relayAddress: Multiaddr) {}
+export type ParticleHandler = (particle: string) => void;
 
-    static async createConnection(options: FluenceConnectionOptions): Promise<FluenceConnection> {
-        const lib2p2Peer = await createLibp2p({
+/**
+ * Base class for connectivity layer to Fluence Network
+ */
+export abstract class FluenceConnection {
+    abstract readonly relayPeerId: PeerIdB58 | null;
+    abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
+    abstract disconnect(): Promise<void>;
+    abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
+}
+
+/**
+ * Implementation for JS peers which connects to Fluence through relay node
+ */
+export class RelayConnection extends FluenceConnection {
+    constructor(
+        public peerId: PeerIdB58,
+        private _lib2p2Peer: Lib2p2Peer,
+        private _relayAddress: Multiaddr,
+        public readonly relayPeerId: PeerIdB58,
+    ) {
+        super();
+    }
+
+    private _connection?: Connection;
+
+    static async createConnection(options: FluenceConnectionOptions): Promise<RelayConnection> {
+        const transportKey = Websockets.prototype[Symbol.toStringTag];
+        const lib2p2Peer = await Lib2p2Peer.create({
             peerId: options.peerId,
             //@ts-ignore
             transports: [new WebSockets()],
@@ -69,45 +92,35 @@ export class FluenceConnection {
             },
         });
 
-        lib2p2Peer.handle([PROTOCOL_NAME], async (arg: any) => {
-            const { connection, stream } = arg;
-            pipe(
-                // force new line
-                stream.source,
-                // @ts-ignore
-                decode(),
-                async (source: AsyncIterable<string>) => {
-                    try {
-                        console.log('incoming');
-                        for await (const particle of source) {
-                            try {
-                                options.onIncomingParticle(particle);
-                            } catch (e) {
-                                log.error('error on handling a new incoming message: ' + e);
-                            }
-                        }
-                    } catch (e) {
-                        log.debug('connection closed: ' + e);
-                    }
-                },
-            );
-        });
+        const relayMultiaddr = new Multiaddr(options.relayAddress);
+        const relayPeerId = relayMultiaddr.getPeerId();
+        if (relayPeerId === null) {
+            throw new Error('Specified multiaddr is invalid or missing peer id: ' + options.relayAddress);
+        }
 
-        const relayAddress = options.relayAddress;
-
-        return new FluenceConnection(lib2p2Peer, new Multiaddr(relayAddress));
-    }
-
-    getPeerId(): string {
-        return this._relayAddress.getPeerId()!;
+        return new RelayConnection(
+            // force new line
+            options.peerId.toB58String(),
+            lib2p2Peer,
+            relayMultiaddr,
+            relayPeerId,
+        );
     }
 
     async disconnect() {
-        // @ts-ignore
+        await this._lib2p2Peer.unhandle(PROTOCOL_NAME);
         await this._lib2p2Peer.stop();
     }
 
-    async sendParticle(particle: string): Promise<void> {
+    async sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void> {
+        if (nextPeerIds.length !== 1 && nextPeerIds[0] !== this.relayPeerId) {
+            throw new Error(
+                `Relay connection only accepts peer id of the connected relay. Got: ${JSON.stringify(
+                    nextPeerIds,
+                )} instead.`,
+            );
+        }
+
         /*
         TODO:: find out why this doesn't work and a new connection has to be established each time
         if (this._connection.streams.length !== 1) {
@@ -124,17 +137,36 @@ export class FluenceConnection {
         pipe(
             // force new line
             [Buffer.from(particle, 'utf8')],
-            // @ts-ignore
             encode(),
             sink,
         );
     }
 
-    async connect() {
-        // @ts-ignore
+    async connect(onIncomingParticle: ParticleHandler) {
         await this._lib2p2Peer.start();
 
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId);
+        this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+            pipe(
+                stream.source,
+                // @ts-ignore
+                decode(),
+                async (source: AsyncIterable<string>) => {
+                    try {
+                        for await (const msg of source) {
+                            try {
+                                onIncomingParticle(msg);
+                            } catch (e) {
+                                log.error('error on handling a new incoming message: ' + e);
+                            }
+                        }
+                    } catch (e) {
+                        log.debug('connection closed: ' + e);
+                    }
+                },
+            );
+        });
+
+        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
 
         /*
         try {

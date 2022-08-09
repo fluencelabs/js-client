@@ -40,13 +40,9 @@ type Node = {
     multiaddr: string;
 };
 
-/**
- * Enum representing the log level used in Aqua VM.
- * Possible values: 'info', 'trace', 'debug', 'info', 'warn', 'error', 'off';
- */
-export type MarineLoglevel = LogLevel;
-
 const DEFAULT_TTL = 7000;
+
+export type ConnectionOption = string | MultiaddrInput | Node;
 
 /**
  * Configuration used when initiating Fluence Peer
@@ -58,9 +54,10 @@ export interface PeerConfig {
      * - string: multiaddr in string format
      * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
      * - Node: node structure, @see Node
+     * - Implementation of FluenceConnection class, @see FluenceConnection
      * If not specified the will work locally and would not be able to send or receive particles.
      */
-    connectTo?: string | MultiaddrInput | Node;
+    connectTo?: ConnectionOption;
 
     /**
      * @deprecated. AVM run through marine-js infrastructure.
@@ -147,7 +144,13 @@ export interface PeerConfig {
 }
 
 /**
- * Information about Fluence Peer connection
+ * Information about Fluence Peer connection.
+ * Represented as object with the following keys:
+ * - `isInitialized`: Is the peer initialized or not.
+ * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
+ * - `isConnected`: Is the peer connected to network or not
+ * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
+ * - `isDirect`: True if the peer is connected to the network directly (not through relay)
  */
 export type PeerStatus =
     | {
@@ -167,6 +170,13 @@ export type PeerStatus =
           peerId: PeerIdB58;
           isConnected: true;
           relayPeerId: PeerIdB58;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          isDirect: true;
+          relayPeerId: null;
       };
 
 /**
@@ -197,7 +207,7 @@ export class FluencePeer {
             };
         }
 
-        if (this._connection === undefined || this._relayPeerId === null) {
+        if (this._connection === undefined) {
             return {
                 isInitialized: true,
                 peerId: this._keyPair.libp2pPeerId.toString(),
@@ -206,11 +216,21 @@ export class FluencePeer {
             };
         }
 
+        if (this._connection.relayPeerId === null) {
+            return {
+                isInitialized: true,
+                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                isConnected: true,
+                isDirect: true,
+                relayPeerId: null,
+            };
+        }
+
         return {
             isInitialized: true,
             peerId: this._keyPair.libp2pPeerId.toString(),
             isConnected: true,
-            relayPeerId: this._relayPeerId,
+            relayPeerId: this._connection.relayPeerId,
         };
     }
 
@@ -219,73 +239,17 @@ export class FluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async start(config?: PeerConfig): Promise<void> {
+    async start(config: PeerConfig = {}): Promise<void> {
         throwIfNotSupported();
+        const keyPair = config.KeyPair ?? (await KeyPair.randomEd25519());
+        const newConfig = { ...config, KeyPair: keyPair };
 
-        const keyPair = config?.KeyPair ?? (await KeyPair.randomEd25519());
-        this._keyPair = keyPair;
+        await this.init(newConfig);
 
-        const peerId = keyPair.libp2pPeerId.toString();
-
-        if (config?.debug?.printParticleId) {
-            this._printParticleId = true;
+        const conn = await configToConnection(newConfig.KeyPair, config?.connectTo, config?.dialTimeoutMs);
+        if (conn !== null) {
+            await this.connect(conn);
         }
-
-        this._defaultTTL = config?.defaultTtlMs ?? DEFAULT_TTL;
-
-        if (config?.debug?.marineLogLevel) {
-            this._marineLogLevel = config.debug.marineLogLevel;
-        }
-
-        this._fluenceAppService = new FluenceAppService(config?.marineJS?.workerScriptPath);
-        const marineDeps = config?.marineJS
-            ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
-            : await loadDefaults();
-        await this._fluenceAppService.init(marineDeps.marine);
-        await this._fluenceAppService.createService(marineDeps.avm, 'avm');
-        this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
-        await this._avmRunner.init(config?.avmLogLevel || 'off');
-
-        if (config?.connectTo) {
-            let connectToMultiAddr: MultiaddrInput;
-            const fromNode = (config.connectTo as any).multiaddr;
-            if (fromNode) {
-                connectToMultiAddr = fromNode;
-            } else {
-                connectToMultiAddr = config.connectTo as string;
-            }
-
-            if (this._connection) {
-                await this._connection.disconnect();
-            }
-
-            this._connection = await FluenceConnection.createConnection({
-                peerId: this._keyPair.libp2pPeerId,
-                relayAddress: connectToMultiAddr,
-                dialTimeoutMs: config.dialTimeoutMs,
-                onIncomingParticle: (p) => {
-                    console.log('particle received \\/');
-                    console.log(p);
-                    const particle = Particle.fromString(p);
-                    this._incomingParticles.next({ particle, onStageChange: () => {} });
-                },
-            });
-
-            this._relayPeerId = this._connection!.getPeerId();
-
-            await this._connect();
-        }
-
-        registerDefaultServices(this);
-
-        this._classServices = {
-            sig: new Sig(this._keyPair),
-        };
-        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
-        registerSig(this, this._classServices.sig);
-        registerSig(this, peerId, this._classServices.sig);
-
-        this._startParticleProcessing();
     }
 
     getServices() {
@@ -314,8 +278,12 @@ export class FluencePeer {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        const envs = this._marineLogLevel ? { WASM_LOG: this._marineLogLevel } : undefined;
-        await this._fluenceAppService.createService(wasm, serviceId, undefined, envs);
+        await this._fluenceAppService.createService(
+            wasm,
+            serviceId,
+            undefined,
+            marineLogLevelToEnvs(this._marineLogLevel),
+        );
         this._marineServices.add(serviceId);
     }
 
@@ -333,9 +301,8 @@ export class FluencePeer {
      */
     async stop() {
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
-        this._relayPeerId = null;
         this._stopParticleProcessing();
-        await this._disconnect();
+        await this.disconnect();
         await this._avmRunner?.terminate();
         await this._fluenceAppService?.terminate();
         this._avmRunner = undefined;
@@ -350,10 +317,38 @@ export class FluencePeer {
     // internal api
 
     /**
-     * Is not intended to be used manually. Subject to change
+     * @private Is not intended to be used manually. Subject to change
      */
     get internals() {
         return {
+            parseAst: async (air: string): Promise<{ success: boolean; data: any }> => {
+                const status = this.getStatus();
+
+                if (!status.isInitialized) {
+                    new Error("Can't use avm: peer is not initialized");
+                }
+
+                const args = JSON.stringify([air]);
+                const rawRes = await this._fluenceAppService!.callService('avm', 'ast', args, undefined);
+                let res;
+                try {
+                    res = JSON.parse(rawRes);
+                    res = res.result as string;
+                    if (res.startsWith('error')) {
+                        return {
+                            success: false,
+                            data: res,
+                        };
+                    } else {
+                        return {
+                            success: true,
+                            data: JSON.parse(res),
+                        };
+                    }
+                } catch (err) {
+                    throw new Error('Failed to call avm. Raw result: ' + rawRes + '. Error: ' + err);
+                }
+            },
             createNewParticle: (script: string, ttl: number = this._defaultTTL) => {
                 const status = this.getStatus();
 
@@ -427,22 +422,79 @@ export class FluencePeer {
         };
     }
 
+    /**
+     * @private Subject to change. Do not use this method directly
+     */
+    async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
+        this._keyPair = config.KeyPair;
+
+        const peerId = this._keyPair.Libp2pPeerId.toB58String();
+
+        if (config?.debug?.printParticleId) {
+            this._printParticleId = true;
+        }
+
+        this._defaultTTL = config?.defaultTtlMs ?? DEFAULT_TTL;
+
+        if (config?.debug?.marineLogLevel) {
+            this._marineLogLevel = config.debug.marineLogLevel;
+        }
+
+        this._fluenceAppService = new FluenceAppService(config?.marineJS?.workerScriptPath);
+        const marineDeps = config?.marineJS
+            ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
+            : await loadDefaults();
+        await this._fluenceAppService.init(marineDeps.marine);
+        await this._fluenceAppService.createService(
+            marineDeps.avm,
+            'avm',
+            undefined,
+            marineLogLevelToEnvs(this._marineLogLevel),
+        );
+        this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
+        await this._avmRunner.init(config?.avmLogLevel || 'off');
+
+        registerDefaultServices(this);
+
+        this._classServices = {
+            sig: new Sig(this._keyPair),
+        };
+        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
+        registerSig(this, this._classServices.sig);
+        registerSig(this, peerId, this._classServices.sig);
+
+        this._startParticleProcessing();
+    }
+
+    /**
+     * @private Subject to change. Do not use this method directly
+     */
+    async connect(connection: FluenceConnection): Promise<void> {
+        if (this._connection) {
+            await this._connection.disconnect();
+        }
+
+        this._connection = connection;
+
+        await this._connection.connect(this._onIncomingParticle.bind(this));
+    }
+
+    /**
+     * @private Subject to change. Do not use this method directly
+     */
+    async disconnect(): Promise<void> {
+        if (this._connection) {
+            await this._connection.disconnect();
+            this._connection = undefined;
+        }
+    }
+
     // private
-
-    // TODO:: make public when full connection\disconnection cycle is implemented properly
-    private _connect(): Promise<void> {
-        return this._connection?.connect() || Promise.resolve();
-    }
-
-    // TODO:: make public when full connection\disconnection cycle is implemented properly
-    private _disconnect(): Promise<void> {
-        return this._connection?.disconnect() || Promise.resolve();
-    }
 
     // Queues for incoming and outgoing particles
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
-    private _outgoingParticles = new Subject<ParticleQueueItem>();
+    private _outgoingParticles = new Subject<ParticleQueueItem & { nextPeerIds: PeerIdB58[] }>();
 
     // Call service handler
 
@@ -463,7 +515,6 @@ export class FluencePeer {
 
     private _printParticleId = false;
     private _defaultTTL: number = DEFAULT_TTL;
-    private _relayPeerId: PeerIdB58 | null = null;
     private _keyPair: KeyPair | undefined;
     private _connection?: FluenceConnection;
 
@@ -474,6 +525,11 @@ export class FluencePeer {
     private _fluenceAppService?: FluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
+
+    private _onIncomingParticle(p: string) {
+        const particle = Particle.fromString(p);
+        this._incomingParticles.next({ particle, onStageChange: () => {} });
+    }
 
     private _startParticleProcessing() {
         this._incomingParticles
@@ -512,13 +568,8 @@ export class FluencePeer {
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-
             item.particle.logTo('debug', 'sending particle:');
-
-            const particleToSend = item.particle.toString();
-
-            /*
-            this._connection.sendParticle(particleToSend).then(
+            this._connection.sendParticle(item.nextPeerIds, item.particle.toString()).then(
                 () => {
                     item.onStageChange({ stage: 'sent' });
                 },
@@ -526,7 +577,6 @@ export class FluencePeer {
                     log.error(e);
                 },
             );
-            */
 
             this._connection.sendParticle(particleToSend);
         });
@@ -595,7 +645,11 @@ export class FluencePeer {
                 if (item.result.nextPeerPks.length > 0) {
                     const newParticle = item.particle.clone();
                     newParticle.data = item.newData;
-                    this._outgoingParticles.next({ ...item, particle: newParticle });
+                    this._outgoingParticles.next({
+                        ...item,
+                        particle: newParticle,
+                        nextPeerIds: item.result.nextPeerPks,
+                    });
                 }
 
                 // execute call requests if needed
@@ -716,6 +770,38 @@ export class FluencePeer {
         });
         this._particleQueues.clear();
     }
+}
+
+async function configToConnection(
+    keyPair: KeyPair,
+    connection?: ConnectionOption,
+    dialTimeoutMs?: number,
+): Promise<FluenceConnection | null> {
+    if (!connection) {
+        return null;
+    }
+
+    if (connection instanceof FluenceConnection) {
+        return connection;
+    }
+
+    let connectToMultiAddr: MultiaddrInput;
+    // figuring out what was specified as input
+    const tmp = connection as any;
+    if (tmp.multiaddr !== undefined) {
+        // specified as FluenceNode (object with multiaddr and peerId props)
+        connectToMultiAddr = tmp.multiaddr;
+    } else {
+        // specified as MultiaddrInput
+        connectToMultiAddr = tmp;
+    }
+
+    const res = await RelayConnection.createConnection({
+        peerId: keyPair.Libp2pPeerId,
+        relayAddress: connectToMultiAddr,
+        dialTimeoutMs: dialTimeoutMs,
+    });
+    return res;
 }
 
 function isInterpretationSuccessful(result: InterpreterResult) {
