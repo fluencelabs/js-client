@@ -3,6 +3,8 @@
         "outDir": "./dist/",
         "lib": ["ES2015"],
         "target": "ES5",
+        "sourceMap": true,
+        "declaration": true,
         "module": "commonjs",
    },
     "exclude": ["node_modules", "dist"],

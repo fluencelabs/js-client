@@ -15,6 +15,7 @@
  */
 import { RelayConnection, FluenceConnection } from '@fluencelabs/fluence-connection';
 import { KeyPair } from '@fluencelabs/fluence-keypair';
+import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
@@ -26,7 +27,7 @@ import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
-import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
+
 import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';
 import { InterpreterResult, LogLevel } from '@fluencelabs/avm';

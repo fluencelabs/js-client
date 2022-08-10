@@ -28,10 +28,10 @@ import { Multiaddr } from "multiaddr";
 // @ts-ignore
 import { all as allow_all } from "libp2p-websockets/src/filters";
 import { Connection } from "libp2p-interfaces/src/topology";
-import Buffer from "../../fluence-js/src/internal/Buffer";
-import { PeerIdB58 } from "../../fluence-js/src/internal/commonTypes";
 
 export const PROTOCOL_NAME = "/fluence/particle/2.0.0";
+
+type PeerIdB58 = string;
 
 /**
  * Options to configure fluence connection

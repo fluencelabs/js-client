@@ -5,6 +5,8 @@
         "target": "ES5",
         "module": "commonjs",
         "skipLibCheck": true,
+        "sourceMap": true,
+        "declaration": true,
         "esModuleInterop": true,
    },
     "exclude": ["node_modules", "dist"],
