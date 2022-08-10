@@ -18,5 +18,5 @@
         "skipLibCheck": true
     },
     "exclude": ["node_modules", "dist", "bundle"],
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "../fluence-keypair/src/KeyPair.ts", "../fluence-connection/src/FluenceConnection.ts"]
 }

@@ -1,7 +1,7 @@
 import { CallParams, CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
 import { builtInServices } from '../../internal/builtins/common';
-import { KeyPair } from '../../internal/KeyPair';
+import { KeyPair } from '../../../../fluence-keypair/src';
 import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
 

@@ -1,0 +1,25 @@
+{
+    "name": "@fluencelabs/fluence-keypair",
+    "version": "0.0.0",
+    "description": "Keypair implementation for Fluence JS Peer",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "tsc"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "peer-id": "0.16.0",
+        "libp2p-crypto": "0.21.2",
+        "js-base64": "^3.7.2"
+    },
+    "devDependencies": {
+        "typescript": "^4.6.4"
+    }
+}

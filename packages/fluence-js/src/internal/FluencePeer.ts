@@ -17,9 +17,9 @@
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
-import { RelayConnection, FluenceConnection } from './FluenceConnection';
+import { RelayConnection, FluenceConnection } from '../../../fluence-connection/src';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { KeyPair } from './KeyPair';
+import { KeyPair } from '../../../fluence-keypair/src';
 import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';

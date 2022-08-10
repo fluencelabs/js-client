@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "lib": ["ES2015"],
+        "target": "ES5",
+        "module": "commonjs",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+   },
+    "exclude": ["node_modules", "dist"],
+    "include": ["src/**/*"]
+}

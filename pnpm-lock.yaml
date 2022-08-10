@@ -2,9 +2,37 @@ lockfileVersion: 5.4
 
 importers:
 
-  packages/fluence-js:
+  packages/fluence-connection:
     specifiers:
       '@chainsafe/libp2p-noise': ^4.1.1
+      it-length-prefixed: 5.0.3
+      it-pipe: 1.1.0
+      libp2p: 0.36.2
+      libp2p-interfaces: ^4.0.6
+      libp2p-mplex: 0.10.7
+      libp2p-websockets: 0.16.2
+      loglevel: 1.8.0
+      multiaddr: 10.0.1
+      multiformats: 9.6.5
+      peer-id: 0.16.0
+      typescript: ^4.6.4
+    dependencies:
+      '@chainsafe/libp2p-noise': 4.1.2
+      it-length-prefixed: 5.0.3
+      it-pipe: 1.1.0
+      libp2p: 0.36.2_node-fetch@3.2.10
+      libp2p-interfaces: 4.0.6_node-fetch@3.2.10
+      libp2p-mplex: 0.10.7
+      libp2p-websockets: 0.16.2_node-fetch@3.2.10
+      loglevel: 1.8.0
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      multiformats: 9.6.5
+      peer-id: 0.16.0
+    devDependencies:
+      typescript: 4.7.4
+
+  packages/fluence-js:
+    specifiers:
       '@fluencelabs/aqua': ^0.7.2-307
       '@fluencelabs/aqua-lib': ^0.5.1
       '@fluencelabs/avm': 0.25.0
@@ -20,19 +48,10 @@ importers:
       bs58: 5.0.0
       buffer: ^6.0.3
       cids: 1.1.9
-      it-length-prefixed: 5.0.3
-      it-pipe: 1.1.0
       jest: ^28.1.0
       jest-each: ^28.1.3
-      js-base64: ^3.7.2
-      libp2p: 0.36.2
-      libp2p-crypto: 0.21.2
-      libp2p-interfaces: ^4.0.6
-      libp2p-mplex: 0.10.7
-      libp2p-websockets: 0.16.2
       loglevel: 1.8.0
       multiaddr: 10.0.1
-      multiformats: 9.6.5
       peer-id: 0.16.0
       platform: ^1.3.6
       rxjs: ^7.5.5
@@ -42,7 +61,6 @@ importers:
       typescript: ^4.6.4
       uuid: 8.3.2
     dependencies:
-      '@chainsafe/libp2p-noise': 4.1.2
       '@fluencelabs/avm': 0.25.0
       '@fluencelabs/marine-js': 0.3.5_sko4ffqqp673sksiv43o5nk3cy
       async: 3.2.3
@@ -51,17 +69,7 @@ importers:
       bs58: 5.0.0
       buffer: 6.0.3
       cids: 1.1.9
-      it-length-prefixed: 5.0.3
-      it-pipe: 1.1.0
-      js-base64: 3.7.2
-      libp2p: 0.36.2_node-fetch@3.2.10
-      libp2p-crypto: 0.21.2
-      libp2p-interfaces: 4.0.6_node-fetch@3.2.10
-      libp2p-mplex: 0.10.7
-      libp2p-websockets: 0.16.2_node-fetch@3.2.10
       loglevel: 1.8.0
-      multiaddr: 10.0.1_node-fetch@3.2.10
-      multiformats: 9.6.5
       peer-id: 0.16.0
       platform: 1.3.6
       rxjs: 7.5.6
@@ -77,8 +85,22 @@ importers:
       '@types/uuid': 8.3.4
       jest: 28.1.3
       jest-each: 28.1.3
+      multiaddr: 10.0.1_node-fetch@3.2.10
       ts-jest: 28.0.7_m5noci3hdgjcbp5i3skppiufvq
       typedoc: 0.22.18_typescript@4.7.4
+      typescript: 4.7.4
+
+  packages/fluence-keypair:
+    specifiers:
+      js-base64: ^3.7.2
+      libp2p-crypto: 0.21.2
+      peer-id: 0.16.0
+      typescript: ^4.6.4
+    dependencies:
+      js-base64: 3.7.2
+      libp2p-crypto: 0.21.2
+      peer-id: 0.16.0
+    devDependencies:
       typescript: 4.7.4
 
 packages:
