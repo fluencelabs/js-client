@@ -37,6 +37,8 @@ jobs:
               run: pnpm i
             
             - name: Run tests
-              run: pnpm -r test
+              run: |
+                  pnpm -r build
+                  pnpm -r test
               env:
                   CI: true
