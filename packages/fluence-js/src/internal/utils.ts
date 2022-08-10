@@ -16,10 +16,10 @@
 
 import log from 'loglevel';
 import platform from 'platform';
+import { LogLevel } from '@fluencelabs/avm';
 
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
-import { LogLevel } from '@fluencelabs/avm';
 import { ParticleExecutionStage } from './Particle';
 import Buffer from './Buffer';
 

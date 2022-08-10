@@ -1,7 +1,8 @@
+import { FluenceConnection, ParticleHandler } from '@fluencelabs/fluence-connection';
+import { keyPairFromBase64Sk } from '@fluencelabs/fluence-keypair';
+
 import { PeerIdB58 } from './commonTypes';
-import { FluenceConnection, ParticleHandler } from '../../../fluence-connection/src';
 import { FluencePeer } from '../index';
-import { keyPairFromBase64Sk } from '../../../fluence-keypair/src';
 import log from 'loglevel';
 
 interface EphemeralConfig {

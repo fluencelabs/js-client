@@ -13,7 +13,6 @@ importers:
       libp2p-websockets: 0.16.2
       loglevel: 1.8.0
       multiaddr: 10.0.1
-      multiformats: 9.6.5
       peer-id: 0.16.0
       typescript: ^4.6.4
     dependencies:
@@ -26,7 +25,6 @@ importers:
       libp2p-websockets: 0.16.2_node-fetch@3.2.10
       loglevel: 1.8.0
       multiaddr: 10.0.1_node-fetch@3.2.10
-      multiformats: 9.6.5
       peer-id: 0.16.0
     devDependencies:
       typescript: 4.7.4
@@ -36,6 +34,8 @@ importers:
       '@fluencelabs/aqua': ^0.7.2-307
       '@fluencelabs/aqua-lib': ^0.5.1
       '@fluencelabs/avm': 0.25.0
+      '@fluencelabs/fluence-connection': workspace:*
+      '@fluencelabs/fluence-keypair': workspace:*
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/marine-js': 0.3.5
       '@types/bs58': ^4.0.1
@@ -50,8 +50,10 @@ importers:
       cids: 1.1.9
       jest: ^28.1.0
       jest-each: ^28.1.3
+      js-base64: ^3.7.2
       loglevel: 1.8.0
       multiaddr: 10.0.1
+      multiformats: 9.6.5
       peer-id: 0.16.0
       platform: ^1.3.6
       rxjs: ^7.5.5
@@ -70,6 +72,7 @@ importers:
       buffer: 6.0.3
       cids: 1.1.9
       loglevel: 1.8.0
+      multiformats: 9.6.5
       peer-id: 0.16.0
       platform: 1.3.6
       rxjs: 7.5.6
@@ -78,6 +81,8 @@ importers:
     devDependencies:
       '@fluencelabs/aqua': 0.7.2-314_rclyoh22nbyjal25iijhtohxna
       '@fluencelabs/aqua-lib': 0.5.2
+      '@fluencelabs/fluence-connection': link:../fluence-connection
+      '@fluencelabs/fluence-keypair': link:../fluence-keypair
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/jest': 27.5.2
@@ -85,6 +90,7 @@ importers:
       '@types/uuid': 8.3.4
       jest: 28.1.3
       jest-each: 28.1.3
+      js-base64: 3.7.2
       multiaddr: 10.0.1_node-fetch@3.2.10
       ts-jest: 28.0.7_m5noci3hdgjcbp5i3skppiufvq
       typedoc: 0.22.18_typescript@4.7.4
@@ -2909,7 +2915,6 @@ packages:
 
   /js-base64/3.7.2:
     resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
-    dev: false
 
   /js-sha3/0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
