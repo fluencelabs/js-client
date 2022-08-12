@@ -1,5 +1,5 @@
 {
-    "name": "@fluencelabs/fluence-keypair",
+    "name": "@fluencelabs/keypair",
     "version": "0.1.0",
     "description": "Keypair implementation for Fluence JS Peer",
     "main": "./dist/index.js",

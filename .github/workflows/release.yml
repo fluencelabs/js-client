@@ -35,14 +35,14 @@ jobs:
         run: |
             pnpm i
             pnpm -r build
-        env:
-            CI: true
+        #env:
+        #    CI: true
 
       - name: Release Fluence JS
         run: |
             pnpm -r publish --dry-run
-        env:
-            CI: true
+        #env:
+        #    CI: true
 
     #   - name: Build Changelog
     #     id: changelog
