@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RelayConnection, FluenceConnection } from '@fluencelabs/connection';
+import { RelayConnection } from '@fluencelabs/connection';
+import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
 import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
 import type { MultiaddrInput } from 'multiaddr';

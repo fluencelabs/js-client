@@ -5,6 +5,7 @@ importers:
   packages/fluence-connection:
     specifiers:
       '@chainsafe/libp2p-noise': ^4.1.1
+      '@fluencelabs/interfaces': workspace:0.1.0
       it-length-prefixed: 5.0.3
       it-pipe: 1.1.0
       libp2p: 0.36.2
@@ -17,6 +18,7 @@ importers:
       typescript: ^4.6.4
     dependencies:
       '@chainsafe/libp2p-noise': 4.1.2
+      '@fluencelabs/interfaces': link:../fluence-interfaces
       it-length-prefixed: 5.0.3
       it-pipe: 1.1.0
       libp2p: 0.36.2_node-fetch@3.2.10
@@ -29,6 +31,12 @@ importers:
     devDependencies:
       typescript: 4.7.4
 
+  packages/fluence-interfaces:
+    specifiers:
+      typescript: ^4.6.4
+    devDependencies:
+      typescript: 4.7.4
+
   packages/fluence-js:
     specifiers:
       '@fluencelabs/aqua': ^0.7.2-307
@@ -36,6 +44,7 @@ importers:
       '@fluencelabs/avm': 0.25.0
       '@fluencelabs/connection': workspace:0.1.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
+      '@fluencelabs/interfaces': workspace:0.1.0
       '@fluencelabs/keypair': workspace:0.1.0
       '@fluencelabs/marine-js': 0.3.5
       '@types/bs58': ^4.0.1
@@ -65,6 +74,7 @@ importers:
     dependencies:
       '@fluencelabs/avm': 0.25.0
       '@fluencelabs/connection': link:../fluence-connection
+      '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
       '@fluencelabs/marine-js': 0.3.5_sko4ffqqp673sksiv43o5nk3cy
       async: 3.2.3

@@ -1,4 +1,4 @@
-import { FluenceConnection, ParticleHandler } from '@fluencelabs/connection';
+import { FluenceConnection, ParticleHandler } from '@fluencelabs/interfaces';
 import { keyPairFromBase64Sk } from '@fluencelabs/keypair';
 
 import { PeerIdB58 } from './commonTypes';

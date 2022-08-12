@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { FluenceConnection, ParticleHandler, PeerIdB58 } from '@fluencelabs/interfaces';
 // @ts-ignore
 import Websockets from 'libp2p-websockets';
 // @ts-ignore
@@ -30,8 +31,6 @@ import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
-
-type PeerIdB58 = string;
 
 /**
  * Options to configure fluence connection
@@ -51,18 +50,6 @@ export interface FluenceConnectionOptions {
      * The dialing timeout in milliseconds
      */
     dialTimeoutMs?: number;
-}
-
-export type ParticleHandler = (particle: string) => void;
-
-/**
- * Base class for connectivity layer to Fluence Network
- */
-export abstract class FluenceConnection {
-    abstract readonly relayPeerId: PeerIdB58 | null;
-    abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
-    abstract disconnect(): Promise<void>;
-    abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
 }
 
 /**

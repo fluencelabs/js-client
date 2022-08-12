@@ -9,14 +9,13 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "lint": "eslint . --ext .ts",
-        "lint-fix": "eslint . --ext .ts --cache --fix",
         "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
+        "@fluencelabs/interfaces": "workspace:0.1.0",
         "peer-id": "0.16.0",
         "it-length-prefixed": "5.0.3",
         "it-pipe": "1.1.0",
