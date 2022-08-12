@@ -34,8 +34,8 @@ importers:
       '@fluencelabs/aqua': ^0.7.2-307
       '@fluencelabs/aqua-lib': ^0.5.1
       '@fluencelabs/avm': 0.25.0
-      '@fluencelabs/fluence-connection': workspace:*
-      '@fluencelabs/fluence-keypair': workspace:*
+      '@fluencelabs/fluence-connection': workspace:0.1.0
+      '@fluencelabs/fluence-keypair': workspace:0.1.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/marine-js': 0.3.5
       '@types/bs58': ^4.0.1
@@ -64,6 +64,8 @@ importers:
       uuid: 8.3.2
     dependencies:
       '@fluencelabs/avm': 0.25.0
+      '@fluencelabs/fluence-connection': link:../fluence-connection
+      '@fluencelabs/fluence-keypair': link:../fluence-keypair
       '@fluencelabs/marine-js': 0.3.5_sko4ffqqp673sksiv43o5nk3cy
       async: 3.2.3
       base64-js: 1.5.1
@@ -81,8 +83,6 @@ importers:
     devDependencies:
       '@fluencelabs/aqua': 0.7.2-314_rclyoh22nbyjal25iijhtohxna
       '@fluencelabs/aqua-lib': 0.5.2
-      '@fluencelabs/fluence-connection': link:../fluence-connection
-      '@fluencelabs/fluence-keypair': link:../fluence-keypair
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/jest': 27.5.2
