@@ -28,21 +28,30 @@ jobs:
             node-version: ${{ matrix.node-version }}
             cache: 'pnpm'
 
-      #- name: Set env
-      #  run: ???
-
       - name: Build Fluence JS
         run: |
             pnpm i
             pnpm -r build
-        #env:
-        #    CI: true
+        env:
+           CI: true
 
       - name: Release Fluence JS
         run: |
             pnpm -r publish --dry-run
-        #env:
-        #    CI: true
+        env:
+            CI: true
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+        with:
+            path: packages/fluence-js
+
+      - run: echo ${{ steps.package-version.outputs.current-version}}
+
+    #  - uses: actions-ecosystem/action-push-tag@v1
+    #    with:
+    #      tag: ${{ steps.package-version.outputs.current-version}}
 
     #   - name: Build Changelog
     #     id: changelog
