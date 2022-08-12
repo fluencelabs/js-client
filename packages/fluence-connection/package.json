@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence-connection",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "description": "Fluence connection",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
