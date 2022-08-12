@@ -9,6 +9,8 @@
         "pnpm": ">=3"
     },
     "scripts": {
+        "lint": "eslint . --ext .ts",
+        "lint-fix": "eslint . --ext .ts --cache --fix",
         "compile-aqua": "npm run compile-aqua:src && npm run compile-aqua:test",
         "compile-aqua:src": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
         "compile-aqua:test": "aqua -i ./aqua/tests/ -o ./src/__test__/_aqua",

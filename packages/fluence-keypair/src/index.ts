@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import * as PeerId from "peer-id";
-import { keys } from "libp2p-crypto";
-import { toUint8Array } from "js-base64";
+import * as PeerId from 'peer-id';
+import { keys } from 'libp2p-crypto';
+import { toUint8Array } from 'js-base64';
 
 export class KeyPair {
     /**
@@ -35,11 +35,7 @@ export class KeyPair {
      */
     static async fromEd25519SK(arr: Uint8Array): Promise<KeyPair> {
         // generateKeyPairFromSeed takes seed and copies it to private key as is
-        const privateKey = await keys.generateKeyPairFromSeed(
-            "Ed25519",
-            arr,
-            256
-        );
+        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', arr, 256);
         const lib2p2Pid = await PeerId.createFromPrivKey(privateKey.bytes);
         return new KeyPair(lib2p2Pid);
     }
@@ -49,7 +45,7 @@ export class KeyPair {
      * @returns - Promise with the created KeyPair
      */
     static async randomEd25519(): Promise<KeyPair> {
-        const lib2p2Pid = await PeerId.create({ keyType: "Ed25519" });
+        const lib2p2Pid = await PeerId.create({ keyType: 'Ed25519' });
         return new KeyPair(lib2p2Pid);
     }
 

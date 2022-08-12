@@ -9,6 +9,8 @@
         "pnpm": ">=3"
     },
     "scripts": {
+        "lint": "eslint . --ext .ts",
+        "lint-fix": "eslint . --ext .ts --cache --fix",
         "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
