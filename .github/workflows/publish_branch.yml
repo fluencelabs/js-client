@@ -23,7 +23,7 @@ jobs:
           method: jwt
           jwtGithubAudience: "https://github.com/fluencelabs"
           jwtTtl: 300
-          exportToken: true
+          exportToken: false
           secrets: |
             kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
