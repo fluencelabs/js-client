@@ -1,7 +1,9 @@
 name: "publish-branch"
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branch:
+      - "master"
 
 jobs:
   npm-publish:
