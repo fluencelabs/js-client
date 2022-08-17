@@ -20,10 +20,11 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: "Setup node"
+      - name: "Setup node with self-hosted npm registry"
         uses: actions/setup-node@v2
         with:
           node-version: "16"
+          registry-url: "https://npm.fluence.dev"
 
       - run: npm ci
       - run: npm run build
@@ -40,12 +41,6 @@ jobs:
           exportToken: false
           secrets: |
             kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
-
-      - name: "Setup node with self-hosted npm registry"
-        uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-          registry-url: "https://npm.fluence.dev"
 
       - name: "Generate package version"
         id: version
