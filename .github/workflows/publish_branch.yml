@@ -1,9 +1,7 @@
 name: "publish-branch"
 
 on:
-  pull_request:
-    branch:
-      - "master"
+  workflow_dispatch:
 
 jobs:
   npm-publish:
@@ -19,11 +17,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
 
       - name: "Setup node"
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
 
       - run: npm ci
       - run: npm run build
@@ -44,13 +44,13 @@ jobs:
       - name: "Setup node with self-hosted npm registry"
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
-          registry-url: 'https://npm.fluence.dev'
+          node-version: "16"
+          registry-url: "https://npm.fluence.dev"
 
       - name: "Generate package version"
         id: version
         run: |
-          BRANCH=${{ github.head_ref }}
+          BRANCH=${GITHUB_REF#refs/heads/}
           SHA=$(git rev-parse --short HEAD)
 
           echo "::set-output name=sha::$SHA"
