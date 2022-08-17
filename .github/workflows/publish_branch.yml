@@ -12,13 +12,8 @@ jobs:
       contents: read
       id-token: write
 
-    env:
-      VAULT_ADDR: "https://vault.fluence.dev"
-
     steps:
       - uses: actions/checkout@v3
-        # with:
-        #   ref: ${{ github.ref }}
 
       - name: "Setup node with self-hosted npm registry"
         uses: actions/setup-node@v2
@@ -32,7 +27,7 @@ jobs:
       - name: "Import secrets"
         uses: hashicorp/vault-action@v2.4.2
         with:
-          url: "${{ env.VAULT_ADDR }}"
+          url: https://vault.fluence.dev
           path: jwt/github
           role: ci
           method: jwt
