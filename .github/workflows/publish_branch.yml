@@ -17,8 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref }}
+        # with:
+        #   ref: ${{ github.ref }}
 
       - name: "Setup node with self-hosted npm registry"
         uses: actions/setup-node@v2
