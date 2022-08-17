@@ -60,7 +60,7 @@ jobs:
         env:
           BRANCH: ${{ steps.version.outputs.branch }}
           SHA: ${{ steps.version.outputs.sha }}
-          RUN: ${{ github.run.number }}
+          RUN: ${{ github.run_number }}
         run: |
             npm version prerelease --no-git-tag-version \
               --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}
