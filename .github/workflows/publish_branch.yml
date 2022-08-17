@@ -54,7 +54,7 @@ jobs:
           SHA=$(git rev-parse --short HEAD)
 
           echo "::set-output name=sha::$SHA"
-          echo "::set-output name=branch::$BRANCH//[^a-zA-Z0-9-]/-}"
+          echo "::set-output name=branch::${BRANCH//[^a-zA-Z0-9-]/-}"
 
       - name: "Set package version"
         env:
