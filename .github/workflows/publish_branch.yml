@@ -1,41 +1,60 @@
 name: "publish-branch"
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   npm-publish:
     name: "Publish"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Get branch name
-        run: |
-          BRANCH=${GITHUB_REF#refs/*/}
-          SANITIZED=$(echo "$BRANCH" | sed -e 's/[^a-zA-Z0-9-]/-/g')
-          echo "BRANCH_NAME=$SANITIZED" >> $GITHUB_ENV
-      ### Set version
-      - name: Set version
-        run: npm version prerelease --no-git-tag-version --preid ${{ env.BRANCH_NAME }}-${{ github.run_number }}
-
-      ### Publish to NPM registry
-      - uses: actions/setup-node@v1
+      - name: "Setup node with self-hosted npm registry"
+        uses: actions/setup-node@v2
         with:
-          node-version: '16'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "16"
+          registry-url: "https://npm.fluence.dev"
 
-      - run: cat package.json
-
-      - run: npm i
+      - run: npm ci
       - run: npm run build
 
-      - run: npm publish --access public --tag=beta
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: "Import secrets"
+        uses: hashicorp/vault-action@v2.4.2
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
+      - name: "Generate package version"
+        id: version
+        run: |
+          BRANCH=${GITHUB_REF#refs/heads/}
+          SHA=$(git rev-parse --short HEAD)
+
+          echo "::set-output name=sha::$SHA"
+          echo "::set-output name=branch::${BRANCH//[^a-zA-Z0-9-]/-}"
+
+      - name: "Set package version"
+        env:
+          BRANCH: ${{ steps.version.outputs.branch }}
+          SHA: ${{ steps.version.outputs.sha }}
+          RUN: ${{ github.run_number }}
+          ATTEMPT: ${{ github.run_attempt }}
+        run: |
+            npm version prerelease --no-git-tag-version \
+              --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
+
+      - name: "Publish to self-hosted npm repo"
+        run: npm publish --tag snapshot --registry https://npm.fluence.dev
