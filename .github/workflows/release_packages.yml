@@ -45,7 +45,7 @@ jobs:
 
       - name: "Publish to npmjs.com"
         run: |
-            pnpm -r publish --dry-run --no-git-checks
+            pnpm -r publish --dry-run --no-git-checks --registry https://npm.fluence.dev
         env:
             CI: true
 
