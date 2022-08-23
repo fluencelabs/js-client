@@ -1,7 +1,9 @@
 name: "Release packages"
 
 on:
-  workflow_dispatch:
+    push:
+# on:
+#   workflow_dispatch:
 
 jobs:
   npm-publish:
@@ -18,35 +20,35 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-            version: 7
+    #   - uses: pnpm/action-setup@v2.2.2
+    #     with:
+    #         version: 7
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-            node-version: ${{ matrix.node-version }}
-            cache: 'pnpm'
+    #   - name: Setup Node.js ${{ matrix.node-version }}
+    #     uses: actions/setup-node@v1
+    #     with:
+    #         node-version: ${{ matrix.node-version }}
+    #         cache: 'pnpm'
 
-      - name: Build Fluence JS
-        run: |
-            pnpm i
-            pnpm -r build
-        env:
-           CI: true
+    #   - name: Build Fluence JS
+    #     run: |
+    #         pnpm i
+    #         pnpm -r build
+    #     env:
+    #        CI: true
 
-      - name: Release Fluence JS
-        run: |
-            pnpm -r publish --dry-run --no-git-checks
-        env:
-            CI: true
+    #   - name: Release Fluence JS
+    #     run: |
+    #         pnpm -r publish --dry-run --no-git-checks
+    #     env:
+    #         CI: true
 
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-        with:
-            path: packages/fluence-js
+    #   - name: get-npm-version
+    #     id: package-version
+    #     uses: martinbeentjes/npm-get-version-action@main
+    #     with:
+    #         path: packages/fluence-js
 
-      - uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: v${{ steps.package-version.outputs.current-version}}
+    #   - uses: actions-ecosystem/action-push-tag@v1
+    #     with:
+    #       tag: v${{ steps.package-version.outputs.current-version}}
