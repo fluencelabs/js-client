@@ -28,6 +28,15 @@ Build all packages
 pnpm -r build
 ```
 
+### Repository structure
+
+| Folder                      | Package                 | Description                                   |
+| --------------------------- | ----------------------- | --------------------------------------------- |
+| packages/fluence-js         | @fluencelabs/fluence-js | TypeScript implementation of the Fluence Peer |
+| packages/fluence-interfaces | @fluencelabs/interfaces | Common interfaces used in Fluence Peer        |
+| packages/fluence-connection | @fluencelabs/connection | Connectivity layer used in Fluence Peer       |
+| packages/fluence-keypair    | @fluencelabs/keypair    | Key Pair implementation                       |
+
 ### Running tests
 
 Tests are split into unit and integration categories. By default integration tests require a locally running Fluence node with 4310 port open for ws connections. The dependency can be started with docker
