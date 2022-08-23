@@ -1,54 +1,60 @@
 name: "Release packages"
 
 on:
-    push:
-# on:
-#   workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   npm-publish:
     name: "Publish"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-
-    strategy:
-        matrix:
-            node-version: [17.x]
+    
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+            version: 7
 
-    #   - uses: pnpm/action-setup@v2.2.2
-    #     with:
-    #         version: 7
+      - name: "Setup node with self-hosted npm registry"
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          registry-url: "https://npm.fluence.dev"
 
-    #   - name: Setup Node.js ${{ matrix.node-version }}
-    #     uses: actions/setup-node@v1
-    #     with:
-    #         node-version: ${{ matrix.node-version }}
-    #         cache: 'pnpm'
+      - name: "Build packages"
+        run: |
+            pnpm i
+            pnpm -r build
 
-    #   - name: Build Fluence JS
-    #     run: |
-    #         pnpm i
-    #         pnpm -r build
-    #     env:
-    #        CI: true
+      - name: "Import secrets"
+        uses: hashicorp/vault-action@v2.4.2
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
-    #   - name: Release Fluence JS
-    #     run: |
-    #         pnpm -r publish --dry-run --no-git-checks
-    #     env:
-    #         CI: true
+      - name: "Publish to npmjs.com"
+        run: |
+            pnpm -r publish --dry-run --no-git-checks
+        env:
+            CI: true
 
-    #   - name: get-npm-version
-    #     id: package-version
-    #     uses: martinbeentjes/npm-get-version-action@main
-    #     with:
-    #         path: packages/fluence-js
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+        with:
+            path: packages/fluence-js
 
-    #   - uses: actions-ecosystem/action-push-tag@v1
-    #     with:
-    #       tag: v${{ steps.package-version.outputs.current-version}}
+      - uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: tmp_v${{ steps.package-version.outputs.current-version}}
