@@ -2,6 +2,9 @@ name: "Release packages"
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'DXJ-85'
 
 jobs:
   release-packages:
