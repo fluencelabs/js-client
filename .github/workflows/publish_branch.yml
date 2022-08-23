@@ -1,4 +1,4 @@
-name: "publish-branch"
+name: "Publish development branch packages"
 
 on:
   push:
