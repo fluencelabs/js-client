@@ -4,8 +4,7 @@ on:
   push:
 
 jobs:
-  npm-publish:
-    name: "Publish"
+  publish-branch:
     runs-on: ubuntu-latest
 
     permissions:

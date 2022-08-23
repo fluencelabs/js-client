@@ -6,8 +6,7 @@ on:
       - "v*"
 
 jobs:
-  npm-publish:
-    name: "Publish"
+  release-github:
     runs-on: ubuntu-latest
     defaults:
       run:
