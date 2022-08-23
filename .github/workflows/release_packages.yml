@@ -58,7 +58,7 @@ jobs:
             path: packages/fluence-js
 
       - name: "Create tag for release"
-      - uses: rickstaa/action-create-tag@v1
+        uses: rickstaa/action-create-tag@v1
         with:
           tag: "tmp_v${{ steps.package-version.outputs.current-version }}"
           message: ""
