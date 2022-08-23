@@ -58,9 +58,7 @@ jobs:
             path: packages/fluence-js
 
       - name: "Create tag for release"
-        run: |
-          tag="${{ steps.package-version.outputs.current-version }}"
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git tag -a "${tag}" -m ""
-          git push origin "${tag}"
+      - uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "tmp_v${{ steps.package-version.outputs.current-version }}"
+          message: ""
