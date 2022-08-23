@@ -62,3 +62,4 @@ jobs:
         with:
           tag: "tmp_v${{ steps.package-version.outputs.current-version }}"
           message: ""
+          github_token: ${{ secrets.GITHUB_TOKEN }}
