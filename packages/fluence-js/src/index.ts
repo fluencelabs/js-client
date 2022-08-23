@@ -15,11 +15,11 @@
  */
 
 import log, { LogLevelDesc } from 'loglevel';
+export { KeyPair } from '@fluencelabs/keypair';
 
 import { FluencePeer, PeerConfig } from './internal/FluencePeer';
 
 export { PeerStatus } from './internal/FluencePeer';
-export { KeyPair } from '../../fluence-keypair/src';
 export { FluencePeer, PeerConfig } from './internal/FluencePeer';
 export { MarineLoglevel as AvmLoglevel } from './internal/utils';
 export { PeerIdB58, CallParams } from './internal/commonTypes';

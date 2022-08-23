@@ -1,6 +1,6 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
 import { CallParams, PeerIdB58 } from '../commonTypes';
-import { KeyPair } from '../../../../fluence-keypair/src';
+import { KeyPair } from '@fluencelabs/keypair';
 import { SigDef } from '../_aqua/services';
 
 /**

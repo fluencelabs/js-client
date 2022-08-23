@@ -1,6 +1,6 @@
 import * as bs58 from 'bs58';
 import * as base64 from 'base64-js';
-import { KeyPair } from '../../../../fluence-keypair/src';
+import { KeyPair } from '@fluencelabs/keypair';
 
 describe('KeyPair tests', () => {
     it('generate keypair from seed', async function () {

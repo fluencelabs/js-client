@@ -1,5 +1,6 @@
+import { KeyPair } from '@fluencelabs/keypair';
 import { EphemeralNetwork, defaultConfig } from '../../internal/ephemeral';
-import { FluencePeer, KeyPair } from '../../index';
+import { FluencePeer } from '../../index';
 import { ResultCodes } from '../../internal/commonTypes';
 
 let en: EphemeralNetwork;
