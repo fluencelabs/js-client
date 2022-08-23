@@ -51,12 +51,16 @@ jobs:
         env:
             CI: true
 
-      - name: get-npm-version
+      - name: "Get the version of fluence-js package"
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
         with:
             path: packages/fluence-js
 
-      - uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: tmp_v${{ steps.package-version.outputs.current-version}}
+      - name: "Create tag for release"
+        run: |
+          tag=${{ steps.bump-semver.outputs.new_version }}
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git tag -a "${tag}" -m ""
+          git push origin "${tag}"
