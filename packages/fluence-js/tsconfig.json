@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "typeRoots": ["./node_modules/@types", "./node_modules/libp2p-ts/types"],
         "outDir": "./dist/",
         "baseUrl": ".",
         "downlevelIteration": true,
@@ -18,5 +17,5 @@
         "skipLibCheck": true
     },
     "exclude": ["node_modules", "dist", "bundle"],
-    "include": ["src/**/*", "../fluence-keypair/src/KeyPair.ts", "../fluence-connection/src/FluenceConnection.ts"]
+    "include": ["src/**/*"]
 }
