@@ -58,10 +58,12 @@ jobs:
           RUN: ${{ github.run_number }}
           ATTEMPT: ${{ github.run_attempt }}
         run: |
-            find packages/* -maxdepth 0 -type d -exec bash -c "cd '{}' && 
-               pnpm version prepatch --no-git-tag-version \
-              --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }} \
-            " \;
+            for package in packages/*; do
+              cd $package
+              pnpm version prepatch --no-git-tag-version \
+                --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
+              cd -
+            done
 
       - name: "Publish to self-hosted npm repo"
         run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag snapshot -filter '@fluencelabs/*'
