@@ -47,7 +47,7 @@ jobs:
 
       - name: "Publish to npmjs.com"
         run: |
-            result=$(pnpm --no-git-checks -r publish --registry https://npm.fluence.dev)
+            result=$(pnpm --no-git-checks -r publish --registry https://npm.fluence.dev -filter '@fluencelabs/*)
             if [ "$result" == "There are no new packages that should be published" ]
             then
                 echo ERROR: no packages have been published. Did you forget to bump version?
