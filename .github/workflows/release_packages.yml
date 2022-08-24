@@ -1,0 +1,50 @@
+name: "Release packages"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-packages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+            version: 7
+
+      - name: "Setup node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: "Build packages"
+        run: |
+            pnpm i
+            pnpm -r build
+
+      - name: "Publish to npmjs.com"
+        run: |
+            result=$(pnpm --no-git-checks -r publish -filter '@fluencelabs/*')
+            if [[ $result == "There are no new packages that should be published" ]]
+            then
+                echo ERROR: no packages have been published. Did you forget to bump version?
+                exit 1
+            fi
+        env:
+            CI: true
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: "Get the version of fluence-js package"
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+        with:
+            path: packages/fluence-js
+
+      - name: "Create tag for release"
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "v${{ steps.package-version.outputs.current-version }}"
+          message: ""
+          github_token: ${{ secrets.GITHUB_TOKEN }}

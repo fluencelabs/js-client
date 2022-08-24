@@ -14,11 +14,28 @@ While the project is still in the early stages of development, you are welcome t
 
 ### Setting up dev environment
 
-Install node packages
+Fluence JS uses pnpm to manage monorepo packages. See [pnpm.io](https://pnpm.io/installation) for installation instructions.
+
+Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
+
+Build all packages
+
+```
+pnpm -r build
+```
+
+### Repository structure
+
+| Folder                      | Package                 | Description                                   |
+| --------------------------- | ----------------------- | --------------------------------------------- |
+| packages/fluence-js         | @fluencelabs/fluence-js | TypeScript implementation of the Fluence Peer |
+| packages/fluence-interfaces | @fluencelabs/interfaces | Common interfaces used in Fluence Peer        |
+| packages/fluence-connection | @fluencelabs/connection | Connectivity layer used in Fluence Peer       |
+| packages/fluence-keypair    | @fluencelabs/keypair    | Key Pair implementation                       |
 
 ### Running tests
 
@@ -28,28 +45,22 @@ Tests are split into unit and integration categories. By default integration tes
  docker run --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj
 ```
 
-To run all tests in interactive mode
+To run all tests
 
 ```bash
-npm run test
+pnpm -r test
 ```
 
 To run only unit tests
 
 ```bash
-npm run test:unit
+pnpm -r test:unit
 ```
 
 To run only integration tests
 
 ```bash
-npm run test:unit
-```
-
-To run all tests
-
-```bash
-npm run test:all
+pnpm -r test:integration
 ```
 
 ## License

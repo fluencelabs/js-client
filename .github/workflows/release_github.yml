@@ -1,0 +1,41 @@
+name: "Make github release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release-github:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      ### Create a release
+      - name: Build Changelog
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          configuration: ".github/workflows/changelog_config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Fluence JS ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ env.RELEASE_VERSION }}
+          body: ${{steps.changelog.outputs.changelog}}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

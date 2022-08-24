@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "declaration": true,
+        "skipDefaultLibCheck": true
+   },
+    "exclude": ["node_modules", "dist"],
+    "include": ["src/**/*"]
+}

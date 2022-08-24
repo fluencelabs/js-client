@@ -1,11 +1,10 @@
-name: "publish-branch"
+name: "Publish development branch packages"
 
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
-  npm-publish:
-    name: "Publish"
+  publish-branch:
     runs-on: ubuntu-latest
 
     permissions:
@@ -14,6 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+            version: 7
 
       - name: "Setup node with self-hosted npm registry"
         uses: actions/setup-node@v2
@@ -21,8 +24,10 @@ jobs:
           node-version: "16"
           registry-url: "https://npm.fluence.dev"
 
-      - run: npm ci
-      - run: npm run build
+      - name: "Build packages"
+        run: |
+            pnpm i
+            pnpm -r build
 
       - name: "Import secrets"
         uses: hashicorp/vault-action@v2.4.2
@@ -53,8 +58,12 @@ jobs:
           RUN: ${{ github.run_number }}
           ATTEMPT: ${{ github.run_attempt }}
         run: |
-            npm version prerelease --no-git-tag-version \
-              --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
+            for package in packages/*; do
+              cd $package
+              pnpm version prepatch --no-git-tag-version \
+                --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
+              cd -
+            done
 
       - name: "Publish to self-hosted npm repo"
-        run: npm publish --tag snapshot --registry https://npm.fluence.dev
+        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag snapshot -filter '@fluencelabs/*'

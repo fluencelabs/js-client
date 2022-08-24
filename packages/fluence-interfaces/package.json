@@ -1,0 +1,21 @@
+{
+    "name": "@fluencelabs/interfaces",
+    "version": "0.1.0",
+    "description": "Fluence interfaces",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "tsc"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {},
+    "devDependencies": {
+        "typescript": "^4.6.4"
+    }
+}
