@@ -59,7 +59,7 @@ jobs:
           ATTEMPT: ${{ github.run_attempt }}
         run: |
             find packages/* -maxdepth 0 -type d -exec bash -c "cd '{}' && 
-               pnpm version prerelease --no-git-tag-version \
+               pnpm version prepatch --no-git-tag-version \
               --preid ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }} \
             " \;
 
