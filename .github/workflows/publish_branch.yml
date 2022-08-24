@@ -64,4 +64,4 @@ jobs:
             " \;
 
       - name: "Publish to self-hosted npm repo"
-        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag snapshot -filter '@fluencelabs/*
+        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag snapshot -filter '@fluencelabs/*'
