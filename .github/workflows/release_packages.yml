@@ -2,9 +2,6 @@ name: "Release packages"
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'DXJ-85'
 
 jobs:
   release-packages:
@@ -21,33 +18,19 @@ jobs:
         with:
             version: 7
 
-      - name: "Setup node with self-hosted npm registry"
+      - name: "Setup node"
         uses: actions/setup-node@v2
         with:
           node-version: "16"
-          registry-url: "https://npm.fluence.dev"
 
       - name: "Build packages"
         run: |
             pnpm i
             pnpm -r build
 
-      - name: "Import secrets"
-        uses: hashicorp/vault-action@v2.4.2
-        with:
-          url: https://vault.fluence.dev
-          path: jwt/github
-          role: ci
-          method: jwt
-          jwtGithubAudience: "https://github.com/fluencelabs"
-          jwtTtl: 300
-          exportToken: false
-          secrets: |
-            kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
-
       - name: "Publish to npmjs.com"
         run: |
-            result=$(pnpm --no-git-checks -r publish --registry https://npm.fluence.dev -filter '@fluencelabs/*')
+            result=$(pnpm --no-git-checks -r publish -filter '@fluencelabs/*')
             if [ "$result" == "There are no new packages that should be published" ]
             then
                 echo ERROR: no packages have been published. Did you forget to bump version?
@@ -55,6 +38,7 @@ jobs:
             fi
         env:
             CI: true
+            #NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Get the version of fluence-js package"
         id: package-version
@@ -65,6 +49,6 @@ jobs:
       - name: "Create tag for release"
         uses: rickstaa/action-create-tag@v1
         with:
-          tag: "tmp_v${{ steps.package-version.outputs.current-version }}"
+          tag: "v${{ steps.package-version.outputs.current-version }}"
           message: ""
           github_token: ${{ secrets.GITHUB_TOKEN }}
