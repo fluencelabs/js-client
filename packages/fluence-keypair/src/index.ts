@@ -14,30 +14,32 @@
  * limitations under the License.
  */
 
-import * as PeerId from 'peer-id';
-import { keys } from 'libp2p-crypto';
+import type { PeerId } from '@libp2p/interfaces/peer-id';
+import { peerIdFromKeys } from '@libp2p/peer-id';
+import { keys } from '@libp2p/crypto';
 import { toUint8Array } from 'js-base64';
+import type { PrivateKey } from '@libp2p/interfaces/keys';
 
 export class KeyPair {
-    /**
-     * Key pair in libp2p format. Used for backward compatibility with the current FluencePeer implementation
-     */
-    public Libp2pPeerId: PeerId;
+    constructor(public libp2pPeerId: PeerId, private secretKey: PrivateKey) {}
 
-    constructor(libp2pPeerId: PeerId) {
-        this.Libp2pPeerId = libp2pPeerId;
+    private static async fromSk(sk: PrivateKey) {
+        const lib2p2Pid = await peerIdFromKeys(sk.public.bytes, sk.bytes);
+        return new KeyPair(lib2p2Pid, sk);
     }
 
     /**
      * Generates new KeyPair from ed25519 private key represented as a 32 byte array
-     * @param key - Any sequence of 32 bytes
+     * @param seed - Any sequence of 32 bytes
      * @returns - Promise with the created KeyPair
      */
-    static async fromEd25519SK(arr: Uint8Array): Promise<KeyPair> {
+    static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
+        if (seed.length !== 32) {
+            throw new Error('seed must have length of exactly 32 bytes, got ' + seed.length);
+        }
         // generateKeyPairFromSeed takes seed and copies it to private key as is
-        const privateKey = await keys.generateKeyPairFromSeed('Ed25519', arr, 256);
-        const lib2p2Pid = await PeerId.createFromPrivKey(privateKey.bytes);
-        return new KeyPair(lib2p2Pid);
+        const sk = await keys.generateKeyPairFromSeed('Ed25519', seed, 32 * 8);
+        return await this.fromSk(sk);
     }
 
     /**
@@ -45,27 +47,27 @@ export class KeyPair {
      * @returns - Promise with the created KeyPair
      */
     static async randomEd25519(): Promise<KeyPair> {
-        const lib2p2Pid = await PeerId.create({ keyType: 'Ed25519' });
-        return new KeyPair(lib2p2Pid);
+        const sk = await keys.generateKeyPair('Ed25519');
+        return await this.fromSk(sk);
     }
 
     toB58String(): string {
-        return this.Libp2pPeerId.toB58String();
+        return this.libp2pPeerId.toString();
     }
 
     /**
      * @returns 32 byte private key
      */
     toEd25519PrivateKey(): Uint8Array {
-        return this.Libp2pPeerId.privKey.marshal().subarray(0, 32);
+        return this.secretKey.marshal().slice(0, 32);
     }
 
     signBytes(data: Uint8Array): Promise<Uint8Array> {
-        return this.Libp2pPeerId.privKey.sign(data);
+        return this.secretKey.sign(data);
     }
 
     verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
-        return this.Libp2pPeerId.privKey.public.verify(data, signature);
+        return this.secretKey.public.verify(data, signature);
     }
 }
 

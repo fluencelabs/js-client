@@ -67,9 +67,11 @@ export class RelayConnection extends FluenceConnection {
         const lib2p2Peer = await createLibp2p({
             peerId: options.peerId,
             transports: [new WebSockets()],
+            // @ts-ignore
             streamMuxers: [new Mplex()],
+            // @ts-ignore
             connectionEncryption: [new Noise()],
-            dialer: {
+            connectionManager: {
                 dialTimeout: options?.dialTimeoutMs,
             },
         });
@@ -82,7 +84,7 @@ export class RelayConnection extends FluenceConnection {
 
         return new RelayConnection(
             // force new line
-            options.peerId.toB58String(),
+            options.peerId.toString(),
             lib2p2Peer,
             relayMultiaddr,
             relayPeerId,
@@ -145,6 +147,7 @@ export class RelayConnection extends FluenceConnection {
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
 
         try {
+            // @ts-ignore
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {
@@ -155,4 +158,6 @@ export class RelayConnection extends FluenceConnection {
             }
         }
     }
+
+    async disconnect(): Promise<void> {}
 }
