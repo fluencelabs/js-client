@@ -23,7 +23,7 @@ import * as log from 'loglevel';
 import { Noise } from '@chainsafe/libp2p-noise';
 import type { PeerId } from '@libp2p/interface-peer-id';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { Multiaddr } from '@multiformats/multiaddr/dist/src';
+import { Multiaddr } from '@multiformats/multiaddr';
 import { Connection } from '@libp2p/interface-connection';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';

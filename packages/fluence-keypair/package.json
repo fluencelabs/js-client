@@ -9,7 +9,7 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "rollup -c rollup.config.ts --configPlugin swc3"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
