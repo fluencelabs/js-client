@@ -1,4 +1,4 @@
-import { Multiaddr } from 'multiaddr';
+import { Multiaddr } from '@multiformats/multiaddr';
 
 import { nodes } from '../connection';
 import { FluencePeer } from '../../index';

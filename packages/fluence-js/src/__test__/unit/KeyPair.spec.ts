@@ -26,7 +26,7 @@ describe('KeyPair tests', () => {
 
         // assert
         const expectedPeerId = '12D3KooWH1W3VznVZ87JH4FwABK4mkntcspTVWJDta6c2xg9Pzbp';
-        expect(keyPair.Libp2pPeerId.toB58String()).toStrictEqual(expectedPeerId);
+        expect(keyPair.toB58String()).toStrictEqual(expectedPeerId);
     });
 
     it('create keypair from a seed phrase', async function () {
@@ -38,6 +38,6 @@ describe('KeyPair tests', () => {
 
         // assert
         const expectedPeerId = '12D3KooWK99VoVxNE7XzyBwXEzW7xhK7Gpv85r9F3V3fyKSUKPH5';
-        expect(keyPair.Libp2pPeerId.toB58String()).toStrictEqual(expectedPeerId);
+        expect(keyPair.toB58String()).toStrictEqual(expectedPeerId);
     });
 });

@@ -9,7 +9,7 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "rollup -c rollup.config.ts --configPlugin swc3"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -24,12 +24,23 @@
         "it-length-prefixed": "7.0.1",
         "it-pipe": "2.0.3",
         "libp2p": "0.38.0",
-        "loglevel": "1.8.0"
+        "loglevel": "1.8.0",
+        "regenerator-runtime": "^0.13.9"
     },
     "devDependencies": {
         "@libp2p/interface-connection": "^2.1.1",
         "@libp2p/interface-peer-id": "^1.0.4",
         "@types/node": "^18.7.13",
-        "typescript": "^4.0.0"
+        "typescript": "^4.0.0",
+        "@rollup/plugin-commonjs": "^22.0.0",
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "@swc/core": "^1.2.194",
+        "rollup": "^2.74.1",
+        "rollup-plugin-clear": "^2.0.7",
+        "rollup-plugin-dts": "^4.2.2",
+        "rollup-plugin-flat-dts": "^1.6.0",
+        "rollup-plugin-preserve-shebang": "^1.0.1",
+        "rollup-plugin-swc3": "^0.3.0",
+        "rollup-plugin-terser": "^7.0.2"
     }
 }

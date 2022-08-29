@@ -110,6 +110,7 @@ export class RelayConnection extends FluenceConnection {
         */
 
         const stream = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
+        // @ts-ignore
         const sink = stream.sink;
 
         pipe(
@@ -121,6 +122,7 @@ export class RelayConnection extends FluenceConnection {
     }
 
     async connect(onIncomingParticle: ParticleHandler) {
+        // @ts-ignore
         await this._lib2p2Peer.start();
 
         this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {

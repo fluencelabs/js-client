@@ -181,7 +181,7 @@ const context = (async () => {
     const kp = await KeyPair.fromEd25519SK(keyBytes);
     const res = {
         peerKeyPair: kp,
-        peerId: kp.Libp2pPeerId.toB58String(),
+        peerId: kp.toB58String(),
     };
     return res;
 })();

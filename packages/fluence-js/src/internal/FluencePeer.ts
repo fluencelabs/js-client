@@ -17,7 +17,7 @@ import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
 import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
-import type { MultiaddrInput } from 'multiaddr';
+import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
@@ -208,10 +208,12 @@ export class FluencePeer {
             };
         }
 
+        const pid = this._keyPair.toB58String();
+
         if (this._connection === undefined) {
             return {
                 isInitialized: true,
-                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                peerId: pid,
                 isConnected: false,
                 relayPeerId: null,
             };
@@ -220,7 +222,7 @@ export class FluencePeer {
         if (this._connection.relayPeerId === null) {
             return {
                 isInitialized: true,
-                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                peerId: pid,
                 isConnected: true,
                 isDirect: true,
                 relayPeerId: null,
@@ -229,7 +231,7 @@ export class FluencePeer {
 
         return {
             isInitialized: true,
-            peerId: this._keyPair.Libp2pPeerId.toB58String(),
+            peerId: pid,
             isConnected: true,
             relayPeerId: this._connection.relayPeerId,
         };
@@ -429,7 +431,7 @@ export class FluencePeer {
     async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
         this._keyPair = config.KeyPair;
 
-        const peerId = this._keyPair.Libp2pPeerId.toB58String();
+        const peerId = this._keyPair.toB58String();
 
         if (config?.debug?.printParticleId) {
             this._printParticleId = true;
@@ -796,7 +798,7 @@ async function configToConnection(
     }
 
     const res = await RelayConnection.createConnection({
-        peerId: keyPair.Libp2pPeerId,
+        peerId: keyPair.libp2pPeerId,
         relayAddress: connectToMultiAddr,
         dialTimeoutMs: dialTimeoutMs,
     });
