@@ -1,4 +1,4 @@
-// import { Multiaddr } from '@multiformats/multiaddr';
+import { Multiaddr } from '@multiformats/multiaddr';
 
 import { nodes } from '../connection';
 import { FluencePeer } from '../../index';
@@ -185,12 +185,12 @@ describe('Typescript usage suite', () => {
             expect(isConnected).toBeTruthy();
         });
 
-        // it('address as multiaddr', async () => {
-        //     await peer.start({ connectTo: new Multiaddr(nodes[0].multiaddr) });
-        //     const isConnected = await checkConnection(peer);
-        //     
-        //     expect(isConnected).toBeTruthy();
-        // });
+        it('address as multiaddr', async () => {
+            await peer.start({ connectTo: new Multiaddr(nodes[0].multiaddr) });
+            const isConnected = await checkConnection(peer);
+
+            expect(isConnected).toBeTruthy();
+        });
 
         it('address as node', async () => {
             await peer.start({ connectTo: nodes[0] });
