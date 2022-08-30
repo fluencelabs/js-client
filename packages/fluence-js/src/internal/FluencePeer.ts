@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RelayConnection } from '@fluencelabs/connection';
+import { RelayConnection, Multiaddr } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
 import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
@@ -576,7 +576,7 @@ export class FluencePeer {
                 () => {
                     item.onStageChange({ stage: 'sent' });
                 },
-                (e) => {
+                (e: any) => {
                     log.error(e);
                 },
             );
