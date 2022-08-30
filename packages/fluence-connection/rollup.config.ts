@@ -33,7 +33,8 @@ export default [
             swc({
                 sourceMaps: true,
             }),
-            minify(),
+            // TODO: find out why minification fails unit tests
+            // minify(),
             clear({
                 targets: ['dist'],
             }),
