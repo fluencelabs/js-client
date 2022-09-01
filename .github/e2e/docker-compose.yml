@@ -1,6 +1,6 @@
 services:
   fluence-1:
-    image: ${IMAGE}
+    image: ${RUST_PEER_IMAGE}
     ports:
       - 1210:1210
       - 4310:4310
