@@ -1,7 +1,31 @@
+#! /usr/bin/env node
+
 const fs = require("fs").promises;
 const path = require("path");
 
-const postfix = "-bla-bla";
+function printUsage() {
+    console.log(`Usage: "ci check-consistency" or "ci bump-version %postfix%"`);
+}
+
+let postfix;
+const mod = process.argv[2];
+
+switch (mod) {
+    case "bump-version":
+        postfix = process.argv[3];
+        if (!postfix) {
+            printUsage();
+            process.exit();
+        }
+        break;
+
+    case "check-consistency":
+        break;
+
+    default:
+        printUsage();
+        process.exit(0);
+}
 
 const pathToPackages = "./packages/";
 const allPackageJsons = [];
@@ -30,17 +54,18 @@ async function getVersion(file) {
     return [json.name, json.version];
 }
 
-function updateDep(obj, name, version) {
+function isWorkspaceDep(obj, name, version) {
     if (!obj[name]) {
         return;
     }
 
+    return /^workspace\:/.test(obj[name]);
     if (/^workspace\:/.test(obj[name])) {
         obj[name] = `workspace:${version}`;
     }
 }
 
-async function updateVersions(file) {
+async function processVersions(file) {
     console.log("Updating: ", file);
     let content = await fs.readFile(file);
     const json = JSON.parse(content);
@@ -49,10 +74,25 @@ async function updateVersions(file) {
         console.log("Failed to get version for package: ", file);
         process.exit(1);
     }
+
+    const consistencyErrors = [];
+    for (const [name, version] of packagesMap) {
+        if (isWorkspaceDep(json.dependencies, name, version)) {
+            if()
+        }
+
+        if (isWorkspaceDep(json.devDependencies, name, version)) {
+
+        }
+    }
+
     json.version = newPackageVersion;
     for (const [name, version] of packagesMap) {
-        updateDep(json.dependencies, name, version);
-        updateDep(json.devDependencies, name, version);
+        if (mod === "check-consistency") {
+        } else {
+            isWorkspaceDep(json.dependencies, name, version);
+            isWorkspaceDep(json.devDependencies, name, version);
+        }
     }
     content = JSON.stringify(json, undefined, 4);
     await fs.writeFile(file, content);
@@ -68,7 +108,7 @@ async function run() {
     }
     console.log("Bumping versions: ", packagesMap);
     for (let file of allPackageJsons) {
-        updateVersions(file);
+        processVersions(file);
     }
 }
 
