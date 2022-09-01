@@ -1,0 +1,12 @@
+services:
+  fluence-1:
+    image: ${IMAGE}
+    ports:
+      - 1210:1210
+      - 4310:4310
+    command:
+      - -t=1210
+      - -w=4310
+      - --local
+      - -k=gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj
+      - --aqua-pool-size=2
