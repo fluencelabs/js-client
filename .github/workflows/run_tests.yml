@@ -1,44 +1,52 @@
 name: Run tests
 
-defaults:
-    run:
-        working-directory: .
-
 on:
-    push:
+  push:
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        strategy:
-            matrix:
-                node-version: [16.x, 17.x]
+    strategy:
+      matrix:
+        node-version: [16.x, 17.x]
 
-        steps:
-            - uses: actions/checkout@v2
+    env:
+      RUST_PEER_IMAGE: fluencelabs/fluence
 
-            - uses: pnpm/action-setup@v2.2.2
-              with:
-                  version: 7
+    steps:
+      - uses: actions/checkout@v3
 
-            - name: Setup Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: 'pnpm'
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
 
-            - name: Run container with Fluence node
-              run: |
-                  docker pull fluencelabs/fluence
-                  docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local --aqua-pool-size 2
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-            - name: Install deps
-              run: pnpm i
-            
-            - name: Run tests
-              run: |
-                  pnpm -r build
-                  pnpm -r test
-              env:
-                  CI: true
+      - name: Setup docker-compose
+        uses: KengoTODA/actions-setup-docker-compose@v1.0.9
+        with:
+          version: 'v2.10.0'
+
+      - name: Pull image
+        run: docker pull ${RUST_PEER_IMAGE}
+
+      - name: Run rust-peer
+        uses: isbang/compose-action@v1.1.0
+        with:
+          compose-file: ".github/e2e/docker-compose.yml"
+          down-flags: "--volumes"
+
+      - name: Install deps
+        run: pnpm i
+
+      - name: Run tests
+        run: |
+          pnpm -r build
+          pnpm -r test
+        env:
+          CI: true
