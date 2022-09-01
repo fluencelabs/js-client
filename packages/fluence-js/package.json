@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence",
-    "version": "0.23.5",
+    "version": "0.23.6",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
