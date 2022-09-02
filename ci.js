@@ -93,7 +93,7 @@ async function bumpVersions(file, versionsMap) {
         console.log("Failed to get version for package: ", file);
         process.exit(1);
     }
-    const newVersion = `workspace:${version}${postfix}`;
+    const newVersion = `workspace:${version}-${postfix}`;
 
     for (const [name, version] of versionsMap) {
         if (isWorkspaceDep(json.dependencies, name, version)) {
