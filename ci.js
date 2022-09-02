@@ -40,7 +40,7 @@ async function getFiles(currentPath, files) {
         }
 
         if (file.isDirectory()) {
-            await getFiles(`${currentPath}${file.name}/`);
+            await getFiles(`${currentPath}${file.name}/`, files);
         } else if (file.name === "package.json") {
             const packageJsonPath = path.join(
                 __dirname,
@@ -93,7 +93,7 @@ async function bumpVersions(file, versionsMap) {
         console.log("Failed to get version for package: ", file);
         process.exit(1);
     }
-    const newVersion = `${version}${postfix}`;
+    const newVersion = `workspace:${version}${postfix}`;
 
     for (const [name, version] of versionsMap) {
         if (isWorkspaceDep(json.dependencies, name, version)) {
