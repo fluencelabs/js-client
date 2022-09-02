@@ -151,20 +151,15 @@ async function run() {
     const packageJsons = await doGetFiles(pathToPackages);
     const versionsMap = await getVersionsMap(packageJsons);
 
-    if (mode == "check-consistency") {
-        console.log("Checking versions consistency...");
-        await processPackageJsons(packageJsons, versionsMap, checkConsistency);
-        console.log("Versions are consistent");
-    }
+    // always check consistency
+    console.log("Checking versions consistency...");
+    await processPackageJsons(packageJsons, versionsMap, checkConsistency);
+    console.log("Versions are consistent");
 
     if (mode === "bump-version") {
         console.log("Adding postfix: ", postfix);
         await processPackageJsons(packageJsons, versionsMap, bumpVersions);
         console.log("Done");
-
-        console.log("Checking versions consistency...");
-        await processPackageJsons(packageJsons, versionsMap, checkConsistency);
-        console.log("Versions are consistent");
     }
 }
 
