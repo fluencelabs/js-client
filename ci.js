@@ -8,9 +8,9 @@ function printUsage() {
 }
 
 let postfix;
-const mod = process.argv[2];
+const mode = process.argv[2];
 
-switch (mod) {
+switch (mode) {
     case "bump-version":
         postfix = process.argv[3];
         if (!postfix) {
@@ -125,14 +125,17 @@ async function bumpVersions(file, versionsMap) {
     console.log("Updating: ", file);
     let content = await fs.readFile(file);
     const json = JSON.parse(content);
-    const version = getVersionForPackageOrThrow(versionsMap, json.name);
-    const newVersion = `workspace:${version}-${postfix}`;
 
+    // bump dependencies
     for (const [name, version] of versionsMap) {
-        const update = (x) => (x[name] = newVersion);
+        const update = (x) => (x[name] = `workspace:${version}-${postfix}`);
         processDep(json.dependencies, name, update);
         processDep(json.devDependencies, name, update);
     }
+
+    // also bump version in package itself
+    const version = getVersionForPackageOrThrow(versionsMap, json.name);
+    json.version = `${version}-${postfix}`;
 
     content = JSON.stringify(json, undefined, 4) + "\n";
     await fs.writeFile(file, content);
@@ -148,15 +151,20 @@ async function run() {
     const packageJsons = await doGetFiles(pathToPackages);
     const versionsMap = await getVersionsMap(packageJsons);
 
-    // always check versions consistency
-    console.log("Checking versions consistency...");
-    processPackageJsons(packageJsons, versionsMap, checkConsistency);
-    console.log("Versions are consistent");
+    if (mode == "check-consistency") {
+        console.log("Checking versions consistency...");
+        await processPackageJsons(packageJsons, versionsMap, checkConsistency);
+        console.log("Versions are consistent");
+    }
 
-    if (mod === "bump-version") {
+    if (mode === "bump-version") {
         console.log("Adding postfix: ", postfix);
-        processPackageJsons(packageJsons, versionsMap, bumpVersions);
+        await processPackageJsons(packageJsons, versionsMap, bumpVersions);
         console.log("Done");
+
+        console.log("Checking versions consistency...");
+        await processPackageJsons(packageJsons, versionsMap, checkConsistency);
+        console.log("Versions are consistent");
     }
 }
 
