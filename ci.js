@@ -64,12 +64,17 @@ async function getVersion(file) {
     return [json.name, json.version];
 }
 
-function isWorkspaceDep(obj, name, version) {
+function processDep(obj, name, fn) {
     if (!obj[name]) {
         return;
     }
 
-    return /^workspace\:/.test(obj[name]);
+    if (!/^workspace\:/.test(obj[name])) {
+        return;
+    }
+
+    const version = obj[name].replace("workspace:", "");
+    fn(obj, version);
 }
 
 async function getVersionsMap(allPackageJsons) {
@@ -82,29 +87,54 @@ async function getVersionsMap(allPackageJsons) {
     return map;
 }
 
-async function checkConsistency(packageJsons, versionsMap) {}
+function getVersionForPackageOrThrow(versionsMap, packageName) {
+    const version = versionsMap.get(packageName);
+    if (!version) {
+        console.log("Failed to get version for package: ", packageName);
+        process.exit(1);
+    }
+    return version;
+}
+
+async function checkConsistency(file, versionsMap) {
+    console.log("Checking: ", file);
+    const content = await fs.readFile(file);
+    const json = JSON.parse(content);
+    const version = getVersionForPackageOrThrow(versionsMap, json.name);
+
+    for (const [name, versionInDep] of versionsMap) {
+        const check = (x, version) => {
+            if (version.includes("*")) {
+                return;
+            }
+
+            if (versionInDep !== version) {
+                console.log(
+                    `Error, versions don't match: ${name}:${version} !== ${versionInDep}`,
+                    file
+                );
+                process.exit(1);
+            }
+        };
+        processDep(json.dependencies, name, check);
+        processDep(json.devDependencies, name, check);
+    }
+}
 
 async function bumpVersions(file, versionsMap) {
     console.log("Updating: ", file);
     let content = await fs.readFile(file);
     const json = JSON.parse(content);
-    const version = versionsMap.get(json.name);
-    if (!version) {
-        console.log("Failed to get version for package: ", file);
-        process.exit(1);
-    }
+    const version = getVersionForPackageOrThrow(versionsMap, json.name);
     const newVersion = `workspace:${version}-${postfix}`;
 
     for (const [name, version] of versionsMap) {
-        if (isWorkspaceDep(json.dependencies, name, version)) {
-            json.dependencies[name] = newVersion;
-        }
-        if (isWorkspaceDep(json.devDependencies, name, version)) {
-            json.devDependencies[name] = newVersion;
-        }
+        const update = (x) => (x[name] = newVersion);
+        processDep(json.dependencies, name, update);
+        processDep(json.devDependencies, name, update);
     }
 
-    content = JSON.stringify(json, undefined, 4);
+    content = JSON.stringify(json, undefined, 4) + "\n";
     await fs.writeFile(file, content);
 }
 
