@@ -65,6 +65,10 @@ async function getVersion(file) {
 }
 
 function processDep(obj, name, fn) {
+    if (!obj) {
+        return;
+    }
+
     if (!obj[name]) {
         return;
     }
