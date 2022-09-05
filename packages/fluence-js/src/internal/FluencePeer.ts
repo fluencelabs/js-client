@@ -29,6 +29,7 @@ import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
+import Buffer from './Buffer';
 
 import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';

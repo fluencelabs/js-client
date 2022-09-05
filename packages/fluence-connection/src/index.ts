@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import 'buffer';
-
 import { FluenceConnection, ParticleHandler, PeerIdB58 } from '@fluencelabs/interfaces';
 // @ts-ignore
 import Websockets from 'libp2p-websockets';
@@ -32,6 +29,7 @@ import { Multiaddr } from 'multiaddr';
 // @ts-ignore
 import { all as allow_all } from 'libp2p-websockets/src/filters';
 import { Connection } from 'libp2p-interfaces/src/topology';
+import Buffer from './Buffer';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 

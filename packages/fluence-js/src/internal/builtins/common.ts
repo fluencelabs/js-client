@@ -20,6 +20,7 @@ import { CallServiceResult } from '@fluencelabs/avm';
 
 import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { jsonify } from '../utils';
+import Buffer from '../Buffer';
 
 const success = (result: any): CallServiceResult => {
     return {
