@@ -51,7 +51,7 @@ export class KeyPair {
         return await this.fromSk(sk);
     }
 
-    toB58String(): string {
+    getPeerId(): string {
         return this.libp2pPeerId.toString();
     }
 

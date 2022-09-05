@@ -27,6 +27,7 @@ import { Multiaddr } from '@multiformats/multiaddr';
 import { Connection } from '@libp2p/interface-connection';
 
 export { Multiaddr } from '@multiformats/multiaddr';
+import Buffer from './Buffer';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -79,7 +80,7 @@ export class RelayConnection extends FluenceConnection {
         });
 
         const relayMultiaddr = new Multiaddr(options.relayAddress);
-        const relayPeerId = relayMultiaddr.getPeerId();
+        const relayPeerId = relayMultiaddr.toString();
         if (relayPeerId === null) {
             throw new Error('Specified multiaddr is invalid or missing peer id: ' + options.relayAddress);
         }

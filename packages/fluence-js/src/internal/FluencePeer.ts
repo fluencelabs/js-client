@@ -208,7 +208,7 @@ export class FluencePeer {
             };
         }
 
-        const pid = this._keyPair.toB58String();
+        const pid = this._keyPair.getPeerId();
 
         if (this._connection === undefined) {
             return {
@@ -431,7 +431,7 @@ export class FluencePeer {
     async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
         this._keyPair = config.KeyPair;
 
-        const peerId = this._keyPair.toB58String();
+        const peerId = this._keyPair.getPeerId();
 
         if (config?.debug?.printParticleId) {
             this._printParticleId = true;

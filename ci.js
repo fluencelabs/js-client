@@ -4,48 +4,59 @@ const fs = require("fs").promises;
 const path = require("path");
 
 function printUsage() {
-    console.log(`Usage: "ci check-consistency" or "ci bump-version %postfix%"`);
+    console.log(
+        `Usage: "ci check-consistency" or "ci bump-version %postfix%" or "ci get-version"`
+    );
 }
 
 let postfix;
-const mod = process.argv[2];
+const mode = process.argv[2];
 
-switch (mod) {
-    case "bump-version":
-        postfix = process.argv[3];
-        if (!postfix) {
-            printUsage();
-            process.exit();
-        }
-        break;
+function validateArgs() {
+    switch (mode) {
+        case "get-version":
+            return true;
 
-    case "check-consistency":
-        break;
+        case "bump-version":
+            postfix = process.argv[3];
+            if (!postfix) {
+                printUsage();
+                process.exit();
+            }
+            return true;
 
-    default:
-        printUsage();
-        process.exit(0);
+        case "":
+        case undefined:
+        case "check-consistency":
+            return true;
+
+        default:
+            return false;
+    }
 }
 
-const pathToPackages = "./packages/";
-const allPackageJsons = [];
-const packagesMap = new Map();
+const PATH_TO_PACKAGES = "./packages/";
 
-async function getFiles(thePath) {
-    const entries = await fs.readdir(thePath, { withFileTypes: true });
-
-    for (let file of entries) {
-        if (file.name === "node_modules") {
-            continue;
-        }
-
-        if (file.isDirectory()) {
-            await getFiles(`${thePath}${file.name}/`);
-        } else if (file.name === "package.json") {
-            const packageJsonPath = path.join(__dirname, thePath, file.name);
-            allPackageJsons.push(packageJsonPath);
-        }
-    }
+async function getPackageJsonsRecursive(currentPath) {
+    return (
+        await Promise.all(
+            (await fs.readdir(currentPath, { withFileTypes: true }))
+                .filter(
+                    (file) =>
+                        file.name !== "node_modules" &&
+                        (file.isDirectory() || file.name === "package.json")
+                )
+                .map((file) =>
+                    file.isDirectory()
+                        ? getPackageJsonsRecursive(
+                              path.join(currentPath, file.name)
+                          )
+                        : Promise.resolve([
+                              path.join(process.cwd(), currentPath, file.name),
+                          ])
+                )
+        )
+    ).flat();
 }
 
 async function getVersion(file) {
@@ -54,61 +65,107 @@ async function getVersion(file) {
     return [json.name, json.version];
 }
 
-function isWorkspaceDep(obj, name, version) {
+function processDep(obj, name, fn) {
+    if (!obj) {
+        return;
+    }
+
     if (!obj[name]) {
         return;
     }
 
-    return /^workspace\:/.test(obj[name]);
-    if (/^workspace\:/.test(obj[name])) {
-        obj[name] = `workspace:${version}`;
+    if (!/^workspace\:/.test(obj[name])) {
+        return;
+    }
+
+    const version = obj[name].replace("workspace:", "");
+    fn(obj, version);
+}
+async function getVersionsMap(allPackageJsons) {
+    return new Map(await Promise.all(allPackageJsons.map(getVersion)));
+}
+
+function getVersionForPackageOrThrow(versionsMap, packageName) {
+    const version = versionsMap.get(packageName);
+    if (!version) {
+        console.log("Failed to get version for package: ", packageName);
+        process.exit(1);
+    }
+    return version;
+}
+
+async function checkConsistency(file, versionsMap) {
+    console.log("Checking: ", file);
+    const content = await fs.readFile(file);
+    const json = JSON.parse(content);
+
+    for (const [name, versionInDep] of versionsMap) {
+        const check = (x, version) => {
+            if (version.includes("*")) {
+                return;
+            }
+
+            if (versionInDep !== version) {
+                console.log(
+                    `Error, versions don't match: ${name}:${version} !== ${versionInDep}`,
+                    file
+                );
+                process.exit(1);
+            }
+        };
+        processDep(json.dependencies, name, check);
+        processDep(json.devDependencies, name, check);
     }
 }
 
-async function processVersions(file) {
+async function bumpVersions(file, versionsMap) {
     console.log("Updating: ", file);
-    let content = await fs.readFile(file);
+    const content = await fs.readFile(file);
     const json = JSON.parse(content);
-    const newPackageVersion = packagesMap.get(json.name);
-    if (!newPackageVersion) {
-        console.log("Failed to get version for package: ", file);
-        process.exit(1);
+
+    // bump dependencies
+    for (const [name, version] of versionsMap) {
+        const update = (x) => (x[name] = `workspace:${version}-${postfix}`);
+        processDep(json.dependencies, name, update);
+        processDep(json.devDependencies, name, update);
     }
 
-    const consistencyErrors = [];
-    for (const [name, version] of packagesMap) {
-        if (isWorkspaceDep(json.dependencies, name, version)) {
-            if()
-        }
+    // also bump version in package itself
+    const version = getVersionForPackageOrThrow(versionsMap, json.name);
+    json.version = `${version}-${postfix}`;
 
-        if (isWorkspaceDep(json.devDependencies, name, version)) {
+    const newContent = JSON.stringify(json, undefined, 4) + "\n";
+    await fs.writeFile(file, newContent);
+}
 
-        }
-    }
-
-    json.version = newPackageVersion;
-    for (const [name, version] of packagesMap) {
-        if (mod === "check-consistency") {
-        } else {
-            isWorkspaceDep(json.dependencies, name, version);
-            isWorkspaceDep(json.devDependencies, name, version);
-        }
-    }
-    content = JSON.stringify(json, undefined, 4);
-    await fs.writeFile(file, content);
+async function processPackageJsons(allPackageJsons, versionsMap, fn) {
+    await Promise.all(allPackageJsons.map((x) => fn(x, versionsMap)));
 }
 
 async function run() {
-    await getFiles(pathToPackages);
-    for (let file of allPackageJsons) {
-        // console.log("Reading data from: ", file);
-        const [name, version] = await getVersion(file);
-        const newVersion = `${version}${postfix}`;
-        packagesMap.set(name, newVersion);
+    if (!validateArgs()) {
+        printUsage();
+        process.exit(0);
     }
-    console.log("Bumping versions: ", packagesMap);
-    for (let file of allPackageJsons) {
-        processVersions(file);
+
+    const packageJsons = await getPackageJsonsRecursive(PATH_TO_PACKAGES);
+    const versionsMap = await getVersionsMap(packageJsons);
+
+    if (mode === "get-version") {
+        const fjs = versionsMap.get("@fluencelabs/fluence");
+        console.log(fjs);
+        return;
+    }
+
+    // always check consistency
+    console.log("Checking versions consistency...");
+    await processPackageJsons(packageJsons, versionsMap, checkConsistency);
+    console.log("Versions are consistent");
+
+    if (mode === "bump-version") {
+        console.log("Adding postfix: ", postfix);
+        await processPackageJsons(packageJsons, versionsMap, bumpVersions);
+        console.log("Done");
     }
 }
 

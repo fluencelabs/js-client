@@ -14,20 +14,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
       - name: "Get the version of fluence-js package"
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.2.3
-
         with:
             path: packages/fluence-js
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=v${{ steps.package-version.outputs.current-version }}" >> $GITHUB_ENV
 
       - name: "Create tag for release"
         uses: rickstaa/action-create-tag@v1
         with:
-          tag: "v${{ steps.package-version.outputs.current-version }}"
+          tag: ${{ env.RELEASE_VERSION }}
           message: ""
           github_token: ${{ secrets.GITHUB_TOKEN }}
 

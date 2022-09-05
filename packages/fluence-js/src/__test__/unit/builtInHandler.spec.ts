@@ -181,7 +181,7 @@ const context = (async () => {
     const kp = await KeyPair.fromEd25519SK(keyBytes);
     const res = {
         peerKeyPair: kp,
-        peerId: kp.toB58String(),
+        peerId: kp.getPeerId(),
     };
     return res;
 })();
@@ -283,7 +283,7 @@ describe('Sig service tests', () => {
 
         const res = await sig.sign(
             testData,
-            makeTetraplet((await KeyPair.randomEd25519()).toB58String(), 'registry', 'get_key_bytes'),
+            makeTetraplet((await KeyPair.randomEd25519()).getPeerId(), 'registry', 'get_key_bytes'),
         );
 
         await expect(res.success).toBe(false);
