@@ -64,7 +64,7 @@ jobs:
 
       - name: "Click to see published version"
         run: |
-          fjs_version=${node ci.js get-version}
+          fjs_version=$(node ci.js get-version)
           echo "FluenceJS version is ${fjs_version}"
           echo "To install it run: "
           echo "echo '@fluencelabs/fluence:registry=https://npm.fluence.dev/' > .npmrc"
