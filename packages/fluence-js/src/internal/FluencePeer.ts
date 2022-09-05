@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import 'buffer';
+
 import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';

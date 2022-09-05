@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'buffer';
-
 import log, { LogLevelDesc } from 'loglevel';
 export { KeyPair } from '@fluencelabs/keypair';
 
