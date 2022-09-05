@@ -66,8 +66,7 @@ jobs:
         run: |
           fjs_version=$(node ci.js get-version)
           echo "FluenceJS version is ${fjs_version}"
-          echo "To install it run: "
+          echo "To install it run the following: \n"
           echo "echo '@fluencelabs/fluence:registry=https://npm.fluence.dev/' > .npmrc"
-          echo "And then: "
           echo "npm i @fluencelabs/fluence@${fjs_version}"
 
