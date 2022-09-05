@@ -4,13 +4,18 @@ const fs = require("fs").promises;
 const path = require("path");
 
 function printUsage() {
-    console.log(`Usage: "ci check-consistency" or "ci bump-version %postfix%"`);
+    console.log(
+        `Usage: "ci check-consistency" or "ci bump-version %postfix%" or "ci get-version"`
+    );
 }
 
 let postfix;
 const mode = process.argv[2];
 
 switch (mode) {
+    case "get-version":
+        break;
+
     case "bump-version":
         postfix = process.argv[3];
         if (!postfix) {
@@ -84,7 +89,7 @@ function processDep(obj, name, fn) {
 async function getVersionsMap(allPackageJsons) {
     const map = new Map();
     for (let file of allPackageJsons) {
-        console.log("Reading version from: ", file);
+        // console.log("Reading version from: ", file);
         const [name, version] = await getVersion(file);
         map.set(name, version);
     }
@@ -154,6 +159,12 @@ async function processPackageJsons(allPackageJsons, versionsMap, fn) {
 async function run() {
     const packageJsons = await doGetFiles(pathToPackages);
     const versionsMap = await getVersionsMap(packageJsons);
+
+    if (mode === "get-version") {
+        const fjs = versionsMap.get("@fluencelabs/fluence");
+        console.log(fjs);
+        return;
+    }
 
     // always check consistency
     console.log("Checking versions consistency...");
