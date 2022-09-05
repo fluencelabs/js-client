@@ -68,6 +68,6 @@ jobs:
           echo "FluenceJS version is ${fjs_version}"
           echo "To install it run the following: "
           echo ""
-          echo "echo '@fluencelabs/fluence:registry=https://npm.fluence.dev/' > .npmrc"
+          echo "echo '@fluencelabs:registry=https://npm.fluence.dev/' > .npmrc"
           echo "npm i @fluencelabs/fluence@${fjs_version}"
 
