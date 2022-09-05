@@ -62,7 +62,7 @@ importers:
       '@fluencelabs/connection': workspace:0.2.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/interfaces': workspace:0.1.0
-      '@fluencelabs/keypair': workspace:0.1.0
+      '@fluencelabs/keypair': workspace:0.2.0
       '@fluencelabs/marine-js': 0.3.9
       '@types/bs58': ^4.0.1
       '@types/jest': ^27.5.1

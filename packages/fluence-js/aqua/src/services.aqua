@@ -32,4 +32,4 @@ service Sig("sig"):
     verify(signature: []u8, data: []u8) -> bool
 
     -- Gets service's public key.
-    get_pub_key() -> string
+    get_peer_id() -> string

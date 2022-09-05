@@ -91,8 +91,8 @@ export class Sig implements SigDef {
     /**
      * Gets the public key of KeyPair. Required by aqua
      */
-    get_pub_key() {
-        return this._keyPair.toB58String();
+    get_peer_id() {
+        return this._keyPair.getPeerId();
     }
 
     /**
