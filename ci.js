@@ -12,55 +12,51 @@ function printUsage() {
 let postfix;
 const mode = process.argv[2];
 
-switch (mode) {
-    case "get-version":
-        break;
+function validateArgs() {
+    switch (mode) {
+        case "get-version":
+            return true;
 
-    case "bump-version":
-        postfix = process.argv[3];
-        if (!postfix) {
-            printUsage();
-            process.exit();
-        }
-        break;
+        case "bump-version":
+            postfix = process.argv[3];
+            if (!postfix) {
+                printUsage();
+                process.exit();
+            }
+            return true;
 
-    case "":
-    case undefined:
-    case "check-consistency":
-        break;
+        case "":
+        case undefined:
+        case "check-consistency":
+            return true;
 
-    default:
-        printUsage();
-        process.exit(0);
-}
-
-const pathToPackages = "./packages/";
-
-async function getFiles(currentPath, files) {
-    const entries = await fs.readdir(currentPath, { withFileTypes: true });
-
-    for (let file of entries) {
-        if (file.name === "node_modules") {
-            continue;
-        }
-
-        if (file.isDirectory()) {
-            await getFiles(`${currentPath}${file.name}/`, files);
-        } else if (file.name === "package.json") {
-            const packageJsonPath = path.join(
-                __dirname,
-                currentPath,
-                file.name
-            );
-            files.push(packageJsonPath);
-        }
+        default:
+            return false;
     }
 }
 
-async function doGetFiles(path) {
-    const files = [];
-    await getFiles(path, files);
-    return files;
+const PATH_TO_PACKAGES = "./packages/";
+
+async function getPackageJsonsRecursive(currentPath) {
+    return (
+        await Promise.all(
+            (await fs.readdir(currentPath, { withFileTypes: true }))
+                .filter(
+                    (file) =>
+                        file.name !== "node_modules" &&
+                        (file.isDirectory() || file.name === "package.json")
+                )
+                .map((file) =>
+                    file.isDirectory()
+                        ? getPackageJsonsRecursive(
+                              path.join(currentPath, file.name)
+                          )
+                        : Promise.resolve([
+                              path.join(process.cwd(), currentPath, file.name),
+                          ])
+                )
+        )
+    ).flat();
 }
 
 async function getVersion(file) {
@@ -85,15 +81,8 @@ function processDep(obj, name, fn) {
     const version = obj[name].replace("workspace:", "");
     fn(obj, version);
 }
-
 async function getVersionsMap(allPackageJsons) {
-    const map = new Map();
-    for (let file of allPackageJsons) {
-        // console.log("Reading version from: ", file);
-        const [name, version] = await getVersion(file);
-        map.set(name, version);
-    }
-    return map;
+    return new Map(await Promise.all(allPackageJsons.map(getVersion)));
 }
 
 function getVersionForPackageOrThrow(versionsMap, packageName) {
@@ -109,7 +98,6 @@ async function checkConsistency(file, versionsMap) {
     console.log("Checking: ", file);
     const content = await fs.readFile(file);
     const json = JSON.parse(content);
-    const version = getVersionForPackageOrThrow(versionsMap, json.name);
 
     for (const [name, versionInDep] of versionsMap) {
         const check = (x, version) => {
@@ -132,7 +120,7 @@ async function checkConsistency(file, versionsMap) {
 
 async function bumpVersions(file, versionsMap) {
     console.log("Updating: ", file);
-    let content = await fs.readFile(file);
+    const content = await fs.readFile(file);
     const json = JSON.parse(content);
 
     // bump dependencies
@@ -146,18 +134,21 @@ async function bumpVersions(file, versionsMap) {
     const version = getVersionForPackageOrThrow(versionsMap, json.name);
     json.version = `${version}-${postfix}`;
 
-    content = JSON.stringify(json, undefined, 4) + "\n";
-    await fs.writeFile(file, content);
+    const newContent = JSON.stringify(json, undefined, 4) + "\n";
+    await fs.writeFile(file, newContent);
 }
 
 async function processPackageJsons(allPackageJsons, versionsMap, fn) {
-    for (let file of allPackageJsons) {
-        await fn(file, versionsMap);
-    }
+    await Promise.all(allPackageJsons.map((x) => fn(x, versionsMap)));
 }
 
 async function run() {
-    const packageJsons = await doGetFiles(pathToPackages);
+    if (!validateArgs()) {
+        printUsage();
+        process.exit(0);
+    }
+
+    const packageJsons = await getPackageJsonsRecursive(PATH_TO_PACKAGES);
     const versionsMap = await getVersionsMap(packageJsons);
 
     if (mode === "get-version") {
