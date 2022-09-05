@@ -21,7 +21,6 @@ import { LogLevel } from '@fluencelabs/avm';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import { ParticleExecutionStage } from './Particle';
-import Buffer from './Buffer';
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>

@@ -20,7 +20,6 @@ import { fromByteArray, toByteArray } from 'base64-js';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
 import { dataToString, jsonify } from './utils';
-import Buffer from './Buffer';
 
 export class Particle {
     // TODO: make it not optional (should be added to the constructor)
