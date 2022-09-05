@@ -126,7 +126,7 @@ export class EphemeralNetwork {
                 this._send(peer.getStatus().peerId!, nextPeerIds, particle);
             };
             const kp = await keyPairFromBase64Sk(x.sk);
-            if (kp.toB58String() !== x.peerId) {
+            if (kp.getPeerId() !== x.peerId) {
                 throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
             }
 
