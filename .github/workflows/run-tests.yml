@@ -1,7 +1,7 @@
 name: Run tests
 
 on:
-  pull-request:
+  pull_request:
     paths-ignode:
       - "**.md"
 
