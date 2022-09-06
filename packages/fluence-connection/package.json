@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/connection",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Fluence connection",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -25,7 +25,9 @@
         "libp2p-mplex": "0.10.7",
         "libp2p-websockets": "0.16.2",
         "loglevel": "1.8.0",
-        "multiaddr": "10.0.1"
+        "multiaddr": "10.0.1",
+        "browser-or-node": "^2.0.0",
+        "buffer": "^6.0.3"
     },
     "devDependencies": {
         "typescript": "^4.6.4"

@@ -49,7 +49,7 @@ export class KeyPair {
         return new KeyPair(lib2p2Pid);
     }
 
-    toB58String(): string {
+    getPeerId(): string {
         return this.Libp2pPeerId.toB58String();
     }
 

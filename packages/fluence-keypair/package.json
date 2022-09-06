@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/keypair",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Keypair implementation for Fluence JS Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
