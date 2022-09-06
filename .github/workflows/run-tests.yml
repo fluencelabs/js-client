@@ -20,6 +20,6 @@ jobs:
 
   aqua-playground:
     needs: snapshot
-    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@marine-e2e
+    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
       fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
