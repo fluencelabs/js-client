@@ -7,6 +7,10 @@ on:
         description: "FluenceJS snapshot version"
         value: ${{ jobs.publish-snapshot.outputs.fluence-js-version }}
 
+env:
+  FORCE_COLOR: true
+  CI: true
+
 jobs:
   publish-snapshot:
     name: "Publish snapshot"
