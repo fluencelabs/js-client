@@ -55,7 +55,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          repository: fluencelabs/fluencejs
+          repository: fluencelabs/fluence-js
           ref: ${{ inputs.ref }}
 
       - name: Setup docker-compose
