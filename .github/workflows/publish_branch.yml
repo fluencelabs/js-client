@@ -70,4 +70,3 @@ jobs:
           echo ""
           echo "echo '@fluencelabs:registry=https://npm.fluence.dev/' > .npmrc"
           echo "npm i @fluencelabs/fluence@${fjs_version}"
-
