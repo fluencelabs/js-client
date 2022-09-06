@@ -78,7 +78,6 @@ jobs:
 
   comment:
     name: "Update comment"
-    if: github.event.pull_request != '[]'
     runs-on: ubuntu-latest
 
     needs:
