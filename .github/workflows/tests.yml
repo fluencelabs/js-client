@@ -1,28 +1,24 @@
-name: Run tests
+name: Run tests with worflow_call
 
 on:
-  push:
-    paths-ignode:
-      - "**.md"
-
   workflow_call:
     inputs:
-      image:
+      rust-peer-image:
         description: "rust-peer image tag"
         type: string
-        required: true
-
-concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
-  cancel-in-progress: true
+        default: "fluencelabs/fluence:minimal"
+      ref:
+        type: string
+        default: "master"
 
 env:
+  RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
   FORCE_COLOR: true
   CI: true
 
 jobs:
   fluence-js:
-    name: "Run fluence-js tests"
+    name: "Run tests"
     runs-on: ubuntu-latest
 
     permissions:
@@ -35,19 +31,7 @@ jobs:
           - 16.x
           - 17.x
 
-    env:
-      RUST_PEER_IMAGE: fluencelabs/fluence
-
     steps:
-      - name: Set rust-peer image
-        id: image
-        run: |
-          if [[ ${{ github.event_name }} == workflow_call ]]; then
-            echo "::set-output name=image::${{ inputs.image }}"
-          else
-            echo "::set-output name=image::fluencelabs/fluence:minimal"
-          fi
-
       - name: Import secrets
         uses: hashicorp/vault-action@v2.4.1
         with:
@@ -70,6 +54,9 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          repository: fluencelabs/fluencejs
+          ref: ${{ inputs.ref }}
 
       - name: Setup docker-compose
         uses: KengoTODA/actions-setup-docker-compose@v1.0.9
@@ -77,9 +64,13 @@ jobs:
           version: 'v2.10.0'
 
       - name: Pull rust-peer image
-        env:
-          RUST_PEER_IMAGE: ${{ steps.image.outputs.image }}
         run: docker pull $RUST_PEER_IMAGE
+
+      - name: Run rust-peer
+        uses: isbang/compose-action@v1.1.0
+        with:
+          compose-file: ".github/e2e/docker-compose.yml"
+          down-flags: "--volumes"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.2
@@ -91,12 +82,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-
-      - name: Run rust-peer
-        uses: isbang/compose-action@v1.1.0
-        with:
-          compose-file: ".github/e2e/docker-compose.yml"
-          down-flags: "--volumes"
 
       - run: pnpm i
       - run: pnpm -r build

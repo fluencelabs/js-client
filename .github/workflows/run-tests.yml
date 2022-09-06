@@ -1,0 +1,26 @@
+name: Run tests
+
+on:
+  pull-request:
+    paths-ignode:
+      - "**.md"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  fluence-js:
+    uses: ./.github/workflows/tests.yml
+    with:
+      ref: ${{ github.ref }}
+
+  snapshot:
+    needs: fluence-js
+    uses: ./.github/workflows/snapshot.yml
+
+  aqua-playground:
+    needs: snapshot
+    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@marine-e2e
+    with:
+      fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
