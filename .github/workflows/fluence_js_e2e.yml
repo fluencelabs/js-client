@@ -1,35 +1,46 @@
-name: "Publish development branch packages"
+name: Run e2e tests
 
 on:
-  push:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: true
 
 jobs:
-  publish-branch:
+  build:
+    name: "Build fluence-js"
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       id-token: write
 
+    outputs:
+      fluence-js-version: "${{ steps.build.outputs.version }}"
+
     steps:
       - uses: actions/checkout@v3
-        
+
       - uses: pnpm/action-setup@v2.2.2
         with:
             version: 7
 
-      - name: "Setup node with self-hosted npm registry"
+      - name: Setup node with self-hosted npm registry
         uses: actions/setup-node@v2
         with:
           node-version: "16"
           registry-url: "https://npm.fluence.dev"
 
-      - name: "Build packages"
-        run: |
-            pnpm i
-            pnpm -r build
+      - run: pnpm i
+      - run: pnpm -r build
 
-      - name: "Import secrets"
+      - name: Import secrets
         uses: hashicorp/vault-action@v2.4.2
         with:
           url: https://vault.fluence.dev
@@ -42,7 +53,7 @@ jobs:
           secrets: |
             kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
-      - name: "Generate package version"
+      - name: Generate package version
         id: version
         run: |
           BRANCH=${GITHUB_REF#refs/heads/}
@@ -51,22 +62,29 @@ jobs:
           echo "::set-output name=sha::$SHA"
           echo "::set-output name=branch::${BRANCH//[^a-zA-Z0-9-]/-}"
 
-      - name: "Set package version"
+      - name: Set package version
+        id: build
         env:
           BRANCH: ${{ steps.version.outputs.branch }}
           SHA: ${{ steps.version.outputs.sha }}
           RUN: ${{ github.run_number }}
           ATTEMPT: ${{ github.run_attempt }}
-        run: node ci.js bump-version ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
-
-      - name: "Publish to self-hosted npm repo"
-        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag snapshot -filter '@fluencelabs/*'
-
-      - name: "Click to see published version"
         run: |
-          fjs_version=$(node ci.js get-version)
-          echo "FluenceJS version is ${fjs_version}"
-          echo "To install it run the following: "
-          echo ""
-          echo "echo '@fluencelabs:registry=https://npm.fluence.dev/' > .npmrc"
-          echo "npm i @fluencelabs/fluence@${fjs_version}"
+          node ci.js bump-version ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
+          echo "::set-output name=version::$(node ci.js get-version)"
+
+      - name: Publish to self-hosted npm repo
+        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag e2e -filter '@fluencelabs/*'
+
+  aqua-playground:
+    permissions:
+      contents: read
+      id-token: write
+
+    needs:
+      - build
+
+    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@marine-e2e
+    with:
+      fluence-js-version: ${{ needs.build.outputs.fluence-js-version }}
+      ref: marine-e2e
