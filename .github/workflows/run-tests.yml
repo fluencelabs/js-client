@@ -2,7 +2,7 @@ name: Run tests
 
 on:
   pull_request:
-    paths-ignode:
+    paths-ignore:
       - "**.md"
 
 concurrency:
