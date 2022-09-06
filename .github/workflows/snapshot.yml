@@ -105,6 +105,6 @@ jobs:
             ## FluenceJS version is [${{ env.FLUENCE_JS_VERSION }}](https://npm.fluence.dev/-/web/detail/@fluencelabs/fluence/v/${{ env.FLUENCE_JS_VERSION }})
             To install it run:
             ```shell
-            echo '@fluencelabs:registry=https://npm.fluence.dev/' > .npmrc
-            npm i @fluencelabs/fluence@${{ env.FLUENCE_JS_VERSION }}
+            npm login --registry https://npm.fluence.dev
+            npm i @fluencelabs/fluence@${{ env.FLUENCE_JS_VERSION }} --registry=https://npm.fluence.dev
             ```
