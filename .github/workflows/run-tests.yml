@@ -16,7 +16,6 @@ jobs:
       ref: ${{ github.ref }}
 
   snapshot:
-    needs: fluence-js
     uses: ./.github/workflows/snapshot.yml
 
   aqua-playground:
