@@ -1,0 +1,109 @@
+name: Publish snapshot
+
+on:
+  workflow_call:
+    outputs:
+      fluence-js-version:
+        description: "FluenceJS snapshot version"
+        value: ${{ jobs.publish-snapshot.outputs.fluence-js-version }}
+
+env:
+  FORCE_COLOR: true
+  CI: true
+
+jobs:
+  publish-snapshot:
+    name: "Publish snapshot"
+    runs-on: ubuntu-latest
+
+    outputs:
+      fluence-js-version: "${{ steps.build.outputs.version }}"
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout fluence-js
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+
+      - name: Setup node with self-hosted npm registry
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          registry-url: "https://npm.fluence.dev"
+
+      - run: pnpm i
+      - run: pnpm -r build
+
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.2
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
+
+      - name: Generate package version
+        id: version
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+
+          echo "::set-output name=sha::$SHA"
+          echo "::set-output name=branch::${GITHUB_HEAD_REF//[^a-zA-Z0-9-]/-}"
+
+      - name: Set package version
+        id: build
+        env:
+          BRANCH: ${{ steps.version.outputs.branch }}
+          SHA: ${{ steps.version.outputs.sha }}
+          RUN: ${{ github.run_number }}
+          ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          node ci.js bump-version ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
+          echo "::set-output name=version::$(node ci.js get-version)"
+
+      - name: Publish to self-hosted npm repo
+        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag e2e -filter '@fluencelabs/*'
+
+  comment:
+    name: "Update comment"
+    runs-on: ubuntu-latest
+
+    needs:
+      - publish-snapshot
+
+    env:
+      FLUENCE_JS_VERSION: ${{ needs.publish-snapshot.outputs.fluence-js-version }}
+
+    steps:
+      - name: Find comment
+        uses: peter-evans/find-comment@v1
+        id: comment
+        with:
+          issue-number: "${{ github.event.pull_request.number }}"
+          comment-author: github-actions[bot]
+          body-includes: "## FluenceJS version is"
+
+      - name: Update comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: "${{ steps.comment.outputs.comment-id }}"
+          issue-number: "${{ github.event.pull_request.number }}"
+          edit-mode: replace
+          body: |
+            ## FluenceJS version is [${{ env.FLUENCE_JS_VERSION }}](https://npm.fluence.dev/-/web/detail/@fluencelabs/fluence/v/${{ env.FLUENCE_JS_VERSION }})
+            To install it run:
+            ```shell
+            npm login --registry https://npm.fluence.dev
+            npm i @fluencelabs/fluence@${{ env.FLUENCE_JS_VERSION }} --registry=https://npm.fluence.dev
+            ```
