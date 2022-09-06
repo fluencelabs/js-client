@@ -84,7 +84,7 @@ jobs:
       - publish-snapshot
 
     env:
-      FLUENCE_JS_VERSION: ${{ needs.publish-snapshot.outputs.version }}
+      FLUENCE_JS_VERSION: ${{ needs.publish-snapshot.outputs.fluence-js-version }}
 
     steps:
       - name: Find comment
