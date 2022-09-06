@@ -81,7 +81,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
 
       - run: pnpm i
       - run: pnpm -r build
