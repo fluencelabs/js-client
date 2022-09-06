@@ -56,11 +56,10 @@ jobs:
       - name: Generate package version
         id: version
         run: |
-          BRANCH=${GITHUB_REF#refs/heads/}
           SHA=$(git rev-parse --short HEAD)
 
           echo "::set-output name=sha::$SHA"
-          echo "::set-output name=branch::${BRANCH//[^a-zA-Z0-9-]/-}"
+          echo "::set-output name=branch::${GITHUB_HEAD_REF//[^a-zA-Z0-9-]/-}"
 
       - name: Set package version
         id: build
