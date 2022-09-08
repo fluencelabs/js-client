@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import clear from 'rollup-plugin-clear';
 import { swc, minify } from 'rollup-plugin-swc3';
 import dts from 'rollup-plugin-dts';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 
 const input = './src/index.ts';
 
@@ -27,6 +28,7 @@ export default [
         ],
         plugins: [
             nodeResolve(),
+            nodePolyfills(),
             commonjs({
                 ignoreDynamicRequires: true,
             }),

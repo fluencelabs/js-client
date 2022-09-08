@@ -15,31 +15,32 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "libp2p": "fluencelabs/js-libp2p#2d8b5c78b6ec8b22695b09914594878fd1f5afd1",
         "@chainsafe/libp2p-noise": "^8.0.1",
         "@fluencelabs/interfaces": "workspace:0.1.0",
         "@libp2p/mplex": "^5.0.0",
         "@libp2p/peer-id": "^1.1.15",
         "@libp2p/websockets": "^3.0.2",
         "@multiformats/multiaddr": "^10.3.3",
+        "browser-or-node": "^2.0.0",
+        "buffer": "^6.0.3",
         "it-length-prefixed": "7.0.1",
         "it-pipe": "2.0.3",
+        "libp2p": "fluencelabs/js-libp2p#2d8b5c78b6ec8b22695b09914594878fd1f5afd1",
         "loglevel": "1.8.0",
-        "regenerator-runtime": "^0.13.9",
-        "browser-or-node": "^2.0.0",
-        "buffer": "^6.0.3"
+        "regenerator-runtime": "^0.13.9"
     },
     "devDependencies": {
         "@libp2p/interface-connection": "^2.1.1",
         "@libp2p/interface-peer-id": "^1.0.4",
-        "@types/node": "^18.7.13",
-        "typescript": "^4.0.0",
         "@rollup/plugin-commonjs": "^22.0.0",
         "@rollup/plugin-node-resolve": "^13.3.0",
         "@swc/core": "^1.2.194",
+        "@types/node": "^18.7.13",
         "rollup": "^2.74.1",
         "rollup-plugin-clear": "^2.0.7",
         "rollup-plugin-dts": "^4.2.2",
-        "rollup-plugin-swc3": "^0.3.0"
+        "rollup-plugin-polyfill-node": "^0.10.2",
+        "rollup-plugin-swc3": "^0.3.0",
+        "typescript": "^4.0.0"
     }
 }
