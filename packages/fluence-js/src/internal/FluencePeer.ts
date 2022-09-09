@@ -18,7 +18,13 @@ import 'buffer';
 import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
+import {
+    FluenceAppService,
+    IFluenceAppService,
+    loadDefaults,
+    loadWasmFromFileSystem,
+    loadWasmFromServer,
+} from '@fluencelabs/marine-js';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
@@ -31,9 +37,8 @@ import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
 
-import { AVM, AvmRunner } from './avm';
 import { isBrowser, isNode } from 'browser-or-node';
-import { InterpreterResult, LogLevel } from '@fluencelabs/avm';
+import { deserializeAvmResult, InterpreterResult, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -99,12 +104,6 @@ export interface PeerConfig {
      * If the option is not set default TTL will be 7000
      */
     defaultTtlMs?: number;
-
-    /**
-     * @deprecated. AVM run through marine-js infrastructure.
-     * @see marineJS option to configure AVM
-     */
-    avmRunner?: AvmRunner;
 
     /**
      * This option allows to specify the location of various dependencies needed for marine-js.
@@ -306,9 +305,7 @@ export class FluencePeer {
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
         this._stopParticleProcessing();
         await this.disconnect();
-        await this._avmRunner?.terminate();
         await this._fluenceAppService?.terminate();
-        this._avmRunner = undefined;
         this._fluenceAppService = undefined;
         this._classServices = undefined;
 
@@ -331,12 +328,8 @@ export class FluencePeer {
                     new Error("Can't use avm: peer is not initialized");
                 }
 
-                const args = JSON.stringify([air]);
-                const rawRes = await this._fluenceAppService!.callService('avm', 'ast', args, undefined);
-                let res;
+                const res = (await this._fluenceAppService!.callService('avm', 'ast', [air], undefined)) as string;
                 try {
-                    res = JSON.parse(rawRes);
-                    res = res.result as string;
                     if (res.startsWith('error')) {
                         return {
                             success: false,
@@ -349,7 +342,7 @@ export class FluencePeer {
                         };
                     }
                 } catch (err) {
-                    throw new Error('Failed to call avm. Raw result: ' + rawRes + '. Error: ' + err);
+                    throw new Error('Failed to call avm. Result: ' + res + '. Error: ' + err);
                 }
             },
             createNewParticle: (script: string, ttl: number = this._defaultTTL) => {
@@ -454,8 +447,6 @@ export class FluencePeer {
             undefined,
             marineLogLevelToEnvs(this._marineLogLevel),
         );
-        this._avmRunner = config?.avmRunner || new AVM(this._fluenceAppService);
-        await this._avmRunner.init(config?.avmLogLevel || 'off');
 
         registerDefaultServices(this);
 
@@ -520,11 +511,6 @@ export class FluencePeer {
     private _defaultTTL: number = DEFAULT_TTL;
     private _keyPair: KeyPair | undefined;
     private _connection?: FluenceConnection;
-
-    /**
-     * @deprecated. AVM run through marine-js infrastructure. This field is needed for backward compatibility with the previous API
-     */
-    private _avmRunner?: AvmRunner;
     private _fluenceAppService?: FluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
@@ -576,7 +562,7 @@ export class FluencePeer {
                 () => {
                     item.onStageChange({ stage: 'sent' });
                 },
-                (e) => {
+                (e: any) => {
                     log.error(e);
                 },
             );
@@ -605,7 +591,7 @@ export class FluencePeer {
 
                 concatMap(async (item) => {
                     const status = this.getStatus();
-                    if (!status.isInitialized || this._avmRunner === undefined) {
+                    if (!status.isInitialized || this._fluenceAppService === undefined) {
                         // If `.stop()` was called return null to stop particle processing immediately
                         return null;
                     }
@@ -615,14 +601,37 @@ export class FluencePeer {
                     // MUST happen sequentially (in a critical section).
                     // Otherwise the race between runner might occur corrupting the prevData
 
-                    const result = await runAvmRunner(status.peerId, this._avmRunner, item.particle, prevData);
-                    const newData = Buffer.from(result.data);
-                    prevData = newData;
+                    const args = serializeAvmArgs(
+                        {
+                            initPeerId: item.particle.initPeerId,
+                            currentPeerId: status.peerId,
+                            timestamp: item.particle.timestamp,
+                            ttl: item.particle.ttl,
+                        },
+                        item.particle.script,
+                        prevData,
+                        item.particle.data,
+                        item.particle.callResults,
+                    );
+
+                    item.particle.logTo('debug', 'Sending particle to interpreter');
+                    log.debug('prevData: ', dataToString(prevData));
+                    let avmCallResult: InterpreterResult | Error;
+                    try {
+                        const res = await this._fluenceAppService.callService('avm', 'invoke', args, undefined);
+                        avmCallResult = deserializeAvmResult(res);
+                    } catch (e) {
+                        avmCallResult = e instanceof Error ? e : new Error((e as any).toString());
+                    }
+
+                    if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
+                        const newData = Buffer.from(avmCallResult.data);
+                        prevData = newData;
+                    }
 
                     return {
                         ...item,
-                        result: result,
-                        newData: newData,
+                        result: avmCallResult,
                     };
                 }),
             )
@@ -633,10 +642,22 @@ export class FluencePeer {
                 }
 
                 // Do not continue if there was an error in particle interpretation
-                if (!isInterpretationSuccessful(item.result)) {
-                    item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
+                if (item.result instanceof Error) {
+                    log.error('Interpreter failed: ', jsonify(item.result.message));
+                    item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
                     return;
                 }
+
+                const toLog = { ...item.result, data: dataToString(item.result.data) };
+                if (item.result.retCode !== 0) {
+                    log.error('Interpreter failed: ', jsonify(toLog));
+                    item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
+                    return;
+                } else {
+                    log.debug('Interpreter result: ', jsonify(toLog));
+                }
+
+                const newData = Buffer.from(item.result.data);
 
                 setTimeout(() => {
                     item.onStageChange({ stage: 'interpreted' });
@@ -645,7 +666,7 @@ export class FluencePeer {
                 // send particle further if requested
                 if (item.result.nextPeerPks.length > 0) {
                     const newParticle = item.particle.clone();
-                    newParticle.data = item.newData;
+                    newParticle.data = newData;
                     this._outgoingParticles.next({
                         ...item,
                         particle: newParticle,
@@ -700,31 +721,12 @@ export class FluencePeer {
         const particleId = req.particleContext.particleId;
 
         if (this._fluenceAppService && this._marineServices.has(req.serviceId)) {
-            const args = JSON.stringify(req.args);
-            const rawResult = await this._fluenceAppService.callService(req.serviceId, req.fnName, args, undefined);
+            const result = await this._fluenceAppService.callService(req.serviceId, req.fnName, req.args, undefined);
 
-            try {
-                const result = JSON.parse(rawResult);
-                if (typeof result.error === 'string' && result.error.length > 0) {
-                    return {
-                        retCode: ResultCodes.error,
-                        result: result.error,
-                    };
-                }
-
-                if (result.result === undefined) {
-                    throw new Error(
-                        `Call to marine-js returned no error and empty result. Original request: ${jsonify(req)}`,
-                    );
-                }
-
-                return {
-                    retCode: ResultCodes.success,
-                    result: result.result,
-                };
-            } catch (e) {
-                throw new Error(`Call to marine-js. Result parsing error: ${e}, original text: ${rawResult}`);
-            }
+            return {
+                retCode: ResultCodes.success,
+                result: result,
+            };
         }
 
         const key = serviceFnKey(req.serviceId, req.fnName);
@@ -805,10 +807,6 @@ async function configToConnection(
     return res;
 }
 
-function isInterpretationSuccessful(result: InterpreterResult) {
-    return result.retCode === 0;
-}
-
 function serviceFnKey(serviceId: string, fnName: string) {
     return `${serviceId}/${fnName}`;
 }
@@ -819,37 +817,6 @@ function registerDefaultServices(peer: FluencePeer) {
             peer.internals.regHandler.common(serviceId, fnName, fn);
         });
     });
-}
-
-async function runAvmRunner(
-    currentPeerId: PeerIdB58,
-    runner: AvmRunner,
-    particle: Particle,
-    prevData: Uint8Array,
-): Promise<InterpreterResult> {
-    particle.logTo('debug', 'Sending particle to interpreter');
-    log.debug('prevData: ', dataToString(prevData));
-    const interpreterResult = await runner.run(
-        particle.script,
-        prevData,
-        particle.data,
-        {
-            initPeerId: particle.initPeerId,
-            currentPeerId: currentPeerId,
-            timestamp: particle.timestamp,
-            ttl: particle.ttl,
-        },
-        particle.callResults,
-    );
-
-    const toLog = { ...interpreterResult, data: dataToString(interpreterResult.data) };
-
-    if (isInterpretationSuccessful(interpreterResult)) {
-        log.debug('Interpreter result: ', jsonify(toLog));
-    } else {
-        log.error('Interpreter failed: ', jsonify(toLog));
-    }
-    return interpreterResult;
 }
 
 function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) => void) {
