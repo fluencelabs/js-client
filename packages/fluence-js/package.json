@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence",
-    "version": "0.25.0",
+    "version": "0.26.0",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -29,7 +29,7 @@
         "@fluencelabs/connection": "workspace:0.3.0",
         "@fluencelabs/interfaces": "workspace:0.1.0",
         "@fluencelabs/keypair": "workspace:0.3.0",
-        "@fluencelabs/marine-js": "0.3.5",
+        "@fluencelabs/marine-js": "0.3.9",
         "async": "3.2.3",
         "base64-js": "^1.5.1",
         "browser-or-node": "^2.0.0",
