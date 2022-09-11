@@ -38,7 +38,7 @@ import { registerSig } from './_aqua/services';
 import Buffer from './Buffer';
 
 import { isBrowser, isNode } from 'browser-or-node';
-import { deserializeAvmResult, InterpreterResult, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
+import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -725,7 +725,7 @@ export class FluencePeer {
 
             return {
                 retCode: ResultCodes.success,
-                result: result,
+                result: result as JSONValue,
             };
         }
 
