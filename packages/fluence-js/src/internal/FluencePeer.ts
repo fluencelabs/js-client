@@ -18,13 +18,7 @@ import 'buffer';
 import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import {
-    FluenceAppService,
-    IFluenceAppService,
-    loadDefaults,
-    loadWasmFromFileSystem,
-    loadWasmFromServer,
-} from '@fluencelabs/marine-js';
+import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
