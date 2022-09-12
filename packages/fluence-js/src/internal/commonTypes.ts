@@ -125,7 +125,7 @@ export interface CallServiceData {
 /**
  * Type for all the possible objects that can be returned to the AVM
  */
-export type CallServiceResultType = object | boolean | number | string | null;
+export type CallServiceResultType = JSONValue;
 
 /**
  * Generic call service handler
@@ -146,3 +146,7 @@ export interface CallServiceResult {
      */
     result: CallServiceResultType;
 }
+
+export type JSONValue = string | number | boolean | null | { [x: string]: JSONValue } | Array<JSONValue>;
+export type JSONArray = Array<JSONValue>;
+export type JSONObject = { [x: string]: JSONValue };

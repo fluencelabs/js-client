@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence",
-    "version": "0.24.1",
+    "version": "0.25.0",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -25,11 +25,11 @@
         "copy-marine": "dist/tools/copyMarine.js"
     },
     "dependencies": {
-        "@fluencelabs/avm": "0.27.8",
+        "@fluencelabs/avm": "0.28.8",
         "@fluencelabs/connection": "workspace:0.2.0",
         "@fluencelabs/interfaces": "workspace:0.1.0",
         "@fluencelabs/keypair": "workspace:0.2.0",
-        "@fluencelabs/marine-js": "0.3.10",
+        "@fluencelabs/marine-js": "0.3.16",
         "async": "3.2.3",
         "base64-js": "^1.5.1",
         "browser-or-node": "^2.0.0",
