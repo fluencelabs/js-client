@@ -654,7 +654,6 @@ export class FluencePeer {
                 }
 
                 log.debug('Interpreter result: ', jsonify(toLog));
-                const newData = Buffer.from(item.result.data);
 
                 setTimeout(() => {
                     item.onStageChange({ stage: 'interpreted' });
@@ -663,6 +662,7 @@ export class FluencePeer {
                 // send particle further if requested
                 if (item.result.nextPeerPks.length > 0) {
                     const newParticle = item.particle.clone();
+                    const newData = Buffer.from(item.result.data);
                     newParticle.data = newData;
                     this._outgoingParticles.next({
                         ...item,
