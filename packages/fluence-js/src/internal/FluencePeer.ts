@@ -23,7 +23,7 @@ import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs } from './utils';
+import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs, isString } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
@@ -322,7 +322,11 @@ export class FluencePeer {
                     new Error("Can't use avm: peer is not initialized");
                 }
 
-                const res = (await this._fluenceAppService!.callService('avm', 'ast', [air], undefined)) as string;
+                const res = await this._fluenceAppService!.callService('avm', 'ast', [air], undefined);
+                if (!isString(res)) {
+                    throw new Error(`Call to avm:ast expected to return string. Actual return: ${res}`);
+                }
+
                 try {
                     if (res.startsWith('error')) {
                         return {
