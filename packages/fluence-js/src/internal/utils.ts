@@ -175,5 +175,5 @@ export const marineLogLevelToEnvs = (marineLogLevel: MarineLoglevel | undefined)
     marineLogLevel ? { WASM_LOG: marineLogLevel } : undefined;
 
 export const isString = (x: unknown): x is string => {
-    return x === null && typeof x !== 'string';
+    return x !== null && typeof x === 'string';
 };
