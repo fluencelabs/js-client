@@ -651,10 +651,9 @@ export class FluencePeer {
                     log.error('Interpreter failed: ', jsonify(toLog));
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
-                } else {
-                    log.debug('Interpreter result: ', jsonify(toLog));
                 }
 
+                log.debug('Interpreter result: ', jsonify(toLog));
                 const newData = Buffer.from(item.result.data);
 
                 setTimeout(() => {
