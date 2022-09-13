@@ -30,7 +30,8 @@ jobs:
     steps:
       - name: Checkout fluence-js
         uses: actions/checkout@v3
-        repository: fluencelabs/fluence-js
+        with:
+          repository: fluencelabs/fluence-js
 
       - uses: pnpm/action-setup@v2.2.2
         with:
