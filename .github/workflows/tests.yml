@@ -81,6 +81,7 @@ jobs:
         with:
           node-version: "16"
           registry-url: "https://npm.fluence.dev"
+          cache: "pnpm"
 
       - name: Set avm version from branch
         if: inputs.avm-version != ''
