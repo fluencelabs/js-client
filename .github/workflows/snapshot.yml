@@ -2,9 +2,13 @@ name: Publish snapshot
 
 on:
   workflow_call:
+    inputs:
+      avm-version:
+        description: "@fluencelabs/avm version"
+        type: string
     outputs:
       fluence-js-version:
-        description: "FluenceJS snapshot version"
+        description: "@fluencelabs/fluence version"
         value: ${{ jobs.publish-snapshot.outputs.fluence-js-version }}
 
 env:
@@ -26,16 +30,24 @@ jobs:
     steps:
       - name: Checkout fluence-js
         uses: actions/checkout@v3
+        with:
+          repository: fluencelabs/fluence-js
 
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
 
       - name: Setup node with self-hosted npm registry
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "16"
           registry-url: "https://npm.fluence.dev"
+          cache: "pnpm"
+
+      - name: Set avm version from branch
+        if: inputs.avm-version != ''
+        working-directory: packages/fluence-js
+        run: pnpm add @fluencelabs/avm@${{ inputs.avm-version }}
 
       - run: pnpm i
       - run: pnpm -r build
