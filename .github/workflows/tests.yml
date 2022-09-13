@@ -76,10 +76,10 @@ jobs:
         with:
           version: 7
 
-      - name: Setup node with self-hosted registry
+      - name: Setup node ${{ matrix.node-version }} with self-hosted registry
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: ${{ matrix.node-version }}
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
