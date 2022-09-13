@@ -80,16 +80,7 @@ jobs:
         with:
           version: 7
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-
-      - run: pnpm i
-
       - name: Setup node with self-hosted registry
-        if: inputs.avm-version != ''
         uses: actions/setup-node@v3
         with:
           node-version: "16"
@@ -98,7 +89,9 @@ jobs:
       - name: Set avm version from branch
         if: inputs.avm-version != ''
         working-directory: packages/fluence-js
-        run: pnpm i @fluencelabs/avm@${{ inputs.avm-version }}
+        run: pnpm add @fluencelabs/avm@${{ inputs.avm-version }}
 
+
+      - run: pnpm i
       - run: pnpm -r build
       - run: pnpm -r test
