@@ -8,11 +8,8 @@ on:
         type: string
         default: "fluencelabs/fluence:minimal"
       avm-version:
-        description: "avm version"
+        description: "@fluencelabs/avm version"
         type: string
-      ref:
-        type: string
-        default: "master"
 
 env:
   RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
@@ -59,7 +56,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: fluencelabs/fluence-js
-          ref: ${{ inputs.ref }}
 
       - name: Setup docker-compose
         uses: KengoTODA/actions-setup-docker-compose@v1.0.9
@@ -90,7 +86,6 @@ jobs:
         if: inputs.avm-version != ''
         working-directory: packages/fluence-js
         run: pnpm add @fluencelabs/avm@${{ inputs.avm-version }}
-
 
       - run: pnpm i
       - run: pnpm -r build

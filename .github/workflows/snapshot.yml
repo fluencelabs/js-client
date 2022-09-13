@@ -4,11 +4,11 @@ on:
   workflow_call:
     inputs:
       avm-version:
-        description: "avm version"
+        description: "@fluencelabs/avm version"
         type: string
     outputs:
       fluence-js-version:
-        description: "FluenceJS snapshot version"
+        description: "@fluencelabs/fluence version"
         value: ${{ jobs.publish-snapshot.outputs.fluence-js-version }}
 
 env:
