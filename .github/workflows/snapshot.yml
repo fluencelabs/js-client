@@ -99,7 +99,7 @@ jobs:
       - name: Update comment in PR
         uses: peter-evans/create-or-update-comment@v1
         env:
-          FLUENCE_JS_VERSION: ${{ steps.build.ouputs.version }}
+          FLUENCE_JS_VERSION: ${{ steps.build.outputs.version }}
         with:
           comment-id: "${{ steps.comment.outputs.comment-id }}"
           issue-number: "${{ github.event.pull_request.number }}"
