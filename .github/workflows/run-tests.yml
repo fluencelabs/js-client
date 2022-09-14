@@ -18,6 +18,7 @@ jobs:
     uses: ./.github/workflows/snapshot.yml
 
   aqua-snapshot:
+    name: "aqua"
     needs:
       - snapshot
 
