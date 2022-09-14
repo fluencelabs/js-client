@@ -24,6 +24,8 @@ jobs:
       fluence-js-version: "${{ steps.build.outputs.version }}"
 
     permissions:
+      contents: read
+      pull-requests: write
       id-token: write
 
     steps:
