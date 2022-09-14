@@ -16,8 +16,20 @@ jobs:
   snapshot:
     uses: ./.github/workflows/snapshot.yml
 
+  aqua-snapshot:
+    needs:
+      - snapshot
+
+    uses: fluencelabs/aqua/.github/workflows/snapshot.yml@main
+    with:
+      fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
+
   aqua-playground:
-    needs: snapshot
+    needs:
+      - snapshot
+      - aqua-snapshot
+
     uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
       fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
+      aqua-version: ${{ needs.aqua-snapshot.outputs.aqua-version }}
