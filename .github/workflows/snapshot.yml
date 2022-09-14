@@ -87,7 +87,6 @@ jobs:
       - name: Publish to self-hosted npm repo
         run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag e2e -filter '@fluencelabs/*'
 
-    steps:
       - name: Find comment in PR
         uses: peter-evans/find-comment@v1
         id: comment
