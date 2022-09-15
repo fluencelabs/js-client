@@ -112,12 +112,12 @@ importers:
     specifiers:
       '@fluencelabs/aqua': ^0.7.2-307
       '@fluencelabs/aqua-lib': ^0.5.1
-      '@fluencelabs/avm': 0.27.0
+      '@fluencelabs/avm': 0.28.8
       '@fluencelabs/connection': workspace:0.3.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/interfaces': workspace:0.1.0
       '@fluencelabs/keypair': workspace:0.3.0
-      '@fluencelabs/marine-js': 0.3.9
+      '@fluencelabs/marine-js': 0.3.16
       '@libp2p/peer-id': ^1.1.15
       '@multiformats/multiaddr': ^10.3.3
       '@types/bs58': ^4.0.1
@@ -145,11 +145,11 @@ importers:
       typescript: ^4.6.4
       uuid: 8.3.2
     dependencies:
-      '@fluencelabs/avm': 0.27.0
+      '@fluencelabs/avm': 0.28.8
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
-      '@fluencelabs/marine-js': 0.3.9_fja7bfls6liznxtpjmz7a3mgre
+      '@fluencelabs/marine-js': 0.3.16_fja7bfls6liznxtpjmz7a3mgre
       async: 3.2.3
       base64-js: 1.5.1
       browser-or-node: 2.0.0
@@ -1854,8 +1854,8 @@ packages:
     resolution: {integrity: sha512-BD7pr3ZRHLIb9XVt08i+/fX2+B4l5zln6j+5mEIJmDBQETv6Gz7NdsgKn0jUQueBcztR+mw5w7byM66yf6xEnA==}
     dev: true
 
-  /@fluencelabs/avm/0.27.0:
-    resolution: {integrity: sha512-5iU78+oo3toPDxf6s9fDj15M5vDEF7J8w4klPf1zsBnGx01imoFu9/AuVZKqF+OdruNmxKbtsoDk0EJ61f6tng==}
+  /@fluencelabs/avm/0.28.8:
+    resolution: {integrity: sha512-s3s5Y+qRmXXXUFYawXlWwK4CRtfuQWAi2UkyqzTieBS2hS/V6IZ+OZkV3XvBpF2CNWO7lH2gGzo4anhlg8KMIA==}
     dev: false
 
   /@fluencelabs/fluence-network-environment/1.0.13:
@@ -1919,8 +1919,8 @@ packages:
       - typescript
     dev: true
 
-  /@fluencelabs/marine-js/0.3.9_fja7bfls6liznxtpjmz7a3mgre:
-    resolution: {integrity: sha512-6TMPwB7z144yryBk+Nw7fUbZFMpm32uA9A3eCsYCm815Ny7OGjZpLFNO5+XWdZlLLfjn1TP970FFq2Vf119nLQ==}
+  /@fluencelabs/marine-js/0.3.16_fja7bfls6liznxtpjmz7a3mgre:
+    resolution: {integrity: sha512-LJ1rj530L0qDX0fGF6LO14bGY5pycN6KVqpC01snIqIP550vslEj5DzMewzKcnll4jObtTX6n5cQtn2kq/NvrA==}
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0

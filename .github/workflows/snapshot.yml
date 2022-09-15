@@ -2,9 +2,13 @@ name: Publish snapshot
 
 on:
   workflow_call:
+    inputs:
+      avm-version:
+        description: "@fluencelabs/avm version"
+        type: string
     outputs:
       fluence-js-version:
-        description: "FluenceJS snapshot version"
+        description: "@fluencelabs/fluence version"
         value: ${{ jobs.publish-snapshot.outputs.fluence-js-version }}
 
 env:
@@ -21,23 +25,33 @@ jobs:
 
     permissions:
       contents: read
+      pull-requests: write
       id-token: write
 
     steps:
       - name: Checkout fluence-js
         uses: actions/checkout@v3
+        with:
+          repository: fluencelabs/fluence-js
 
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
 
       - name: Setup node with self-hosted npm registry
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "16"
           registry-url: "https://npm.fluence.dev"
+          cache: "pnpm"
 
       - run: pnpm i
+
+      - name: Set avm version from branch
+        if: inputs.avm-version != ''
+        working-directory: packages/fluence-js
+        run: pnpm add @fluencelabs/avm@${{ inputs.avm-version }}
+
       - run: pnpm -r build
 
       - name: Import secrets
@@ -56,9 +70,8 @@ jobs:
       - name: Generate package version
         id: version
         run: |
-          SHA=$(git rev-parse --short HEAD)
-
-          echo "::set-output name=sha::$SHA"
+          SHA=${{ github.event.pull_request.head.sha }}
+          echo "::set-output name=sha::${SHA::7}"
           echo "::set-output name=branch::${GITHUB_HEAD_REF//[^a-zA-Z0-9-]/-}"
 
       - name: Set package version
@@ -75,18 +88,7 @@ jobs:
       - name: Publish to self-hosted npm repo
         run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag e2e -filter '@fluencelabs/*'
 
-  comment:
-    name: "Update comment"
-    runs-on: ubuntu-latest
-
-    needs:
-      - publish-snapshot
-
-    env:
-      FLUENCE_JS_VERSION: ${{ needs.publish-snapshot.outputs.fluence-js-version }}
-
-    steps:
-      - name: Find comment
+      - name: Find comment in PR
         uses: peter-evans/find-comment@v1
         id: comment
         with:
@@ -94,8 +96,10 @@ jobs:
           comment-author: github-actions[bot]
           body-includes: "## FluenceJS version is"
 
-      - name: Update comment
+      - name: Update comment in PR
         uses: peter-evans/create-or-update-comment@v1
+        env:
+          FLUENCE_JS_VERSION: ${{ steps.build.outputs.version }}
         with:
           comment-id: "${{ steps.comment.outputs.comment-id }}"
           issue-number: "${{ github.event.pull_request.number }}"
