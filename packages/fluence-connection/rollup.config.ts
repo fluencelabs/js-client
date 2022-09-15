@@ -28,7 +28,7 @@ export default [
         ],
         plugins: [
             nodeResolve(),
-            nodePolyfills(),
+            // nodePolyfills(),
             commonjs({
                 ignoreDynamicRequires: true,
             }),
