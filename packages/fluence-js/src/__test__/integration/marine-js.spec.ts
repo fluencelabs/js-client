@@ -1,5 +1,6 @@
 import { Fluence, FluencePeer } from '../../index';
 import fs from 'fs';
+import path from 'path';
 import { call } from '../_aqua/marine-js';
 import { call_info } from '../_aqua/marine-js-logging';
 
@@ -14,7 +15,7 @@ describe('Marine js tests', () => {
 
     it('should call marine service correctly', async () => {
         // arrange
-        const wasm = await fs.promises.readFile(__dirname + '/greeting.wasm');
+        const wasm = await fs.promises.readFile(path.resolve() + '/wasms/greeting.wasm');
         await Fluence.registerMarineService(wasm, 'greeting');
 
         // act
@@ -37,7 +38,7 @@ describe('Marine js tests', () => {
                     marineLogLevel: 'debug',
                 },
             });
-            const wasm = await fs.promises.readFile(__dirname + '/greeting-record.wasm');
+            const wasm = await fs.promises.readFile(path.resolve() + '/wasms/greeting-record.wasm');
             await peer.registerMarineService(wasm, 'greeting');
 
             // act

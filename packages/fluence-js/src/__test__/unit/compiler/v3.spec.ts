@@ -1,4 +1,3 @@
-import each from 'jest-each';
 import { aqua2ts, ts2aqua } from '../../../internal/compilerSupport/v3impl/conversions';
 
 const i32 = { tag: 'scalar', name: 'i32' } as const;
@@ -152,24 +151,24 @@ const nestedStructs = [
 ];
 
 describe('Conversion from aqua to typescript', () => {
-    each`
-    aqua                            | ts                       | type               
-    ${1}                            | ${1}                     | ${i32}             
-    ${[]}                           | ${null}                  | ${opt_i32}         
-    ${[1]}                          | ${1}                     | ${opt_i32}         
-    ${[1, 2, 3]}                    | ${[1, 2, 3]}             | ${array_i32}       
-    ${[]}                           | ${[]}                    | ${array_i32}       
-    ${[[1]]}                        | ${[1]}                   | ${array_opt_i32}   
-    ${[[]]}                         | ${[null]}                | ${array_opt_i32}   
-    ${[[1], [2]]}                   | ${[1, 2]}                | ${array_opt_i32}   
-    ${[[], [2]]}                    | ${[null, 2]}             | ${array_opt_i32}   
-    ${structs[0].aqua}              | ${structs[0].ts}         | ${labeledProduct}  
-    ${structs[1].aqua}              | ${structs[1].ts}         | ${labeledProduct}  
-    ${structs[0].aqua}              | ${structs[0].ts}         | ${struct}          
-    ${structs[1].aqua}              | ${structs[1].ts}         | ${struct}          
-    ${nestedStructs[0].aqua}        | ${nestedStructs[0].ts}   | ${nestedLabeledProductType}          
-    ${nestedStructs[1].aqua}        | ${nestedStructs[1].ts}   | ${nestedLabeledProductType}          
-`.test(
+    test.each`
+        aqua                     | ts                     | type
+        ${1}                     | ${1}                   | ${i32}
+        ${[]}                    | ${null}                | ${opt_i32}
+        ${[1]}                   | ${1}                   | ${opt_i32}
+        ${[1, 2, 3]}             | ${[1, 2, 3]}           | ${array_i32}
+        ${[]}                    | ${[]}                  | ${array_i32}
+        ${[[1]]}                 | ${[1]}                 | ${array_opt_i32}
+        ${[[]]}                  | ${[null]}              | ${array_opt_i32}
+        ${[[1], [2]]}            | ${[1, 2]}              | ${array_opt_i32}
+        ${[[], [2]]}             | ${[null, 2]}           | ${array_opt_i32}
+        ${structs[0].aqua}       | ${structs[0].ts}       | ${labeledProduct}
+        ${structs[1].aqua}       | ${structs[1].ts}       | ${labeledProduct}
+        ${structs[0].aqua}       | ${structs[0].ts}       | ${struct}
+        ${structs[1].aqua}       | ${structs[1].ts}       | ${struct}
+        ${nestedStructs[0].aqua} | ${nestedStructs[0].ts} | ${nestedLabeledProductType}
+        ${nestedStructs[1].aqua} | ${nestedStructs[1].ts} | ${nestedLabeledProductType}
+    `(
         //
         'aqua: $aqua. ts: $ts. type: $type',
         async ({ aqua, ts, type }) => {

@@ -2,12 +2,13 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "lib": ["ES2015"],
-        "target": "ES5",
-        "module": "commonjs",
+        "target": "ES6",
+        "module": "ESNext",
         "skipLibCheck": true,
         "sourceMap": true,
         "declaration": true,
         "esModuleInterop": true,
+        "moduleResolution": "node"
    },
     "exclude": ["node_modules", "dist"],
     "include": ["src/**/*"]

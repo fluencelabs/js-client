@@ -1,5 +1,4 @@
-import * as bs58 from 'bs58';
-import * as base64 from 'base64-js';
+import bs58 from 'bs58';
 import { KeyPair } from '@fluencelabs/keypair';
 
 describe('KeyPair tests', () => {

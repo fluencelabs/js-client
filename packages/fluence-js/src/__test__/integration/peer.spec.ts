@@ -7,7 +7,7 @@ import { registerHandlersHelper } from '../util';
 
 let peer: FluencePeer;
 
-describe('Typescript usage suite', () => {
+describe.skip('Typescript usage suite', () => {
     afterEach(async () => {
         if (peer) {
             await peer.stop();

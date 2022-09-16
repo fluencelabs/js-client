@@ -1,5 +1,4 @@
 import { CallParams, CallServiceData } from '../../internal/commonTypes';
-import each from 'jest-each';
 import { builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '@fluencelabs/keypair';
 import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
@@ -19,7 +18,7 @@ const oneTwoThreeFour = `[
 
 describe('Tests for default handler', () => {
     // prettier-ignore
-    each`
+    test.each`
   serviceId     | fnName               | args                                      | retCode | result
   ${'op'}       | ${'identity'}        | ${[]}                                     | ${0}    | ${{}}
   ${'op'}       | ${'identity'}        | ${[1]}                                    | ${0}    | ${1}
@@ -111,7 +110,7 @@ describe('Tests for default handler', () => {
   ${'array'}    | ${'diff'}"           | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["a"]}
   ${'array'}    | ${'sdiff'}"          | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["a", "d"]}
 
-  `.test(
+  `(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
         async ({ serviceId, fnName, args, retCode, result }) => {

@@ -2,14 +2,16 @@
     "name": "@fluencelabs/keypair",
     "version": "0.3.0",
     "description": "Keypair implementation for Fluence JS Peer",
-    "main": "./dist/index.js",
+    "type": "module",
+    "exports": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
         "node": ">=10",
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "rollup -c rollup.config.ts --configPlugin swc3"
+        "build": "tsc",
+        "_build": "rollup -c rollup.config.ts --configPlugin swc3"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

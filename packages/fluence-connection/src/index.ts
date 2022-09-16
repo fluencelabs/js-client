@@ -19,7 +19,7 @@ import { Mplex } from '@libp2p/mplex';
 import { Libp2p, createLibp2p } from 'libp2p';
 import { decode, encode } from 'it-length-prefixed';
 import { pipe } from 'it-pipe';
-import * as log from 'loglevel';
+import loglevel from 'loglevel';
 import { Noise } from '@chainsafe/libp2p-noise';
 import type { PeerId } from '@libp2p/interface-peer-id';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
@@ -139,17 +139,17 @@ export class RelayConnection extends FluenceConnection {
                             try {
                                 onIncomingParticle(msg);
                             } catch (e) {
-                                log.error('error on handling a new incoming message: ' + e);
+                                loglevel.error('error on handling a new incoming message: ' + e);
                             }
                         }
                     } catch (e) {
-                        log.debug('connection closed: ' + e);
+                        loglevel.debug('connection closed: ' + e);
                     }
                 },
             );
         });
 
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
+        loglevel.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
 
         try {
             // @ts-ignore

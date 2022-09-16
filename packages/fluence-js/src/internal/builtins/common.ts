@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { encode, decode } from 'bs58';
+import bs58 from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { CallServiceResult } from '@fluencelabs/avm';
 
@@ -226,7 +226,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             if (req.args.length !== 1) {
                 return error('string_to_b58 accepts only one string argument');
             } else {
-                return success(encode(new TextEncoder().encode(req.args[0])));
+                return success(bs58.encode(new TextEncoder().encode(req.args[0])));
             }
         },
 
@@ -234,7 +234,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             if (req.args.length !== 1) {
                 return error('string_from_b58 accepts only one string argument');
             } else {
-                return success(new TextDecoder().decode(decode(req.args[0])));
+                return success(new TextDecoder().decode(bs58.decode(req.args[0])));
             }
         },
 
@@ -243,7 +243,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return error('bytes_to_b58 accepts only single argument: array of numbers');
             } else {
                 const argumentArray = req.args[0] as number[];
-                return success(encode(new Uint8Array(argumentArray)));
+                return success(bs58.encode(new Uint8Array(argumentArray)));
             }
         },
 
@@ -251,7 +251,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             if (req.args.length !== 1) {
                 return error('bytes_from_b58 accepts only one string argument');
             } else {
-                return success(Array.from(decode(req.args[0])));
+                return success(Array.from(bs58.decode(req.args[0])));
             }
         },
 
@@ -264,7 +264,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 const multihash = await sha256.digest(inBuffer);
 
                 const outBytes = digestOnly ? multihash.digest : multihash.bytes;
-                const res = asBytes ? Array.from(outBytes) : encode(outBytes);
+                const res = asBytes ? Array.from(outBytes) : bs58.encode(outBytes);
 
                 return success(res);
             }
