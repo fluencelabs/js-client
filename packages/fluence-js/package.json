@@ -3,7 +3,10 @@
     "version": "0.26.0",
     "description": "TypeScript implementation of Fluence Peer",
     "type": "module",
-    "exports": "./dist/index.js",
+    "exports": {
+        ".": "./dist/index.js",
+        "./dist/internal/compilerSupport/v3": "./dist/internal/compilerSupport/v3"
+    },
     "typings": "./dist/index.d.ts",
     "engines": {
         "node": ">=10",
