@@ -23,7 +23,13 @@ import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serialize
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 
 import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
-import { PeerIdB58, CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes.js';
+import {
+    PeerIdB58,
+    CallServiceData,
+    CallServiceResult,
+    GenericCallServiceHandler,
+    ResultCodes,
+} from './commonTypes.js';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
 import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs, isString } from './utils.js';
 import { builtInServices } from './builtins/common.js';
@@ -640,7 +646,7 @@ export class FluencePeer {
 
                 // Do not continue if there was an error in particle interpretation
                 if (item.result instanceof Error) {
-                    log.error('Interpreter failed: ', jsonify(item.result.message));
+                    log.error('Interpreter failed: ', jsonify(item.result.toString()));
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
                     return;
                 }
