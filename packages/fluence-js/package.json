@@ -5,8 +5,8 @@
     "type": "module",
     "exports": {
         ".": "./dist/index.js",
-        "./dist/internal/compilerSupport/v3": "./dist/internal/compilerSupport/v3",
-        "./compilerSupport/v3": "./dist/internal/compilerSupport/v3"
+        "./dist/internal/compilerSupport/v3": "./dist/internal/compilerSupport/v3.js",
+        "./compilerSupport/v3": "./dist/internal/compilerSupport/v3.js"
     },
     "typings": "./dist/index.d.ts",
     "engines": {
