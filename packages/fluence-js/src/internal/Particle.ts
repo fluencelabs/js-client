@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'buffer';
-
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import log from 'loglevel';
-import { ParticleContext } from './commonTypes';
-import { dataToString, jsonify } from './utils';
-import Buffer from './Buffer';
+import { ParticleContext } from './commonTypes.js';
+import { dataToString, jsonify } from './utils.js';
+import Buffer from './Buffer.js';
 
 export class Particle {
     // TODO: make it not optional (should be added to the constructor)

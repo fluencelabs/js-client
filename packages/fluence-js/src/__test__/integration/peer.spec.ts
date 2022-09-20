@@ -1,9 +1,9 @@
 import { Multiaddr } from '@fluencelabs/connection';
 
-import { nodes } from '../connection';
-import { FluencePeer } from '../../index';
-import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
-import { registerHandlersHelper } from '../util';
+import { nodes } from '../connection.js';
+import { FluencePeer } from '../../index.js';
+import { checkConnection, doNothing, handleTimeout } from '../../internal/utils.js';
+import { registerHandlersHelper } from '../util.js';
 
 let peer: FluencePeer;
 

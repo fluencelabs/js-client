@@ -1,8 +1,8 @@
-import { Fluence, FluencePeer } from '../../index';
 import fs from 'fs';
 import path from 'path';
-import { call } from '../_aqua/marine-js';
-import { call_info } from '../_aqua/marine-js-logging';
+import { Fluence, FluencePeer } from '../../index.js';
+import { call } from '../_aqua/marine-js.js';
+import { call_info } from '../_aqua/marine-js-logging.js';
 
 describe('Marine js tests', () => {
     beforeEach(async () => {

@@ -1,7 +1,8 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
-import { CallParams, PeerIdB58 } from '../commonTypes';
 import { KeyPair } from '@fluencelabs/keypair';
-import { SigDef } from '../_aqua/services';
+
+import { CallParams, PeerIdB58 } from '../commonTypes.js';
+import { SigDef } from '../_aqua/services.js';
 
 /**
  * A predicate of call params for sig service's sign method which determines whether signing operation is allowed or not

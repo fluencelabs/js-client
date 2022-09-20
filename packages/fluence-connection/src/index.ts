@@ -27,7 +27,7 @@ import { Multiaddr } from '@multiformats/multiaddr';
 import { Connection } from '@libp2p/interface-connection';
 
 export { Multiaddr } from '@multiformats/multiaddr';
-import Buffer from './Buffer';
+import Buffer from './Buffer.js';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 

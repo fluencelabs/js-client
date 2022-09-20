@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export { FluencePeer } from '../FluencePeer';
-export { CallParams } from '../commonTypes';
-export * from './v3impl/interface';
-export * from './v3impl/callFunction';
-export * from './v3impl/registerService';
+export { FluencePeer } from '../FluencePeer.js';
+export { CallParams } from '../commonTypes.js';
+export * from './v3impl/interface.js';
+export * from './v3impl/callFunction.js';
+export * from './v3impl/registerService.js';

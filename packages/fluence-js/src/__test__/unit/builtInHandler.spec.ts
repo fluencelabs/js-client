@@ -1,8 +1,8 @@
-import { CallParams, CallServiceData } from '../../internal/commonTypes';
-import { builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '@fluencelabs/keypair';
-import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
+import { CallParams, CallServiceData } from '../../internal/commonTypes.js';
+import { builtInServices } from '../../internal/builtins/common.js';
+import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig.js';
 
 const a10b20 = `{
     "a": 10,

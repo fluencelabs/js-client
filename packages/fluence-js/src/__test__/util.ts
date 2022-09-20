@@ -1,6 +1,6 @@
-import { FluencePeer } from '../index';
-import { Particle } from '../internal/Particle';
-import { MakeServiceCall } from '../internal/utils';
+import { FluencePeer } from '../index.js';
+import { Particle } from '../internal/Particle.js';
+import { MakeServiceCall } from '../internal/utils.js';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,

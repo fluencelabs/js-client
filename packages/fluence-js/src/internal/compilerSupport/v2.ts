@@ -16,12 +16,12 @@
 
 import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
-import { CallParams, Fluence, FluencePeer } from '../../index';
-import { CallServiceData, GenericCallServiceHandler, CallServiceResult, ResultCodes } from '../commonTypes';
-import { Particle } from '../Particle';
+import { CallParams, Fluence, FluencePeer } from '../../index.js';
+import type { CallServiceData, CallServiceResult } from '../commonTypes';
+import { ResultCodes } from '../commonTypes';
 
-export { FluencePeer } from '../FluencePeer';
-export { CallParams } from '../commonTypes';
+export { FluencePeer } from '../FluencePeer.js';
+export { CallParams } from '../commonTypes.js';
 
 /**
  * Represents the Aqua Option type

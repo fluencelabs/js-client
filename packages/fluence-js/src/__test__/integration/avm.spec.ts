@@ -1,6 +1,6 @@
-import { FluencePeer } from '../../index';
-import { handleTimeout } from '../../internal/utils';
-import { registerHandlersHelper } from '../util';
+import { FluencePeer } from '../../index.js';
+import { handleTimeout } from '../../internal/utils.js';
+import { registerHandlersHelper } from '../util.js';
 
 let peer: FluencePeer;
 

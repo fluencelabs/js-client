@@ -1,7 +1,7 @@
-import { FnConfig, FunctionCallDef } from './interface';
-import { FluencePeer } from '../../FluencePeer';
-import { Fluence } from '../../../index';
-import { Particle } from '../../Particle';
+import { FnConfig, FunctionCallDef } from './interface.js';
+import { FluencePeer } from '../../FluencePeer.js';
+import { Fluence } from '../../../index.js';
+
 import {
     injectRelayService,
     argToServiceDef,
@@ -11,7 +11,7 @@ import {
     ServiceDescription,
     userHandlerService,
     injectValueService,
-} from './services';
+} from './services.js';
 
 /**
  * Convenience function to support Aqua `func` generation backend

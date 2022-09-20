@@ -1,6 +1,6 @@
-import { Fluence, FluencePeer, KeyPair, setLogLevel } from '../../index';
-import { allowServiceFn, Sig } from '../../services';
-import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests';
+import { Fluence, FluencePeer, KeyPair, setLogLevel } from '../../index.js';
+import { allowServiceFn, Sig } from '../../services.js';
+import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests.js';
 
 let peer: FluencePeer;
 

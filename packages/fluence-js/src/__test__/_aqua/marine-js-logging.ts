@@ -6,8 +6,8 @@
  * Aqua version: 0.7.2-314
  *
  */
-import { Fluence, FluencePeer } from '../../index';
-import { CallParams, callFunction, registerService } from '../../internal/compilerSupport/v3';
+import { Fluence, FluencePeer } from '../../index.js';
+import { CallParams, callFunction, registerService } from '../../internal/compilerSupport/v3.js';
 
 // Services
 

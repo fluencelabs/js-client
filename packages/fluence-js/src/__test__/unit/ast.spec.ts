@@ -1,4 +1,4 @@
-import { Fluence } from '../../index';
+import { Fluence } from '../../index.js';
 
 describe('Parse ast tests', () => {
     beforeAll(async () => {

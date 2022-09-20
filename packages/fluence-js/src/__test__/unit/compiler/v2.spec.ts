@@ -1,5 +1,5 @@
-import { Fluence, FluencePeer } from '../../..';
-import { forTests } from '../../../internal/compilerSupport/v2';
+import { Fluence, FluencePeer } from '../../../index.js';
+import { forTests } from '../../../internal/compilerSupport/v2.js';
 
 const peer = new FluencePeer();
 const cfg = { ttl: 1000 };

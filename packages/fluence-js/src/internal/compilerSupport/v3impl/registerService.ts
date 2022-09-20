@@ -1,7 +1,7 @@
-import { FluencePeer } from '../../FluencePeer';
-import { Fluence } from '../../../index';
-import { ServiceDef } from './interface';
-import { registerGlobalService, userHandlerService } from './services';
+import { FluencePeer } from '../../FluencePeer.js';
+import { Fluence } from '../../../index.js';
+import { ServiceDef } from './interface.js';
+import { registerGlobalService, userHandlerService } from './services.js';
 
 /**
  * Convenience function to support Aqua `service` generation backend

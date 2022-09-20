@@ -16,21 +16,20 @@
 import { RelayConnection, Multiaddr } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
-import { PeerIdB58 } from './commonTypes';
-import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs, isString } from './utils';
-import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
-import { builtInServices } from './builtins/common';
-import { defaultSigGuard, Sig } from './builtins/Sig';
-import { registerSig } from './_aqua/services';
-import Buffer from './Buffer';
-
 import { isBrowser, isNode } from 'browser-or-node';
 import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
+import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
+
+import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
+import { PeerIdB58, CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes.js';
+import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
+import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs, isString } from './utils.js';
+import { builtInServices } from './builtins/common.js';
+import { defaultSigGuard, Sig } from './builtins/Sig.js';
+import { registerSig } from './_aqua/services.js';
+import Buffer from './Buffer.js';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
