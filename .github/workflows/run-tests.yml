@@ -31,7 +31,7 @@ jobs:
       - snapshot
       - aqua-snapshot
 
-    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
+    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@test-npm-version
     with:
       fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
       aqua-version: ${{ needs.aqua-snapshot.outputs.aqua-version }}
