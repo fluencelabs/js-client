@@ -27,7 +27,7 @@
         "buffer": "^6.0.3",
         "it-length-prefixed": "7.0.1",
         "it-pipe": "2.0.3",
-        "libp2p": "fluencelabs/js-libp2p#2d8b5c78b6ec8b22695b09914594878fd1f5afd1",
+        "libp2p": "fluencelabs/js-libp2p#9c76cd94137014e0d6849cb465db2e47c9ce52b4",
         "loglevel": "1.8.0",
         "regenerator-runtime": "^0.13.9"
     },
