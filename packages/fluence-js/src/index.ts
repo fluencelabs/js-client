@@ -27,8 +27,8 @@ export { loadWasmFromFileSystem, loadWasmFromNpmPackage, loadWasmFromServer } fr
 
 export const setLogLevel = (level: LogLevelDesc) => {
     log.setLevel(level);
-}; 
- 
+};
+
 log.setDefaultLevel('WARN');
 
 const defaultPeer = new FluencePeer();
