@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence",
-    "version": "0.26.1",
+    "version": "0.26.2",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
         "copy-marine": "dist/tools/copyMarine.js"
     },
     "dependencies": {
-        "@fluencelabs/avm": "0.30.10",
+        "@fluencelabs/avm": "0.30.11",
         "@fluencelabs/connection": "workspace:0.2.0",
         "@fluencelabs/interfaces": "workspace:0.1.0",
         "@fluencelabs/keypair": "workspace:0.2.0",
