@@ -86,7 +86,7 @@ jobs:
       - name: Set avm version from branch
         if: inputs.avm-version != ''
         working-directory: packages/fluence-js
-        run: pnpm add @fluencelabs/avm@${{ inputs.avm-version }}
+        run: pnpm add =@fluencelabs/avm@${{ inputs.avm-version }}
 
       - run: pnpm i
       - run: pnpm -r build
