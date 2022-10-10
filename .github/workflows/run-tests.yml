@@ -24,7 +24,7 @@ jobs:
 
     uses: fluencelabs/aqua/.github/workflows/snapshot.yml@main
     with:
-      fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
+      fluence-js-version: "=${{ needs.snapshot.outputs.fluence-js-version }}"
 
   aqua-playground:
     needs:
@@ -33,5 +33,13 @@ jobs:
 
     uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
-      fluence-js-version: ${{ needs.snapshot.outputs.fluence-js-version }}
-      aqua-version: ${{ needs.aqua-snapshot.outputs.aqua-version }}
+      fluence-js-version: "=${{ needs.snapshot.outputs.fluence-js-version }}"
+      aqua-version: "=${{ needs.aqua-snapshot.outputs.aqua-version }}"
+
+  registry:
+    needs:
+      - aqua-snapshot
+
+    uses: fluencelabs/registry/.github/workflows/tests.yml@main
+    with:
+      aqua-version: "=${{ needs.aqua-snapshot.outputs.aqua-version }}"
