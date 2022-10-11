@@ -83,11 +83,12 @@ jobs:
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
+      - run: pnpm i
+
       - name: Set avm version from branch
         if: inputs.avm-version != ''
         working-directory: packages/fluence-js
-        run: pnpm add @fluencelabs/avm@${{ inputs.avm-version }}
+        run: pnpm add --save -E @fluencelabs/avm@${{ inputs.avm-version }}
 
-      - run: pnpm i
       - run: pnpm -r build
       - run: pnpm -r test
