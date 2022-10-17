@@ -1,7 +1,7 @@
 module Export
 
 import Srv from "../src/single-module-srv.aqua"
-export happy_path, service_removed
+export happy_path, list_services, file_not_found, service_removed, removing_non_exiting
 
 service Greeting("greeting"):
     greeting(name: string) -> string
