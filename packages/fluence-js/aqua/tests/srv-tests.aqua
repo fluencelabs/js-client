@@ -1,19 +1,24 @@
 module Export
 
 import Srv from "../src/single-module-srv.aqua"
-export test1, test2
+export happy_path, service_removed
 
 service Greeting("greeting"):
     greeting(name: string) -> string
 
-func test1(file_path: string) -> string:
+func happy_path(file_path: string) -> string:
     wasm <- Srv.read_file(file_path)
     id <- Srv.create(wasm)
     Greeting id
     <- Greeting.greeting("test")
 
-func test2(file_path: string) -> string:
+func service_removed(file_path: string) -> string:
     wasm <- Srv.read_file(file_path)
     id <- Srv.create(wasm)
     Greeting id
-    <- Greeting.greeting("test")
+    Srv.remove(id)
+    try:
+        dontcare <- Greeting.greeting("test")
+    catch e: 
+        <- e.message
+    

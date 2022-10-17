@@ -29,7 +29,7 @@ import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
-import { registerSrv } from './_aqua/singleModuleSrv';
+import { registerSrv } from './_aqua/single-module-srv';
 import Buffer from './Buffer';
 
 import { isBrowser, isNode } from 'browser-or-node';

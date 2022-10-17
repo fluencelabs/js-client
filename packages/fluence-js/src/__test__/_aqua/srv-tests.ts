@@ -13,11 +13,11 @@ import { CallParams, callFunction, registerService } from '../../internal/compil
 
 // Functions
 
-export function test2(file_path: string, config?: { ttl?: number }): Promise<string>;
+export function service_removed(file_path: string, config?: { ttl?: number }): Promise<string>;
 
-export function test2(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string>;
+export function service_removed(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string>;
 
-export function test2(...args: any) {
+export function service_removed(...args: any) {
     let script = `
                     (xor
                      (seq
@@ -25,17 +25,23 @@ export function test2(...args: any) {
                        (seq
                         (seq
                          (seq
-                          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-                          (call %init_peer_id% ("getDataSrv" "file_path") [] file_path)
+                          (seq
+                           (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                           (call %init_peer_id% ("getDataSrv" "file_path") [] file_path)
+                          )
+                          (call %init_peer_id% ("single_module_srv" "read_file") [file_path] wasm)
                          )
-                         (call %init_peer_id% ("single_module_srv" "read_file") [file_path] wasm)
+                         (call %init_peer_id% ("single_module_srv" "create") [wasm] id)
                         )
-                        (call %init_peer_id% ("single_module_srv" "create") [wasm] id)
+                        (call %init_peer_id% ("single_module_srv" "remove") [wasm])
                        )
-                       (call %init_peer_id% (id "greeting") ["test"] greeting)
+                       (xor
+                        (call %init_peer_id% (id "greeting") ["test"] dontcare)
+                        (null)
+                       )
                       )
                       (xor
-                       (call %init_peer_id% ("callbackSrv" "response") [greeting])
+                       (call %init_peer_id% ("callbackSrv" "response") [%last_error%.$.message!])
                        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
                       )
                      )
@@ -45,7 +51,7 @@ export function test2(...args: any) {
     return callFunction(
         args,
         {
-            functionName: 'test2',
+            functionName: 'service_removed',
             arrow: {
                 tag: 'arrow',
                 domain: {
@@ -81,11 +87,11 @@ export function test2(...args: any) {
     );
 }
 
-export function test1(file_path: string, config?: { ttl?: number }): Promise<string>;
+export function happy_path(file_path: string, config?: { ttl?: number }): Promise<string>;
 
-export function test1(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string>;
+export function happy_path(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string>;
 
-export function test1(...args: any) {
+export function happy_path(...args: any) {
     let script = `
                     (xor
                      (seq
@@ -113,7 +119,7 @@ export function test1(...args: any) {
     return callFunction(
         args,
         {
-            functionName: 'test1',
+            functionName: 'happy_path',
             arrow: {
                 tag: 'arrow',
                 domain: {

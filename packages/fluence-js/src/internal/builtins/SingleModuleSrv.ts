@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray } from 'base64-js';
-import { SrvDef } from '../_aqua/singleModuleSrv';
+import { SrvDef } from '../_aqua/single-module-srv';
 import { FluencePeer } from '../FluencePeer';
 
 export class Srv implements SrvDef {
