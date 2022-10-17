@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray } from 'base64-js';
 import { SrvDef } from '../_aqua/single-module-srv';
 import { FluencePeer } from '../FluencePeer';
+import { ServiceError } from '../utils';
 
 export class Srv implements SrvDef {
     private services: Set<string> = new Set();
@@ -20,6 +21,10 @@ export class Srv implements SrvDef {
     }
 
     remove(service_id: string) {
+        if (!this.services.has(service_id)) {
+            throw new ServiceError(`Service with id ${service_id} not found`);
+        }
+
         this.peer.removeMarineService(service_id);
         this.services.delete(service_id);
     }
@@ -29,8 +34,12 @@ export class Srv implements SrvDef {
     }
 
     async read_file(path: string) {
-        const fs = await require('fs').promises;
-        const data = await fs.readFile(path);
-        return fromByteArray(data);
+        try {
+            const fs = await require('fs').promises;
+            const data = await fs.readFile(path);
+            return fromByteArray(data);
+        } catch (err: any) {
+            throw new ServiceError(err.message);
+        }
     }
 }

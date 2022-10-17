@@ -23,7 +23,15 @@ import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs, isString } from './utils';
+import {
+    throwIfNotSupported,
+    dataToString,
+    jsonify,
+    MarineLoglevel,
+    marineLogLevelToEnvs,
+    isString,
+    ServiceError,
+} from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
@@ -688,14 +696,21 @@ export class FluencePeer {
                         };
 
                         this._execSingleCallRequest(req)
-                            .catch(
-                                (err): CallServiceResult => ({
+                            .catch((err): CallServiceResult => {
+                                if (err instanceof ServiceError) {
+                                    return {
+                                        retCode: ResultCodes.error,
+                                        result: err.message,
+                                    };
+                                }
+
+                                return {
                                     retCode: ResultCodes.error,
                                     result: `Handler failed. fnName="${req.fnName}" serviceId="${
                                         req.serviceId
                                     }" error: ${err.toString()}`,
-                                }),
-                            )
+                                };
+                            })
                             .then((res) => {
                                 const serviceResult = {
                                     result: jsonify(res.result),
