@@ -33,7 +33,7 @@ export function service_removed(...args: any) {
                          )
                          (call %init_peer_id% ("single_module_srv" "create") [wasm] id)
                         )
-                        (call %init_peer_id% ("single_module_srv" "remove") [wasm])
+                        (call %init_peer_id% ("single_module_srv" "remove") [id])
                        )
                        (xor
                         (call %init_peer_id% (id "greeting") ["test"] dontcare)
