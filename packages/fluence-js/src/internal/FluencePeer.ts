@@ -29,10 +29,12 @@ import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
+import { registerSrv } from './_aqua/singleModuleSrv';
 import Buffer from './Buffer';
 
 import { isBrowser, isNode } from 'browser-or-node';
 import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
+import { Srv } from './builtins/SingleModuleSrv';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -454,6 +456,8 @@ export class FluencePeer {
         this._classServices.sig.securityGuard = defaultSigGuard(peerId);
         registerSig(this, this._classServices.sig);
         registerSig(this, peerId, this._classServices.sig);
+
+        registerSrv(this, new Srv(this));
 
         this._startParticleProcessing();
     }

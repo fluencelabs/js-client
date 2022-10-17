@@ -1,0 +1,19 @@
+alias Bytes : []u8
+
+service Srv("single_module_srv"):
+    -- Used to create a service on a certain node
+    -- Arguments:
+    --  bytes – a base64 string containing the .wasm module to add.
+    -- Returns: service_id – the service ID of the created service.
+    create(wasm_b64_content: string) -> string
+
+    -- Used to remove a service from a certain node
+    -- Arguments:
+    --  service_id – ID of the service to remove
+    remove(service_id: string)
+
+    -- Returns a list of services ids running on a peer
+    list() -> []string
+
+    -- Read the file
+    read_file(path: string) -> string
