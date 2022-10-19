@@ -3,6 +3,7 @@ import { fromByteArray } from 'base64-js';
 import { SrvDef } from '../_aqua/single-module-srv';
 import { FluencePeer } from '../FluencePeer';
 import { ServiceError } from '../utils';
+import { isNode } from 'browser-or-node';
 
 export class Srv implements SrvDef {
     private services: Set<string> = new Set();
@@ -34,6 +35,10 @@ export class Srv implements SrvDef {
     }
 
     async read_file(path: string) {
+        if (!isNode) {
+            throw new ServiceError('read_file is only supported in node.js');
+        }
+
         try {
             const fs = await require('fs').promises;
             const data = await fs.readFile(path);
