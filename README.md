@@ -6,7 +6,7 @@ Official TypeScript implementation of the Fluence Peer.
 
 ## Getting started
 
-To start developing applications with Fluence JS refer to the official [documentation](https://doc.fluence.dev/docs/js-sdk)
+To start developing applications with Fluence JS refer to the official [documentation](https://fluence.dev/docs/build/fluence-js/)
 
 ## Contributing
 
