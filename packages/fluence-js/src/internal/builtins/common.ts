@@ -467,10 +467,52 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             return success(sdiff);
         },
     },
+
+    json: {
+        obj: (req) => {
+            const res = intoJson(req.args);
+            return success(res);
+        },
+
+        put: (req) => {
+            const [obj, k, v] = req.args;
+            obj[k] = v;
+            return success(obj);
+        },
+
+        puts: (req) => {
+            const [obj, ...kvs] = req.args;
+            const toMerge = intoJson(kvs);
+            const res = { ...obj, ...toMerge };
+            return success(res);
+        },
+
+        stringify: (req) => {
+            const [json] = req.args;
+            const res = JSON.stringify(json);
+            return success(res);
+        },
+
+        parse: (req) => {
+            const [raw] = req.args;
+            const json = JSON.parse(raw);
+            return success(json);
+        },
+    },
 } as const;
 
 const checkForArgumentsCount = (req: { args: Array<unknown> }, count: number) => {
     if (req.args.length !== count) {
         return error(`Expected ${count} argument(s). Got ${req.args.length}`);
     }
+};
+
+const intoJson = (kvs: Array<unknown>) => {
+    const res: Record<string, any> = {};
+    for (let i = 0; i < kvs.length / 2; i++) {
+        const k = kvs[i * 2] as string;
+        const v = kvs[i * 2 + 1];
+        res[k] = v;
+    }
+    return res;
 };
