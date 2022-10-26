@@ -501,6 +501,10 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
+            if((err = checkForArgumentType(req, 0, "object"))) {
+                return err;
+            }
+
             return makeJsonImpl(req.args);
         },
 
@@ -514,12 +518,20 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
+            if((err = checkForArgumentType(req, 0, "object"))) {
+                return err;
+            }
+
             return makeJsonImpl(req.args);
         },
 
         stringify: (req) => {
             let err;
             if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
+
+            if((err = checkForArgumentType(req, 0, "object"))) {
                 return err;
             }
 
@@ -534,9 +546,17 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
+            if((err = checkForArgumentType(req, 0, "string"))) {
+                return err;
+            }
+
             const [raw] = req.args;
-            const json = JSON.parse(raw);
-            return success(json);
+            try{
+                const json = JSON.parse(raw);
+                return success(json);
+            } catch(err: any) {
+                return error(err.message);
+            }
         },
     },
 } as const;
@@ -565,6 +585,18 @@ const checkForArgumentsCountOdd = (req: { args: Array<unknown> }, count: number)
     }
 };
 
+const checkForArgumentType = (req: { args: Array<unknown> }, index: number, type: string) => {
+    const actual = typeof req.args[index];
+    if (actual !== type) {
+        return error(`Argument ${index} expected to be of type ${type}, Got ${actual}`);
+    }
+};
+
 export const isString = (unknown: unknown): unknown is string => {
     return unknown !== null && typeof unknown === 'string';
 };
+
+export const isObject = (unknown: unknown): unknown is object => {
+    return unknown !== null && typeof unknown === 'object';
+};
+
