@@ -18,7 +18,7 @@ import { encode, decode } from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { CallServiceResult } from '@fluencelabs/avm';
 
-import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
+import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { jsonify } from '../utils';
 import Buffer from '../Buffer';
 
@@ -38,6 +38,23 @@ const error = (error: string): CallServiceResult => {
 
 const errorNotImpl = (methodName: string) => {
     return error(`The JS implementation of Peer does not support "${methodName}"`);
+};
+
+const makeJsonImpl = (args: Array<any>) => {
+    const [obj, ...kvs] = args;
+
+    const toMerge: Record<string, any> = {};
+    for (let i = 0; i < kvs.length / 2; i++) {
+        const k = kvs[i * 2];
+        if (!isString(k)) {
+            return error(`Argument ${k} is expected to be string`);
+        }
+        const v = kvs[i * 2 + 1];
+        toMerge[k] = v;
+    }
+
+    const res = { ...obj, ...toMerge };
+    return success(res);
 };
 
 export const builtInServices: Record<string, Record<string, GenericCallServiceHandler>> = {
@@ -467,6 +484,81 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             return success(sdiff);
         },
     },
+
+    json: {
+        obj: (req) => {
+            let err;
+            if ((err = checkForArgumentsCountEven(req, 1))) {
+                return err;
+            }
+
+            return makeJsonImpl([{}, ...req.args]);
+        },
+
+        put: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 3))) {
+                return err;
+            }
+
+            if((err = checkForArgumentType(req, 0, "object"))) {
+                return err;
+            }
+
+            return makeJsonImpl(req.args);
+        },
+
+        puts: (req) => {
+            let err;
+            if ((err = checkForArgumentsCountOdd(req, 1))) {
+                return err;
+            }
+
+            if ((err = checkForArgumentsCountMoreThan(req, 3))) {
+                return err;
+            }
+
+            if((err = checkForArgumentType(req, 0, "object"))) {
+                return err;
+            }
+
+            return makeJsonImpl(req.args);
+        },
+
+        stringify: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
+
+            if((err = checkForArgumentType(req, 0, "object"))) {
+                return err;
+            }
+
+            const [json] = req.args;
+            const res = JSON.stringify(json);
+            return success(res);
+        },
+
+        parse: (req) => {
+            let err;
+            if ((err = checkForArgumentsCount(req, 1))) {
+                return err;
+            }
+
+            if((err = checkForArgumentType(req, 0, "string"))) {
+                return err;
+            }
+
+            const [raw] = req.args;
+            try{
+                const json = JSON.parse(raw);
+                return success(json);
+            } catch(err: any) {
+                return error(err.message);
+            }
+        },
+    },
 } as const;
 
 const checkForArgumentsCount = (req: { args: Array<unknown> }, count: number) => {
@@ -474,3 +566,37 @@ const checkForArgumentsCount = (req: { args: Array<unknown> }, count: number) =>
         return error(`Expected ${count} argument(s). Got ${req.args.length}`);
     }
 };
+
+const checkForArgumentsCountMoreThan = (req: { args: Array<unknown> }, count: number) => {
+    if (req.args.length < count) {
+        return error(`Expected more than ${count} argument(s). Got ${req.args.length}`);
+    }
+};
+
+const checkForArgumentsCountEven = (req: { args: Array<unknown> }, count: number) => {
+    if (req.args.length % 2 === 1) {
+        return error(`Expected even number of argument(s). Got ${req.args.length}`);
+    }
+};
+
+const checkForArgumentsCountOdd = (req: { args: Array<unknown> }, count: number) => {
+    if (req.args.length % 2 === 0) {
+        return error(`Expected odd number of argument(s). Got ${req.args.length}`);
+    }
+};
+
+const checkForArgumentType = (req: { args: Array<unknown> }, index: number, type: string) => {
+    const actual = typeof req.args[index];
+    if (actual !== type) {
+        return error(`Argument ${index} expected to be of type ${type}, Got ${actual}`);
+    }
+};
+
+export const isString = (unknown: unknown): unknown is string => {
+    return unknown !== null && typeof unknown === 'string';
+};
+
+export const isObject = (unknown: unknown): unknown is object => {
+    return unknown !== null && typeof unknown === 'object';
+};
+
