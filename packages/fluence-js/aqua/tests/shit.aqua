@@ -1,0 +1,10 @@
+service Peer("peer"):
+    -- Blocks for the given number of milliseconds. Meant to be used within `par` blocks.
+    -- message is returned after duration has passed
+    timeout(duration_ms: u64, message: string) -> string
+
+
+func test(time: u8) -> string:
+    on HOST_PEER_ID:
+        Peer.timeout(time, "")
+    <- "success"
