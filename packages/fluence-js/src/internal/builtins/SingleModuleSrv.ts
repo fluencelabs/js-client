@@ -107,7 +107,6 @@ export class NodeUtils implements NodeUtilsDef {
             // eval('require') is needed so that
             // webpack will complain about missing dependencies for web target
             const r = eval('require');
-            const path = r('path');
             const fs = r('fs').promises;
             const data = await fs.readFile(path);
             return {
