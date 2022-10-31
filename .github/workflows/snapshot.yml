@@ -71,8 +71,8 @@ jobs:
         id: version
         run: |
           SHA=${{ github.event.pull_request.head.sha }}
-          echo "::set-output name=sha::${SHA::7}"
-          echo "::set-output name=branch::${GITHUB_HEAD_REF//[^a-zA-Z0-9-]/-}"
+          echo "sha=${SHA::7}" >> $GITHUB_OUTPUT
+          echo "branch=${GITHUB_HEAD_REF//[^a-zA-Z0-9-]/-}" >> $GITHUB_OUTPUT
 
       - name: Set package version
         id: build
@@ -83,31 +83,19 @@ jobs:
           ATTEMPT: ${{ github.run_attempt }}
         run: |
           node ci.js bump-version ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
-          echo "::set-output name=version::$(node ci.js get-version)"
+          echo "version=$(node ci.js get-version)" >> $GITHUB_OUTPUT
 
       - name: Publish to self-hosted npm repo
         run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag e2e -filter '@fluencelabs/*'
 
-      - name: Find comment in PR
-        uses: peter-evans/find-comment@v1
-        id: comment
-        with:
-          issue-number: "${{ github.event.pull_request.number }}"
-          comment-author: github-actions[bot]
-          body-includes: "## FluenceJS version is"
-
-      - name: Update comment in PR
-        uses: peter-evans/create-or-update-comment@v1
+      - name: Print versions to check summary
         env:
-          FLUENCE_JS_VERSION: ${{ steps.build.outputs.version }}
-        with:
-          comment-id: "${{ steps.comment.outputs.comment-id }}"
-          issue-number: "${{ github.event.pull_request.number }}"
-          edit-mode: replace
-          body: |
-            ## FluenceJS version is [${{ env.FLUENCE_JS_VERSION }}](https://npm.fluence.dev/-/web/detail/@fluencelabs/fluence/v/${{ env.FLUENCE_JS_VERSION }})
-            To install it run:
-            ```shell
-            npm login --registry https://npm.fluence.dev
-            npm i -E @fluencelabs/fluence@${{ env.FLUENCE_JS_VERSION }} --registry=https://npm.fluence.dev
-            ```
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          cat <<'SNAPSHOT' >> $GITHUB_STEP_SUMMARY
+          ## FluenceJS version is [${{ env.VERSION }}](https://npm.fluence.dev/-/web/detail/@fluencelabs/fluence/v/${{ env.VERSION }})
+          To use it run:
+          ```shell
+          npm i -E @fluencelabs/fluence@${{ env.VERSION }} --registry=https://npm.fluence.dev
+          ```
+          SNAPSHOT
