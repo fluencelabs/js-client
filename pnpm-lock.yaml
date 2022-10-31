@@ -89,6 +89,7 @@ importers:
       typescript: ^4.6.4
       uuid: 8.3.2
     dependencies:
+      '@fluencelabs/avm': 0.31.10
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
@@ -109,7 +110,6 @@ importers:
     devDependencies:
       '@fluencelabs/aqua': 0.7.5-342_xzerzk4w2bpfgrtdtvycakab5a
       '@fluencelabs/aqua-lib': 0.5.2
-      '@fluencelabs/avm': 0.31.10
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/jest': 27.5.2
@@ -499,7 +499,7 @@ packages:
 
   /@fluencelabs/avm/0.31.10:
     resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
-    dev: true
+    dev: false
 
   /@fluencelabs/fluence-network-environment/1.0.13:
     resolution: {integrity: sha512-2pci3T0sUHE08jwEs1r/vHKVT4XUh/A3j/QJ0eIhddsxyIjEksjdn05X7DF6STD14CF8GgBVOJEPgav8qaUMpA==}
