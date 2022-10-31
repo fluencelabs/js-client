@@ -111,6 +111,29 @@ describe('Tests for default handler', () => {
   ${'array'}    | ${'diff'}"           | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["a"]}
   ${'array'}    | ${'sdiff'}"          | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["a", "d"]}
 
+  ${'json'}     | ${'obj'}"            | ${["a", 10, "b", "string", "c", null]}    | ${0}    | ${{a: 10, b: "string", c: null}}
+  ${'json'}     | ${'obj'}"            | ${["a", 10, "b", "string", "c"]}          | ${1}    | ${"Expected even number of argument(s). Got 5"}
+  ${'json'}     | ${'obj'}"            | ${[]}                                     | ${0}    | ${{}}
+  
+  ${'json'}     | ${'put'}"            | ${[{}, "a", 10]}                          | ${0}    | ${{a: 10}}
+  ${'json'}     | ${'put'}"            | ${[{b: 11}, "a", 10]}                     | ${0}    | ${{a: 10, b: 11}}
+  ${'json'}     | ${'put'}"            | ${["a", "a", 11]}                         | ${1}    | ${"Argument 0 expected to be of type object, Got string"}
+  ${'json'}     | ${'put'}"            | ${[{}, "a", 10, "b", 20]}                 | ${1}    | ${"Expected 3 argument(s). Got 5"}
+  ${'json'}     | ${'put'}"            | ${[{}]}                                   | ${1}    | ${"Expected 3 argument(s). Got 1"}
+
+  ${'json'}     | ${'puts'}"           | ${[{}, "a", 10]}                                  | ${0}    | ${{a: 10}}
+  ${'json'}     | ${'puts'}"           | ${[{b: 11}, "a", 10]}                             | ${0}    | ${{a: 10, b: 11}}
+  ${'json'}     | ${'puts'}"           | ${[{}, "a", 10, "b", "string", "c", null]}        | ${0}    | ${{a: 10, b: "string", c: null}}
+  ${'json'}     | ${'puts'}"           | ${[{x: "text"}, "a", 10, "b", "string"]}          | ${0}    | ${{a: 10, b: "string", x: "text"}}
+  ${'json'}     | ${'puts'}"           | ${[{}]}                                           | ${1}    | ${"Expected more than 3 argument(s). Got 1"}
+  ${'json'}     | ${'puts'}"           | ${["a", "a", 11]}                                 | ${1}    | ${"Argument 0 expected to be of type object, Got string"}
+
+  ${'json'}     | ${'stringify'}"      | ${[{a: 10, b: "string", c: null}]}                | ${0}    | ${"{\"a\":10,\"b\":\"string\",\"c\":null}"}
+  ${'json'}     | ${'stringify'}"      | ${[1]}                                            | ${1}    | ${"Argument 0 expected to be of type object, Got number"}
+  ${'json'}     | ${'parse'}"          | ${["{\"a\":10,\"b\":\"string\",\"c\":null}"]}     | ${0}    | ${{a: 10, b: "string", c: null}}
+  ${'json'}     | ${'parse'}"          | ${["incorrect"]}                                  | ${1}    | ${"Unexpected token i in JSON at position 0"}
+  ${'json'}     | ${'parse'}"          | ${[10]}                                           | ${1}    | ${"Argument 0 expected to be of type string, Got number"}
+
   `.test(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
