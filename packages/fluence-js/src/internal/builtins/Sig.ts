@@ -1,68 +1,10 @@
-import { SecurityTetraplet } from '@fluencelabs/avm';
 import { CallParams, PeerIdB58 } from '../commonTypes';
 import { KeyPair } from '@fluencelabs/keypair';
 import { SigDef } from '../_aqua/services';
-
-/**
- * A predicate of call params for sig service's sign method which determines whether signing operation is allowed or not
- */
-export type SigSecurityGuard = (params: CallParams<'data'>) => boolean;
-
-/**
- * Only allow calls when tetraplet for 'data' argument satisfies the predicate
- */
-export const allowTetraplet = (pred: (tetraplet: SecurityTetraplet) => boolean): SigSecurityGuard => {
-    return (params) => {
-        const t = params.tetraplets.data[0];
-        return pred(t);
-    };
-};
-
-/**
- * Only allow data which comes from the specified serviceId and fnName
- */
-export const allowServiceFn = (serviceId: string, fnName: string): SigSecurityGuard => {
-    return allowTetraplet((t) => {
-        return t.service_id === serviceId && t.function_name === fnName;
-    });
-};
-
-/**
- * Only allow data originated from the specified json_path
- */
-export const allowExactJsonPath = (jsonPath: string): SigSecurityGuard => {
-    return allowTetraplet((t) => {
-        return t.json_path === jsonPath;
-    });
-};
-
-/**
- * Only allow signing when particle is initiated at the specified peer
- */
-export const allowOnlyParticleOriginatedAt = (peerId: PeerIdB58): SigSecurityGuard => {
-    return (params) => {
-        return params.initPeerId === peerId;
-    };
-};
-
-/**
- * Only allow signing when all of the predicates are satisfied.
- * Useful for predicates reuse
- */
-export const and = (...predicates: SigSecurityGuard[]): SigSecurityGuard => {
-    return (params) => predicates.every((x) => x(params));
-};
-
-/**
- * Only allow signing when any of the predicates are satisfied.
- * Useful for predicates reuse
- */
-export const or = (...predicates: SigSecurityGuard[]): SigSecurityGuard => {
-    return (params) => predicates.some((x) => x(params));
-};
+import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard';
 
 export const defaultSigGuard = (peerId: PeerIdB58) => {
-    return and(
+    return and<'data'>(
         allowOnlyParticleOriginatedAt(peerId),
         or(
             allowServiceFn('trust-graph', 'get_trust_bytes'),
@@ -83,9 +25,9 @@ export class Sig implements SigDef {
     }
 
     /**
-     *
+     * Configurable security guard for sign method
      */
-    securityGuard: SigSecurityGuard = (params) => {
+    securityGuard: SecurityGuard<'data'> = (params) => {
         return true;
     };
 

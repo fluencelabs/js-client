@@ -2,8 +2,9 @@ import { CallParams, CallServiceData } from '../../internal/commonTypes';
 import each from 'jest-each';
 import { builtInServices } from '../../internal/builtins/common';
 import { KeyPair } from '@fluencelabs/keypair';
-import { Sig, defaultSigGuard, allowServiceFn } from '../../internal/builtins/Sig';
+import { Sig, defaultSigGuard } from '../../internal/builtins/Sig';
 import { toUint8Array } from 'js-base64';
+import { allowServiceFn } from '../../internal/builtins/securityGuard';
 
 const a10b20 = `{
     "a": 10,

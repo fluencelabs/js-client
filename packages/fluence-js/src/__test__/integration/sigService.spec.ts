@@ -1,5 +1,6 @@
+import { allowServiceFn } from '../../internal/builtins/securityGuard';
 import { Fluence, FluencePeer, KeyPair, setLogLevel } from '../../index';
-import { allowServiceFn, Sig } from '../../services';
+import { Sig } from '../../services';
 import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests';
 
 let peer: FluencePeer;

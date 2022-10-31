@@ -42,7 +42,8 @@ import Buffer from './Buffer';
 
 import { isBrowser, isNode } from 'browser-or-node';
 import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
-import { Srv } from './builtins/SingleModuleSrv';
+import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
+import { registerNodeUtils } from './_aqua/node-utils';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -466,6 +467,7 @@ export class FluencePeer {
         registerSig(this, peerId, this._classServices.sig);
 
         registerSrv(this, new Srv(this));
+        registerNodeUtils(this, new NodeUtils(this));
 
         this._startParticleProcessing();
     }

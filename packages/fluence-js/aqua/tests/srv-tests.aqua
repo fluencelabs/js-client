@@ -1,43 +1,40 @@
 module Export
 
 import Srv from "../src/single-module-srv.aqua"
+import NodeUtils from "../src/node-utils.aqua"
 export happy_path, list_services, file_not_found, service_removed, removing_non_exiting
 
 service Greeting("greeting"):
     greeting(name: string) -> string
 
 func happy_path(file_path: string) -> string:
-    wasm <- Srv.read_file(file_path)
-    id <- Srv.create(wasm)
-    Greeting id
+    file <- NodeUtils.read_file(file_path)
+    created_service <- Srv.create(file.content!)
+    Greeting created_service.service_id!
     <- Greeting.greeting("test")
 
 func list_services(file_path: string) -> []string:
-    wasm <- Srv.read_file(file_path)
-    Srv.create(wasm)
-    Srv.create(wasm)
-    Srv.create(wasm)
+    file <- NodeUtils.read_file(file_path)
+    Srv.create(file.content!)
+    Srv.create(file.content!)
+    Srv.create(file.content!)
     <- Srv.list()
 
 func file_not_found() -> string:
-    try:
-        wasm <- Srv.read_file("/random/incorrect/file")
-    catch e:
-        <- e.message
+    e <- NodeUtils.read_file("/random/incorrect/file")
+    <- e.error!
 
 func service_removed(file_path: string) -> string:
-    wasm <- Srv.read_file(file_path)
-    id <- Srv.create(wasm)
-    Greeting id
-    Srv.remove(id)
+    file <- NodeUtils.read_file(file_path)
+    created_service <- Srv.create(file.content!)
+    Greeting created_service.service_id!
+    Srv.remove(created_service.service_id!)
     try:
         dontcare <- Greeting.greeting("test")
     catch e: 
         <- e.message
 
 func removing_non_exiting() -> string:
-    try:
-        Srv.remove("random_id")
-    catch e: 
-        <- e.message
-    
+    e <- Srv.remove("random_id")
+    <- e.error!
+

@@ -1,0 +1,12 @@
+data ReadFileResult:
+    -- Was the call successful or not
+    success: bool
+    -- File content in base64 if the call was successful
+    content: ?string
+    --  Error message if the call was unsuccessful
+    error: ?string
+
+service NodeUtils("node_utils"):
+    -- Read file from file system.
+    --   returns file content in base64 format
+    read_file(path: string) -> ReadFileResult

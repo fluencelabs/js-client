@@ -6,106 +6,129 @@
  * Aqua version: 0.7.5-342
  *
  */
-import { Fluence, FluencePeer } from '../../index';
-import { CallParams, callFunction, registerService } from '../../internal/compilerSupport/v3';
+ import { Fluence, FluencePeer } from '../../index';
+ import { CallParams, callFunction, registerService } from '../../internal/compilerSupport/v3';
+
 
 // Services
 
 export interface SrvDef {
-    create: (wasm_b64_content: string, callParams: CallParams<'wasm_b64_content'>) => string | Promise<string>;
+    create: (wasm_b64_content: string, callParams: CallParams<'wasm_b64_content'>) => { error: string | null; service_id: string | null; success: boolean; } | Promise<{ error: string | null; service_id: string | null; success: boolean; }>;
     list: (callParams: CallParams<null>) => string[] | Promise<string[]>;
-    read_file: (path: string, callParams: CallParams<'path'>) => string | Promise<string>;
-    remove: (service_id: string, callParams: CallParams<'service_id'>) => void | Promise<void>;
+    remove: (service_id: string, callParams: CallParams<'service_id'>) => { error: string | null; success: boolean; } | Promise<{ error: string | null; success: boolean; }>;
 }
 export function registerSrv(service: SrvDef): void;
 export function registerSrv(serviceId: string, service: SrvDef): void;
 export function registerSrv(peer: FluencePeer, service: SrvDef): void;
 export function registerSrv(peer: FluencePeer, serviceId: string, service: SrvDef): void;
+       
 
 export function registerSrv(...args: any) {
-    registerService(args, {
-        defaultServiceId: 'single_module_srv',
-        functions: {
-            tag: 'labeledProduct',
-            fields: {
-                create: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            wasm_b64_content: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        ],
-                    },
+    registerService(
+        args,
+        {
+    "defaultServiceId" : "single_module_srv",
+    "functions" : {
+        "tag" : "labeledProduct",
+        "fields" : {
+            "create" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "labeledProduct",
+                    "fields" : {
+                        "wasm_b64_content" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
                 },
-                list: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'nil',
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'array',
-                                type: {
-                                    tag: 'scalar',
-                                    name: 'string',
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "struct",
+                            "name" : "ServiceCreationResult",
+                            "fields" : {
+                                "error" : {
+                                    "tag" : "option",
+                                    "type" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    }
                                 },
-                            },
-                        ],
-                    },
-                },
-                read_file: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            path: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        ],
-                    },
-                },
-                remove: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            service_id: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        },
-                    },
-                    codomain: {
-                        tag: 'nil',
-                    },
-                },
+                                "service_id" : {
+                                    "tag" : "option",
+                                    "type" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    }
+                                },
+                                "success" : {
+                                    "tag" : "scalar",
+                                    "name" : "bool"
+                                }
+                            }
+                        }
+                    ]
+                }
             },
-        },
-    });
+            "list" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "nil"
+                },
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "array",
+                            "type" : {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            }
+                        }
+                    ]
+                }
+            },
+            "remove" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "labeledProduct",
+                    "fields" : {
+                        "service_id" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                },
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "struct",
+                            "name" : "RemoveResult",
+                            "fields" : {
+                                "error" : {
+                                    "tag" : "option",
+                                    "type" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    }
+                                },
+                                "success" : {
+                                    "tag" : "scalar",
+                                    "name" : "bool"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
 }
-
+    );
+}
+      
 // Functions
+
