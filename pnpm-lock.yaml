@@ -57,7 +57,7 @@ importers:
   packages/fluence-js:
     specifiers:
       '@fluencelabs/aqua': 0.7.7-362
-      '@fluencelabs/aqua-lib': ^0.5.1
+      '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/connection': workspace:0.2.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
@@ -109,7 +109,7 @@ importers:
       uuid: 8.3.2
     devDependencies:
       '@fluencelabs/aqua': 0.7.7-362_xzerzk4w2bpfgrtdtvycakab5a
-      '@fluencelabs/aqua-lib': 0.5.2
+      '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/jest': 27.5.2
@@ -469,6 +469,10 @@ packages:
 
   /@fluencelabs/aqua-lib/0.5.2:
     resolution: {integrity: sha512-fmoFFE8myhLH9d+YR0+0ZPL2YIQyR6M1woAGu5d1xXI02Sjzn4id6dE4PpxHb8cSBPRie8AwsKobHCNqGxI8oA==}
+    dev: true
+
+  /@fluencelabs/aqua-lib/0.6.0:
+    resolution: {integrity: sha512-ifjtCM93KO3LhzPkMxqmXhwLmrg/scjOiyTihEVg7ns5N+BVzaK1eWzdOdqGdl9ZVoah43pdlQUepEo7VdRmsw==}
     dev: true
 
   /@fluencelabs/aqua/0.7.7-362_xzerzk4w2bpfgrtdtvycakab5a:
@@ -2884,7 +2888,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 18.7.11
+      '@types/node': 18.7.14
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.10
