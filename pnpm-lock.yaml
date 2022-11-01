@@ -56,7 +56,7 @@ importers:
 
   packages/fluence-js:
     specifiers:
-      '@fluencelabs/aqua': 0.7.7-361
+      '@fluencelabs/aqua': 0.7.7-362
       '@fluencelabs/aqua-lib': ^0.5.1
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/connection': workspace:0.2.0
@@ -108,7 +108,7 @@ importers:
       ts-pattern: 3.3.3
       uuid: 8.3.2
     devDependencies:
-      '@fluencelabs/aqua': 0.7.7-361_xzerzk4w2bpfgrtdtvycakab5a
+      '@fluencelabs/aqua': 0.7.7-362_xzerzk4w2bpfgrtdtvycakab5a
       '@fluencelabs/aqua-lib': 0.5.2
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
@@ -471,8 +471,8 @@ packages:
     resolution: {integrity: sha512-fmoFFE8myhLH9d+YR0+0ZPL2YIQyR6M1woAGu5d1xXI02Sjzn4id6dE4PpxHb8cSBPRie8AwsKobHCNqGxI8oA==}
     dev: true
 
-  /@fluencelabs/aqua/0.7.7-361_xzerzk4w2bpfgrtdtvycakab5a:
-    resolution: {integrity: sha512-pgxw/YfSSc39sKL5lH+Z2AO7AFxQW5FMwWmbv48oB1lXemluRXm82UfvgqDgjNzygkYl4cY85EPSgZ/llFnQQQ==}
+  /@fluencelabs/aqua/0.7.7-362_xzerzk4w2bpfgrtdtvycakab5a:
+    resolution: {integrity: sha512-CwvBc3wKQdvnDM4Zxj6yFE5MR2oeh+EZ++m2hLvENt7OWl3cnZVR4cJQkRxMMLVT0MxRwLiy97UIBwGsPqlSCA==}
     hasBin: true
     dependencies:
       '@fluencelabs/aqua-ipfs': 0.5.5
