@@ -57,13 +57,13 @@ importers:
   packages/fluence-js:
     specifiers:
       '@fluencelabs/aqua': 0.7.7-362
-      '@fluencelabs/aqua-lib': ^0.5.1
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/aqua-lib': 0.6.0
+      '@fluencelabs/avm': 0.31.11
       '@fluencelabs/connection': workspace:0.2.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/interfaces': workspace:0.1.0
       '@fluencelabs/keypair': workspace:0.2.0
-      '@fluencelabs/marine-js': 0.3.18
+      '@fluencelabs/marine-js': 0.3.27
       '@types/bs58': ^4.0.1
       '@types/jest': ^27.5.1
       '@types/platform': ^1.3.4
@@ -89,11 +89,11 @@ importers:
       typescript: ^4.6.4
       uuid: 8.3.2
     dependencies:
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/avm': 0.31.11
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
-      '@fluencelabs/marine-js': 0.3.18_rl5xm3oiydas7snsul2pa47p2m
+      '@fluencelabs/marine-js': 0.3.27_rl5xm3oiydas7snsul2pa47p2m
       async: 3.2.3
       base64-js: 1.5.1
       browser-or-node: 2.0.0
@@ -109,7 +109,7 @@ importers:
       uuid: 8.3.2
     devDependencies:
       '@fluencelabs/aqua': 0.7.7-362_xzerzk4w2bpfgrtdtvycakab5a
-      '@fluencelabs/aqua-lib': 0.5.2
+      '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/jest': 27.5.2
@@ -471,6 +471,10 @@ packages:
     resolution: {integrity: sha512-fmoFFE8myhLH9d+YR0+0ZPL2YIQyR6M1woAGu5d1xXI02Sjzn4id6dE4PpxHb8cSBPRie8AwsKobHCNqGxI8oA==}
     dev: true
 
+  /@fluencelabs/aqua-lib/0.6.0:
+    resolution: {integrity: sha512-ifjtCM93KO3LhzPkMxqmXhwLmrg/scjOiyTihEVg7ns5N+BVzaK1eWzdOdqGdl9ZVoah43pdlQUepEo7VdRmsw==}
+    dev: true
+
   /@fluencelabs/aqua/0.7.7-362_xzerzk4w2bpfgrtdtvycakab5a:
     resolution: {integrity: sha512-CwvBc3wKQdvnDM4Zxj6yFE5MR2oeh+EZ++m2hLvENt7OWl3cnZVR4cJQkRxMMLVT0MxRwLiy97UIBwGsPqlSCA==}
     hasBin: true
@@ -493,8 +497,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@fluencelabs/avm/0.31.10:
-    resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
+  /@fluencelabs/avm/0.31.11:
+    resolution: {integrity: sha512-Mx9cpX0WWUVE9jSD1jPzFb/4qHYqWnOL8MFNBqjWus+48eKV/mam4vgEuUsFNG0KXHeJ6xwdwNQvbtMU47vU7A==}
     dev: false
 
   /@fluencelabs/avm/0.31.4:
@@ -596,6 +600,26 @@ packages:
       - jest
       - supports-color
       - typescript
+    dev: true
+
+  /@fluencelabs/marine-js/0.3.27_rl5xm3oiydas7snsul2pa47p2m:
+    resolution: {integrity: sha512-2sX9e1zotmiuJubLY5cfp7CBkhhf9V4+RQlrNgeR/SRUu4U2wm3nO0onpXp5rvz7dp+Ccget7YUnPzOscwfY9w==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+      threads: 1.7.0
+      ts-jest: 27.1.5_rl5xm3oiydas7snsul2pa47p2m
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - esbuild
+      - jest
+      - supports-color
+      - typescript
+    dev: false
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
@@ -2884,7 +2908,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 18.7.11
+      '@types/node': 18.7.14
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.10
