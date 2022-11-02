@@ -15,10 +15,10 @@ export class Srv implements SrvDef {
 
     constructor(private peer: FluencePeer) {}
 
-    createSecurityGuard: SecurityGuard<'wasm_b64_content'> = defaultGuard(this.peer);
+    securityGuard_create: SecurityGuard<'wasm_b64_content'> = defaultGuard(this.peer);
 
     async create(wasm_b64_content: string, callParams: CallParams<'wasm_b64_content'>) {
-        if (!this.createSecurityGuard(callParams)) {
+        if (!this.securityGuard_create(callParams)) {
             return {
                 success: false,
                 error: 'Security guard validation failed',
@@ -49,10 +49,10 @@ export class Srv implements SrvDef {
         }
     }
 
-    removeSecurityGuard: SecurityGuard<'service_id'> = defaultGuard(this.peer);
+    securityGuard_remove: SecurityGuard<'service_id'> = defaultGuard(this.peer);
 
     remove(service_id: string, callParams: CallParams<'service_id'>) {
-        if (!this.removeSecurityGuard(callParams)) {
+        if (!this.securityGuard_remove(callParams)) {
             return {
                 success: false,
                 error: 'Security guard validation failed',
@@ -84,7 +84,7 @@ export class Srv implements SrvDef {
 export class NodeUtils implements NodeUtilsDef {
     constructor(private peer: FluencePeer) {}
 
-    readFileSecurityGuard: SecurityGuard<'path'> = defaultGuard(this.peer);
+    securityGuard_readFile: SecurityGuard<'path'> = defaultGuard(this.peer);
 
     async read_file(path: string, callParams: CallParams<'path'>) {
         if (!isNode) {
@@ -95,7 +95,7 @@ export class NodeUtils implements NodeUtilsDef {
             };
         }
 
-        if (!this.readFileSecurityGuard(callParams)) {
+        if (!this.securityGuard_readFile(callParams)) {
             return {
                 success: false,
                 error: 'Security guard validation failed',

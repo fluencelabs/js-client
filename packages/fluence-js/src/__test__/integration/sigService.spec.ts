@@ -1,5 +1,5 @@
 import { allowServiceFn } from '../../internal/builtins/securityGuard';
-import { Fluence, FluencePeer, KeyPair, setLogLevel } from '../../index';
+import { FluencePeer, KeyPair } from '../../index';
 import { Sig } from '../../services';
 import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests';
 
