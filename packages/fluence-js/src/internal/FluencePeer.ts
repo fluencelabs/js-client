@@ -23,16 +23,27 @@ import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { throwIfNotSupported, dataToString, jsonify, MarineLoglevel, marineLogLevelToEnvs, isString } from './utils';
+import {
+    throwIfNotSupported,
+    dataToString,
+    jsonify,
+    MarineLoglevel,
+    marineLogLevelToEnvs,
+    isString,
+    ServiceError,
+} from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
+import { registerSrv } from './_aqua/single-module-srv';
 import Buffer from './Buffer';
 
 import { isBrowser, isNode } from 'browser-or-node';
 import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
+import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
+import { registerNodeUtils } from './_aqua/node-utils';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -450,10 +461,14 @@ export class FluencePeer {
 
         this._classServices = {
             sig: new Sig(this._keyPair),
+            srv: new Srv(this),
         };
         this._classServices.sig.securityGuard = defaultSigGuard(peerId);
         registerSig(this, this._classServices.sig);
         registerSig(this, peerId, this._classServices.sig);
+
+        registerSrv(this, this._classServices.srv);
+        registerNodeUtils(this, new NodeUtils(this));
 
         this._startParticleProcessing();
     }
@@ -497,6 +512,7 @@ export class FluencePeer {
 
     private _classServices?: {
         sig: Sig;
+        srv: Srv;
     };
 
     private _containsService(serviceId: string): boolean {
@@ -684,14 +700,21 @@ export class FluencePeer {
                         };
 
                         this._execSingleCallRequest(req)
-                            .catch(
-                                (err): CallServiceResult => ({
+                            .catch((err): CallServiceResult => {
+                                if (err instanceof ServiceError) {
+                                    return {
+                                        retCode: ResultCodes.error,
+                                        result: err.message,
+                                    };
+                                }
+
+                                return {
                                     retCode: ResultCodes.error,
                                     result: `Handler failed. fnName="${req.fnName}" serviceId="${
                                         req.serviceId
                                     }" error: ${err.toString()}`,
-                                }),
-                            )
+                                };
+                            })
                             .then((res) => {
                                 const serviceResult = {
                                     result: jsonify(res.result),

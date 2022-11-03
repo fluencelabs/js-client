@@ -177,3 +177,11 @@ export const marineLogLevelToEnvs = (marineLogLevel: MarineLoglevel | undefined)
 export const isString = (x: unknown): x is string => {
     return x !== null && typeof x === 'string';
 };
+
+export class ServiceError extends Error {
+    constructor(message: string) {
+        super(message);
+
+        Object.setPrototypeOf(this, ServiceError.prototype);
+    }
+}

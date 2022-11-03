@@ -36,6 +36,6 @@ export {
     StructType as StructType$$,
     TopType as TopType$$,
     UnlabeledProductType as UnlabeledProductType$$,
-} from './v3impl/interface';
-export { callFunction as callFunction$$ } from './v3impl/callFunction';
-export { registerService as registerService$$ } from './v3impl/registerService';
+    callFunction as callFunction$$,
+    registerService as registerService$$,
+} from './v3';
