@@ -63,7 +63,7 @@ importers:
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/interfaces': workspace:0.1.0
       '@fluencelabs/keypair': workspace:0.2.0
-      '@fluencelabs/marine-js': 0.3.28
+      '@fluencelabs/marine-js': 0.3.29
       '@types/bs58': ^4.0.1
       '@types/jest': ^27.5.1
       '@types/platform': ^1.3.4
@@ -93,7 +93,7 @@ importers:
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
-      '@fluencelabs/marine-js': 0.3.28_rl5xm3oiydas7snsul2pa47p2m
+      '@fluencelabs/marine-js': 0.3.29_rl5xm3oiydas7snsul2pa47p2m
       async: 3.2.3
       base64-js: 1.5.1
       browser-or-node: 2.0.0
@@ -602,8 +602,8 @@ packages:
       - typescript
     dev: true
 
-  /@fluencelabs/marine-js/0.3.28_rl5xm3oiydas7snsul2pa47p2m:
-    resolution: {integrity: sha512-pf8rvdtZ5lSJ57L8Nl1K3dqyUkPpgwhfhDB91jt82fPoQnwm51EAYlU5m4Uo+7DJvquBBfmWklJ2tEq+HSuCxw==}
+  /@fluencelabs/marine-js/0.3.29_rl5xm3oiydas7snsul2pa47p2m:
+    resolution: {integrity: sha512-0FAoheUCTyS6OVOdnDVi+cp6cFBIjfXWcIPGY6Vd5LYNCMHAtqnuNzZT0XfyeYzo3YnXVsCPrl+J6OcezIwaew==}
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
