@@ -85,19 +85,13 @@ jobs:
 
       - name: Set avm version
         if: inputs.avm-version != ''
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/fluence-js
+        working-directory: packages/fluence-js
+        run: pnpm i --save -E @fluencelabs/avm@${{ inputs.avm-version }}
 
       - name: Set marine-js version
         if: inputs.marine-js-version != ''
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/marine-js"
-          version: ${{ inputs.marine-js-version }}
-          working-directory: packages/fluence-js
+        working-directory: packages/fluence-js
+        run: pnpm i --save -E @fluencelabs/marine-js@${{ inputs.marine-js-version }}
 
       - run: pnpm -r build
       - run: pnpm -r test
