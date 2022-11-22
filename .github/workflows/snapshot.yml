@@ -71,11 +71,22 @@ jobs:
         id: version
         uses: fluencelabs/github-actions/generate-snapshot-id@main
 
+      - name: Set package version
+        id: snapshot
+        run: |
+          node ci.js bump-version ${{ steps.version.outputs.id }}
+          echo "version=$(node ci.js get-version)" >> $GITHUB_OUTPUT
+
       - run: pnpm -r build
 
-      - name: Publish snapshot
-        id: snapshot
+      - name: Publish to self-hosted npm repo
+        run: |
+          # Publish to self-hosted npm repo
+          pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag snapshot -filter '@fluencelabs/*'
+
+      - name: Print info to check summary
         uses: fluencelabs/github-actions/npm-publish-snapshot@main
         with:
           working-directory: packages/fluence-js
           id: ${{ steps.version.outputs.id }}
+          publish: false
