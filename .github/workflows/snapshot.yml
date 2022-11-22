@@ -6,6 +6,9 @@ on:
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
+      marine-js-version:
+        description: "@fluencelabs/marine-js version"
+        type: string
     outputs:
       fluence-js-version:
         description: "@fluencelabs/fluence version"
@@ -48,11 +51,13 @@ jobs:
 
       - name: Set avm version
         if: inputs.avm-version != ''
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/fluence-js
+        working-directory: packages/fluence-js
+        run: pnpm i --save -E @fluencelabs/avm@${{ inputs.avm-version }}
+
+      - name: Set marine-js version
+        if: inputs.marine-js-version != ''
+        working-directory: packages/fluence-js
+        run: pnpm i --save -E @fluencelabs/marine-js@${{ inputs.marine-js-version }}
 
       - name: Import secrets
         uses: hashicorp/vault-action@v2.4.3
