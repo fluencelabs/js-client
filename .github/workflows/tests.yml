@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Import secrets
-        uses: hashicorp/vault-action@v2.4.1
+        uses: hashicorp/vault-action@v2.4.3
         with:
           url: https://vault.fluence.dev
           path: jwt/github
@@ -57,22 +57,17 @@ jobs:
         with:
           repository: fluencelabs/fluence-js
 
-      - name: Setup docker-compose
-        uses: KengoTODA/actions-setup-docker-compose@v1.0.9
-        with:
-          version: 'v2.10.0'
-
       - name: Pull rust-peer image
         run: docker pull $RUST_PEER_IMAGE
 
       - name: Run rust-peer
-        uses: isbang/compose-action@v1.1.0
+        uses: isbang/compose-action@v1.4.1
         with:
           compose-file: ".github/e2e/docker-compose.yml"
           down-flags: "--volumes"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.2
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
 
@@ -85,10 +80,13 @@ jobs:
 
       - run: pnpm i
 
-      - name: Set avm version from branch
+      - name: Set avm version
         if: inputs.avm-version != ''
-        working-directory: packages/fluence-js
-        run: pnpm add --save -E @fluencelabs/avm@${{ inputs.avm-version }}
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/fluence-js
 
       - run: pnpm -r build
       - run: pnpm -r test
