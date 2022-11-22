@@ -1,40 +1,43 @@
-name: Run tests
+name: "e2e"
 
 on:
   pull_request:
     paths-ignore:
       - "**.md"
+  push:
+    branches:
+      - "master"
 
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
 
 jobs:
-  fluence-js:
+  tests:
     uses: ./.github/workflows/tests.yml
 
-  snapshot:
+  fluence-js:
     name: "fluence-js"
     uses: ./.github/workflows/snapshot.yml
 
   aqua-snapshot:
     name: "aqua"
     needs:
-      - snapshot
+      - fluence-js
 
     uses: fluencelabs/aqua/.github/workflows/snapshot.yml@main
     with:
-      fluence-js-version: "=${{ needs.snapshot.outputs.fluence-js-version }}"
+      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
 
   aqua-playground:
     needs:
-      - snapshot
+      - fluence-js
       - aqua-snapshot
 
     uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
-      fluence-js-version: "=${{ needs.snapshot.outputs.fluence-js-version }}"
-      aqua-version: "=${{ needs.aqua-snapshot.outputs.aqua-version }}"
+      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
+      aqua-version: "${{ needs.aqua-snapshot.outputs.aqua-version }}"
 
   registry:
     needs:
@@ -42,4 +45,4 @@ jobs:
 
     uses: fluencelabs/registry/.github/workflows/tests.yml@main
     with:
-      aqua-version: "=${{ needs.aqua-snapshot.outputs.aqua-version }}"
+      aqua-version: "${{ needs.aqua-snapshot.outputs.aqua-version }}"

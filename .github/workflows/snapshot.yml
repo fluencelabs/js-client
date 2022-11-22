@@ -47,15 +47,16 @@ jobs:
 
       - run: pnpm i
 
-      - name: Set avm version from branch
+      - name: Set avm version
         if: inputs.avm-version != ''
-        working-directory: packages/fluence-js
-        run: pnpm add --save -E @fluencelabs/avm@${{ inputs.avm-version }}
-
-      - run: pnpm -r build
+        uses: fluencelabs/github-actions/npm-set-dependency@FLU-118-add-npm-set-dependency
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/fluence-js
 
       - name: Import secrets
-        uses: hashicorp/vault-action@v2.4.2
+        uses: hashicorp/vault-action@v2.4.3
         with:
           url: https://vault.fluence.dev
           path: jwt/github
@@ -67,35 +68,15 @@ jobs:
           secrets: |
             kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
-      - name: Generate package version
+      - name: Generate snapshot version
         id: version
-        run: |
-          SHA=${{ github.event.pull_request.head.sha }}
-          echo "sha=${SHA::7}" >> $GITHUB_OUTPUT
-          echo "branch=${GITHUB_HEAD_REF//[^a-zA-Z0-9-]/-}" >> $GITHUB_OUTPUT
+        uses: fluencelabs/github-actions/generate-snapshot-id@main
 
-      - name: Set package version
-        id: build
-        env:
-          BRANCH: ${{ steps.version.outputs.branch }}
-          SHA: ${{ steps.version.outputs.sha }}
-          RUN: ${{ github.run_number }}
-          ATTEMPT: ${{ github.run_attempt }}
-        run: |
-          node ci.js bump-version ${{ env.BRANCH }}-${{ env.SHA }}-${{ env.RUN }}-${{ env.ATTEMPT }}
-          echo "version=$(node ci.js get-version)" >> $GITHUB_OUTPUT
+      - run: pnpm -r build
 
-      - name: Publish to self-hosted npm repo
-        run: pnpm --no-git-checks --registry https://npm.fluence.dev -r publish --tag e2e -filter '@fluencelabs/*'
-
-      - name: Print versions to check summary
-        env:
-          VERSION: ${{ steps.build.outputs.version }}
-        run: |
-          cat <<'SNAPSHOT' >> $GITHUB_STEP_SUMMARY
-          ## FluenceJS version is [${{ env.VERSION }}](https://npm.fluence.dev/-/web/detail/@fluencelabs/fluence/v/${{ env.VERSION }})
-          To use it run:
-          ```shell
-          npm i -E @fluencelabs/fluence@${{ env.VERSION }} --registry=https://npm.fluence.dev
-          ```
-          SNAPSHOT
+      - name: Publish snapshot
+        id: snapshot
+        uses: fluencelabs/github-actions/npm-publish-snapshot@main
+        with:
+          working-directory: packages/fluence-js
+          id: ${{ steps.version.outputs.id }}
