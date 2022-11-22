@@ -82,7 +82,7 @@ jobs:
 
       - name: Set avm version
         if: inputs.avm-version != ''
-        uses: fluencelabs/github-actions/npm-set-dependency@FLU-118-add-npm-set-dependency
+        uses: fluencelabs/github-actions/npm-set-dependency@main
         with:
           package: "@fluencelabs/avm"
           version: ${{ inputs.avm-version }}
