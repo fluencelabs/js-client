@@ -10,6 +10,9 @@ on:
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
+      marine-js-version:
+        description: "@fluencelabs/marine-js version"
+        type: string
 
 env:
   RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
