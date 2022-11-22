@@ -61,13 +61,13 @@ jobs:
         run: docker pull $RUST_PEER_IMAGE
 
       - name: Run rust-peer
-        uses: isbang/compose-action@v1.1.0
+        uses: isbang/compose-action@v1.4.1
         with:
           compose-file: ".github/e2e/docker-compose.yml"
           down-flags: "--volumes"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.2
+        uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
 
