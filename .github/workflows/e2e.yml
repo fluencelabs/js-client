@@ -17,11 +17,9 @@ jobs:
     uses: ./.github/workflows/tests.yml
 
   fluence-js:
-    name: "fluence-js"
     uses: ./.github/workflows/snapshot.yml
 
-  aqua-snapshot:
-    name: "aqua"
+  aqua:
     needs:
       - fluence-js
 
