@@ -96,4 +96,4 @@ jobs:
           working-directory: packages/fluence-js
           id: ${{ steps.version.outputs.id }}
           package-manager: pnpm
-          flags: "-r --registry https://npm.fluence.dev --no-git-checks --tag snapsot -filter '@fluencelabs/*"
+          flags: "-r --registry https://npm.fluence.dev --no-git-checks --tag snapsot -filter '@fluencelabs/*'"
