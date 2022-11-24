@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      fluence-js-version: "${{ steps.snapshot.outputs.version }}"
+      fluence-js-version: "v${{ steps.snapshot.outputs.version }}"
 
     permissions:
       contents: read
