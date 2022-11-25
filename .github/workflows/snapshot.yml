@@ -55,7 +55,7 @@ jobs:
         with:
           package: "@fluencelabs/avm"
           version: ${{ inputs.avm-version }}
-          working-directory: packages/fluence-js
+          # working-directory: packages/fluence-js
           package-manager: pnpm
 
       - name: Set marine-js version
@@ -64,7 +64,7 @@ jobs:
         with:
           package: "@fluencelabs/marine-js"
           version: ${{ inputs.marine-js-version }}
-          working-directory: packages/fluence-js
+          # working-directory: packages/fluence-js
           package-manager: pnpm
 
       - name: Import secrets
