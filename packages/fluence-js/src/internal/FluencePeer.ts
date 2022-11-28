@@ -18,7 +18,9 @@ import 'buffer';
 import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import { FluenceAppService, loadDefaults, loadWasmFromFileSystem, loadWasmFromServer } from '@fluencelabs/marine-js';
+import { loadDefaults } from '@fluencelabs/marine-js-deps-loader';
+import { IFluenceAppService } from '@fluencelabs/marine-js';
+import { MarineJsBgRunner } from '@fluencelabs/marine-js-bg';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
@@ -44,6 +46,7 @@ import { isBrowser, isNode } from 'browser-or-node';
 import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
 import { registerNodeUtils } from './_aqua/node-utils';
+import { LogFunction } from '@fluencelabs/marine-js';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -445,17 +448,16 @@ export class FluencePeer {
             this._marineLogLevel = config.debug.marineLogLevel;
         }
 
-        this._fluenceAppService = new FluenceAppService(config?.marineJS?.workerScriptPath);
-        const marineDeps = config?.marineJS
-            ? await loadMarineAndAvm(config.marineJS.marineWasmPath, config.marineJS.avmWasmPath)
-            : await loadDefaults();
-        await this._fluenceAppService.init(marineDeps.marine);
-        await this._fluenceAppService.createService(
-            marineDeps.avm,
-            'avm',
-            undefined,
-            marineLogLevelToEnvs(this._marineLogLevel),
-        );
+        const { avm, marine, worker } = await loadDefaults({
+            avmPath: config?.marineJS?.avmWasmPath,
+            marinePath: config?.marineJS?.marineWasmPath,
+            workerScript: config?.marineJS?.workerScriptPath,
+        });
+
+        this._fluenceAppService = new MarineJsBgRunner(worker, logFunction);
+
+        await this._fluenceAppService.init(marine);
+        await this._fluenceAppService.createService(avm, 'avm', undefined, marineLogLevelToEnvs(this._marineLogLevel));
 
         registerDefaultServices(this);
 
@@ -525,7 +527,7 @@ export class FluencePeer {
     private _defaultTTL: number = DEFAULT_TTL;
     private _keyPair: KeyPair | undefined;
     private _connection?: FluenceConnection;
-    private _fluenceAppService?: FluenceAppService;
+    private _fluenceAppService?: IFluenceAppService;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
@@ -850,34 +852,6 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
     );
 }
 
-async function loadMarineAndAvm(
-    marinePath: string,
-    avmPath: string,
-): Promise<{
-    marine: SharedArrayBuffer | Buffer;
-    avm: SharedArrayBuffer | Buffer;
-}> {
-    let promises: [Promise<SharedArrayBuffer | Buffer>, Promise<SharedArrayBuffer | Buffer>];
-    // check if we are running inside the browser and instantiate worker with the corresponding script
-    if (isBrowser) {
-        promises = [
-            // force new line
-            loadWasmFromServer(marinePath),
-            loadWasmFromServer(avmPath),
-        ];
-    } else if (isNode) {
-        promises = [
-            // force new line
-            loadWasmFromFileSystem(marinePath),
-            loadWasmFromFileSystem(avmPath),
-        ];
-    } else {
-        throw new Error('Unknown environment');
-    }
-
-    const [marine, avm] = await Promise.all(promises);
-    return {
-        marine,
-        avm,
-    };
-}
+const logFunction: LogFunction = (message) => {
+    console.log(message);
+};

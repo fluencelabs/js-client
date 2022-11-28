@@ -23,7 +23,7 @@ export { PeerStatus } from './internal/FluencePeer';
 export { FluencePeer, PeerConfig } from './internal/FluencePeer';
 export { MarineLoglevel as AvmLoglevel } from './internal/utils';
 export { PeerIdB58, CallParams } from './internal/commonTypes';
-export { loadWasmFromFileSystem, loadWasmFromNpmPackage, loadWasmFromServer } from '@fluencelabs/marine-js';
+export { loadWasmFromFileSystem, loadWasmFromNpmPackage, loadWasmFromServer } from '@fluencelabs/marine-js-deps-loader';
 
 export const setLogLevel = (level: LogLevelDesc) => {
     log.setLevel(level);

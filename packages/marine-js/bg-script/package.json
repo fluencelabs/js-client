@@ -1,0 +1,30 @@
+{
+    "version": "0.1.0",
+    "name": "@fluencelabs/marine-js-bg-script",
+    "description": "MarineJS background script",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "npm run build:tsc && npm run build:web && npm run build:node",
+        "build:tsc": "tsc",
+        "build:web": "webpack -c webpack.config.web.js",
+        "build:node": "webpack -c webpack.config.node.js"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.2",
+        "threads": "^1.7.0"
+    },
+    "devDependencies": {
+        "typescript": "^4.6.4",
+        "ts-loader": "8.4.0",
+        "webpack": "4.46.0",
+        "webpack-cli": "4.10.0"
+    }
+}

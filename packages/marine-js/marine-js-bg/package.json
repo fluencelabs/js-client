@@ -1,7 +1,7 @@
 {
-    "name": "@test/smoke",
+    "name": "@fluencelabs/marine-js-bg",
     "version": "0.1.0",
-    "description": "Smoke test",
+    "description": "MarineJS background runner",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
@@ -9,18 +9,18 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc",
-        "test": "ts-node src/index.ts"
+        "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/fluence": "workspace:*",
-        "ts-node": "^10.9.1"
+        "threads": "^1.7.0"
     },
     "devDependencies": {
-        "@types/node": "16.11.59",
-        "typescript": "^4.6.4"
+        "@fluencelabs/marine-js-bg-script": "workspace:0.1.0",
+        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.2",
+        "typescript": "^4.6.4",
+        "@types/node": "16.11.59"
     }
 }

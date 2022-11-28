@@ -1,7 +1,7 @@
 {
-    "name": "@test/smoke",
+    "name": "@fluencelabs/marine-js-deps-loader",
     "version": "0.1.0",
-    "description": "Smoke test",
+    "description": "MarineJS runner for web",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
@@ -9,18 +9,17 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc",
-        "test": "ts-node src/index.ts"
+        "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/fluence": "workspace:*",
-        "ts-node": "^10.9.1"
+        "buffer": "^6.0.3",
+        "browser-or-node": "^2.0.0"
     },
     "devDependencies": {
-        "@types/node": "16.11.59",
-        "typescript": "^4.6.4"
+        "typescript": "^4.6.4",
+        "threads": "^1.7.0"
     }
 }
