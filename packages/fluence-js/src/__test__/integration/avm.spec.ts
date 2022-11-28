@@ -85,7 +85,10 @@ describe('Avm spec', () => {
                             (call %init_peer_id% ("peer" "timeout") [1000 arg] $result)
                             (call %init_peer_id% ("op" "identity") ["fast_result"] $result)
                         )
-                        (call %init_peer_id% ("return" "return") [$result.$[0]]) 
+                        (seq
+                            (canon %init_peer_id% $result #result)
+                            (call %init_peer_id% ("return" "return") [#result.$[0]]) 
+                        )
                     )
                 )
             `;
@@ -127,7 +130,10 @@ describe('Avm spec', () => {
                                 (ap "impossible happened" $result)
                             )
                         )
-                        (call %init_peer_id% ("return" "return") [$result.$[0]]) 
+                        (seq
+                            (canon %init_peer_id% $result #result)
+                            (call %init_peer_id% ("return" "return") [#result.$[0]]) 
+                        )
                     )
                 )
             `;
