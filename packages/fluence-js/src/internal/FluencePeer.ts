@@ -590,8 +590,7 @@ export class FluencePeer {
         );
 
         this._particleQueues.delete(particleId);
-        // just try not to removing handlers :))
-        // this._particleSpecificHandlers.delete(particleId);
+        this._particleSpecificHandlers.delete(particleId);
 
         item.onStageChange({ stage: 'expired' });
     }
