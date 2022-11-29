@@ -690,11 +690,6 @@ export class FluencePeer {
                 // execute call requests if needed
                 // and put particle with the results back to queue
                 if (item.result.callRequests.length > 0) {
-                    if (item.particle.hasExpired()) {
-                        // just in case do not call any services if the particle is already expired
-                        return;
-                    }
-
                     for (const [key, cr] of item.result.callRequests) {
                         const req = {
                             fnName: cr.functionName,
@@ -704,6 +699,10 @@ export class FluencePeer {
                             particleContext: item.particle.getParticleContext(),
                         };
 
+                        if (item.particle.hasExpired()) {
+                            // just in case do not call any services if the particle is already expired
+                            return;
+                        }
                         this._execSingleCallRequest(req)
                             .catch((err): CallServiceResult => {
                                 if (err instanceof ServiceError) {
