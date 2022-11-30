@@ -16,24 +16,15 @@
 import 'buffer';
 
 import { RelayConnection } from '@fluencelabs/connection';
-import { FluenceConnection } from '@fluencelabs/interfaces';
+import { FluenceConnection, IMarine } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import { loadDefaults } from '@fluencelabs/marine-js-deps-loader';
-import { IFluenceAppService } from '@fluencelabs/marine-js';
-import { MarineJsBgRunner } from '@fluencelabs/marine-js-bg';
+import { loadDefaults } from '@fluencelabs/marine-deps-loader';
+import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import {
-    throwIfNotSupported,
-    dataToString,
-    jsonify,
-    MarineLoglevel,
-    marineLogLevelToEnvs,
-    isString,
-    ServiceError,
-} from './utils';
+import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './utils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
@@ -42,11 +33,10 @@ import { registerSig } from './_aqua/services';
 import { registerSrv } from './_aqua/single-module-srv';
 import Buffer from './Buffer';
 
-import { isBrowser, isNode } from 'browser-or-node';
-import { deserializeAvmResult, InterpreterResult, JSONValue, LogLevel, serializeAvmArgs } from '@fluencelabs/avm';
+import { deserializeAvmResult, InterpreterResult, JSONValue, serializeAvmArgs } from '@fluencelabs/avm';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
 import { registerNodeUtils } from './_aqua/node-utils';
-import { LogFunction } from '@fluencelabs/marine-js';
+import { LogFunction, LogLevel, logLevelToEnv, Marine } from '@fluencelabs/marine-js';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -79,7 +69,7 @@ export interface PeerConfig {
      * @deprecated. AVM run through marine-js infrastructure.
      * @see debug.marineLogLevel option to configure logging level of AVM
      */
-    avmLogLevel?: MarineLoglevel;
+    avmLogLevel?: LogLevel | 'off';
 
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
@@ -288,12 +278,7 @@ export class FluencePeer {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        await this._fluenceAppService.createService(
-            wasm,
-            serviceId,
-            undefined,
-            marineLogLevelToEnvs(this._marineLogLevel),
-        );
+        await this._fluenceAppService.createService(wasm, serviceId, this._marineLogLevel);
         this._marineServices.add(serviceId);
     }
 
@@ -454,10 +439,10 @@ export class FluencePeer {
             workerScript: config?.marineJS?.workerScriptPath,
         });
 
-        this._fluenceAppService = new MarineJsBgRunner(worker, logFunction);
+        this._fluenceAppService = new MarineBackgroundRunner(worker, logFunction);
 
         await this._fluenceAppService.init(marine);
-        await this._fluenceAppService.createService(avm, 'avm', undefined, marineLogLevelToEnvs(this._marineLogLevel));
+        await this._fluenceAppService.createService(avm, 'avm', this._marineLogLevel);
 
         registerDefaultServices(this);
 
@@ -508,7 +493,7 @@ export class FluencePeer {
     // Call service handler
 
     private _marineServices = new Set<string>();
-    private _marineLogLevel?: MarineLoglevel;
+    private _marineLogLevel?: LogLevel;
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
 
@@ -527,7 +512,7 @@ export class FluencePeer {
     private _defaultTTL: number = DEFAULT_TTL;
     private _keyPair: KeyPair | undefined;
     private _connection?: FluenceConnection;
-    private _fluenceAppService?: IFluenceAppService;
+    private _fluenceAppService?: IMarine;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 

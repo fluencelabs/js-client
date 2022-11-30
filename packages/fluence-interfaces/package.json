@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/interfaces",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Fluence interfaces",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -16,6 +16,7 @@
     "license": "Apache-2.0",
     "dependencies": {},
     "devDependencies": {
-        "typescript": "^4.6.4"
+        "typescript": "^4.6.4",
+        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.4"
     }
 }

@@ -1,7 +1,7 @@
 {
     "version": "0.1.0",
-    "name": "@fluencelabs/marine-js-bg-script",
-    "description": "MarineJS background script",
+    "name": "@fluencelabs/marine-worker-script",
+    "description": "MarineJS background worker script",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
@@ -18,7 +18,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.2",
+        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.4",
         "threads": "^1.7.0"
     },
     "devDependencies": {

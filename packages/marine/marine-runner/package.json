@@ -1,5 +1,5 @@
 {
-    "name": "@fluencelabs/marine-js-bg",
+    "name": "@fluencelabs/marine-runner",
     "version": "0.1.0",
     "description": "MarineJS background runner",
     "main": "./dist/index.js",
@@ -18,8 +18,9 @@
         "threads": "^1.7.0"
     },
     "devDependencies": {
-        "@fluencelabs/marine-js-bg-script": "workspace:0.1.0",
-        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.2",
+        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
+        "@fluencelabs/interfaces": "workspace:0.2.0",
+        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.4",
         "typescript": "^4.6.4",
         "@types/node": "16.11.59"
     }

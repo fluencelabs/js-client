@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import type { Env, FaaSConfig, JSONArray, JSONObject, LogFunction, IFluenceAppService } from '@fluencelabs/marine-js';
-import type { MarineBackgroundInterface } from '@fluencelabs/marine-bg-script';
+import { JSONArray, JSONObject, LogFunction, logLevelToEnv, LogLevel } from '@fluencelabs/marine-js';
+import type { IMarine } from '@fluencelabs/interfaces';
+import type { MarineBackgroundInterface } from '@fluencelabs/marine-worker-script';
 import { spawn, Thread, Worker } from 'threads';
 import type { ModuleThread } from 'threads';
 
-export class MarineJsBgRunner implements IFluenceAppService {
+export class MarineBackgroundRunner implements IMarine {
     private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
     constructor(private worker: Worker, private logFunction: LogFunction) {}
@@ -34,17 +35,13 @@ export class MarineJsBgRunner implements IFluenceAppService {
         await this.workerThread.init(controlModule);
     }
 
-    createService(
-        serviceModule: SharedArrayBuffer | Buffer,
-        serviceId: string,
-        faaSConfig?: FaaSConfig,
-        envs?: Env,
-    ): Promise<void> {
+    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string, logLevel?: LogLevel): Promise<void> {
         if (!this.workerThread) {
             throw 'Worker is not initialized';
         }
 
-        return this.workerThread.createService(serviceModule, serviceId, faaSConfig, envs);
+        const env = logLevel ? logLevelToEnv(logLevel) : {};
+        return this.workerThread.createService(serviceModule, serviceId, undefined, env);
     }
 
     callService(

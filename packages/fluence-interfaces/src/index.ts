@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js';
 export type PeerIdB58 = string;
 
 export type ParticleHandler = (particle: string) => void;
@@ -26,4 +27,19 @@ export abstract class FluenceConnection {
     abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
     abstract disconnect(): Promise<void>;
     abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
+}
+
+export interface IMarine {
+    init(controlModule: SharedArrayBuffer | Buffer): Promise<void>;
+
+    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string, logLevel?: LogLevel): Promise<void>;
+
+    callService(
+        serviceId: string,
+        functionName: string,
+        args: JSONArray | JSONObject,
+        callParams: any,
+    ): Promise<unknown>;
+
+    terminate(): Promise<void>;
 }

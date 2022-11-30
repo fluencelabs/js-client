@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-import { FluenceAppService } from '@fluencelabs/marine-js';
-import type { Env, FaaSConfig, JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js';
+import { Marine } from '@fluencelabs/marine-js';
+import type { Env, MarineServiceConfig, JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js';
 import { Subject } from 'threads/observable';
 import { expose } from 'threads';
 
-let service: FluenceAppService;
+let marine: Marine;
 
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
     init: async (controlModuleWasm: SharedArrayBuffer | Buffer): Promise<void> => {
-        service = new FluenceAppService(onLogMessage.next);
-        service.init(controlModuleWasm);
+        marine = new Marine(onLogMessage.next);
+        marine.init(controlModuleWasm);
     },
 
     createService: async (
         wasm: SharedArrayBuffer | Buffer,
         serviceId: string,
-        faaSConfig?: FaaSConfig,
+        marineConfig?: MarineServiceConfig,
         envs?: Env,
     ): Promise<void> => {
-        return service.createService(wasm, serviceId, faaSConfig, envs);
+        return marine.createService(wasm, serviceId, marineConfig, envs);
     },
 
     terminate: async (): Promise<void> => {
-        return service.terminate();
+        return marine.terminate();
     },
 
     callService: async (
@@ -48,7 +48,7 @@ const toExpose = {
         args: JSONArray | JSONObject,
         callParams: any,
     ): Promise<unknown> => {
-        return service.callService(serviceId, functionName, args, callParams);
+        return marine.callService(serviceId, functionName, args, callParams);
     },
 
     onLogMessage(): typeof onLogMessage {

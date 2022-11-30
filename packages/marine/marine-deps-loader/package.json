@@ -1,7 +1,7 @@
 {
-    "name": "@fluencelabs/marine-js-deps-loader",
+    "name": "@fluencelabs/marine-deps-loader",
     "version": "0.1.0",
-    "description": "MarineJS runner for web",
+    "description": "MarineJS deps loader",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {

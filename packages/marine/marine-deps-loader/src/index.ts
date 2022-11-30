@@ -128,9 +128,9 @@ export const loadDefaults = async (overrides: {
         }
 
         if (overrides?.marinePath) {
-            avmPromise = loadWasmFromFileSystem(overrides?.marinePath);
+            marinePromise = loadWasmFromFileSystem(overrides?.marinePath);
         } else {
-            avmPromise = loadWasmFromNpmPackage(defaultNames.marine);
+            marinePromise = loadWasmFromNpmPackage(defaultNames.marine);
         }
 
         workerPath = defaultNames.workerScriptPath.node;
