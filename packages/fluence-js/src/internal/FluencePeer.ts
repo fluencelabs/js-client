@@ -271,14 +271,14 @@ export class FluencePeer {
      * @param serviceId - the service id by which the service can be accessed in aqua
      */
     async registerMarineService(wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
-        if (!this._fluenceAppService) {
+        if (!this._marine) {
             throw new Error("Can't register marine service: peer is not initialized");
         }
         if (this._containsService(serviceId)) {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        await this._fluenceAppService.createService(wasm, serviceId, this._marineLogLevel);
+        await this._marine.createService(wasm, serviceId, this._marineLogLevel);
         this._marineServices.add(serviceId);
     }
 
@@ -298,8 +298,8 @@ export class FluencePeer {
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
         this._stopParticleProcessing();
         await this.disconnect();
-        await this._fluenceAppService?.terminate();
-        this._fluenceAppService = undefined;
+        await this._marine?.terminate();
+        this._marine = undefined;
         this._classServices = undefined;
 
         this._particleSpecificHandlers.clear();
@@ -321,7 +321,7 @@ export class FluencePeer {
                     new Error("Can't use avm: peer is not initialized");
                 }
 
-                const res = await this._fluenceAppService!.callService('avm', 'ast', [air], undefined);
+                const res = await this._marine!.callService('avm', 'ast', [air], undefined);
                 if (!isString(res)) {
                     throw new Error(`Call to avm:ast expected to return string. Actual return: ${res}`);
                 }
@@ -439,10 +439,13 @@ export class FluencePeer {
             workerScript: config?.marineJS?.workerScriptPath,
         });
 
-        this._fluenceAppService = new MarineBackgroundRunner(worker, logFunction);
+        console.log(avm);
+        console.log(marine);
 
-        await this._fluenceAppService.init(marine);
-        await this._fluenceAppService.createService(avm, 'avm', this._marineLogLevel);
+        this._marine = new MarineBackgroundRunner(worker, logFunction);
+
+        await this._marine.init(marine);
+        await this._marine.createService(avm, 'avm', this._marineLogLevel);
 
         registerDefaultServices(this);
 
@@ -512,7 +515,7 @@ export class FluencePeer {
     private _defaultTTL: number = DEFAULT_TTL;
     private _keyPair: KeyPair | undefined;
     private _connection?: FluenceConnection;
-    private _fluenceAppService?: IMarine;
+    private _marine?: IMarine;
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
@@ -592,7 +595,7 @@ export class FluencePeer {
 
                 concatMap(async (item) => {
                     const status = this.getStatus();
-                    if (!status.isInitialized || this._fluenceAppService === undefined) {
+                    if (!status.isInitialized || this._marine === undefined) {
                         // If `.stop()` was called return null to stop particle processing immediately
                         return null;
                     }
@@ -619,7 +622,7 @@ export class FluencePeer {
                     log.debug('prevData: ', dataToString(prevData));
                     let avmCallResult: InterpreterResult | Error;
                     try {
-                        const res = await this._fluenceAppService.callService('avm', 'invoke', args, undefined);
+                        const res = await this._marine.callService('avm', 'invoke', args, undefined);
                         avmCallResult = deserializeAvmResult(res);
                     } catch (e) {
                         avmCallResult = e instanceof Error ? e : new Error((e as any).toString());
@@ -727,8 +730,8 @@ export class FluencePeer {
         log.debug('executing call service handler', jsonify(req));
         const particleId = req.particleContext.particleId;
 
-        if (this._fluenceAppService && this._marineServices.has(req.serviceId)) {
-            const result = await this._fluenceAppService.callService(req.serviceId, req.fnName, req.args, undefined);
+        if (this._marine && this._marineServices.has(req.serviceId)) {
+            const result = await this._marine.callService(req.serviceId, req.fnName, req.args, undefined);
 
             return {
                 retCode: ResultCodes.success,

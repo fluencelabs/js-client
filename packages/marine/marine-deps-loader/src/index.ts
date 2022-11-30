@@ -1,3 +1,4 @@
+import loadNodeWorker from '@fluencelabs/marine-worker-script/dist/loadNodeWorker';
 import { Worker } from 'threads';
 import { isBrowser, isNode } from 'browser-or-node';
 import { Buffer } from 'buffer';
@@ -113,13 +114,13 @@ export const loadDefaults = async (overrides: {
 }> => {
     let avmPromise;
     let marinePromise;
-    let workerPath: string;
+    let worker: Worker;
 
     // check if we are running inside the browser and instantiate worker with the corresponding script
     if (isBrowser) {
         avmPromise = loadWasmFromServer(overrides?.avmPath || defaultNames.avm.file);
         marinePromise = loadWasmFromServer(overrides?.marinePath || defaultNames.marine.file);
-        workerPath = defaultNames.workerScriptPath.web;
+        worker = new Worker(overrides.workerScript || defaultNames.workerScriptPath.web);
     } else if (isNode) {
         if (overrides?.avmPath) {
             avmPromise = loadWasmFromFileSystem(overrides?.avmPath);
@@ -133,12 +134,15 @@ export const loadDefaults = async (overrides: {
             marinePromise = loadWasmFromNpmPackage(defaultNames.marine);
         }
 
-        workerPath = defaultNames.workerScriptPath.node;
+        if (overrides.workerScript) {
+            worker = new Worker(overrides.workerScript);
+        } else {
+            worker = loadNodeWorker();
+        }
     } else {
         throw new Error('Unknown environment');
     }
 
-    const worker = new Worker(overrides?.workerScript || workerPath);
     const [marine, avm] = await Promise.all([marinePromise, avmPromise]);
     return {
         marine,

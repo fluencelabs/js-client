@@ -26,7 +26,7 @@ const onLogMessage = new Subject<LogMessage>();
 const toExpose = {
     init: async (controlModuleWasm: SharedArrayBuffer | Buffer): Promise<void> => {
         marine = new Marine(onLogMessage.next);
-        marine.init(controlModuleWasm);
+        return marine.init(controlModuleWasm);
     },
 
     createService: async (
