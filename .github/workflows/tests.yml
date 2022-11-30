@@ -10,9 +10,11 @@ on:
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
+        default: "null"
       marine-js-version:
         description: "@fluencelabs/marine-js version"
         type: string
+        default: "null"
       ref:
         description: "git ref to checkout to"
         type: string
@@ -89,7 +91,7 @@ jobs:
       - run: pnpm i
 
       - name: Set avm version
-        if: inputs.avm-version != ''
+        if: inputs.avm-version != 'null'
         uses: fluencelabs/github-actions/npm-set-dependency@main
         with:
           package: "@fluencelabs/avm"
@@ -98,7 +100,7 @@ jobs:
           package-manager: pnpm
 
       - name: Set marine-js version
-        if: inputs.marine-js-version != ''
+        if: inputs.marine-js-version != 'null'
         uses: fluencelabs/github-actions/npm-set-dependency@main
         with:
           package: "@fluencelabs/marine-js"
