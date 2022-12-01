@@ -16,9 +16,7 @@
     },
     {
       "matchManagers": ["github-actions"],
-      "automerge": true,
-      "automergeType": "branch",
-      "prPriority": 1
+      "groupName": "all github-actions"
     }
   ]
 }
