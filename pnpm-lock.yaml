@@ -50,10 +50,12 @@ importers:
 
   packages/fluence-interfaces:
     specifiers:
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@types/node': 16.11.59
       typescript: ^4.6.4
     devDependencies:
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@types/node': 16.11.59
       typescript: 4.7.4
 
   packages/fluence-js:
@@ -66,7 +68,7 @@ importers:
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/keypair': workspace:0.2.0
       '@fluencelabs/marine-deps-loader': workspace:0.1.0
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
       '@fluencelabs/marine-runner': workspace:0.1.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       '@types/bs58': ^4.0.1
@@ -99,7 +101,7 @@ importers:
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
       '@fluencelabs/marine-deps-loader': link:../marine/marine-deps-loader
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
       '@fluencelabs/marine-runner': link:../marine/marine-runner
       '@fluencelabs/marine-worker-script': link:../marine/worker-script
       async: 3.2.3
@@ -146,11 +148,13 @@ importers:
 
   packages/marine/marine-deps-loader:
     specifiers:
+      '@fluencelabs/marine-worker-script': workspace:0.1.0
       browser-or-node: ^2.0.0
       buffer: ^6.0.3
       threads: ^1.7.0
       typescript: ^4.6.4
     dependencies:
+      '@fluencelabs/marine-worker-script': link:../worker-script
       browser-or-node: 2.0.0
       buffer: 6.0.3
     devDependencies:
@@ -160,7 +164,7 @@ importers:
   packages/marine/marine-runner:
     specifiers:
       '@fluencelabs/interfaces': workspace:0.2.0
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       '@types/node': 16.11.59
       threads: ^1.7.0
@@ -169,23 +173,25 @@ importers:
       threads: 1.7.0
     devDependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
       '@fluencelabs/marine-worker-script': link:../worker-script
       '@types/node': 16.11.59
       typescript: 4.7.4
 
   packages/marine/worker-script:
     specifiers:
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@types/node': 16.11.59
       threads: ^1.7.0
       ts-loader: 8.4.0
       typescript: ^4.6.4
       webpack: 4.46.0
       webpack-cli: 4.10.0
     dependencies:
-      '@fluencelabs/marine-js': 0.3.3-DXJ-135-move-marine.4
+      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
       threads: 1.7.0
     devDependencies:
+      '@types/node': 16.11.59
       ts-loader: 8.4.0_hrl2l4xchpnd6hlkqocppvpxx4
       typescript: 4.7.4
       webpack: 4.46.0_webpack-cli@4.10.0
@@ -680,6 +686,14 @@ packages:
       peer-id: 0.16.0
     dev: true
 
+  /@fluencelabs/marine-js/0.1.1-DXJ-135-move-marine-fcd7832-133-1.0:
+    resolution: {integrity: sha512-5185R6NYltTSTolAsnvDfYQFud7uAtnp+N5oQBzAoZ/95CCndbq22ZUexlzigkLBPoSLuxlYtK8Il/S+iYkQOg==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+
   /@fluencelabs/marine-js/0.3.18_rl5xm3oiydas7snsul2pa47p2m:
     resolution: {integrity: sha512-aNuGtyY910kJvtRwfqmZKjVs+1l3LVWShv5xvkY04faHm65nX3sZLe8UHwughdja/4ixV1IFKlaTUgw2u3Sf5A==}
     dependencies:
@@ -698,14 +712,6 @@ packages:
       - supports-color
       - typescript
     dev: true
-
-  /@fluencelabs/marine-js/0.3.3-DXJ-135-move-marine.4:
-    resolution: {integrity: sha512-EQWweKd125aW9uaTHrBaji95Qx+dqjSMn8bPyYjli0iKZHDxEhTSd1MKBAmDvsuKoDIRP6XGjs1HT6Onzp/dNw==}
-    dependencies:
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
-      browser-or-node: 2.0.0
-      buffer: 6.0.3
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
@@ -1786,6 +1792,7 @@ packages:
 
   /bindings/1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
 
@@ -2796,6 +2803,7 @@ packages:
 
   /file-uri-to-path/1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
 
   /fill-range/4.0.0:
     resolution: {integrity: sha512-VcpLTWqWDiTerugjj8e3+esbg+skS3M9e54UuR3iCeIDMXCLTsAH8hTSzDQU/X6/6t3eYkOKoZSef2PlU6U1XQ==}
@@ -4974,6 +4982,7 @@ packages:
 
   /nan/2.16.0:
     resolution: {integrity: sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA==}
+    requiresBuild: true
 
   /nanoid/3.3.4:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}

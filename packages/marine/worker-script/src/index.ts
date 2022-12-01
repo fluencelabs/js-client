@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-import { Marine } from '@fluencelabs/marine-js';
+import { MarineService } from '@fluencelabs/marine-js';
 import type { Env, MarineServiceConfig, JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js';
 import { Subject } from 'threads/observable';
 import { expose } from 'threads';
 
-let marine: Marine;
+let marineServices = new Map<string, MarineService>();
+let controlModule: WebAssembly.Module | undefined;
 
 const onLogMessage = new Subject<LogMessage>();
 
+const asArray = (buf: SharedArrayBuffer | Buffer) => {
+    return new Uint8Array(buf);
+};
+
 const toExpose = {
     init: async (controlModuleWasm: SharedArrayBuffer | Buffer): Promise<void> => {
-        marine = new Marine(onLogMessage.next);
-        return marine.init(controlModuleWasm);
+        controlModule = await WebAssembly.compile(asArray(controlModuleWasm));
     },
 
     createService: async (
@@ -35,20 +39,29 @@ const toExpose = {
         marineConfig?: MarineServiceConfig,
         envs?: Env,
     ): Promise<void> => {
-        return marine.createService(wasm, serviceId, marineConfig, envs);
+        if (!controlModule) {
+            throw new Error('MarineJS is not initialized. To initialize call `init` function');
+        }
+
+        const service = await WebAssembly.compile(asArray(wasm));
+        const srv = new MarineService(controlModule, service, serviceId, onLogMessage.next, marineConfig, envs);
+        await srv.init();
+        marineServices.set(serviceId, srv);
     },
 
-    terminate: async (): Promise<void> => {
-        return marine.terminate();
+    terminate: () => {
+        marineServices.forEach((val, key) => {
+            val.terminate();
+        });
     },
 
-    callService: async (
-        serviceId: string,
-        functionName: string,
-        args: JSONArray | JSONObject,
-        callParams: any,
-    ): Promise<unknown> => {
-        return marine.callService(serviceId, functionName, args, callParams);
+    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any): unknown => {
+        const srv = marineServices.get(serviceId);
+        if (!srv) {
+            throw new Error(`service with id=${serviceId} not found`);
+        }
+
+        return srv.call(functionName, args, callParams);
     },
 
     onLogMessage(): typeof onLogMessage {

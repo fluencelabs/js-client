@@ -143,10 +143,10 @@ export const loadDefaults = async (overrides: {
         throw new Error('Unknown environment');
     }
 
-    const [marine, avm] = await Promise.all([marinePromise, avmPromise]);
+    const [avm, marine] = await Promise.all([avmPromise, marinePromise]);
     return {
-        marine,
         avm,
+        marine,
         worker,
     };
 };

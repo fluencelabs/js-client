@@ -36,7 +36,7 @@ import Buffer from './Buffer';
 import { deserializeAvmResult, InterpreterResult, JSONValue, serializeAvmArgs } from '@fluencelabs/avm';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
 import { registerNodeUtils } from './_aqua/node-utils';
-import { LogFunction, LogLevel, logLevelToEnv, Marine } from '@fluencelabs/marine-js';
+import { LogFunction, LogLevel } from '@fluencelabs/marine-js';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -438,9 +438,6 @@ export class FluencePeer {
             marinePath: config?.marineJS?.marineWasmPath,
             workerScript: config?.marineJS?.workerScriptPath,
         });
-
-        console.log(avm);
-        console.log(marine);
 
         this._marine = new MarineBackgroundRunner(worker, logFunction);
 

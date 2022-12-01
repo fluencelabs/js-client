@@ -26,7 +26,7 @@
     },
     "dependencies": {
         "@fluencelabs/avm": "0.31.10",
-        "@fluencelabs/marine-js": "0.3.3-DXJ-135-move-marine.4",
+        "@fluencelabs/marine-js": "0.1.1-DXJ-135-move-marine-fcd7832-133-1.0",
         "@fluencelabs/connection": "workspace:0.2.0",
         "@fluencelabs/interfaces": "workspace:0.2.0",
         "@fluencelabs/keypair": "workspace:0.2.0",
