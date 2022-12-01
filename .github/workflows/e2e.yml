@@ -16,9 +16,13 @@ jobs:
   tests:
     name: "fluence-js"
     uses: ./.github/workflows/tests.yml
+    with:
+      ref: ${{ github.ref }}
 
   fluence-js:
     uses: ./.github/workflows/snapshot.yml
+    with:
+      ref: ${{ github.ref }}
 
   aqua:
     needs:
