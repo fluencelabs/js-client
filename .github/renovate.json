@@ -5,6 +5,7 @@
     ":semanticCommitTypeAll(chore)"
   ],
   "enabledManagers": ["npm", "github-actions"],
+  "rangeStrategy": "pin",
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
