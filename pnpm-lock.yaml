@@ -19,7 +19,7 @@ importers:
     specifiers:
       '@chainsafe/libp2p-noise': ^4.1.1
       '@fluencelabs/interfaces': workspace:0.1.0
-      browser-or-node: ^2.0.0
+      browser-or-node: 2.0.0
       buffer: ^6.0.3
       it-length-prefixed: 5.0.3
       it-pipe: 1.1.0
@@ -137,10 +137,6 @@ importers:
       typescript: 4.7.4
 
 packages:
-
-  /@achingbrain/node-fetch/2.6.7:
-    resolution: {integrity: sha512-iTASGs+HTFK5E4ZqcMsHmeJ4zodyq8L38lZV33jwqcBJYoUt3HjN4+ot+O9/0b+ke8ddE7UgOtVuZN/OkV19/g==}
-    engines: {node: 4.x || >=6.0.0}
 
   /@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==}
@@ -2204,7 +2200,7 @@ packages:
       nanoid: 3.3.4
       native-abort-controller: 1.0.4_abort-controller@3.0.0
       native-fetch: 3.0.0_hmwa7nplpltavckpkeobtw6pv4
-      node-fetch: /@achingbrain/node-fetch/2.6.7
+      node-fetch: '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz'
       react-native-fetch-api: 2.0.0
       stream-to-it: 0.2.4
     dev: true
@@ -2223,7 +2219,7 @@ packages:
       merge-options: 3.0.4
       nanoid: 3.3.4
       native-fetch: 3.0.0_hmwa7nplpltavckpkeobtw6pv4
-      node-fetch: /@achingbrain/node-fetch/2.6.7
+      node-fetch: '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz'
       react-native-fetch-api: 2.0.0
       stream-to-it: 0.2.4
 
@@ -3500,7 +3496,7 @@ packages:
     peerDependencies:
       node-fetch: '*'
     dependencies:
-      node-fetch: /@achingbrain/node-fetch/2.6.7
+      node-fetch: '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz'
 
   /native-fetch/3.0.0_node-fetch@3.2.10:
     resolution: {integrity: sha512-G3Z7vx0IFb/FQ4JxvtqGABsOTIqRWvgQz6e+erkB+JJD6LrszQtMozEHI4EkmgZQvnGHrpLVzUWk7t4sJCIkVw==}
@@ -4525,3 +4521,9 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz':
+    resolution: {tarball: https://registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz}
+    name: '@achingbrain/node-fetch'
+    version: 2.6.7
+    engines: {node: 4.x || >=6.0.0}
