@@ -17,7 +17,7 @@
     "dependencies": {},
     "devDependencies": {
         "typescript": "^4.6.4",
-        "@fluencelabs/marine-js": "0.1.1-DXJ-135-move-marine-fcd7832-133-1.0",
+        "@fluencelabs/marine-js": "0.3.38",
         "@types/node": "16.11.59"
     }
 }

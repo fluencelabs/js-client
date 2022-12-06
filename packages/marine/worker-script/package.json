@@ -18,7 +18,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/marine-js": "0.1.1-DXJ-135-move-marine-fcd7832-133-1.0",
+        "@fluencelabs/marine-js": "0.3.38",
         "threads": "^1.7.0"
     },
     "devDependencies": {

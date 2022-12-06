@@ -50,11 +50,11 @@ importers:
 
   packages/fluence-interfaces:
     specifiers:
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@types/node': 16.11.59
       typescript: ^4.6.4
     devDependencies:
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@types/node': 16.11.59
       typescript: 4.7.4
 
@@ -68,7 +68,7 @@ importers:
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/keypair': workspace:0.2.0
       '@fluencelabs/marine-deps-loader': workspace:0.1.0
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-runner': workspace:0.1.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       '@types/bs58': ^4.0.1
@@ -101,7 +101,7 @@ importers:
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
       '@fluencelabs/marine-deps-loader': link:../marine/marine-deps-loader
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-runner': link:../marine/marine-runner
       '@fluencelabs/marine-worker-script': link:../marine/worker-script
       async: 3.2.3
@@ -164,7 +164,7 @@ importers:
   packages/marine/marine-runner:
     specifiers:
       '@fluencelabs/interfaces': workspace:0.2.0
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       '@types/node': 16.11.59
       threads: ^1.7.0
@@ -173,14 +173,14 @@ importers:
       threads: 1.7.0
     devDependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-worker-script': link:../worker-script
       '@types/node': 16.11.59
       typescript: 4.7.4
 
   packages/marine/worker-script:
     specifiers:
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       '@types/node': 16.11.59
       threads: ^1.7.0
       ts-loader: 8.4.0
@@ -188,7 +188,7 @@ importers:
       webpack: 4.46.0
       webpack-cli: 4.10.0
     dependencies:
-      '@fluencelabs/marine-js': 0.1.1-DXJ-135-move-marine-fcd7832-133-1.0
+      '@fluencelabs/marine-js': 0.3.38
       threads: 1.7.0
     devDependencies:
       '@types/node': 16.11.59
@@ -686,14 +686,6 @@ packages:
       peer-id: 0.16.0
     dev: true
 
-  /@fluencelabs/marine-js/0.1.1-DXJ-135-move-marine-fcd7832-133-1.0:
-    resolution: {integrity: sha512-5185R6NYltTSTolAsnvDfYQFud7uAtnp+N5oQBzAoZ/95CCndbq22ZUexlzigkLBPoSLuxlYtK8Il/S+iYkQOg==}
-    dependencies:
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
-      browser-or-node: 2.0.0
-      buffer: 6.0.3
-
   /@fluencelabs/marine-js/0.3.18_rl5xm3oiydas7snsul2pa47p2m:
     resolution: {integrity: sha512-aNuGtyY910kJvtRwfqmZKjVs+1l3LVWShv5xvkY04faHm65nX3sZLe8UHwughdja/4ixV1IFKlaTUgw2u3Sf5A==}
     dependencies:
@@ -712,6 +704,12 @@ packages:
       - supports-color
       - typescript
     dev: true
+
+  /@fluencelabs/marine-js/0.3.38:
+    resolution: {integrity: sha512-vP5w7be6vR0MZGkMpmmCvyVhABmVroPD9VAeCCDTuLhzqHMlDhm/cltU0B4kt9yijiNlh9CbY7dSZsCcspWPHw==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}

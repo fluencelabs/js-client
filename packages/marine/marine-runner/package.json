@@ -20,7 +20,7 @@
     "devDependencies": {
         "@fluencelabs/marine-worker-script": "workspace:0.1.0",
         "@fluencelabs/interfaces": "workspace:0.2.0",
-        "@fluencelabs/marine-js": "0.1.1-DXJ-135-move-marine-fcd7832-133-1.0",
+        "@fluencelabs/marine-js": "0.3.38",
         "typescript": "^4.6.4",
         "@types/node": "16.11.59"
     }
