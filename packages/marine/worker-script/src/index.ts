@@ -16,7 +16,7 @@
 
 import { MarineService } from '@fluencelabs/marine-js';
 import type { Env, MarineServiceConfig, JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js';
-import { Subject } from 'threads/observable';
+import { Observable, Subject } from 'threads/observable';
 import { expose } from 'threads';
 
 let marineServices = new Map<string, MarineService>();
@@ -44,7 +44,14 @@ const toExpose = {
         }
 
         const service = await WebAssembly.compile(asArray(wasm));
-        const srv = new MarineService(controlModule, service, serviceId, onLogMessage.next, marineConfig, envs);
+        const srv = new MarineService(
+            controlModule,
+            service,
+            serviceId,
+            onLogMessage.next.bind(onLogMessage),
+            marineConfig,
+            envs,
+        );
         await srv.init();
         marineServices.set(serviceId, srv);
     },
@@ -53,6 +60,7 @@ const toExpose = {
         marineServices.forEach((val, key) => {
             val.terminate();
         });
+        onLogMessage.complete();
     },
 
     callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any): unknown => {
@@ -64,8 +72,8 @@ const toExpose = {
         return srv.call(functionName, args, callParams);
     },
 
-    onLogMessage(): typeof onLogMessage {
-        return onLogMessage;
+    onLogMessage(): Observable<LogMessage> {
+        return Observable.from(onLogMessage);
     },
 };
 
