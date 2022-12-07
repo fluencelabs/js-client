@@ -838,5 +838,27 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
 }
 
 const logFunction: LogFunction = (message) => {
-    console.log(message);
+    const str = `[marine service "${message.service}"]: ${message}`;
+
+    const nodeProcess = (globalThis as any).process ? (globalThis as any).process : undefined;
+    if (nodeProcess && nodeProcess.stderr) {
+        nodeProcess.stderr.write(str);
+        return;
+    }
+
+    switch (message.level) {
+        case 'warn':
+            console.warn(str);
+            break;
+
+        case 'error':
+            console.error(str);
+            break;
+
+        case 'debug':
+        case 'trace':
+        case 'info':
+            console.log(str);
+            break;
+    }
 };
