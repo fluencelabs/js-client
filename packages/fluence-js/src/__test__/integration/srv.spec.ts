@@ -61,7 +61,7 @@ describe('Srv service test suite', () => {
         expect(res).toMatch("ENOENT: no such file or directory, open '/random/incorrect/file'");
     });
 
-    it('4', async () => {
+    it('Correct error for removing non existing service', async () => {
         // arrange
 
         // act
