@@ -103,7 +103,7 @@ export const loadWasmFromFileSystem = async (filePath: string): Promise<SharedAr
  * Defaults can be overridden by the function argument
  * @returns Object with two fields: "marine", "avm" and work corresponding to control module, avm module and worker object
  */
-export const loadDefaults = async (overrides: {
+export const loadDefaults = async (overrides?: {
     avmPath?: string;
     marinePath?: string;
     workerScript?: string;
@@ -120,7 +120,7 @@ export const loadDefaults = async (overrides: {
     if (isBrowser) {
         avmPromise = loadWasmFromServer(overrides?.avmPath || defaultNames.avm.file);
         marinePromise = loadWasmFromServer(overrides?.marinePath || defaultNames.marine.file);
-        worker = new Worker(overrides.workerScript || defaultNames.workerScriptPath.web);
+        worker = new Worker(overrides?.workerScript || defaultNames.workerScriptPath.web);
     } else if (isNode) {
         if (overrides?.avmPath) {
             avmPromise = loadWasmFromFileSystem(overrides?.avmPath);
@@ -134,7 +134,7 @@ export const loadDefaults = async (overrides: {
             marinePromise = loadWasmFromNpmPackage(defaultNames.marine);
         }
 
-        if (overrides.workerScript) {
+        if (overrides?.workerScript) {
             worker = new Worker(overrides.workerScript);
         } else {
             worker = loadNodeWorker();
