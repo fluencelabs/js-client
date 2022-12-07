@@ -1,4 +1,5 @@
 {
+    "name": "@test/marine_web",
     "scripts": {
         "start": "webpack serve",
         "test": "jest",
