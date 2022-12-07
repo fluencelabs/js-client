@@ -1,10 +1,12 @@
 import { KeyPair } from '@fluencelabs/keypair';
 import { EphemeralNetwork, defaultConfig } from '../../internal/ephemeral';
-import { FluencePeer } from '../../index';
+import { FluencePeer, setLogLevel } from '../../index';
 import { ResultCodes } from '../../internal/commonTypes';
 
 let en: EphemeralNetwork;
 let peer: FluencePeer;
+
+jest.setTimeout(20000);
 
 describe('Ephemeral networks tests', () => {
     beforeEach(async () => {
