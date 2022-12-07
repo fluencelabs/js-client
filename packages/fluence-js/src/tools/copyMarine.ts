@@ -31,7 +31,7 @@ async function main() {
     await fs.promises.mkdir(destPath, { recursive: true });
 
     await Promise.all([
-        copyFile('@fluencelabs/worker-script', 'marine-js.web.js'),
+        copyFile('@fluencelabs/marine-worker-script', 'marine-js.web.js'),
         copyFile('@fluencelabs/marine-js', 'marine-js.wasm'),
         copyFile('@fluencelabs/avm', 'avm.wasm'),
     ]);

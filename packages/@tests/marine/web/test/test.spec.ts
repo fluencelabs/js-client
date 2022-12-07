@@ -46,7 +46,7 @@ function copyFile(packageName: string, fileName: string) {
 
 const copyPublicDeps = async () => {
     fs.mkdirSync(publicDir, { recursive: true });
-    copyFile('@fluencelabs/worker-script', 'marine-js.web.js');
+    copyFile('@fluencelabs/marine-worker-script', 'marine-js.web.js');
     copyFile('@fluencelabs/marine-js', 'marine-js.wasm');
     copyFile('@fluencelabs/avm', 'avm.wasm');
 };
