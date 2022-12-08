@@ -30,7 +30,7 @@ export class MarineBackgroundRunner implements IMarine {
             return;
         }
 
-        this.workerThread = await spawn<MarineBackgroundInterface>(this.worker);
+        this.workerThread = await spawn<MarineBackgroundInterface>(this.worker, { timeout: 99999999 });
         this.workerThread.onLogMessage().subscribe(this.logFunction);
         await this.workerThread.init(controlModule);
     }
