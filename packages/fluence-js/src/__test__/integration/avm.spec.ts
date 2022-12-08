@@ -85,7 +85,10 @@ describe('Avm spec', () => {
                             (call %init_peer_id% ("peer" "timeout") [1000 arg] $result)
                             (call %init_peer_id% ("op" "identity") ["fast_result"] $result)
                         )
-                        (call %init_peer_id% ("return" "return") [$result.$[0]]) 
+                        (seq
+                            (canon %init_peer_id% $result #result)
+                            (call %init_peer_id% ("return" "return") [#result.$[0]]) 
+                        )
                     )
                 )
             `;
@@ -121,13 +124,19 @@ describe('Avm spec', () => {
                                 (call "invalid_peer" ("op" "identity") ["never"] $ok_or_err) 
                             )
                             (xor
-                                (match $ok_or_err.$[0] "timeout_msg"
-                                    (ap "failed_with_timeout" $result)
+                                (seq
+                                    (canon %init_peer_id% $ok_or_err #ok_or_err)
+                                    (match #ok_or_err.$[0] "timeout_msg"
+                                        (ap "failed_with_timeout" $result)
+                                    )
                                 )
                                 (ap "impossible happened" $result)
                             )
                         )
-                        (call %init_peer_id% ("return" "return") [$result.$[0]]) 
+                        (seq
+                            (canon %init_peer_id% $result #result)
+                            (call %init_peer_id% ("return" "return") [#result.$[0]]) 
+                        )
                     )
                 )
             `;
