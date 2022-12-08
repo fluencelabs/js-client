@@ -67,7 +67,10 @@ importers:
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/keypair': workspace:0.2.0
+      '@fluencelabs/marine-deps-loader': workspace:0.1.0
       '@fluencelabs/marine-js': 0.3.38
+      '@fluencelabs/marine-runner': workspace:0.1.0
+      '@fluencelabs/marine-worker-script': workspace:0.1.0
       '@types/bs58': 4.0.1
       '@types/jest': 28.1.0
       '@types/platform': 1.3.4
@@ -97,7 +100,10 @@ importers:
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
+      '@fluencelabs/marine-deps-loader': link:../marine/marine-deps-loader
       '@fluencelabs/marine-js': 0.3.38
+      '@fluencelabs/marine-runner': link:../marine/marine-runner
+      '@fluencelabs/marine-worker-script': link:../marine/worker-script
       async: 3.2.3
       base64-js: 1.5.1
       browser-or-node: 2.0.0
