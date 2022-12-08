@@ -17,10 +17,10 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/fluence": "workspace:*",
-        "ts-node": "^10.9.1"
+        "ts-node": "10.9.1"
     },
     "devDependencies": {
         "@types/node": "16.11.59",
-        "typescript": "^4.6.4"
+        "typescript": "4.6.4"
     }
 }
