@@ -655,6 +655,11 @@ export class FluencePeer {
                     return;
                 }
 
+                // Do not proceed further if the particle is expired
+                if (item.particle.hasExpired()) {
+                    return;
+                }
+
                 // Do not continue if there was an error in particle interpretation
                 if (item.result instanceof Error) {
                     log.error('Interpreter failed: ', jsonify(item.result.message));
