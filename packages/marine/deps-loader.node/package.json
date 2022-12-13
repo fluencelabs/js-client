@@ -9,19 +9,21 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "webpack"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
         "buffer": "^6.0.3",
-        "browser-or-node": "^2.0.0"
+        "@fluencelabs/interfaces": "workspace:0.2.0"
     },
     "devDependencies": {
-        "@fluencelabs/interfaces": "workspace:0.2.0",
+        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
         "typescript": "^4.6.4",
-        "threads": "^1.7.0"
+        "threads": "^1.7.0",
+        "ts-loader": "8.4.0",
+        "webpack": "4.46.0",
+        "webpack-cli": "4.10.0"
     }
 }

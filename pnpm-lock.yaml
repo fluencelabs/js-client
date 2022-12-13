@@ -156,18 +156,22 @@ importers:
     specifiers:
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
-      browser-or-node: ^2.0.0
       buffer: ^6.0.3
       threads: ^1.7.0
+      ts-loader: 8.4.0
       typescript: ^4.6.4
+      webpack: 4.46.0
+      webpack-cli: 4.10.0
     dependencies:
-      '@fluencelabs/marine-worker-script': link:../worker-script
-      browser-or-node: 2.0.0
+      '@fluencelabs/interfaces': link:../../fluence-interfaces
       buffer: 6.0.3
     devDependencies:
-      '@fluencelabs/interfaces': link:../../fluence-interfaces
+      '@fluencelabs/marine-worker-script': link:../worker-script
       threads: 1.7.0
+      ts-loader: 8.4.0_hrl2l4xchpnd6hlkqocppvpxx4
       typescript: 4.7.4
+      webpack: 4.46.0_webpack-cli@4.10.0
+      webpack-cli: 4.10.0_webpack@4.46.0
 
   packages/marine/deps-loader.web:
     specifiers:
@@ -175,14 +179,20 @@ importers:
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       buffer: ^6.0.3
       threads: ^1.7.0
+      ts-loader: 8.4.0
       typescript: ^4.6.4
+      webpack: 4.46.0
+      webpack-cli: 4.10.0
     dependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
       buffer: 6.0.3
     devDependencies:
       '@fluencelabs/marine-worker-script': link:../worker-script
       threads: 1.7.0
+      ts-loader: 8.4.0_hrl2l4xchpnd6hlkqocppvpxx4
       typescript: 4.7.4
+      webpack: 4.46.0_webpack-cli@4.10.0
+      webpack-cli: 4.10.0_webpack@4.46.0
 
   packages/marine/marine-runner:
     specifiers:
@@ -5736,6 +5746,7 @@ packages:
 
   /resolve/1.22.1:
     resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
+    hasBin: true
     dependencies:
       is-core-module: 2.10.0
       path-parse: 1.0.7
@@ -5846,13 +5857,6 @@ packages:
   /semver/6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
-    dev: true
-
-  /semver/7.3.7:
-    resolution: {integrity: sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==}
-    engines: {node: '>=10'}
-    dependencies:
-      lru-cache: 6.0.0
     dev: true
 
   /semver/7.3.8:
@@ -6417,7 +6421,7 @@ packages:
       enhanced-resolve: 4.5.0
       loader-utils: 2.0.4
       micromatch: 4.0.5
-      semver: 7.3.7
+      semver: 7.3.8
       typescript: 4.7.4
       webpack: 4.46.0_webpack-cli@4.10.0
     dev: true
@@ -6797,6 +6801,7 @@ packages:
   /which/2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
+    hasBin: true
     dependencies:
       isexe: 2.0.0
 
