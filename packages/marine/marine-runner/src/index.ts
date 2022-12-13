@@ -15,24 +15,32 @@
  */
 
 import { JSONArray, JSONObject, LogFunction, logLevelToEnv, LogLevel } from '@fluencelabs/marine-js';
-import type { IMarine } from '@fluencelabs/interfaces';
+import type { IMarine, IWorkerLoader, IWasmLoader } from '@fluencelabs/interfaces';
 import type { MarineBackgroundInterface } from '@fluencelabs/marine-worker-script';
-import { spawn, Thread, Worker } from 'threads';
+import { spawn, Thread } from 'threads';
 import type { ModuleThread } from 'threads';
 
 export class MarineBackgroundRunner implements IMarine {
     private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
-    constructor(private worker: Worker, private logFunction: LogFunction) {}
+    constructor(
+        private workerLoader: IWorkerLoader,
+        private controlModuleLoader: IWasmLoader,
+        private logFunction: LogFunction,
+    ) {}
 
-    async init(controlModule: SharedArrayBuffer | Buffer): Promise<void> {
+    async start(): Promise<void> {
         if (this.workerThread) {
             return;
         }
 
-        this.workerThread = await spawn<MarineBackgroundInterface>(this.worker, { timeout: 99999999 });
+        await this.workerLoader.start();
+        await this.controlModuleLoader.start();
+        const worker = this.workerLoader.getWorker();
+        const wasm = this.controlModuleLoader.getWasm();
+        this.workerThread = await spawn<MarineBackgroundInterface>(worker, { timeout: 99999999 });
         this.workerThread.onLogMessage().subscribe(this.logFunction);
-        await this.workerThread.init(controlModule);
+        await this.workerThread.init(wasm);
     }
 
     createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string, logLevel?: LogLevel): Promise<void> {
@@ -57,7 +65,7 @@ export class MarineBackgroundRunner implements IMarine {
         return this.workerThread.callService(serviceId, functionName, args, callParams);
     }
 
-    async terminate(): Promise<void> {
+    async stop(): Promise<void> {
         if (!this.workerThread) {
             return;
         }

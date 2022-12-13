@@ -1,9 +1,14 @@
 import { FluenceConnection, ParticleHandler } from '@fluencelabs/interfaces';
+import { WasmFromNpmLoader, WorkerLoader } from '@fluencelabs/marine-deps-loader';
+
 import { keyPairFromBase64Sk } from '@fluencelabs/keypair';
 
 import { PeerIdB58 } from './commonTypes';
-import { FluencePeer } from '../index';
+import { FluencePeer, defaultNames } from './FluencePeer';
 import log from 'loglevel';
+import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
+import { logFunction } from './FluencePeer';
+import { MarineBasedAvmRunner } from './avm';
 
 interface EphemeralConfig {
     peers: Array<{
@@ -120,8 +125,17 @@ export class EphemeralNetwork {
     async up(): Promise<void> {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
+
+        const workerLoader = new WorkerLoader(defaultNames.workerScriptPath.node);
+        const controlModuleLoader = new WasmFromNpmLoader(defaultNames.marine.package, defaultNames.marine.package);
+        const avmModuleLoader = new WasmFromNpmLoader(defaultNames.avm.package, defaultNames.avm.package);
+
         const promises = this.config.peers.map(async (x) => {
-            const peer = new FluencePeer();
+            // TODO: not undefined;
+            const logLevel = undefined;
+            const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, logFunction);
+            const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, logLevel);
+            const peer = new FluencePeer(marine, avm);
             const sendParticle = async (nextPeerIds: string[], particle: string): Promise<void> => {
                 this._send(peer.getStatus().peerId!, nextPeerIds, particle);
             };
@@ -134,22 +148,23 @@ export class EphemeralNetwork {
                 KeyPair: kp,
             });
 
-            let handler: ParticleHandler | null = null;
             const connectionCtor = class extends FluenceConnection {
                 relayPeerId = null;
 
-                async connect(onIncomingParticle: ParticleHandler): Promise<void> {
-                    handler = onIncomingParticle;
+                async start(): Promise<void> {}
+
+                isConnected(): boolean {
+                    return true;
                 }
 
-                async disconnect(): Promise<void> {
-                    handler = null;
-                }
+                async stop(): Promise<void> {}
 
                 sendParticle = sendParticle;
             };
 
-            await peer.connect(new connectionCtor());
+            const conn = new connectionCtor();
+            // onIncomingParticle will be set here
+            await peer.start();
 
             const peerId = peer.getStatus().peerId!;
             const ephPeer: PeerAdapter = {
@@ -157,7 +172,7 @@ export class EphemeralNetwork {
                 connections: new Set(allPeerIds.filter((x) => x !== peerId)),
                 peer: peer,
                 peerId: peerId,
-                onIncoming: handler!,
+                onIncoming: conn.onIncomingParticle,
             };
             return [peerId, ephPeer] as const;
         });
@@ -193,19 +208,23 @@ export class EphemeralNetwork {
         const connectionCtor = class extends FluenceConnection {
             relayPeerId = relay;
 
-            async connect(onIncomingParticle: ParticleHandler): Promise<void> {
+            async start(): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
                 me._peers.set(peerId, {
                     isEphemeral: false,
                     peer: peer,
-                    onIncoming: onIncomingParticle,
+                    onIncoming: this.onIncomingParticle.bind(this),
                     peerId: peerId,
                     connections: new Set([relay]),
                 });
                 relayPeer.connections.add(peerId);
             }
 
-            async disconnect(): Promise<void> {
+            isConnected(): boolean {
+                return true;
+            }
+
+            async stop(): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
                 relayPeer.connections.delete(peerId);
                 me._peers.delete(peerId);

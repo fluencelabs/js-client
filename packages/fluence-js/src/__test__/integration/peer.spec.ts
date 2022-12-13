@@ -4,6 +4,7 @@ import { nodes } from '../connection';
 import { FluencePeer } from '../../index';
 import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
+import { makeDefaultPeer } from '../../internal/FluencePeer';
 
 let peer: FluencePeer;
 
@@ -15,7 +16,7 @@ describe('Typescript usage suite', () => {
     });
 
     beforeEach(() => {
-        peer = new FluencePeer();
+        peer = makeDefaultPeer();
     });
 
     it('should perform test for FluencePeer class correctly', () => {
@@ -142,9 +143,9 @@ describe('Typescript usage suite', () => {
     });
 
     it('two clients should work inside the same time browser', async () => {
-        const peer1 = new FluencePeer();
+        const peer1 = makeDefaultPeer();
         await peer1.start({ connectTo: nodes[0] });
-        const peer2 = new FluencePeer();
+        const peer2 = makeDefaultPeer();
         await peer2.start({ connectTo: nodes[0] });
 
         const res = new Promise((resolve) => {

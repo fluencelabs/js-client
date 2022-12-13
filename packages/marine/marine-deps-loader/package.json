@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/marine-deps-loader",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "MarineJS deps loader",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -20,6 +20,7 @@
         "browser-or-node": "^2.0.0"
     },
     "devDependencies": {
+        "@fluencelabs/interfaces": "workspace:0.2.0",
         "typescript": "^4.6.4",
         "threads": "^1.7.0"
     }

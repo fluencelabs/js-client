@@ -57,6 +57,8 @@ export interface FluenceConnectionOptions {
  * Implementation for JS peers which connects to Fluence through relay node
  */
 export class RelayConnection extends FluenceConnection {
+    private isStarted: boolean = false;
+
     constructor(
         public peerId: PeerIdB58,
         private _lib2p2Peer: Lib2p2Peer,
@@ -104,9 +106,18 @@ export class RelayConnection extends FluenceConnection {
         );
     }
 
-    async disconnect() {
+    isConnected(): boolean {
+        return this.isStarted;
+    }
+
+    async stop() {
+        if (!this._lib2p2Peer.isStarted) {
+            return;
+        }
+
         await this._lib2p2Peer.unhandle(PROTOCOL_NAME);
         await this._lib2p2Peer.stop();
+        this.isStarted = false;
     }
 
     async sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void> {
@@ -138,7 +149,11 @@ export class RelayConnection extends FluenceConnection {
         );
     }
 
-    async connect(onIncomingParticle: ParticleHandler) {
+    async start() {
+        if (this._lib2p2Peer.isStarted) {
+            return;
+        }
+
         await this._lib2p2Peer.start();
 
         this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
@@ -150,7 +165,7 @@ export class RelayConnection extends FluenceConnection {
                     try {
                         for await (const msg of source) {
                             try {
-                                onIncomingParticle(msg);
+                                this?.onIncomingParticle(msg);
                             } catch (e) {
                                 log.error('error on handling a new incoming message: ' + e);
                             }
@@ -174,5 +189,7 @@ export class RelayConnection extends FluenceConnection {
                 throw e;
             }
         }
+
+        this.isStarted = true;
     }
 }

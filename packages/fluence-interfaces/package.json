@@ -17,7 +17,9 @@
     "dependencies": {},
     "devDependencies": {
         "typescript": "4.6.4",
+        "@fluencelabs/avm": "0.31.10",
         "@fluencelabs/marine-js": "0.3.38",
-        "@types/node": "16.11.59"
+        "@types/node": "16.11.59",
+        "threads": "^1.7.0"
     }
 }

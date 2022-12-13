@@ -1,3 +1,4 @@
+import type { IModule, IWasmLoader, IWorkerLoader } from '@fluencelabs/interfaces';
 import loadNodeWorker from '@fluencelabs/marine-worker-script/dist/loadNodeWorker';
 import { Worker } from 'threads';
 import { isBrowser, isNode } from 'browser-or-node';
@@ -150,3 +151,72 @@ export const loadDefaults = async (overrides?: {
         worker,
     };
 };
+
+abstract class LazyLoader<T> implements IModule {
+    private value: T | null = null;
+
+    constructor(private loadValue: () => Promise<T>) {}
+
+    getValue(): T {
+        if (this.value == null) {
+            throw new Error('Value has not been loaded. To load wasm call `start` method');
+        }
+
+        return this.value;
+    }
+
+    async start() {
+        if (this.value !== null) {
+            return;
+        }
+
+        this.value = await this.loadValue();
+    }
+
+    async stop() {}
+}
+
+export class WasmWebLoader extends LazyLoader<SharedArrayBuffer | Buffer> implements IWasmLoader {
+    constructor(path: string) {
+        super(() => loadWasmFromServer(path));
+    }
+
+    getWasm(): SharedArrayBuffer | Buffer {
+        return super.getValue();
+    }
+}
+
+export class WasmFromFsLoader extends LazyLoader<SharedArrayBuffer | Buffer> implements IWasmLoader {
+    constructor(path: string) {
+        super(() => loadWasmFromFileSystem(path));
+    }
+
+    getWasm(): SharedArrayBuffer | Buffer {
+        return super.getValue();
+    }
+}
+
+export class WasmFromNpmLoader extends LazyLoader<SharedArrayBuffer | Buffer> implements IWasmLoader {
+    constructor(pkg: string, file: string) {
+        super(() =>
+            loadWasmFromNpmPackage({
+                package: pkg,
+                file: file,
+            }),
+        );
+    }
+
+    getWasm(): SharedArrayBuffer | Buffer {
+        return super.getValue();
+    }
+}
+
+export class WorkerLoader extends LazyLoader<Worker> implements IWorkerLoader {
+    constructor(scriptPath: string) {
+        super(() => Promise.resolve(new Worker(scriptPath)));
+    }
+
+    getWorker(): Worker {
+        return super.getValue();
+    }
+}

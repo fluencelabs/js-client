@@ -2,6 +2,7 @@ import { allowServiceFn } from '../../internal/builtins/securityGuard';
 import { FluencePeer, KeyPair } from '../../index';
 import { Sig } from '../../services';
 import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests';
+import { makeDefaultPeer } from '../../internal/FluencePeer';
 
 let peer: FluencePeer;
 
@@ -13,7 +14,7 @@ describe('Sig service test suite', () => {
     });
 
     beforeEach(async () => {
-        peer = new FluencePeer();
+        peer = makeDefaultPeer();
         await peer.start();
     });
 

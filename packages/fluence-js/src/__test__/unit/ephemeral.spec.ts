@@ -2,6 +2,7 @@ import { KeyPair } from '@fluencelabs/keypair';
 import { EphemeralNetwork, defaultConfig } from '../../internal/ephemeral';
 import { FluencePeer, setLogLevel } from '../../index';
 import { ResultCodes } from '../../internal/commonTypes';
+import { makeDefaultPeer } from '../../internal/FluencePeer';
 
 let en: EphemeralNetwork;
 let peer: FluencePeer;
@@ -15,7 +16,7 @@ describe.skip('Ephemeral networks tests', () => {
         await en.up();
         const relay = defaultConfig.peers[0].peerId;
 
-        peer = new FluencePeer();
+        peer = makeDefaultPeer();
         await peer.init({
             KeyPair: await KeyPair.randomEd25519(),
         });

@@ -1,9 +1,10 @@
 import each from 'jest-each';
+import { makeDefaultPeer } from '../../../internal/FluencePeer';
 
 import { Fluence, FluencePeer } from '../../..';
 import { forTests } from '../../../internal/compilerSupport/v2';
 
-const peer = new FluencePeer();
+const peer = makeDefaultPeer();
 const cfg = { ttl: 1000 };
 
 describe('Compiler support tests', () => {
