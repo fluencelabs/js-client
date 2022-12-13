@@ -37,7 +37,8 @@ import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
 import { registerNodeUtils } from './_aqua/node-utils';
 import { LogFunction, LogLevel } from '@fluencelabs/marine-js';
 import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
-import { WasmFromNpmLoader, WorkerLoader } from '@fluencelabs/marine-deps-loader';
+import { WasmFromNpmLoader } from '@fluencelabs/marine-deps-loader';
+import { WorkerLoader } from '@fluencelabs/marine-worker-script/dist/loadNodeWorker';
 import { MarineBasedAvmRunner } from './avm';
 
 /**

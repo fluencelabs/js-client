@@ -1,0 +1,26 @@
+{
+    "name": "@fluencelabs/marine-deps-loader.web",
+    "version": "0.1.0",
+    "description": "MarineJS deps loader web",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "tsc"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "buffer": "^6.0.3",
+        "@fluencelabs/interfaces": "workspace:0.2.0"
+    },
+    "devDependencies": {
+        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
+        "typescript": "^4.6.4",
+        "threads": "^1.7.0"
+    }
+}

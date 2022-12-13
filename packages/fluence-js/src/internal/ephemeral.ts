@@ -1,5 +1,6 @@
 import { FluenceConnection, ParticleHandler } from '@fluencelabs/interfaces';
-import { WasmFromNpmLoader, WorkerLoader } from '@fluencelabs/marine-deps-loader';
+import { WasmFromNpmLoader } from '@fluencelabs/marine-deps-loader';
+import { WorkerLoader } from '@fluencelabs/marine-worker-script/dist/loadNodeWorker';
 
 import { keyPairFromBase64Sk } from '@fluencelabs/keypair';
 

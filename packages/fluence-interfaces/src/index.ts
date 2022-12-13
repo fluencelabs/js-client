@@ -66,3 +66,27 @@ export interface IWasmLoader extends IModule {
 export interface IWorkerLoader extends IModule {
     getWorker(): Worker;
 }
+
+export class LazyLoader<T> implements IModule {
+    private value: T | null = null;
+
+    constructor(private loadValue: () => Promise<T>) {}
+
+    getValue(): T {
+        if (this.value == null) {
+            throw new Error('Value has not been loaded. Call `start` method to load the value.');
+        }
+
+        return this.value;
+    }
+
+    async start() {
+        if (this.value !== null) {
+            return;
+        }
+
+        this.value = await this.loadValue();
+    }
+
+    async stop() {}
+}

@@ -71,7 +71,8 @@ importers:
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/keypair': workspace:0.2.0
-      '@fluencelabs/marine-deps-loader': workspace:0.2.0
+      '@fluencelabs/marine-deps-loader.node': workspace:0.1.0
+      '@fluencelabs/marine-deps-loader.web': workspace:0.1.0
       '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-runner': workspace:0.1.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
@@ -104,7 +105,8 @@ importers:
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
-      '@fluencelabs/marine-deps-loader': link:../marine/marine-deps-loader
+      '@fluencelabs/marine-deps-loader.node': link:../marine/deps-loader.node
+      '@fluencelabs/marine-deps-loader.web': link:../marine/deps-loader.web
       '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-runner': link:../marine/marine-runner
       '@fluencelabs/marine-worker-script': link:../marine/worker-script
@@ -150,7 +152,7 @@ importers:
     devDependencies:
       typescript: 4.7.4
 
-  packages/marine/marine-deps-loader:
+  packages/marine/deps-loader.node:
     specifiers:
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
@@ -164,6 +166,21 @@ importers:
       buffer: 6.0.3
     devDependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
+      threads: 1.7.0
+      typescript: 4.7.4
+
+  packages/marine/deps-loader.web:
+    specifiers:
+      '@fluencelabs/interfaces': workspace:0.2.0
+      '@fluencelabs/marine-worker-script': workspace:0.1.0
+      buffer: ^6.0.3
+      threads: ^1.7.0
+      typescript: ^4.6.4
+    dependencies:
+      '@fluencelabs/interfaces': link:../../fluence-interfaces
+      buffer: 6.0.3
+    devDependencies:
+      '@fluencelabs/marine-worker-script': link:../worker-script
       threads: 1.7.0
       typescript: 4.7.4
 
