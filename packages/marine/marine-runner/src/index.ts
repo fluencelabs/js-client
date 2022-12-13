@@ -36,8 +36,8 @@ export class MarineBackgroundRunner implements IMarine {
 
         await this.workerLoader.start();
         await this.controlModuleLoader.start();
-        const worker = this.workerLoader.getWorker();
-        const wasm = this.controlModuleLoader.getWasm();
+        const worker = this.workerLoader.getValue();
+        const wasm = this.controlModuleLoader.getValue();
         this.workerThread = await spawn<MarineBackgroundInterface>(worker, { timeout: 99999999 });
         this.workerThread.onLogMessage().subscribe(this.logFunction);
         await this.workerThread.init(wasm);

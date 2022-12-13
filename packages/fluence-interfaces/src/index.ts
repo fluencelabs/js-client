@@ -16,7 +16,7 @@
 
 import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
-import type { Worker } from 'threads';
+import type { WorkerImplementation } from 'threads/dist/types/master';
 export type PeerIdB58 = string;
 
 export type ParticleHandler = (particle: string) => void;
@@ -59,15 +59,15 @@ export interface IModule {
     stop(): Promise<void>;
 }
 
-export interface IWasmLoader extends IModule {
-    getWasm(): SharedArrayBuffer | Buffer;
+export interface IValueLoader<T> {
+    getValue(): T;
 }
 
-export interface IWorkerLoader extends IModule {
-    getWorker(): Worker;
-}
+export interface IWasmLoader extends IValueLoader<SharedArrayBuffer | Buffer>, IModule {}
 
-export class LazyLoader<T> implements IModule {
+export interface IWorkerLoader extends IValueLoader<WorkerImplementation>, IModule {}
+
+export class LazyLoader<T> implements IModule, IValueLoader<T> {
     private value: T | null = null;
 
     constructor(private loadValue: () => Promise<T>) {}

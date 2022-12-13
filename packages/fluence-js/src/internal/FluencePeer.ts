@@ -18,7 +18,6 @@ import 'buffer';
 import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection, IAvmRunner, IMarine } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import { loadDefaults } from '@fluencelabs/marine-deps-loader';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
@@ -37,9 +36,9 @@ import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
 import { registerNodeUtils } from './_aqua/node-utils';
 import { LogFunction, LogLevel } from '@fluencelabs/marine-js';
 import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
-import { WasmFromNpmLoader } from '@fluencelabs/marine-deps-loader';
-import { WorkerLoader } from '@fluencelabs/marine-worker-script/dist/loadNodeWorker';
 import { MarineBasedAvmRunner } from './avm';
+// @ts-ignore
+import { BlobWorkerLoader, WasmNpmLoader } from '@fluencelabs/marine-deps-loader.node';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -440,12 +439,6 @@ export class FluencePeer {
             this._marineLogLevel = config.debug.marineLogLevel;
         }
 
-        const { avm, marine, worker } = await loadDefaults({
-            avmPath: config?.marineJS?.avmWasmPath,
-            marinePath: config?.marineJS?.marineWasmPath,
-            workerScript: config?.marineJS?.workerScriptPath,
-        });
-
         await this.marine.start();
         await this.avmRunner.start();
 
@@ -841,9 +834,11 @@ export const defaultNames = {
 };
 
 export const makeDefaultPeer = () => {
-    const workerLoader = new WorkerLoader(defaultNames.workerScriptPath.node);
-    const controlModuleLoader = new WasmFromNpmLoader(defaultNames.marine.package, defaultNames.marine.package);
-    const avmModuleLoader = new WasmFromNpmLoader(defaultNames.avm.package, defaultNames.avm.package);
+    // const workerLoader = new WorkerLoader(defaultNames.workerScriptPath.node);
+    const workerLoader = new BlobWorkerLoader();
+
+    const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.package);
+    const avmModuleLoader = new WasmNpmLoader(defaultNames.avm.package, defaultNames.avm.package);
     // TODO: not undefined;
     const logLevel = undefined;
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, logFunction);

@@ -18,7 +18,7 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
  * Load wasm file from npm package. Only works in nodejs environment.
  * The function returns SharedArrayBuffer compatible with FluenceAppService methods.
  * @param source - object specifying the source of the file. Consist two fields: package name and file path.
- * @returns SharedArrayBuffer with the wasm filemarine-js-bg
+ * @returns SharedArrayBuffer with the wasm file
  */
 export const loadWasmFromNpmPackage = async (source: { package: string; file: string }): Promise<SharedArrayBuffer> => {
     const packagePath = require.resolve(source.package);

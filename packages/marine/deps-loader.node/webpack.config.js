@@ -27,7 +27,7 @@ const config = () => ({
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.ts', '.js'],
         fallback: {
             path: false,
             fs: false,
