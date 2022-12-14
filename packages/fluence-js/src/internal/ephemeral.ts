@@ -1,7 +1,5 @@
 import { FluenceConnection, ParticleHandler } from '@fluencelabs/interfaces';
-// @ts-ignore
-import { WasmNpmLoader } from '@fluencelabs/marine-deps-loader.node';
-import { WorkerLoader } from '@fluencelabs/marine-worker-script/dist/loadNodeWorker';
+import { WasmNpmLoader, InlinedWorkerLoader, NpmWorkerLoader } from '@fluencelabs/marine-deps-loader.node';
 
 import { keyPairFromBase64Sk } from '@fluencelabs/keypair';
 
@@ -128,7 +126,8 @@ export class EphemeralNetwork {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
 
-        const workerLoader = new WorkerLoader(defaultNames.workerScriptPath.node);
+        const workerLoader = new InlinedWorkerLoader();
+        // const workerLoader = new NpmWorkerLoader('@fluencelabs/marine-worker-script`', './marine-js.node.js');
         const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.package);
         const avmModuleLoader = new WasmNpmLoader(defaultNames.avm.package, defaultNames.avm.package);
 

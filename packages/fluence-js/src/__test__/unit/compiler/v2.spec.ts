@@ -1,7 +1,7 @@
 import each from 'jest-each';
 import { makeDefaultPeer } from '../../../internal/FluencePeer';
 
-import { Fluence, FluencePeer } from '../../..';
+import { Fluence } from '../../..';
 import { forTests } from '../../../internal/compilerSupport/v2';
 
 const peer = makeDefaultPeer();

@@ -1,10 +1,9 @@
 import { Multiaddr } from 'multiaddr';
 
 import { nodes } from '../connection';
-import { FluencePeer } from '../../index';
 import { checkConnection, doNothing, handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
-import { makeDefaultPeer } from '../../internal/FluencePeer';
+import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 
 let peer: FluencePeer;
 

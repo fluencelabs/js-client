@@ -43,6 +43,10 @@ export class WasmWebLoader extends LazyLoader<SharedArrayBuffer | Buffer> {
     }
 }
 
-export const BlobWorkerLoader = new LazyLoader<WorkerImplementation>(() => {
-    return Promise.resolve(BlobWorker.fromText(WorkerScript));
-});
+export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
+    constructor() {
+        super(() => {
+            return Promise.resolve(BlobWorker.fromText(WorkerScript));
+        });
+    }
+}

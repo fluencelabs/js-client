@@ -1,7 +1,6 @@
 import { Particle } from '../../internal/Particle';
 import { doNothing } from '../../internal/utils';
-import { FluencePeer } from '../../index';
-import { makeDefaultPeer } from '../../internal/FluencePeer';
+import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 
 let peer: FluencePeer;
 

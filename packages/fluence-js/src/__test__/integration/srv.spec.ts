@@ -1,9 +1,6 @@
-import { Fluence, FluencePeer, KeyPair, setLogLevel } from '../../index';
-
-import fs from 'fs/promises';
 import path from 'path';
 import { happy_path, service_removed, file_not_found, list_services, removing_non_exiting } from '../_aqua/srv-tests';
-import { makeDefaultPeer } from '../../internal/FluencePeer';
+import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 
 let peer: FluencePeer;
 

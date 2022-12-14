@@ -1,5 +1,5 @@
 import { LazyLoader } from '@fluencelabs/interfaces';
-import { BlobWorker } from 'threads/dist/types/master';
+import { BlobWorker } from 'threads';
 import type { WorkerImplementation } from 'threads/dist/types/master';
 import { Buffer } from 'buffer';
 import fs from 'fs';
@@ -50,6 +50,26 @@ export class WasmNpmLoader extends LazyLoader<SharedArrayBuffer> {
     }
 }
 
-export const BlobWorkerLoader = new LazyLoader<WorkerImplementation>(() => {
-    return Promise.resolve(BlobWorker.fromText(WorkerScript));
-});
+export class FsWorkerLoader extends LazyLoader<WorkerImplementation> {
+    constructor(scriptPath: string) {
+        super(() => {
+            return Promise.resolve(new Worker(scriptPath));
+        });
+    }
+}
+
+export class NpmWorkerLoader extends LazyLoader<WorkerImplementation> {
+    constructor(pkg: string, file: string) {
+        super(() => {
+            const packagePath = require.resolve(pkg);
+            const scriptPath = path.join(path.dirname(packagePath), file);
+            return new Worker(scriptPath);
+        });
+    }
+}
+
+export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
+    constructor() {
+        super(() => Promise.resolve(BlobWorker.fromText(WorkerScript)));
+    }
+}

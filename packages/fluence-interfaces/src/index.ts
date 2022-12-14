@@ -70,7 +70,7 @@ export interface IWorkerLoader extends IValueLoader<WorkerImplementation>, IModu
 export class LazyLoader<T> implements IModule, IValueLoader<T> {
     private value: T | null = null;
 
-    constructor(private loadValue: () => Promise<T>) {}
+    constructor(private loadValue: () => Promise<T> | T) {}
 
     getValue(): T {
         if (this.value == null) {

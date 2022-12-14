@@ -1,8 +1,7 @@
 import { KeyPair } from '@fluencelabs/keypair';
 import { EphemeralNetwork, defaultConfig } from '../../internal/ephemeral';
-import { FluencePeer, setLogLevel } from '../../index';
 import { ResultCodes } from '../../internal/commonTypes';
-import { makeDefaultPeer } from '../../internal/FluencePeer';
+import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 
 let en: EphemeralNetwork;
 let peer: FluencePeer;

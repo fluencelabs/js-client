@@ -37,8 +37,7 @@ import { registerNodeUtils } from './_aqua/node-utils';
 import { LogFunction, LogLevel } from '@fluencelabs/marine-js';
 import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
 import { MarineBasedAvmRunner } from './avm';
-// @ts-ignore
-import { BlobWorkerLoader, WasmNpmLoader } from '@fluencelabs/marine-deps-loader.node';
+import { WasmNpmLoader, InlinedWorkerLoader, NpmWorkerLoader } from '@fluencelabs/marine-deps-loader.node';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
@@ -834,11 +833,11 @@ export const defaultNames = {
 };
 
 export const makeDefaultPeer = () => {
-    // const workerLoader = new WorkerLoader(defaultNames.workerScriptPath.node);
-    const workerLoader = new BlobWorkerLoader();
+    // const workerLoader = new NpmWorkerLoader('@fluencelabs/marine-worker-script`', './marine-js.node.js');
+    const workerLoader = new InlinedWorkerLoader();
 
-    const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.package);
-    const avmModuleLoader = new WasmNpmLoader(defaultNames.avm.package, defaultNames.avm.package);
+    const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.file);
+    const avmModuleLoader = new WasmNpmLoader(defaultNames.avm.package, defaultNames.avm.file);
     // TODO: not undefined;
     const logLevel = undefined;
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, logFunction);

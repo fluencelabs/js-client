@@ -17,9 +17,14 @@ const config = () => ({
             {
                 test: /\.(js|ts|tsx)$/i,
                 use: [
-                    // force new line
                     {
                         loader: 'ts-loader',
+                        options: {
+                            compilerOptions: {
+                                sourcemaps: false,
+                                declaration: false,
+                            },
+                        },
                     },
                 ],
                 exclude: ['/node_modules/'],
