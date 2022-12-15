@@ -9,18 +9,18 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "./build.sh"
+        "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/interfaces": "workspace:0.2.0",
+        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
         "js-base64": "3.7.3",
         "buffer": "^6.0.3"
     },
     "devDependencies": {
-        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
         "@types/node": "16.11.59",
         "threads": "^1.7.0",
         "ts-loader": "8.4.0",

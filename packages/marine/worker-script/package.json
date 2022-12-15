@@ -9,7 +9,7 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "pnpm build:web && pnpm build:node && pnpm build:b64 ",
+        "build": "tsc --emitDeclarationOnly && pnpm build:web && pnpm build:node && pnpm build:b64 ",
         "build:b64": "./build_b64.sh",
         "build:web": "webpack -c webpack.config.web.js",
         "build:node": "webpack -c webpack.config.node.js"

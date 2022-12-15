@@ -166,10 +166,10 @@ importers:
       webpack-cli: 5.0.1
     dependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
+      '@fluencelabs/marine-worker-script': link:../worker-script
       buffer: 6.0.3
       js-base64: 3.7.3
     devDependencies:
-      '@fluencelabs/marine-worker-script': link:../worker-script
       '@types/node': 16.11.59
       threads: 1.7.0
       ts-loader: 8.4.0_l2co7ao223gzrfox7yaiyzd7wu

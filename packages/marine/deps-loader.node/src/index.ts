@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 import fs from 'fs';
 import path from 'path';
 import { fromBase64 } from 'js-base64';
-import b64script from './script';
+import b64script from '@fluencelabs/marine-worker-script/dist/marine-js.b64.node';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
