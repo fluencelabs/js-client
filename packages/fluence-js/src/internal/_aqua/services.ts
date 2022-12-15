@@ -128,7 +128,7 @@ export function registerSig(...args: any) {
                                 name: 'bool',
                             },
                         ],
-                    },
+                    },in the sens of before 
                 },
             },
         },

@@ -13,6 +13,10 @@ import { registerGlobalService, userHandlerService } from './services';
 export function registerService(args: any[], def: ServiceDef) {
     const { peer, service, serviceId } = extractArgs(args, def.defaultServiceId);
 
+    registerServiceEx(peer, service, serviceId);
+}
+
+export const registerServiceEx = (peer: FluencePeer, serviceId: string, service: any) => {
     if (!peer.getStatus().isInitialized) {
         throw new Error(
             'Could not register the service because the peer is not initialized. Are you passing the wrong peer to the register function?',
@@ -39,7 +43,7 @@ export function registerService(args: any[], def: ServiceDef) {
         const serviceDescription = userHandlerService(serviceId, singleFunction, userDefinedHandler);
         registerGlobalService(peer, serviceDescription);
     }
-}
+};
 
 /**
  * Arguments could be passed in one these configurations:
