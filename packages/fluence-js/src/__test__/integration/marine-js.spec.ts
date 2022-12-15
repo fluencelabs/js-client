@@ -1,22 +1,23 @@
-import { Fluence } from '../../index';
 import fs from 'fs';
 import { call } from '../_aqua/marine-js';
 import { call_info } from '../_aqua/marine-js-logging';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 
+const peer = makeDefaultPeer();
+
 describe('Marine js tests', () => {
     beforeEach(async () => {
-        await Fluence.start();
+        await peer.start();
     });
 
     afterEach(async () => {
-        await Fluence.stop();
+        await peer.stop();
     });
 
     it('should call marine service correctly', async () => {
         // arrange
         const wasm = await fs.promises.readFile(__dirname + '/greeting.wasm');
-        await Fluence.registerMarineService(wasm, 'greeting');
+        await peer.registerMarineService(wasm, 'greeting');
 
         // act
         const res = await call('test');

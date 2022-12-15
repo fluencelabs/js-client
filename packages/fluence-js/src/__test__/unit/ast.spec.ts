@@ -1,16 +1,17 @@
-import { Fluence } from '../../index';
+import { makeDefaultPeer } from 'src/internal/FluencePeer';
+
+const peer = makeDefaultPeer();
 
 describe('Parse ast tests', () => {
     beforeAll(async () => {
-        await Fluence.start();
+        await peer.start();
     });
 
     afterAll(async () => {
-        await Fluence.stop();
+        await peer.stop();
     });
 
     it('Correct ast should be parsed correctly', async function () {
-        const peer = Fluence.getPeer();
         const air = `(null)`;
         const res = await peer.internals.parseAst(air);
 
@@ -21,7 +22,6 @@ describe('Parse ast tests', () => {
     });
 
     it('Incorrect ast should result in corresponding error', async function () {
-        const peer = Fluence.getPeer();
         const air = `(null`;
         const res = await peer.internals.parseAst(air);
 

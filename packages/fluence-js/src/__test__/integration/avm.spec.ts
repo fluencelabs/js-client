@@ -1,5 +1,4 @@
-import { makeDefaultPeer } from '../../internal/FluencePeer';
-import { FluencePeer } from '../../index';
+import { FluencePeer, makeDefaultPeer } from '../../internal/FluencePeer';
 import { handleTimeout } from '../../internal/utils';
 import { registerHandlersHelper } from '../util';
 

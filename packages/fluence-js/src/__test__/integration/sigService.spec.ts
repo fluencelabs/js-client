@@ -1,8 +1,8 @@
 import { allowServiceFn } from '../../internal/builtins/securityGuard';
-import { KeyPair } from '../../index';
 import { Sig } from '../../services';
 import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
+import { KeyPair } from '@fluencelabs/keypair';
 
 let peer: FluencePeer;
 
