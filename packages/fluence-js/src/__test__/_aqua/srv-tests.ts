@@ -256,6 +256,11 @@ export function service_removed(peer: FluencePeer, args: any[]) {
 export function list_services(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
                           (seq
                            (seq
                             (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
