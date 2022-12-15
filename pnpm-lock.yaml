@@ -27,7 +27,7 @@ importers:
       libp2p-interfaces: 4.0.6
       libp2p-mplex: 0.10.7
       libp2p-websockets: 0.16.2
-      loglevel: 1.8.0
+      loglevel: 1.8.1
       multiaddr: 10.0.1
       peer-id: 0.16.0
       typescript: 4.6.4
@@ -42,7 +42,7 @@ importers:
       libp2p-interfaces: 4.0.6
       libp2p-mplex: 0.10.7
       libp2p-websockets: 0.16.2
-      loglevel: 1.8.0
+      loglevel: 1.8.1
       multiaddr: 10.0.1
       peer-id: 0.16.0
     devDependencies:
@@ -89,9 +89,9 @@ importers:
       jest: 28.1.0
       jest-each: 28.1.3
       js-base64: 3.7.2
-      loglevel: 1.8.0
+      loglevel: 1.8.1
       multiaddr: 10.0.1
-      multiformats: 9.6.5
+      multiformats: 9.9.0
       peer-id: 0.16.0
       platform: 1.3.6
       rxjs: 7.5.5
@@ -116,8 +116,8 @@ importers:
       bs58: 5.0.0
       buffer: 6.0.3
       cids: 1.1.9
-      loglevel: 1.8.0
-      multiformats: 9.6.5
+      loglevel: 1.8.1
+      multiformats: 9.9.0
       peer-id: 0.16.0
       platform: 1.3.6
       rxjs: 7.5.5
@@ -190,10 +190,10 @@ importers:
       webpack-cli: 4.10.0
     dependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
+      '@fluencelabs/marine-worker-script': link:../worker-script
       buffer: 6.0.3
       js-base64: 3.7.3
     devDependencies:
-      '@fluencelabs/marine-worker-script': link:../worker-script
       threads: 1.7.0
       ts-loader: 8.4.0_hrl2l4xchpnd6hlkqocppvpxx4
       typescript: 4.7.4
@@ -407,6 +407,7 @@ packages:
   /@babel/parser/7.18.13:
     resolution: {integrity: sha512-dgXcIfMuQ0kgzLB2b9tRZs7TTFFaGM2AbtA4fJgUUYukzGH4jwsS7hzQHEGs67jdehpm22vkgKwvbU+aEflgwg==}
     engines: {node: '>=6.0.0'}
+    hasBin: true
     dependencies:
       '@babel/types': 7.18.13
     dev: true
@@ -736,7 +737,7 @@ packages:
     resolution: {integrity: sha512-sNFvoeefSa0Xa/xzzLwWBXPMB4y/vHEFh3BaA6FCGNPwbtN0pje9rd8AOgSP9fjlTPpxy3TuBI+eAIzBk5b+SQ==}
     engines: {node: '>=10', pnpm: '>=3'}
     dependencies:
-      js-base64: 3.7.2
+      js-base64: 3.7.3
       libp2p-crypto: 0.21.2
       peer-id: 0.16.0
     dev: true
@@ -4320,9 +4321,11 @@ packages:
       '@types/node': 18.7.14
     dev: true
 
-  /jest-pnp-resolver/1.2.2:
+  /jest-pnp-resolver/1.2.2_jest-resolve@28.1.3:
     resolution: {integrity: sha512-olV41bKSMm8BdnuMsewT4jqlZ8+3TCARAXjZGT9jcoSnrfUnRCqnMoF9XEeoWjbzObpqF9dRhHQj0Xb9QdF6/w==}
     engines: {node: '>=6'}
+    peerDependencies:
+      jest-resolve: '*'
     peerDependenciesMeta:
       jest-resolve:
         optional: true
@@ -4352,7 +4355,7 @@ packages:
       chalk: 4.1.2
       graceful-fs: 4.2.10
       jest-haste-map: 28.1.3
-      jest-pnp-resolver: 1.2.2
+      jest-pnp-resolver: 1.2.2_jest-resolve@28.1.3
       jest-util: 28.1.3
       jest-validate: 28.1.3
       resolve: 1.22.1
@@ -4542,7 +4545,6 @@ packages:
 
   /js-base64/3.7.3:
     resolution: {integrity: sha512-PAr6Xg2jvd7MCR6Ld9Jg3BmTcjYsHEBx1VlwEwULb/qowPf5VD9kEMagj23Gm7JRnSvE/Da/57nChZjnvL8v6A==}
-    dev: false
 
   /js-sha3/0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
@@ -4554,6 +4556,7 @@ packages:
 
   /js-yaml/3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
+    hasBin: true
     dependencies:
       argparse: 1.0.10
       esprima: 4.0.1
@@ -4666,7 +4669,7 @@ packages:
       is-typedarray: 1.0.0
       iso-random-stream: 2.0.2
       keypair: 1.0.4
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       node-forge: 0.10.0
       pem-jwk: 2.0.0
       protobufjs: 6.11.3
@@ -4681,7 +4684,7 @@ packages:
       err-code: 3.0.1
       iso-random-stream: 2.0.2
       keypair: 1.0.4
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       noble-ed25519: 1.2.6
       noble-secp256k1: 1.2.14
       node-forge: 0.10.0
@@ -4698,7 +4701,7 @@ packages:
       '@noble/secp256k1': 1.6.3
       err-code: 3.0.1
       iso-random-stream: 2.0.2
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       node-forge: 1.3.1
       protobufjs: 6.11.3
       uint8arrays: 3.1.0
@@ -4714,7 +4717,7 @@ packages:
       it-pushable: 1.4.2
       libp2p-crypto: 0.21.2
       multiaddr: 10.0.1
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       p-queue: 6.6.2
       peer-id: 0.16.0
       protobufjs: 6.11.3
@@ -4883,6 +4886,12 @@ packages:
   /loglevel/1.8.0:
     resolution: {integrity: sha512-G6A/nJLRgWOuuwdNuA6koovfEV1YpqqAG4pRUlFaz3jj2QNZ8M4vBqnVA+HBTmU/AMNUtlOsMmSpF6NyOjztbA==}
     engines: {node: '>= 0.6.0'}
+    dev: true
+
+  /loglevel/1.8.1:
+    resolution: {integrity: sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==}
+    engines: {node: '>= 0.6.0'}
+    dev: false
 
   /long/4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
@@ -5181,6 +5190,9 @@ packages:
 
   /multiformats/9.7.1:
     resolution: {integrity: sha512-TaVmGEBt0fhxiNJMGphBfB+oGvUxFs8KgGvgl8d3C+GWtrFcvXdJ2196eg+dYhmSFClmgFfSfJEklo+SZzdNuw==}
+
+  /multiformats/9.9.0:
+    resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
 
   /multihashes/4.0.3:
     resolution: {integrity: sha512-0AhMH7Iu95XjDLxIeuCOOE4t9+vQZsACyKZ9Fxw2pcsRmlX4iCn1mby0hS0bb+nQOVpdQYWPpnyusw4da5RPhA==}
@@ -5625,7 +5637,7 @@ packages:
       class-is: 1.1.0
       libp2p-crypto: 0.20.0
       minimist: 1.2.6
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       protobufjs: 6.11.3
       uint8arrays: 3.1.0
 
@@ -6025,6 +6037,7 @@ packages:
 
   /rimraf/3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    hasBin: true
     dependencies:
       glob: 7.2.3
     dev: true
@@ -6843,13 +6856,13 @@ packages:
   /uint8arrays/2.1.10:
     resolution: {integrity: sha512-Q9/hhJa2836nQfEJSZTmr+pg9+cDJS9XEAp7N2Vg5MzL3bK/mkMVfjscRGYruP9jNda6MAdf4QD/y78gSzkp6A==}
     dependencies:
-      multiformats: 9.7.1
+      multiformats: 9.9.0
     dev: true
 
   /uint8arrays/3.1.0:
     resolution: {integrity: sha512-ei5rfKtoRO8OyOIor2Rz5fhzjThwIHJZ3uyDPnDHTXbP0aMQ1RN/6AI5B5d9dBxJOU+BvOAk7ZQ1xphsX8Lrog==}
     dependencies:
-      multiformats: 9.7.1
+      multiformats: 9.9.0
 
   /union-value/1.0.1:
     resolution: {integrity: sha512-tJfXmxMeWYnczCVs7XAEvIV7ieppALdyepWMkHkwciRpZraG/xwT+s2JN8+pr1+8jCRf80FFzvr+MpQeeoF4Xg==}
