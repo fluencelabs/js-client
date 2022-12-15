@@ -1,4 +1,4 @@
-import { FluencePeer } from '../index';
+import { FluencePeer } from '../internal/FluencePeer';
 import { Particle } from '../internal/Particle';
 import { MakeServiceCall } from '../internal/utils';
 

@@ -6,9 +6,9 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { FluencePeer } from '../..';
 import type { CallParams$$ } from '../../internal/compilerSupport/v4';
-import { registerService$$ } from '../../internal/compilerSupport/v4';
+import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { FluencePeer } from '../FluencePeer';
 
 // Services
 
@@ -20,61 +20,62 @@ export interface NodeUtilsDef {
         | { content: string | null; error: string | null; success: boolean }
         | Promise<{ content: string | null; error: string | null; success: boolean }>;
 }
-export function registerNodeUtils(service: NodeUtilsDef): void;
-export function registerNodeUtils(serviceId: string, service: NodeUtilsDef): void;
-export function registerNodeUtils(peer: FluencePeer, service: NodeUtilsDef): void;
-export function registerNodeUtils(peer: FluencePeer, serviceId: string, service: NodeUtilsDef): void;
 
-export function registerNodeUtils(...args: any) {
-    registerService$$(args, {
-        defaultServiceId: 'node_utils',
-        functions: {
-            tag: 'labeledProduct',
-            fields: {
-                read_file: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            path: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'struct',
-                                name: 'ReadFileResult',
-                                fields: {
-                                    content: {
-                                        tag: 'option',
-                                        type: {
-                                            tag: 'scalar',
-                                            name: 'string',
-                                        },
-                                    },
-                                    error: {
-                                        tag: 'option',
-                                        type: {
-                                            tag: 'scalar',
-                                            name: 'string',
-                                        },
-                                    },
-                                    success: {
-                                        tag: 'scalar',
-                                        name: 'bool',
-                                    },
+export function registerNodeUtils(peer: FluencePeer, serviceId: string, service: any) {
+    registerServiceEx(
+        peer,
+        {
+            defaultServiceId: 'node_utils',
+            functions: {
+                tag: 'labeledProduct',
+                fields: {
+                    read_file: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'labeledProduct',
+                            fields: {
+                                path: {
+                                    tag: 'scalar',
+                                    name: 'string',
                                 },
                             },
-                        ],
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'struct',
+                                    name: 'ReadFileResult',
+                                    fields: {
+                                        content: {
+                                            tag: 'option',
+                                            type: {
+                                                tag: 'scalar',
+                                                name: 'string',
+                                            },
+                                        },
+                                        error: {
+                                            tag: 'option',
+                                            type: {
+                                                tag: 'scalar',
+                                                name: 'string',
+                                            },
+                                        },
+                                        success: {
+                                            tag: 'scalar',
+                                            name: 'bool',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
                     },
                 },
             },
         },
-    });
+        serviceId,
+        service,
+    );
 }
 
 // Functions

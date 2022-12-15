@@ -6,9 +6,9 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { FluencePeer } from '../..';
 import type { CallParams$$ } from '../../internal/compilerSupport/v4';
-import { registerService$$ } from '../../internal/compilerSupport/v4';
+import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { FluencePeer } from '../FluencePeer';
 
 // Services
 
@@ -25,113 +25,114 @@ export interface SrvDef {
         callParams: CallParams$$<'service_id'>,
     ) => { error: string | null; success: boolean } | Promise<{ error: string | null; success: boolean }>;
 }
-export function registerSrv(service: SrvDef): void;
-export function registerSrv(serviceId: string, service: SrvDef): void;
-export function registerSrv(peer: FluencePeer, service: SrvDef): void;
-export function registerSrv(peer: FluencePeer, serviceId: string, service: SrvDef): void;
 
-export function registerSrv(...args: any) {
-    registerService$$(args, {
-        defaultServiceId: 'single_module_srv',
-        functions: {
-            tag: 'labeledProduct',
-            fields: {
-                create: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            wasm_b64_content: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'struct',
-                                name: 'ServiceCreationResult',
-                                fields: {
-                                    error: {
-                                        tag: 'option',
-                                        type: {
-                                            tag: 'scalar',
-                                            name: 'string',
-                                        },
-                                    },
-                                    service_id: {
-                                        tag: 'option',
-                                        type: {
-                                            tag: 'scalar',
-                                            name: 'string',
-                                        },
-                                    },
-                                    success: {
-                                        tag: 'scalar',
-                                        name: 'bool',
-                                    },
-                                },
-                            },
-                        ],
-                    },
-                },
-                list: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'nil',
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'array',
-                                type: {
+export function registerSrv(peer: FluencePeer, serviceId: string, service: any) {
+    registerServiceEx(
+        peer,
+        {
+            defaultServiceId: 'single_module_srv',
+            functions: {
+                tag: 'labeledProduct',
+                fields: {
+                    create: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'labeledProduct',
+                            fields: {
+                                wasm_b64_content: {
                                     tag: 'scalar',
                                     name: 'string',
                                 },
                             },
-                        ],
-                    },
-                },
-                remove: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            service_id: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
                         },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'struct',
-                                name: 'RemoveResult',
-                                fields: {
-                                    error: {
-                                        tag: 'option',
-                                        type: {
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'struct',
+                                    name: 'ServiceCreationResult',
+                                    fields: {
+                                        error: {
+                                            tag: 'option',
+                                            type: {
+                                                tag: 'scalar',
+                                                name: 'string',
+                                            },
+                                        },
+                                        service_id: {
+                                            tag: 'option',
+                                            type: {
+                                                tag: 'scalar',
+                                                name: 'string',
+                                            },
+                                        },
+                                        success: {
                                             tag: 'scalar',
-                                            name: 'string',
+                                            name: 'bool',
                                         },
                                     },
-                                    success: {
+                                },
+                            ],
+                        },
+                    },
+                    list: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'nil',
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'array',
+                                    type: {
                                         tag: 'scalar',
-                                        name: 'bool',
+                                        name: 'string',
                                     },
                                 },
+                            ],
+                        },
+                    },
+                    remove: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'labeledProduct',
+                            fields: {
+                                service_id: {
+                                    tag: 'scalar',
+                                    name: 'string',
+                                },
                             },
-                        ],
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'struct',
+                                    name: 'RemoveResult',
+                                    fields: {
+                                        error: {
+                                            tag: 'option',
+                                            type: {
+                                                tag: 'scalar',
+                                                name: 'string',
+                                            },
+                                        },
+                                        success: {
+                                            tag: 'scalar',
+                                            name: 'bool',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
                     },
                 },
             },
         },
-    });
+        serviceId,
+        service,
+    );
 }
 
 // Functions

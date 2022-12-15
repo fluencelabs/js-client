@@ -36,6 +36,6 @@ export {
     StructType as StructType$$,
     TopType as TopType$$,
     UnlabeledProductType as UnlabeledProductType$$,
-    callFunction as callFunction$$,
-    registerService as registerService$$,
+    // callFunction as callFunction$$,
+    // registerService as registerService$$,
 } from './v3';

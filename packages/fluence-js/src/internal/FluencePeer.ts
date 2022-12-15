@@ -448,11 +448,11 @@ export class FluencePeer {
             srv: new Srv(this),
         };
         this._classServices.sig.securityGuard = defaultSigGuard(peerId);
-        registerSig(this, this._classServices.sig);
+        registerSig(this, 'sig', this._classServices.sig);
         registerSig(this, peerId, this._classServices.sig);
 
-        registerSrv(this, this._classServices.srv);
-        registerNodeUtils(this, new NodeUtils(this));
+        registerSrv(this, 'single_module_srv', this._classServices.srv);
+        registerNodeUtils(this, 'node_utils', new NodeUtils(this));
 
         this._startParticleProcessing();
     }
