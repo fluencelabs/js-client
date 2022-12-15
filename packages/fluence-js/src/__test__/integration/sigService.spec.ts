@@ -25,7 +25,7 @@ describe('Sig service test suite', () => {
 
         registerSig(peer, 'CustomSig', customSig);
 
-        registerDataProvider(peer, {
+        registerDataProvider(peer, 'data', {
             provide_data: () => {
                 return data;
             },
@@ -33,7 +33,7 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('data', 'provide_data');
 
-        const result = await callSig(peer, 'CustomSig');
+        const result = await callSig(peer, ['CustomSig']);
 
         expect(result.success).toBe(true);
         const isSigCorrect = await customSig.verify(result.signature as number[], data);
@@ -47,7 +47,7 @@ describe('Sig service test suite', () => {
 
         registerSig(peer, 'CustomSig', customSig);
 
-        registerDataProvider(peer, {
+        registerDataProvider(peer, 'data', {
             provide_data: () => {
                 return data;
             },
@@ -55,29 +55,29 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('wrong', 'wrong');
 
-        const result = await callSig(peer, 'CustomSig');
+        const result = await callSig(peer, ['CustomSig']);
     });
 
     it('Default sig service should be resolvable by peer id', async () => {
         const sig = peer.getServices().sig;
 
         const data = [1, 2, 3, 4, 5];
-        registerDataProvider(peer, {
+        registerDataProvider(peer, 'data', {
             provide_data: () => {
                 return data;
             },
         });
 
-        const callAsSigRes = await callSig(peer, 'sig');
-        const callAsPeerIdRes = await callSig(peer, peer.getStatus().peerId as string);
+        const callAsSigRes = await callSig(peer, ['sig']);
+        const callAsPeerIdRes = await callSig(peer, [peer.getStatus().peerId as string]);
 
         expect(callAsSigRes.success).toBe(false);
         expect(callAsPeerIdRes.success).toBe(false);
 
         sig.securityGuard = () => true;
 
-        const callAsSigResAfterGuardChange = await callSig(peer, 'sig');
-        const callAsPeerIdResAfterGuardChange = await callSig(peer, peer.getStatus().peerId as string);
+        const callAsSigResAfterGuardChange = await callSig(peer, ['sig']);
+        const callAsPeerIdResAfterGuardChange = await callSig(peer, [peer.getStatus().peerId as string]);
 
         expect(callAsSigResAfterGuardChange.success).toBe(true);
         expect(callAsPeerIdResAfterGuardChange.success).toBe(true);

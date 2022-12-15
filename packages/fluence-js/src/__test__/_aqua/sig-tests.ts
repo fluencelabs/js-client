@@ -6,47 +6,49 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { FluencePeer } from '../../index';
 import type { CallParams$$ } from '../../internal/compilerSupport/v4';
-import { callFunction$$, registerService$$ } from '../../internal/compilerSupport/v4';
+import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { callFunctionEx } from '../../internal/compilerSupport/v3impl/callFunction';
+import { FluencePeer, FunctionCallDef } from 'src/internal/compilerSupport/v3';
 
 // Services
 
 export interface DataProviderDef {
     provide_data: (callParams: CallParams$$<null>) => number[] | Promise<number[]>;
 }
-export function registerDataProvider(service: DataProviderDef): void;
-export function registerDataProvider(serviceId: string, service: DataProviderDef): void;
-export function registerDataProvider(peer: FluencePeer, service: DataProviderDef): void;
-export function registerDataProvider(peer: FluencePeer, serviceId: string, service: DataProviderDef): void;
 
-export function registerDataProvider(...args: any) {
-    registerService$$(args, {
-        defaultServiceId: 'data',
-        functions: {
-            tag: 'labeledProduct',
-            fields: {
-                provide_data: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'nil',
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'array',
-                                type: {
-                                    tag: 'scalar',
-                                    name: 'u8',
+export function registerDataProvider(peer: FluencePeer, serviceId: string, service: any) {
+    registerServiceEx(
+        peer,
+        {
+            defaultServiceId: 'data',
+            functions: {
+                tag: 'labeledProduct',
+                fields: {
+                    provide_data: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'nil',
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'array',
+                                    type: {
+                                        tag: 'scalar',
+                                        name: 'u8',
+                                    },
                                 },
-                            },
-                        ],
+                            ],
+                        },
                     },
                 },
             },
         },
-    });
+        serviceId,
+        service,
+    );
 }
 
 export interface SigDef {
@@ -63,123 +65,121 @@ export interface SigDef {
         callParams: CallParams$$<'signature' | 'data'>,
     ) => boolean | Promise<boolean>;
 }
-export function registerSig(service: SigDef): void;
-export function registerSig(serviceId: string, service: SigDef): void;
-export function registerSig(peer: FluencePeer, service: SigDef): void;
-export function registerSig(peer: FluencePeer, serviceId: string, service: SigDef): void;
 
-export function registerSig(...args: any) {
-    registerService$$(args, {
-        defaultServiceId: 'sig',
-        functions: {
-            tag: 'labeledProduct',
-            fields: {
-                get_peer_id: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'nil',
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        ],
-                    },
-                },
-                sign: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            data: {
-                                tag: 'array',
-                                type: {
+export function registerSig(peer: FluencePeer, serviceId: string, service: any) {
+    registerServiceEx(
+        peer,
+        {
+            defaultServiceId: 'sig',
+            functions: {
+                tag: 'labeledProduct',
+                fields: {
+                    get_peer_id: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'nil',
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
                                     tag: 'scalar',
-                                    name: 'u8',
+                                    name: 'string',
+                                },
+                            ],
+                        },
+                    },
+                    sign: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'labeledProduct',
+                            fields: {
+                                data: {
+                                    tag: 'array',
+                                    type: {
+                                        tag: 'scalar',
+                                        name: 'u8',
+                                    },
                                 },
                             },
                         },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'struct',
-                                name: 'SignResult',
-                                fields: {
-                                    error: {
-                                        tag: 'option',
-                                        type: {
-                                            tag: 'scalar',
-                                            name: 'string',
-                                        },
-                                    },
-                                    signature: {
-                                        tag: 'option',
-                                        type: {
-                                            tag: 'array',
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'struct',
+                                    name: 'SignResult',
+                                    fields: {
+                                        error: {
+                                            tag: 'option',
                                             type: {
                                                 tag: 'scalar',
-                                                name: 'u8',
+                                                name: 'string',
                                             },
                                         },
-                                    },
-                                    success: {
-                                        tag: 'scalar',
-                                        name: 'bool',
+                                        signature: {
+                                            tag: 'option',
+                                            type: {
+                                                tag: 'array',
+                                                type: {
+                                                    tag: 'scalar',
+                                                    name: 'u8',
+                                                },
+                                            },
+                                        },
+                                        success: {
+                                            tag: 'scalar',
+                                            name: 'bool',
+                                        },
                                     },
                                 },
-                            },
-                        ],
+                            ],
+                        },
                     },
-                },
-                verify: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            signature: {
-                                tag: 'array',
-                                type: {
-                                    tag: 'scalar',
-                                    name: 'u8',
+                    verify: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'labeledProduct',
+                            fields: {
+                                signature: {
+                                    tag: 'array',
+                                    type: {
+                                        tag: 'scalar',
+                                        name: 'u8',
+                                    },
                                 },
-                            },
-                            data: {
-                                tag: 'array',
-                                type: {
-                                    tag: 'scalar',
-                                    name: 'u8',
+                                data: {
+                                    tag: 'array',
+                                    type: {
+                                        tag: 'scalar',
+                                        name: 'u8',
+                                    },
                                 },
                             },
                         },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'scalar',
-                                name: 'bool',
-                            },
-                        ],
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'scalar',
+                                    name: 'bool',
+                                },
+                            ],
+                        },
                     },
                 },
             },
         },
-    });
+        serviceId,
+        service,
+    );
 }
 
 // Functions
 
 export type CallSigResult = { error: string | null; signature: number[] | null; success: boolean };
-export function callSig(sigId: string, config?: { ttl?: number }): Promise<CallSigResult>;
 
-export function callSig(peer: FluencePeer, sigId: string, config?: { ttl?: number }): Promise<CallSigResult>;
-
-export function callSig(...args: any) {
+export function callSig(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
                      (seq
@@ -201,8 +201,8 @@ export function callSig(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
         {
             functionName: 'callSig',
             arrow: {
@@ -260,5 +260,6 @@ export function callSig(...args: any) {
             },
         },
         script,
+        args,
     );
 }

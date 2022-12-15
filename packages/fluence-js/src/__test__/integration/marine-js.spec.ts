@@ -20,7 +20,7 @@ describe('Marine js tests', () => {
         await peer.registerMarineService(wasm, 'greeting');
 
         // act
-        const res = await call('test');
+        const res = await call(peer, ['test']);
 
         // assert
         expect(res).toBe('Hi, Hi, Hi, test');
@@ -43,7 +43,7 @@ describe('Marine js tests', () => {
             await peer.registerMarineService(wasm, 'greeting');
 
             // act
-            await call_info(peer, 'greeting');
+            await call_info(peer, ['greeting']);
 
             // assert
             expect(console.info).toBeCalledTimes(1);

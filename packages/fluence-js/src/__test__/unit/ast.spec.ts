@@ -1,4 +1,4 @@
-import { makeDefaultPeer } from 'src/internal/FluencePeer';
+import { makeDefaultPeer } from '../../internal/FluencePeer';
 
 const peer = makeDefaultPeer();
 

@@ -21,7 +21,7 @@ describe('Srv service test suite', () => {
         const wasm = path.join(__dirname, './greeting.wasm');
 
         // act
-        const res = await happy_path(peer, wasm);
+        const res = await happy_path(peer, [wasm]);
 
         // assert
         expect(res).toBe('Hi, test');
@@ -32,7 +32,7 @@ describe('Srv service test suite', () => {
         const wasm = path.join(__dirname, './greeting.wasm');
 
         // act
-        const res = await list_services(peer, wasm);
+        const res = await list_services(peer, [wasm]);
 
         // assert
         expect(res).toHaveLength(3);
@@ -43,7 +43,7 @@ describe('Srv service test suite', () => {
         const wasm = path.join(__dirname, './greeting.wasm');
 
         // act
-        const res = await service_removed(peer, wasm);
+        const res = await service_removed(peer, [wasm]);
 
         // assert
         expect(res).toMatch('No handler has been registered for serviceId');
@@ -53,7 +53,7 @@ describe('Srv service test suite', () => {
         // arrange
 
         // act
-        const res = await file_not_found(peer);
+        const res = await file_not_found(peer, []);
 
         // assert
         expect(res).toMatch("ENOENT: no such file or directory, open '/random/incorrect/file'");
@@ -63,7 +63,7 @@ describe('Srv service test suite', () => {
         // arrange
 
         // act
-        const res = await removing_non_exiting(peer);
+        const res = await removing_non_exiting(peer, []);
 
         // assert
         expect(res).toMatch('Service with id random_id not found');

@@ -6,18 +6,16 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { FluencePeer } from '../../index';
-import { callFunction$$ } from '../../internal/compilerSupport/v4';
+import type { CallParams$$ } from '../../internal/compilerSupport/v4';
+import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { callFunctionEx } from '../../internal/compilerSupport/v3impl/callFunction';
+import { FluencePeer, FunctionCallDef } from 'src/internal/compilerSupport/v3';
 
 // Services
 
 // Functions
 
-export function happy_path(file_path: string, config?: { ttl?: number }): Promise<string>;
-
-export function happy_path(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string>;
-
-export function happy_path(...args: any) {
+export function happy_path(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
                      (seq
@@ -42,8 +40,8 @@ export function happy_path(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
         {
             functionName: 'happy_path',
             arrow: {
@@ -78,14 +76,11 @@ export function happy_path(...args: any) {
             },
         },
         script,
+        args,
     );
 }
 
-export function removing_non_exiting(config?: { ttl?: number }): Promise<string>;
-
-export function removing_non_exiting(peer: FluencePeer, config?: { ttl?: number }): Promise<string>;
-
-export function removing_non_exiting(...args: any) {
+export function removing_non_exiting(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
                      (seq
@@ -101,8 +96,8 @@ export function removing_non_exiting(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
         {
             functionName: 'removing_non_exiting',
             arrow: {
@@ -132,14 +127,11 @@ export function removing_non_exiting(...args: any) {
             },
         },
         script,
+        args,
     );
 }
 
-export function file_not_found(config?: { ttl?: number }): Promise<string>;
-
-export function file_not_found(peer: FluencePeer, config?: { ttl?: number }): Promise<string>;
-
-export function file_not_found(...args: any) {
+export function file_not_found(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
                      (seq
@@ -155,8 +147,8 @@ export function file_not_found(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
         {
             functionName: 'file_not_found',
             arrow: {
@@ -186,14 +178,11 @@ export function file_not_found(...args: any) {
             },
         },
         script,
+        args,
     );
 }
 
-export function service_removed(file_path: string, config?: { ttl?: number }): Promise<string>;
-
-export function service_removed(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string>;
-
-export function service_removed(...args: any) {
+export function service_removed(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
                      (seq
@@ -224,8 +213,8 @@ export function service_removed(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
         {
             functionName: 'service_removed',
             arrow: {
@@ -260,21 +249,13 @@ export function service_removed(...args: any) {
             },
         },
         script,
+        args,
     );
 }
 
-export function list_services(file_path: string, config?: { ttl?: number }): Promise<string[]>;
-
-export function list_services(peer: FluencePeer, file_path: string, config?: { ttl?: number }): Promise<string[]>;
-
-export function list_services(...args: any) {
+export function list_services(peer: FluencePeer, args: any[]) {
     let script = `
-                    (xor
-                     (seq
-                      (seq
-                       (seq
-                        (seq
-                         (seq
+                    (xorargs
                           (seq
                            (seq
                             (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
@@ -298,8 +279,8 @@ export function list_services(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
         {
             functionName: 'list_services',
             arrow: {
@@ -337,5 +318,6 @@ export function list_services(...args: any) {
             },
         },
         script,
+        args,
     );
 }

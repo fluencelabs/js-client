@@ -6,9 +6,10 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { FluencePeer } from '../../index';
 import type { CallParams$$ } from '../../internal/compilerSupport/v4';
-import { callFunction$$, registerService$$ } from '../../internal/compilerSupport/v4';
+import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { callFunctionEx } from '../../internal/compilerSupport/v3impl/callFunction';
+import { FluencePeer, FunctionCallDef } from 'src/internal/compilerSupport/v3';
 
 // Services
 
@@ -18,75 +19,72 @@ export interface GreetingDef {
         callParams: CallParams$$<null>,
     ) => { num: number; str: string } | Promise<{ num: number; str: string }>;
 }
-export function registerGreeting(service: GreetingDef): void;
-export function registerGreeting(serviceId: string, service: GreetingDef): void;
-export function registerGreeting(peer: FluencePeer, service: GreetingDef): void;
-export function registerGreeting(peer: FluencePeer, serviceId: string, service: GreetingDef): void;
 
-export function registerGreeting(...args: any) {
-    registerService$$(args, {
-        defaultServiceId: 'greeting',
-        functions: {
-            tag: 'labeledProduct',
-            fields: {
-                greeting: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'labeledProduct',
-                        fields: {
-                            name: {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        },
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'scalar',
-                                name: 'string',
-                            },
-                        ],
-                    },
-                },
-                greeting_record: {
-                    tag: 'arrow',
-                    domain: {
-                        tag: 'nil',
-                    },
-                    codomain: {
-                        tag: 'unlabeledProduct',
-                        items: [
-                            {
-                                tag: 'struct',
-                                name: 'GreetingRecord',
-                                fields: {
-                                    num: {
-                                        tag: 'scalar',
-                                        name: 'i32',
-                                    },
-                                    str: {
-                                        tag: 'scalar',
-                                        name: 'string',
-                                    },
+export function registerGreeting(peer: FluencePeer, serviceId: string, service: any) {
+    registerServiceEx(
+        peer,
+        {
+            defaultServiceId: 'greeting',
+            functions: {
+                tag: 'labeledProduct',
+                fields: {
+                    greeting: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'labeledProduct',
+                            fields: {
+                                name: {
+                                    tag: 'scalar',
+                                    name: 'string',
                                 },
                             },
-                        ],
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'scalar',
+                                    name: 'string',
+                                },
+                            ],
+                        },
+                    },
+                    greeting_record: {
+                        tag: 'arrow',
+                        domain: {
+                            tag: 'nil',
+                        },
+                        codomain: {
+                            tag: 'unlabeledProduct',
+                            items: [
+                                {
+                                    tag: 'struct',
+                                    name: 'GreetingRecord',
+                                    fields: {
+                                        num: {
+                                            tag: 'scalar',
+                                            name: 'i32',
+                                        },
+                                        str: {
+                                            tag: 'scalar',
+                                            name: 'string',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
                     },
                 },
             },
         },
-    });
+        serviceId,
+        service,
+    );
 }
 
 // Functions
 
-export function call(arg: string, config?: { ttl?: number }): Promise<string>;
-
-export function call(peer: FluencePeer, arg: string, config?: { ttl?: number }): Promise<string>;
-
-export function call(...args: any) {
+export function call(peer: FluencePeer, args: any[]) {
     let script = `
                     (xor
                      (seq
@@ -111,8 +109,9 @@ export function call(...args: any) {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
                     )
     `;
-    return callFunction$$(
-        args,
+    return callFunctionEx(
+        peer,
+
         {
             functionName: 'call',
             arrow: {
@@ -147,5 +146,6 @@ export function call(...args: any) {
             },
         },
         script,
+        args,
     );
 }
