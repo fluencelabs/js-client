@@ -4,8 +4,7 @@ import type { WorkerImplementation } from 'threads/dist/types/master';
 import { Buffer } from 'buffer';
 import fs from 'fs';
 import path from 'path';
-// @ts-ignore
-import WorkerScript from '@fluencelabs/marine-worker-script/dist/marine-js.node.js?raw';
+import b64script from './script';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
@@ -70,6 +69,9 @@ export class NpmWorkerLoader extends LazyLoader<WorkerImplementation> {
 
 export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
     constructor() {
-        super(() => Promise.resolve(BlobWorker.fromText(WorkerScript)));
+        super(() => {
+            const script = fromBase64(b64script);
+            return Promise.resolve(BlobWorker.fromText(script));
+        });
     }
 }

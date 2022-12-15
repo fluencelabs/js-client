@@ -158,6 +158,7 @@ importers:
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       '@types/node': 16.11.59
       buffer: ^6.0.3
+      js-base64: 3.7.3
       threads: ^1.7.0
       ts-loader: 8.4.0
       typescript: ^4.6.4
@@ -166,6 +167,7 @@ importers:
     dependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
       buffer: 6.0.3
+      js-base64: 3.7.3
     devDependencies:
       '@fluencelabs/marine-worker-script': link:../worker-script
       '@types/node': 16.11.59
@@ -180,6 +182,7 @@ importers:
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/marine-worker-script': workspace:0.1.0
       buffer: ^6.0.3
+      js-base64: 3.7.3
       threads: ^1.7.0
       ts-loader: 8.4.0
       typescript: ^4.6.4
@@ -188,6 +191,7 @@ importers:
     dependencies:
       '@fluencelabs/interfaces': link:../../fluence-interfaces
       buffer: 6.0.3
+      js-base64: 3.7.3
     devDependencies:
       '@fluencelabs/marine-worker-script': link:../worker-script
       threads: 1.7.0
@@ -4535,6 +4539,10 @@ packages:
 
   /js-base64/3.7.2:
     resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
+
+  /js-base64/3.7.3:
+    resolution: {integrity: sha512-PAr6Xg2jvd7MCR6Ld9Jg3BmTcjYsHEBx1VlwEwULb/qowPf5VD9kEMagj23Gm7JRnSvE/Da/57nChZjnvL8v6A==}
+    dev: false
 
   /js-sha3/0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}

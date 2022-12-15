@@ -9,13 +9,14 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "webpack && tsc --emitDeclarationOnly"
+        "build": "./build.sh"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/interfaces": "workspace:0.2.0",
+        "js-base64": "3.7.3",
         "buffer": "^6.0.3"
     },
     "devDependencies": {

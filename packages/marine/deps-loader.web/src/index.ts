@@ -2,8 +2,8 @@ import { BlobWorker } from 'threads';
 import { Buffer } from 'buffer';
 import { LazyLoader } from '@fluencelabs/interfaces';
 import type { WorkerImplementation } from 'threads/dist/types/master';
-// @ts-ignore
-import WorkerScript from '@fluencelabs/marine-worker-script/dist/marine-js.web.js?raw';
+import { fromBase64 } from 'js-base64';
+import b64script from './script';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
@@ -46,7 +46,8 @@ export class WasmWebLoader extends LazyLoader<SharedArrayBuffer | Buffer> {
 export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
     constructor() {
         super(() => {
-            return Promise.resolve(BlobWorker.fromText(WorkerScript));
+            const script = fromBase64(b64script);
+            return Promise.resolve(BlobWorker.fromText(script));
         });
     }
 }
