@@ -461,6 +461,7 @@ export class FluencePeer {
      * @private Subject to change. Do not use this method directly
      */
     async connect(connection: FluenceConnection): Promise<void> {
+        this.connection = connection;
         await this.connection?.start();
     }
 
