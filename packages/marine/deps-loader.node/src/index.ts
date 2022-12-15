@@ -4,6 +4,7 @@ import type { WorkerImplementation } from 'threads/dist/types/master';
 import { Buffer } from 'buffer';
 import fs from 'fs';
 import path from 'path';
+import { fromBase64 } from 'js-base64';
 import b64script from './script';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
