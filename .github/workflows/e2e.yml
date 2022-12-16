@@ -59,4 +59,4 @@ jobs:
     with:
       aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
       fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
-      with: fix-typo-e2e
+      ref: fix-typo-e2e
