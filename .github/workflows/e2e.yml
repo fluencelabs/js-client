@@ -52,6 +52,7 @@ jobs:
 
   fluence-cli:
     needs:
+      - fluence-js
       - aqua
 
     uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
