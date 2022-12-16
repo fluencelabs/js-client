@@ -55,7 +55,8 @@ jobs:
       - fluence-js
       - aqua
 
-    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
+    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@fix-version
     with:
       aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
       fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
+      ref: fix-version
