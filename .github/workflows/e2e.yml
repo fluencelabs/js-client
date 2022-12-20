@@ -49,3 +49,13 @@ jobs:
     uses: fluencelabs/registry/.github/workflows/tests.yml@main
     with:
       aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
+
+  fluence-cli:
+    needs:
+      - fluence-js
+      - aqua
+
+    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
+    with:
+      aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
+      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
