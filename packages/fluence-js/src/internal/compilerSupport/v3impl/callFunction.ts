@@ -143,7 +143,7 @@ const extractArgs = (
         throw new Error(`Incorrect number of arguments. Expecting ${numberOfExpectedArgs}`);
     }
 
-    const argsRes = argumentNames.reduce((acc, name, index) => ({ ...acc, [name]: index }), {});
+    const argsRes = argumentNames.reduce((acc, name, index) => ({ ...acc, [name]: structuredArgs[index] }), {});
 
     return {
         peer: peer,
