@@ -123,7 +123,8 @@ const extractArgs = (
     args: { [key: string]: any };
 } => {
     const argumentTypes = getArgumentTypes(def);
-    const numberOfExpectedArgs = Object.entries(argumentTypes).length;
+    const argumentNames = Object.keys(argumentTypes);
+    const numberOfExpectedArgs = argumentNames.length;
 
     let peer: FluencePeer;
     let structuredArgs: any[];
@@ -142,9 +143,7 @@ const extractArgs = (
         throw new Error(`Incorrect number of arguments. Expecting ${numberOfExpectedArgs}`);
     }
 
-    const argsRes = Object.entries(argumentTypes)
-        .map(([name, _], ix) => ({ [name]: structuredArgs[ix] }))
-        .reduce((acc, kp) => ({ ...acc, ...kp }), {});
+    const argsRes = argumentNames.reduce((acc, name, index) => ({ ...acc, [name]: index }), {});
 
     return {
         peer: peer,
