@@ -8,7 +8,7 @@
  */
 import { FluencePeer } from '../FluencePeer';
 import type { CallParams$$ } from '../../internal/compilerSupport/v4';
-import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { registerServiceImpl } from '../../internal/compilerSupport/v3impl/registerService';
 
 // Services
 
@@ -28,7 +28,7 @@ export interface SigDef {
 }
 
 export function registerSig(peer: FluencePeer, serviceId: string, service: any) {
-    registerServiceEx(
+    registerServiceImpl(
         peer,
         {
             defaultServiceId: 'sig',

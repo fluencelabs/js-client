@@ -1,10 +1,15 @@
 import path from 'path';
-import { happy_path, service_removed, file_not_found, list_services, removing_non_exiting } from '../_aqua/srv-tests';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
+import { compileAqua } from '../util';
 
 let peer: FluencePeer;
+let aqua: any;
 
 describe('Srv service test suite', () => {
+    beforeAll(async () => {
+        aqua = await compileAqua('./srv.aqua');
+    });
+
     afterEach(async () => {
         if (peer) {
             await peer.stop();
@@ -21,7 +26,7 @@ describe('Srv service test suite', () => {
         const wasm = path.join(__dirname, './greeting.wasm');
 
         // act
-        const res = await happy_path(peer, [wasm]);
+        const res = await aqua.happy_path(peer, { file_path: wasm });
 
         // assert
         expect(res).toBe('Hi, test');
@@ -32,7 +37,7 @@ describe('Srv service test suite', () => {
         const wasm = path.join(__dirname, './greeting.wasm');
 
         // act
-        const res = await list_services(peer, [wasm]);
+        const res = await aqua.list_services(peer, { file_path: wasm });
 
         // assert
         expect(res).toHaveLength(3);
@@ -43,7 +48,7 @@ describe('Srv service test suite', () => {
         const wasm = path.join(__dirname, './greeting.wasm');
 
         // act
-        const res = await service_removed(peer, [wasm]);
+        const res = await aqua.service_removed(peer, { file_path: wasm });
 
         // assert
         expect(res).toMatch('No handler has been registered for serviceId');
@@ -53,7 +58,7 @@ describe('Srv service test suite', () => {
         // arrange
 
         // act
-        const res = await file_not_found(peer, []);
+        const res = await aqua.file_not_found(peer, {});
 
         // assert
         expect(res).toMatch("ENOENT: no such file or directory, open '/random/incorrect/file'");
@@ -63,7 +68,7 @@ describe('Srv service test suite', () => {
         // arrange
 
         // act
-        const res = await removing_non_exiting(peer, []);
+        const res = await aqua.removing_non_exiting(peer, {});
 
         // assert
         expect(res).toMatch('Service with id random_id not found');

@@ -9,7 +9,7 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "./build.sh"
+        "build": "tsc"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

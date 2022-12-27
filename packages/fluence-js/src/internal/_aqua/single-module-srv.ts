@@ -7,7 +7,7 @@
  *
  */
 import type { CallParams$$ } from '../../internal/compilerSupport/v4';
-import { registerServiceEx } from '../../internal/compilerSupport/v3impl/registerService';
+import { registerServiceImpl } from '../../internal/compilerSupport/v3impl/registerService';
 import { FluencePeer } from '../FluencePeer';
 
 // Services
@@ -27,7 +27,7 @@ export interface SrvDef {
 }
 
 export function registerSrv(peer: FluencePeer, serviceId: string, service: any) {
-    registerServiceEx(
+    registerServiceImpl(
         peer,
         {
             defaultServiceId: 'single_module_srv',

@@ -12,10 +12,10 @@ import { registerGlobalService, userHandlerService } from './services';
 // export function registerService(args: any[], def: ServiceDef) {
 //     const { peer, service, serviceId } = extractArgs(args, def.defaultServiceId);
 
-//     registerServiceEx(peer, def, service, serviceId);
+//     registerServiceImpl(peer, def, service, serviceId);
 // }
 
-export const registerServiceEx = (peer: FluencePeer, def: ServiceDef, serviceId: string, service: any) => {
+export const registerServiceImpl = (peer: FluencePeer, def: ServiceDef, serviceId: string, service: any) => {
     if (!peer.getStatus().isInitialized) {
         throw new Error(
             'Could not register the service because the peer is not initialized. Are you passing the wrong peer to the register function?',

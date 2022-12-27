@@ -1,7 +1,7 @@
 module Export
 
-import Srv from "../src/single-module-srv.aqua"
-import NodeUtils from "../src/node-utils.aqua"
+import Srv from "../../../aqua/src/single-module-srv.aqua"
+import NodeUtils from "../../../aqua/src/node-utils.aqua"
 export happy_path, list_services, file_not_found, service_removed, removing_non_exiting
 
 service Greeting("greeting"):
