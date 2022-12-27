@@ -80,7 +80,7 @@ importers:
       '@types/jest': 28.1.0
       '@types/platform': 1.3.4
       '@types/uuid': 8.3.2
-      async: 3.2.3
+      async: 3.2.4
       base64-js: ^1.5.1
       browser-or-node: 2.0.0
       bs58: 5.0.0
@@ -110,7 +110,7 @@ importers:
       '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-runner': link:../marine/marine-runner
       '@fluencelabs/marine-worker-script': link:../marine/worker-script
-      async: 3.2.3
+      async: 3.2.4
       base64-js: 1.5.1
       browser-or-node: 2.0.0
       bs58: 5.0.0
@@ -1881,6 +1881,7 @@ packages:
 
   /async/3.2.3:
     resolution: {integrity: sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==}
+    dev: true
 
   /async/3.2.4:
     resolution: {integrity: sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==}

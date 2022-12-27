@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/fluence",
-    "version": "0.27.4",
+    "version": "0.27.5",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -34,7 +34,7 @@
         "@fluencelabs/marine-worker-script": "workspace:0.1.0",
         "@fluencelabs/marine-deps-loader.web": "workspace:0.1.0",
         "@fluencelabs/marine-deps-loader.node": "workspace:0.1.0",
-        "async": "3.2.3",
+        "async": "3.2.4",
         "base64-js": "^1.5.1",
         "browser-or-node": "2.0.0",
         "bs58": "5.0.0",
