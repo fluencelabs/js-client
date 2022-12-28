@@ -1,12 +1,18 @@
+import path from 'path';
 import { allowServiceFn } from '../../internal/builtins/securityGuard';
 import { Sig } from '../../services';
-import { registerSig, registerDataProvider, callSig } from '../_aqua/sig-tests';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 import { KeyPair } from '@fluencelabs/keypair';
+import { compileAqua } from '../util';
 
 let peer: FluencePeer;
+let aqua: any;
 
 describe('Sig service test suite', () => {
+    beforeAll(async () => {
+        aqua = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+    });
+
     afterEach(async () => {
         if (peer) {
             await peer.stop();
@@ -33,7 +39,7 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('data', 'provide_data');
 
-        const result = await callSig(peer, ['CustomSig']);
+        const result = await aqua.callSig(peer, ['CustomSig']);
 
         expect(result.success).toBe(true);
         const isSigCorrect = await customSig.verify(result.signature as number[], data);
@@ -55,7 +61,7 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('wrong', 'wrong');
 
-        const result = await callSig(peer, ['CustomSig']);
+        const result = await aqua.callSig(peer, { sigId: 'CustomSig' });
     });
 
     it('Default sig service should be resolvable by peer id', async () => {
@@ -68,16 +74,18 @@ describe('Sig service test suite', () => {
             },
         });
 
-        const callAsSigRes = await callSig(peer, ['sig']);
-        const callAsPeerIdRes = await callSig(peer, [peer.getStatus().peerId as string]);
+        const callAsSigRes = await aqua.allSig(peer, { sigId: 'sig' });
+        const callAsPeerIdRes = await aqua.callSig(peer, { sigId: peer.getStatus().peerId });
 
         expect(callAsSigRes.success).toBe(false);
         expect(callAsPeerIdRes.success).toBe(false);
 
         sig.securityGuard = () => true;
 
-        const callAsSigResAfterGuardChange = await callSig(peer, ['sig']);
-        const callAsPeerIdResAfterGuardChange = await callSig(peer, [peer.getStatus().peerId as string]);
+        const callAsSigResAfterGuardChange = await aqua.callSig(peer, { sigId: 'sig' });
+        const callAsPeerIdResAfterGuardChange = await aqua.callSig(peer, {
+            sigId: peer.getStatus().peerId,
+        });
 
         expect(callAsSigResAfterGuardChange.success).toBe(true);
         expect(callAsPeerIdResAfterGuardChange.success).toBe(true);

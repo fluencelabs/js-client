@@ -1,17 +1,25 @@
 import fs from 'fs';
-import { call } from '../_aqua/marine-js';
-import { call_info } from '../_aqua/marine-js-logging';
+import path from 'path';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
+import { compileAqua } from '../util';
 
-const peer = makeDefaultPeer();
+let peer: FluencePeer;
+let aqua: any;
 
 describe('Marine js tests', () => {
+    beforeAll(async () => {
+        aqua = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+    });
+
     beforeEach(async () => {
+        const peer = makeDefaultPeer();
         await peer.start();
     });
 
     afterEach(async () => {
-        await peer.stop();
+        if (peer) {
+            await peer.stop();
+        }
     });
 
     it('should call marine service correctly', async () => {
@@ -20,7 +28,7 @@ describe('Marine js tests', () => {
         await peer.registerMarineService(wasm, 'greeting');
 
         // act
-        const res = await call(peer, ['test']);
+        const res = await aqua.call(peer, { arg: 'test' });
 
         // assert
         expect(res).toBe('Hi, Hi, Hi, test');
@@ -43,7 +51,7 @@ describe('Marine js tests', () => {
             await peer.registerMarineService(wasm, 'greeting');
 
             // act
-            await call_info(peer, ['greeting']);
+            await aqua.call_info(peer, { arg: 'greeting' });
 
             // assert
             expect(console.info).toBeCalledTimes(1);

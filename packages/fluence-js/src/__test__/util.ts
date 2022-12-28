@@ -1,4 +1,5 @@
 import api from '@fluencelabs/aqua-api/aqua-api';
+import { promises as fs } from 'fs';
 import { FluencePeer } from '../internal/FluencePeer';
 import { Particle } from '../internal/Particle';
 import { MakeServiceCall } from '../internal/utils';
@@ -20,14 +21,13 @@ export type CompiledFnCall = (peer: FluencePeer, args: { [key: string]: any }) =
 export type CompiledFile = { [key: string]: CompiledFnCall };
 
 export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
-    const compilationResult = await api.Aqua.compile(aquaFile, [], {
-        constants: [],
-        logLevel: 'off',
-        noRelay: false,
-        noXor: false,
-    });
+    await fs.access(aquaFile);
 
-    const compiled = Array.from(compilationResult.functions.entries())
+    const compilationResult = await api.Aqua.compile(aquaFile, [], undefined);
+
+    compilationResult.services["qwe"].
+
+    const compiled = Object.entries(compilationResult.functions)
         .map(([name, fnInfo]) => {
             const callFn = (peer: FluencePeer, args: { [key: string]: any }) => {
                 return callFunctionImpl(fnInfo.funcDef, fnInfo.script, {}, peer, args);
@@ -36,7 +36,7 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
         })
         .reduce((agg, obj) => {
             return { ...agg, ...obj };
-        });
+        }, {});
 
     return compiled;
 };

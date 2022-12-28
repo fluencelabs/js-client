@@ -7,7 +7,7 @@ let aqua: any;
 
 describe('Srv service test suite', () => {
     beforeAll(async () => {
-        aqua = await compileAqua('./srv.aqua');
+        aqua = await compileAqua(path.join(__dirname, './srv.aqua'));
     });
 
     afterEach(async () => {

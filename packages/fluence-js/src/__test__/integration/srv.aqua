@@ -25,14 +25,18 @@ func file_not_found() -> string:
     <- e.error!
 
 func service_removed(file_path: string) -> string:
+    result: *string
+
     file <- NodeUtils.read_file(file_path)
     created_service <- Srv.create(file.content!)
     Greeting created_service.service_id!
     Srv.remove(created_service.service_id!)
     try:
         dontcare <- Greeting.greeting("test")
+        result <<- "ok"
     catch e: 
-        <- e.message
+        result <<- e.message
+    <- result!
 
 func removing_non_exiting() -> string:
     e <- Srv.remove("random_id")
