@@ -15,7 +15,12 @@ import { registerGlobalService, userHandlerService } from './services';
 //     registerServiceImpl(peer, def, service, serviceId);
 // }
 
-export const registerServiceImpl = (peer: FluencePeer, def: ServiceDef, serviceId: string, service: any) => {
+export const registerServiceImpl = (
+    peer: FluencePeer,
+    def: ServiceDef,
+    serviceId: string | undefined,
+    service: any,
+) => {
     if (!peer.getStatus().isInitialized) {
         throw new Error(
             'Could not register the service because the peer is not initialized. Are you passing the wrong peer to the register function?',
@@ -30,6 +35,14 @@ export const registerServiceImpl = (peer: FluencePeer, def: ServiceDef, serviceI
             `Error registering service ${serviceId}: missing functions: ` +
                 incorrectServiceDefinitions.map((d) => "'" + d + "'").join(', '),
         );
+    }
+
+    if (!serviceId) {
+        serviceId = def.defaultServiceId;
+    }
+
+    if (!serviceId) {
+        throw new Error('Service ID must be specified');
     }
 
     const singleFunctions = def.functions.tag === 'nil' ? [] : Object.entries(def.functions.fields);

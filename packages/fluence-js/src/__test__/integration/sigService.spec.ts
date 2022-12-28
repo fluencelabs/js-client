@@ -4,13 +4,19 @@ import { Sig } from '../../services';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
 import { KeyPair } from '@fluencelabs/keypair';
 import { compileAqua } from '../util';
+import { registerServiceImpl } from '../../internal/compilerSupport/v3';
 
 let peer: FluencePeer;
 let aqua: any;
+let sigDef: any;
+let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        aqua = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+        aqua = functions;
+        sigDef = services[0];
+        dataProviderDef = services[1];
     });
 
     afterEach(async () => {
@@ -29,9 +35,9 @@ describe('Sig service test suite', () => {
         const customSig = new Sig(customKeyPair);
         const data = [1, 2, 3, 4, 5];
 
-        registerSig(peer, 'CustomSig', customSig);
+        registerServiceImpl(peer, sigDef, 'CustomSig', customSig);
 
-        registerDataProvider(peer, 'data', {
+        registerServiceImpl(peer, dataProviderDef, 'data', {
             provide_data: () => {
                 return data;
             },
@@ -51,9 +57,9 @@ describe('Sig service test suite', () => {
         const customSig = new Sig(customKeyPair);
         const data = [1, 2, 3, 4, 5];
 
-        registerSig(peer, 'CustomSig', customSig);
+        registerServiceImpl(peer, sigDef, 'CustomSig', customSig);
 
-        registerDataProvider(peer, 'data', {
+        registerServiceImpl(peer, dataProviderDef, 'data', {
             provide_data: () => {
                 return data;
             },
@@ -68,7 +74,7 @@ describe('Sig service test suite', () => {
         const sig = peer.getServices().sig;
 
         const data = [1, 2, 3, 4, 5];
-        registerDataProvider(peer, 'data', {
+        registerServiceImpl(peer, dataProviderDef, 'data', {
             provide_data: () => {
                 return data;
             },

@@ -843,7 +843,6 @@ export const defaultNames = {
 };
 
 export const makeDefaultPeer = () => {
-    // const workerLoader = new NpmWorkerLoader('@fluencelabs/marine-worker-script`', './marine-js.node.js');
     const workerLoader = new InlinedWorkerLoader();
 
     const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.file);

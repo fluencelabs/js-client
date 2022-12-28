@@ -9,9 +9,7 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "compile-aqua": "npm run compile-aqua:src && npm run compile-aqua:test",
-        "compile-aqua:src": "aqua -i ./aqua/src/  -o ./src/internal/_aqua",
-        "compile-aqua:test": "aqua -i ./aqua/tests/ -o ./src/__test__/_aqua",
+        "compile-aqua": "aqua -i ./aqua/  -o ./src/internal/_aqua",
         "test": "jest",
         "test:unit": "jest --testPathPattern=src/__test__/unit",
         "test:integration": "jest --testPathPattern=src/__test__/integration",

@@ -8,7 +8,8 @@ let aqua: any;
 
 describe('Marine js tests', () => {
     beforeAll(async () => {
-        aqua = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+        aqua = functions;
     });
 
     beforeEach(async () => {

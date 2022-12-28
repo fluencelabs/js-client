@@ -1,6 +1,6 @@
 module Export
 
-import SignResult, Sig from "../../../aqua/src/services.aqua"
+import SignResult, Sig from "../../../aqua/services.aqua"
 export Sig, DataProvider, callSig
 
 service DataProvider("data"):
