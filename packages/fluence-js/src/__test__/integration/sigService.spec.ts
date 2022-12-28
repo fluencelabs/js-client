@@ -1,8 +1,8 @@
 import path from 'path';
+import { KeyPair } from '@fluencelabs/keypair';
 import { allowServiceFn } from '../../internal/builtins/securityGuard';
 import { Sig } from '../../services';
 import { makeDefaultPeer, FluencePeer } from '../../internal/FluencePeer';
-import { KeyPair } from '@fluencelabs/keypair';
 import { compileAqua } from '../util';
 import { registerServiceImpl } from '../../internal/compilerSupport/v3';
 
@@ -13,10 +13,10 @@ let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname, './sigService.aqua'));
         aqua = functions;
-        sigDef = services[0];
-        dataProviderDef = services[1];
+        sigDef = services[1];
+        dataProviderDef = services[0];
     });
 
     afterEach(async () => {
@@ -45,7 +45,7 @@ describe('Sig service test suite', () => {
 
         customSig.securityGuard = allowServiceFn('data', 'provide_data');
 
-        const result = await aqua.callSig(peer, ['CustomSig']);
+        const result = await aqua.callSig(peer, { sigId: 'CustomSig' });
 
         expect(result.success).toBe(true);
         const isSigCorrect = await customSig.verify(result.signature as number[], data);
@@ -80,7 +80,7 @@ describe('Sig service test suite', () => {
             },
         });
 
-        const callAsSigRes = await aqua.allSig(peer, { sigId: 'sig' });
+        const callAsSigRes = await aqua.callSig(peer, { sigId: 'sig' });
         const callAsPeerIdRes = await aqua.callSig(peer, { sigId: peer.getStatus().peerId });
 
         expect(callAsSigRes.success).toBe(false);
