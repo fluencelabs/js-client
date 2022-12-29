@@ -25,10 +25,10 @@ import * as log from 'loglevel';
 import { Noise } from '@chainsafe/libp2p-noise';
 import PeerId from 'peer-id';
 import type { MultiaddrInput } from 'multiaddr';
+import { Connection } from 'libp2p-interfaces/src/topology';
 import { Multiaddr } from 'multiaddr';
 // @ts-ignore
 import { all as allow_all } from 'libp2p-websockets/src/filters';
-import { Connection } from 'libp2p-interfaces/src/topology';
 import Buffer from './Buffer';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
@@ -53,20 +53,19 @@ export interface FluenceConnectionOptions {
     dialTimeoutMs?: number;
 }
 
-/**
+/*
  * Implementation for JS peers which connects to Fluence through relay node
  */
 export class RelayConnection extends FluenceConnection {
-    public readonly relayPeerId: PeerIdB58 | null;
-    private isStarted: boolean = false;
-
-    constructor(private lib2p2Peer: Lib2p2Peer, private relayAddress: Multiaddr) {
+    constructor(
+        public peerId: PeerIdB58,
+        private _lib2p2Peer: Lib2p2Peer,
+        private _relayAddress: Multiaddr,
+        public readonly relayPeerId: PeerIdB58,
+    ) {
         super();
-        this.relayPeerId = relayAddress.getPeerId();
     }
-
     private _connection?: Connection;
-
     static async createConnection(options: FluenceConnectionOptions): Promise<RelayConnection> {
         const transportKey = Websockets.prototype[Symbol.toStringTag];
         const lib2p2Peer = await Lib2p2Peer.create({
@@ -87,28 +86,23 @@ export class RelayConnection extends FluenceConnection {
                 dialTimeout: options?.dialTimeoutMs,
             },
         });
-
         const relayMultiaddr = new Multiaddr(options.relayAddress);
         const relayPeerId = relayMultiaddr.getPeerId();
         if (relayPeerId === null) {
             throw new Error('Specified multiaddr is invalid or missing peer id: ' + options.relayAddress);
         }
-
-        return new RelayConnection(lib2p2Peer, relayMultiaddr);
+        return new RelayConnection(
+            // force new line
+            options.peerId.toB58String(),
+            lib2p2Peer,
+            relayMultiaddr,
+            relayPeerId,
+        );
     }
 
-    isConnected(): boolean {
-        return this.isStarted;
-    }
-
-    async stop() {
-        if (!this.lib2p2Peer.isStarted) {
-            return;
-        }
-
-        await this.lib2p2Peer.unhandle(PROTOCOL_NAME);
-        await this.lib2p2Peer.stop();
-        this.isStarted = false;
+    async disconnect() {
+        await this._lib2p2Peer.unhandle(PROTOCOL_NAME);
+        await this._lib2p2Peer.stop();
     }
 
     async sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void> {
@@ -119,19 +113,15 @@ export class RelayConnection extends FluenceConnection {
                 )} instead.`,
             );
         }
-
         /*
         TODO:: find out why this doesn't work and a new connection has to be established each time
         if (this._connection.streams.length !== 1) {
             throw new Error('Incorrect number of streams in FluenceConnection');
         }
-
         const sink = this._connection.streams[0].sink;
         */
-
-        const conn = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
+        const conn = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
         const sink = conn.stream.sink;
-
         pipe(
             // force new line
             [Buffer.from(particle, 'utf8')],
@@ -140,14 +130,10 @@ export class RelayConnection extends FluenceConnection {
         );
     }
 
-    async start() {
-        if (this.lib2p2Peer.isStarted) {
-            return;
-        }
+    async connect(onIncomingParticle: ParticleHandler) {
+        await this._lib2p2Peer.start();
 
-        await this.lib2p2Peer.start();
-
-        await this.lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+        this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(
                 stream.source,
                 // @ts-ignore
@@ -156,7 +142,7 @@ export class RelayConnection extends FluenceConnection {
                     try {
                         for await (const msg of source) {
                             try {
-                                this?.onIncomingParticle(msg);
+                                onIncomingParticle(msg);
                             } catch (e) {
                                 log.error('error on handling a new incoming message: ' + e);
                             }
@@ -167,20 +153,16 @@ export class RelayConnection extends FluenceConnection {
                 },
             );
         });
-
-        log.debug(`dialing to the node with client's address: ` + this.lib2p2Peer.peerId.toB58String());
-
+        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
         try {
-            this._connection = await this.lib2p2Peer.dial(this.relayAddress);
+            this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {
                 const error = e._errors[0];
-                throw new Error(`Error dialing node ${this.relayAddress}:\n${error.code}\n${error.message}`);
+                throw new Error(`Error dialing node ${this._relayAddress}:\n${error.code}\n${error.message}`);
             } else {
                 throw e;
             }
         }
-
-        this.isStarted = true;
     }
 }

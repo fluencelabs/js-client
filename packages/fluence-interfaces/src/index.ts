@@ -24,12 +24,10 @@ export type ParticleHandler = (particle: string) => void;
 /**
  * Base class for connectivity layer to Fluence Network
  */
-export abstract class FluenceConnection implements IModule {
-    onIncomingParticle: ParticleHandler;
+export abstract class FluenceConnection {
     abstract readonly relayPeerId: PeerIdB58 | null;
-    abstract start(): Promise<void>;
-    abstract stop(): Promise<void>;
-    abstract isConnected(): boolean;
+    abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
+    abstract disconnect(): Promise<void>;
     abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
 }
 

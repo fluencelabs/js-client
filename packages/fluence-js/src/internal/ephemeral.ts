@@ -125,11 +125,9 @@ export class EphemeralNetwork {
     async up(): Promise<void> {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
-
         const workerLoader = new InlinedWorkerLoader();
-        // const workerLoader = new NpmWorkerLoader('@fluencelabs/marine-worker-script`', './marine-js.node.js');
-        const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.package);
-        const avmModuleLoader = new WasmNpmLoader(defaultNames.avm.package, defaultNames.avm.package);
+        const controlModuleLoader = new WasmNpmLoader(defaultNames.marine.package, defaultNames.marine.file);
+        const avmModuleLoader = new WasmNpmLoader(defaultNames.avm.package, defaultNames.avm.file);
 
         const promises = this.config.peers.map(async (x) => {
             // TODO: not undefined;
@@ -144,28 +142,26 @@ export class EphemeralNetwork {
             if (kp.getPeerId() !== x.peerId) {
                 throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
             }
-
             await peer.init({
                 KeyPair: kp,
             });
 
+            let handler: ParticleHandler | null = null;
             const connectionCtor = class extends FluenceConnection {
                 relayPeerId = null;
 
-                async start(): Promise<void> {}
-
-                isConnected(): boolean {
-                    return true;
+                async connect(onIncomingParticle: ParticleHandler): Promise<void> {
+                    handler = onIncomingParticle;
                 }
 
-                async stop(): Promise<void> {}
+                async disconnect(): Promise<void> {
+                    handler = null;
+                }
 
                 sendParticle = sendParticle;
             };
 
-            const conn = new connectionCtor();
-            // onIncomingParticle will be set here
-            await peer.start();
+            await peer.connect(new connectionCtor());
 
             const peerId = peer.getStatus().peerId!;
             const ephPeer: PeerAdapter = {
@@ -173,7 +169,7 @@ export class EphemeralNetwork {
                 connections: new Set(allPeerIds.filter((x) => x !== peerId)),
                 peer: peer,
                 peerId: peerId,
-                onIncoming: conn.onIncomingParticle,
+                onIncoming: handler!,
             };
             return [peerId, ephPeer] as const;
         });
@@ -205,38 +201,31 @@ export class EphemeralNetwork {
         if (relayPeer === undefined) {
             throw new Error(`Relay with peer Id: ${relay} has not been found in ephemeral network`);
         }
-
         const connectionCtor = class extends FluenceConnection {
             relayPeerId = relay;
 
-            async start(): Promise<void> {
+            async connect(onIncomingParticle: ParticleHandler): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
                 me._peers.set(peerId, {
                     isEphemeral: false,
                     peer: peer,
-                    onIncoming: this.onIncomingParticle.bind(this),
+                    onIncoming: onIncomingParticle,
                     peerId: peerId,
                     connections: new Set([relay]),
                 });
                 relayPeer.connections.add(peerId);
             }
 
-            isConnected(): boolean {
-                return true;
-            }
-
-            async stop(): Promise<void> {
+            async disconnect(): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
                 relayPeer.connections.delete(peerId);
                 me._peers.delete(peerId);
             }
-
             async sendParticle(nextPeerIds: string[], particle: string): Promise<void> {
                 const peerId = peer.getStatus().peerId!;
                 me._send(peerId, nextPeerIds, particle);
             }
         };
-
         return new connectionCtor();
     }
 

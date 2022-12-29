@@ -252,7 +252,6 @@ export class FluencePeer {
         const conn = await configToConnection(newConfig.KeyPair, config?.connectTo, config?.dialTimeoutMs);
 
         if (conn !== null) {
-            conn.onIncomingParticle = this._onIncomingParticle.bind(this);
             await this.connect(conn);
         }
     }
@@ -462,18 +461,18 @@ export class FluencePeer {
      */
     async connect(connection: FluenceConnection): Promise<void> {
         if (this.connection) {
-            await this.connection.stop();
+            await this.connection.disconnect();
         }
 
         this.connection = connection;
-        await this.connection?.start();
+        await this.connection.connect(this._onIncomingParticle.bind(this));
     }
 
     /**
      * @private Subject to change. Do not use this method directly
      */
     async disconnect(): Promise<void> {
-        await this.connection?.stop();
+        await this.connection?.disconnect();
     }
 
     // private

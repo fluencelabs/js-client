@@ -8,8 +8,7 @@ let peer: FluencePeer;
 
 jest.setTimeout(50000);
 
-// TODO: do not instantiate a new marine service per peer and uncomment the test
-describe.skip('Ephemeral networks tests', () => {
+describe('Ephemeral networks tests', () => {
     beforeEach(async () => {
         en = new EphemeralNetwork(defaultConfig);
         await en.up();
