@@ -9,9 +9,7 @@ let peer: FluencePeer;
 
 describe('Typescript usage suite', () => {
     afterEach(async () => {
-        if (peer) {
-            await peer.stop();
-        }
+        await peer?.stop();
     });
 
     beforeEach(() => {

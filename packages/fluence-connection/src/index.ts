@@ -57,15 +57,12 @@ export interface FluenceConnectionOptions {
  * Implementation for JS peers which connects to Fluence through relay node
  */
 export class RelayConnection extends FluenceConnection {
+    public readonly relayPeerId: PeerIdB58 | null;
     private isStarted: boolean = false;
 
-    constructor(
-        public peerId: PeerIdB58,
-        private _lib2p2Peer: Lib2p2Peer,
-        private _relayAddress: Multiaddr,
-        public readonly relayPeerId: PeerIdB58,
-    ) {
+    constructor(private lib2p2Peer: Lib2p2Peer, private relayAddress: Multiaddr) {
         super();
+        this.relayPeerId = relayAddress.getPeerId();
     }
 
     private _connection?: Connection;
@@ -97,13 +94,7 @@ export class RelayConnection extends FluenceConnection {
             throw new Error('Specified multiaddr is invalid or missing peer id: ' + options.relayAddress);
         }
 
-        return new RelayConnection(
-            // force new line
-            options.peerId.toB58String(),
-            lib2p2Peer,
-            relayMultiaddr,
-            relayPeerId,
-        );
+        return new RelayConnection(lib2p2Peer, relayMultiaddr);
     }
 
     isConnected(): boolean {
@@ -111,12 +102,12 @@ export class RelayConnection extends FluenceConnection {
     }
 
     async stop() {
-        if (!this._lib2p2Peer.isStarted) {
+        if (!this.lib2p2Peer.isStarted) {
             return;
         }
 
-        await this._lib2p2Peer.unhandle(PROTOCOL_NAME);
-        await this._lib2p2Peer.stop();
+        await this.lib2p2Peer.unhandle(PROTOCOL_NAME);
+        await this.lib2p2Peer.stop();
         this.isStarted = false;
     }
 
@@ -138,7 +129,7 @@ export class RelayConnection extends FluenceConnection {
         const sink = this._connection.streams[0].sink;
         */
 
-        const conn = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
+        const conn = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
         const sink = conn.stream.sink;
 
         pipe(
@@ -150,13 +141,13 @@ export class RelayConnection extends FluenceConnection {
     }
 
     async start() {
-        if (this._lib2p2Peer.isStarted) {
+        if (this.lib2p2Peer.isStarted) {
             return;
         }
 
-        await this._lib2p2Peer.start();
+        await this.lib2p2Peer.start();
 
-        await this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+        await this.lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(
                 stream.source,
                 // @ts-ignore
@@ -177,14 +168,14 @@ export class RelayConnection extends FluenceConnection {
             );
         });
 
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toB58String());
+        log.debug(`dialing to the node with client's address: ` + this.lib2p2Peer.peerId.toB58String());
 
         try {
-            this._connection = await this._lib2p2Peer.dial(this._relayAddress);
+            this._connection = await this.lib2p2Peer.dial(this.relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {
                 const error = e._errors[0];
-                throw new Error(`Error dialing node ${this._relayAddress}:\n${error.code}\n${error.message}`);
+                throw new Error(`Error dialing node ${this.relayAddress}:\n${error.code}\n${error.message}`);
             } else {
                 throw e;
             }

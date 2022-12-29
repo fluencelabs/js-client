@@ -11,15 +11,15 @@ describe('Srv service test suite', () => {
         aqua = functions;
     });
 
+    beforeEach(async () => {
+        peer = makeDefaultPeer();
+        await peer.start();
+    });
+
     afterEach(async () => {
         if (peer) {
             await peer.stop();
         }
-    });
-
-    beforeEach(async () => {
-        peer = makeDefaultPeer();
-        await peer.start();
     });
 
     it('Use custom srv service, success path', async () => {

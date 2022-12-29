@@ -13,7 +13,7 @@ describe('Marine js tests', () => {
     });
 
     beforeEach(async () => {
-        const peer = makeDefaultPeer();
+        peer = makeDefaultPeer();
         await peer.start();
     });
 

@@ -210,7 +210,7 @@ export class FluencePeer {
             };
         }
 
-        if (this.connection?.isConnected() === undefined) {
+        if (this.connection === null) {
             return {
                 isInitialized: true,
                 peerId: this._keyPair.Libp2pPeerId.toB58String(),
@@ -461,6 +461,10 @@ export class FluencePeer {
      * @private Subject to change. Do not use this method directly
      */
     async connect(connection: FluenceConnection): Promise<void> {
+        if (this.connection) {
+            await this.connection.stop();
+        }
+
         this.connection = connection;
         await this.connection?.start();
     }
