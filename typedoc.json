@@ -1,7 +1,0 @@
-{
-    "readme": "./typedoc.md",
-    "theme": "default",
-    "out": "docs",
-    "excludePrivate": true,
-    "entryPoints": ["packages/fluence-js/src/index.ts"]
-}

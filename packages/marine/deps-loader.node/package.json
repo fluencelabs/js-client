@@ -1,5 +1,5 @@
 {
-    "name": "@fluencelabs/marine-deps-loader.node",
+    "name": "@fluencelabs/marine.deps-loader.node",
     "version": "0.1.0",
     "description": "MarineJS deps loader",
     "main": "./dist/index.js",
@@ -16,7 +16,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/interfaces": "workspace:0.2.0",
-        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
+        "@fluencelabs/marine.worker-script": "workspace:0.1.0",
         "js-base64": "3.7.3",
         "buffer": "^6.0.3"
     },

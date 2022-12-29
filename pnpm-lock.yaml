@@ -4,65 +4,18 @@ importers:
 
   packages/@tests/smoke:
     specifiers:
-      '@fluencelabs/fluence': workspace:*
+      '@fluencelabs/js-peer': workspace:*
       '@types/node': 16.11.59
       ts-node: 10.9.1
       typescript: 4.6.4
     dependencies:
-      '@fluencelabs/fluence': link:../../fluence-js
+      '@fluencelabs/js-peer': link:../../core/js-peer
       ts-node: 10.9.1_f4s53rsdbgkmxc2oaa23drhnsy
     devDependencies:
       '@types/node': 16.11.59
       typescript: 4.6.4
 
-  packages/fluence-connection:
-    specifiers:
-      '@chainsafe/libp2p-noise': 4.1.1
-      '@fluencelabs/interfaces': workspace:0.2.0
-      browser-or-node: 2.0.0
-      buffer: 6.0.3
-      it-length-prefixed: 5.0.3
-      it-pipe: 1.1.0
-      libp2p: 0.36.2
-      libp2p-interfaces: 4.0.6
-      libp2p-mplex: 0.10.7
-      libp2p-websockets: 0.16.2
-      loglevel: 1.8.1
-      multiaddr: 10.0.1
-      peer-id: 0.16.0
-      typescript: 4.6.4
-    dependencies:
-      '@chainsafe/libp2p-noise': 4.1.1
-      '@fluencelabs/interfaces': link:../fluence-interfaces
-      browser-or-node: 2.0.0
-      buffer: 6.0.3
-      it-length-prefixed: 5.0.3
-      it-pipe: 1.1.0
-      libp2p: 0.36.2
-      libp2p-interfaces: 4.0.6
-      libp2p-mplex: 0.10.7
-      libp2p-websockets: 0.16.2
-      loglevel: 1.8.1
-      multiaddr: 10.0.1
-      peer-id: 0.16.0
-    devDependencies:
-      typescript: 4.6.4
-
-  packages/fluence-interfaces:
-    specifiers:
-      '@fluencelabs/avm': 0.31.10
-      '@fluencelabs/marine-js': 0.3.38
-      '@types/node': 16.11.59
-      threads: ^1.7.0
-      typescript: 4.6.4
-    devDependencies:
-      '@fluencelabs/avm': 0.31.10
-      '@fluencelabs/marine-js': 0.3.38
-      '@types/node': 16.11.59
-      threads: 1.7.0
-      typescript: 4.6.4
-
-  packages/fluence-js:
+  packages/client/fluence-js:
     specifiers:
       '@fluencelabs/aqua': 0.7.7-362
       '@fluencelabs/aqua-api': 0.0.4-api-for-fluence-cli-1437934-107-1.0
@@ -72,11 +25,11 @@ importers:
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/interfaces': workspace:0.2.0
       '@fluencelabs/keypair': workspace:0.2.0
-      '@fluencelabs/marine-deps-loader.node': workspace:0.1.0
-      '@fluencelabs/marine-deps-loader.web': workspace:0.1.0
       '@fluencelabs/marine-js': 0.3.38
       '@fluencelabs/marine-runner': workspace:0.1.0
-      '@fluencelabs/marine-worker-script': workspace:0.1.0
+      '@fluencelabs/marine.deps-loader.node': workspace:0.1.0
+      '@fluencelabs/marine.deps-loader.web': workspace:0.1.0
+      '@fluencelabs/marine.worker-script': workspace:0.1.0
       '@types/bs58': 4.0.1
       '@types/jest': 28.1.0
       '@types/platform': 1.3.4
@@ -104,14 +57,14 @@ importers:
       uuid: 8.3.2
     dependencies:
       '@fluencelabs/avm': 0.32.1
-      '@fluencelabs/connection': link:../fluence-connection
-      '@fluencelabs/interfaces': link:../fluence-interfaces
-      '@fluencelabs/keypair': link:../fluence-keypair
-      '@fluencelabs/marine-deps-loader.node': link:../marine/deps-loader.node
-      '@fluencelabs/marine-deps-loader.web': link:../marine/deps-loader.web
+      '@fluencelabs/connection': link:../../core/connection
+      '@fluencelabs/interfaces': link:../../core/interfaces
+      '@fluencelabs/keypair': link:../../core/keypair
       '@fluencelabs/marine-js': 0.3.38
-      '@fluencelabs/marine-runner': link:../marine/marine-runner
-      '@fluencelabs/marine-worker-script': link:../marine/worker-script
+      '@fluencelabs/marine-runner': link:../../marine/background-runner
+      '@fluencelabs/marine.deps-loader.node': link:../../marine/deps-loader.node
+      '@fluencelabs/marine.deps-loader.web': link:../../marine/deps-loader.web
+      '@fluencelabs/marine.worker-script': link:../../marine/worker-script
       async: 3.2.4
       base64-js: 1.5.1
       browser-or-node: 2.0.0
@@ -126,7 +79,143 @@ importers:
       ts-pattern: 3.3.3
       uuid: 8.3.2
     devDependencies:
-      '@fluencelabs/aqua': 0.7.7-362_ewlfou5hfwkqpvjzhjdbxrqn2m
+      '@fluencelabs/aqua': 0.7.7-362_j2eacdjxptxiyokdurrbqsd7ey
+      '@fluencelabs/aqua-api': 0.0.4-api-for-fluence-cli-1437934-107-1.0
+      '@fluencelabs/aqua-lib': 0.6.0
+      '@fluencelabs/fluence-network-environment': 1.0.13
+      '@types/bs58': 4.0.1
+      '@types/jest': 28.1.0
+      '@types/platform': 1.3.4
+      '@types/uuid': 8.3.2
+      jest: 28.1.0_gsb7asu77en4txj3es3i65pxci
+      jest-each: 28.1.3
+      js-base64: 3.7.2
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      ts-jest: 28.0.2_ewlfou5hfwkqpvjzhjdbxrqn2m
+      ts-node: 10.9.1_apbkdfxvcdmborgupeskcsfbo4
+      typedoc: 0.22.15_typescript@4.6.4
+      typescript: 4.6.4
+
+  packages/client/tools:
+    specifiers:
+      '@types/node': 16.11.59
+      typescript: 4.6.4
+    devDependencies:
+      '@types/node': 16.11.59
+      typescript: 4.6.4
+
+  packages/core/connection:
+    specifiers:
+      '@chainsafe/libp2p-noise': 4.1.1
+      '@fluencelabs/interfaces': workspace:0.2.0
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+      it-length-prefixed: 5.0.3
+      it-pipe: 1.1.0
+      libp2p: 0.36.2
+      libp2p-interfaces: 4.0.6
+      libp2p-mplex: 0.10.7
+      libp2p-websockets: 0.16.2
+      loglevel: 1.8.1
+      multiaddr: 10.0.1
+      peer-id: 0.16.0
+      typescript: 4.6.4
+    dependencies:
+      '@chainsafe/libp2p-noise': 4.1.1
+      '@fluencelabs/interfaces': link:../interfaces
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+      it-length-prefixed: 5.0.3
+      it-pipe: 1.1.0
+      libp2p: 0.36.2_node-fetch@3.2.10
+      libp2p-interfaces: 4.0.6_node-fetch@3.2.10
+      libp2p-mplex: 0.10.7
+      libp2p-websockets: 0.16.2_node-fetch@3.2.10
+      loglevel: 1.8.1
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      peer-id: 0.16.0
+    devDependencies:
+      typescript: 4.6.4
+
+  packages/core/interfaces:
+    specifiers:
+      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/marine-js': 0.3.38
+      '@types/node': 16.11.59
+      threads: ^1.7.0
+      typescript: 4.6.4
+    devDependencies:
+      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/marine-js': 0.3.38
+      '@types/node': 16.11.59
+      threads: 1.7.0
+      typescript: 4.6.4
+
+  packages/core/js-peer:
+    specifiers:
+      '@fluencelabs/aqua': 0.7.7-362
+      '@fluencelabs/aqua-api': 0.0.4-api-for-fluence-cli-1437934-107-1.0
+      '@fluencelabs/aqua-lib': 0.6.0
+      '@fluencelabs/avm': 0.32.1
+      '@fluencelabs/connection': workspace:0.2.0
+      '@fluencelabs/fluence-network-environment': 1.0.13
+      '@fluencelabs/interfaces': workspace:0.2.0
+      '@fluencelabs/keypair': workspace:0.2.0
+      '@fluencelabs/marine-js': 0.3.38
+      '@fluencelabs/marine-runner': workspace:0.1.0
+      '@fluencelabs/marine.deps-loader.node': workspace:0.1.0
+      '@fluencelabs/marine.deps-loader.web': workspace:0.1.0
+      '@fluencelabs/marine.worker-script': workspace:0.1.0
+      '@types/bs58': 4.0.1
+      '@types/jest': 28.1.0
+      '@types/platform': 1.3.4
+      '@types/uuid': 8.3.2
+      async: 3.2.4
+      base64-js: ^1.5.1
+      browser-or-node: 2.0.0
+      bs58: 5.0.0
+      buffer: 6.0.3
+      cids: 1.1.9
+      jest: 28.1.0
+      jest-each: 28.1.3
+      js-base64: 3.7.2
+      loglevel: 1.8.1
+      multiaddr: 10.0.1
+      multiformats: 9.9.0
+      peer-id: 0.16.0
+      platform: 1.3.6
+      rxjs: 7.5.5
+      ts-jest: 28.0.2
+      ts-node: 10.9.1
+      ts-pattern: 3.3.3
+      typedoc: 0.22.15
+      typescript: 4.6.4
+      uuid: 8.3.2
+    dependencies:
+      '@fluencelabs/avm': 0.32.1
+      '@fluencelabs/connection': link:../connection
+      '@fluencelabs/interfaces': link:../interfaces
+      '@fluencelabs/keypair': link:../keypair
+      '@fluencelabs/marine-js': 0.3.38
+      '@fluencelabs/marine-runner': link:../../marine/background-runner
+      '@fluencelabs/marine.deps-loader.node': link:../../marine/deps-loader.node
+      '@fluencelabs/marine.deps-loader.web': link:../../marine/deps-loader.web
+      '@fluencelabs/marine.worker-script': link:../../marine/worker-script
+      async: 3.2.4
+      base64-js: 1.5.1
+      browser-or-node: 2.0.0
+      bs58: 5.0.0
+      buffer: 6.0.3
+      cids: 1.1.9
+      loglevel: 1.8.1
+      multiformats: 9.9.0
+      peer-id: 0.16.0
+      platform: 1.3.6
+      rxjs: 7.5.5
+      ts-pattern: 3.3.3
+      uuid: 8.3.2
+    devDependencies:
+      '@fluencelabs/aqua': 0.7.7-362_vibqa5hxa5biq5fwuxzv5iobty
       '@fluencelabs/aqua-api': 0.0.4-api-for-fluence-cli-1437934-107-1.0
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/fluence-network-environment': 1.0.13
@@ -138,28 +227,45 @@ importers:
       jest-each: 28.1.3
       js-base64: 3.7.2
       multiaddr: 10.0.1
-      ts-jest: 28.0.2_ewlfou5hfwkqpvjzhjdbxrqn2m
+      ts-jest: 28.0.2_vibqa5hxa5biq5fwuxzv5iobty
       ts-node: 10.9.1_apbkdfxvcdmborgupeskcsfbo4
       typedoc: 0.22.15_typescript@4.6.4
       typescript: 4.6.4
 
-  packages/fluence-keypair:
+  packages/core/keypair:
     specifiers:
       js-base64: ^3.7.2
       libp2p-crypto: 0.21.2
       peer-id: 0.16.0
       typescript: ^4.6.4
     dependencies:
-      js-base64: 3.7.2
+      js-base64: 3.7.3
       libp2p-crypto: 0.21.2
       peer-id: 0.16.0
     devDependencies:
       typescript: 4.7.4
 
+  packages/marine/background-runner:
+    specifiers:
+      '@fluencelabs/interfaces': workspace:0.2.0
+      '@fluencelabs/marine-js': 0.3.38
+      '@fluencelabs/marine.worker-script': workspace:0.1.0
+      '@types/node': 16.11.59
+      threads: ^1.7.0
+      typescript: ^4.6.4
+    dependencies:
+      threads: 1.7.0
+    devDependencies:
+      '@fluencelabs/interfaces': link:../../core/interfaces
+      '@fluencelabs/marine-js': 0.3.38
+      '@fluencelabs/marine.worker-script': link:../worker-script
+      '@types/node': 16.11.59
+      typescript: 4.7.4
+
   packages/marine/deps-loader.node:
     specifiers:
       '@fluencelabs/interfaces': workspace:0.2.0
-      '@fluencelabs/marine-worker-script': workspace:0.1.0
+      '@fluencelabs/marine.worker-script': workspace:0.1.0
       '@types/node': 16.11.59
       buffer: ^6.0.3
       js-base64: 3.7.3
@@ -169,8 +275,8 @@ importers:
       webpack: 5.75.0
       webpack-cli: 5.0.1
     dependencies:
-      '@fluencelabs/interfaces': link:../../fluence-interfaces
-      '@fluencelabs/marine-worker-script': link:../worker-script
+      '@fluencelabs/interfaces': link:../../core/interfaces
+      '@fluencelabs/marine.worker-script': link:../worker-script
       buffer: 6.0.3
       js-base64: 3.7.3
     devDependencies:
@@ -184,7 +290,7 @@ importers:
   packages/marine/deps-loader.web:
     specifiers:
       '@fluencelabs/interfaces': workspace:0.2.0
-      '@fluencelabs/marine-worker-script': workspace:0.1.0
+      '@fluencelabs/marine.worker-script': workspace:0.1.0
       buffer: ^6.0.3
       js-base64: 3.7.3
       threads: ^1.7.0
@@ -193,8 +299,8 @@ importers:
       webpack: 4.46.0
       webpack-cli: 4.10.0
     dependencies:
-      '@fluencelabs/interfaces': link:../../fluence-interfaces
-      '@fluencelabs/marine-worker-script': link:../worker-script
+      '@fluencelabs/interfaces': link:../../core/interfaces
+      '@fluencelabs/marine.worker-script': link:../worker-script
       buffer: 6.0.3
       js-base64: 3.7.3
     devDependencies:
@@ -203,23 +309,6 @@ importers:
       typescript: 4.7.4
       webpack: 4.46.0_webpack-cli@4.10.0
       webpack-cli: 4.10.0_webpack@4.46.0
-
-  packages/marine/marine-runner:
-    specifiers:
-      '@fluencelabs/interfaces': workspace:0.2.0
-      '@fluencelabs/marine-js': 0.3.38
-      '@fluencelabs/marine-worker-script': workspace:0.1.0
-      '@types/node': 16.11.59
-      threads: ^1.7.0
-      typescript: ^4.6.4
-    dependencies:
-      threads: 1.7.0
-    devDependencies:
-      '@fluencelabs/interfaces': link:../../fluence-interfaces
-      '@fluencelabs/marine-js': 0.3.38
-      '@fluencelabs/marine-worker-script': link:../worker-script
-      '@types/node': 16.11.59
-      typescript: 4.7.4
 
   packages/marine/worker-script:
     specifiers:
@@ -647,12 +736,35 @@ packages:
     resolution: {integrity: sha512-ifjtCM93KO3LhzPkMxqmXhwLmrg/scjOiyTihEVg7ns5N+BVzaK1eWzdOdqGdl9ZVoah43pdlQUepEo7VdRmsw==}
     dev: true
 
-  /@fluencelabs/aqua/0.7.7-362_ewlfou5hfwkqpvjzhjdbxrqn2m:
+  /@fluencelabs/aqua/0.7.7-362_j2eacdjxptxiyokdurrbqsd7ey:
     resolution: {integrity: sha512-CwvBc3wKQdvnDM4Zxj6yFE5MR2oeh+EZ++m2hLvENt7OWl3cnZVR4cJQkRxMMLVT0MxRwLiy97UIBwGsPqlSCA==}
+    hasBin: true
     dependencies:
       '@fluencelabs/aqua-ipfs': 0.5.5
       '@fluencelabs/aqua-lib': 0.5.2
-      '@fluencelabs/fluence': 0.26.3-snapshot-4_ewlfou5hfwkqpvjzhjdbxrqn2m
+      '@fluencelabs/fluence': 0.26.3-snapshot-4_j2eacdjxptxiyokdurrbqsd7ey
+      '@fluencelabs/fluence-network-environment': 1.0.13
+      ipfs-http-client: 50.1.2_node-fetch@3.2.10
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - bufferutil
+      - esbuild
+      - jest
+      - node-fetch
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: true
+
+  /@fluencelabs/aqua/0.7.7-362_vibqa5hxa5biq5fwuxzv5iobty:
+    resolution: {integrity: sha512-CwvBc3wKQdvnDM4Zxj6yFE5MR2oeh+EZ++m2hLvENt7OWl3cnZVR4cJQkRxMMLVT0MxRwLiy97UIBwGsPqlSCA==}
+    hasBin: true
+    dependencies:
+      '@fluencelabs/aqua-ipfs': 0.5.5
+      '@fluencelabs/aqua-lib': 0.5.2
+      '@fluencelabs/fluence': 0.26.3-snapshot-4_vibqa5hxa5biq5fwuxzv5iobty
       '@fluencelabs/fluence-network-environment': 1.0.13
       ipfs-http-client: 50.1.2
     transitivePeerDependencies:
@@ -662,6 +774,7 @@ packages:
       - bufferutil
       - esbuild
       - jest
+      - node-fetch
       - supports-color
       - typescript
       - utf-8-validate
@@ -698,6 +811,31 @@ packages:
       peer-id: 0.16.0
     transitivePeerDependencies:
       - bufferutil
+      - node-fetch
+      - supports-color
+      - utf-8-validate
+    dev: true
+
+  /@fluencelabs/connection/0.2.0_node-fetch@3.2.10:
+    resolution: {integrity: sha512-0jTRI1h/j/fR2VaLIlcIm6VoP3j2jL2lI6/OaYaOnwGXmI6CbZWHNeq9eaKWycT9B1vpN9wHu0Vi7vH3pFplhg==}
+    engines: {node: '>=10', pnpm: '>=3'}
+    dependencies:
+      '@chainsafe/libp2p-noise': 4.1.2
+      '@fluencelabs/interfaces': 0.1.0
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+      it-length-prefixed: 5.0.3
+      it-pipe: 1.1.0
+      libp2p: 0.36.2_node-fetch@3.2.10
+      libp2p-interfaces: 4.0.6_node-fetch@3.2.10
+      libp2p-mplex: 0.10.7
+      libp2p-websockets: 0.16.2_node-fetch@3.2.10
+      loglevel: 1.8.0
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      peer-id: 0.16.0
+    transitivePeerDependencies:
+      - bufferutil
+      - node-fetch
       - supports-color
       - utf-8-validate
     dev: true
@@ -706,12 +844,13 @@ packages:
     resolution: {integrity: sha512-2pci3T0sUHE08jwEs1r/vHKVT4XUh/A3j/QJ0eIhddsxyIjEksjdn05X7DF6STD14CF8GgBVOJEPgav8qaUMpA==}
     dev: true
 
-  /@fluencelabs/fluence/0.26.3-snapshot-4_ewlfou5hfwkqpvjzhjdbxrqn2m:
+  /@fluencelabs/fluence/0.26.3-snapshot-4_j2eacdjxptxiyokdurrbqsd7ey:
     resolution: {integrity: sha512-M/iQhnViXfMaATj3gFPQXrZe9zSVcyN9F9A9hfJBUn0VLamhmbfeIoSZeheK8VGBxYbRGcrtoqLPTy1vJQVgVw==}
     engines: {node: '>=10', pnpm: '>=3'}
+    hasBin: true
     dependencies:
       '@fluencelabs/avm': 0.31.4
-      '@fluencelabs/connection': 0.2.0
+      '@fluencelabs/connection': 0.2.0_node-fetch@3.2.10
       '@fluencelabs/interfaces': 0.1.0
       '@fluencelabs/keypair': 0.2.0
       '@fluencelabs/marine-js': 0.3.18_ewlfou5hfwkqpvjzhjdbxrqn2m
@@ -735,6 +874,43 @@ packages:
       - bufferutil
       - esbuild
       - jest
+      - node-fetch
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: true
+
+  /@fluencelabs/fluence/0.26.3-snapshot-4_vibqa5hxa5biq5fwuxzv5iobty:
+    resolution: {integrity: sha512-M/iQhnViXfMaATj3gFPQXrZe9zSVcyN9F9A9hfJBUn0VLamhmbfeIoSZeheK8VGBxYbRGcrtoqLPTy1vJQVgVw==}
+    engines: {node: '>=10', pnpm: '>=3'}
+    hasBin: true
+    dependencies:
+      '@fluencelabs/avm': 0.31.4
+      '@fluencelabs/connection': 0.2.0
+      '@fluencelabs/interfaces': 0.1.0
+      '@fluencelabs/keypair': 0.2.0
+      '@fluencelabs/marine-js': 0.3.18_vibqa5hxa5biq5fwuxzv5iobty
+      async: 3.2.3
+      base64-js: 1.5.1
+      browser-or-node: 2.0.0
+      bs58: 5.0.0
+      buffer: 6.0.3
+      cids: 1.1.9
+      loglevel: 1.8.0
+      multiformats: 9.6.5
+      peer-id: 0.16.0
+      platform: 1.3.6
+      rxjs: 7.5.6
+      ts-pattern: 3.3.3
+      uuid: 8.3.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - bufferutil
+      - esbuild
+      - jest
+      - node-fetch
       - supports-color
       - typescript
       - utf-8-validate
@@ -763,6 +939,25 @@ packages:
       buffer: 6.0.3
       threads: 1.7.0
       ts-jest: 27.1.5_ewlfou5hfwkqpvjzhjdbxrqn2m
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - esbuild
+      - jest
+      - supports-color
+      - typescript
+    dev: true
+
+  /@fluencelabs/marine-js/0.3.18_vibqa5hxa5biq5fwuxzv5iobty:
+    resolution: {integrity: sha512-aNuGtyY910kJvtRwfqmZKjVs+1l3LVWShv5xvkY04faHm65nX3sZLe8UHwughdja/4ixV1IFKlaTUgw2u3Sf5A==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+      threads: 1.7.0
+      ts-jest: 27.1.5_vibqa5hxa5biq5fwuxzv5iobty
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/jest'
@@ -1323,12 +1518,8 @@ packages:
   /@types/node/16.11.59:
     resolution: {integrity: sha512-6u+36Dj3aDzhfBVUf/mfmc92OEdzQ2kx2jcXGdigfl70E/neV21ZHE6UCz4MDzTRcVqGAM27fk+DLXvyDsn3Jw==}
 
-  /@types/node/18.7.11:
-    resolution: {integrity: sha512-KZhFpSLlmK/sdocfSAjqPETTMd0ug6HIMIAwkwUpU79olnZdQtMxpQP+G1wDzCH7na+FltSIhbaZuKdwZ8RDrw==}
-
   /@types/node/18.7.14:
     resolution: {integrity: sha512-6bbDaETVi8oyIARulOE9qF1/Qdi/23z6emrUh0fNJRUmjznqrixD4MpGDdgOFk5Xb0m2H6Xu42JGdvAxaJR/wA==}
-    dev: true
 
   /@types/platform/1.3.4:
     resolution: {integrity: sha512-U0o4K+GNiK0PNxoDwd8xRnvLVe4kzei6opn3/FCjAriqaP+rfrDdSl1kP/hLL6Y3/Y3hhGnBwD4dCkkAqs1W/Q==}
@@ -1793,7 +1984,7 @@ packages:
     resolution: {integrity: sha512-B+rDnWasMi/eWcajPcCWSlYc7muXOrcYrqgyzcdKisl2H/WTlQ0gip1KyQfr0ZlxJdsuWCj/LWwQm7fhyhRfIQ==}
     dependencies:
       abort-controller: 3.0.0
-      native-abort-controller: 1.0.4
+      native-abort-controller: 1.0.4_abort-controller@3.0.0
     dev: true
 
   /any-signal/3.0.1:
@@ -2074,6 +2265,7 @@ packages:
   /borc/3.0.0:
     resolution: {integrity: sha512-ec4JmVC46kE0+layfnwM3l15O70MlFiEbmQHY/vpqIKiUtPVntv4BY4NVnz3N4vb21edV3mY97XVckFvYHWF9g==}
     engines: {node: '>=4'}
+    hasBin: true
     dependencies:
       bignumber.js: 9.1.0
       buffer: 6.0.3
@@ -2386,6 +2578,7 @@ packages:
   /cids/1.1.9:
     resolution: {integrity: sha512-l11hWRfugIcbGuTZwAM5PwpjPPjyb6UZOGwlHSnOBV5o07XhQ4gNpBN67FbODvpjyHtd+0Xs6KNvUcGBiDRsdg==}
     engines: {node: '>=4.0.0', npm: '>=3.0.0'}
+    deprecated: This module has been superseded by the multiformats module
     dependencies:
       multibase: 4.0.6
       multicodec: 3.2.1
@@ -2749,6 +2942,18 @@ packages:
       native-fetch: 3.0.0
       receptacle: 1.3.2
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /dns-over-http-resolver/1.2.3_node-fetch@3.2.10:
+    resolution: {integrity: sha512-miDiVSI6KSNbi4SVifzO/reD8rMnxgrlnkrlkugOLQpWQTe2qMdHsZp5DmfKjxNE+/T3VAAYLQUZMv9SMr6+AA==}
+    dependencies:
+      debug: 4.3.4
+      native-fetch: 3.0.0_node-fetch@3.2.10
+      receptacle: 1.3.2
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /domain-browser/1.2.0:
@@ -3280,6 +3485,7 @@ packages:
   /har-validator/5.1.5:
     resolution: {integrity: sha512-nmT2T0lljbxdQZfspsno9hgrG3Uir6Ks5afism62poxqBM6sDnMEuPmzTq8XN0OEwqKLLdh1jQI3qyE66Nzb3w==}
     engines: {node: '>=6'}
+    deprecated: this library is no longer supported
     dependencies:
       ajv: 6.12.6
       har-schema: 2.0.0
@@ -3454,6 +3660,7 @@ packages:
 
   /interface-ipld-format/1.0.1:
     resolution: {integrity: sha512-WV/ar+KQJVoQpqRDYdo7YPGYIUHJxCuOEhdvsRpzLqoOIVCqPKdMMYmsLL1nCRsF3yYNio+PAJbCKiv6drrEAg==}
+    deprecated: This module has been superseded by the multiformats module
     dependencies:
       cids: 1.1.9
       multicodec: 3.2.1
@@ -3501,6 +3708,20 @@ packages:
       multiaddr: 9.0.2
       multibase: 4.0.6
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /ipfs-core-types/0.5.2_node-fetch@3.2.10:
+    resolution: {integrity: sha512-DOQeL+GFGYMTlnbdtMeBzvfVnyAalSgCfPr8XUCI+FVBZZWwzkt5jZZzGDmF87HVRrMR3FuVyBKZj772mcXKyQ==}
+    dependencies:
+      cids: 1.1.9
+      interface-datastore: 4.0.2
+      ipld-block: 0.11.1
+      multiaddr: 9.0.2_node-fetch@3.2.10
+      multibase: 4.0.6
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
     dev: true
 
@@ -3524,6 +3745,31 @@ packages:
       timeout-abort-controller: 1.1.1
       uint8arrays: 2.1.10
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /ipfs-core-utils/0.8.3_node-fetch@3.2.10:
+    resolution: {integrity: sha512-PY7PkCgCtVYtNOe1C3ew1+5D9NqXqizb886R/lyGWe+KsmWtBQkQIk0ZIDwKyHGvG2KA2QQeIDzdOmzBQBJtHQ==}
+    dependencies:
+      any-signal: 2.1.2
+      blob-to-it: 1.0.4
+      browser-readablestream-to-it: 1.0.3
+      cids: 1.1.9
+      err-code: 3.0.1
+      ipfs-core-types: 0.5.2_node-fetch@3.2.10
+      ipfs-unixfs: 4.0.3
+      ipfs-utils: 8.1.6
+      it-all: 1.0.6
+      it-map: 1.0.6
+      it-peekable: 1.0.3
+      multiaddr: 9.0.2_node-fetch@3.2.10
+      multiaddr-to-uri: 7.0.0_node-fetch@3.2.10
+      parse-duration: 1.0.2
+      timeout-abort-controller: 1.1.1
+      uint8arrays: 2.1.10
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
     dev: true
 
@@ -3554,11 +3800,48 @@ packages:
       multicodec: 3.2.1
       multihashes: 4.0.3
       nanoid: 3.3.4
-      native-abort-controller: 1.0.4
+      native-abort-controller: 1.0.4_abort-controller@3.0.0
       parse-duration: 1.0.2
       stream-to-it: 0.2.4
       uint8arrays: 2.1.10
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /ipfs-http-client/50.1.2_node-fetch@3.2.10:
+    resolution: {integrity: sha512-ZbJlED4wqwFXQFVB9FQDs20ygdq7O/zSq4AvO9KRAmkqUj2TsCWCteUz2fBMnGWLh2tExxeSl/rQbHbJptb8JQ==}
+    engines: {node: '>=14.0.0', npm: '>=3.0.0'}
+    dependencies:
+      abort-controller: 3.0.0
+      any-signal: 2.1.2
+      cids: 1.1.9
+      debug: 4.3.4
+      form-data: 4.0.0
+      ipfs-core-types: 0.5.2_node-fetch@3.2.10
+      ipfs-core-utils: 0.8.3_node-fetch@3.2.10
+      ipfs-unixfs: 4.0.3
+      ipfs-utils: 8.1.6
+      ipld-block: 0.11.1
+      ipld-dag-cbor: 1.0.1
+      ipld-dag-pb: 0.22.3
+      ipld-raw: 7.0.1
+      it-last: 1.0.6
+      it-map: 1.0.6
+      it-tar: 3.0.0
+      it-to-stream: 1.0.0
+      merge-options: 3.0.4
+      multiaddr: 9.0.2_node-fetch@3.2.10
+      multibase: 4.0.6
+      multicodec: 3.2.1
+      multihashes: 4.0.3
+      nanoid: 3.3.4
+      native-abort-controller: 1.0.4_abort-controller@3.0.0
+      parse-duration: 1.0.2
+      stream-to-it: 0.2.4
+      uint8arrays: 2.1.10
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
     dev: true
 
@@ -3584,8 +3867,8 @@ packages:
       it-to-stream: 1.0.0
       merge-options: 3.0.4
       nanoid: 3.3.4
-      native-abort-controller: 1.0.4
-      native-fetch: 3.0.0
+      native-abort-controller: 1.0.4_abort-controller@3.0.0
+      native-fetch: 3.0.0_hmwa7nplpltavckpkeobtw6pv4
       node-fetch: /@achingbrain/node-fetch/2.6.7
       react-native-fetch-api: 2.0.0
       stream-to-it: 0.2.4
@@ -3604,7 +3887,7 @@ packages:
       it-to-stream: 1.0.0
       merge-options: 3.0.4
       nanoid: 3.3.4
-      native-fetch: 3.0.0
+      native-fetch: 3.0.0_hmwa7nplpltavckpkeobtw6pv4
       node-fetch: /@achingbrain/node-fetch/2.6.7
       react-native-fetch-api: 2.0.0
       stream-to-it: 0.2.4
@@ -3619,6 +3902,7 @@ packages:
   /ipld-dag-cbor/1.0.1:
     resolution: {integrity: sha512-PZh8rHnRETX5bj60i73W2oq6BXoZnIvYCBDwIffYVJgxMr7BEVd5PycAARBiT6daORJ/4zbqEFR5CcrjeCtm/A==}
     engines: {node: '>=6.0.0', npm: '>=3.0.0'}
+    deprecated: This module has been superseded by @ipld/dag-cbor and multiformats
     dependencies:
       borc: 3.0.0
       cids: 1.1.9
@@ -3632,6 +3916,7 @@ packages:
   /ipld-dag-pb/0.22.3:
     resolution: {integrity: sha512-dfG5C5OVAR4FEP7Al2CrHWvAyIM7UhAQrjnOYOIxXGQz5NlEj6wGX0XQf6Ru6or1na6upvV3NQfstapQG8X2rg==}
     engines: {node: '>=6.0.0', npm: '>=3.0.0'}
+    deprecated: This module has been superseded by @ipld/dag-pb and multiformats
     dependencies:
       cids: 1.1.9
       interface-ipld-format: 1.0.1
@@ -3644,6 +3929,7 @@ packages:
 
   /ipld-raw/7.0.1:
     resolution: {integrity: sha512-oaiy0Ot23NCnoBA7sLvPL9qFRC6JDB0IsdZL6rUeZJxzxabQuBLNGYXcqjQ8jlF0UPLEUSO+h8OJh2DZPzL2aQ==}
+    deprecated: This module has been superseded by the multiformats module
     dependencies:
       cids: 1.1.9
       interface-ipld-format: 1.0.1
@@ -4509,6 +4795,7 @@ packages:
 
   /js-base64/3.7.2:
     resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
+    dev: true
 
   /js-base64/3.7.3:
     resolution: {integrity: sha512-PAr6Xg2jvd7MCR6Ld9Jg3BmTcjYsHEBx1VlwEwULb/qowPf5VD9kEMagj23Gm7JRnSvE/Da/57nChZjnvL8v6A==}
@@ -4690,6 +4977,28 @@ packages:
       protobufjs: 6.11.3
       uint8arrays: 3.1.0
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /libp2p-interfaces/4.0.6_node-fetch@3.2.10:
+    resolution: {integrity: sha512-3KjzNEIWhi+VoOamLvgKKUE/xqwxSw/JYqsBnfMhAWVRvRtosROtVT03wci2XbuuowCYw+/hEX1xKJIR1w5n0A==}
+    dependencies:
+      abortable-iterator: 3.0.2
+      debug: 4.3.4
+      err-code: 3.0.1
+      it-length-prefixed: 5.0.3
+      it-pipe: 1.1.0
+      it-pushable: 1.4.2
+      libp2p-crypto: 0.21.2
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      multiformats: 9.9.0
+      p-queue: 6.6.2
+      peer-id: 0.16.0
+      protobufjs: 6.11.3
+      uint8arrays: 3.1.0
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /libp2p-mplex/0.10.7:
@@ -4716,6 +5025,22 @@ packages:
       multiaddr: 10.0.1
       private-ip: 2.3.4
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /libp2p-utils/0.4.1_node-fetch@3.2.10:
+    resolution: {integrity: sha512-kq/US2unamiyY+YwP47dO1uqpAdcbdYI2Fzi9JIEhjfPBaD1MR/uyQ/YP7ABthl3EaxAjIQYd1TVp85d6QKAtQ==}
+    dependencies:
+      abortable-iterator: 3.0.2
+      debug: 4.3.4
+      err-code: 3.0.1
+      ip-address: 8.1.0
+      is-loopback-addr: 1.0.1
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      private-ip: 2.3.4
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /libp2p-websockets/0.16.2:
@@ -4735,6 +5060,29 @@ packages:
       p-timeout: 4.1.0
     transitivePeerDependencies:
       - bufferutil
+      - node-fetch
+      - supports-color
+      - utf-8-validate
+    dev: true
+
+  /libp2p-websockets/0.16.2_node-fetch@3.2.10:
+    resolution: {integrity: sha512-QGfo8jX1Ks16yi8C67CCyMW7k9cfCYiQ0lzKVJBud0fV3ymbMO2L8gzU6iXUUZTHILo8ka26zKhwQ4lmUMI+nA==}
+    dependencies:
+      abortable-iterator: 3.0.2
+      class-is: 1.1.0
+      debug: 4.3.4
+      err-code: 3.0.1
+      ipfs-utils: 9.0.7
+      it-ws: 4.0.0
+      libp2p-utils: 0.4.1_node-fetch@3.2.10
+      mafmt: 10.0.0_node-fetch@3.2.10
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      multiaddr-to-uri: 8.0.0_node-fetch@3.2.10
+      p-defer: 3.0.0
+      p-timeout: 4.1.0
+    transitivePeerDependencies:
+      - bufferutil
+      - node-fetch
       - supports-color
       - utf-8-validate
 
@@ -4775,7 +5123,7 @@ packages:
       merge-options: 3.0.4
       mortice: 2.0.1
       multiaddr: 10.0.1
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       multistream-select: 3.0.2
       mutable-proxy: 1.0.0
       nat-api: 0.3.1
@@ -4797,6 +5145,70 @@ packages:
       wherearewe: 1.0.2
       xsalsa20: 1.2.0
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /libp2p/0.36.2_node-fetch@3.2.10:
+    resolution: {integrity: sha512-UpNYBMQVivMu56zoibdGitopv39uBBAybIBOEGWmFy/I2NnTVGUutLPrxo47AuN2kntYgo/TNJfW+PpswUgSaw==}
+    engines: {node: '>=15.0.0'}
+    dependencies:
+      '@vascosantos/moving-average': 1.1.0
+      abortable-iterator: 3.0.2
+      aggregate-error: 3.1.0
+      any-signal: 3.0.1
+      bignumber.js: 9.1.0
+      class-is: 1.1.0
+      datastore-core: 7.0.3
+      debug: 4.3.4
+      err-code: 3.0.1
+      es6-promisify: 7.0.0
+      events: 3.3.0
+      hashlru: 2.3.0
+      interface-datastore: 6.1.1
+      it-all: 1.0.6
+      it-buffer: 0.1.3
+      it-drain: 1.0.5
+      it-filter: 1.0.3
+      it-first: 1.0.7
+      it-foreach: 0.1.1
+      it-handshake: 2.0.0
+      it-length-prefixed: 5.0.3
+      it-map: 1.0.6
+      it-merge: 1.0.4
+      it-pipe: 1.1.0
+      it-sort: 1.0.1
+      it-take: 1.0.2
+      libp2p-crypto: 0.21.2
+      libp2p-interfaces: 4.0.6_node-fetch@3.2.10
+      libp2p-utils: 0.4.1_node-fetch@3.2.10
+      mafmt: 10.0.0_node-fetch@3.2.10
+      merge-options: 3.0.4
+      mortice: 2.0.1
+      multiaddr: 10.0.1_node-fetch@3.2.10
+      multiformats: 9.9.0
+      multistream-select: 3.0.2
+      mutable-proxy: 1.0.0
+      nat-api: 0.3.1
+      node-forge: 1.3.1
+      p-any: 3.0.0
+      p-fifo: 1.0.0
+      p-retry: 4.6.2
+      p-settle: 4.1.1
+      peer-id: 0.16.0
+      private-ip: 2.3.4
+      protobufjs: 6.11.3
+      retimer: 3.0.0
+      sanitize-filename: 1.6.3
+      set-delayed-interval: 1.0.0
+      streaming-iterables: 6.2.0
+      timeout-abort-controller: 3.0.0
+      uint8arrays: 3.1.0
+      varint: 6.0.0
+      wherearewe: 1.0.2
+      xsalsa20: 1.2.0
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /lines-and-columns/1.2.4:
@@ -4885,6 +5297,16 @@ packages:
     dependencies:
       multiaddr: 10.0.1
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /mafmt/10.0.0_node-fetch@3.2.10:
+    resolution: {integrity: sha512-K1bziJOXcnepfztu+2Xy9FLKVLaFMDuspmiyJIYRxnO0WOxFSV7XKSdMxMrVZxcvg1+YjlTIvSGTImUHU2k4Aw==}
+    dependencies:
+      multiaddr: 10.0.1_node-fetch@3.2.10
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /make-dir/2.1.0:
@@ -5101,17 +5523,41 @@ packages:
 
   /multiaddr-to-uri/7.0.0:
     resolution: {integrity: sha512-VbscDpLcbV0m25tJqfnZSfbjVUuNlPa4BbD5l/7me1t0lc3SWI0XAoO5E/PNJF0e1qUlbdq7yjVFEQjUT+9r0g==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr-to-uri
     dependencies:
       multiaddr: 9.0.2
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /multiaddr-to-uri/7.0.0_node-fetch@3.2.10:
+    resolution: {integrity: sha512-VbscDpLcbV0m25tJqfnZSfbjVUuNlPa4BbD5l/7me1t0lc3SWI0XAoO5E/PNJF0e1qUlbdq7yjVFEQjUT+9r0g==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr-to-uri
+    dependencies:
+      multiaddr: 9.0.2_node-fetch@3.2.10
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
     dev: true
 
   /multiaddr-to-uri/8.0.0:
     resolution: {integrity: sha512-dq4p/vsOOUdVEd1J1gl+R2GFrXJQH8yjLtz4hodqdVbieg39LvBOdMQRdQnfbg5LSM/q1BYNVf5CBbwZFFqBgA==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr-to-uri
     dependencies:
       multiaddr: 10.0.1
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /multiaddr-to-uri/8.0.0_node-fetch@3.2.10:
+    resolution: {integrity: sha512-dq4p/vsOOUdVEd1J1gl+R2GFrXJQH8yjLtz4hodqdVbieg39LvBOdMQRdQnfbg5LSM/q1BYNVf5CBbwZFFqBgA==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr-to-uri
+    dependencies:
+      multiaddr: 10.0.1_node-fetch@3.2.10
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /multiaddr/10.0.1:
@@ -5125,10 +5571,27 @@ packages:
       uint8arrays: 3.1.0
       varint: 6.0.0
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /multiaddr/10.0.1_node-fetch@3.2.10:
+    resolution: {integrity: sha512-G5upNcGzEGuTHkzxezPrrD6CaIHR9uo+7MwqhNVcXTs33IInon4y7nMiGxl2CY5hG7chvYQUQhz5V52/Qe3cbg==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr
+    dependencies:
+      dns-over-http-resolver: 1.2.3_node-fetch@3.2.10
+      err-code: 3.0.1
+      is-ip: 3.1.0
+      multiformats: 9.9.0
+      uint8arrays: 3.1.0
+      varint: 6.0.0
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
 
   /multiaddr/9.0.2:
     resolution: {integrity: sha512-YFaEb9t4yXSbaGksSEdg+Kn2U02s7w4wXUgyEMQmPxFJj7CfVHY10WOsScAX/rK6Soa15S1zXYadqH9TtlVreQ==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr
     dependencies:
       cids: 1.1.9
       dns-over-http-resolver: 1.2.3
@@ -5138,17 +5601,36 @@ packages:
       uint8arrays: 2.1.10
       varint: 6.0.0
     transitivePeerDependencies:
+      - node-fetch
+      - supports-color
+    dev: true
+
+  /multiaddr/9.0.2_node-fetch@3.2.10:
+    resolution: {integrity: sha512-YFaEb9t4yXSbaGksSEdg+Kn2U02s7w4wXUgyEMQmPxFJj7CfVHY10WOsScAX/rK6Soa15S1zXYadqH9TtlVreQ==}
+    deprecated: This module is deprecated, please upgrade to @multiformats/multiaddr
+    dependencies:
+      cids: 1.1.9
+      dns-over-http-resolver: 1.2.3_node-fetch@3.2.10
+      err-code: 3.0.1
+      is-ip: 3.1.0
+      multibase: 4.0.6
+      uint8arrays: 2.1.10
+      varint: 6.0.0
+    transitivePeerDependencies:
+      - node-fetch
       - supports-color
     dev: true
 
   /multibase/4.0.6:
     resolution: {integrity: sha512-x23pDe5+svdLz/k5JPGCVdfn7Q5mZVMBETiC+ORfO+sor9Sgs0smJzAjfTbM5tckeCqnaUuMYoz+k3RXMmJClQ==}
     engines: {node: '>=12.0.0', npm: '>=6.0.0'}
+    deprecated: This module has been superseded by the multiformats module
     dependencies:
       '@multiformats/base-x': 4.0.1
 
   /multicodec/3.2.1:
     resolution: {integrity: sha512-+expTPftro8VAW8kfvcuNNNBgb9gPeNYV9dn+z1kJRWF2vih+/S79f2RVeIwmrJBUJ6NT9IUPWnZDQvegEh5pw==}
+    deprecated: This module has been superseded by the multiformats module
     dependencies:
       uint8arrays: 3.1.0
       varint: 6.0.0
@@ -5156,9 +5638,6 @@ packages:
   /multiformats/9.6.5:
     resolution: {integrity: sha512-vMwf/FUO+qAPvl3vlSZEgEVFY/AxeZq5yg761ScF3CZsXgmTi/HGkicUiNN0CI4PW8FiY2P0OLklOcmQjdQJhw==}
     dev: true
-
-  /multiformats/9.7.1:
-    resolution: {integrity: sha512-TaVmGEBt0fhxiNJMGphBfB+oGvUxFs8KgGvgl8d3C+GWtrFcvXdJ2196eg+dYhmSFClmgFfSfJEklo+SZzdNuw==}
 
   /multiformats/9.9.0:
     resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
@@ -5216,6 +5695,7 @@ packages:
   /nanoid/3.3.4:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
 
   /nanomatch/1.2.13:
     resolution: {integrity: sha512-fpoe2T0RbHwBTBUOftAfBPaDEi06ufaUai0mE6Yn1kacc3SnTErfb/h+X94VXzI64rKFHYImXSvdwGGCmwOqCA==}
@@ -5249,14 +5729,33 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /native-abort-controller/1.0.4:
+  /native-abort-controller/1.0.4_abort-controller@3.0.0:
     resolution: {integrity: sha512-zp8yev7nxczDJMoP6pDxyD20IU0T22eX8VwN2ztDccKvSZhRaV33yP1BGwKSZfXuqWUzsXopVFjBdau9OOAwMQ==}
+    peerDependencies:
+      abort-controller: '*'
     dependencies:
       abort-controller: 3.0.0
     dev: true
 
   /native-fetch/3.0.0:
     resolution: {integrity: sha512-G3Z7vx0IFb/FQ4JxvtqGABsOTIqRWvgQz6e+erkB+JJD6LrszQtMozEHI4EkmgZQvnGHrpLVzUWk7t4sJCIkVw==}
+    peerDependencies:
+      node-fetch: '*'
+    dependencies:
+      node-fetch: 3.2.10
+    dev: true
+
+  /native-fetch/3.0.0_hmwa7nplpltavckpkeobtw6pv4:
+    resolution: {integrity: sha512-G3Z7vx0IFb/FQ4JxvtqGABsOTIqRWvgQz6e+erkB+JJD6LrszQtMozEHI4EkmgZQvnGHrpLVzUWk7t4sJCIkVw==}
+    peerDependencies:
+      node-fetch: '*'
+    dependencies:
+      node-fetch: /@achingbrain/node-fetch/2.6.7
+
+  /native-fetch/3.0.0_node-fetch@3.2.10:
+    resolution: {integrity: sha512-G3Z7vx0IFb/FQ4JxvtqGABsOTIqRWvgQz6e+erkB+JJD6LrszQtMozEHI4EkmgZQvnGHrpLVzUWk7t4sJCIkVw==}
+    peerDependencies:
+      node-fetch: '*'
     dependencies:
       node-fetch: 3.2.10
 
@@ -5616,7 +6115,7 @@ packages:
     dependencies:
       class-is: 1.1.0
       libp2p-crypto: 0.21.2
-      multiformats: 9.7.1
+      multiformats: 9.9.0
       protobufjs: 6.11.3
       uint8arrays: 3.1.0
 
@@ -5731,6 +6230,7 @@ packages:
 
   /protobufjs/6.11.3:
     resolution: {integrity: sha512-xL96WDdCZYdU7Slin569tFX712BxsxslWwAfAhCYjQKGTq7dAU91Lomy6nLLhh/dyGhk/YH4TwTSRxTzhuHyZg==}
+    hasBin: true
     requiresBuild: true
     dependencies:
       '@protobufjs/aspromise': 1.1.2
@@ -5744,7 +6244,7 @@ packages:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 18.7.11
+      '@types/node': 18.7.14
       long: 4.0.0
 
   /prr/1.0.1:
@@ -5923,6 +6423,7 @@ packages:
   /request/2.88.2:
     resolution: {integrity: sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==}
     engines: {node: '>= 6'}
+    deprecated: request has been deprecated, see https://github.com/request/request/issues/3142
     dependencies:
       aws-sign2: 0.7.0
       aws4: 1.11.0
@@ -6272,6 +6773,7 @@ packages:
   /sshpk/1.17.0:
     resolution: {integrity: sha512-/9HIEs1ZXGhSPE8X6Ccm7Nam1z8KcoCqPdI7ecm1N33EzAetWahvQWVqLZtaZQ+IDKX4IyA2o0gBzqIMkAagHQ==}
     engines: {node: '>=0.10.0'}
+    hasBin: true
     dependencies:
       asn1: 0.2.6
       assert-plus: 1.0.0
@@ -6291,6 +6793,7 @@ packages:
 
   /stable/0.1.8:
     resolution: {integrity: sha512-ji9qxRnOVfcuLDySj9qzhGSEFVobyt1kIOSkj1qZzYLzq7Tos/oUUWvotUPQLlrsidqsK6tBH89Bc9kL5zHA6w==}
+    deprecated: 'Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility'
     dev: true
 
   /stack-utils/2.0.5:
@@ -6666,6 +7169,40 @@ packages:
       yargs-parser: 20.2.9
     dev: true
 
+  /ts-jest/27.1.5_vibqa5hxa5biq5fwuxzv5iobty:
+    resolution: {integrity: sha512-Xv6jBQPoBEvBq/5i2TeSG9tt/nqkbpcurrEG1b+2yfBrcJelOZF9Ml6dmyMh7bcW9JyFbRYpR5rxROSlBLTZHA==}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    hasBin: true
+    peerDependencies:
+      '@babel/core': '>=7.0.0-beta.0 <8'
+      '@types/jest': ^27.0.0
+      babel-jest: '>=27.0.0 <28'
+      esbuild: '*'
+      jest: ^27.0.0
+      typescript: '>=3.8 <5.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@types/jest':
+        optional: true
+      babel-jest:
+        optional: true
+      esbuild:
+        optional: true
+    dependencies:
+      '@types/jest': 28.1.0
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 28.1.0_gsb7asu77en4txj3es3i65pxci
+      jest-util: 27.5.1
+      json5: 2.2.1
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.3.8
+      typescript: 4.6.4
+      yargs-parser: 20.2.9
+    dev: true
+
   /ts-jest/28.0.2_ewlfou5hfwkqpvjzhjdbxrqn2m:
     resolution: {integrity: sha512-IOZMb3D0gx6IHO9ywPgiQxJ3Zl4ECylEFwoVpENB55aTn5sdO0Ptyx/7noNBxAaUff708RqQL4XBNxxOVjY0vQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -6688,6 +7225,40 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.18.13
+      '@types/jest': 28.1.0
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 28.1.0_gsb7asu77en4txj3es3i65pxci
+      jest-util: 28.1.3
+      json5: 2.2.1
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.3.8
+      typescript: 4.6.4
+      yargs-parser: 20.2.9
+    dev: true
+
+  /ts-jest/28.0.2_vibqa5hxa5biq5fwuxzv5iobty:
+    resolution: {integrity: sha512-IOZMb3D0gx6IHO9ywPgiQxJ3Zl4ECylEFwoVpENB55aTn5sdO0Ptyx/7noNBxAaUff708RqQL4XBNxxOVjY0vQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      '@babel/core': '>=7.0.0-beta.0 <8'
+      '@types/jest': ^27.0.0
+      babel-jest: ^28.0.0
+      esbuild: '*'
+      jest: ^28.0.0
+      typescript: '>=4.3'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@types/jest':
+        optional: true
+      babel-jest:
+        optional: true
+      esbuild:
+        optional: true
+    dependencies:
       '@types/jest': 28.1.0
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -6964,9 +7535,12 @@ packages:
 
   /uuid/3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
+    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
 
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
 
   /v8-compile-cache-lib/3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}

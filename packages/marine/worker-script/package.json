@@ -1,6 +1,6 @@
 {
     "version": "0.1.0",
-    "name": "@fluencelabs/marine-worker-script",
+    "name": "@fluencelabs/marine.worker-script",
     "description": "MarineJS background worker script",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",

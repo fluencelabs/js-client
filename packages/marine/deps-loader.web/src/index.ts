@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { LazyLoader } from '@fluencelabs/interfaces';
 import type { WorkerImplementation } from 'threads/dist/types/master';
 import { fromBase64 } from 'js-base64';
-import b64script from '@fluencelabs/marine-worker-script/dist/marine-js.b64.web';
+import b64script from '@fluencelabs/marine.worker-script/dist/marine-js.b64.web';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);

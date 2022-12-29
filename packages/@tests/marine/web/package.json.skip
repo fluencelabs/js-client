@@ -32,7 +32,7 @@
         "@fluencelabs/avm": "0.32.1",
         "@fluencelabs/marine-runner": "workspace:0.1.0",
         "@fluencelabs/marine-deps-loader": "workspace:0.1.0",
-        "@fluencelabs/marine-worker-script": "workspace:0.1.0",
+        "@fluencelabs/marine.worker-script": "workspace:0.1.0",
         "js-base64": "^3.7.2"
     }
 }
