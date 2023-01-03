@@ -18,7 +18,7 @@ import log, { LogLevelDesc } from 'loglevel';
 export { KeyPair } from '@fluencelabs/keypair';
 
 import { FluencePeer, PeerConfig } from '@fluencelabs/js-peer/dist/FluencePeer';
-import { makeDefaultPeer } from './makeDefaultPeer';
+import { isBrowser, isNode } from 'browser-or-node';
 
 export { PeerStatus } from '@fluencelabs/js-peer/dist/FluencePeer';
 export { FluencePeer, PeerConfig } from '@fluencelabs/js-peer/dist/FluencePeer';
@@ -30,7 +30,20 @@ export const setLogLevel = (level: LogLevelDesc) => {
 
 log.setDefaultLevel('WARN');
 
+let pkg: string;
+if (isBrowser) {
+    pkg = '@fluencelabs/js-client.web';
+} else if (isNode) {
+    pkg = '@fluencelabs/js-client.node';
+} else {
+    throw new Error('Unknown environment');
+}
+
+const { makeDefaultPeer } = require(pkg);
+
 const defaultPeer = makeDefaultPeer();
+// @ts-ignore
+globalThis.defaultPeer = defaultPeer;
 
 /**
  * Public interface to Fluence JS
