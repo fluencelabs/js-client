@@ -20,7 +20,7 @@ import { CallServiceResult } from '@fluencelabs/avm';
 
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
 import { jsonify } from '../utils';
-import Buffer from '../Buffer';
+import { Buffer } from 'buffer';
 
 const success = (result: any): CallServiceResult => {
     return {
@@ -501,7 +501,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
-            if((err = checkForArgumentType(req, 0, "object"))) {
+            if ((err = checkForArgumentType(req, 0, 'object'))) {
                 return err;
             }
 
@@ -518,7 +518,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
-            if((err = checkForArgumentType(req, 0, "object"))) {
+            if ((err = checkForArgumentType(req, 0, 'object'))) {
                 return err;
             }
 
@@ -531,7 +531,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
-            if((err = checkForArgumentType(req, 0, "object"))) {
+            if ((err = checkForArgumentType(req, 0, 'object'))) {
                 return err;
             }
 
@@ -546,15 +546,15 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
-            if((err = checkForArgumentType(req, 0, "string"))) {
+            if ((err = checkForArgumentType(req, 0, 'string'))) {
                 return err;
             }
 
             const [raw] = req.args;
-            try{
+            try {
                 const json = JSON.parse(raw);
                 return success(json);
-            } catch(err: any) {
+            } catch (err: any) {
                 return error(err.message);
             }
         },
@@ -599,4 +599,3 @@ export const isString = (unknown: unknown): unknown is string => {
 export const isObject = (unknown: unknown): unknown is object => {
     return unknown !== null && typeof unknown === 'object';
 };
-

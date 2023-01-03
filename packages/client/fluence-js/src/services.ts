@@ -1,2 +1,2 @@
-export * from './internal/builtins/Sig';
-export { registerSig } from './internal/_aqua/services';
+export * from '@fluencelabs/js-peer/dist/builtins/Sig';
+export { registerSig } from '@fluencelabs/js-peer/dist/_aqua/services';

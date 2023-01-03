@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { SrvDef } from '../_aqua/single-module-srv';
 import { NodeUtilsDef } from '../_aqua/node-utils';
 import { FluencePeer } from '../FluencePeer';
-import { isNode } from 'browser-or-node';
 import { CallParams } from '../commonTypes';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard';
 
@@ -87,13 +86,14 @@ export class NodeUtils implements NodeUtilsDef {
     securityGuard_readFile: SecurityGuard<'path'> = defaultGuard(this.peer);
 
     async read_file(path: string, callParams: CallParams<'path'>) {
-        if (!isNode) {
-            return {
-                success: false,
-                error: 'read_file is only supported in node.js',
-                content: null,
-            };
-        }
+        // TODO: split node-only and universal services into different client packages
+        // if (!isNode) {
+        //     return {
+        //         success: false,
+        //         error: 'read_file is only supported in node.js',
+        //         content: null,
+        //     };
+        // }
 
         if (!this.securityGuard_readFile(callParams)) {
             return {

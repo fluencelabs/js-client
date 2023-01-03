@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export { FluencePeer } from '../FluencePeer';
-export { CallParams as CallParams$$ } from '../commonTypes';
+export { FluencePeer } from './v3';
+export { CallParams as CallParams$$ } from './v3';
 export {
     ArrayType as ArrayType$$,
     ArrowType as ArrowType$$,
@@ -36,6 +36,8 @@ export {
     StructType as StructType$$,
     TopType as TopType$$,
     UnlabeledProductType as UnlabeledProductType$$,
-    // callFunction as callFunction$$,
-    // registerService as registerService$$,
+    callFunction as callFunction$$,
+    registerService as registerService$$,
+    registerServiceImpl as registerServiceImpl$$,
+    callFunctionImpl as callFunctionImpl$$,
 } from './v3';

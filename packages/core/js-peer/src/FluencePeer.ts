@@ -29,7 +29,7 @@ import { builtInServices } from './builtins/common';
 import { defaultSigGuard, Sig } from './builtins/Sig';
 import { registerSig } from './_aqua/services';
 import { registerSrv } from './_aqua/single-module-srv';
-import Buffer from './Buffer';
+import { Buffer } from 'buffer';
 
 import { JSONValue } from '@fluencelabs/avm';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
@@ -826,4 +826,3 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
         filter((x: ParticleQueueItem) => !x.particle.hasExpired()),
     );
 }
-

@@ -17,9 +17,9 @@
     "dependencies": {
         "peer-id": "0.16.0",
         "libp2p-crypto": "0.21.2",
-        "js-base64": "^3.7.2"
+        "js-base64": "3.7.2"
     },
     "devDependencies": {
-        "typescript": "^4.6.4"
+        "typescript": "4.6.4"
     }
 }

@@ -125,6 +125,7 @@ export class EphemeralNetwork {
     async up(): Promise<void> {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
+        // shared worker for all the peers
         const workerLoader = new InlinedWorkerLoader();
 
         const promises = this.config.peers.map(async (x) => {

@@ -1,4 +1,4 @@
-import { FnConfig, FunctionCallDef } from './interface';
+import { ArrowWithoutCallbacks, FnConfig, FunctionCallDef, NonArrowType } from './interface';
 import { FluencePeer } from '../FluencePeer';
 
 import {
@@ -82,7 +82,7 @@ export function callFunctionImpl(
     return promise;
 }
 
-const isReturnTypeVoid = (def: FunctionCallDef) => {
+const isReturnTypeVoid = (def: FunctionCallDef): boolean => {
     if (def.arrow.codomain.tag === 'nil') {
         return true;
     }
@@ -90,7 +90,11 @@ const isReturnTypeVoid = (def: FunctionCallDef) => {
     return def.arrow.codomain.items.length == 0;
 };
 
-const getArgumentTypes = (def: FunctionCallDef) => {
+export const getArgumentTypes = (
+    def: FunctionCallDef,
+): {
+    [key: string]: NonArrowType | ArrowWithoutCallbacks;
+} => {
     if (def.arrow.domain.tag !== 'labeledProduct') {
         throw new Error('Should be impossible');
     }

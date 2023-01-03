@@ -1,7 +1,6 @@
-import { FluencePeer } from "@fluencelabs/fluence";
-import { makeDefaultPeer } from "@fluencelabs/fluence/dist/internal/FluencePeer";
+import { Fluence } from "@fluencelabs/fluence";
 
-const peer = makeDefaultPeer();
+const peer = Fluence.getPeer();
 
 const main = async () => {
     await peer.start({});

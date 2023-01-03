@@ -17,11 +17,12 @@
 import log, { LogLevelDesc } from 'loglevel';
 export { KeyPair } from '@fluencelabs/keypair';
 
-import { FluencePeer, makeDefaultPeer, PeerConfig } from './internal/FluencePeer';
+import { FluencePeer, PeerConfig } from '@fluencelabs/js-peer/dist/FluencePeer';
+import { makeDefaultPeer } from './makeDefaultPeer';
 
-export { PeerStatus } from './internal/FluencePeer';
-export { FluencePeer, PeerConfig } from './internal/FluencePeer';
-export { PeerIdB58, CallParams } from './internal/commonTypes';
+export { PeerStatus } from '@fluencelabs/js-peer/dist/FluencePeer';
+export { FluencePeer, PeerConfig } from '@fluencelabs/js-peer/dist/FluencePeer';
+export { PeerIdB58, CallParams } from '@fluencelabs/js-peer/dist/commonTypes';
 
 export const setLogLevel = (level: LogLevelDesc) => {
     log.setLevel(level);

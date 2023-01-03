@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'buffer';
 
 import log from 'loglevel';
 import platform from 'platform';
 
+import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import { ParticleExecutionStage } from './Particle';
-import Buffer from './Buffer';
 import { LogFunction } from '@fluencelabs/marine-js';
 import { WasmNpmLoader } from '@fluencelabs/marine.deps-loader.node';
 

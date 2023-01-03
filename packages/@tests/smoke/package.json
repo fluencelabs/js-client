@@ -16,7 +16,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-peer": "workspace:*",
+        "@fluencelabs/fluence": "workspace:*",
         "ts-node": "10.9.1"
     },
     "devDependencies": {

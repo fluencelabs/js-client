@@ -1,4 +1,4 @@
-# MarineJS deps loader
+# MarineJS deps loader for web
 
 This package is a part of FluenceJS, the official implementation of the Fluence Peer in typescript. See the [FluenceJS repo](https://github.com/fluencelabs/fluence-js) for more info
 
