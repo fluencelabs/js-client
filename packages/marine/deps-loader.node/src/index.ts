@@ -23,8 +23,7 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
 export const loadWasmFromNpmPackage = async (source: { package: string; file: string }): Promise<SharedArrayBuffer> => {
     const packagePath = require.resolve(source.package);
     const filePath = path.join(path.dirname(packagePath), source.file);
-    const buffer = await fs.promises.readFile(filePath);
-    return bufferToSharedArrayBuffer(buffer);
+    return loadWasmFromFileSystem(filePath);
 };
 
 /**
