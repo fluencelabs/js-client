@@ -17,7 +17,7 @@
     "dependencies": {
         "@fluencelabs/js-peer": "workspace:0.1.0",
         "@fluencelabs/marine.deps-loader.node": "workspace:0.1.0",
-        "@fluencelabs/marine-runner": "workspace:0.1.0"
+        "@fluencelabs/marine.background-runner": "workspace:0.1.0"
     },
     "devDependencies": {
         "@types/node": "16.11.59",

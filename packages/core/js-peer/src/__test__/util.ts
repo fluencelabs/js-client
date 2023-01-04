@@ -9,7 +9,7 @@ import { ServiceDef } from '../compilerSupport/interface';
 import { callFunctionImpl } from '../compilerSupport/callFunction';
 
 import { marineLogFunction } from '../utils';
-import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
+import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { MarineBasedAvmRunner } from '../avm';
 
 export const registerHandlersHelper = (

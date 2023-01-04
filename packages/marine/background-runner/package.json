@@ -1,5 +1,5 @@
 {
-    "name": "@fluencelabs/marine-runner",
+    "name": "@fluencelabs/marine.background-runner",
     "version": "0.1.0",
     "description": "MarineJS background runner",
     "main": "./dist/index.js",

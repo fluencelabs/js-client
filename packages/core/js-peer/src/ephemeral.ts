@@ -6,7 +6,7 @@ import { keyPairFromBase64Sk } from '@fluencelabs/keypair';
 import { PeerIdB58 } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import log from 'loglevel';
-import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
+import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { avmModuleLoader, controlModuleLoader, marineLogFunction } from './utils';
 import { MarineBasedAvmRunner } from './avm';
 

@@ -1,5 +1,5 @@
-import { loadDefaults } from '@fluencelabs/marine-deps-loader';
-import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
+import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
+import { InlinedWorkerLoader, WasmWebLoader } from '@fluencelabs/marine.deps-loader.web';
 import { callAvm, JSONArray, JSONObject } from '@fluencelabs/avm';
 import { toUint8Array } from 'js-base64';
 
@@ -10,11 +10,15 @@ const b = (s: string) => {
 };
 
 const main = async () => {
-    const { avm, marine, worker } = await loadDefaults();
-    const runner = new MarineBackgroundRunner(worker, () => {});
+    const avm = new WasmWebLoader('avm.wasm');
+    const control = new WasmWebLoader('marine-js.wasm');
+    const worker = new InlinedWorkerLoader();
+    const runner = new MarineBackgroundRunner(worker, control, () => {});
 
-    await runner.init(marine);
-    await runner.createService(avm, 'avm');
+    await runner.start();
+    await avm.start();
+    const avmVal = await avm.getValue();
+    await runner.createService(avmVal, 'avm');
 
     const s = `(seq
             (par 
@@ -38,7 +42,7 @@ const main = async () => {
         b(''),
         [],
     );
-    await runner.terminate();
+    await runner.stop();
 
     return res;
 };

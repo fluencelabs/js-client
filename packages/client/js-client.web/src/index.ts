@@ -1,4 +1,4 @@
-import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
+import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/avm';
 import { marineLogFunction } from '@fluencelabs/js-peer/dist/utils';
 import { FluencePeer } from '@fluencelabs/js-peer/dist/FluencePeer';

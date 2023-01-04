@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "@fluencelabs/avm": "0.32.1",
-        "@fluencelabs/marine-runner": "workspace:0.1.0",
+        "@fluencelabs/marine.background-runner": "workspace:0.1.0",
         "@fluencelabs/marine-deps-loader": "workspace:0.1.0"
     }
 }

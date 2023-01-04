@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+build/
 public/*.*
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)

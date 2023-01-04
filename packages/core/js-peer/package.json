@@ -26,7 +26,7 @@
         "@fluencelabs/marine.deps-loader.node": "workspace:0.1.0",
         "@fluencelabs/marine.deps-loader.web": "workspace:0.1.0",
         "@fluencelabs/marine-js": "0.3.38",
-        "@fluencelabs/marine-runner": "workspace:0.1.0",
+        "@fluencelabs/marine.background-runner": "workspace:0.1.0",
         "@fluencelabs/marine.worker-script": "workspace:0.1.0",
         "async": "3.2.4",
         "base64-js": "^1.5.1",

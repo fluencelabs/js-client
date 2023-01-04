@@ -1,5 +1,5 @@
 import { loadDefaults } from '@fluencelabs/marine-deps-loader';
-import { MarineBackgroundRunner } from '@fluencelabs/marine-runner';
+import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { callAvm, JSONArray, JSONObject } from '@fluencelabs/avm';
 
 const vmPeerId = '12D3KooWNzutuy8WHXDKFqFsATvCR6j9cj2FijYbnd47geRKaQZS';
