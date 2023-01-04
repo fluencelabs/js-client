@@ -1,5 +1,5 @@
-import { loadDefaults } from '@fluencelabs/marine-deps-loader';
 import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
+import { InlinedWorkerLoader, WasmNpmLoader } from '@fluencelabs/marine.deps-loader.node';
 import { callAvm, JSONArray, JSONObject } from '@fluencelabs/avm';
 
 const vmPeerId = '12D3KooWNzutuy8WHXDKFqFsATvCR6j9cj2FijYbnd47geRKaQZS';
@@ -10,14 +10,18 @@ const b = (s: string) => {
 
 describe('Nodejs integration tests', () => {
     it('Smoke test', async () => {
-        let runner: MarineBackgroundRunner | null = null;
+        let runner: MarineBackgroundRunner | undefined = undefined;
         try {
             // arrange
-            const { avm, marine, worker } = await loadDefaults();
-            runner = new MarineBackgroundRunner(worker, () => {});
+            const avm = new WasmNpmLoader('@fluencelabs/avm', 'avm.wasm');
+            const control = new WasmNpmLoader('@fluencelabs/marine-js', 'marine-js.wasm');
+            const worker = new InlinedWorkerLoader();
+            runner = new MarineBackgroundRunner(worker, control, () => {});
 
-            await runner.init(marine);
-            await runner.createService(avm, 'avm');
+            await avm.start();
+
+            await runner.start();
+            await runner.createService(avm.getValue(), 'avm');
 
             const s = `(seq
             (par 
@@ -29,7 +33,7 @@ describe('Nodejs integration tests', () => {
 
             // act
             const res = await callAvm(
-                (args: JSONArray | JSONObject): unknown => runner!.callService('avm', 'invoke', args, undefined),
+                (args: JSONArray | JSONObject) => runner!.callService('avm', 'invoke', args, undefined),
                 {
                     currentPeerId: vmPeerId,
                     initPeerId: vmPeerId,
@@ -41,7 +45,6 @@ describe('Nodejs integration tests', () => {
                 b(''),
                 [],
             );
-            await runner.terminate();
 
             // assert
             expect(res).toMatchObject({
@@ -49,7 +52,7 @@ describe('Nodejs integration tests', () => {
                 errorMessage: '',
             });
         } finally {
-            runner?.terminate();
+            runner?.stop();
         }
     });
 });
