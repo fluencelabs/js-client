@@ -1,0 +1,112 @@
+name: Run tests with worflow_call
+
+on:
+  workflow_call:
+    inputs:
+      rust-peer-image:
+        description: "rust-peer image tag"
+        type: string
+        default: "fluencelabs/fluence:minimal"
+      avm-version:
+        description: "@fluencelabs/avm version"
+        type: string
+        default: "null"
+      marine-js-version:
+        description: "@fluencelabs/marine-js version"
+        type: string
+        default: "null"
+      ref:
+        description: "git ref to checkout to"
+        type: string
+        default: "master"
+
+env:
+  RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
+  FORCE_COLOR: true
+  CI: true
+
+jobs:
+  fluence-js:
+    name: "Run tests"
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    strategy:
+      matrix:
+        node-version:
+          - 16.x
+          - 17.x
+
+    steps:
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          secrets: |
+            kv/docker-registry/basicauth/ci username | DOCKER_USERNAME ;
+            kv/docker-registry/basicauth/ci password | DOCKER_PASSWORD
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          registry: docker.fluence.dev
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: fluencelabs/fluence-js
+          ref: ${{ inputs.ref }}
+
+      - name: Pull rust-peer image
+        run: docker pull $RUST_PEER_IMAGE
+
+      - name: Run rust-peer
+        uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: ".github/e2e/docker-compose.yml"
+          down-flags: "--volumes"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Setup node ${{ matrix.node-version }} with self-hosted registry
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://npm.fluence.dev"
+          cache: "pnpm"
+
+      - run: pnpm i
+
+      - name: Set avm version
+        if: inputs.avm-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/fluence-js
+          package-manager: pnpm
+
+      - name: Set marine-js version
+        if: inputs.marine-js-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/marine-js"
+          version: ${{ inputs.marine-js-version }}
+          working-directory: packages/fluence-js
+          package-manager: pnpm
+
+      - run: pnpm -r build
+      - run: pnpm -r test
