@@ -23,6 +23,11 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2.2.4
+              with:
+                version: 7
+
             - name: Run container with Fluence node
               run: |
                   docker pull fluencelabs/fluence
