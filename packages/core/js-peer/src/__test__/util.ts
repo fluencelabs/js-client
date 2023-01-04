@@ -27,13 +27,13 @@ export const registerHandlersHelper = (
 export type CompiledFnCall = (peer: FluencePeer, args: { [key: string]: any }) => Promise<unknown>;
 export type CompiledFile = {
     functions: { [key: string]: CompiledFnCall };
-    services: ServiceDef[];
+    services: { [key: string]: ServiceDef };
 };
 
 export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     await fs.access(aquaFile);
 
-    const compilationResult = await api.Aqua.compile(aquaFile, [], undefined);
+    const compilationResult = await api.Aqua.compile(new api.Path(aquaFile), [], undefined);
 
     const functions = Object.entries(compilationResult.functions)
         .map(([name, fnInfo]) => {

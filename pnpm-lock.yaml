@@ -171,7 +171,7 @@ importers:
   packages/core/js-peer:
     specifiers:
       '@fluencelabs/aqua': 0.7.7-362
-      '@fluencelabs/aqua-api': 0.0.4-api-for-fluence-cli-1437934-107-1.0
+      '@fluencelabs/aqua-api': 0.9.1-373
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.32.1
       '@fluencelabs/connection': workspace:0.2.0
@@ -230,7 +230,7 @@ importers:
       uuid: 8.3.2
     devDependencies:
       '@fluencelabs/aqua': 0.7.7-362_j2eacdjxptxiyokdurrbqsd7ey
-      '@fluencelabs/aqua-api': 0.0.4-api-for-fluence-cli-1437934-107-1.0
+      '@fluencelabs/aqua-api': 0.9.1-373
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
@@ -732,8 +732,8 @@ packages:
     engines: {node: '>=10.0.0'}
     dev: true
 
-  /@fluencelabs/aqua-api/0.0.4-api-for-fluence-cli-1437934-107-1.0:
-    resolution: {integrity: sha512-KvfHE6ssMdtG3MlXZFcxtbSQS+OuDXSovLE6DnBv91RJXLNjePomoBsPKVWzw/FsS/cRlQY22A9JqbZCbg+THA==}
+  /@fluencelabs/aqua-api/0.9.1-373:
+    resolution: {integrity: sha512-q0A2z/FXOlc9UKCQ/Kf00ig0VpgdJ9woITYSj1tnVo9X3kR71gSv4loCQmukJoqlVZXzfQ8r+spalwBerin89A==}
     dev: true
 
   /@fluencelabs/aqua-ipfs/0.5.5:

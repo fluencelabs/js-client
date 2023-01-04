@@ -43,7 +43,7 @@
     },
     "devDependencies": {
         "@fluencelabs/aqua": "0.7.7-362",
-        "@fluencelabs/aqua-api": "0.0.4-api-for-fluence-cli-1437934-107-1.0",
+        "@fluencelabs/aqua-api": "0.9.1-373",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "@types/bs58": "4.0.1",

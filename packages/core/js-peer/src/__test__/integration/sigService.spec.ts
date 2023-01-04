@@ -15,8 +15,8 @@ describe('Sig service test suite', () => {
     beforeAll(async () => {
         const { services, functions } = await compileAqua(path.join(__dirname, './sigService.aqua'));
         aqua = functions;
-        sigDef = services[1];
-        dataProviderDef = services[0];
+        sigDef = services.Sig;
+        dataProviderDef = services.DataProvider;
     });
 
     afterEach(async () => {
