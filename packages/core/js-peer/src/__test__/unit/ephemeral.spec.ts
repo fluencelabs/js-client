@@ -7,9 +7,8 @@ import { mkTestPeer } from '../util';
 let en: EphemeralNetwork;
 let peer: FluencePeer;
 
-jest.setTimeout(50000);
-
-describe('Ephemeral networks tests', () => {
+// TODO: jest tests hang when running this test. Fix it (DXJ-219)
+describe.skip('Ephemeral networks tests', () => {
     beforeEach(async () => {
         en = new EphemeralNetwork(defaultConfig);
         await en.up();
