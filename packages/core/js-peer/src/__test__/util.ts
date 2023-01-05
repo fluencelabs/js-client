@@ -2,7 +2,7 @@ import api from '@fluencelabs/aqua-api/aqua-api';
 import { InlinedWorkerLoader } from '@fluencelabs/marine.deps-loader.node';
 
 import { promises as fs } from 'fs';
-import { FluencePeer } from '../FluencePeer';
+import { FluencePeer, PeerConfig } from '../FluencePeer';
 import { Particle } from '../Particle';
 import { avmModuleLoader, controlModuleLoader, MakeServiceCall } from '../utils';
 import { ServiceDef } from '../compilerSupport/interface';
@@ -11,6 +11,7 @@ import { callFunctionImpl } from '../compilerSupport/callFunction';
 import { marineLogFunction } from '../utils';
 import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { MarineBasedAvmRunner } from '../avm';
+import { nodes } from './connection';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
@@ -55,4 +56,18 @@ export const mkTestPeer = () => {
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
     return new FluencePeer(marine, avm);
+};
+
+export const withPeer = async (action: (p: FluencePeer) => Promise<void>, config?: PeerConfig) => {
+    const p = mkTestPeer();
+    try {
+        await p.start(config);
+        await action(p);
+    } finally {
+        await p!.stop();
+    }
+};
+
+export const withConnectedPeer = async (action: (p: FluencePeer) => Promise<void>, config?: PeerConfig) => {
+    return withPeer(action, { connectTo: nodes[0] });
 };

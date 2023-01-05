@@ -1,8 +1,6 @@
 import path from 'path';
-import { FluencePeer } from '../../FluencePeer';
-import { compileAqua, mkTestPeer } from '../util';
+import { compileAqua, withPeer } from '../util';
 
-let peer: FluencePeer;
 let aqua: any;
 
 describe('Srv service test suite', () => {
@@ -11,67 +9,66 @@ describe('Srv service test suite', () => {
         aqua = functions;
     });
 
-    beforeEach(async () => {
-        peer = mkTestPeer();
-        await peer.start();
-    });
-
-    afterEach(async () => {
-        if (peer) {
-            await peer.stop();
-        }
-    });
-
     it('Use custom srv service, success path', async () => {
-        // arrange
-        const wasm = path.join(__dirname, './greeting.wasm');
+        await withPeer(async (peer) => {
+            // arrange
+            const wasm = path.join(__dirname, './greeting.wasm');
 
-        // act
-        const res = await aqua.happy_path(peer, { file_path: wasm });
+            // act
+            const res = await aqua.happy_path(peer, { file_path: wasm });
 
-        // assert
-        expect(res).toBe('Hi, test');
+            // assert
+            expect(res).toBe('Hi, test');
+        });
     });
 
     it('List deployed services', async () => {
-        // arrange
-        const wasm = path.join(__dirname, './greeting.wasm');
+        await withPeer(async (peer) => {
+            // arrange
+            const wasm = path.join(__dirname, './greeting.wasm');
 
-        // act
-        const res = await aqua.list_services(peer, { file_path: wasm });
+            // act
+            const res = await aqua.list_services(peer, { file_path: wasm });
 
-        // assert
-        expect(res).toHaveLength(3);
+            // assert
+            expect(res).toHaveLength(3);
+        });
     });
 
     it('Correct error for removed services', async () => {
-        // arrange
-        const wasm = path.join(__dirname, './greeting.wasm');
+        await withPeer(async (peer) => {
+            // arrange
+            const wasm = path.join(__dirname, './greeting.wasm');
 
-        // act
-        const res = await aqua.service_removed(peer, { file_path: wasm });
+            // act
+            const res = await aqua.service_removed(peer, { file_path: wasm });
 
-        // assert
-        expect(res).toMatch('No handler has been registered for serviceId');
+            // assert
+            expect(res).toMatch('No handler has been registered for serviceId');
+        });
     });
 
     it('Correct error for file not found', async () => {
-        // arrange
+        await withPeer(async (peer) => {
+            // arrange
 
-        // act
-        const res = await aqua.file_not_found(peer, {});
+            // act
+            const res = await aqua.file_not_found(peer, {});
 
-        // assert
-        expect(res).toMatch("ENOENT: no such file or directory, open '/random/incorrect/file'");
+            // assert
+            expect(res).toMatch("ENOENT: no such file or directory, open '/random/incorrect/file'");
+        });
     });
 
     it('Correct error for removing non existing service', async () => {
-        // arrange
+        await withPeer(async (peer) => {
+            // arrange
 
-        // act
-        const res = await aqua.removing_non_exiting(peer, {});
+            // act
+            const res = await aqua.removing_non_exiting(peer, {});
 
-        // assert
-        expect(res).toMatch('Service with id random_id not found');
+            // assert
+            expect(res).toMatch('Service with id random_id not found');
+        });
     });
 });

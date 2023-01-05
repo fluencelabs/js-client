@@ -1,9 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { FluencePeer } from '../../FluencePeer';
-import { compileAqua, mkTestPeer } from '../util';
+import { compileAqua, withPeer } from '../util';
 
-let peer: FluencePeer;
 let aqua: any;
 
 describe('Marine js tests', () => {
@@ -12,35 +10,26 @@ describe('Marine js tests', () => {
         aqua = functions;
     });
 
-    beforeEach(async () => {
-        peer = mkTestPeer();
-        await peer.start();
-    });
-
-    afterEach(async () => {
-        if (peer) {
-            await peer.stop();
-        }
-    });
-
     it('should call marine service correctly', async () => {
-        // arrange
-        const wasm = await fs.promises.readFile(__dirname + '/greeting.wasm');
-        await peer.registerMarineService(wasm, 'greeting');
+        await withPeer(async (peer) => {
+            // arrange
+            const wasm = await fs.promises.readFile(__dirname + '/greeting.wasm');
+            await peer.registerMarineService(wasm, 'greeting');
 
-        // act
-        const res = await aqua.call(peer, { arg: 'test' });
+            // act
+            const res = await aqua.call(peer, { arg: 'test' });
 
-        // assert
-        expect(res).toBe('Hi, Hi, Hi, test');
+            // assert
+            expect(res).toBe('Hi, Hi, Hi, test');
+        });
     });
 
     // TODO: console printouts are happening inside web-worker\worker threads.
     // Find a way to mock functions in background thread
     it.skip('logging should work', async () => {
-        // arrange
-        const peer = mkTestPeer();
-        try {
+        await withPeer(async (peer) => {
+            // arrange
+
             jest.spyOn(global.console, 'info').mockImplementation(() => {});
 
             await peer.start({
@@ -57,8 +46,6 @@ describe('Marine js tests', () => {
             // assert
             expect(console.info).toBeCalledTimes(1);
             expect(console.info).toHaveBeenNthCalledWith(1, '[marine service "greeting"]: info');
-        } finally {
-            await peer.stop();
-        }
+        });
     });
 });
