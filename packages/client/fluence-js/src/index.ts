@@ -34,7 +34,8 @@ let pkg: string;
 if (isBrowser) {
     pkg = '@fluencelabs/js-client.web';
 } else if (isNode) {
-    pkg = '@fluencelabs/js-client.node';
+    // pkg = '@fluencelabs/js-client.node';
+    pkg = '';
 } else {
     throw new Error('Unknown environment');
 }

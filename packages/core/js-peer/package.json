@@ -23,11 +23,8 @@
         "@fluencelabs/connection": "workspace:0.2.0",
         "@fluencelabs/interfaces": "workspace:0.2.0",
         "@fluencelabs/keypair": "workspace:0.2.0",
-        "@fluencelabs/marine.deps-loader.node": "workspace:0.1.0",
-        "@fluencelabs/marine.deps-loader.web": "workspace:0.1.0",
         "@fluencelabs/marine-js": "0.3.38",
         "@fluencelabs/marine.background-runner": "workspace:0.1.0",
-        "@fluencelabs/marine.worker-script": "workspace:0.1.0",
         "async": "3.2.4",
         "base64-js": "^1.5.1",
         "bs58": "5.0.0",
@@ -42,6 +39,7 @@
         "uuid": "8.3.2"
     },
     "devDependencies": {
+        "@fluencelabs/marine.deps-loader.node": "workspace:0.1.0",
         "@fluencelabs/aqua": "0.7.7-362",
         "@fluencelabs/aqua-api": "0.9.1-373",
         "@fluencelabs/aqua-lib": "0.6.0",

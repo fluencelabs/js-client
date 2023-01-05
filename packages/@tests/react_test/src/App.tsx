@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-import { Fluence } from "@fluencelabs/fluence";
+import { makeDefaultPeer } from "@fluencelabs/js-client.web";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 
 const relayNode = krasnodar[4];
+
+const peer = makeDefaultPeer();
 
 function App() {
     const [connected, setConnected] = useState<boolean>(false);
 
     useEffect(() => {
-        Fluence.start({ connectTo: relayNode })
+        peer.start({ connectTo: relayNode })
             .then(() => {
                 setConnected(true);
             })

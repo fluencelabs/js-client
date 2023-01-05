@@ -18,7 +18,6 @@
         "@fluencelabs/keypair": "workspace:0.2.0",
         "@fluencelabs/avm": "0.32.1",
         "@fluencelabs/marine-js": "0.3.38",
-        "@fluencelabs/js-client.node": "workspace:0.1.0",
         "@fluencelabs/js-client.web": "workspace:0.1.0",
         "browser-or-node": "2.0.0",
         "loglevel": "1.8.1",

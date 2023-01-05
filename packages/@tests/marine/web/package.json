@@ -27,13 +27,13 @@
         "@types/puppeteer": "^5.4.4",
         "jest": "28.1.0",
         "jest-puppeteer": "^6.0.2",
-        "ts-jest": "^27.0.7",
-        "buffer": "6.0.3"
+        "ts-jest": "28.0.2"
     },
     "dependencies": {
         "@fluencelabs/marine.deps-loader.web": "workspace:*",
         "@fluencelabs/marine.background-runner": "workspace:*",
         "@fluencelabs/avm": "0.34.4",
-        "js-base64": "^3.7.2"
+        "js-base64": "^3.7.2",
+        "buffer": "6.0.3"
     }
 }
