@@ -409,10 +409,10 @@ importers:
       webpack-cli: 4.10.0
     dependencies:
       '@fluencelabs/interfaces': link:../../core/interfaces
-      '@fluencelabs/marine.worker-script': link:../worker-script
       buffer: 6.0.3
       js-base64: 3.7.3
     devDependencies:
+      '@fluencelabs/marine.worker-script': link:../worker-script
       threads: 1.7.0
       ts-loader: 8.4.0_hrl2l4xchpnd6hlkqocppvpxx4
       typescript: 4.7.4
