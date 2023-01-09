@@ -10,6 +10,7 @@ import fs from 'fs';
 process.chdir(path.join(__dirname, '..'));
 
 let server;
+const port = 8080;
 
 jest.setTimeout(10000);
 
@@ -19,15 +20,42 @@ const startServer = async (modifyConfig?) => {
 
     modifyConfig = modifyConfig || ((_) => {});
 
-    const cfg: any = webpackConfig();
-    modifyConfig(cfg);
-    const compiler = Webpack(cfg);
-    const devServerOptions = { ...cfg.devServer, open: loadInBrowserToDebug };
-    server = new WebpackDevServer(devServerOptions, compiler);
-    await server.start();
-    // wait for webpack to load
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const config: any = webpackConfig();
+    modifyConfig(config);
+    config.devServer.open = loadInBrowserToDebug;
+    server = await makeServer(config);
 };
+
+// https://stackoverflow.com/questions/42940550/wait-until-webpack-dev-server-is-ready
+function makeServer(config) {
+    return new Promise((resolve, reject) => {
+        const compiler = Webpack(config);
+
+        let compiled = false;
+        let listening = false;
+
+        compiler.hooks.done.tap('tap_name', () => {
+            // console.log('compiled');
+
+            if (listening) resolve(server);
+            else compiled = true;
+        });
+
+        const server = new WebpackDevServer(compiler, config.devServer);
+
+        server.listen(port, '0.0.0.0', (err) => {
+            if (err) return reject(err);
+
+            // console.log('listening');
+
+            if (compiled) {
+                resolve(server);
+            } else {
+                listening = true;
+            }
+        });
+    });
+}
 
 const stopServer = async () => {
     console.log('test: stopping server');
@@ -36,22 +64,24 @@ const stopServer = async () => {
 
 const publicDir = 'public';
 
-function copyFile(packageName: string, fileName: string) {
+const copyFile = async (packageName: string, fileName: string) => {
     const modulePath = require.resolve(packageName);
     const source = path.join(path.dirname(modulePath), fileName);
     const dest = path.join(publicDir, fileName);
 
-    fs.copyFileSync(source, dest);
-}
-
-const copyPublicDeps = async () => {
-    fs.mkdirSync(publicDir, { recursive: true });
-    copyFile('@fluencelabs/marine-js', 'marine-js.wasm');
-    copyFile('@fluencelabs/avm', 'avm.wasm');
+    return fs.promises.copyFile(source, dest);
 };
 
-const cleanPublicDeps = async () => {
-    fs.rmSync(publicDir, { recursive: true, force: true });
+const copyPublicDeps = async () => {
+    await fs.promises.mkdir(publicDir, { recursive: true });
+    return Promise.all([
+        copyFile('@fluencelabs/marine-js', 'marine-js.wasm'),
+        copyFile('@fluencelabs/avm', 'avm.wasm'),
+    ]);
+};
+
+const cleanPublicDeps = () => {
+    return fs.promises.rm(publicDir, { recursive: true, force: true });
 };
 
 describe('Browser integration tests', () => {
@@ -71,9 +101,9 @@ describe('Browser integration tests', () => {
         await page.goto('http://localhost:8080/');
 
         console.log('test: running script in browser...');
-        const res = await page.evaluate(async () => {
+        const res = await page.evaluate(() => {
             // @ts-ignore
-            return await window.MAIN();
+            return window.MAIN();
         });
 
         console.log('test: checking expectations...');
