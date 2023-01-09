@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "lib": ["ES2017"],
+        "target": "ES5",
+        "module": "commonjs",
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "declaration": true,
+        "esModuleInterop": true
+    },
+    "exclude": ["node_modules", "dist"],
+    "include": ["src/**/*"]
+}

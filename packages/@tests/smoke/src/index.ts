@@ -1,6 +1,7 @@
-import { FluencePeer } from "@fluencelabs/fluence";
+import "@fluencelabs/js-client.node";
+import { Fluence } from "@fluencelabs/fluence";
 
-const peer = new FluencePeer();
+const peer = Fluence.getPeer();
 
 const main = async () => {
     await peer.start({});
