@@ -25,7 +25,7 @@
         "copy-marine": "dist/tools/copyMarine.js"
     },
     "dependencies": {
-        "@fluencelabs/avm": "0.31.10",
+        "@fluencelabs/avm": "0.35.3",
         "@fluencelabs/connection": "workspace:0.2.0",
         "@fluencelabs/interfaces": "workspace:0.1.0",
         "@fluencelabs/keypair": "workspace:0.2.0",

@@ -58,7 +58,7 @@ importers:
     specifiers:
       '@fluencelabs/aqua': 0.7.7-362
       '@fluencelabs/aqua-lib': 0.6.0
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/avm': 0.35.3
       '@fluencelabs/connection': workspace:0.2.0
       '@fluencelabs/fluence-network-environment': ^1.0.13
       '@fluencelabs/interfaces': workspace:0.1.0
@@ -89,7 +89,7 @@ importers:
       typescript: ^4.6.4
       uuid: 8.3.2
     dependencies:
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/avm': 0.35.3
       '@fluencelabs/connection': link:../fluence-connection
       '@fluencelabs/interfaces': link:../fluence-interfaces
       '@fluencelabs/keypair': link:../fluence-keypair
@@ -494,13 +494,13 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@fluencelabs/avm/0.31.10:
-    resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
-    dev: false
-
   /@fluencelabs/avm/0.31.4:
     resolution: {integrity: sha512-rApXdqk0NUX+Fyq9BJ1jQ7X//EfVrAg9wrjdd4K/tvo54Lgij0tY/IT+imwr/Eb4qgHgi1QMW4zT0AOlgKIKmw==}
     dev: true
+
+  /@fluencelabs/avm/0.35.3:
+    resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
+    dev: false
 
   /@fluencelabs/connection/0.2.0:
     resolution: {integrity: sha512-0jTRI1h/j/fR2VaLIlcIm6VoP3j2jL2lI6/OaYaOnwGXmI6CbZWHNeq9eaKWycT9B1vpN9wHu0Vi7vH3pFplhg==}
