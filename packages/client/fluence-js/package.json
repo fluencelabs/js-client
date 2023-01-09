@@ -15,12 +15,10 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
+        "loglevel": "1.8.1",
         "@fluencelabs/keypair": "workspace:0.2.0",
         "@fluencelabs/avm": "0.32.1",
         "@fluencelabs/marine-js": "0.3.38",
-        "@fluencelabs/js-client.web": "workspace:0.1.0",
-        "browser-or-node": "2.0.0",
-        "loglevel": "1.8.1",
         "@fluencelabs/js-peer": "workspace:0.1.0"
     },
     "devDependencies": {

@@ -1,3 +1,4 @@
+import "@fluencelabs/js-client.node";
 import { Fluence } from "@fluencelabs/fluence";
 
 const peer = Fluence.getPeer();

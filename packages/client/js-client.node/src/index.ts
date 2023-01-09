@@ -24,3 +24,6 @@ export const makeDefaultPeer = () => {
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
     return new FluencePeer(marine, avm);
 };
+
+// @ts-ignore
+globalThis.defaultPeer = makeDefaultPeer();
