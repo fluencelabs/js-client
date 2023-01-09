@@ -4,10 +4,6 @@ import { callAvm, JSONArray, JSONObject } from '@fluencelabs/avm';
 
 const vmPeerId = '12D3KooWNzutuy8WHXDKFqFsATvCR6j9cj2FijYbnd47geRKaQZS';
 
-const b = (s: string) => {
-    return Buffer.from(s);
-};
-
 describe('Nodejs integration tests', () => {
     it('Smoke test', async () => {
         let runner: MarineBackgroundRunner | undefined = undefined;
@@ -41,8 +37,8 @@ describe('Nodejs integration tests', () => {
                     ttl: 10000,
                 },
                 s,
-                b(''),
-                b(''),
+                Buffer.from(''),
+                Buffer.from(''),
                 [],
             );
 
