@@ -40,6 +40,7 @@ importers:
       jest: 28.1.0
       jest-puppeteer: ^6.0.2
       js-base64: ^3.7.2
+      puppeteer-core: 19.5.2
       style-loader: ^3.3.1
       ts-jest: 28.0.2
       ts-loader: ^8.3.0
@@ -65,6 +66,7 @@ importers:
       install-local: 3.0.1
       jest: 28.1.0
       jest-puppeteer: 6.2.0_puppeteer@19.5.2
+      puppeteer-core: 19.5.2
       style-loader: 3.3.1_webpack@5.75.0
       ts-jest: 28.0.2_atm4ofwnb4hwhym55zapdi5lim
       ts-loader: 8.4.0_l2co7ao223gzrfox7yaiyzd7wu
