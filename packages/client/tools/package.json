@@ -17,7 +17,9 @@
     "bin": {
         "copy-marine": "dist/copyMarine.js"
     },
-    "dependencies": {},
+    "dependencies": {
+        "@fluencelabs/marine.worker-script": "workspace:*"
+    },
     "devDependencies": {
         "@types/node": "16.11.59",
         "typescript": "4.6.4"

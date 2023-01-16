@@ -1,10 +1,5 @@
-import { Buffer } from 'buffer';
-
-// @ts-ignore
-window.Buffer = Buffer;
-
 import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
-import { InlinedWorkerLoader, WasmWebLoader } from '@fluencelabs/marine.deps-loader.web';
+import { WorkerLoader, WasmWebLoader } from '@fluencelabs/marine.deps-loader.web';
 import { callAvm, JSONArray, JSONObject } from '@fluencelabs/avm';
 import { toUint8Array } from 'js-base64';
 
@@ -17,7 +12,7 @@ const b = (s: string) => {
 const main = async () => {
     const avm = new WasmWebLoader('avm.wasm');
     const control = new WasmWebLoader('marine-js.wasm');
-    const worker = new InlinedWorkerLoader();
+    const worker = new WorkerLoader('marine-js.web.js');
     const runner = new MarineBackgroundRunner(worker, control, () => {});
 
     await runner.start();

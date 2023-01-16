@@ -1,6 +1,7 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const path = require('path');
+const webpack = require('webpack');
 
 // const isProduction = true;
 // uncomment to debug
@@ -32,7 +33,16 @@ const config = () => ({
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        fallback: {
+            buffer: require.resolve('buffer/'),
+        },
     },
+    plugins: [
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+            process: 'process/browser',
+        }),
+    ],
 });
 
 module.exports = () => {

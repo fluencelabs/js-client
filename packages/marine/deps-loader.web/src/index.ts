@@ -1,4 +1,4 @@
-import { BlobWorker } from 'threads';
+import { BlobWorker, Worker } from 'threads';
 import { Buffer } from 'buffer';
 import { LazyLoader } from '@fluencelabs/interfaces';
 import type { WorkerImplementation } from 'threads/dist/types/master';
@@ -49,6 +49,14 @@ export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
         super(() => {
             const script = fromBase64(b64script);
             return Promise.resolve(BlobWorker.fromText(script));
+        });
+    }
+}
+
+export class WorkerLoader extends LazyLoader<WorkerImplementation> {
+    constructor(path: string) {
+        super(() => {
+            return new Worker(path);
         });
     }
 }

@@ -2,6 +2,7 @@
     "name": "@test/marine_web",
     "version": "0.1.0",
     "scripts": {
+        "postinstall": "copy-marine public",
         "start": "webpack serve",
         "test": "jest",
         "build": "webpack --mode=production --node-env=production",
@@ -30,6 +31,7 @@
         "ts-jest": "28.0.2"
     },
     "dependencies": {
+        "@fluencelabs/tools": "workspace:*",
         "@fluencelabs/marine.deps-loader.web": "workspace:*",
         "@fluencelabs/marine.background-runner": "workspace:*",
         "@fluencelabs/avm": "0.34.4",

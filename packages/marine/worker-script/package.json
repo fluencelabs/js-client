@@ -9,7 +9,7 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc --emitDeclarationOnly && pnpm build:web && pnpm build:node && pnpm build:b64 ",
+        "build": "tsc && pnpm build:web && pnpm build:node && pnpm build:b64 ",
         "build:b64": "./build_b64.sh",
         "build:web": "webpack -c webpack.config.web.js",
         "build:node": "webpack -c webpack.config.node.js"
@@ -22,6 +22,9 @@
         "threads": "^1.7.0"
     },
     "devDependencies": {
+        "buffer": "6.0.3",
+        "process": "0.11.10",
+        "webpack-plugin-replace": "1.2.0",
         "@types/node": "16.11.59",
         "ts-loader": "8.4.0",
         "typescript": "^4.6.4",
