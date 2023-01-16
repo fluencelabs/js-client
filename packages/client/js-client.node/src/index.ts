@@ -1,6 +1,6 @@
 import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/avm';
-import { marineLogFunction } from '@fluencelabs/js-peer/dist/utils';
+import { marineLogFunction } from '@fluencelabs/js-peer/dist/peerUtils';
 import { FluencePeer } from '@fluencelabs/js-peer/dist/FluencePeer';
 import { InlinedWorkerLoader, WasmNpmLoader } from '@fluencelabs/marine.deps-loader.node';
 

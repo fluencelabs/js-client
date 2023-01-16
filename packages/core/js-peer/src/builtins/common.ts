@@ -19,7 +19,7 @@ import { sha256 } from 'multiformats/hashes/sha2';
 import { CallServiceResult } from '@fluencelabs/avm';
 
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
-import { jsonify } from '../utils';
+import { jsonify } from '../peerUtils';
 import { Buffer } from 'buffer';
 
 const success = (result: any): CallServiceResult => {

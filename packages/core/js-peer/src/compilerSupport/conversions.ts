@@ -1,4 +1,4 @@
-import { jsonify } from '../utils';
+import { jsonify } from '../peerUtils';
 import { match } from 'ts-pattern';
 import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface';
 import { CallServiceData } from '../commonTypes';

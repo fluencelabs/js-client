@@ -21,8 +21,7 @@ import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import { ParticleExecutionStage } from './Particle';
-import { LogFunction } from '@fluencelabs/marine-js';
-import { WasmNpmLoader } from '@fluencelabs/marine.deps-loader.node';
+import { LogFunction } from '@fluencelabs/marine-js/dist/types';
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>
@@ -202,6 +201,3 @@ export const marineLogFunction: LogFunction = (message) => {
             break;
     }
 };
-
-export const controlModuleLoader = new WasmNpmLoader('@fluencelabs/marine-js', 'marine-js.wasm');
-export const avmModuleLoader = new WasmNpmLoader('@fluencelabs/avm', 'avm.wasm');

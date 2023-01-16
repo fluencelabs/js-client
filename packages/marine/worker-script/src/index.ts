@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { MarineService } from '@fluencelabs/marine-js';
-import type { Env, MarineServiceConfig, JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js';
+import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
+import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
+import type { Env, MarineServiceConfig } from '@fluencelabs/marine-js/dist/config';
 import { Observable, Subject } from 'threads/observable';
 import { expose } from 'threads';
 

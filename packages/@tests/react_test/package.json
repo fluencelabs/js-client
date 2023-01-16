@@ -18,7 +18,11 @@
         "typescript": "^4.8.2",
         "web-vitals": "^2.1.4"
     },
+    "devDependencies": {
+        "@fluencelabs/tools": "workspace:*"
+    },
     "scripts": {
+        "copy-marine": "copy-marine public",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "_test": "react-scripts test",

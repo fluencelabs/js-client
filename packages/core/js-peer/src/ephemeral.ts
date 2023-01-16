@@ -7,7 +7,8 @@ import { PeerIdB58 } from './commonTypes';
 import { FluencePeer } from './FluencePeer';
 import log from 'loglevel';
 import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
-import { avmModuleLoader, controlModuleLoader, marineLogFunction } from './utils';
+import { marineLogFunction } from './peerUtils';
+import { avmModuleLoader, controlModuleLoader } from './ephemeralUtils';
 import { MarineBasedAvmRunner } from './avm';
 
 interface EphemeralConfig {

@@ -22,7 +22,7 @@ import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './utils';
+import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './peerUtils';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common';
@@ -34,7 +34,7 @@ import { Buffer } from 'buffer';
 import { JSONValue } from '@fluencelabs/avm';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
 import { registerNodeUtils } from './_aqua/node-utils';
-import { LogLevel } from '@fluencelabs/marine-js';
+import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id

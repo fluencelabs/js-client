@@ -1,7 +1,7 @@
 import { Multiaddr } from 'multiaddr';
 
 import { nodes } from '../connection';
-import { checkConnection, doNothing, handleTimeout } from '../../utils';
+import { checkConnection, doNothing, handleTimeout } from '../../peerUtils';
 import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer } from '../util';
 import { FluencePeer } from '../../FluencePeer';
 

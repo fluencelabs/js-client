@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fromByteArray, toByteArray } from 'base64-js';
 import log from 'loglevel';
 import { ParticleContext } from './commonTypes';
-import { dataToString, jsonify } from './utils';
+import { dataToString, jsonify } from './peerUtils';
 import { Buffer } from 'buffer';
 
 export class Particle {

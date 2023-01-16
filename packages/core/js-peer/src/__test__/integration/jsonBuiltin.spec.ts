@@ -1,5 +1,5 @@
 import { Particle } from '../../Particle';
-import { doNothing } from '../../utils';
+import { doNothing } from '../../peerUtils';
 import { FluencePeer } from '../../FluencePeer';
 import { mkTestPeer } from '../util';
 

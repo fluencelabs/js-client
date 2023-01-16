@@ -1,4 +1,4 @@
-import { handleTimeout } from '../../utils';
+import { handleTimeout } from '../../peerUtils';
 import { registerHandlersHelper, withPeer } from '../util';
 
 describe('Avm spec', () => {

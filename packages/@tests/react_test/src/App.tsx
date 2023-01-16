@@ -5,7 +5,7 @@ import "./App.css";
 import { makeDefaultPeer } from "@fluencelabs/js-client.web";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 
-const relayNode = krasnodar[4];
+const relayNode = krasnodar[2];
 
 const peer = makeDefaultPeer();
 
