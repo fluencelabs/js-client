@@ -8,11 +8,11 @@ export const makeDefaultPeer = () => {
     const workerLoader = new InlinedWorkerLoader();
     const controlModuleLoader = new InlinedWasmLoader('__marine__');
     const avmModuleLoader = new InlinedWasmLoader('__avm__');
-
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
-    return new FluencePeer(marine, avm);
+    // return new FluencePeer(marine, avm);
+    return 1;
 };
 
-// @ts-ignore
+ // @ts-ignore
 globalThis.defaultPeer = makeDefaultPeer();

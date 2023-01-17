@@ -3,9 +3,10 @@
 const path = require('path');
 const ReplacePlugin = require('webpack-plugin-replace');
 
-const mode = 'production';
+// const mode = 'production';
+const mode = 'development';
 
-const config = () => ({
+const config = {
     mode: mode,
     entry: './src/index.ts',
     output: {
@@ -15,11 +16,7 @@ const config = () => ({
         rules: [
             {
                 test: /\.(js|ts|tsx)$/i,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                    },
-                ],
+                loader: 'ts-loader',
                 exclude: ['/node_modules/'],
             },
         ],
@@ -30,13 +27,13 @@ const config = () => ({
     plugins: [
         new ReplacePlugin({
             values: {
-                __marine__: '10',
-                __avm__: '20',
+                '__marine__': '__marine__10',
+                '__avm__': '__avm__10',
             },
         }),
     ],
-});
+};
 
 module.exports = () => {
-    return config();
+    return config;
 };

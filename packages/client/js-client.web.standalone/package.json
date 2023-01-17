@@ -9,7 +9,8 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "webpack"
+        "build": "webpack",
+        "_build": "webpack --mode=production --node-env=production"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

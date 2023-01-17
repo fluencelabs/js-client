@@ -1,21 +1,23 @@
 {
     "compilerOptions": {
         "outDir": "./dist/",
+        "allowJs": true,
         "baseUrl": ".",
-        "downlevelIteration": true,
-        "sourceMap": true,
-        "inlineSources": true,
-        "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true,
-        "target": "ES5",
-        "module": "commonjs",
+        "sourceMap": false,
+        "inlineSources": false,
+        "pretty": true,
+        "target": "esnext",
+        "module": "esnext",
         "moduleResolution": "node",
-        "declaration": true,
+        "declaration": false,
         "esModuleInterop": true,
-        "declarationMap": true,
+        "declarationMap": false,
         "strict": true,
-        "skipLibCheck": true
+        "noImplicitAny": false,
+        "alwaysStrict": true,
+        "noImplicitThis": true,
+        "strictNullChecks": false
     },
-    "exclude": ["node_modules", "dist", "bundle"],
-    "include": ["src/**/*"]
+    "exclude": ["node_modules", "dist"],
+    "include": ["src"]
 }
