@@ -2,7 +2,7 @@ import { BlobWorker, Worker } from 'threads';
 import { Buffer } from 'buffer';
 import { LazyLoader } from '@fluencelabs/interfaces';
 import type { WorkerImplementation } from 'threads/dist/types/master';
-import { fromBase64 } from 'js-base64';
+import { toUint8Array, fromBase64 } from 'js-base64';
 // @ts-ignore
 import b64script from './marine-js.b64.web';
 
@@ -41,6 +41,15 @@ export const loadWasmFromServer = async (filePath: string): Promise<SharedArrayB
 export class WasmWebLoader extends LazyLoader<SharedArrayBuffer | Buffer> {
     constructor(filePath: string) {
         super(() => loadWasmFromServer(filePath));
+    }
+}
+
+export class InlinedWasmLoader extends LazyLoader<SharedArrayBuffer | Buffer> {
+    constructor(b64Content: string) {
+        super(() => {
+            const content = toUint8Array(b64Content);
+            return Buffer.from(content);
+        });
     }
 }
 
