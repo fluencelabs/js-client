@@ -4,6 +4,7 @@ import "./App.css";
 
 import { makeDefaultPeer } from "@fluencelabs/js-client.web";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
+import { getRelayTime } from "./_aqua/demo";
 
 const relayNode = krasnodar[2];
 
@@ -23,11 +24,18 @@ function App() {
             });
     }, []);
 
+    const handleClick = () => {
+        getRelayTime(peer, relayNode.peerId).then((x) => alert(x));
+    };
+
+    const connectedStr = connected ? "Connected" : "Disconnected";
+
     return (
         <div className="App">
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
-                <p>Connected: ${connected}</p>
+                <button onClick={handleClick}>Send ping</button>
+                <p>{connectedStr}</p>
                 <p>
                     Edit <code>src/App.tsx</code> and save to reload.
                 </p>

@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "@fluencelabs/js-client.web": "workspace:*",
+        "@fluencelabs/compiler-support": "workspace:*",
         "@fluencelabs/fluence-network-environment": "^1.0.13",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
@@ -19,9 +20,12 @@
         "web-vitals": "^2.1.4"
     },
     "devDependencies": {
-        "@fluencelabs/tools": "workspace:*"
+        "@fluencelabs/tools": "workspace:*",
+        "@fluencelabs/aqua": "0.8.0-368",
+        "@fluencelabs/aqua-lib": "0.6.0"
     },
     "scripts": {
+        "compile-aqua": "aqua -i ./aqua/ -o ./src/_aqua",
         "copy-marine": "copy-marine public",
         "start": "react-scripts start",
         "build": "react-scripts build",
