@@ -9,7 +9,8 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "build_wp": "webpack"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -30,6 +31,11 @@
         "buffer": "6.0.3"
     },
     "devDependencies": {
-        "typescript": "4.6.4"
+        "buffer": "6.0.3",
+        "ts-loader": "9.4.2",
+        "typescript": "4.6.4",
+        "webpack": "5.64.4",
+        "webpack-cli": "5.0.1",
+        "webpack-plugin-replace": "1.2.0"
     }
 }

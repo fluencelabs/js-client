@@ -10,9 +10,9 @@ export const makeDefaultPeer = () => {
     const avmModuleLoader = new InlinedWasmLoader('__avm__');
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
-    // return new FluencePeer(marine, avm);
-    return 1;
+    return new FluencePeer(marine, avm);
+    //return 1;
 };
 
- // @ts-ignore
+// @ts-ignore
 globalThis.defaultPeer = makeDefaultPeer();

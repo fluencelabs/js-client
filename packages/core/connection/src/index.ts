@@ -29,7 +29,6 @@ import { Connection } from 'libp2p-interfaces/src/topology';
 import { Multiaddr } from 'multiaddr';
 // @ts-ignore
 import { all as allow_all } from 'libp2p-websockets/src/filters';
-import Buffer from './Buffer';
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 

@@ -1,8 +1,8 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const path = require('path');
-const ReplacePlugin = require('webpack-plugin-replace');
 const webpack = require('webpack');
+const ReplacePlugin = require('webpack-plugin-replace');
 
 // const mode = 'production';
 const mode = 'development';
@@ -29,11 +29,15 @@ const config = {
         },
     },
     plugins: [
-        new ReplacePlugin({
-            values: {
-                __marine__: '__marine__10',
-                __avm__: '__avm__10',
-            },
+        // new ReplacePlugin({
+        //     values: {
+        //         __marine__: '__marine__10',
+        //         __avm__: '__avm__10',
+        //     },
+        //     exclude: ['/node_modules/'],
+        // }),
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
         }),
     ],
 };

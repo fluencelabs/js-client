@@ -18,7 +18,7 @@
     "dependencies": {},
     "devDependencies": {
         "js-base64": "3.7.3",
-        "webpack": "5.75.0",
+        "webpack": "5.64.4",
         "webpack-cli": "5.0.1",
         "webpack-plugin-replace": "1.2.0",
         "@fluencelabs/js-peer": "workspace:0.1.0",

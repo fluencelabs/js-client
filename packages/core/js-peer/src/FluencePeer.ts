@@ -16,7 +16,7 @@
 import 'buffer';
 
 import { RelayConnection } from '@fluencelabs/connection';
-import { FluenceConnection, IAvmRunner, IMarine } from '@fluencelabs/interfaces';
+import { IAvmRunner, IMarine } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
 import type { MultiaddrInput } from 'multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
@@ -46,7 +46,7 @@ type Node = {
 
 const DEFAULT_TTL = 7000;
 
-export type ConnectionOption = string | MultiaddrInput | Node;
+export type ConnectionOption = string | Node;
 
 /**
  * Configuration used when initiating Fluence Peer
@@ -456,7 +456,7 @@ export class FluencePeer {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    async connect(connection: FluenceConnection): Promise<void> {
+    async connect(connection: RelayConnection): Promise<void> {
         if (this.connection) {
             await this.connection.disconnect();
         }
@@ -497,7 +497,7 @@ export class FluencePeer {
 
     // Internal peer state
 
-    private connection: FluenceConnection | null = null;
+    private connection: RelayConnection | null = null;
     private _printParticleId = false;
     private _defaultTTL: number = DEFAULT_TTL;
     private _keyPair: KeyPair | undefined;
@@ -776,14 +776,14 @@ async function configToConnection(
     keyPair: KeyPair,
     connection?: ConnectionOption,
     dialTimeoutMs?: number,
-): Promise<FluenceConnection | null> {
+): Promise<RelayConnection | null> {
     if (!connection) {
         return null;
     }
 
-    if (connection instanceof FluenceConnection) {
-        return connection;
-    }
+    // if (connection instanceof RelayConnection) {
+    //     return connection;
+    // }
 
     let connectToMultiAddr: MultiaddrInput;
     // figuring out what was specified as input
@@ -801,7 +801,7 @@ async function configToConnection(
         relayAddress: connectToMultiAddr,
         dialTimeoutMs: dialTimeoutMs,
     });
-    return res;
+    return undefined as any;
 }
 
 function serviceFnKey(serviceId: string, fnName: string) {
