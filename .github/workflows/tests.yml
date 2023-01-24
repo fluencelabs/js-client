@@ -29,6 +29,7 @@ jobs:
   fluence-js:
     name: "Run tests"
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     permissions:
       contents: read
