@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { encode, decode } from 'bs58';
+// import { encode, decode } from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { CallServiceResult } from '@fluencelabs/avm';
 
@@ -239,53 +239,53 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             }
         },
 
-        string_to_b58: (req) => {
-            if (req.args.length !== 1) {
-                return error('string_to_b58 accepts only one string argument');
-            } else {
-                return success(encode(new TextEncoder().encode(req.args[0])));
-            }
-        },
+        // string_to_b58: (req) => {
+        //     if (req.args.length !== 1) {
+        //         return error('string_to_b58 accepts only one string argument');
+        //     } else {
+        //         return success(encode(new TextEncoder().encode(req.args[0])));
+        //     }
+        // },
 
-        string_from_b58: (req) => {
-            if (req.args.length !== 1) {
-                return error('string_from_b58 accepts only one string argument');
-            } else {
-                return success(new TextDecoder().decode(decode(req.args[0])));
-            }
-        },
+        // string_from_b58: (req) => {
+        //     if (req.args.length !== 1) {
+        //         return error('string_from_b58 accepts only one string argument');
+        //     } else {
+        //         return success(new TextDecoder().decode(decode(req.args[0])));
+        //     }
+        // },
 
-        bytes_to_b58: (req) => {
-            if (req.args.length !== 1 || !Array.isArray(req.args[0])) {
-                return error('bytes_to_b58 accepts only single argument: array of numbers');
-            } else {
-                const argumentArray = req.args[0] as number[];
-                return success(encode(new Uint8Array(argumentArray)));
-            }
-        },
+        // bytes_to_b58: (req) => {
+        //     if (req.args.length !== 1 || !Array.isArray(req.args[0])) {
+        //         return error('bytes_to_b58 accepts only single argument: array of numbers');
+        //     } else {
+        //         const argumentArray = req.args[0] as number[];
+        //         return success(encode(new Uint8Array(argumentArray)));
+        //     }
+        // },
 
-        bytes_from_b58: (req) => {
-            if (req.args.length !== 1) {
-                return error('bytes_from_b58 accepts only one string argument');
-            } else {
-                return success(Array.from(decode(req.args[0])));
-            }
-        },
+        // bytes_from_b58: (req) => {
+        //     if (req.args.length !== 1) {
+        //         return error('bytes_from_b58 accepts only one string argument');
+        //     } else {
+        //         return success(Array.from(decode(req.args[0])));
+        //     }
+        // },
 
-        sha256_string: async (req) => {
-            if (req.args.length < 1 || req.args.length > 3) {
-                return error(`sha256_string accepts 1-3 arguments, found: ${req.args.length}`);
-            } else {
-                const [input, digestOnly, asBytes] = req.args;
-                const inBuffer = Buffer.from(input);
-                const multihash = await sha256.digest(inBuffer);
+        // sha256_string: async (req) => {
+        //     if (req.args.length < 1 || req.args.length > 3) {
+        //         return error(`sha256_string accepts 1-3 arguments, found: ${req.args.length}`);
+        //     } else {
+        //         const [input, digestOnly, asBytes] = req.args;
+        //         const inBuffer = Buffer.from(input);
+        //         const multihash = await sha256.digest(inBuffer);
 
-                const outBytes = digestOnly ? multihash.digest : multihash.bytes;
-                const res = asBytes ? Array.from(outBytes) : encode(outBytes);
+        //         const outBytes = digestOnly ? multihash.digest : multihash.bytes;
+        //         const res = asBytes ? Array.from(outBytes) : encode(outBytes);
 
-                return success(res);
-            }
-        },
+        //         return success(res);
+        //     }
+        // },
 
         concat_strings: (req) => {
             const res = ''.concat(...req.args);

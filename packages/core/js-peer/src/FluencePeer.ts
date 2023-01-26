@@ -18,7 +18,7 @@ import 'buffer';
 import { RelayConnection } from '@fluencelabs/connection';
 import { FluenceConnection, IAvmRunner, IMarine } from '@fluencelabs/interfaces';
 import { KeyPair } from '@fluencelabs/keypair';
-import type { MultiaddrInput } from 'multiaddr';
+import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
 import { PeerIdB58 } from './commonTypes';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';

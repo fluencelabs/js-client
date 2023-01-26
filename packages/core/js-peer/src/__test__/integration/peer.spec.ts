@@ -1,5 +1,3 @@
-import { Multiaddr } from 'multiaddr';
-
 import { nodes } from '../connection';
 import { checkConnection, doNothing, handleTimeout } from '../../utils';
 import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer } from '../util';

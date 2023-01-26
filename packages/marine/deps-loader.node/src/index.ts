@@ -1,3 +1,4 @@
+import { createRequire } from 'module';
 import { LazyLoader } from '@fluencelabs/interfaces';
 import { BlobWorker } from 'threads';
 import type { WorkerImplementation } from 'threads/dist/types/master';
@@ -7,6 +8,8 @@ import path from 'path';
 import { fromBase64 } from 'js-base64';
 // @ts-ignore
 import b64script from './marine-js.b64.node';
+
+const require = createRequire(import.meta.url);
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
