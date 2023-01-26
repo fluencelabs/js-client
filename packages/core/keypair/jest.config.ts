@@ -23,4 +23,5 @@
 
 // export default jestConfig;
 
-export * from '../../../jest.config';
+import { jestConfig } from '../../../jest.config';
+export default jestConfig;

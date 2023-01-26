@@ -10,17 +10,19 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "test": "NODE_OPTIONS=--experimental-vm-modules pnpm jest"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "peer-id": "0.16.0",
-        "libp2p-crypto": "0.21.2",
+        "@libp2p/peer-id": "2.0.1",
+        "@libp2p/peer-id-factory": "2.0.1",
+        "@libp2p/interface-peer-id": "2.0.1",
         "js-base64": "3.7.2"
     },
     "devDependencies": {
-        "typescript": "4.6.4"
+        "bs58": "5.0.0"
     }
 }

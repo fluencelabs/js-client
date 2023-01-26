@@ -1,5 +1,5 @@
-import * as bs58 from 'bs58';
-import { KeyPair } from '@fluencelabs/keypair';
+import { encode, decode } from 'bs58';
+import { KeyPair } from '../';
 
 describe('KeyPair tests', () => {
     it('generate keypair from seed', async function () {
@@ -18,14 +18,14 @@ describe('KeyPair tests', () => {
     it('create keypair from ed25519 private key', async function () {
         // arrange
         const rustSK = 'jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH';
-        const sk = bs58.decode(rustSK);
+        const sk = decode(rustSK);
 
         // act
         const keyPair = await KeyPair.fromEd25519SK(sk);
 
         // assert
         const expectedPeerId = '12D3KooWH1W3VznVZ87JH4FwABK4mkntcspTVWJDta6c2xg9Pzbp';
-        expect(keyPair.Libp2pPeerId.toB58String()).toStrictEqual(expectedPeerId);
+        expect(keyPair.getPeerId()).toStrictEqual(expectedPeerId);
     });
 
     it('create keypair from a seed phrase', async function () {
@@ -37,6 +37,6 @@ describe('KeyPair tests', () => {
 
         // assert
         const expectedPeerId = '12D3KooWK99VoVxNE7XzyBwXEzW7xhK7Gpv85r9F3V3fyKSUKPH5';
-        expect(keyPair.Libp2pPeerId.toB58String()).toStrictEqual(expectedPeerId);
+        expect(keyPair.getPeerId()).toStrictEqual(expectedPeerId);
     });
 });
