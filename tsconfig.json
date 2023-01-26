@@ -11,6 +11,5 @@
         "forceConsistentCasingInFileNames": true,
         "sourceMap": false,
         "declaration": true
-    },
-    "exclude": ["node_modules", "dist"]
+    }
 }

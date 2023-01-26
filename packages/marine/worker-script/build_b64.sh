@@ -11,17 +11,13 @@ else
 fi
 
 cat << EOF > ./dist/marine-js.b64.web.js
-"use strict";
 // auto-generated
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = "$BASE64_WEB";
+export default "$BASE64_WEB";
 EOF
 
 cat << EOF > ./dist/marine-js.b64.node.js
-"use strict";
 // auto-generated
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = "$BASE64_NODE";
+export default "$BASE64_NODE";
 EOF
 
 cat << EOF > ./dist/marine-js.b64.node.d.ts

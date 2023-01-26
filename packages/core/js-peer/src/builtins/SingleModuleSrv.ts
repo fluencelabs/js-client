@@ -5,8 +5,8 @@ import { FluencePeer } from '../FluencePeer';
 import { CallParams } from '../commonTypes';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard';
 
-export const defaultGuard = (peer: FluencePeer) => {
-    return allowOnlyParticleOriginatedAt<any>(peer.getStatus().peerId!);
+export const defaultGuard = (peer: () => FluencePeer) => {
+    return allowOnlyParticleOriginatedAt<any>(peer().getStatus().peerId!);
 };
 
 export class Srv implements SrvDef {
@@ -14,7 +14,7 @@ export class Srv implements SrvDef {
 
     constructor(private peer: FluencePeer) {}
 
-    securityGuard_create: SecurityGuard<'wasm_b64_content'> = defaultGuard(this.peer);
+    securityGuard_create: SecurityGuard<'wasm_b64_content'> = defaultGuard(() => this.peer);
 
     async create(wasm_b64_content: string, callParams: CallParams<'wasm_b64_content'>) {
         if (!this.securityGuard_create(callParams)) {
@@ -48,7 +48,7 @@ export class Srv implements SrvDef {
         }
     }
 
-    securityGuard_remove: SecurityGuard<'service_id'> = defaultGuard(this.peer);
+    securityGuard_remove: SecurityGuard<'service_id'> = defaultGuard(() => this.peer);
 
     remove(service_id: string, callParams: CallParams<'service_id'>) {
         if (!this.securityGuard_remove(callParams)) {
@@ -83,7 +83,7 @@ export class Srv implements SrvDef {
 export class NodeUtils implements NodeUtilsDef {
     constructor(private peer: FluencePeer) {}
 
-    securityGuard_readFile: SecurityGuard<'path'> = defaultGuard(this.peer);
+    securityGuard_readFile: SecurityGuard<'path'> = defaultGuard(() => this.peer);
 
     async read_file(path: string, callParams: CallParams<'path'>) {
         // TODO: split node-only and universal services into different client packages

@@ -4,6 +4,7 @@
     "description": "Keypair implementation for Fluence JS Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
+    "type": "module",
     "engines": {
         "node": ">=10",
         "pnpm": ">=3"
