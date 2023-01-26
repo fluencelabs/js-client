@@ -286,18 +286,22 @@ importers:
 
   packages/core/keypair:
     specifiers:
+      '@libp2p/crypto': 1.0.11
+      '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-peer-id': 2.0.1
       '@libp2p/peer-id': 2.0.1
       '@libp2p/peer-id-factory': 2.0.1
-      bs58: 5.0.0
       js-base64: 3.7.2
+      multiformats: 11.0.1
     dependencies:
+      '@libp2p/crypto': 1.0.11
+      '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-peer-id': 2.0.1
       '@libp2p/peer-id': 2.0.1
       '@libp2p/peer-id-factory': 2.0.1
       js-base64: 3.7.2
     devDependencies:
-      bs58: 5.0.0
+      multiformats: 11.0.1
 
   packages/marine/background-runner:
     specifiers:
@@ -7191,7 +7195,6 @@ packages:
   /multiformats/11.0.1:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dev: false
 
   /multiformats/9.6.5:
     resolution: {integrity: sha512-vMwf/FUO+qAPvl3vlSZEgEVFY/AxeZq5yg761ScF3CZsXgmTi/HGkicUiNN0CI4PW8FiY2P0OLklOcmQjdQJhw==}

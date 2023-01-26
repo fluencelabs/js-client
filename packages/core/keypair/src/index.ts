@@ -15,8 +15,9 @@
  */
 
 import type { PeerId } from '@libp2p/interface-peer-id';
-import { peerIdFromBytes } from '@libp2p/peer-id';
-import { createEd25519PeerId } from '@libp2p/peer-id-factory';
+import { generateKeyPairFromSeed, generateKeyPair } from '@libp2p/crypto/keys';
+import { createFromPrivKey } from '@libp2p/peer-id-factory';
+import type { PrivateKey } from '@libp2p/interface-keys';
 
 export class KeyPair {
     /**
@@ -26,16 +27,17 @@ export class KeyPair {
         return this.libp2pPeerId;
     }
 
-    constructor(private libp2pPeerId: PeerId) {}
+    constructor(private key: PrivateKey, private libp2pPeerId: PeerId) {}
 
     /**
      * Generates new KeyPair from ed25519 private key represented as a 32 byte array
-     * @param key - Any sequence of 32 bytes
+     * @param seed - Any sequence of 32 bytes
      * @returns - Promise with the created KeyPair
      */
-    static async fromEd25519SK(arr: Uint8Array): Promise<KeyPair> {
-        const lib2p2Pid = peerIdFromBytes(arr);
-        return new KeyPair(lib2p2Pid);
+    static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
+        const key = await generateKeyPairFromSeed('Ed25519', seed, 256);
+        const lib2p2Pid = await createFromPrivKey(key);
+        return new KeyPair(key, lib2p2Pid);
     }
 
     /**
@@ -43,8 +45,9 @@ export class KeyPair {
      * @returns - Promise with the created KeyPair
      */
     static async randomEd25519(): Promise<KeyPair> {
-        const lib2p2Pid = await createEd25519PeerId();
-        return new KeyPair(lib2p2Pid);
+        const key = await generateKeyPair('Ed25519');
+        const lib2p2Pid = await createFromPrivKey(key);
+        return new KeyPair(key, lib2p2Pid);
     }
 
     getPeerId(): string {
@@ -55,16 +58,14 @@ export class KeyPair {
      * @returns 32 byte private key
      */
     toEd25519PrivateKey(): Uint8Array {
-        return this.libp2pPeerId.privateKey!.subarray(0, 32);
+        return this.key.marshal().subarray(0, 32);
     }
 
     signBytes(data: Uint8Array): Promise<Uint8Array> {
-        throw new Error('not implemented');
-        // return this.libp2pPeerId.sign(data);
+        return this.key.sign(data);
     }
 
     verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
-        throw new Error('not implemented');
-        // return this.libp2pPeerId.verify(data, signature);
+        return this.key.public.verify(data, signature);
     }
 }

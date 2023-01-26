@@ -1,4 +1,4 @@
-import { encode, decode } from 'bs58';
+import { base58btc } from 'multiformats/bases/base58';
 import { KeyPair } from '../';
 
 describe('KeyPair tests', () => {
@@ -18,7 +18,7 @@ describe('KeyPair tests', () => {
     it('create keypair from ed25519 private key', async function () {
         // arrange
         const rustSK = 'jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH';
-        const sk = decode(rustSK);
+        const sk = base58btc.decode(rustSK);
 
         // act
         const keyPair = await KeyPair.fromEd25519SK(sk);
