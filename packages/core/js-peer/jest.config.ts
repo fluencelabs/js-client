@@ -1,26 +1,2 @@
-// import type { JestConfigWithTsJest } from 'ts-jest';
-
-// const jestConfig: JestConfigWithTsJest = {
-//     preset: 'ts-jest',
-//     extensionsToTreatAsEsm: ['.ts'],
-//     moduleNameMapper: {
-//         '^(\\.{1,2}/.*)\\.js$': '$1',
-//     },
-//     transform: {
-//         // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
-//         // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-//         '^.+\\.tsx?$': [
-//             'ts-jest',
-//             {
-//                 useESM: true,
-//             },
-//         ],
-//     },
-//     testEnvironment: 'node',
-//     testTimeout: 10000,
-//     testPathIgnorePatterns: ['dist'],
-// };
-
-// export default jestConfig;
-
-export * from '../../../jest.config';
+import { jestConfig } from '../../../jest.config';
+export default jestConfig;
