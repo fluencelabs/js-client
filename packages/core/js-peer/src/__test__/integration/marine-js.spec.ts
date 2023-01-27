@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { compileAqua, withPeer } from '../util';
+import { compileAqua, withPeer, __dirname } from '../util';
 
 let aqua: any;
 
 describe('Marine js tests', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, './marine-js.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname(), './marine-js.aqua'));
         aqua = functions;
     });
 

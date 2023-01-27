@@ -1,6 +1,6 @@
 import { nodes } from '../connection';
 import { checkConnection, doNothing, handleTimeout } from '../../utils';
-import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer } from '../util';
+import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer, __dirname } from '../util';
 import { FluencePeer } from '../../FluencePeer';
 
 describe('Typescript usage suite', () => {

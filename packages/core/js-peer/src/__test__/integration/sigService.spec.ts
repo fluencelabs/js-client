@@ -2,7 +2,7 @@ import path from 'path';
 import { KeyPair } from '@fluencelabs/keypair';
 import { allowServiceFn } from '../../builtins/securityGuard';
 import { Sig } from '../../builtins/Sig';
-import { compileAqua, withPeer } from '../util';
+import { compileAqua, withPeer, __dirname } from '../util';
 import { registerServiceImpl } from '../../compilerSupport/registerService';
 
 let aqua: any;
@@ -11,7 +11,7 @@ let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, './sigService.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname(), './sigService.aqua'));
         aqua = functions;
         sigDef = services.Sig;
         dataProviderDef = services.DataProvider;

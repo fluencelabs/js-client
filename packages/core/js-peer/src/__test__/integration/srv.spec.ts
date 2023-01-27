@@ -1,18 +1,18 @@
 import path from 'path';
-import { compileAqua, withPeer } from '../util';
+import { compileAqua, withPeer, __dirname } from '../util';
 
 let aqua: any;
 
 describe('Srv service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, './srv.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname(), './srv.aqua'));
         aqua = functions;
     });
 
     it('Use custom srv service, success path', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = path.join(__dirname, './greeting.wasm');
+            const wasm = path.join(__dirname(), './greeting.wasm');
 
             // act
             const res = await aqua.happy_path(peer, { file_path: wasm });
@@ -25,7 +25,7 @@ describe('Srv service test suite', () => {
     it('List deployed services', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = path.join(__dirname, './greeting.wasm');
+            const wasm = path.join(__dirname(), './greeting.wasm');
 
             // act
             const res = await aqua.list_services(peer, { file_path: wasm });
@@ -38,7 +38,7 @@ describe('Srv service test suite', () => {
     it('Correct error for removed services', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = path.join(__dirname, './greeting.wasm');
+            const wasm = path.join(__dirname(), './greeting.wasm');
 
             // act
             const res = await aqua.service_removed(peer, { file_path: wasm });

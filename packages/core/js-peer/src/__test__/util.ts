@@ -1,3 +1,5 @@
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import api from '@fluencelabs/aqua-api/aqua-api';
 import { InlinedWorkerLoader } from '@fluencelabs/marine.deps-loader.node';
 
@@ -71,3 +73,5 @@ export const withPeer = async (action: (p: FluencePeer) => Promise<void>, config
 export const withConnectedPeer = async (action: (p: FluencePeer) => Promise<void>, config?: PeerConfig) => {
     return withPeer(action, { connectTo: nodes[0] });
 };
+
+export const __dirname = () => dirname(fileURLToPath(import.meta.url));

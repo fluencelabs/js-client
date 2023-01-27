@@ -1,5 +1,4 @@
 import { CallParams, CallServiceData } from '../../commonTypes';
-import each from 'jest-each';
 import { builtInServices } from '../../builtins/common';
 import { KeyPair } from '@fluencelabs/keypair';
 import { Sig, defaultSigGuard } from '../../builtins/Sig';
@@ -19,123 +18,93 @@ const oneTwoThreeFour = `[
 ]`;
 
 describe('Tests for default handler', () => {
-    // prettier-ignore
-    each`
-  serviceId     | fnName               | args                                      | retCode | result
-  ${'op'}       | ${'identity'}        | ${[]}                                     | ${0}    | ${{}}
-  ${'op'}       | ${'identity'}        | ${[1]}                                    | ${0}    | ${1}
-  ${'op'}       | ${'identity'}        | ${[1, 2]}                                 | ${1}    | ${'identity accepts up to 1 arguments, received 2 arguments'}
-     
-  ${'op'}       | ${'noop'}            | ${[1, 2]}                                 | ${0}    | ${{}}
-     
-  ${'op'}       | ${'array'}           | ${[1, 2, 3]}                              | ${0}    | ${[1, 2, 3]}
-  
-  ${'op'}       | ${'array_length'}    | ${[[1, 2, 3]]}                            | ${0}    | ${3}
-  ${'op'}       | ${'array_length'}    | ${[]}                                     | ${1}    | ${'array_length accepts exactly one argument, found: 0'}
-     
-  ${'op'}       | ${'concat'}          | ${[[1, 2], [3, 4], [5, 6]]}               | ${0}    | ${[1, 2, 3, 4, 5, 6]}
-  ${'op'}       | ${'concat'}          | ${[[1, 2]]}                               | ${0}    | ${[1, 2]}
-  ${'op'}       | ${'concat'}          | ${[]}                                     | ${0}    | ${[]}
-  ${'op'}       | ${'concat'}          | ${[1, [1, 2], 1]}                         | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
-     
-  ${'op'}       | ${'string_to_b58'}   | ${["test"]}                               | ${0}    | ${"3yZe7d"}
-  ${'op'}       | ${'string_to_b58'}   | ${["test", 1]}                            | ${1}    | ${"string_to_b58 accepts only one string argument"}
-     
-  ${'op'}       | ${'string_from_b58'} | ${["3yZe7d"]}                             | ${0}    | ${"test"}
-  ${'op'}       | ${'string_from_b58'} | ${["3yZe7d", 1]}                          | ${1}    | ${"string_from_b58 accepts only one string argument"}
-     
-  ${'op'}       | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}                 | ${0}    | ${"3yZe7d"}
-  ${'op'}       | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}              | ${1}    | ${"bytes_to_b58 accepts only single argument: array of numbers"}
-     
-  ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d"]}                             | ${0}    | ${[116, 101, 115, 116]}
-  ${'op'}       | ${'bytes_from_b58'}  | ${["3yZe7d", 1]}                          | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
-
-  ${'op'}       | ${'sha256_string'}   | ${["hello, world!"]}                      | ${0}    | ${"QmVQ8pg6L1tpoWYeq6dpoWqnzZoSLCh7E96fCFXKvfKD3u"}
-  ${'op'}       | ${'sha256_string'}   | ${["hello, world!", true]}                | ${0}    | ${"84V7ZxLW7qKsx1Qvbd63BdGaHxUc3TfT2MBPqAXM7Wyu"}
-  ${'op'}       | ${'sha256_string'}   | ${[]}                                     | ${1}    | ${"sha256_string accepts 1-3 arguments, found: 0"}
-
-  ${'op'}       | ${'concat_strings'}  | ${[]}                                     | ${0}    | ${""}
-  ${'op'}       | ${'concat_strings'}  | ${["a", "b", "c"]}                        | ${0}    | ${"abc"}
-     
-  ${'peer'}     | ${'timeout'}         | ${[200, []]}                              | ${0}    | ${[]}}
-  ${'peer'}     | ${'timeout'}         | ${[200, ['test']]}                        | ${0}    | ${['test']}}
-  ${'peer'}     | ${'timeout'}         | ${[]}                                     | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
-  ${'peer'}     | ${'timeout'}         | ${[200, 'test', 1]}                       | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}}
-
-  ${'debug'}    | ${'stringify'}       | ${[]}                                     | ${0}    | ${'"<empty argument list>"'}}
-  ${'debug'}    | ${'stringify'}       | ${[{a: 10, b: 20}]}                       | ${0}    | ${a10b20}}
-  ${'debug'}    | ${'stringify'}       | ${[1, 2, 3, 4]}                           | ${0}    | ${oneTwoThreeFour}}
-  
-  ${'math'}     | ${'add'}"            | ${[2, 2]}                                 | ${0}    | ${4}
-  ${'math'}     | ${'add'}"            | ${[2]}                                    | ${1}    | ${"Expected 2 argument(s). Got 1"}
-
-  ${'math'}     | ${'sub'}"            | ${[2, 2]}                                 | ${0}    | ${0}
-  ${'math'}     | ${'sub'}"            | ${[2, 3]}                                 | ${0}    | ${-1}
-
-  ${'math'}     | ${'mul'}"            | ${[2, 2]}                                 | ${0}    | ${4}
-  ${'math'}     | ${'mul'}"            | ${[2, 0]}                                 | ${0}    | ${0}
-  ${'math'}     | ${'mul'}"            | ${[2, -1]}                                | ${0}    | ${-2}
-
-  ${'math'}     | ${'fmul'}"           | ${[10, 0.66]}                             | ${0}    | ${6}
-  ${'math'}     | ${'fmul'}"           | ${[0.5, 0.5]}                             | ${0}    | ${0}
-  ${'math'}     | ${'fmul'}"           | ${[100.5, 0.5]}                           | ${0}    | ${50}
-
-  ${'math'}     | ${'div'}"            | ${[2, 2]}                                 | ${0}    | ${1}
-  ${'math'}     | ${'div'}"            | ${[2, 3]}                                 | ${0}    | ${0}
-  ${'math'}     | ${'div'}"            | ${[10, 5]}                                | ${0}    | ${2}
-
-  ${'math'}     | ${'rem'}"            | ${[10, 3]}                                | ${0}    | ${1}
-
-  ${'math'}     | ${'pow'}"            | ${[2, 2]}                                 | ${0}    | ${4}
-  ${'math'}     | ${'pow'}"            | ${[2, 0]}                                 | ${0}    | ${1}
-
-  ${'math'}     | ${'log'}"            | ${[2, 2]}                                 | ${0}    | ${1}
-  ${'math'}     | ${'log'}"            | ${[2, 4]}                                 | ${0}    | ${2}
-
-  ${'cmp'}      | ${'gt'}"             | ${[2, 4]}                                 | ${0}    | ${false}
-  ${'cmp'}      | ${'gte'}"            | ${[2, 4]}                                 | ${0}    | ${false}
-  ${'cmp'}      | ${'gte'}"            | ${[4, 2]}                                 | ${0}    | ${true}
-  ${'cmp'}      | ${'gte'}"            | ${[2, 2]}                                 | ${0}    | ${true}
-
-  ${'cmp'}      | ${'lt'}"             | ${[2, 4]}                                 | ${0}    | ${true}
-  ${'cmp'}      | ${'lte'}"            | ${[2, 4]}                                 | ${0}    | ${true}
-  ${'cmp'}      | ${'lte'}"            | ${[4, 2]}                                 | ${0}    | ${false}
-  ${'cmp'}      | ${'lte'}"            | ${[2, 2]}                                 | ${0}    | ${true}
-
-  ${'cmp'}      | ${'cmp'}"            | ${[2, 4]}                                 | ${0}    | ${-1}
-  ${'cmp'}      | ${'cmp'}"            | ${[2, -4]}                                | ${0}    | ${1}
-  ${'cmp'}      | ${'cmp'}"            | ${[2, 2]}                                 | ${0}    | ${0}
-
-  ${'array'}    | ${'sum'}"            | ${[[1, 2, 3]]}                            | ${0}    | ${6}
-  ${'array'}    | ${'dedup'}"          | ${[["a", "a", "b", "c", "a", "b", "c"]]}  | ${0}    | ${["a", "b", "c"]}
-  ${'array'}    | ${'intersect'}"      | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["b", "c"]}
-  ${'array'}    | ${'diff'}"           | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["a"]}
-  ${'array'}    | ${'sdiff'}"          | ${[["a", "b", "c"], ["c", "b", "d"]]}     | ${0}    | ${["a", "d"]}
-
-  ${'json'}     | ${'obj'}"            | ${["a", 10, "b", "string", "c", null]}    | ${0}    | ${{a: 10, b: "string", c: null}}
-  ${'json'}     | ${'obj'}"            | ${["a", 10, "b", "string", "c"]}          | ${1}    | ${"Expected even number of argument(s). Got 5"}
-  ${'json'}     | ${'obj'}"            | ${[]}                                     | ${0}    | ${{}}
-  
-  ${'json'}     | ${'put'}"            | ${[{}, "a", 10]}                          | ${0}    | ${{a: 10}}
-  ${'json'}     | ${'put'}"            | ${[{b: 11}, "a", 10]}                     | ${0}    | ${{a: 10, b: 11}}
-  ${'json'}     | ${'put'}"            | ${["a", "a", 11]}                         | ${1}    | ${"Argument 0 expected to be of type object, Got string"}
-  ${'json'}     | ${'put'}"            | ${[{}, "a", 10, "b", 20]}                 | ${1}    | ${"Expected 3 argument(s). Got 5"}
-  ${'json'}     | ${'put'}"            | ${[{}]}                                   | ${1}    | ${"Expected 3 argument(s). Got 1"}
-
-  ${'json'}     | ${'puts'}"           | ${[{}, "a", 10]}                                  | ${0}    | ${{a: 10}}
-  ${'json'}     | ${'puts'}"           | ${[{b: 11}, "a", 10]}                             | ${0}    | ${{a: 10, b: 11}}
-  ${'json'}     | ${'puts'}"           | ${[{}, "a", 10, "b", "string", "c", null]}        | ${0}    | ${{a: 10, b: "string", c: null}}
-  ${'json'}     | ${'puts'}"           | ${[{x: "text"}, "a", 10, "b", "string"]}          | ${0}    | ${{a: 10, b: "string", x: "text"}}
-  ${'json'}     | ${'puts'}"           | ${[{}]}                                           | ${1}    | ${"Expected more than 3 argument(s). Got 1"}
-  ${'json'}     | ${'puts'}"           | ${["a", "a", 11]}                                 | ${1}    | ${"Argument 0 expected to be of type object, Got string"}
-
-  ${'json'}     | ${'stringify'}"      | ${[{a: 10, b: "string", c: null}]}                | ${0}    | ${"{\"a\":10,\"b\":\"string\",\"c\":null}"}
-  ${'json'}     | ${'stringify'}"      | ${[1]}                                            | ${1}    | ${"Argument 0 expected to be of type object, Got number"}
-  ${'json'}     | ${'parse'}"          | ${["{\"a\":10,\"b\":\"string\",\"c\":null}"]}     | ${0}    | ${{a: 10, b: "string", c: null}}
-  ${'json'}     | ${'parse'}"          | ${["incorrect"]}                                  | ${1}    | ${"Unexpected token i in JSON at position 0"}
-  ${'json'}     | ${'parse'}"          | ${[10]}                                           | ${1}    | ${"Argument 0 expected to be of type string, Got number"}
-
-  `.test(
+    test.each`
+        serviceId  | fnName               | args                                       | retCode | result
+        ${'op'}    | ${'identity'}        | ${[]}                                      | ${0}    | ${{}}
+        ${'op'}    | ${'identity'}        | ${[1]}                                     | ${0}    | ${1}
+        ${'op'}    | ${'identity'}        | ${[1, 2]}                                  | ${1}    | ${'identity accepts up to 1 arguments, received 2 arguments'}
+        ${'op'}    | ${'noop'}            | ${[1, 2]}                                  | ${0}    | ${{}}
+        ${'op'}    | ${'array'}           | ${[1, 2, 3]}                               | ${0}    | ${[1, 2, 3]}
+        ${'op'}    | ${'array_length'}    | ${[[1, 2, 3]]}                             | ${0}    | ${3}
+        ${'op'}    | ${'array_length'}    | ${[]}                                      | ${1}    | ${'array_length accepts exactly one argument, found: 0'}
+        ${'op'}    | ${'concat'}          | ${[[1, 2], [3, 4], [5, 6]]}                | ${0}    | ${[1, 2, 3, 4, 5, 6]}
+        ${'op'}    | ${'concat'}          | ${[[1, 2]]}                                | ${0}    | ${[1, 2]}
+        ${'op'}    | ${'concat'}          | ${[]}                                      | ${0}    | ${[]}
+        ${'op'}    | ${'concat'}          | ${[1, [1, 2], 1]}                          | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
+        ${'op'}    | ${'string_to_b58'}   | ${['test']}                                | ${0}    | ${'3yZe7d'}
+        ${'op'}    | ${'string_to_b58'}   | ${['test', 1]}                             | ${1}    | ${'string_to_b58 accepts only one string argument'}
+        ${'op'}    | ${'string_from_b58'} | ${['3yZe7d']}                              | ${0}    | ${'test'}
+        ${'op'}    | ${'string_from_b58'} | ${['3yZe7d', 1]}                           | ${1}    | ${'string_from_b58 accepts only one string argument'}
+        ${'op'}    | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116]]}                  | ${0}    | ${'3yZe7d'}
+        ${'op'}    | ${'bytes_to_b58'}    | ${[[116, 101, 115, 116], 1]}               | ${1}    | ${'bytes_to_b58 accepts only single argument: array of numbers'}
+        ${'op'}    | ${'bytes_from_b58'}  | ${['3yZe7d']}                              | ${0}    | ${[116, 101, 115, 116]}
+        ${'op'}    | ${'bytes_from_b58'}  | ${['3yZe7d', 1]}                           | ${1}    | ${'bytes_from_b58 accepts only one string argument'}
+        ${'op'}    | ${'sha256_string'}   | ${['hello, world!']}                       | ${0}    | ${'QmVQ8pg6L1tpoWYeq6dpoWqnzZoSLCh7E96fCFXKvfKD3u'}
+        ${'op'}    | ${'sha256_string'}   | ${['hello, world!', true]}                 | ${0}    | ${'84V7ZxLW7qKsx1Qvbd63BdGaHxUc3TfT2MBPqAXM7Wyu'}
+        ${'op'}    | ${'sha256_string'}   | ${[]}                                      | ${1}    | ${'sha256_string accepts 1-3 arguments, found: 0'}
+        ${'op'}    | ${'concat_strings'}  | ${[]}                                      | ${0}    | ${''}
+        ${'op'}    | ${'concat_strings'}  | ${['a', 'b', 'c']}                         | ${0}    | ${'abc'}
+        ${'peer'}  | ${'timeout'}         | ${[200, []]}                               | ${0}    | ${[]}
+        ${'peer'}  | ${'timeout'}         | ${[200, ['test']]}                         | ${0}    | ${['test']}
+        ${'peer'}  | ${'timeout'}         | ${[]}                                      | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}
+        ${'peer'}  | ${'timeout'}         | ${[200, 'test', 1]}                        | ${1}    | ${'timeout accepts exactly two arguments: timeout duration in ms and a message string'}
+        ${'debug'} | ${'stringify'}       | ${[]}                                      | ${0}    | ${'"<empty argument list>"'}
+        ${'debug'} | ${'stringify'}       | ${[{ a: 10, b: 20 }]}                      | ${0}    | ${a10b20}
+        ${'debug'} | ${'stringify'}       | ${[1, 2, 3, 4]}                            | ${0}    | ${oneTwoThreeFour}
+        ${'math'}  | ${'add'}             | ${[2, 2]}                                  | ${0}    | ${4}
+        ${'math'}  | ${'add'}             | ${[2]}                                     | ${1}    | ${'Expected 2 argument(s). Got 1'}
+        ${'math'}  | ${'sub'}             | ${[2, 2]}                                  | ${0}    | ${0}
+        ${'math'}  | ${'sub'}             | ${[2, 3]}                                  | ${0}    | ${-1}
+        ${'math'}  | ${'mul'}             | ${[2, 2]}                                  | ${0}    | ${4}
+        ${'math'}  | ${'mul'}             | ${[2, 0]}                                  | ${0}    | ${0}
+        ${'math'}  | ${'mul'}             | ${[2, -1]}                                 | ${0}    | ${-2}
+        ${'math'}  | ${'fmul'}            | ${[10, 0.66]}                              | ${0}    | ${6}
+        ${'math'}  | ${'fmul'}            | ${[0.5, 0.5]}                              | ${0}    | ${0}
+        ${'math'}  | ${'fmul'}            | ${[100.5, 0.5]}                            | ${0}    | ${50}
+        ${'math'}  | ${'div'}             | ${[2, 2]}                                  | ${0}    | ${1}
+        ${'math'}  | ${'div'}             | ${[2, 3]}                                  | ${0}    | ${0}
+        ${'math'}  | ${'div'}             | ${[10, 5]}                                 | ${0}    | ${2}
+        ${'math'}  | ${'rem'}             | ${[10, 3]}                                 | ${0}    | ${1}
+        ${'math'}  | ${'pow'}             | ${[2, 2]}                                  | ${0}    | ${4}
+        ${'math'}  | ${'pow'}             | ${[2, 0]}                                  | ${0}    | ${1}
+        ${'math'}  | ${'log'}             | ${[2, 2]}                                  | ${0}    | ${1}
+        ${'math'}  | ${'log'}             | ${[2, 4]}                                  | ${0}    | ${2}
+        ${'cmp'}   | ${'gt'}              | ${[2, 4]}                                  | ${0}    | ${false}
+        ${'cmp'}   | ${'gte'}             | ${[2, 4]}                                  | ${0}    | ${false}
+        ${'cmp'}   | ${'gte'}             | ${[4, 2]}                                  | ${0}    | ${true}
+        ${'cmp'}   | ${'gte'}             | ${[2, 2]}                                  | ${0}    | ${true}
+        ${'cmp'}   | ${'lt'}              | ${[2, 4]}                                  | ${0}    | ${true}
+        ${'cmp'}   | ${'lte'}             | ${[2, 4]}                                  | ${0}    | ${true}
+        ${'cmp'}   | ${'lte'}             | ${[4, 2]}                                  | ${0}    | ${false}
+        ${'cmp'}   | ${'lte'}             | ${[2, 2]}                                  | ${0}    | ${true}
+        ${'cmp'}   | ${'cmp'}             | ${[2, 4]}                                  | ${0}    | ${-1}
+        ${'cmp'}   | ${'cmp'}             | ${[2, -4]}                                 | ${0}    | ${1}
+        ${'cmp'}   | ${'cmp'}             | ${[2, 2]}                                  | ${0}    | ${0}
+        ${'array'} | ${'sum'}             | ${[[1, 2, 3]]}                             | ${0}    | ${6}
+        ${'array'} | ${'dedup'}           | ${[['a', 'a', 'b', 'c', 'a', 'b', 'c']]}   | ${0}    | ${['a', 'b', 'c']}
+        ${'array'} | ${'intersect'}       | ${[['a', 'b', 'c'], ['c', 'b', 'd']]}      | ${0}    | ${['b', 'c']}
+        ${'array'} | ${'diff'}            | ${[['a', 'b', 'c'], ['c', 'b', 'd']]}      | ${0}    | ${['a']}
+        ${'array'} | ${'sdiff'}           | ${[['a', 'b', 'c'], ['c', 'b', 'd']]}      | ${0}    | ${['a', 'd']}
+        ${'json'}  | ${'obj'}             | ${['a', 10, 'b', 'string', 'c', null]}     | ${0}    | ${{ a: 10, b: 'string', c: null }}
+        ${'json'}  | ${'obj'}             | ${['a', 10, 'b', 'string', 'c']}           | ${1}    | ${'Expected even number of argument(s). Got 5'}
+        ${'json'}  | ${'obj'}             | ${[]}                                      | ${0}    | ${{}}
+        ${'json'}  | ${'put'}             | ${[{}, 'a', 10]}                           | ${0}    | ${{ a: 10 }}
+        ${'json'}  | ${'put'}             | ${[{ b: 11 }, 'a', 10]}                    | ${0}    | ${{ a: 10, b: 11 }}
+        ${'json'}  | ${'put'}             | ${['a', 'a', 11]}                          | ${1}    | ${'Argument 0 expected to be of type object, Got string'}
+        ${'json'}  | ${'put'}             | ${[{}, 'a', 10, 'b', 20]}                  | ${1}    | ${'Expected 3 argument(s). Got 5'}
+        ${'json'}  | ${'put'}             | ${[{}]}                                    | ${1}    | ${'Expected 3 argument(s). Got 1'}
+        ${'json'}  | ${'puts'}            | ${[{}, 'a', 10]}                           | ${0}    | ${{ a: 10 }}
+        ${'json'}  | ${'puts'}            | ${[{ b: 11 }, 'a', 10]}                    | ${0}    | ${{ a: 10, b: 11 }}
+        ${'json'}  | ${'puts'}            | ${[{}, 'a', 10, 'b', 'string', 'c', null]} | ${0}    | ${{ a: 10, b: 'string', c: null }}
+        ${'json'}  | ${'puts'}            | ${[{ x: 'text' }, 'a', 10, 'b', 'string']} | ${0}    | ${{ a: 10, b: 'string', x: 'text' }}
+        ${'json'}  | ${'puts'}            | ${[{}]}                                    | ${1}    | ${'Expected more than 3 argument(s). Got 1'}
+        ${'json'}  | ${'puts'}            | ${['a', 'a', 11]}                          | ${1}    | ${'Argument 0 expected to be of type object, Got string'}
+        ${'json'}  | ${'stringify'}       | ${[{ a: 10, b: 'string', c: null }]}       | ${0}    | ${'{"a":10,"b":"string","c":null}'}
+        ${'json'}  | ${'stringify'}       | ${[1]}                                     | ${1}    | ${'Argument 0 expected to be of type object, Got number'}
+        ${'json'}  | ${'parse'}           | ${['{"a":10,"b":"string","c":null}']}      | ${0}    | ${{ a: 10, b: 'string', c: null }}
+        ${'json'}  | ${'parse'}           | ${['incorrect']}                           | ${1}    | ${'Unexpected token i in JSON at position 0'}
+        ${'json'}  | ${'parse'}           | ${[10]}                                    | ${1}    | ${'Argument 0 expected to be of type string, Got number'}
+    `(
         //
         '$fnName with $args expected retcode: $retCode and result: $result',
         async ({ serviceId, fnName, args, retCode, result }) => {
