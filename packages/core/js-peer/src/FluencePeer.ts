@@ -210,7 +210,7 @@ export class FluencePeer {
         if (this.connection === null) {
             return {
                 isInitialized: true,
-                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                peerId: this._keyPair.getPeerId(),
                 isConnected: false,
                 relayPeerId: null,
             };
@@ -219,7 +219,7 @@ export class FluencePeer {
         if (this.connection.relayPeerId === null) {
             return {
                 isInitialized: true,
-                peerId: this._keyPair.Libp2pPeerId.toB58String(),
+                peerId: this._keyPair.getPeerId(),
                 isConnected: true,
                 isDirect: true,
                 relayPeerId: null,
@@ -228,7 +228,7 @@ export class FluencePeer {
 
         return {
             isInitialized: true,
-            peerId: this._keyPair.Libp2pPeerId.toB58String(),
+            peerId: this._keyPair.getPeerId(),
             isConnected: true,
             relayPeerId: this.connection.relayPeerId,
         };
@@ -422,7 +422,7 @@ export class FluencePeer {
     async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
         this._keyPair = config.KeyPair;
 
-        const peerId = this._keyPair.Libp2pPeerId.toB58String();
+        const peerId = this._keyPair.getPeerId();
 
         if (config?.debug?.printParticleId) {
             this._printParticleId = true;
@@ -797,7 +797,7 @@ async function configToConnection(
     }
 
     const res = await RelayConnection.createConnection({
-        peerId: keyPair.Libp2pPeerId,
+        peerId: keyPair.getLibp2pPeerId(),
         relayAddress: connectToMultiAddr,
         dialTimeoutMs: dialTimeoutMs,
     });

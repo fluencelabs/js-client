@@ -22,9 +22,8 @@
         "@libp2p/peer-id-factory": "2.0.1",
         "@libp2p/interface-peer-id": "2.0.1",
         "@libp2p/interface-keys": "1.0.7",
-        "js-base64": "3.7.2"
-    },
-    "devDependencies": {
+        "js-base64": "3.7.2",
         "multiformats": "11.0.1"
-    }
+    },
+    "devDependencies": {}
 }

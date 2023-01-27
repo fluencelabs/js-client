@@ -1,3 +1,4 @@
+// import { base58 } from '../util';
 import { base58btc } from 'multiformats/bases/base58';
 import { KeyPair } from '../';
 
@@ -17,7 +18,7 @@ describe('KeyPair tests', () => {
 
     it('create keypair from ed25519 private key', async function () {
         // arrange
-        const rustSK = 'jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH';
+        const rustSK = 'zjDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH';
         const sk = base58btc.decode(rustSK);
 
         // act
