@@ -6,7 +6,8 @@ import { InlinedWorkerLoader } from '@fluencelabs/marine.deps-loader.node';
 import { promises as fs } from 'fs';
 import { FluencePeer, PeerConfig } from '../FluencePeer';
 import { Particle } from '../Particle';
-import { avmModuleLoader, controlModuleLoader, MakeServiceCall } from '../utils';
+import { MakeServiceCall } from '../utils';
+import { avmModuleLoader, controlModuleLoader } from '../utilsForNode';
 import { ServiceDef } from '../compilerSupport/interface';
 import { callFunctionImpl } from '../compilerSupport/callFunction';
 
