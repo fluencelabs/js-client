@@ -16,9 +16,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-peer": "workspace:0.1.0",
-        "@fluencelabs/marine.deps-loader.web": "workspace:0.1.0",
-        "@fluencelabs/marine.background-runner": "workspace:0.1.0"
+        "@fluencelabs/js-peer": "workspace:*"
     },
     "devDependencies": {
         "@types/node": "16.11.59",
