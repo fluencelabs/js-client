@@ -19,8 +19,8 @@ import * as bs58 from 'bs58';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { CallServiceResult } from '@fluencelabs/avm';
 
-import { GenericCallServiceHandler, ResultCodes } from '../commonTypes';
-import { jsonify } from '../utils';
+import { GenericCallServiceHandler, ResultCodes } from '../commonTypes.js';
+import { jsonify } from '../utils.js';
 import { Buffer } from 'buffer';
 
 //@ts-ignore

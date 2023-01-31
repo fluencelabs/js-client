@@ -1,7 +1,7 @@
 import type { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
 import { deserializeAvmResult, serializeAvmArgs } from '@fluencelabs/avm';
-import type { LogLevel } from '@fluencelabs/marine-js';
-import type { IMarine, IAvmRunner, IWasmLoader } from '../interfaces';
+import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
+import type { IMarine, IAvmRunner, IWasmLoader } from '../interfaces/index.js';
 
 export class MarineBasedAvmRunner implements IAvmRunner {
     constructor(private marine: IMarine, private avmWasmLoader: IWasmLoader, private logLevel: LogLevel | undefined) {}

@@ -1,4 +1,4 @@
-import { mkTestPeer } from '../util';
+import { mkTestPeer } from '../util.js';
 
 const peer = mkTestPeer();
 

@@ -15,26 +15,26 @@
  */
 import 'buffer';
 
-import { RelayConnection } from '../connection';
-import { FluenceConnection, IAvmRunner, IMarine } from '../interfaces';
-import { KeyPair } from '../keypair';
+import { RelayConnection } from '../connection/index.js';
+import { FluenceConnection, IAvmRunner, IMarine } from '../interfaces/index.js';
+import { KeyPair } from '../keypair/index.js';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes';
-import { PeerIdB58 } from './commonTypes';
-import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle';
-import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './utils';
+import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes.js';
+import { PeerIdB58 } from './commonTypes.js';
+import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
+import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
-import { builtInServices } from './builtins/common';
-import { defaultSigGuard, Sig } from './builtins/Sig';
-import { registerSig } from './_aqua/services';
-import { registerSrv } from './_aqua/single-module-srv';
+import { builtInServices } from './builtins/common.js';
+import { defaultSigGuard, Sig } from './builtins/Sig.js';
+import { registerSig } from './_aqua/services.js';
+import { registerSrv } from './_aqua/single-module-srv.js';
 import { Buffer } from 'buffer';
 
 import { JSONValue } from '@fluencelabs/avm';
-import { NodeUtils, Srv } from './builtins/SingleModuleSrv';
-import { registerNodeUtils } from './_aqua/node-utils';
-import { LogLevel } from '@fluencelabs/marine-js';
+import { NodeUtils, Srv } from './builtins/SingleModuleSrv.js';
+import { registerNodeUtils } from './_aqua/node-utils.js';
+import { LogLevel } from '@fluencelabs/marine-js/dist/types';
 
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id

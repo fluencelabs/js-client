@@ -1,7 +1,7 @@
-import { Particle } from '../../Particle';
-import { doNothing } from '../../utils';
-import { FluencePeer } from '../../FluencePeer';
-import { mkTestPeer } from '../util';
+import { Particle } from '../../Particle.js';
+import { doNothing } from '../../utils.js';
+import { FluencePeer } from '../../FluencePeer.js';
+import { mkTestPeer } from '../util.js';
 
 let peer: FluencePeer;
 

@@ -1,6 +1,6 @@
-import * as bs58 from 'bs58';
 import { toUint8Array } from 'js-base64';
-import { KeyPair } from '../';
+import * as bs58 from 'bs58';
+import { KeyPair } from '../index.js';
 
 // @ts-ignore
 const { decode } = bs58.default;

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { MarineService } from '@fluencelabs/marine-js';
-import type { Env, MarineServiceConfig, JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js';
+import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
+import type { Env, MarineServiceConfig } from '@fluencelabs/marine-js/dist/config';
+import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
 import { Observable, Subject } from 'threads/observable';
-import { expose } from 'threads';
+import { expose } from 'threads/worker';
 
 let marineServices = new Map<string, MarineService>();
 let controlModule: WebAssembly.Module | undefined;

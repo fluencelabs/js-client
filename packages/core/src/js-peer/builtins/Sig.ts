@@ -1,7 +1,7 @@
-import { CallParams, PeerIdB58 } from '../commonTypes';
-import { KeyPair } from '../../keypair';
-import { SigDef } from '../_aqua/services';
-import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard';
+import { CallParams, PeerIdB58 } from '../commonTypes.js';
+import { KeyPair } from '../../keypair/index.js';
+import { SigDef } from '../_aqua/services.js';
+import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard.js';
 
 export const defaultSigGuard = (peerId: PeerIdB58) => {
     return and<'data'>(

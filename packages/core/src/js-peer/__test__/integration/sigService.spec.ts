@@ -1,9 +1,12 @@
-import path from 'path';
-import { KeyPair } from '../../../keypair';
-import { allowServiceFn } from '../../builtins/securityGuard';
-import { Sig } from '../../builtins/Sig';
-import { compileAqua, withPeer, getDataFile } from '../util';
-import { registerServiceImpl } from '../../compilerSupport/registerService';
+import * as path from 'path';
+import * as url from 'url';
+import { KeyPair } from '../../../keypair/index.js';
+import { allowServiceFn } from '../../builtins/securityGuard.js';
+import { Sig } from '../../builtins/Sig.js';
+import { compileAqua, withPeer } from '../util.js';
+import { registerServiceImpl } from '../../compilerSupport/registerService.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 let aqua: any;
 let sigDef: any;
@@ -11,7 +14,7 @@ let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(getDataFile('./sigService.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname, '../data/sigService.aqua'));
         aqua = functions;
         sigDef = services.Sig;
         dataProviderDef = services.DataProvider;

@@ -1,5 +1,5 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
-import { CallParams, PeerIdB58 } from '../commonTypes';
+import { CallParams, PeerIdB58 } from '../commonTypes.js';
 
 type ArgName = string | null;
 

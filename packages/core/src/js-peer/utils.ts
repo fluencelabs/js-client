@@ -15,13 +15,13 @@
  */
 
 import log from 'loglevel';
-import platform from 'platform';
+import * as platform from 'platform';
 
 import { Buffer } from 'buffer';
-import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes';
-import { FluencePeer } from './FluencePeer';
-import { ParticleExecutionStage } from './Particle';
-import { LogFunction } from '@fluencelabs/marine-js';
+import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes.js';
+import { FluencePeer } from './FluencePeer.js';
+import { ParticleExecutionStage } from './Particle.js';
+import { LogFunction } from '@fluencelabs/marine-js/dist/types';
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>

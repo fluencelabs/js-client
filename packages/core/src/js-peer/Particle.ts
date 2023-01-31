@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { fromUint8Array, toUint8Array } from 'js-base64';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
-import { fromUint8Array, toUint8Array } from 'js-base64';
 import log from 'loglevel';
-import { ParticleContext } from './commonTypes';
-import { dataToString, jsonify } from './utils';
+import { ParticleContext } from './commonTypes.js';
+import { dataToString, jsonify } from './utils.js';
 import { Buffer } from 'buffer';
 
 export class Particle {

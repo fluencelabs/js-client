@@ -1,5 +1,5 @@
-import { handleTimeout } from '../../utils';
-import { registerHandlersHelper, withPeer } from '../util';
+import { handleTimeout } from '../../utils.js';
+import { registerHandlersHelper, withPeer } from '../util.js';
 
 describe('Avm spec', () => {
     it('Simple call', async () => {

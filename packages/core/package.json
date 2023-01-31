@@ -21,7 +21,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/avm": "0.31.10",
-        "@fluencelabs/marine-js": "0.3.38",
+        "@fluencelabs/marine-js": "0.1.1-marine-js-esm-02fb173-259-1.0",
         "multiformats": "11.0.1",
         "async": "3.2.4",
         "bs58": "5.0.0",

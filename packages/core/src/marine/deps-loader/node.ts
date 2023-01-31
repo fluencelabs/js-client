@@ -1,13 +1,12 @@
 import { createRequire } from 'module';
-import { LazyLoader } from '../../interfaces';
+import { LazyLoader } from '../../interfaces/index.js';
 
 import type { WorkerImplementation } from 'threads/dist/types/master';
 import { Worker } from 'threads';
 import { Buffer } from 'buffer';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
-// @ts-ignore
 const require = createRequire(import.meta.url);
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {

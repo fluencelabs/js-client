@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { FluenceConnection, ParticleHandler, PeerIdB58 } from '../interfaces';
-import { encode, decode } from 'it-length-prefixed';
+import { FluenceConnection, ParticleHandler, PeerIdB58 } from '../interfaces/index.js';
 import { pipe } from 'it-pipe';
+import { encode, decode } from 'it-length-prefixed';
 import type { PeerId } from '@libp2p/interface-peer-id';
 import { createLibp2p, Libp2p } from 'libp2p';
 

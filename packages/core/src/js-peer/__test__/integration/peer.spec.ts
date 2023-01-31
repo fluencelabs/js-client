@@ -1,7 +1,7 @@
-import { nodes } from '../connection';
-import { checkConnection, doNothing, handleTimeout } from '../../utils';
-import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer } from '../util';
-import { FluencePeer } from '../../FluencePeer';
+import { nodes } from '../connection.js';
+import { checkConnection, doNothing, handleTimeout } from '../../utils.js';
+import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer } from '../util.js';
+import { FluencePeer } from '../../FluencePeer.js';
 
 describe('Typescript usage suite', () => {
     it('should perform test for FluencePeer class correctly', () => {

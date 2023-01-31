@@ -1,12 +1,12 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 
-import { Particle } from '../Particle';
-import { CallParams, CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes';
-import { FluencePeer } from '../FluencePeer';
+import { Particle } from '../Particle.js';
+import { CallParams, CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes.js';
+import { FluencePeer } from '../FluencePeer.js';
 
-import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions';
-import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface';
+import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
+import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface.js';
 
 export interface ServiceDescription {
     serviceId: string;

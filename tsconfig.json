@@ -1,15 +1,14 @@
 {
     "compilerOptions": {
-        "lib": ["ESNext", "DOM", "DOM.Iterable"],
-        "module": "ESNext",
+        "lib": ["es2015", "dom"],
+        "outDir": "./dist/",
         "target": "ESNext",
-        "moduleResolution": "node",
-        "strict": true,
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
+        "module": "ESNext",
         "skipLibCheck": true,
+        "strict": true,
         "forceConsistentCasingInFileNames": true,
-        "sourceMap": false,
-        "declaration": true
+        "allowJs": true,
+        "declaration": true,
+        "moduleResolution": "node"
     }
 }

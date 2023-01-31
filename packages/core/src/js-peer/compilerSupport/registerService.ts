@@ -1,6 +1,6 @@
-import type { FluencePeer } from '../FluencePeer';
-import { ServiceDef } from './interface';
-import { registerGlobalService, userHandlerService } from './services';
+import type { FluencePeer } from '../FluencePeer.js';
+import { ServiceDef } from './interface.js';
+import { registerGlobalService, userHandlerService } from './services.js';
 
 export const registerServiceImpl = (
     peer: FluencePeer,

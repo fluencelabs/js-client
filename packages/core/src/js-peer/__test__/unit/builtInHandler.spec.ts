@@ -1,9 +1,9 @@
 import { toUint8Array } from 'js-base64';
-import { CallParams, CallServiceData } from '../../commonTypes';
-import { builtInServices } from '../../builtins/common';
-import { KeyPair } from '../../../keypair';
-import { Sig, defaultSigGuard } from '../../builtins/Sig';
-import { allowServiceFn } from '../../builtins/securityGuard';
+import { CallParams, CallServiceData } from '../../commonTypes.js';
+import { builtInServices } from '../../builtins/common.js';
+import { KeyPair } from '../../../keypair/index.js';
+import { Sig, defaultSigGuard } from '../../builtins/Sig.js';
+import { allowServiceFn } from '../../builtins/securityGuard.js';
 
 const a10b20 = `{
     "a": 10,

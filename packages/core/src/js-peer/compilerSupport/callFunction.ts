@@ -1,5 +1,5 @@
-import { ArrowWithoutCallbacks, FnConfig, FunctionCallDef, NonArrowType } from './interface';
-import { FluencePeer } from '../FluencePeer';
+import { ArrowWithoutCallbacks, FnConfig, FunctionCallDef, NonArrowType } from './interface.js';
+import { FluencePeer } from '../FluencePeer.js';
 
 import {
     injectRelayService,
@@ -9,7 +9,7 @@ import {
     ServiceDescription,
     userHandlerService,
     injectValueService,
-} from './services';
+} from './services.js';
 
 /**
  * Convenience function which does all the internal work of creating particles

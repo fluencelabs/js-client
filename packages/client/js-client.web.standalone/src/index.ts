@@ -1,8 +1,9 @@
-import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
-import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/avm';
-import { marineLogFunction } from '@fluencelabs/js-peer/dist/utils';
-import { FluencePeer } from '@fluencelabs/js-peer/dist/FluencePeer';
-import { InlinedWorkerLoader, WasmWebLoader } from '@fluencelabs/marine.deps-loader.web';
+import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer';
+import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm';
+import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker';
+import { marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils';
+import { WasmWebLoader } from '@fluencelabs/js-peer/dist/marine/deps-loader/web';
+import { InlinedWorkerLoader } from '@fluencelabs/js-peer/dist/marine/deps-loader/common';
 
 export const defaultNames = {
     avm: 'avm.wasm',
@@ -10,7 +11,7 @@ export const defaultNames = {
 };
 
 export const makeDefaultPeer = () => {
-    const workerLoader = new InlinedWorkerLoader();
+    const workerLoader = new InlinedWorkerLoader('__worker__');
     const controlModuleLoader = new WasmWebLoader(defaultNames.marine);
     const avmModuleLoader = new WasmWebLoader(defaultNames.avm);
 

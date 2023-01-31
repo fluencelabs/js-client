@@ -1,20 +1,18 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
-import api from '@fluencelabs/aqua-api/aqua-api';
+import * as api from '@fluencelabs/aqua-api/aqua-api.js';
 
 import { promises as fs } from 'fs';
-import { FluencePeer, PeerConfig } from '../FluencePeer';
-import { Particle } from '../Particle';
-import { MakeServiceCall } from '../utils';
-import { avmModuleLoader, controlModuleLoader } from '../utilsForNode';
-import { ServiceDef } from '../compilerSupport/interface';
-import { callFunctionImpl } from '../compilerSupport/callFunction';
+import { FluencePeer, PeerConfig } from '../FluencePeer.js';
+import { Particle } from '../Particle.js';
+import { MakeServiceCall } from '../utils.js';
+import { avmModuleLoader, controlModuleLoader } from '../utilsForNode.js';
+import { ServiceDef } from '../compilerSupport/interface.js';
+import { callFunctionImpl } from '../compilerSupport/callFunction.js';
 
-import { marineLogFunction } from '../utils';
-import { MarineBackgroundRunner } from '../../marine/worker';
-import { MarineBasedAvmRunner } from '../avm';
-import { nodes } from './connection';
-import { FsWorkerLoader } from '../../marine/deps-loader/node';
+import { marineLogFunction } from '../utils.js';
+import { MarineBackgroundRunner } from '../../marine/worker/index.js';
+import { MarineBasedAvmRunner } from '../avm.js';
+import { nodes } from './connection.js';
+import { FsWorkerLoader } from '../../marine/deps-loader/node.js';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
@@ -74,6 +72,3 @@ export const withPeer = async (action: (p: FluencePeer) => Promise<void>, config
 export const withConnectedPeer = async (action: (p: FluencePeer) => Promise<void>, config?: PeerConfig) => {
     return withPeer(action, { connectTo: nodes[0] });
 };
-
-export const getDataFile = (fileName: string) =>
-    path.join(path.dirname(fileURLToPath(import.meta.url)), './data', fileName);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js';
+import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
 import type { WorkerImplementation } from 'threads/dist/types/master';
 export type PeerIdB58 = string;

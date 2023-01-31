@@ -1,7 +1,7 @@
-import { jsonify } from '../utils';
+import { jsonify } from '../utils.js';
 import { match } from 'ts-pattern';
-import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface';
-import { CallServiceData } from '../commonTypes';
+import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface.js';
+import { CallServiceData } from '../commonTypes.js';
 
 /**
  * Convert value from its representation in aqua language to representation in typescript
@@ -21,6 +21,7 @@ export const aqua2ts = (value: any, type: NonArrowType): any => {
                 return aqua2ts(value[0], opt.type);
             }
         })
+        // @ts-ignore
         .with({ tag: 'scalar' }, { tag: 'bottomType' }, { tag: 'topType' }, () => {
             return value;
         })

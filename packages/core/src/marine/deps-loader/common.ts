@@ -1,7 +1,7 @@
 import { BlobWorker } from 'threads';
 import { fromBase64 } from 'js-base64';
 import type { WorkerImplementation } from 'threads/dist/types/master';
-import { LazyLoader } from '../../interfaces';
+import { LazyLoader } from '../../interfaces/index.js';
 
 export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
     constructor(b64script: string) {

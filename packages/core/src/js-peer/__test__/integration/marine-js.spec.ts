@@ -1,18 +1,21 @@
-import fs from 'fs';
-import { compileAqua, withPeer, getDataFile } from '../util';
+import * as fs from 'fs';
+import * as url from 'url';
+import * as path from 'path';
+import { compileAqua, withPeer } from '../util.js';
 
 let aqua: any;
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 describe('Marine js tests', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(getDataFile('./marine-js.aqua'));
+        const { services, functions } = await compileAqua(path.join(__dirname, '../data/marine-js.aqua'));
         aqua = functions;
     });
 
     it('should call marine service correctly', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = await fs.promises.readFile(getDataFile + '/greeting.wasm');
+            const wasm = await fs.promises.readFile(path.join(__dirname, '../data/greeting.wasm'));
             await peer.registerMarineService(wasm, 'greeting');
 
             // act
@@ -36,7 +39,7 @@ describe('Marine js tests', () => {
                     marineLogLevel: 'debug',
                 },
             });
-            const wasm = await fs.promises.readFile(getDataFile + '/greeting-record.wasm');
+            const wasm = await fs.promises.readFile(path.join(__dirname, '../data/greeting-record.wasm'));
             await peer.registerMarineService(wasm, 'greeting');
 
             // act

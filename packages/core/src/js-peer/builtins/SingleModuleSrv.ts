@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import { SrvDef } from '../_aqua/single-module-srv';
-import { NodeUtilsDef } from '../_aqua/node-utils';
-import { FluencePeer } from '../FluencePeer';
-import { CallParams } from '../commonTypes';
-import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard';
+import { SrvDef } from '../_aqua/single-module-srv.js';
+import { NodeUtilsDef } from '../_aqua/node-utils.js';
+import { FluencePeer } from '../FluencePeer.js';
+import { CallParams } from '../commonTypes.js';
+import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
 
 export const defaultGuard = (peer: () => FluencePeer) => {
     return allowOnlyParticleOriginatedAt<any>(peer().getStatus().peerId!);
