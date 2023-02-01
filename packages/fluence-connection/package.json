@@ -18,7 +18,7 @@
         "@fluencelabs/interfaces": "workspace:0.1.0",
         "peer-id": "0.16.0",
         "it-length-prefixed": "5.0.3",
-        "it-pipe": "1.1.0",
+        "it-pipe": "2.0.5",
         "@chainsafe/libp2p-noise": "^4.1.1",
         "libp2p": "0.36.2",
         "libp2p-interfaces": "^4.0.6",
