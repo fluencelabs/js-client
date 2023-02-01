@@ -66,8 +66,7 @@ describe('KeyPair tests', () => {
         const res = await keyPair.signBytes(testData);
 
         // assert
-        expect(res).toBe(testDataSig);
-        new Uint8Array(32).fill(1);
+        expect(res).toStrictEqual(testDataSig);
     });
 
     it('verify', async function () {
