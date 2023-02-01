@@ -75,6 +75,7 @@ importers:
       '@types/jest': 28.1.0
       '@types/node': 16.11.59
       jest: 28.1.0
+      terser: 5.16.2
       ts-jest: 28.0.2
       ts-node: 10.9.1
       typescript: 4.6.4
@@ -88,10 +89,11 @@ importers:
       '@types/jest': 28.1.0
       '@types/node': 16.11.59
       jest: 28.1.0_4echt27za7uk6ezjshmbxcfmgy
+      terser: 5.16.2
       ts-jest: 28.0.2_2lbfdhsfbklyitfcjze7u67xk4
       ts-node: 10.9.1_f4s53rsdbgkmxc2oaa23drhnsy
       typescript: 4.6.4
-      vite: 4.0.4_@types+node@16.11.59
+      vite: 4.0.4_t3qaaeomag6pkx3omw7idckniy
       vite-tsconfig-paths: 4.0.3_gz4bk4tpl733bxc72eq7vnh46a
 
   packages/client/tools:
@@ -111,7 +113,7 @@ importers:
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/marine-js': 0.1.1-marine-js-esm-02fb173-259-1.0
-      '@libp2p/crypto': 1.0.11
+      '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-peer-id': 2.0.1
@@ -126,8 +128,6 @@ importers:
       '@types/node': 16.11.59
       '@types/platform': 1.3.4
       '@types/uuid': 8.3.2
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
       async: 3.2.4
       browser-or-node: 2.0.0
       bs58: 5.0.0
@@ -151,7 +151,7 @@ importers:
       '@chainsafe/libp2p-noise': 11.0.0
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/marine-js': 0.1.1-marine-js-esm-02fb173-259-1.0
-      '@libp2p/crypto': 1.0.11
+      '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-peer-id': 2.0.1
@@ -161,8 +161,6 @@ importers:
       '@libp2p/peer-id-factory': 2.0.1
       '@libp2p/websockets': 5.0.3
       '@multiformats/multiaddr': 11.3.0
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
       async: 3.2.4
       browser-or-node: 2.0.0
       bs58: 5.0.0
@@ -1681,6 +1679,13 @@ packages:
     engines: {node: '>=6.0.0'}
     dev: true
 
+  /@jridgewell/source-map/0.3.2:
+    resolution: {integrity: sha512-m7O9o2uR8k2ObDysZYzdfhb08VuEml5oWGiosa1VdaPZ/A6QyPkAJuwN0Q1lhULOf6B7MtQmHENS743hWtCrgw==}
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.2
+      '@jridgewell/trace-mapping': 0.3.15
+    dev: true
+
   /@jridgewell/sourcemap-codec/1.4.14:
     resolution: {integrity: sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw==}
     dev: true
@@ -1708,6 +1713,20 @@ packages:
       '@noble/secp256k1': 1.6.3
       err-code: 3.0.1
       multiformats: 11.0.1
+      node-forge: 1.3.1
+      protons-runtime: 4.0.2
+      uint8arrays: 4.0.3
+    dev: false
+
+  /@libp2p/crypto/1.0.8:
+    resolution: {integrity: sha512-L0nOms1gJKwT5HRzDiEzTon+VOqilez6jIx+J27aSRJjgK+PpWGP2pmo5t0K60EGbIkDK0XDMjQkj0TUecDk5g==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dependencies:
+      '@libp2p/interface-keys': 1.0.7
+      '@noble/ed25519': 1.6.1
+      '@noble/secp256k1': 1.6.3
+      err-code: 3.0.1
+      multiformats: 10.0.3
       node-forge: 1.3.1
       protons-runtime: 4.0.2
       uint8arrays: 4.0.3
@@ -6100,6 +6119,11 @@ packages:
       varint: 6.0.0
     dev: true
 
+  /multiformats/10.0.3:
+    resolution: {integrity: sha512-K2yGSmstS/oEmYiEIieHb53jJCaqp4ERPDQAYrm5sV3UUrVDZeshJQCK6GHAKyIGufU1vAcbS0PdAAZmC7Tzcw==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dev: false
+
   /multiformats/11.0.1:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -6924,6 +6948,13 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /source-map-support/0.5.21:
+    resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
+    dependencies:
+      buffer-from: 1.1.2
+      source-map: 0.6.1
+    dev: true
+
   /source-map/0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
@@ -7073,6 +7104,17 @@ packages:
     dependencies:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.2.0
+    dev: true
+
+  /terser/5.16.2:
+    resolution: {integrity: sha512-JKuM+KvvWVqT7muHVyrwv7FVRPnmHDwF6XwoIxdbF5Witi0vu99RYpxDexpJndXt3jbZZmmWr2/mQa6HvSNdSg==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      '@jridgewell/source-map': 0.3.2
+      acorn: 8.8.0
+      commander: 2.20.3
+      source-map-support: 0.5.21
     dev: true
 
   /test-exclude/6.0.0:
@@ -7556,13 +7598,13 @@ packages:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 2.0.2_typescript@4.6.4
-      vite: 4.0.4_@types+node@16.11.59
+      vite: 4.0.4_t3qaaeomag6pkx3omw7idckniy
     transitivePeerDependencies:
       - supports-color
       - typescript
     dev: true
 
-  /vite/4.0.4_@types+node@16.11.59:
+  /vite/4.0.4_t3qaaeomag6pkx3omw7idckniy:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -7592,6 +7634,7 @@ packages:
       postcss: 8.4.21
       resolve: 1.22.1
       rollup: 3.12.0
+      terser: 5.16.2
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
