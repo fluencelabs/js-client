@@ -6,10 +6,22 @@
   ],
   "enabledManagers": ["npm", "github-actions"],
   "rangeStrategy": "pin",
+  "schedule": "every weekend",
   "packageRules": [
     {
+      "matchManagers": ["npm"],
+      "matchPackagePatterns": [
+        "@fluencelabs/.*"
+      ],
+      "semanticCommitType": "fix",
+      "semanticCommitScope": "deps",
+      "schedule": "at any time"
+    },
+    {
       "matchDepTypes": ["devDependencies"],
-      "prPriority": -1
+      "prPriority": -1,
+      "semanticCommitType": "chore",
+      "semanticCommitScope": "deps"
     },
     {
       "matchUpdateTypes": ["major"],
