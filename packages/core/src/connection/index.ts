@@ -71,7 +71,6 @@ export class RelayConnection extends FluenceConnection {
     private _connection?: Connection;
 
     static async createConnection(options: FluenceConnectionOptions): Promise<RelayConnection> {
-        console.log('createConnection: before createLibp2p');
         const lib2p2Peer = await createLibp2p({
             peerId: options.peerId,
             transports: [
@@ -83,7 +82,6 @@ export class RelayConnection extends FluenceConnection {
             connectionEncryption: [noise()],
         });
 
-        console.log('createConnection: after createLibp2p');
 
         const relayMultiaddr = multiaddr(options.relayAddress);
         const relayPeerId = relayMultiaddr.getPeerId();
@@ -135,9 +133,7 @@ export class RelayConnection extends FluenceConnection {
     }
 
     async connect(onIncomingParticle: ParticleHandler) {
-        console.log('connect: starting libp2p');
         await this._lib2p2Peer.start();
-        console.log('connect: startEd libp2p');
 
         this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(
@@ -162,7 +158,6 @@ export class RelayConnection extends FluenceConnection {
             );
         });
 
-        console.log('connect: handle succeded');
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
 

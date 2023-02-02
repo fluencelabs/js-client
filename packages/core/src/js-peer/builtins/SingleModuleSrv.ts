@@ -3,6 +3,7 @@ import { SrvDef } from '../_aqua/single-module-srv.js';
 import { NodeUtilsDef } from '../_aqua/node-utils.js';
 import { FluencePeer } from '../FluencePeer.js';
 import { CallParams } from '../commonTypes.js';
+import { Buffer } from 'buffer';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
 
 export const defaultGuard = (peer: () => FluencePeer) => {
