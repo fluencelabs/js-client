@@ -10,63 +10,6 @@ importers:
       ts-node: 10.9.1_apbkdfxvcdmborgupeskcsfbo4
       typescript: 4.6.4
 
-  packages/client/compiler-support:
-    specifiers:
-      '@fluencelabs/js-peer': workspace:*
-      '@types/jest': 28.1.0
-      '@types/node': 16.11.59
-      jest: 28.1.0
-      ts-jest: 28.0.2
-      ts-node: 10.9.1
-      typescript: 4.6.4
-    dependencies:
-      '@fluencelabs/js-peer': link:../../core
-    devDependencies:
-      '@types/jest': 28.1.0
-      '@types/node': 16.11.59
-      jest: 28.1.0_4echt27za7uk6ezjshmbxcfmgy
-      ts-jest: 28.0.2_ewlfou5hfwkqpvjzhjdbxrqn2m
-      ts-node: 10.9.1_f4s53rsdbgkmxc2oaa23drhnsy
-      typescript: 4.6.4
-
-  packages/client/js-client.node:
-    specifiers:
-      '@fluencelabs/js-peer': workspace:*
-      '@types/jest': 28.1.0
-      '@types/node': 16.11.59
-      jest: 28.1.0
-      ts-jest: 28.0.2
-      ts-node: 10.9.1
-      typescript: 4.6.4
-    dependencies:
-      '@fluencelabs/js-peer': link:../../core
-    devDependencies:
-      '@types/jest': 28.1.0
-      '@types/node': 16.11.59
-      jest: 28.1.0_4echt27za7uk6ezjshmbxcfmgy
-      ts-jest: 28.0.2_vibqa5hxa5biq5fwuxzv5iobty
-      ts-node: 10.9.1_f4s53rsdbgkmxc2oaa23drhnsy
-      typescript: 4.6.4
-
-  packages/client/js-client.web:
-    specifiers:
-      '@fluencelabs/js-peer': workspace:*
-      '@types/jest': 28.1.0
-      '@types/node': 16.11.59
-      jest: 28.1.0
-      ts-jest: 28.0.2
-      ts-node: 10.9.1
-      typescript: 4.6.4
-    dependencies:
-      '@fluencelabs/js-peer': link:../../core
-    devDependencies:
-      '@types/jest': 28.1.0
-      '@types/node': 16.11.59
-      jest: 28.1.0_4echt27za7uk6ezjshmbxcfmgy
-      ts-jest: 28.0.2_vibqa5hxa5biq5fwuxzv5iobty
-      ts-node: 10.9.1_f4s53rsdbgkmxc2oaa23drhnsy
-      typescript: 4.6.4
-
   packages/client/js-client.web.standalone:
     specifiers:
       '@fluencelabs/avm': 0.35.3
@@ -97,7 +40,7 @@ importers:
       '@types/node': 16.11.59
       jest: 28.1.0_4echt27za7uk6ezjshmbxcfmgy
       js-base64: 3.7.2
-      ts-jest: 28.0.2_vibqa5hxa5biq5fwuxzv5iobty
+      ts-jest: 28.0.2_ewlfou5hfwkqpvjzhjdbxrqn2m
       ts-node: 10.9.1_f4s53rsdbgkmxc2oaa23drhnsy
       typescript: 4.6.4
       vite: 4.0.4_@types+node@16.11.59
@@ -6824,40 +6767,6 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.18.13
-      '@types/jest': 28.1.0
-      bs-logger: 0.2.6
-      fast-json-stable-stringify: 2.1.0
-      jest: 28.1.0_4echt27za7uk6ezjshmbxcfmgy
-      jest-util: 28.1.3
-      json5: 2.2.3
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.3.8
-      typescript: 4.6.4
-      yargs-parser: 20.2.9
-    dev: true
-
-  /ts-jest/28.0.2_vibqa5hxa5biq5fwuxzv5iobty:
-    resolution: {integrity: sha512-IOZMb3D0gx6IHO9ywPgiQxJ3Zl4ECylEFwoVpENB55aTn5sdO0Ptyx/7noNBxAaUff708RqQL4XBNxxOVjY0vQ==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      '@babel/core': '>=7.0.0-beta.0 <8'
-      '@types/jest': ^27.0.0
-      babel-jest: ^28.0.0
-      esbuild: '*'
-      jest: ^28.0.0
-      typescript: '>=4.3'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@types/jest':
-        optional: true
-      babel-jest:
-        optional: true
-      esbuild:
-        optional: true
-    dependencies:
       '@types/jest': 28.1.0
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
