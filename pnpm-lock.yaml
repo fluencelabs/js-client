@@ -120,7 +120,7 @@ importers:
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/fluence-network-environment': 1.0.13
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/marine-js': 0.1.1-marine-js-esm-02fb173-259-1.0
       '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
@@ -158,7 +158,7 @@ importers:
     dependencies:
       '@chainsafe/libp2p-noise': 11.0.0
       '@fluencelabs/avm': 0.31.10
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/marine-js': 0.1.1-marine-js-esm-02fb173-259-1.0
       '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
@@ -968,6 +968,14 @@ packages:
       peer-id: 0.16.0
     dev: true
 
+  /@fluencelabs/marine-js/0.1.1-marine-js-esm-02fb173-259-1.0:
+    resolution: {integrity: sha512-KJkn5uKif8YNDQhSnjvtoI2n6/9QAj5f/QiVVF6yuxHJWCfrl+tYutaR4rQPYP4UYPDykLxTKlBkP6JRGlbnQw==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
+      default-import: 1.1.5
+    dev: false
+
   /@fluencelabs/marine-js/0.3.18_cqcbevnsbbxbdq6k4tkreubqoy:
     resolution: {integrity: sha512-aNuGtyY910kJvtRwfqmZKjVs+1l3LVWShv5xvkY04faHm65nX3sZLe8UHwughdja/4ixV1IFKlaTUgw2u3Sf5A==}
     dependencies:
@@ -992,6 +1000,7 @@ packages:
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
+    dev: true
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
@@ -2985,6 +2994,11 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       execa: 5.1.1
+
+  /default-import/1.1.5:
+    resolution: {integrity: sha512-aaJ6uzZlmaEcN1U8yvtiyV7MG3/zZQf1XtGSW5dTfAVvfk0VZuriJelXxVL9a0ni42vMkhjWcztFfpIhwFcfOQ==}
+    engines: {node: '>=14'}
+    dev: false
 
   /delayed-stream/1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
