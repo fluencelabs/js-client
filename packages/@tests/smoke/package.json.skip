@@ -17,8 +17,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/fluence": "workspace:*",
-        "@fluencelabs/js-client.node": "workspace:*",
-        "ts-node": "10.9.1"
+        "@fluencelabs/js-client.node": "workspace:*"
     },
     "devDependencies": {
         "@types/node": "16.11.59",
