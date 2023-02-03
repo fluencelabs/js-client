@@ -9,6 +9,6 @@
         "forceConsistentCasingInFileNames": true,
         "allowJs": true,
         "declaration": true,
-        "moduleResolution": "node"
+        "moduleResolution": "nodenext"
     }
 }
