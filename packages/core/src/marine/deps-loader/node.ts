@@ -39,19 +39,19 @@ export const loadWasmFromFileSystem = async (filePath: string): Promise<SharedAr
     return bufferToSharedArrayBuffer(buffer);
 };
 
-export class WasmFsLoader extends LazyLoader<SharedArrayBuffer> {
+export class WasmLoaderFromFs extends LazyLoader<SharedArrayBuffer> {
     constructor(filePath: string) {
         super(() => loadWasmFromFileSystem(filePath));
     }
 }
 
-export class WasmNpmLoader extends LazyLoader<SharedArrayBuffer> {
+export class WasmLoaderFromNpm extends LazyLoader<SharedArrayBuffer> {
     constructor(pkg: string, file: string) {
         super(() => loadWasmFromNpmPackage({ package: pkg, file: file }));
     }
 }
 
-export class FsWorkerLoader extends LazyLoader<WorkerImplementation> {
+export class WorkerLoaderFromFs extends LazyLoader<WorkerImplementation> {
     constructor(scriptPath: string) {
         super(() => {
             return Promise.resolve(new Worker(scriptPath));
@@ -59,7 +59,7 @@ export class FsWorkerLoader extends LazyLoader<WorkerImplementation> {
     }
 }
 
-export class NpmWorkerLoader extends LazyLoader<WorkerImplementation> {
+export class WorkerLoaderFromNpm extends LazyLoader<WorkerImplementation> {
     constructor(pkg: string, file: string) {
         super(() => {
             const packagePath = require.resolve(pkg);

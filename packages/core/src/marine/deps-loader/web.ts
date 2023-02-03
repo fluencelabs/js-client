@@ -33,7 +33,7 @@ export const loadWasmFromServer = async (filePath: string): Promise<SharedArrayB
     return buffer;
 };
 
-export class WasmWebLoader extends LazyLoader<SharedArrayBuffer | Buffer> {
+export class WebLoaderFromUrl extends LazyLoader<SharedArrayBuffer | Buffer> {
     constructor(filePath: string) {
         super(() => loadWasmFromServer(filePath));
     }

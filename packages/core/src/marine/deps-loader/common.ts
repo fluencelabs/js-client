@@ -13,7 +13,7 @@ export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
     }
 }
 
-export class InlineWasmLoader extends LazyLoader<Buffer> {
+export class InlinedWasmLoader extends LazyLoader<Buffer> {
     constructor(b64wasm: string) {
         super(() => {
             const wasm = toUint8Array(b64wasm);

@@ -12,7 +12,7 @@ import { marineLogFunction } from '../utils.js';
 import { MarineBackgroundRunner } from '../../marine/worker/index.js';
 import { MarineBasedAvmRunner } from '../avm.js';
 import { nodes } from './connection.js';
-import { FsWorkerLoader } from '../../marine/deps-loader/node.js';
+import { WorkerLoaderFromFs } from '../../marine/deps-loader/node.js';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
@@ -52,7 +52,7 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
 };
 
 export const mkTestPeer = () => {
-    const workerLoader = new FsWorkerLoader('../../marine/worker-script');
+    const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);

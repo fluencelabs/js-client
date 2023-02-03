@@ -8,7 +8,7 @@ import { marineLogFunction } from './utils';
 import { MarineBasedAvmRunner } from './avm';
 
 import log from 'loglevel';
-import { FsWorkerLoader } from '../marine/deps-loader/node.js';
+import { WorkerLoaderFromFs } from '../marine/deps-loader/node.js';
 
 interface EphemeralConfig {
     peers: Array<{
@@ -126,7 +126,7 @@ export class EphemeralNetwork {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
         // shared worker for all the peers
-        const workerLoader = new FsWorkerLoader('../../marine/worker-script');
+        const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
         const promises = this.config.peers.map(async (x) => {
             const logLevel = undefined;
