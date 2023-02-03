@@ -1,4 +1,4 @@
-import { WasmFsLoader, WasmNpmLoader } from '../marine/deps-loader/node.js';
+import { FsWorkerLoader, WasmFsLoader, WasmNpmLoader } from '../marine/deps-loader/node.js';
 
 // export const controlModuleLoader = new WasmNpmLoader('@fluencelabs/marine-js', 'marine-js.wasm');
 // export const avmModuleLoader = new WasmNpmLoader('@fluencelabs/avm', 'avm.wasm');

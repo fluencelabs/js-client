@@ -1,14 +1,14 @@
-import { FluenceConnection, ParticleHandler } from '@fluencelabs/interfaces';
-import { InlinedWorkerLoader } from '@fluencelabs/marine.deps-loader.node';
-
-import { keyPairFromBase64Sk } from '@fluencelabs/keypair';
-
-import { PeerIdB58 } from './commonTypes';
-import { FluencePeer } from './FluencePeer';
-import log from 'loglevel';
-import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
-import { avmModuleLoader, controlModuleLoader, marineLogFunction } from './utils';
+import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
+import { keyPairFromBase64Sk } from '../keypair/index.js';
+import { PeerIdB58 } from './commonTypes.js';
+import { FluencePeer } from './FluencePeer.js';
+import { MarineBackgroundRunner } from '../marine/worker/index.js';
+import { avmModuleLoader, controlModuleLoader } from './utilsForNode';
+import { marineLogFunction } from './utils';
 import { MarineBasedAvmRunner } from './avm';
+
+import log from 'loglevel';
+import { FsWorkerLoader } from '../marine/deps-loader/node.js';
 
 interface EphemeralConfig {
     peers: Array<{
@@ -126,7 +126,7 @@ export class EphemeralNetwork {
         log.debug('Starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
         // shared worker for all the peers
-        const workerLoader = new InlinedWorkerLoader();
+        const workerLoader = new FsWorkerLoader('../../marine/worker-script');
 
         const promises = this.config.peers.map(async (x) => {
             const logLevel = undefined;

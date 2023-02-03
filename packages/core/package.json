@@ -12,6 +12,7 @@
     "scripts": {
         "build": "tsc",
         "compile-aqua": "aqua -i ./aqua/  -o ./src/internal/_aqua",
+        "test:smoke": "node ./dist/js-peer/__test__/integration/smokeTest.js",
         "test": "NODE_OPTIONS=--experimental-vm-modules pnpm jest",
         "test:unit": "NODE_OPTIONS=--experimental-vm-modules pnpm jest --testPathPattern=src/__test__/unit",
         "test:integration": "NODE_OPTIONS=--experimental-vm-modules pnpm jest --testPathPattern=src/__test__/integration"

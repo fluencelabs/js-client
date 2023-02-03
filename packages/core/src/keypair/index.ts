@@ -18,6 +18,7 @@ import type { PeerId } from '@libp2p/interface-peer-id';
 import { generateKeyPairFromSeed, generateKeyPair } from '@libp2p/crypto/keys';
 import { createFromPrivKey } from '@libp2p/peer-id-factory';
 import type { PrivateKey } from '@libp2p/interface-keys';
+import { toUint8Array } from 'js-base64';
 
 export class KeyPair {
     /**
@@ -69,3 +70,8 @@ export class KeyPair {
         return this.key.public.verify(data, signature);
     }
 }
+
+export const keyPairFromBase64Sk = (sk: string): Promise<KeyPair> => {
+    const arr = toUint8Array(sk);
+    return KeyPair.fromEd25519SK(arr);
+};
