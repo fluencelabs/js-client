@@ -61,9 +61,7 @@ const readWasmFromNpmAsBase64 = (pkg: string, wasmFileName: string): Promise<str
 };
 
 const buildClient = async () => {
-    if (!fs.existsSync('./tmp')) {
-        await fs.promises.mkdir('./tmp');
-    }
+    await fs.promises.mkdir('tmp', { recursive: true });
 
     // build worker script
     const workerConfig = commonConfig({
