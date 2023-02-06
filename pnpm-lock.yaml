@@ -59,7 +59,7 @@ importers:
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/fluence-network-environment': 1.0.13
-      '@fluencelabs/marine-js': 0.1.1-marine-js-esm-02fb173-259-1.0
+      '@fluencelabs/marine-js': 0.3.44
       '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
@@ -97,7 +97,7 @@ importers:
     dependencies:
       '@chainsafe/libp2p-noise': 11.0.0
       '@fluencelabs/avm': 0.31.10
-      '@fluencelabs/marine-js': 0.1.1-marine-js-esm-02fb173-259-1.0
+      '@fluencelabs/marine-js': 0.3.44
       '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
@@ -888,14 +888,6 @@ packages:
       peer-id: 0.16.0
     dev: true
 
-  /@fluencelabs/marine-js/0.1.1-marine-js-esm-02fb173-259-1.0:
-    resolution: {integrity: sha512-KJkn5uKif8YNDQhSnjvtoI2n6/9QAj5f/QiVVF6yuxHJWCfrl+tYutaR4rQPYP4UYPDykLxTKlBkP6JRGlbnQw==}
-    dependencies:
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
-      default-import: 1.1.5
-    dev: false
-
   /@fluencelabs/marine-js/0.3.18_2g5e7lwqsvuxdxojhdo55sfvve:
     resolution: {integrity: sha512-aNuGtyY910kJvtRwfqmZKjVs+1l3LVWShv5xvkY04faHm65nX3sZLe8UHwughdja/4ixV1IFKlaTUgw2u3Sf5A==}
     dependencies:
@@ -921,6 +913,14 @@ packages:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
     dev: true
+
+  /@fluencelabs/marine-js/0.3.44:
+    resolution: {integrity: sha512-DbI/x0bRv44oqfMZJlIkVhzZByXhmnOoxpco/cglk5aAvslOSDdRssf3bZADqqUQggGdtISOZcYPM+a4tirYLQ==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
+      default-import: 1.1.5
+    dev: false
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
