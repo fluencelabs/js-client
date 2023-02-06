@@ -20,7 +20,11 @@ const getWorkerScriptPathOrDie = () => {
     return scriptPath;
 };
 
-const commonConfig = (opts: { outDir: string; name: string; entry: string }): InlineConfig => {
+const commonConfig = (opts: {
+    outDir: string;
+    name: string;
+    entry: string;
+}): InlineConfig & Required<Pick<InlineConfig, 'build'>> => {
     return {
         mode: 'production',
         build: {
