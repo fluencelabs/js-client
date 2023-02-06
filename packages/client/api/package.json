@@ -1,0 +1,22 @@
+{
+    "name": "@fluencelabs/js-client.web.standalone",
+    "version": "0.1.0",
+    "description": "TypeScript implementation of Fluence Peer",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "type": "module",
+    "scripts": {
+        "build": "node --loader ts-node/esm ./build.ts"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@fluencelabs/js-peer": "workspace:*"
+    },
+    "devDependencies": {}
+}

@@ -16,11 +16,15 @@
 import 'buffer';
 
 import { RelayConnection } from '../connection/index.js';
-import { FluenceConnection, IAvmRunner, IMarine } from '../interfaces/index.js';
+import { FluenceConnection, IAvmRunner, IFluencePeer, IMarine } from '../interfaces/index.js';
 import { KeyPair } from '../keypair/index.js';
-import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, ResultCodes } from './commonTypes.js';
-import { PeerIdB58 } from './commonTypes.js';
+import {
+    CallServiceData,
+    CallServiceResult,
+    GenericCallServiceHandler,
+    ResultCodes,
+} from '../interfaces/commonTypes.js';
+import { PeerIdB58 } from '../interfaces/commonTypes.js';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
 import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
@@ -32,74 +36,56 @@ import { registerSrv } from './_aqua/single-module-srv.js';
 import { Buffer } from 'buffer';
 
 import { JSONValue } from '@fluencelabs/avm';
+import { LogLevel } from '@fluencelabs/marine-js/dist/types';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv.js';
 import { registerNodeUtils } from './_aqua/node-utils.js';
-import { LogLevel } from '@fluencelabs/marine-js/dist/types';
+import { ConnectionOption, PeerConfig } from '../interfaces/peerConfig.js';
+import type { MultiaddrInput } from '@multiformats/multiaddr';
 
 /**
- * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
+ * Information about Fluence Peer connection.
+ * Represented as object with the following keys:
+ * - `isInitialized`: Is the peer initialized or not.
+ * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
+ * - `isConnected`: Is the peer connected to network or not
+ * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
+ * - `isDirect`: True if the peer is connected to the network directly (not through relay)
  */
-type Node = {
-    peerId: PeerIdB58;
-    multiaddr: string;
-};
+export type PeerStatus =
+    | {
+          isInitialized: false;
+          peerId: null;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          relayPeerId: PeerIdB58;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          isDirect: true;
+          relayPeerId: null;
+      };
 
 const DEFAULT_TTL = 7000;
 
-export type ConnectionOption = string | MultiaddrInput | Node;
-
-/**
- * Configuration used when initiating Fluence Peer
- */
-export interface PeerConfig {
-    /**
-     * Node in Fluence network to connect to.
-     * Can be in the form of:
-     * - string: multiaddr in string format
-     * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
-     * - Node: node structure, @see Node
-     * - Implementation of FluenceConnection class, @see FluenceConnection
-     * If not specified the will work locally and would not be able to send or receive particles.
-     */
-    connectTo?: ConnectionOption;
-
-    /**
-     * @deprecated. AVM run through marine-js infrastructure.
-     * @see debug.marineLogLevel option to configure logging level of AVM
-     */
-    avmLogLevel?: LogLevel | 'off';
-
+export interface PeerConfig2 extends PeerConfig {
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
     KeyPair?: KeyPair;
-
-    /**
-     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-     * The options allows to specify the timeout for that message in milliseconds.
-     * If not specified the default timeout will be used
-     */
-    checkConnectionTimeoutMs?: number;
-
-    /**
-     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-     * If set to true, the ping-like message will be skipped
-     * Default: false
-     */
-    skipCheckConnection?: boolean;
-
-    /**
-     * The dialing timeout in milliseconds
-     */
-    dialTimeoutMs?: number;
-
-    /**
-     * Sets the default TTL for all particles originating from the peer with no TTL specified.
-     * If the originating particle's TTL is defined then that value will be used
-     * If the option is not set default TTL will be 7000
-     */
-    defaultTtlMs?: number;
 
     /**
      * This option allows to specify the location of various dependencies needed for marine-js.
@@ -142,46 +128,10 @@ export interface PeerConfig {
 }
 
 /**
- * Information about Fluence Peer connection.
- * Represented as object with the following keys:
- * - `isInitialized`: Is the peer initialized or not.
- * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
- * - `isConnected`: Is the peer connected to network or not
- * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
- * - `isDirect`: True if the peer is connected to the network directly (not through relay)
- */
-export type PeerStatus =
-    | {
-          isInitialized: false;
-          peerId: null;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          relayPeerId: PeerIdB58;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          isDirect: true;
-          relayPeerId: null;
-      };
-
-/**
  * This class implements the Fluence protocol for javascript-based environments.
  * It provides all the necessary features to communicate with Fluence network
  */
-export class FluencePeer {
+export class FluencePeer implements IFluencePeer {
     constructor(private marine: IMarine, private avmRunner: IAvmRunner) {}
 
     /**
@@ -239,7 +189,7 @@ export class FluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async start(config: PeerConfig = {}): Promise<void> {
+    async start(config: PeerConfig2 = {}): Promise<void> {
         throwIfNotSupported();
         const keyPair = config.KeyPair ?? (await KeyPair.randomEd25519());
         const newConfig = { ...config, KeyPair: keyPair };
@@ -419,7 +369,7 @@ export class FluencePeer {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    async init(config: PeerConfig & Required<Pick<PeerConfig, 'KeyPair'>>) {
+    async init(config: PeerConfig2 & Required<Pick<PeerConfig2, 'KeyPair'>>) {
         this._keyPair = config.KeyPair;
 
         const peerId = this._keyPair.getPeerId();

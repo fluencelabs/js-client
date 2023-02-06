@@ -1,5 +1,5 @@
 import { toUint8Array } from 'js-base64';
-import { CallParams, CallServiceData } from '../../commonTypes.js';
+import { CallParams, CallServiceData } from '../../../interfaces/commonTypes.js';
 import { builtInServices } from '../../builtins/common.js';
 import { KeyPair } from '../../../keypair/index.js';
 import { Sig, defaultSigGuard } from '../../builtins/Sig.js';

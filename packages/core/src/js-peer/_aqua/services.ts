@@ -6,7 +6,7 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { CallParams } from '../commonTypes.js';
+import { CallParams } from '../../interfaces/commonTypes.js';
 import { registerServiceImpl } from '../compilerSupport/registerService.js';
 import { FluencePeer } from '../FluencePeer.js';
 

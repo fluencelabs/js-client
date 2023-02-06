@@ -1,6 +1,6 @@
 import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
 import { keyPairFromBase64Sk } from '../keypair/index.js';
-import { PeerIdB58 } from './commonTypes.js';
+import { PeerIdB58 } from '../interfaces/commonTypes.js';
 import { FluencePeer } from './FluencePeer.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
 import { avmModuleLoader, controlModuleLoader } from './utilsForNode';

@@ -18,7 +18,7 @@ import log from 'loglevel';
 import * as platform from 'platform';
 
 import { Buffer } from 'buffer';
-import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from './commonTypes.js';
+import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
 import { FluencePeer } from './FluencePeer.js';
 import { ParticleExecutionStage } from './Particle.js';
 import { LogFunction } from '@fluencelabs/marine-js/dist/types';

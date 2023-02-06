@@ -1,7 +1,7 @@
 import { jsonify } from '../utils.js';
 import { match } from 'ts-pattern';
 import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from './interface.js';
-import { CallServiceData } from '../commonTypes.js';
+import { CallServiceData } from '../../interfaces/commonTypes.js';
 
 /**
  * Convert value from its representation in aqua language to representation in typescript

@@ -18,7 +18,7 @@ import { fromUint8Array, toUint8Array } from 'js-base64';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
 import log from 'loglevel';
-import { ParticleContext } from './commonTypes.js';
+import { ParticleContext } from '../interfaces/commonTypes.js';
 import { dataToString, jsonify } from './utils.js';
 import { Buffer } from 'buffer';
 

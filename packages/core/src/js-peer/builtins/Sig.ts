@@ -1,4 +1,4 @@
-import { CallParams, PeerIdB58 } from '../commonTypes.js';
+import { CallParams, PeerIdB58 } from '../../interfaces/commonTypes.js';
 import { KeyPair } from '../../keypair/index.js';
 import { SigDef } from '../_aqua/services.js';
 import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard.js';

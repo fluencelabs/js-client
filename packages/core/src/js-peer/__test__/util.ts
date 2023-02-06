@@ -1,7 +1,7 @@
 import * as api from '@fluencelabs/aqua-api/aqua-api.js';
 
 import { promises as fs } from 'fs';
-import { FluencePeer, PeerConfig } from '../FluencePeer.js';
+import { FluencePeer, PeerConfig2 as PeerConfig } from '../FluencePeer.js';
 import { Particle } from '../Particle.js';
 import { MakeServiceCall } from '../utils.js';
 import { avmModuleLoader, controlModuleLoader } from '../utilsForNode.js';

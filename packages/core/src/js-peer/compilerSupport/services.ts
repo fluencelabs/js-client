@@ -2,7 +2,7 @@ import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 
 import { Particle } from '../Particle.js';
-import { CallParams, CallServiceData, GenericCallServiceHandler, ResultCodes } from '../commonTypes.js';
+import { CallParams, CallServiceData, GenericCallServiceHandler, ResultCodes } from '../../interfaces/commonTypes.js';
 import { FluencePeer } from '../FluencePeer.js';
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';

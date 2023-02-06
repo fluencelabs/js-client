@@ -17,9 +17,16 @@
 import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
 import type { WorkerImplementation } from 'threads/dist/types/master';
+import { PeerConfig } from './peerConfig';
+
 export type PeerIdB58 = string;
 
 export type ParticleHandler = (particle: string) => void;
+
+export interface IFluencePeer {
+    start(config?: PeerConfig): Promise<void>;
+    stop(): Promise<void>;
+}
 
 /**
  * Base class for connectivity layer to Fluence Network
