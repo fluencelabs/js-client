@@ -8,7 +8,7 @@ export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
     constructor(b64script: string) {
         super(() => {
             const script = fromBase64(b64script);
-            return Promise.resolve(BlobWorker.fromText(script));
+            return BlobWorker.fromText(script);
         });
     }
 }
