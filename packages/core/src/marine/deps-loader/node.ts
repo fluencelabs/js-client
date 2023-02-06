@@ -53,9 +53,7 @@ export class WasmLoaderFromNpm extends LazyLoader<SharedArrayBuffer> {
 
 export class WorkerLoaderFromFs extends LazyLoader<WorkerImplementation> {
     constructor(scriptPath: string) {
-        super(() => {
-            return Promise.resolve(new Worker(scriptPath));
-        });
+        super(() => new Worker(scriptPath));
     }
 }
 
