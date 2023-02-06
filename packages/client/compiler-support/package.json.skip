@@ -1,7 +1,7 @@
 {
-    "name": "@fluencelabs/tools",
+    "name": "@fluencelabs/compiler-support",
     "version": "0.1.0",
-    "description": "Fluence JS Client tools",
+    "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
@@ -14,11 +14,13 @@
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "bin": {
-        "copy-marine": "dist/copyMarine.js"
+    "dependencies": {
+        "@fluencelabs/js-peer": "workspace:*"
     },
-    "dependencies": {},
     "devDependencies": {
-        "@types/node": "16.11.59"
+        "@types/node": "16.11.59",
+        "@types/jest": "28.1.0",
+        "jest": "28.1.0",
+        "ts-jest": "28.0.2"
     }
 }

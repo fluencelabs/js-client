@@ -1,17 +1,7 @@
 {
+    "extends": "../../../../tsconfig.json",
     "compilerOptions": {
-        "lib": ["es2015", "dom"],
-        "outDir": "./dist/",
-        "target": "es5",
-        "module": "commonjs",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "declaration": true,
-        "declarationMap": false,
-        "sourceMap": true
+        "outDir": "./dist"
     },
-    "exclude": ["node_modules", "dist"],
-    "include": ["src"]
+    "exclude": ["node_modules", "dist"]
 }
