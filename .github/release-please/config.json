@@ -1,0 +1,16 @@
+{
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "plugins": [
+    {
+      "type": "node-workspace"
+    }
+  ],
+  "packages": {
+    "packages/fluence-js": {},
+    "packages/fluence-connection": {},
+    "packages/fluence-interfaces": {},
+    "packages/fluence-keypair": {}
+  }
+}

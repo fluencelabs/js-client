@@ -1,0 +1,6 @@
+{
+  "packages/fluence-js": "0.28.0",
+  "packages/fluence-connection": "0.2.0",
+  "packages/fluence-interfaces": "0.1.0",
+  "packages/fluence-keypair": "0.2.0"
+}

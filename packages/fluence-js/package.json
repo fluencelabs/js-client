@@ -26,9 +26,9 @@
     },
     "dependencies": {
         "@fluencelabs/avm": "0.35.3",
-        "@fluencelabs/connection": "workspace:0.2.0",
-        "@fluencelabs/interfaces": "workspace:0.1.0",
-        "@fluencelabs/keypair": "workspace:0.2.0",
+        "@fluencelabs/connection": "0.2.0",
+        "@fluencelabs/interfaces": "0.1.0",
+        "@fluencelabs/keypair": "0.2.0",
         "@fluencelabs/marine-js": "0.3.37",
         "async": "3.2.4",
         "base64-js": "^1.5.1",
