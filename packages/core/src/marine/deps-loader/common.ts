@@ -17,8 +17,7 @@ export class InlinedWasmLoader extends LazyLoader<Buffer> {
     constructor(b64wasm: string) {
         super(() => {
             const wasm = toUint8Array(b64wasm);
-            const buffer = Buffer.from(wasm);
-            return Promise.resolve(buffer);
+            return Buffer.from(wasm);
         });
     }
 }
