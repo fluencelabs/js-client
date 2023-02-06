@@ -8,7 +8,9 @@
     }
   ],
   "packages": {
-    "packages/fluence-js": {},
+    "packages/fluence-js": {
+      "component": "fluence-js"
+    },
     "packages/fluence-connection": {},
     "packages/fluence-interfaces": {},
     "packages/fluence-keypair": {}
