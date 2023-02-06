@@ -1,14 +1,5 @@
 import { WorkerLoaderFromFs, WasmLoaderFromFs, WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 
-// TODO!: should be fixed in scope of DXJ-194
-
-// export const controlModuleLoader = new WasmNpmLoader('@fluencelabs/marine-js', 'marine-js.wasm');
-// export const avmModuleLoader = new WasmNpmLoader('@fluencelabs/avm', 'avm.wasm');
-
-export const controlModuleLoader = new WasmLoaderFromFs(
-    '/home/pavel/work/fluence/fluence-js/node_modules/.pnpm/@fluencelabs+marine-js@0.1.1-marine-js-esm-e51255f-251-1.0/node_modules/@fluencelabs/marine-js/dist/marine-js.wasm',
-);
-
-export const avmModuleLoader = new WasmLoaderFromFs(
-    '/home/pavel/work/fluence/fluence-js/node_modules/.pnpm/@fluencelabs+avm@0.31.10/node_modules/@fluencelabs/avm/dist/avm.wasm',
-);
+// TODO!: after moving to ESM loaders stopped working. Should be fixed in scope of DXJ-194
+export const controlModuleLoader = new WasmLoaderFromNpm('@fluencelabs/marine-js', 'marine-js.wasm');
+export const avmModuleLoader = new WasmLoaderFromNpm('@fluencelabs/avm', 'avm.wasm');
