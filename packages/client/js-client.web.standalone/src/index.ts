@@ -17,7 +17,7 @@ export const makeDefaultPeer = () => {
 // @ts-ignore
 globalThis.defaultPeer = makeDefaultPeer();
 
-// TODO! remove
+// TODO! remove after implementing smoke test (DXJ-253)
 // @ts-ignore
 window.demo = async () => {
     // @ts-ignore

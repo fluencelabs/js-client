@@ -1,5 +1,7 @@
 import { WorkerLoaderFromFs, WasmLoaderFromFs, WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 
+// TODO!: should be fixed in scope of DXJ-194
+
 // export const controlModuleLoader = new WasmNpmLoader('@fluencelabs/marine-js', 'marine-js.wasm');
 // export const avmModuleLoader = new WasmNpmLoader('@fluencelabs/avm', 'avm.wasm');
 
