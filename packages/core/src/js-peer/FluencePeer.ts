@@ -16,7 +16,7 @@
 import 'buffer';
 
 import { RelayConnection } from '../connection/index.js';
-import { FluenceConnection, IAvmRunner, IFluencePeer, IMarine } from '../interfaces/index.js';
+import { FluenceConnection, IAvmRunner, IFluencePeer, IMarine, PeerStatus } from '../interfaces/index.js';
 import { KeyPair } from '../keypair/index.js';
 import {
     CallServiceData,
@@ -41,42 +41,6 @@ import { NodeUtils, Srv } from './builtins/SingleModuleSrv.js';
 import { registerNodeUtils } from './_aqua/node-utils.js';
 import { ConnectionOption, PeerConfig } from '../interfaces/peerConfig.js';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
-
-/**
- * Information about Fluence Peer connection.
- * Represented as object with the following keys:
- * - `isInitialized`: Is the peer initialized or not.
- * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
- * - `isConnected`: Is the peer connected to network or not
- * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
- * - `isDirect`: True if the peer is connected to the network directly (not through relay)
- */
-export type PeerStatus =
-    | {
-          isInitialized: false;
-          peerId: null;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          relayPeerId: PeerIdB58;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          isDirect: true;
-          relayPeerId: null;
-      };
 
 const DEFAULT_TTL = 7000;
 
@@ -135,13 +99,12 @@ export class FluencePeer implements IFluencePeer {
     constructor(private marine: IMarine, private avmRunner: IAvmRunner) {}
 
     /**
-     * Checks whether the object is instance of FluencePeer class
-     * @param obj - object to check if it is FluencePeer
-     * @returns true if the object is FluencePeer false otherwise
+     * Internal contract to cast unknown objects to IFluencePeer.
+     * If an unknown object has this property then we assume it is in fact a Peer and it implements IFluencePeer
+     * Check against this variable MUST NOT be coupled with any `FluencePeer` because otherwise it might get bundled
+     * brining a lot of unnecessary stuff alongside with it
      */
-    static isInstance(obj: unknown): obj is FluencePeer {
-        return obj instanceof FluencePeer;
-    }
+    __isFluenceAwesome = true;
 
     /**
      * Get the peer's status

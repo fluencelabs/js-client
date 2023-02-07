@@ -1,5 +1,5 @@
 import { ArrowWithoutCallbacks, FnConfig, FunctionCallDef, NonArrowType } from './interface.js';
-import { FluencePeer } from '../FluencePeer.js';
+import { IFluencePeer } from '../../interfaces/index';
 
 import {
     injectRelayService,
@@ -26,7 +26,7 @@ export function callFunctionImpl(
     def: FunctionCallDef,
     script: string,
     config: FnConfig,
-    peer: FluencePeer,
+    peer: IFluencePeer,
     args: { [key: string]: any },
 ): Promise<unknown> {
     const argumentTypes = getArgumentTypes(def);
@@ -55,7 +55,7 @@ export function callFunctionImpl(
 
         registerParticleScopeService(peer, particle, errorHandlingService(def, reject));
 
-        peer.internals.initiateParticle(particle, (stage) => {
+        peer.internals.initiateParticle(particle, (stage: any) => {
             // If function is void, then it's completed when one of the two conditions is met:
             //  1. The particle is sent to the network (state 'sent')
             //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')

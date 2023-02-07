@@ -1,13 +1,15 @@
-import type { FluencePeer } from '../FluencePeer.js';
+import type { IFluencePeer } from '../../interfaces/index';
 import { ServiceDef } from './interface.js';
 import { registerGlobalService, userHandlerService } from './services.js';
 
 export const registerServiceImpl = (
-    peer: FluencePeer,
+    peer: IFluencePeer,
     def: ServiceDef,
     serviceId: string | undefined,
     service: any,
 ) => {
+    // TODO: TBH service registration is just putting some stuff into a hashmap
+    // there should not be such a check at all
     if (!peer.getStatus().isInitialized) {
         throw new Error(
             'Could not register the service because the peer is not initialized. Are you passing the wrong peer to the register function?',

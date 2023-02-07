@@ -1,7 +1,6 @@
-service Peer("peer"):
-    -- Get information about the peer
-    identify() -> Info
+alias PeerId: string
 
+service Peer("peer"):
     -- Get Unix timestamp in milliseconds
     timestamp_ms() -> u64
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export { FluencePeer } from './v3';
+export { IFluencePeer } from './v3';
 export { CallParams as CallParams$$ } from './v3';
 export {
     ArrayType as ArrayType$$,

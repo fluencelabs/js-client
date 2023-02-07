@@ -23,10 +23,69 @@ export type PeerIdB58 = string;
 
 export type ParticleHandler = (particle: string) => void;
 
+/**
+ * Information about Fluence Peer connection.
+ * Represented as object with the following keys:
+ * - `isInitialized`: Is the peer initialized or not.
+ * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
+ * - `isConnected`: Is the peer connected to network or not
+ * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
+ * - `isDirect`: True if the peer is connected to the network directly (not through relay)
+ */
+export type PeerStatus =
+    | {
+          isInitialized: false;
+          peerId: null;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          relayPeerId: PeerIdB58;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          isDirect: true;
+          relayPeerId: null;
+      };
+
 export interface IFluencePeer {
     start(config?: PeerConfig): Promise<void>;
     stop(): Promise<void>;
+    getStatus(): PeerStatus;
+
+    // TODO: come up with a working interface for
+    // - particle creation
+    // - particle initialization
+    // - service registration
+    internals: any;
 }
+
+export const asFluencePeer = (fluencePeerCandidate: unknown): IFluencePeer => {
+    if (isFluencePeer(fluencePeerCandidate)) {
+        return fluencePeerCandidate;
+    }
+
+    throw new Error('');
+};
+
+export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluencePeer => {
+    if (fluencePeerCandidate && (fluencePeerCandidate as any).__isFluenceAwesome) {
+        return true;
+    }
+
+    return false;
+};
 
 /**
  * Base class for connectivity layer to Fluence Network

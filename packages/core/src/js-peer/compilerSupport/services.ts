@@ -3,7 +3,7 @@ import { match } from 'ts-pattern';
 
 import { Particle } from '../Particle.js';
 import { CallParams, CallServiceData, GenericCallServiceHandler, ResultCodes } from '../../interfaces/commonTypes.js';
-import { FluencePeer } from '../FluencePeer.js';
+import { IFluencePeer } from '../../interfaces/index';
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
 import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from './interface.js';
@@ -17,7 +17,7 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
+export const injectRelayService = (def: FunctionCallDef, peer: IFluencePeer) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
@@ -162,10 +162,10 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
     return callParams;
 };
 
-export const registerParticleScopeService = (peer: FluencePeer, particle: Particle, service: ServiceDescription) => {
+export const registerParticleScopeService = (peer: IFluencePeer, particle: Particle, service: ServiceDescription) => {
     peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
 };
 
-export const registerGlobalService = (peer: FluencePeer, service: ServiceDescription) => {
+export const registerGlobalService = (peer: IFluencePeer, service: ServiceDescription) => {
     peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
 };
