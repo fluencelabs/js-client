@@ -10,12 +10,10 @@ const REJECT_MESSAGE = "Couldn't load the peer. Please try this and this or refe
 
 /**
  * Wait until the js client script it loaded and return the default peer from globalThis
- * @returns
  */
-const getDefaultPeer = (): Promise<IFluencePeer> => {
-    // @ts-ignore
+export const getDefaultPeer = (): Promise<IFluencePeer> => {
     return new Promise((resolve, reject) => {
-        let interval: any;
+        let interval: NodeJS.Timer | undefined;
         let hits = 20;
         interval = setInterval(() => {
             if (hits === 0) {

@@ -1,0 +1,11 @@
+service Peer("peer"):
+    -- Get information about the peer
+    identify() -> Info
+
+    -- Get Unix timestamp in milliseconds
+    timestamp_ms() -> u64
+
+func getRelayTime(relayPeerId: PeerId) -> u64:
+    on relayPeerId:
+        ts <- Peer.timestamp_ms()
+    <- ts

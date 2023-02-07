@@ -1,0 +1,29 @@
+{
+    "name": "@tests/smoke_web",
+    "version": "0.1.0",
+    "description": "Smoke test web",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "tsc",
+        "compile-aqua": "aqua -i ../aqua/ -o ./src/_aqua",
+        "serve": "http-server public",
+        "copy-script": "cp ../../client/js-client.web.standalone/dist/js-client.min.js ./public"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@fluencelabs/js-client.api": "workspace:*",
+        "@fluencelabs/fluence-network-environment": "1.0.13"
+    },
+    "devDependencies": {
+        "@fluencelabs/js-peer": "workspace:*",
+        "@fluencelabs/aqua": "0.9.1-374",
+        "http-server": "14.1.1"
+    }
+}
