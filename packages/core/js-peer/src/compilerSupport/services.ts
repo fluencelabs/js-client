@@ -3,10 +3,16 @@ import { match } from 'ts-pattern';
 
 import { Particle } from '../js-peer/Particle.js';
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../interfaces/commonTypes.js';
-import { IFluencePeer, CallParams } from '@fluencelabs/interface';
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
-import { ArrowWithoutCallbacks, FunctionCallConstants, FunctionCallDef, NonArrowType } from '@fluencelabs/interface';
+import {
+    IFluencePeer,
+    CallParams,
+    ArrowWithoutCallbacks,
+    FunctionCallConstants,
+    FunctionCallDef,
+    NonArrowType,
+} from '@fluencelabs/interface';
 
 export interface ServiceDescription {
     serviceId: string;

@@ -5,8 +5,8 @@ import {
     NonArrowType,
     getArgumentTypes,
     isReturnTypeVoid,
+    IFluencePeer,
 } from '@fluencelabs/interface';
-import { IFluencePeer } from '@fluencelabs/interface';
 
 import {
     injectRelayService,

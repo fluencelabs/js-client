@@ -1,5 +1,4 @@
-import { IFluencePeer } from '@fluencelabs/interface';
-import { ServiceDef } from '@fluencelabs/interface';
+import type { IFluencePeer, ServiceDef } from '@fluencelabs/interface';
 import { registerGlobalService, userHandlerService } from './services.js';
 
 export const registerServiceImpl = (

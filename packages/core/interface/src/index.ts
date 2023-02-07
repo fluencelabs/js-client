@@ -1,7 +1,7 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport';
-export * from './compilerSupport';
+import { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
+export * from './compilerSupport.js';
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).

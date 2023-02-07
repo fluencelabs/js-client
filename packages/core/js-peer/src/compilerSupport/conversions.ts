@@ -1,6 +1,6 @@
 import { jsonify } from '../js-peer/utils.js';
 import { match } from 'ts-pattern';
-import { ArrowType, ArrowWithoutCallbacks, NonArrowType } from '@fluencelabs/interface';
+import type { ArrowType, ArrowWithoutCallbacks, NonArrowType } from '@fluencelabs/interface';
 import { CallServiceData } from '../interfaces/commonTypes.js';
 
 /**
@@ -103,6 +103,7 @@ export const ts2aqua = (value: any, type: NonArrowType): any => {
                 return [ts2aqua(value, opt.type)];
             }
         })
+        // @ts-ignore
         .with({ tag: 'scalar' }, { tag: 'bottomType' }, { tag: 'topType' }, () => {
             return value;
         })
