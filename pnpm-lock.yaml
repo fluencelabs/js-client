@@ -6,12 +6,14 @@ importers:
     specifiers:
       '@fluencelabs/aqua': 0.9.1-374
       '@fluencelabs/aqua-lib': 0.6.0
+      '@types/node': 16.11.59
       ts-node: 10.9.1
       typescript: '4.7'
     devDependencies:
       '@fluencelabs/aqua': 0.9.1-374_4kllvqvlnb5b3k2borritadfgq
       '@fluencelabs/aqua-lib': 0.6.0
-      ts-node: 10.9.1_nv75g3i7xuh23du6z7qul3uiqi
+      '@types/node': 16.11.59
+      ts-node: 10.9.1_hjximzan7wcxvjcbhhc47yzr2e
       typescript: 4.7.4
 
   packages/@tests/smoke_web:
@@ -106,7 +108,6 @@ importers:
       '@multiformats/multiaddr': 11.3.0
       '@types/bs58': 4.0.1
       '@types/jest': 29.4.0
-      '@types/node': 16.11.59
       '@types/platform': 1.3.4
       '@types/uuid': 8.3.2
       async: 3.2.4
@@ -167,10 +168,9 @@ importers:
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/jest': 29.4.0
-      '@types/node': 16.11.59
       '@types/platform': 1.3.4
       '@types/uuid': 8.3.2
-      jest: 29.4.1_@types+node@16.11.59
+      jest: 29.4.1
       ts-jest: 29.0.5_knhdxpg4pvwuf6vrybjt5d2q5i
 
 packages:
@@ -4898,7 +4898,7 @@ packages:
       - ts-node
     dev: true
 
-  /jest-cli/29.4.1_@types+node@16.11.59:
+  /jest-cli/29.4.1:
     resolution: {integrity: sha512-jz7GDIhtxQ37M+9dlbv5K+/FVcIo1O/b1sX3cJgzlQUf/3VG25nvuWzlDC4F1FLLzUThJeWLu8I7JF9eWpuURQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     hasBin: true
@@ -4915,7 +4915,7 @@ packages:
       exit: 0.1.2
       graceful-fs: 4.2.10
       import-local: 3.1.0
-      jest-config: 29.4.1_@types+node@16.11.59
+      jest-config: 29.4.1
       jest-util: 29.4.1
       jest-validate: 29.4.1
       prompts: 2.4.2
@@ -5044,7 +5044,7 @@ packages:
       - supports-color
     dev: true
 
-  /jest-config/29.4.1_@types+node@16.11.59:
+  /jest-config/29.4.1:
     resolution: {integrity: sha512-g7p3q4NuXiM4hrS4XFATTkd+2z0Ml2RhFmFPM8c3WyKwVDNszbl4E7cV7WIx1YZeqqCtqbtTtZhGZWJlJqngzg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
@@ -5059,7 +5059,6 @@ packages:
       '@babel/core': 7.20.12
       '@jest/test-sequencer': 29.4.1
       '@jest/types': 29.4.1
-      '@types/node': 16.11.59
       babel-jest: 29.4.1_@babel+core@7.20.12
       chalk: 4.1.2
       ci-info: 3.7.1
@@ -6073,7 +6072,7 @@ packages:
       - ts-node
     dev: true
 
-  /jest/29.4.1_@types+node@16.11.59:
+  /jest/29.4.1:
     resolution: {integrity: sha512-cknimw7gAXPDOmj0QqztlxVtBVCw2lYY9CeIE5N6kD+kET1H4H79HSNISJmijb1HF+qk+G+ploJgiDi5k/fRlg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     hasBin: true
@@ -6086,7 +6085,7 @@ packages:
       '@jest/core': 29.4.1
       '@jest/types': 29.4.1
       import-local: 3.1.0
-      jest-cli: 29.4.1_@types+node@16.11.59
+      jest-cli: 29.4.1
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
@@ -7929,7 +7928,7 @@ packages:
       '@types/jest': 29.4.0
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.4.1_@types+node@16.11.59
+      jest: 29.4.1
       jest-util: 27.5.1
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -8032,7 +8031,7 @@ packages:
       '@babel/core': 7.20.12
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.4.1_@types+node@16.11.59
+      jest: 29.4.1
       jest-util: 29.4.1
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -8042,7 +8041,7 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-node/10.9.1_nv75g3i7xuh23du6z7qul3uiqi:
+  /ts-node/10.9.1_hjximzan7wcxvjcbhhc47yzr2e:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -8061,7 +8060,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 18.11.18
+      '@types/node': 16.11.59
       acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
