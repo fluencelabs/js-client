@@ -29,8 +29,8 @@
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "dependencies": {},
-    "devDependencies": {
-        "@fluencelabs/js-peer": "workspace:*"
-    }
+    "dependencies": {
+        "@fluencelabs/interface": "workspace:*"
+    },
+    "devDependencies": {}
 }

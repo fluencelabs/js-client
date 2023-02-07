@@ -6,8 +6,7 @@
  * Aqua version: 0.7.2-314
  *
  */
-import type { IFluencePeer } from '@fluencelabs/js-peer/dist/interfaces';
-import type { CallParams } from '@fluencelabs/js-peer/dist/interfaces/commonTypes';
+import type { IFluencePeer, CallParams } from '@fluencelabs/interface';
 import { callFunction$$, registerService$$ } from '@fluencelabs/js-client.api/dist/compilerSupport/v4';
 
 // Services

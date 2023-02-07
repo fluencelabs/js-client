@@ -38,6 +38,4 @@ export {
     UnlabeledProductType as UnlabeledProductType$$,
     callFunction as callFunction$$,
     registerService as registerService$$,
-    registerServiceImpl as registerServiceImpl$$,
-    callFunctionImpl as callFunctionImpl$$,
 } from './v3';

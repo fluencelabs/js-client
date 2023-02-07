@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import { IFluencePeer, isFluencePeer } from '@fluencelabs/js-peer/dist/interfaces/index';
-import { FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/js-peer/dist/js-peer/compilerSupport/interface';
-import { registerServiceImpl } from '@fluencelabs/js-peer/dist/js-peer/compilerSupport/registerService';
-import { callFunctionImpl, getArgumentTypes } from '@fluencelabs/js-peer/dist/js-peer/compilerSupport/callFunction';
+import type { IFluencePeer, CallParams, FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interface';
+import { getArgumentTypes } from '@fluencelabs/interface';
+import { isFluencePeer } from '@fluencelabs/interface';
 
 import { getDefaultPeer } from '../index.js';
 
-export type { IFluencePeer } from '@fluencelabs/js-peer/dist/interfaces/index';
-export type { CallParams } from '@fluencelabs/js-peer/dist/interfaces/commonTypes';
+export type { IFluencePeer, CallParams } from '@fluencelabs/interface';
 
 export {
     ArrayType,
@@ -44,9 +42,7 @@ export {
     StructType,
     TopType,
     UnlabeledProductType,
-} from '@fluencelabs/js-peer/dist/js-peer/compilerSupport/interface';
-export { callFunctionImpl } from '@fluencelabs/js-peer/dist/js-peer/compilerSupport/callFunction';
-export { registerServiceImpl } from '@fluencelabs/js-peer/dist/js-peer/compilerSupport/registerService';
+} from '@fluencelabs/interface';
 
 /**
  * Convenience function to support Aqua `func` generation backend
@@ -58,7 +54,12 @@ export { registerServiceImpl } from '@fluencelabs/js-peer/dist/js-peer/compilerS
  */
 export const callFunction = async (rawFnArgs: Array<any>, def: FunctionCallDef, script: string): Promise<unknown> => {
     const { args, peer, config } = await extractFunctionArgs(rawFnArgs, def);
-    return callFunctionImpl(def, script, config || {}, peer, args);
+    return peer.compilerSupport.callFunction({
+        args,
+        def,
+        script,
+        config: config || {},
+    });
 };
 
 /**
@@ -70,8 +71,11 @@ export const callFunction = async (rawFnArgs: Array<any>, def: FunctionCallDef, 
  */
 export const registerService = async (args: any[], def: ServiceDef): Promise<unknown> => {
     const { peer, service, serviceId } = await extractServiceArgs(args, def.defaultServiceId);
-
-    return registerServiceImpl(peer, def, serviceId, service);
+    return peer.compilerSupport.registerService({
+        def,
+        service,
+        serviceId,
+    });
 };
 
 /**

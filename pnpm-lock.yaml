@@ -18,22 +18,24 @@ importers:
     specifiers:
       '@fluencelabs/aqua': 0.9.1-374
       '@fluencelabs/fluence-network-environment': 1.0.13
+      '@fluencelabs/interface': workspace:*
       '@fluencelabs/js-client.api': workspace:*
       '@fluencelabs/js-peer': workspace:*
       http-server: 14.1.1
     dependencies:
       '@fluencelabs/fluence-network-environment': 1.0.13
+      '@fluencelabs/interface': link:../../core/interface
       '@fluencelabs/js-client.api': link:../../client/api
     devDependencies:
       '@fluencelabs/aqua': 0.9.1-374_4kllvqvlnb5b3k2borritadfgq
-      '@fluencelabs/js-peer': link:../../core
+      '@fluencelabs/js-peer': link:../../core/js-peer
       http-server: 14.1.1
 
   packages/client/api:
     specifiers:
-      '@fluencelabs/js-peer': workspace:*
-    devDependencies:
-      '@fluencelabs/js-peer': link:../../core
+      '@fluencelabs/interface': workspace:*
+    dependencies:
+      '@fluencelabs/interface': link:../../core/interface
 
   packages/client/js-client.web.standalone:
     specifiers:
@@ -52,7 +54,7 @@ importers:
       vite-plugin-replace: 0.1.1
       vite-tsconfig-paths: 4.0.3
     dependencies:
-      '@fluencelabs/js-peer': link:../../core
+      '@fluencelabs/js-peer': link:../../core/js-peer
       buffer: 6.0.3
       process: 0.11.10
     devDependencies:
@@ -74,7 +76,15 @@ importers:
     devDependencies:
       '@types/node': 16.11.59
 
-  packages/core:
+  packages/core/interface:
+    specifiers:
+      '@fluencelabs/avm': 0.35.3
+      '@multiformats/multiaddr': 11.3.0
+    devDependencies:
+      '@fluencelabs/avm': 0.35.3
+      '@multiformats/multiaddr': 11.3.0
+
+  packages/core/js-peer:
     specifiers:
       '@chainsafe/libp2p-noise': 11.0.0
       '@fluencelabs/aqua': 0.7.7-362
@@ -82,6 +92,7 @@ importers:
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/fluence-network-environment': 1.0.13
+      '@fluencelabs/interface': workspace:*
       '@fluencelabs/marine-js': 0.3.44
       '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
@@ -120,6 +131,7 @@ importers:
     dependencies:
       '@chainsafe/libp2p-noise': 11.0.0
       '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/interface': link:../interface
       '@fluencelabs/marine-js': 0.3.44
       '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
       '@libp2p/interface-connection': 3.0.8
@@ -545,13 +557,12 @@ packages:
 
   /@chainsafe/is-ip/2.0.1:
     resolution: {integrity: sha512-nqSJ8u2a1Rv9FYbyI8qpDhTYujaKEyLknNrTejLYoSWmdeg+2WB7R6BZqPZYfrJzDxVi3rl6ZQuoaEvpKRZWgQ==}
-    dev: false
 
   /@chainsafe/libp2p-noise/11.0.0:
     resolution: {integrity: sha512-NEl5aIv6muz9OL+dsa3INEU89JX0NViBxOy7NwwG8eNRPUDHo5E3ZTMSHXQpVx1K/ofoNS4ANO9xwezY6ss5GA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
+      '@libp2p/crypto': 1.0.11_uint8arraylist@2.4.3
       '@libp2p/interface-connection-encrypter': 3.0.6
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-metrics': 4.0.5
@@ -2052,7 +2063,7 @@ packages:
     resolution: {integrity: sha512-CRJmqwNQhDC51sQ9lf6EqEY8HuywwymMVffL2kIYI5ts5k+6gvIXzoSxLf3V3o+OxcroXG4KG0uGxxAi5DUXSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
+      '@libp2p/crypto': 1.0.11_uint8arraylist@2.4.3
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-peer-id': 2.0.1
       '@libp2p/peer-id': 2.0.1
@@ -2214,7 +2225,6 @@ packages:
       varint: 6.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@noble/ed25519/1.7.1:
     resolution: {integrity: sha512-Rk4SkJFaXZiznFyC/t77Q0NKS4FL7TLJJsVG2V2oiEq3kJVeTdxysEe/yRWSpnWMe808XRDJ+VFh5pt/FN5plw==}
@@ -3084,7 +3094,6 @@ packages:
     engines: {node: '>=10.16.0'}
     dependencies:
       streamsearch: 1.1.0
-    dev: false
 
   /byte-access/1.0.1:
     resolution: {integrity: sha512-GKYa+lvxnzhgHWj9X+LCsQ4s2/C5uvib573eAOiQKywXMkzFFErY2+yQdzmdE5iWVpmqecsRx3bOtOY4/1eINw==}
@@ -3433,7 +3442,6 @@ packages:
       undici: 5.16.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /domexception/2.0.1:
     resolution: {integrity: sha512-yxJ2mFy/sibVQlu5qHjOkf9J3K6zgmCxgJ94u2EdvDOV09H+32LtRswEcUsmUWN72pVLOEnTSRaIVVzVQgS0dg==}
@@ -6409,7 +6417,7 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@achingbrain/nat-port-mapper': 1.0.7
-      '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
+      '@libp2p/crypto': 1.0.11_uint8arraylist@2.4.3
       '@libp2p/interface-address-manager': 2.0.4
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-connection-encrypter': 3.0.6
@@ -6739,7 +6747,6 @@ packages:
   /multiformats/11.0.1:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dev: false
 
   /multiformats/9.6.5:
     resolution: {integrity: sha512-vMwf/FUO+qAPvl3vlSZEgEVFY/AxeZq5yg761ScF3CZsXgmTi/HGkicUiNN0CI4PW8FiY2P0OLklOcmQjdQJhw==}
@@ -6866,7 +6873,6 @@ packages:
       undici: '*'
     dependencies:
       undici: 5.16.0
-    dev: false
 
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -7704,7 +7710,6 @@ packages:
   /streamsearch/1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
     engines: {node: '>=10.0.0'}
-    dev: false
 
   /string-length/4.0.2:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
@@ -8160,14 +8165,12 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       multiformats: 11.0.1
-    dev: false
 
   /undici/5.16.0:
     resolution: {integrity: sha512-KWBOXNv6VX+oJQhchXieUznEmnJMqgXMbs0xxH2t8q/FUAWSJvOSr/rMaZKnX5RIVq7JDn0JbP4BOnKG2SGXLQ==}
     engines: {node: '>=12.18'}
     dependencies:
       busboy: 1.6.0
-    dev: false
 
   /union/0.5.0:
     resolution: {integrity: sha512-N6uOhuW6zO95P3Mel2I2zMsbsanvvtgn6jVqJv4vbVcz/JN0OkL9suomjQGmWtxJQXOCqUJvquc1sMeNz/IwlA==}

@@ -1,5 +1,4 @@
-import type { IFluencePeer } from '@fluencelabs/js-peer/dist/interfaces/index.js';
-import type { PeerConfig } from '@fluencelabs/js-peer/dist/interfaces/peerConfig';
+import type { IFluencePeer, PeerConfig } from '@fluencelabs/interface';
 
 const getPeerFromGlobalThis = (): IFluencePeer | undefined => {
     // @ts-ignore
