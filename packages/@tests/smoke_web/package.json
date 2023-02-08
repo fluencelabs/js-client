@@ -9,22 +9,16 @@
         "pnpm": ">=3"
     },
     "scripts": {
-        "build": "tsc",
-        "compile-aqua": "aqua -i ../aqua/ -o ./src/_aqua",
+        "build": "pnpm copy-script",
         "serve": "http-server public",
         "copy-script": "cp ../../client/js-client.web.standalone/dist/js-client.min.js ./public"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "dependencies": {
-        "@fluencelabs/js-client.api": "workspace:*",
-        "@fluencelabs/interface": "workspace:*",
-        "@fluencelabs/fluence-network-environment": "1.0.13"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@fluencelabs/js-peer": "workspace:*",
-        "@fluencelabs/aqua": "0.9.1-374",
         "http-server": "14.1.1"
     }
 }

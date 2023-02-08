@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export { IFluencePeer } from './v3';
-export { CallParams as CallParams$$ } from './v3';
+export { IFluencePeer } from './v3.js';
+export { CallParams as CallParams$$ } from './v3.js';
 export {
     ArrayType as ArrayType$$,
     ArrowType as ArrowType$$,
@@ -38,4 +38,4 @@ export {
     UnlabeledProductType as UnlabeledProductType$$,
     callFunction as callFunction$$,
     registerService as registerService$$,
-} from './v3';
+} from './v3.js';

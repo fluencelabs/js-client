@@ -1,5 +1,8 @@
 import type { IFluencePeer, PeerConfig } from '@fluencelabs/interface';
 
+export { IFluencePeer, PeerConfig, CallParams } from '@fluencelabs/interface';
+export { registerService$$, callFunction$$ } from './compilerSupport/v4.js';
+
 const getPeerFromGlobalThis = (): IFluencePeer | undefined => {
     // @ts-ignore
     return globalThis.defaultPeer;

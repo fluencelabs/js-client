@@ -372,18 +372,19 @@ export class FluencePeer implements IFluencePeer {
 
         registerDefaultServices(this);
 
-        this._classServices = {
-            sig: new Sig(this._keyPair),
-            srv: new Srv(this),
-        };
-        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
-        registerSig(this, 'sig', this._classServices.sig);
-        registerSig(this, peerId, this._classServices.sig);
+        // TODO: doesn't work in web, fix!
+        // this._classServices = {
+        //     sig: new Sig(this._keyPair),
+        //     srv: new Srv(this),
+        // };
+        // this._classServices.sig.securityGuard = defaultSigGuard(peerId);
+        // registerSig(this, 'sig', this._classServices.sig);
+        // registerSig(this, peerId, this._classServices.sig);
 
-        registerSrv(this, 'single_module_srv', this._classServices.srv);
-        registerNodeUtils(this, 'node_utils', new NodeUtils(this));
+        // registerSrv(this, 'single_module_srv', this._classServices.srv);
+        // registerNodeUtils(this, 'node_utils', new NodeUtils(this));
 
-        this._startParticleProcessing();
+        // this._startParticleProcessing();
     }
 
     /**
