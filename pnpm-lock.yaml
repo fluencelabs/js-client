@@ -59,9 +59,11 @@ importers:
 
   packages/@tests/smoke_web:
     specifiers:
+      '@fluencelabs/js-client.web.standalone': workspace:*
       '@fluencelabs/js-peer': workspace:*
       http-server: 14.1.1
     devDependencies:
+      '@fluencelabs/js-client.web.standalone': link:../../client/js-client.web.standalone
       '@fluencelabs/js-peer': link:../../core/js-peer
       http-server: 14.1.1
 

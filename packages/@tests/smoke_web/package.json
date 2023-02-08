@@ -19,6 +19,7 @@
     "dependencies": {},
     "devDependencies": {
         "@fluencelabs/js-peer": "workspace:*",
+        "@fluencelabs/js-client.web.standalone": "workspace:*",
         "http-server": "14.1.1"
     }
 }
