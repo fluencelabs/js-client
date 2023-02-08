@@ -1,26 +1,24 @@
 {
-    "name": "@fluencelabs/js-client.node",
+    "name": "@test/smoke",
     "version": "0.1.0",
-    "description": "TypeScript implementation of Fluence Peer",
+    "description": "Smoke test",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
         "node": ">=10",
         "pnpm": ">=3"
     },
+    "type": "module",
     "scripts": {
-        "build": "tsc"
+        "build": "tsc",
+        "_test": "node --loader ts-node/esm ./src/index.ts"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-peer": "workspace:*"
+        "@fluencelabs/js-client.api": "workspace:*",
+        "@fluencelabs/js-client.node": "workspace:*"
     },
-    "devDependencies": {
-        "@types/node": "16.11.59",
-        "@types/jest": "28.1.0",
-        "jest": "28.1.0",
-        "ts-jest": "28.0.2",
-    }
+    "devDependencies": {}
 }

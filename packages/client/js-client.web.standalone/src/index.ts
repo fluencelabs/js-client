@@ -1,8 +1,8 @@
-import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer';
-import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm';
+import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer.js';
+import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker';
-import { checkConnection, marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils';
-import { InlinedWorkerLoader, InlinedWasmLoader } from '@fluencelabs/js-peer/dist/marine/deps-loader/common';
+import { checkConnection, marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils.js';
+import { InlinedWorkerLoader, InlinedWasmLoader } from '@fluencelabs/js-peer/dist/marine/deps-loader/common.js';
 
 export const makeDefaultPeer = () => {
     const workerLoader = new InlinedWorkerLoader('___worker___');

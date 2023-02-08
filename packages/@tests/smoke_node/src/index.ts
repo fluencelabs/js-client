@@ -1,23 +1,24 @@
-import "@fluencelabs/js-client.node";
-import { Fluence } from "@fluencelabs/fluence";
+import '@fluencelabs/js-client.node';
+import { Fluence } from '@fluencelabs/js-client.api';
+import { getRelayTime } from './_aqua/smoke_test.js';
 
-const peer = Fluence.getPeer();
-
-const main = async () => {
-    await peer.start({});
-    const peerId = peer.getStatus().peerId;
-    if (!peerId) {
-        throw new Error("Peer id is null");
-    }
-    console.log("peer id is: ", peerId);
-    await peer.stop();
+const relay = {
+    multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+    peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
 };
 
-main()
-    .then(() => console.log("done"))
-    .catch((err) => console.error(err))
-    .finally(() => {
-        if (peer) {
-            peer.stop();
-        }
+export const main = async () => {
+    console.log('starting fluence...');
+    await Fluence.start({
+        connectTo: relay,
     });
+    console.log('started fluence');
+
+    console.log('getting relay time...');
+    const res = await getRelayTime(relay.peerId);
+    console.log('got relay time, ', res);
+
+    console.log('stopping fluence...');
+    await Fluence.stop();
+    console.log('stopped fluence...');
+};
