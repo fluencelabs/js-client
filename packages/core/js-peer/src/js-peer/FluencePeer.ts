@@ -384,7 +384,7 @@ export class FluencePeer implements IFluencePeer {
         // registerSrv(this, 'single_module_srv', this._classServices.srv);
         // registerNodeUtils(this, 'node_utils', new NodeUtils(this));
 
-        // this._startParticleProcessing();
+        this._startParticleProcessing();
     }
 
     /**
