@@ -11,9 +11,9 @@ import { replaceCodePlugin } from 'vite-plugin-replace';
 const require = createRequire(import.meta.url);
 
 const getWorkerScriptPathOrDie = () => {
-    const scriptPath = path.resolve('../../core/dist/marine/worker-script/index.js');
+    const scriptPath = path.resolve('../../core/js-peer/dist/marine/worker-script/index.js');
     if (!fs.existsSync(scriptPath)) {
-        console.error();
+        console.error('Worker script not found, looking at: ' + scriptPath);
         process.exit(1);
     }
 
