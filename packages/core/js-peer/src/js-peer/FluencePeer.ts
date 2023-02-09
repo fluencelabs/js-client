@@ -112,7 +112,10 @@ export class FluencePeer implements IFluenceClient {
         };
     }
 
-    getKeyPair(): Uint8Array {
+    /**
+     * Return peers SK
+     */
+    getSk(): Uint8Array {
         if (!this._keyPair) {
             throw new Error("Can't get key pair: peer is not initialized");
         }

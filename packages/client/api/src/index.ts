@@ -9,7 +9,7 @@ const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
 };
 
 // TODO: DXJ-271
-const REJECT_MESSAGE = "You probably forgot to add script tag. Read about it here: ";
+const REJECT_MESSAGE = 'You probably forgot to add script tag. Read about it here: ';
 
 /**
  * Wait until the js client script it loaded and return the default peer from globalThis
@@ -56,15 +56,6 @@ export const Fluence = {
         const peer = await getDefaultPeer();
         return peer.stop();
     },
-
-    /**
-     * Get the default peer's status
-     * @returns Default peer's status
-     */
-    // getStatus: async () => {
-    //     const peer = await getDefaultPeer();
-    //     return peer.getStatus();
-    // },
 
     /**
      * Get the default peer instance

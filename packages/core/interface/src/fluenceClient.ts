@@ -160,6 +160,7 @@ export interface IFluenceClient {
     start(config?: ClientOptions): Promise<void>;
     stop(): Promise<void>;
     getStatus(): PeerStatus;
+    getSk(): Uint8Array;
 
     // TODO: come up with a working interface for
     // - particle creation

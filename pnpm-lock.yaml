@@ -22,8 +22,10 @@ importers:
     specifiers:
       '@fluencelabs/aqua': 0.9.4
       '@fluencelabs/js-client.api': workspace:*
+      base64-js: 1.5.1
     dependencies:
       '@fluencelabs/js-client.api': link:../../client/api
+      base64-js: 1.5.1
     devDependencies:
       '@fluencelabs/aqua': 0.9.4_sxyfz5frysr7cnkewysdljfvwu
 
