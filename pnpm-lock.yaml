@@ -21,9 +21,11 @@ importers:
   packages/@tests/aqua:
     specifiers:
       '@fluencelabs/aqua': 0.9.4
+      '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/js-client.api': workspace:*
       base64-js: 1.5.1
     dependencies:
+      '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/js-client.api': link:../../client/api
       base64-js: 1.5.1
     devDependencies:
@@ -2181,7 +2183,6 @@ packages:
 
   /@fluencelabs/fluence-network-environment/1.0.13:
     resolution: {integrity: sha512-2pci3T0sUHE08jwEs1r/vHKVT4XUh/A3j/QJ0eIhddsxyIjEksjdn05X7DF6STD14CF8GgBVOJEPgav8qaUMpA==}
-    dev: true
 
   /@fluencelabs/fluence/0.26.3-snapshot-4_4ybkoodcah37urerzfcwvnjsoe:
     resolution: {integrity: sha512-M/iQhnViXfMaATj3gFPQXrZe9zSVcyN9F9A9hfJBUn0VLamhmbfeIoSZeheK8VGBxYbRGcrtoqLPTy1vJQVgVw==}

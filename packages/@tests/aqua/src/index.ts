@@ -1,11 +1,14 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
-import { getRelayTime } from './_aqua/smoke_test.js';
+import { krasnodar } from '@fluencelabs/fluence-network-environment';
+import { createResource } from './_aqua/smoke_test.js';
 
-const relay = {
-    multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-    peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-};
+// const relay = {
+//     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+//     peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+// };
+
+const relay = krasnodar[4];
 
 const rndSk = () => {
     if (crypto.getRandomValues) {
@@ -32,9 +35,13 @@ export const main = async () => {
     console.log('my peer id: ', p.getStatus().peerId);
     console.log('my sk id: ', fromByteArray(p.getSk()));
 
-    console.log('getting relay time...');
-    const res = await getRelayTime(relay.peerId);
-    console.log('got relay time, ', res);
+    console.log('running some aqua...');
+    const [res, errors] = await createResource('my_resource');
+    if (res === null) {
+        console.log('aqua failed, errors', errors);
+    } else {
+        console.log('aqua finished, result', res);
+    }
 
     console.log('stopping fluence...');
     await Fluence.stop();
