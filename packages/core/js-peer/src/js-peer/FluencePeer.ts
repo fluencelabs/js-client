@@ -24,7 +24,7 @@ import {
     GenericCallServiceHandler,
     ResultCodes,
 } from '../interfaces/commonTypes.js';
-import {
+import type {
     PeerIdB58,
     IFluenceClient,
     PeerStatus,
@@ -33,7 +33,7 @@ import {
     ClientOptions,
     keyPairOptions,
     RelayOptions,
-} from '@fluencelabs/interface';
+} from '@fluencelabs/interface/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
 import { dataToString, jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';

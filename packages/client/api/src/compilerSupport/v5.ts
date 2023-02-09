@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export { IFluenceClient } from './v3.js';
-export { CallParams as CallParams$$ } from './v3.js';
+export { IFluenceClient } from './implementation.js';
+export { CallParams as CallParams$$ } from './implementation.js';
 export {
     ArrayType as ArrayType$$,
     ArrowType as ArrowType$$,
@@ -38,4 +38,4 @@ export {
     UnlabeledProductType as UnlabeledProductType$$,
     callFunction as callFunction$$,
     registerService as registerService$$,
-} from './v3.js';
+} from './implementation.js';

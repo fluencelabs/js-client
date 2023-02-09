@@ -1,14 +1,15 @@
-import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface';
+import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface/fluenceClient';
 
-export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface';
-export { registerService$$, callFunction$$ } from './compilerSupport/v4.js';
+export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface/fluenceClient';
+export { registerService$$, callFunction$$ } from './compilerSupport/v5.js';
 
 const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
     // @ts-ignore
     return globalThis.defaultPeer;
 };
 
-const REJECT_MESSAGE = "Couldn't load the peer. Please try this and this or refer to the docs bla bla";
+// TODO: DXJ-271
+const REJECT_MESSAGE = "You probably forgot to add script tag. Read about it here: ";
 
 /**
  * Wait until the js client script it loaded and return the default peer from globalThis
@@ -16,7 +17,7 @@ const REJECT_MESSAGE = "Couldn't load the peer. Please try this and this or refe
 export const getDefaultPeer = (): Promise<IFluenceClient> => {
     return new Promise((resolve, reject) => {
         let interval: NodeJS.Timer | undefined;
-        let hits = 20;
+        let hits = 50;
         interval = setInterval(() => {
             if (hits === 0) {
                 clearInterval(interval);
