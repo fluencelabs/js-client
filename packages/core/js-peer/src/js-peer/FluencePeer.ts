@@ -324,7 +324,6 @@ export class FluencePeer implements IFluenceClient {
 
         registerDefaultServices(this);
 
-        // TODO: doesn't work in web, fix!
         this._classServices = {
             sig: new Sig(this._keyPair),
             srv: new Srv(this),
