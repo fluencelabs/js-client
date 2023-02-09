@@ -7,12 +7,14 @@ importers:
       '@fluencelabs/aqua': 0.9.1-374
       '@fluencelabs/aqua-lib': 0.6.0
       '@types/node': 16.11.59
+      http-server: 14.1.1
       ts-node: 10.9.1
       typescript: '4.7'
     devDependencies:
       '@fluencelabs/aqua': 0.9.1-374_jaxubti5gf66xc76fsqhxmuwn4
       '@fluencelabs/aqua-lib': 0.6.0
       '@types/node': 16.11.59
+      http-server: 14.1.1
       ts-node: 10.9.1_hjximzan7wcxvjcbhhc47yzr2e
       typescript: 4.7.4
 
@@ -52,10 +54,10 @@ importers:
   packages/@tests/smoke_node:
     specifiers:
       '@fluencelabs/js-client.api': workspace:*
-      '@fluencelabs/js-client.node': workspace:*
+      '@fluencelabs/js-client.web.standalone': workspace:*
     dependencies:
       '@fluencelabs/js-client.api': link:../../client/api
-      '@fluencelabs/js-client.node': link:../../client/js-client.node
+      '@fluencelabs/js-client.web.standalone': link:../../client/js-client.web.standalone
 
   packages/@tests/smoke_web:
     specifiers:
@@ -75,13 +77,9 @@ importers:
 
   packages/client/js-client.node:
     specifiers:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/js-peer': workspace:*
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/js-client.web.standalone': workspace:*
     dependencies:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/js-peer': link:../../core/js-peer
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/js-client.web.standalone': link:../js-client.web.standalone
 
   packages/client/js-client.web.standalone:
     specifiers:
@@ -2115,6 +2113,7 @@ packages:
 
   /@fluencelabs/avm/0.35.3:
     resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
+    dev: true
 
   /@fluencelabs/connection/0.2.0_node-fetch@3.3.0:
     resolution: {integrity: sha512-0jTRI1h/j/fR2VaLIlcIm6VoP3j2jL2lI6/OaYaOnwGXmI6CbZWHNeq9eaKWycT9B1vpN9wHu0Vi7vH3pFplhg==}
@@ -2276,6 +2275,7 @@ packages:
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
+    dev: true
 
   /@fluencelabs/marine-js/0.3.44:
     resolution: {integrity: sha512-DbI/x0bRv44oqfMZJlIkVhzZByXhmnOoxpco/cglk5aAvslOSDdRssf3bZADqqUQggGdtISOZcYPM+a4tirYLQ==}

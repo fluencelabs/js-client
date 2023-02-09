@@ -1,4 +1,4 @@
-import '@fluencelabs/js-client.node';
+import '@fluencelabs/js-client.web.standalone/dist/js-client.min.js';
 import { Fluence } from '@fluencelabs/js-client.api';
 import { getRelayTime } from './_aqua/smoke_test.js';
 
