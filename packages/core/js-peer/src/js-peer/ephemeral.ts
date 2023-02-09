@@ -140,9 +140,7 @@ export class EphemeralNetwork {
             if (kp.getPeerId() !== x.peerId) {
                 throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
             }
-            await peer.init({
-                KeyPair: kp,
-            });
+            await peer.init({}, kp);
 
             let handler: ParticleHandler | null = null;
             const connectionCtor = class extends FluenceConnection {

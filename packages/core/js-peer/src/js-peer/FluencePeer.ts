@@ -26,16 +26,16 @@ import {
 } from '../interfaces/commonTypes.js';
 import {
     PeerIdB58,
-    CallParams,
-    PeerConfig,
-    ConnectionOption,
-    IFluencePeer,
+    IFluenceClient,
     PeerStatus,
     CallFunctionArgs,
     RegisterServiceArgs,
+    ClientOptions,
+    keyPairOptions,
+    RelayOptions,
 } from '@fluencelabs/interface';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
-import { throwIfNotSupported, dataToString, jsonify, isString, ServiceError } from './utils.js';
+import { dataToString, jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import log from 'loglevel';
 import { builtInServices } from './builtins/common.js';
@@ -54,63 +54,18 @@ import { registerServiceImpl } from '../compilerSupport/registerService.js';
 
 const DEFAULT_TTL = 7000;
 
-export interface PeerConfig2 extends PeerConfig {
-    /**
-     * Specify the KeyPair to be used to identify the Fluence Peer.
-     * Will be generated randomly if not specified
-     */
-    KeyPair?: KeyPair;
-
-    /**
-     * This option allows to specify the location of various dependencies needed for marine-js.
-     * Each key specifies the location of the corresponding dependency.
-     * If Fluence peer is started inside browser the location is treated as the path to the file relative to origin.
-     * IF Fluence peer is started in nodejs the location is treated as the full path to file on the file system.
-     */
-    marineJS?: {
-        /**
-         * Configures path to the marine-js worker script.
-         */
-        workerScriptPath: string;
-
-        /**
-         * Configures the path to marine-js control wasm module
-         */
-        marineWasmPath: string;
-
-        /**
-         * Configures the path to AVM wasm module
-         */
-        avmWasmPath: string;
-    };
-
-    /**
-     * Enables\disabled various debugging features
-     */
-    debug?: {
-        /**
-         * If set to true, newly initiated particle ids will be printed to console.
-         * Useful to see what particle id is responsible for aqua function
-         */
-        printParticleId?: boolean;
-
-        /**
-         * Log level for marine services. By default logging is turned off.
-         */
-        marineLogLevel?: LogLevel;
-    };
-}
+export type PeerConfig = ClientOptions;
 
 /**
  * This class implements the Fluence protocol for javascript-based environments.
  * It provides all the necessary features to communicate with Fluence network
  */
-export class FluencePeer implements IFluencePeer {
+export class FluencePeer implements IFluenceClient {
     constructor(private marine: IMarine, private avmRunner: IAvmRunner) {}
 
     /**
-     * Internal contract to cast unknown objects to IFluencePeer.
-     * If an unknown object has this property then we assume it is in fact a Peer and it implements IFluencePeer
+     * Internal contract to cast unknown objects to IFluenceClient.
+     * If an unknown object has this property then we assume it is in fact a Peer and it implements IFluenceClient
      * Check against this variable MUST NOT be coupled with any `FluencePeer` because otherwise it might get bundled
      * brining a lot of unnecessary stuff alongside with it
      */
@@ -162,14 +117,11 @@ export class FluencePeer implements IFluencePeer {
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
      */
-    async start(config: PeerConfig2 = {}): Promise<void> {
-        throwIfNotSupported();
-        const keyPair = config.KeyPair ?? (await KeyPair.randomEd25519());
-        const newConfig = { ...config, KeyPair: keyPair };
+    async start(config: PeerConfig = {}): Promise<void> {
+        const keyPair = await makeKeyPair(config.keyPair);
+        await this.init(config, keyPair);
 
-        await this.init(newConfig);
-
-        const conn = await configToConnection(newConfig.KeyPair, config?.connectTo, config?.dialTimeoutMs);
+        const conn = await configToConnection(keyPair, config?.relay, config?.connectionOptions?.dialTimeoutMs);
 
         if (conn !== null) {
             await this.connect(conn);
@@ -352,8 +304,8 @@ export class FluencePeer implements IFluencePeer {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    async init(config: PeerConfig2 & Required<Pick<PeerConfig2, 'KeyPair'>>) {
-        this._keyPair = config.KeyPair;
+    async init(config: Omit<PeerConfig, 'keyPair'>, keyPair: KeyPair) {
+        this._keyPair = keyPair;
 
         const peerId = this._keyPair.getPeerId();
 
@@ -373,16 +325,16 @@ export class FluencePeer implements IFluencePeer {
         registerDefaultServices(this);
 
         // TODO: doesn't work in web, fix!
-        // this._classServices = {
-        //     sig: new Sig(this._keyPair),
-        //     srv: new Srv(this),
-        // };
-        // this._classServices.sig.securityGuard = defaultSigGuard(peerId);
-        // registerSig(this, 'sig', this._classServices.sig);
-        // registerSig(this, peerId, this._classServices.sig);
+        this._classServices = {
+            sig: new Sig(this._keyPair),
+            srv: new Srv(this),
+        };
+        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
+        registerSig(this, 'sig', this._classServices.sig);
+        registerSig(this, peerId, this._classServices.sig);
 
-        // registerSrv(this, 'single_module_srv', this._classServices.srv);
-        // registerNodeUtils(this, 'node_utils', new NodeUtils(this));
+        registerSrv(this, 'single_module_srv', this._classServices.srv);
+        registerNodeUtils(this, 'node_utils', new NodeUtils(this));
 
         this._startParticleProcessing();
     }
@@ -708,7 +660,7 @@ export class FluencePeer implements IFluencePeer {
 
 async function configToConnection(
     keyPair: KeyPair,
-    connection?: ConnectionOption,
+    connection?: RelayOptions,
     dialTimeoutMs?: number,
 ): Promise<FluenceConnection | null> {
     if (!connection) {
@@ -759,4 +711,8 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
         }),
         filter((x: ParticleQueueItem) => !x.particle.hasExpired()),
     );
+}
+
+async function makeKeyPair(opts?: keyPairOptions) {
+    return await KeyPair.randomEd25519();
 }

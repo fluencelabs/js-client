@@ -1,9 +1,9 @@
-import type { IFluencePeer, PeerConfig } from '@fluencelabs/interface';
+import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface';
 
-export { IFluencePeer, PeerConfig, CallParams } from '@fluencelabs/interface';
+export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface';
 export { registerService$$, callFunction$$ } from './compilerSupport/v4.js';
 
-const getPeerFromGlobalThis = (): IFluencePeer | undefined => {
+const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
     // @ts-ignore
     return globalThis.defaultPeer;
 };
@@ -13,7 +13,7 @@ const REJECT_MESSAGE = "Couldn't load the peer. Please try this and this or refe
 /**
  * Wait until the js client script it loaded and return the default peer from globalThis
  */
-export const getDefaultPeer = (): Promise<IFluencePeer> => {
+export const getDefaultPeer = (): Promise<IFluenceClient> => {
     return new Promise((resolve, reject) => {
         let interval: NodeJS.Timer | undefined;
         let hits = 20;
@@ -40,11 +40,11 @@ export const Fluence = {
     /**
      * Initializes the default peer: starts the Aqua VM, initializes the default call service handlers
      * and (optionally) connect to the Fluence network
-     * @param config - object specifying peer configuration
+     * @param options - object specifying peer configuration
      */
-    start: async (config?: PeerConfig): Promise<void> => {
+    start: async (options?: ClientOptions): Promise<void> => {
         const peer = await getDefaultPeer();
-        return peer.start(config);
+        return peer.start(options);
     },
 
     /**
@@ -69,7 +69,7 @@ export const Fluence = {
      * Get the default peer instance
      * @returns the default peer instance
      */
-    getPeer: async (): Promise<IFluencePeer> => {
+    getPeer: async (): Promise<IFluenceClient> => {
         return getDefaultPeer();
     },
 };

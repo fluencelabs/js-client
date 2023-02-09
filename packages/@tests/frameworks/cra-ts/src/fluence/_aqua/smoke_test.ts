@@ -6,7 +6,7 @@
  * Aqua version: 0.7.2-314
  *
  */
-import type { IFluencePeer, CallParams } from '@fluencelabs/js-client.api';
+import type { IFluenceClient, CallParams } from '@fluencelabs/js-client.api';
 import { callFunction$$, registerService$$ } from '@fluencelabs/js-client.api';
 
 // Services
@@ -16,8 +16,8 @@ export interface PeerDef {
 }
 export function registerPeer(service: PeerDef): void;
 export function registerPeer(serviceId: string, service: PeerDef): void;
-export function registerPeer(peer: IFluencePeer, service: PeerDef): void;
-export function registerPeer(peer: IFluencePeer, serviceId: string, service: PeerDef): void;
+export function registerPeer(peer: IFluenceClient, service: PeerDef): void;
+export function registerPeer(peer: IFluenceClient, serviceId: string, service: PeerDef): void;
 
 export function registerPeer(...args: any) {
     registerService$$(args, {
@@ -49,7 +49,7 @@ export function registerPeer(...args: any) {
 
 export function getRelayTime(relayPeerId: string, config?: { ttl?: number }): Promise<number>;
 
-export function getRelayTime(peer: IFluencePeer, relayPeerId: string, config?: { ttl?: number }): Promise<number>;
+export function getRelayTime(peer: IFluenceClient, relayPeerId: string, config?: { ttl?: number }): Promise<number>;
 
 export function getRelayTime(...args: any) {
     let script = `

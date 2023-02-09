@@ -6,7 +6,7 @@ const smokeTest = async () => {
     // arrange
     const peer = mkTestPeer();
     await peer.start({
-        connectTo: nodes[0],
+        relay: nodes[0],
     });
 
     const result = await new Promise<string[]>((resolve, reject) => {

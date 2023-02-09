@@ -6,7 +6,7 @@ import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../inte
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
 import {
-    IFluencePeer,
+    IFluenceClient,
     CallParams,
     ArrowWithoutCallbacks,
     FunctionCallConstants,
@@ -23,7 +23,7 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: IFluencePeer) => {
+export const injectRelayService = (def: FunctionCallDef, peer: IFluenceClient) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
@@ -168,10 +168,10 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
     return callParams;
 };
 
-export const registerParticleScopeService = (peer: IFluencePeer, particle: Particle, service: ServiceDescription) => {
+export const registerParticleScopeService = (peer: IFluenceClient, particle: Particle, service: ServiceDescription) => {
     peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
 };
 
-export const registerGlobalService = (peer: IFluencePeer, service: ServiceDescription) => {
+export const registerGlobalService = (peer: IFluenceClient, service: ServiceDescription) => {
     peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
 };

@@ -9,7 +9,7 @@ const relay = {
 export const main = async () => {
     console.log('starting fluence...');
     await Fluence.start({
-        connectTo: relay,
+        relay: relay,
     });
     console.log('started fluence');
 

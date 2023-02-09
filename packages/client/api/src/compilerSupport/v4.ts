@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export { IFluencePeer } from './v3.js';
+export { IFluenceClient } from './v3.js';
 export { CallParams as CallParams$$ } from './v3.js';
 export {
     ArrayType as ArrayType$$,

@@ -5,7 +5,7 @@ import {
     NonArrowType,
     getArgumentTypes,
     isReturnTypeVoid,
-    IFluencePeer,
+    IFluenceClient,
 } from '@fluencelabs/interface';
 
 import {
@@ -33,7 +33,7 @@ export function callFunctionImpl(
     def: FunctionCallDef,
     script: string,
     config: FnConfig,
-    peer: IFluencePeer,
+    peer: IFluenceClient,
     args: { [key: string]: any },
 ): Promise<unknown> {
     const argumentTypes = getArgumentTypes(def);

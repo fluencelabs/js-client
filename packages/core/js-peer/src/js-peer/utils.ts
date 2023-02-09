@@ -15,7 +15,6 @@
  */
 
 import log from 'loglevel';
-import * as platform from 'platform';
 
 import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
@@ -148,20 +147,6 @@ export function dataToString(data: Uint8Array) {
 
 export function jsonify(obj: unknown) {
     return JSON.stringify(obj, null, 4);
-}
-
-export function throwIfNotSupported() {
-    if (platform.name === 'Node.js' && platform.version) {
-        const version = platform.version.split('.').map(Number);
-        const major = version[0];
-        if (major < 16) {
-            throw new Error(
-                'FluenceJS requires node.js version >= "16.x"; Detected ' +
-                    platform.description +
-                    ' Please update node.js to version 16 or higher.\nYou can use https://nvm.sh utility to update node.js version: "nvm install 17 && nvm use 17 && nvm alias default 17"',
-            );
-        }
-    }
 }
 
 export const isString = (x: unknown): x is string => {

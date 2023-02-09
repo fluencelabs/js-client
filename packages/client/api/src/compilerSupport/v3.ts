@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import type { IFluencePeer, CallParams, FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interface';
+import type { IFluenceClient, CallParams, FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interface';
 import { getArgumentTypes } from '@fluencelabs/interface';
 import { isFluencePeer } from '@fluencelabs/interface';
 
 import { getDefaultPeer } from '../index.js';
 
-export type { IFluencePeer, CallParams } from '@fluencelabs/interface';
+export type { IFluenceClient, CallParams } from '@fluencelabs/interface';
 
 export {
     ArrayType,
@@ -92,7 +92,7 @@ const extractFunctionArgs = async (
     args: any[],
     def: FunctionCallDef,
 ): Promise<{
-    peer: IFluencePeer;
+    peer: IFluenceClient;
     config?: FnConfig;
     args: { [key: string]: any };
 }> => {
@@ -100,7 +100,7 @@ const extractFunctionArgs = async (
     const argumentNames = Object.keys(argumentTypes);
     const numberOfExpectedArgs = argumentNames.length;
 
-    let peer: IFluencePeer;
+    let peer: IFluenceClient;
     let structuredArgs: any[];
     let config: FnConfig;
     if (isFluencePeer(args[0])) {
@@ -141,8 +141,8 @@ const extractFunctionArgs = async (
 const extractServiceArgs = async (
     args: any[],
     defaultServiceId?: string,
-): Promise<{ peer: IFluencePeer; serviceId: string; service: any }> => {
-    let peer: IFluencePeer;
+): Promise<{ peer: IFluenceClient; serviceId: string; service: any }> => {
+    let peer: IFluenceClient;
     let serviceId: any;
     let service: any;
     if (isFluencePeer(args[0])) {

@@ -1,4 +1,5 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
+import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
 export * from './compilerSupport.js';
@@ -52,12 +53,14 @@ type Node = {
     multiaddr: string;
 };
 
-export type ConnectionOption = string | MultiaddrInput | Node;
+export type RelayOptions = string | MultiaddrInput | Node;
+
+export type keyPairOptions = { type: 'random' } | { type: 'b58'; sk: 'string' };
 
 /**
- * Configuration used when initiating Fluence Peer
+ * Configuration used when initiating Fluence Client
  */
-export interface PeerConfig {
+export interface ClientOptions {
     /**
      * Node in Fluence network to connect to.
      * Can be in the form of:
@@ -67,38 +70,34 @@ export interface PeerConfig {
      * - Implementation of FluenceConnection class, @see FluenceConnection
      * If not specified the will work locally and would not be able to send or receive particles.
      */
-    connectTo?: ConnectionOption;
-
-    /**
-     * @deprecated. AVM run through marine-js infrastructure.
-     * @see debug.marineLogLevel option to configure logging level of AVM
-     */
-    // avmLogLevel?: LogLevel | 'off';
+    relay?: RelayOptions;
 
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
-    //KeyPair?: KeyPair;
+    keyPair?: keyPairOptions;
 
-    /**
-     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-     * The options allows to specify the timeout for that message in milliseconds.
-     * If not specified the default timeout will be used
-     */
-    checkConnectionTimeoutMs?: number;
+    connectionOptions?: {
+        /**
+         * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+         * The options allows to specify the timeout for that message in milliseconds.
+         * If not specified the default timeout will be used
+         */
+        checkConnectionTimeoutMs?: number;
 
-    /**
-     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-     * If set to true, the ping-like message will be skipped
-     * Default: false
-     */
-    skipCheckConnection?: boolean;
+        /**
+         * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+         * If set to true, the ping-like message will be skipped
+         * Default: false
+         */
+        skipCheckConnection?: boolean;
 
-    /**
-     * The dialing timeout in milliseconds
-     */
-    dialTimeoutMs?: number;
+        /**
+         * The dialing timeout in milliseconds
+         */
+        dialTimeoutMs?: number;
+    };
 
     /**
      * Sets the default TTL for all particles originating from the peer with no TTL specified.
@@ -108,43 +107,19 @@ export interface PeerConfig {
     defaultTtlMs?: number;
 
     /**
-     * This option allows to specify the location of various dependencies needed for marine-js.
-     * Each key specifies the location of the corresponding dependency.
-     * If Fluence peer is started inside browser the location is treated as the path to the file relative to origin.
-     * IF Fluence peer is started in nodejs the location is treated as the full path to file on the file system.
-     */
-    // marineJS?: {
-    //     /**
-    //      * Configures path to the marine-js worker script.
-    //      */
-    //     workerScriptPath: string;
-
-    //     /**
-    //      * Configures the path to marine-js control wasm module
-    //      */
-    //     marineWasmPath: string;
-
-    //     /**
-    //      * Configures the path to AVM wasm module
-    //      */
-    //     avmWasmPath: string;
-    // };
-
-    /**
      * Enables\disabled various debugging features
      */
-    // debug?: {
-    //     /**
-    //      * If set to true, newly initiated particle ids will be printed to console.
-    //      * Useful to see what particle id is responsible for aqua function
-    //      */
-    //     printParticleId?: boolean;
-
-    //     /**
-    //      * Log level for marine services. By default logging is turned off.
-    //      */
-    //     marineLogLevel?: LogLevel;
-    // };
+    debug?: {
+        /**
+         * If set to true, newly initiated particle ids will be printed to console.
+         * Useful to see what particle id is responsible for aqua function
+         */
+        printParticleId?: boolean;
+        /**
+         * Log level for marine services. By default logging is turned off.
+         */
+        marineLogLevel?: LogLevel;
+    };
 }
 
 /**
@@ -183,8 +158,8 @@ export type PeerStatus =
           relayPeerId: null;
       };
 
-export interface IFluencePeer {
-    start(config?: PeerConfig): Promise<void>;
+export interface IFluenceClient {
+    start(config?: ClientOptions): Promise<void>;
     stop(): Promise<void>;
     getStatus(): PeerStatus;
 
@@ -212,15 +187,15 @@ export interface RegisterServiceArgs {
     service: any;
 }
 
-export const asFluencePeer = (fluencePeerCandidate: unknown): IFluencePeer => {
+export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
     if (isFluencePeer(fluencePeerCandidate)) {
         return fluencePeerCandidate;
     }
 
-    throw new Error('');
+    throw new Error(`Argument ${fluencePeerCandidate} is not a Fluence Peer`);
 };
 
-export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluencePeer => {
+export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluenceClient => {
     if (fluencePeerCandidate && (fluencePeerCandidate as any).__isFluenceAwesome) {
         return true;
     }

@@ -24,6 +24,7 @@
     "dependencies": {},
     "devDependencies": {
         "@multiformats/multiaddr": "11.3.0",
-        "@fluencelabs/avm": "0.35.3"
+        "@fluencelabs/avm": "0.35.3",
+        "@fluencelabs/marine-js": "0.3.44"
     }
 }
