@@ -18,10 +18,19 @@ importers:
       ts-node: 10.9.1_hjximzan7wcxvjcbhhc47yzr2e
       typescript: 4.7.4
 
+  packages/@tests/aqua:
+    specifiers:
+      '@fluencelabs/aqua': 0.9.4
+      '@fluencelabs/js-client.api': workspace:*
+    dependencies:
+      '@fluencelabs/js-client.api': link:../../client/api
+    devDependencies:
+      '@fluencelabs/aqua': 0.9.4_sxyfz5frysr7cnkewysdljfvwu
+
   packages/@tests/frameworks/cra-ts:
     specifiers:
       '@fluencelabs/js-client.api': workspace:*
-      '@fluencelabs/js-client.web.standalone': workspace:*
+      '@test/aqua_for_test': workspace:*
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0
       '@testing-library/user-event': 13.5.0
@@ -36,6 +45,7 @@ importers:
       web-vitals: 2.1.4
     dependencies:
       '@fluencelabs/js-client.api': link:../../../client/api
+      '@test/aqua_for_test': link:../../aqua
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/user-event': 13.5.0_yxlyej73nftwmh2fiao7paxmlm
@@ -48,16 +58,16 @@ importers:
       react-scripts: 5.0.1_g66udqdz4otldw5gqm6cqau37y
       typescript: 4.9.5
       web-vitals: 2.1.4
-    devDependencies:
-      '@fluencelabs/js-client.web.standalone': link:../../../client/js-client.web.standalone
 
   packages/@tests/smoke_node:
     specifiers:
       '@fluencelabs/js-client.api': workspace:*
       '@fluencelabs/js-client.node': workspace:*
+      '@test/aqua_for_test': workspace:*
     dependencies:
       '@fluencelabs/js-client.api': link:../../client/api
       '@fluencelabs/js-client.node': link:../../client/js-client.node
+      '@test/aqua_for_test': link:../aqua
 
   packages/@tests/smoke_web:
     specifiers:
@@ -2109,6 +2119,29 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@fluencelabs/aqua/0.9.4_sxyfz5frysr7cnkewysdljfvwu:
+    resolution: {integrity: sha512-DAy2XT4E4oR4Imgsc9ns8jd14StwxktHcZe3MTaZT1PDo3KdbrXda5MBGWFiuqhZcB/Xr4EruCvH/LscrsKlQg==}
+    hasBin: true
+    dependencies:
+      '@fluencelabs/aqua-ipfs': 0.5.8
+      '@fluencelabs/aqua-lib': 0.6.0
+      '@fluencelabs/fluence': 0.28.0_sxyfz5frysr7cnkewysdljfvwu
+      '@fluencelabs/fluence-network-environment': 1.0.13
+      ipfs-http-client: 50.1.2_node-fetch@3.3.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - bufferutil
+      - encoding
+      - esbuild
+      - jest
+      - node-fetch
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: true
+
   /@fluencelabs/avm/0.31.10:
     resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
 
@@ -2222,6 +2255,43 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@fluencelabs/fluence/0.28.0_sxyfz5frysr7cnkewysdljfvwu:
+    resolution: {integrity: sha512-SXb2vjTj8m/nw4jEILV0tu9VIFprGo8mNb2nOB5btxdsOI8GzQZkpGzTLrSd/+UagIo2GdxAu0GhBP8dxZXaqg==}
+    engines: {node: '>=10', pnpm: '>=3'}
+    hasBin: true
+    dependencies:
+      '@fluencelabs/avm': 0.35.3
+      '@fluencelabs/connection': 0.2.0_node-fetch@3.3.0
+      '@fluencelabs/interfaces': 0.1.0
+      '@fluencelabs/keypair': 0.2.0
+      '@fluencelabs/marine-js': 0.3.37_cnngzrja2umb46xxazlucyx2qu
+      async: 3.2.4
+      base64-js: 1.5.1
+      browser-or-node: 2.0.0
+      bs58: 5.0.0
+      buffer: 6.0.3
+      cids: 1.1.9
+      loglevel: 1.8.1
+      multiformats: 9.9.0
+      peer-id: 0.16.0
+      platform: 1.3.6
+      rxjs: 7.5.5
+      ts-pattern: 3.3.3
+      uuid: 8.3.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - bufferutil
+      - encoding
+      - esbuild
+      - jest
+      - node-fetch
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: true
+
   /@fluencelabs/interfaces/0.1.0:
     resolution: {integrity: sha512-1nBgrTXa0vwloMMw3iJgbkqK23O6y1hM9YAEOwkUcmvvHQG/OPSYtzAenW7djGhNlA4Lk8QIV4bKNn54WIzjdA==}
     engines: {node: '>=10', pnpm: '>=3'}
@@ -2245,6 +2315,25 @@ packages:
       buffer: 6.0.3
       threads: 1.7.0
       ts-jest: 27.1.5_ddylxr3wxksmlyjpihqkkowegi
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@types/jest'
+      - babel-jest
+      - esbuild
+      - jest
+      - supports-color
+      - typescript
+    dev: true
+
+  /@fluencelabs/marine-js/0.3.37_cnngzrja2umb46xxazlucyx2qu:
+    resolution: {integrity: sha512-/Kpu3S+aDOfrOpKBAK1VeWSHKCoD36/dxtHEWHbj3Lsro0GB9zkoaZPHlFFL7rorCB+hyjAJqLDuBGI8f3l/qg==}
+    dependencies:
+      '@wasmer/wasi': 0.12.0
+      '@wasmer/wasmfs': 0.12.0
+      browser-or-node: 2.0.0
+      buffer: 6.0.3
+      threads: 1.7.0
+      ts-jest: 27.1.5_cnngzrja2umb46xxazlucyx2qu
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/jest'
@@ -2398,7 +2487,6 @@ packages:
       - supports-color
       - ts-node
       - utf-8-validate
-    dev: false
 
   /@jest/core/27.5.1_ts-node@10.9.1:
     resolution: {integrity: sha512-AK6/UTrvQD0Cd24NSqmIA6rKsu0tKIxfiCducZvqxYdmMisOYAsdItspT+fQDQYARPf8XgjAFZi0ogW2agH5nQ==}
@@ -8994,7 +9082,6 @@ packages:
       - supports-color
       - ts-node
       - utf-8-validate
-    dev: false
 
   /jest-cli/27.5.1_ts-node@10.9.1:
     resolution: {integrity: sha512-Hc6HOOwYq4/74/c62dEE3r5elx8wjYqxY0r0G/nFrLDPMFRu6RA/u8qINOIkvhxG7mMQ5EJsOGfRpI8L6eFUVw==}
@@ -9120,7 +9207,6 @@ packages:
       - canvas
       - supports-color
       - utf-8-validate
-    dev: false
 
   /jest-config/27.5.1_ts-node@10.9.1:
     resolution: {integrity: sha512-5sAsjm6tGdsVbW9ahcChPAFCk4IlkQUknH5AvKjuLTSlcO/wCZKyFdn7Rg0EkC+OGgWODEy2hDpWB1PgzH0JNA==}
@@ -10239,7 +10325,6 @@ packages:
       - supports-color
       - ts-node
       - utf-8-validate
-    dev: false
 
   /jest/27.5.1_ts-node@10.9.1:
     resolution: {integrity: sha512-Yn0mADZB89zTtjkPJEXwrac3LHudkQMR+Paqa8uxJHCBr9agxztUifWCyiYrjhMPBoUVBjyny0I7XH6ozDr7QQ==}
@@ -14211,6 +14296,39 @@ packages:
   /tryer/1.0.1:
     resolution: {integrity: sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==}
     dev: false
+
+  /ts-jest/27.1.5_cnngzrja2umb46xxazlucyx2qu:
+    resolution: {integrity: sha512-Xv6jBQPoBEvBq/5i2TeSG9tt/nqkbpcurrEG1b+2yfBrcJelOZF9Ml6dmyMh7bcW9JyFbRYpR5rxROSlBLTZHA==}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    hasBin: true
+    peerDependencies:
+      '@babel/core': '>=7.0.0-beta.0 <8'
+      '@types/jest': ^27.0.0
+      babel-jest: '>=27.0.0 <28'
+      esbuild: '*'
+      jest: ^27.0.0
+      typescript: '>=3.8 <5.0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@types/jest':
+        optional: true
+      babel-jest:
+        optional: true
+      esbuild:
+        optional: true
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 27.5.1
+      jest-util: 27.5.1
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.3.8
+      typescript: 4.9.5
+      yargs-parser: 20.2.9
+    dev: true
 
   /ts-jest/27.1.5_ddylxr3wxksmlyjpihqkkowegi:
     resolution: {integrity: sha512-Xv6jBQPoBEvBq/5i2TeSG9tt/nqkbpcurrEG1b+2yfBrcJelOZF9Ml6dmyMh7bcW9JyFbRYpR5rxROSlBLTZHA==}

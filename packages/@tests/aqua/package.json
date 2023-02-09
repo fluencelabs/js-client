@@ -1,7 +1,7 @@
 {
-    "name": "@test/smoke",
+    "name": "@test/aqua_for_test",
     "version": "0.1.0",
-    "description": "Smoke test",
+    "description": "Shared aqua code for tests",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
     "engines": {
@@ -10,16 +10,18 @@
     },
     "type": "module",
     "scripts": {
+        "prebuild": "compile-aqua",
         "build": "tsc",
-        "_test": "node --loader ts-node/esm ./src/index.ts"
+        "compile-aqua": ""
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-client.api": "workspace:*",
-        "@fluencelabs/js-client.node": "workspace:*",
-        "@test/aqua_for_test": "workspace:*"
+        "@fluencelabs/js-client.api": "workspace:*"
+
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "@fluencelabs/aqua": "0.9.4"
+    }
 }

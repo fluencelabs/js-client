@@ -1,5 +1,5 @@
 import { Fluence } from '@fluencelabs/js-client.api';
-import { getRelayTime } from './_aqua/smoke_test';
+import { getRelayTime } from './_aqua/smoke_test.js';
 
 const relay = {
     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
@@ -20,4 +20,10 @@ export const main = async () => {
     console.log('stopping fluence...');
     await Fluence.stop();
     console.log('stopped fluence...');
+};
+
+export const runMain = () => {
+    main()
+        .then(() => console.log('done!'))
+        .catch((err) => console.error('error: ', err));
 };
