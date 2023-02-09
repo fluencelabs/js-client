@@ -54,7 +54,12 @@ type Node = {
 
 export type RelayOptions = string | MultiaddrInput | Node;
 
-export type keyPairOptions = { type: 'random' } | { type: 'b58'; sk: 'string' };
+export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
+
+export type keyPairOptions =
+    | { type: 'Ed25519'; input: 'random' }
+    | { type: 'Ed25519'; input: 'sk'; format: 'base58' }
+    | { type: 'Ed25519'; input: 'sk'; format: 'base64' };
 
 /**
  * Configuration used when initiating Fluence Client

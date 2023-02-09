@@ -17,7 +17,7 @@ import 'buffer';
 
 import { RelayConnection } from '../connection/index.js';
 import { FluenceConnection, IAvmRunner, IMarine } from '../interfaces/index.js';
-import { KeyPair } from '../keypair/index.js';
+import { fromOpts, KeyPair } from '../keypair/index.js';
 import {
     CallServiceData,
     CallServiceResult,
@@ -713,5 +713,6 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
 }
 
 async function makeKeyPair(opts?: keyPairOptions) {
-    return await KeyPair.randomEd25519();
+    opts = opts || { type: 'Ed25519', input: 'random' };
+    return fromOpts(opts);
 }

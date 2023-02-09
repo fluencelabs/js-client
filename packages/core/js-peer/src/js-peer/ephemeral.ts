@@ -1,6 +1,6 @@
 import { PeerIdB58 } from '@fluencelabs/interface';
 import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
-import { keyPairFromBase64Sk } from '../keypair/index.js';
+import { fromBase64Sk } from '../keypair/index.js';
 import { FluencePeer } from './FluencePeer.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
 import { avmModuleLoader, controlModuleLoader } from './utilsForNode';
@@ -136,7 +136,7 @@ export class EphemeralNetwork {
             const sendParticle = async (nextPeerIds: string[], particle: string): Promise<void> => {
                 this._send(peer.getStatus().peerId!, nextPeerIds, particle);
             };
-            const kp = await keyPairFromBase64Sk(x.sk);
+            const kp = await fromBase64Sk(x.sk);
             if (kp.getPeerId() !== x.peerId) {
                 throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
             }

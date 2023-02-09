@@ -34,7 +34,6 @@ describe('KeyPair tests', () => {
 
     it('create keypair from ed25519 private key', async function () {
         // arrange
-        // TODO: remove decoder which relies on "z"
         const rustSK = 'jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH';
         const sk = decode(rustSK);
 

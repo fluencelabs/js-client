@@ -19,6 +19,11 @@ import { generateKeyPairFromSeed, generateKeyPair } from '@libp2p/crypto/keys';
 import { createFromPrivKey } from '@libp2p/peer-id-factory';
 import type { PrivateKey } from '@libp2p/interface-keys';
 import { toUint8Array } from 'js-base64';
+import * as bs58 from 'bs58';
+import { keyPairOptions } from '@fluencelabs/interface';
+
+// @ts-ignore
+const { decode } = bs58.default;
 
 export class KeyPair {
     /**
@@ -71,7 +76,32 @@ export class KeyPair {
     }
 }
 
-export const keyPairFromBase64Sk = (sk: string): Promise<KeyPair> => {
-    const arr = toUint8Array(sk);
-    return KeyPair.fromEd25519SK(arr);
+export const fromBase64Sk = (sk: string): Promise<KeyPair> => {
+    const skArr = toUint8Array(sk);
+    return KeyPair.fromEd25519SK(skArr);
+};
+
+export const fromBase58Sk = (sk: string): Promise<KeyPair> => {
+    const skArr = decode(sk);
+    return KeyPair.fromEd25519SK(skArr);
+};
+
+export const fromOpts = (opts: keyPairOptions): Promise<KeyPair> => {
+    if (opts.input === 'random') {
+        return KeyPair.randomEd25519();
+    }
+
+    let fn: typeof fromBase58Sk;
+    switch (opts.format) {
+        case 'base58':
+            fn = fromBase58Sk;
+            break;
+        case 'base64':
+            fn = fromBase64Sk;
+            break;
+        default:
+            throw new Error('Unknown SK format: ${opts.fo}');
+    }
+
+    return fn(opts.input);
 };
