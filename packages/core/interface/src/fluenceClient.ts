@@ -56,10 +56,10 @@ export type RelayOptions = string | MultiaddrInput | Node;
 
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
 
-export type keyPairOptions =
-    | { type: 'Ed25519'; input: 'random' }
-    | { type: 'Ed25519'; input: 'sk'; format: 'base58' }
-    | { type: 'Ed25519'; input: 'sk'; format: 'base64' };
+export type KeyPairOptions = {
+    type: 'Ed25519';
+    source: 'random' | Uint8Array;
+};
 
 /**
  * Configuration used when initiating Fluence Client
@@ -80,7 +80,7 @@ export interface ClientOptions {
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
-    keyPair?: keyPairOptions;
+    keyPair?: KeyPairOptions;
 
     connectionOptions?: {
         /**

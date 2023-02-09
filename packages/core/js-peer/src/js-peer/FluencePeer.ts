@@ -31,7 +31,7 @@ import type {
     CallFunctionArgs,
     RegisterServiceArgs,
     ClientOptions,
-    keyPairOptions,
+    KeyPairOptions,
     RelayOptions,
 } from '@fluencelabs/interface/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
@@ -110,6 +110,14 @@ export class FluencePeer implements IFluenceClient {
             isConnected: true,
             relayPeerId: this.connection.relayPeerId,
         };
+    }
+
+    getKeyPair(): Uint8Array {
+        if (!this._keyPair) {
+            throw new Error("Can't get key pair: peer is not initialized");
+        }
+
+        return this._keyPair.toEd25519PrivateKey();
     }
 
     /**
@@ -712,7 +720,7 @@ function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) 
     );
 }
 
-async function makeKeyPair(opts?: keyPairOptions) {
-    opts = opts || { type: 'Ed25519', input: 'random' };
+async function makeKeyPair(opts?: KeyPairOptions) {
+    opts = opts || { type: 'Ed25519', source: 'random' };
     return fromOpts(opts);
 }

@@ -20,7 +20,7 @@ import { createFromPrivKey } from '@libp2p/peer-id-factory';
 import type { PrivateKey } from '@libp2p/interface-keys';
 import { toUint8Array } from 'js-base64';
 import * as bs58 from 'bs58';
-import { keyPairOptions } from '@fluencelabs/interface';
+import { KeyPairOptions } from '@fluencelabs/interface';
 
 // @ts-ignore
 const { decode } = bs58.default;
@@ -86,22 +86,10 @@ export const fromBase58Sk = (sk: string): Promise<KeyPair> => {
     return KeyPair.fromEd25519SK(skArr);
 };
 
-export const fromOpts = (opts: keyPairOptions): Promise<KeyPair> => {
-    if (opts.input === 'random') {
+export const fromOpts = (opts: KeyPairOptions): Promise<KeyPair> => {
+    if (opts.source === 'random') {
         return KeyPair.randomEd25519();
     }
 
-    let fn: typeof fromBase58Sk;
-    switch (opts.format) {
-        case 'base58':
-            fn = fromBase58Sk;
-            break;
-        case 'base64':
-            fn = fromBase64Sk;
-            break;
-        default:
-            throw new Error('Unknown SK format: ${opts.fo}');
-    }
-
-    return fn(opts.input);
+    return KeyPair.fromEd25519SK(opts.source);
 };
