@@ -1,4 +1,5 @@
 {
+    "_1": "This should actually be named @fluencelabs/js-client.api. Naming it fluence-js is needed for backward compat w/ aqua compiler",
     "name": "@fluencelabs/fluence-js",
     "version": "0.60.0",
     "description": "JS Client API",
@@ -9,6 +10,7 @@
         "pnpm": ">=3"
     },
     "type": "module",
+    "_2": "dist/internal/ export is needed for backward compat w/ aqua compiler",
     "exports": {
         ".": {
             "import": "./dist/index.js",

@@ -2,6 +2,7 @@ import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface/fluen
 
 export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface/fluenceClient';
 
+// TODO: hack needed to kinda have backward compat with compiler api
 export type FluencePeer = IFluenceClient;
 
 const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
