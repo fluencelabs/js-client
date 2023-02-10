@@ -28,19 +28,6 @@ Build all packages
 pnpm -r build
 ```
 
-### Repository structure
-
-| Folder                            | Package                               | Description                                   |
-| --------------------------------- | ------------------------------------- | --------------------------------------------- |
-| packages/core/js-peer             | @fluencelabs/js-peer                  | TypeScript implementation of the Fluence Peer |
-| packages/core/interfaces          | @fluencelabs/interfacess              | Common interfaces used in Fluence Peer        |
-| packages/core/connection          | @fluencelabs/connection               | Connectivity layer used in Fluence Peer       |
-| packages/core/keypair             | @fluencelabs/keypair                  | Key Pair implementation                       |
-| packages/marine/background-runner | @fluencelabs/marine.background-runner | MarineJS background runner                    |
-| packages/marine/deps-loader.node  | @fluencelabs/marine.deps-loader.node  | MarineJS deps loader for nodejs               |
-| packages/marine/deps-loader.web   | @fluencelabs/marine.deps-loader.web   | MarineJS deps loader for web                  |
-| packages/marine/worker-script     | @fluencelabs/marine.worker-script     | MarineJS background worker script             |
-
 ### Running tests
 
 Tests are split into unit and integration categories. By default integration tests require a locally running Fluence node with 4310 port open for ws connections. The dependency can be started with docker

@@ -157,9 +157,24 @@ export type PeerStatus =
       };
 
 export interface IFluenceClient {
+    /**
+     * Get the peer's status
+     */
     start(config?: ClientOptions): Promise<void>;
+
+    /**
+     * Un-initializes the peer: stops all the underlying workflows, stops the Aqua VM and disconnects from the Fluence network
+     */
     stop(): Promise<void>;
+
+    /**
+     * Get the peer's status
+     */
     getStatus(): PeerStatus;
+
+    /**
+     * Return peers SK
+     */
     getSk(): Uint8Array;
 
     // TODO: come up with a working interface for
@@ -168,6 +183,7 @@ export interface IFluenceClient {
     // - service registration
     internals: any;
 
+    // TODO: extract this out of Client interface
     compilerSupport: {
         callFunction: (args: CallFunctionArgs) => Promise<unknown>;
         registerService: (args: RegisterServiceArgs) => void;

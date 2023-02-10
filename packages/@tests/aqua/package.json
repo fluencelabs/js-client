@@ -10,9 +10,8 @@
     },
     "type": "module",
     "scripts": {
-        "prebuild": "compile-aqua",
         "build": "tsc",
-        "compile-aqua": ""
+        "compile-aqua": "aqua -i ./_aqua -o ./src/_aqua"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
