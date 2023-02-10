@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { PeerIdB58 } from '@fluencelabs/interface';
+import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import type { SecurityTetraplet } from '@fluencelabs/avm';
 
 export enum ResultCodes {

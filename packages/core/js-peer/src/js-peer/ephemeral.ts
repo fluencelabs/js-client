@@ -1,4 +1,4 @@
-import { PeerIdB58 } from '@fluencelabs/interface';
+import { PeerIdB58 } from '@fluencelabs/interfaces';
 import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
 import { fromBase64Sk } from '../keypair/index.js';
 import { FluencePeer } from './FluencePeer.js';

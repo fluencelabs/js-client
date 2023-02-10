@@ -87,9 +87,9 @@ importers:
 
   packages/client/api:
     specifiers:
-      '@fluencelabs/interface': workspace:*
+      '@fluencelabs/interfaces': workspace:*
     dependencies:
-      '@fluencelabs/interface': link:../../core/interface
+      '@fluencelabs/interfaces': link:../../core/interfaces
 
   packages/client/js-client.node:
     specifiers:
@@ -145,7 +145,7 @@ importers:
     devDependencies:
       '@types/node': 16.11.59
 
-  packages/core/interface:
+  packages/core/interfaces:
     specifiers:
       '@fluencelabs/avm': 0.35.3
       '@fluencelabs/marine-js': 0.3.44
@@ -163,7 +163,7 @@ importers:
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.31.10
       '@fluencelabs/fluence-network-environment': 1.0.13
-      '@fluencelabs/interface': workspace:*
+      '@fluencelabs/interfaces': workspace:*
       '@fluencelabs/marine-js': 0.3.44
       '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
@@ -198,7 +198,7 @@ importers:
     dependencies:
       '@chainsafe/libp2p-noise': 11.0.0
       '@fluencelabs/avm': 0.31.10
-      '@fluencelabs/interface': link:../interface
+      '@fluencelabs/interfaces': link:../interfaces
       '@fluencelabs/marine-js': 0.3.44
       '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
       '@libp2p/interface-connection': 3.0.8

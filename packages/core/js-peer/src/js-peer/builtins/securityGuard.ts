@@ -1,5 +1,5 @@
 import { SecurityTetraplet } from '@fluencelabs/avm';
-import { CallParams, PeerIdB58 } from '@fluencelabs/interface';
+import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
 
 type ArgName = string | null;
 

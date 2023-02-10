@@ -1,4 +1,4 @@
-import { CallParams, PeerIdB58 } from '@fluencelabs/interface';
+import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
 import { KeyPair } from '../../keypair/index.js';
 import { SigDef } from '../_aqua/services.js';
 import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard.js';

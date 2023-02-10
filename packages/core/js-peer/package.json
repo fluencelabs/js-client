@@ -21,7 +21,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/interface": "workspace:*",
+        "@fluencelabs/interfaces": "workspace:*",
         "@fluencelabs/avm": "0.31.10",
         "@fluencelabs/marine-js": "0.3.44",
         "multiformats": "11.0.1",

@@ -1,4 +1,4 @@
-import type { IFluenceClient, ServiceDef } from '@fluencelabs/interface';
+import type { IFluenceClient, ServiceDef } from '@fluencelabs/interfaces';
 import { registerGlobalService, userHandlerService } from './services.js';
 
 export const registerServiceImpl = (

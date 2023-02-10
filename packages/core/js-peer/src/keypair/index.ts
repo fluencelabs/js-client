@@ -20,7 +20,7 @@ import { createFromPrivKey } from '@libp2p/peer-id-factory';
 import type { PrivateKey } from '@libp2p/interface-keys';
 import { toUint8Array } from 'js-base64';
 import * as bs58 from 'bs58';
-import { KeyPairOptions } from '@fluencelabs/interface';
+import { KeyPairOptions } from '@fluencelabs/interfaces';
 
 // @ts-ignore
 const { decode } = bs58.default;

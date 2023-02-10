@@ -33,7 +33,7 @@ import type {
     ClientOptions,
     KeyPairOptions,
     RelayOptions,
-} from '@fluencelabs/interface/dist/fluenceClient';
+} from '@fluencelabs/interfaces/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
 import { dataToString, jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';

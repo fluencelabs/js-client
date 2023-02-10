@@ -12,7 +12,7 @@ import {
     FunctionCallConstants,
     FunctionCallDef,
     NonArrowType,
-} from '@fluencelabs/interface';
+} from '@fluencelabs/interfaces';
 
 export interface ServiceDescription {
     serviceId: string;

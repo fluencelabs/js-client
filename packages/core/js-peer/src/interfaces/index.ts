@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { PeerIdB58 } from '@fluencelabs/interface';
+import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
 import type { WorkerImplementation } from 'threads/dist/types/master';

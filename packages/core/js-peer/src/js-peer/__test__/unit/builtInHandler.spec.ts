@@ -1,4 +1,4 @@
-import { CallParams } from '@fluencelabs/interface';
+import { CallParams } from '@fluencelabs/interfaces';
 import { toUint8Array } from 'js-base64';
 import { CallServiceData } from '../../../interfaces/commonTypes.js';
 import { builtInServices } from '../../builtins/common.js';

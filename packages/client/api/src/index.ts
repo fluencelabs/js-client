@@ -1,6 +1,6 @@
-import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface/fluenceClient';
+import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces/fluenceClient';
 
-export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface/fluenceClient';
+export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces/fluenceClient';
 
 // TODO: hack needed to kinda have backward compat with compiler api
 export type FluencePeer = IFluenceClient;

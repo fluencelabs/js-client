@@ -33,7 +33,7 @@ pnpm -r build
 | Folder                            | Package                               | Description                                   |
 | --------------------------------- | ------------------------------------- | --------------------------------------------- |
 | packages/core/js-peer             | @fluencelabs/js-peer                  | TypeScript implementation of the Fluence Peer |
-| packages/core/interfaces          | @fluencelabs/interfaces               | Common interfaces used in Fluence Peer        |
+| packages/core/interfaces          | @fluencelabs/interfacess              | Common interfaces used in Fluence Peer        |
 | packages/core/connection          | @fluencelabs/connection               | Connectivity layer used in Fluence Peer       |
 | packages/core/keypair             | @fluencelabs/keypair                  | Key Pair implementation                       |
 | packages/marine/background-runner | @fluencelabs/marine.background-runner | MarineJS background runner                    |

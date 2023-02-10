@@ -36,7 +36,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/interface": "workspace:*"
+        "@fluencelabs/interfaces": "workspace:*"
     },
     "devDependencies": {}
 }

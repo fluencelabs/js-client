@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PeerIdB58 } from '@fluencelabs/interface';
+import { PeerIdB58 } from '@fluencelabs/interfaces';
 import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
 import { pipe } from 'it-pipe';
 import { encode, decode } from 'it-length-prefixed';

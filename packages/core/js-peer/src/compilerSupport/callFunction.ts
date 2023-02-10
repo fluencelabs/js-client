@@ -6,7 +6,7 @@ import {
     getArgumentTypes,
     isReturnTypeVoid,
     IFluenceClient,
-} from '@fluencelabs/interface';
+} from '@fluencelabs/interfaces';
 
 import {
     injectRelayService,

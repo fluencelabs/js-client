@@ -5,7 +5,7 @@ import { FluencePeer, PeerConfig } from '../FluencePeer.js';
 import { Particle } from '../Particle.js';
 import { MakeServiceCall } from '../utils.js';
 import { avmModuleLoader, controlModuleLoader } from '../utilsForNode.js';
-import { ServiceDef } from '@fluencelabs/interface';
+import { ServiceDef } from '@fluencelabs/interfaces';
 import { callFunctionImpl } from '../../compilerSupport/callFunction.js';
 
 import { marineLogFunction } from '../utils.js';
