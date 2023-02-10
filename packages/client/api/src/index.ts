@@ -2,6 +2,8 @@ import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface/fluen
 
 export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface/fluenceClient';
 
+export type FluencePeer = IFluenceClient;
+
 const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
     // @ts-ignore
     return globalThis.defaultPeer;

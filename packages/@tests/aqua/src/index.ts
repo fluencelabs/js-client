@@ -1,7 +1,7 @@
 import { fromByteArray } from 'base64-js';
-import { Fluence } from '@fluencelabs/js-client.api';
+import { Fluence } from '@fluencelabs/fluence';
 import { krasnodar } from '@fluencelabs/fluence-network-environment';
-import { createResource } from './_aqua/smoke_test.js';
+import { smokeTest } from './_aqua/smoke_test.js';
 
 // const relay = {
 //     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
@@ -36,7 +36,7 @@ export const main = async () => {
     console.log('my sk id: ', fromByteArray(p.getSk()));
 
     console.log('running some aqua...');
-    const [res, errors] = await createResource('my_resource');
+    const [res, errors] = await smokeTest('my_resource');
     if (res === null) {
         console.log('aqua failed, errors', errors);
     } else {

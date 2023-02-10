@@ -1,10 +1,5 @@
-alias PeerId: string
+import "@fluencelabs/registry/resources-api.aqua"
 
-service Peer("peer"):
-    -- Get Unix timestamp in milliseconds
-    timestamp_ms() -> u64
-
-func getRelayTime(relayPeerId: PeerId) -> u64:
-    on relayPeerId:
-        ts <- Peer.timestamp_ms()
-    <- ts
+func smokeTest(label: string) -> ?string, *string:
+    res, errors <- createResource(label)
+    <- res, errors

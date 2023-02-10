@@ -21,19 +21,21 @@ importers:
   packages/@tests/aqua:
     specifiers:
       '@fluencelabs/aqua': 0.9.4
+      '@fluencelabs/fluence': workspace:*
       '@fluencelabs/fluence-network-environment': 1.0.13
-      '@fluencelabs/js-client.api': workspace:*
+      '@fluencelabs/registry': 0.7.0
       base64-js: 1.5.1
     dependencies:
+      '@fluencelabs/fluence': link:../../client/api
       '@fluencelabs/fluence-network-environment': 1.0.13
-      '@fluencelabs/js-client.api': link:../../client/api
       base64-js: 1.5.1
     devDependencies:
       '@fluencelabs/aqua': 0.9.4_sxyfz5frysr7cnkewysdljfvwu
+      '@fluencelabs/registry': 0.7.0
 
   packages/@tests/frameworks/cra-ts:
     specifiers:
-      '@fluencelabs/js-client.api': workspace:*
+      '@fluencelabs/fluence': workspace:*
       '@test/aqua_for_test': workspace:*
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0
@@ -48,7 +50,7 @@ importers:
       typescript: 4.9.5
       web-vitals: 2.1.4
     dependencies:
-      '@fluencelabs/js-client.api': link:../../../client/api
+      '@fluencelabs/fluence': link:../../../client/api
       '@test/aqua_for_test': link:../../aqua
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
@@ -65,11 +67,11 @@ importers:
 
   packages/@tests/smoke_node:
     specifiers:
-      '@fluencelabs/js-client.api': workspace:*
+      '@fluencelabs/fluence': workspace:*
       '@fluencelabs/js-client.node': workspace:*
       '@test/aqua_for_test': workspace:*
     dependencies:
-      '@fluencelabs/js-client.api': link:../../client/api
+      '@fluencelabs/fluence': link:../../client/api
       '@fluencelabs/js-client.node': link:../../client/js-client.node
       '@test/aqua_for_test': link:../aqua
 
@@ -2378,6 +2380,19 @@ packages:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
       default-import: 1.1.5
+
+  /@fluencelabs/registry/0.7.0:
+    resolution: {integrity: sha512-9yL/CFqGgw6RvPSJZGYM7dCEVQUXrC+cHFAcNWLAcFkA3RaB4znqFYFQRFeo5VUvv1mda9l1BEdv1Q4uO17/hw==}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.5.2
+      '@fluencelabs/trust-graph': 3.1.2
+    dev: true
+
+  /@fluencelabs/trust-graph/3.1.2:
+    resolution: {integrity: sha512-HpyHtiomh09wv6/83z+bhbkqVngIUdqNGEXRTIPg4sArVPMZ9UCXBrkQsHDRqdMUx0lBAcgB3IjlbdhkwHGaXA==}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.5.2
+    dev: true
 
   /@humanwhocodes/config-array/0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}

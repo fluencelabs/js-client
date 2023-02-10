@@ -1,6 +1,6 @@
 {
-    "name": "@fluencelabs/js-client.api",
-    "version": "0.1.0",
+    "name": "@fluencelabs/fluence-js",
+    "version": "0.60.0",
     "description": "JS Client API",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -19,6 +19,10 @@
             "types": "./dist/compilerSupport/v5.d.ts"
         },
         "./dist/compilerSupport/v5": {
+            "import": "./dist/compilerSupport/v5.js",
+            "types": "./dist/compilerSupport/v5.d.ts"
+        },
+        "./dist/internal/compilerSupport/v4": {
             "import": "./dist/compilerSupport/v5.js",
             "types": "./dist/compilerSupport/v5.d.ts"
         }

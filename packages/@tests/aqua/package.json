@@ -18,11 +18,12 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-client.api": "workspace:*",
+        "@fluencelabs/fluence": "workspace:*",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "base64-js": "1.5.1"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.9.4"
+        "@fluencelabs/aqua": "0.9.4",
+        "@fluencelabs/registry": "0.7.0"
     }
 }
