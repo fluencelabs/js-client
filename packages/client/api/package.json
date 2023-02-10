@@ -14,21 +14,13 @@
             "import": "./dist/index.js",
             "types": "./dist/index.d.ts"
         },
-        "./compilerSupport/v3": {
-            "import": "./dist/compilerSupport/v3.js",
-            "types": "./dist/compilerSupport/v3.d.ts"
+        "./compilerSupport/v5": {
+            "import": "./dist/compilerSupport/v5.js",
+            "types": "./dist/compilerSupport/v5.d.ts"
         },
-        "./compilerSupport/v4": {
-            "import": "./dist/compilerSupport/v4.js",
-            "types": "./dist/compilerSupport/v4.d.ts"
-        },
-        "./dist/compilerSupport/v3": {
-            "import": "./dist/compilerSupport/v3.js",
-            "types": "./dist/compilerSupport/v3.d.ts"
-        },
-        "./dist/compilerSupport/v4": {
-            "import": "./dist/compilerSupport/v4.js",
-            "types": "./dist/compilerSupport/v4.d.ts"
+        "./dist/compilerSupport/v5": {
+            "import": "./dist/compilerSupport/v5.js",
+            "types": "./dist/compilerSupport/v5.d.ts"
         }
     },
     "scripts": {

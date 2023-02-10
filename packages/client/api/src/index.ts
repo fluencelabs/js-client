@@ -1,7 +1,6 @@
 import type { IFluenceClient, ClientOptions } from '@fluencelabs/interface/fluenceClient';
 
 export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interface/fluenceClient';
-export { registerService$$, callFunction$$ } from './compilerSupport/v5.js';
 
 const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
     // @ts-ignore

@@ -7,7 +7,7 @@
  *
  */
 import type { IFluenceClient, CallParams } from '@fluencelabs/js-client.api';
-import { callFunction$$, registerService$$ } from '@fluencelabs/js-client.api';
+import { callFunction$$, registerService$$ } from '@fluencelabs/js-client.api/compilerSupport/v5';
 
 // Services
 
