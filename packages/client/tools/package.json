@@ -1,0 +1,24 @@
+{
+    "name": "@fluencelabs/tools",
+    "version": "0.1.0",
+    "description": "Fluence JS Client tools",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "scripts": {
+        "build": "tsc"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "bin": {
+        "copy-marine": "dist/copyMarine.js"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "16.11.59"
+    }
+}

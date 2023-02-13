@@ -1,0 +1,44 @@
+module Export
+
+import Srv from "../../../aqua/single-module-srv.aqua"
+import NodeUtils from "../../../aqua/node-utils.aqua"
+export happy_path, list_services, file_not_found, service_removed, removing_non_exiting
+
+service Greeting("greeting"):
+    greeting(name: string) -> string
+
+func happy_path(file_path: string) -> string:
+    file <- NodeUtils.read_file(file_path)
+    created_service <- Srv.create(file.content!)
+    Greeting created_service.service_id!
+    <- Greeting.greeting("test")
+
+func list_services(file_path: string) -> []string:
+    file <- NodeUtils.read_file(file_path)
+    Srv.create(file.content!)
+    Srv.create(file.content!)
+    Srv.create(file.content!)
+    <- Srv.list()
+
+func file_not_found() -> string:
+    e <- NodeUtils.read_file("/random/incorrect/file")
+    <- e.error!
+
+func service_removed(file_path: string) -> string:
+    result: *string
+
+    file <- NodeUtils.read_file(file_path)
+    created_service <- Srv.create(file.content!)
+    Greeting created_service.service_id!
+    Srv.remove(created_service.service_id!)
+    try:
+        dontcare <- Greeting.greeting("test")
+        result <<- "ok"
+    catch e: 
+        result <<- e.message
+    <- result!
+
+func removing_non_exiting() -> string:
+    e <- Srv.remove("random_id")
+    <- e.error!
+

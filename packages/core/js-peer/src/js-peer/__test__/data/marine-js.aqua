@@ -1,0 +1,26 @@
+data GreetingRecord:
+    str: string
+    num: i32
+
+service Greeting("greeting"):
+    greeting(name: string) -> string
+    greeting_record() -> GreetingRecord
+
+func call(arg: string) -> string:
+    res1 <- Greeting.greeting(arg)
+    res2 <- Greeting.greeting(res1)
+    res3 <- Greeting.greeting(res2)
+    <- res3
+
+service GreetingRecord:
+    greeting_record() -> GreetingRecord
+    log_debug()
+    log_error()
+    log_info()
+    log_trace()
+    log_warn()
+    void_fn()
+
+func call_info(srvId: string):
+    GreetingRecord srvId
+    GreetingRecord.log_info()

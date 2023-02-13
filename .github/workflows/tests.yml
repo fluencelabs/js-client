@@ -18,7 +18,7 @@ on:
       ref:
         description: "git ref to checkout to"
         type: string
-        default: "master"
+        default: "v0.28.0"
 
 env:
   RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
@@ -29,7 +29,6 @@ jobs:
   fluence-js:
     name: "Run tests"
     runs-on: ubuntu-latest
-    timeout-minutes: 30
 
     permissions:
       contents: read

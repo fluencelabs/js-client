@@ -1,0 +1,25 @@
+{
+    "name": "@test/smoke",
+    "version": "0.1.0",
+    "description": "Smoke test",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "_test": "node --loader ts-node/esm ./src/index.ts"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@fluencelabs/fluence": "workspace:0.60.0",
+        "@fluencelabs/js-client.node": "0.1.0",
+        "@test/aqua_for_test": "workspace:*"
+    },
+    "devDependencies": {}
+}
