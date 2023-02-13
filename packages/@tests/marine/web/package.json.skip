@@ -30,8 +30,6 @@
         "ts-jest": "28.0.2"
     },
     "dependencies": {
-        "@fluencelabs/marine.deps-loader.web": "workspace:*",
-        "@fluencelabs/marine.background-runner": "workspace:*",
         "@fluencelabs/avm": "0.34.4",
         "js-base64": "^3.7.2",
         "buffer": "6.0.3"

@@ -1,5 +1,5 @@
 {
-    "name": "@fluencelabs/js-client.web",
+    "name": "@fluencelabs/js-client.node",
     "version": "0.1.0",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
@@ -8,6 +8,13 @@
         "node": ">=10",
         "pnpm": ">=3"
     },
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "type": "module",
     "scripts": {
         "build": "tsc"
     },
@@ -15,12 +22,12 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-peer": "workspace:0.60.0"
+        "@fluencelabs/js-peer": "0.5.0",
+        "@fluencelabs/avm": "0.35.3",
+        "@fluencelabs/marine-js": "0.3.42",
+        "platform": "1.3.6"
     },
     "devDependencies": {
-        "@types/node": "16.11.59",
-        "@types/jest": "28.1.0",
-        "jest": "28.1.0",
-        "ts-jest": "28.0.2"
+        "@types/platform": "1.3.4"
     }
 }

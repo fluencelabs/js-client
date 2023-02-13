@@ -1,0 +1,5 @@
+import "@fluencelabs/registry/resources-api.aqua"
+
+func smokeTest(label: string) -> ?string, *string:
+    res, errors <- createResource(label)
+    <- res, errors
