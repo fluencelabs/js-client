@@ -1,7 +1,7 @@
 {
     "_1": "This should actually be named @fluencelabs/js-client.api. Naming it fluence-js is needed for backward compat w/ aqua compiler",
     "name": "@fluencelabs/fluence",
-    "version": "0.60.0",
+    "version": "0.62.0",
     "description": "JS Client API",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
