@@ -1,12 +1,41 @@
-import { SecurityTetraplet } from '@fluencelabs/avm';
-import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
-import type { MultiaddrInput } from '@multiformats/multiaddr';
+// import type { MultiaddrInput } from '@multiformats/multiaddr';
 import { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
+
+export declare const logLevels: readonly ['trace', 'debug', 'info', 'warn', 'error'];
+export declare type LogLevel = typeof logLevels[number];
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
  */
 export type PeerIdB58 = string;
+
+/**
+ * ResolvedTriplet represents peer network location with all variables, literals and etc resolved into final string.
+ * This structure contains a subset of values that SecurityTetraplet consists of.
+ */
+export interface ResolvedTriplet {
+    /**
+     * Id of a peer where corresponding value was set.
+     */
+    peer_pk: string;
+    /**
+     *  Id of a service that set corresponding value.
+     */
+    service_id: string;
+    /**
+     * Name of a function that returned corresponding value.
+     */
+    function_name: string;
+}
+/**
+ *  Describes an origin that set corresponding value.
+ */
+export interface SecurityTetraplet extends ResolvedTriplet {
+    /**
+     * Value was produced by applying this `json_path` to the output from `call_service`.
+     */
+    json_path: string;
+}
 
 /**
  * Additional information about a service call
@@ -52,7 +81,7 @@ type Node = {
     multiaddr: string;
 };
 
-export type RelayOptions = string | MultiaddrInput | Node;
+export type RelayOptions = string | /* MultiaddrInput | */ Node;
 
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
 

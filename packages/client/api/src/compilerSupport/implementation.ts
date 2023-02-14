@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import type { FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interfaces/compilerSupport';
-import type { IFluenceClient } from '@fluencelabs/interfaces/fluenceClient';
-import { getArgumentTypes } from '@fluencelabs/interfaces/compilerSupport';
-import { isFluencePeer } from '@fluencelabs/interfaces/fluenceClient';
+import type { FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interfaces';
+import type { IFluenceClient } from '@fluencelabs/interfaces';
+import { getArgumentTypes } from '@fluencelabs/interfaces';
+import { isFluencePeer } from '@fluencelabs/interfaces';
 
-import { getDefaultPeer } from '../index.js';
+import { getDefaultPeer } from '../util.js';
 
-export type { IFluenceClient, CallParams } from '@fluencelabs/interfaces/fluenceClient';
+export type { IFluenceClient, CallParams } from '@fluencelabs/interfaces';
 
 export {
     ArrayType,
@@ -43,7 +43,7 @@ export {
     StructType,
     TopType,
     UnlabeledProductType,
-} from '@fluencelabs/interfaces/compilerSupport';
+} from '@fluencelabs/interfaces';
 
 /**
  * Convenience function to support Aqua `func` generation backend
