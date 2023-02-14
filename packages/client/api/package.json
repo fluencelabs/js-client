@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/js-client.api",
-    "version": "0.62.0",
+    "version": "0.10.0",
     "description": "JS Client API",
     "engines": {
         "node": ">=10",
