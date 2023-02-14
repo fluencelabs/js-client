@@ -1,5 +1,5 @@
 import { fromByteArray } from 'base64-js';
-import { Fluence } from '@fluencelabs/fluence';
+import { Fluence } from '@fluencelabs/js-client.api';
 import { krasnodar } from '@fluencelabs/fluence-network-environment';
 import { smokeTest } from './_aqua/smoke_test.js';
 

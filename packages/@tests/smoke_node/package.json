@@ -17,7 +17,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/fluence": "workspace:0.62.0",
+        "@fluencelabs/js-client.api": "workspace:0.62.0",
         "@fluencelabs/js-client.node": "0.1.0",
         "@test/aqua_for_test": "workspace:*"
     },

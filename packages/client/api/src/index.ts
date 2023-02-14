@@ -1,12 +1,14 @@
 import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces';
 import { getDefaultPeer } from './util.js';
-export type { IFluenceClient, ClientOptions, CallParams as CallParams$$ } from '@fluencelabs/interfaces';
+export type { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces';
 
-export { callFunction, registerService  } from "./compilerSupport/implementation.js";
+export {
+    callFunction as v5_callFunction,
+    registerService as v5_registerService,
+} from './compilerSupport/implementation.js';
 
 export type { SecurityTetraplet } from '@fluencelabs/avm';
 export type { LogLevel } from '@fluencelabs/marine-js/dist/types';
-
 
 /**
  * Public interface to Fluence JS

@@ -21,13 +21,13 @@ importers:
   packages/@tests/aqua:
     specifiers:
       '@fluencelabs/aqua': 0.9.4
-      '@fluencelabs/fluence': workspace:0.62.0
       '@fluencelabs/fluence-network-environment': 1.0.13
+      '@fluencelabs/js-client.api': workspace:0.62.0
       '@fluencelabs/registry': 0.7.0
       base64-js: 1.5.1
     dependencies:
-      '@fluencelabs/fluence': link:../../client/api
       '@fluencelabs/fluence-network-environment': 1.0.13
+      '@fluencelabs/js-client.api': link:../../client/api
       base64-js: 1.5.1
     devDependencies:
       '@fluencelabs/aqua': 0.9.4_sxyfz5frysr7cnkewysdljfvwu
@@ -35,7 +35,7 @@ importers:
 
   packages/@tests/frameworks/cra-ts:
     specifiers:
-      '@fluencelabs/fluence': workspace:0.62.0
+      '@fluencelabs/js-client.api': workspace:0.62.0
       '@test/aqua_for_test': workspace:*
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0
@@ -50,7 +50,7 @@ importers:
       typescript: 4.9.5
       web-vitals: 2.1.4
     dependencies:
-      '@fluencelabs/fluence': link:../../../client/api
+      '@fluencelabs/js-client.api': link:../../../client/api
       '@test/aqua_for_test': link:../../aqua
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
@@ -67,11 +67,11 @@ importers:
 
   packages/@tests/smoke_node:
     specifiers:
-      '@fluencelabs/fluence': workspace:0.62.0
+      '@fluencelabs/js-client.api': workspace:0.62.0
       '@fluencelabs/js-client.node': 0.1.0
       '@test/aqua_for_test': workspace:*
     dependencies:
-      '@fluencelabs/fluence': link:../../client/api
+      '@fluencelabs/js-client.api': link:../../client/api
       '@fluencelabs/js-client.node': link:../../client/js-client.node
       '@test/aqua_for_test': link:../aqua
 

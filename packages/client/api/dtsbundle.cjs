@@ -21,25 +21,7 @@ const config = {
             noCheck: false,
 
             libraries: {
-                /**
-                 * Array of package names from @types to import typings from via the triple-slash reference directive.
-                 * By default all packages are allowed and will be used according to their usages.
-                 * Optional. Default value is `undefined`.
-                 */
-                // allowedTypesLibraries: ['node', '@types/node'],
-                /**
-                 * Array of package names from node_modules to import typings from.
-                 * Used types will be imported using `import { First, Second } from 'library-name';`.
-                 * By default all libraries will be imported (except inlined libraries and libraries from @types).
-                 * Optional. Default value is `undefined`.
-                 */
                 importedLibraries: ['node', '@types/node'],
-                /**
-                 * Array of package names from node_modules to inline typings from.
-                 * Used types will be inlined into the output file.
-                 * Optional. Default value is `[]`.
-                 */
-                // inlinedLibraries: ['@my-company/package'],
             },
 
             output: commonOutputParams,

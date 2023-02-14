@@ -6,8 +6,8 @@
  * Aqua version: 0.9.4
  *
  */
-import type { IFluenceClient, CallParams$$ } from '@fluencelabs/fluence';
-import { callFunction as callFunction$$, registerService as registerService$$ } from '@fluencelabs/fluence';
+import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client.api';
+import { v5_callFunction as callFunction$$, v5_registerService as registerService$$ } from '@fluencelabs/js-client.api';
 
 // Services
 
@@ -16,7 +16,7 @@ import { callFunction as callFunction$$, registerService as registerService$$ } 
 export type SmokeTestResult = [string | null, string[]];
 export function smokeTest(label: string, config?: { ttl?: number }): Promise<SmokeTestResult>;
 
-export function smokeTest(peer: IFluenceClient, label: string, config?: { ttl?: number }): Promise<SmokeTestResult>;
+export function smokeTest(peer: IFluenceClient$$, label: string, config?: { ttl?: number }): Promise<SmokeTestResult>;
 
 export function smokeTest(...args: any) {
     let script = `
