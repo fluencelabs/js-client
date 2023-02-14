@@ -17,6 +17,14 @@
         "./compilerSupport": {
             "import": "./dist/compilerSupport.js",
             "types": "./dist/compilerSupport.d.ts"
+        },
+        "./dist/fluenceClient": {
+            "import": "./dist/fluenceClient.js",
+            "types": "./dist/fluenceClient.d.ts"
+        },
+        "./dist/compilerSupport": {
+            "import": "./dist/compilerSupport.js",
+            "types": "./dist/compilerSupport.d.ts"
         }
     },
     "typesVersions": {
@@ -39,10 +47,10 @@
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "dependencies": {
-        "@fluencelabs/avm": "0.35.3",
-        "@fluencelabs/marine-js": "0.3.44"},
+    "dependencies": {},
     "devDependencies": {
-        "@multiformats/multiaddr": "11.3.0"
+        "@multiformats/multiaddr": "11.3.0",
+        "@fluencelabs/avm": "0.35.3",
+        "@fluencelabs/marine-js": "0.3.44"
     }
 }

@@ -19,7 +19,7 @@
     "types": "dist/index.d.ts",
     "typings": "dist/index.d.ts",
     "scripts": {
-        "build": "microbundle src/index.ts && dts-bundle-generator --config dtsbundle.cjs"
+        "build": "microbundle --generateTypes false src/index.ts && dts-bundle-generator --config dtsbundle.cjs"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -28,16 +28,9 @@
         "@fluencelabs/interfaces": "0.5.0"
     },
     "devDependencies": {
-        "microbundle": "0.15.1",
-        "dts-bundle-generator": "7.2.0",
-        "rollup": "3.15.0",
-        "rollup-plugin-dts": "5.2.0",
-        "rollup-plugin-ts": "3.2.0",
-        "rollup-plugin-commonjs": "10.1.0",
-        "rollup-plugin-node-resolve": "5.2.0",
-        "rollup-plugin-terser": "7.0.2",
         "@fluencelabs/avm": "0.35.4",
         "@fluencelabs/marine-js": "0.3.44",
-        "tsc-prog": "2.2.1"
+        "microbundle": "0.15.1",
+        "dts-bundle-generator": "7.2.0"
     }
 }

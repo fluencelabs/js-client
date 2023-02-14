@@ -22,6 +22,7 @@ const config = {
 
             libraries: {
                 importedLibraries: ['node', '@types/node'],
+                inlinedLibraries: ['@fluencelabs/avm', '@fluencelabs/marine-js'],
             },
 
             output: commonOutputParams,

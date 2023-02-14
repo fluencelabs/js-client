@@ -6,6 +6,10 @@
  * Aqua version: 0.9.4
  *
  */
+
+// eslint-disable
+// ts-nocheck
+
 import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client.api';
 import { v5_callFunction as callFunction$$, v5_registerService as registerService$$ } from '@fluencelabs/js-client.api';
 

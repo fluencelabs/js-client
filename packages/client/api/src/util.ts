@@ -1,4 +1,4 @@
-import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces';
+import type { IFluenceClient } from '@fluencelabs/interfaces';
 
 const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
     // @ts-ignore

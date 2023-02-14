@@ -1,14 +1,33 @@
-import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces';
 import { getDefaultPeer } from './util.js';
+import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces';
 export type { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces';
+
+export {
+    ArrayType,
+    ArrowType,
+    ArrowWithCallbacks,
+    ArrowWithoutCallbacks,
+    BottomType,
+    FnConfig,
+    FunctionCallConstants,
+    FunctionCallDef,
+    LabeledProductType,
+    NilType,
+    NonArrowType,
+    OptionType,
+    ProductType,
+    ScalarNames,
+    ScalarType,
+    ServiceDef,
+    StructType,
+    TopType,
+    UnlabeledProductType,
+} from '@fluencelabs/interfaces';
 
 export {
     callFunction as v5_callFunction,
     registerService as v5_registerService,
 } from './compilerSupport/implementation.js';
-
-export type { SecurityTetraplet } from '@fluencelabs/avm';
-export type { LogLevel } from '@fluencelabs/marine-js/dist/types';
 
 /**
  * Public interface to Fluence JS

@@ -21,30 +21,6 @@ import { isFluencePeer } from '@fluencelabs/interfaces';
 
 import { getDefaultPeer } from '../util.js';
 
-export type { IFluenceClient, CallParams } from '@fluencelabs/interfaces';
-
-export {
-    ArrayType,
-    ArrowType,
-    ArrowWithCallbacks,
-    ArrowWithoutCallbacks,
-    BottomType,
-    FnConfig,
-    FunctionCallConstants,
-    FunctionCallDef,
-    LabeledProductType,
-    NilType,
-    NonArrowType,
-    OptionType,
-    ProductType,
-    ScalarNames,
-    ScalarType,
-    ServiceDef,
-    StructType,
-    TopType,
-    UnlabeledProductType,
-} from '@fluencelabs/interfaces';
-
 /**
  * Convenience function to support Aqua `func` generation backend
  * The compiler only need to generate a call the function and provide the corresponding definitions and the air script
