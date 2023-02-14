@@ -13,7 +13,6 @@
     },
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "dependencies": {},
     "devDependencies": {
         "http-server": "14.1.1",
         "@types/node": "18.13.0",

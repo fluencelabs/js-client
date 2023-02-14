@@ -5,11 +5,34 @@ defaults:
         working-directory: .
 
 on:
-    push:
+  workflow_call:
+    inputs:
+      rust-peer-image:
+        description: "rust-peer image tag"
+        type: string
+        default: "fluencelabs/fluence:minimal"
+      avm-version:
+        description: "@fluencelabs/avm version"
+        type: string
+        default: "null"
+      marine-js-version:
+        description: "@fluencelabs/marine-js version"
+        type: string
+        default: "null"
+      ref:
+        description: "git ref to checkout to"
+        type: string
+        default: "v0.28.0"
+
+env:
+  RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
+  FORCE_COLOR: true
+  CI: true
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  fluence-js:
+    name: "Run tests"
+    runs-on: ubuntu-latest
 
         strategy:
             matrix:
