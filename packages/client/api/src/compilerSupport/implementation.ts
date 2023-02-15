@@ -31,6 +31,12 @@ import { getFluenceInterface } from '../util.js';
  */
 export const callFunction = async (rawFnArgs: Array<any>, def: FunctionCallDef, script: string): Promise<unknown> => {
     const { args, peer, config } = await extractFunctionArgs(rawFnArgs, def);
+    if (peer.internals.getConnectionState() !== 'connected') {
+        throw new Error(
+            'Could not call the Aqua function because client is disconnected. Did you forget to call Fluence.connect()?',
+        );
+    }
+
     const fluence = await getFluenceInterface();
     return fluence.callAquaFunction({
         args,
@@ -49,6 +55,15 @@ export const callFunction = async (rawFnArgs: Array<any>, def: FunctionCallDef, 
  */
 export const registerService = async (args: any[], def: ServiceDef): Promise<unknown> => {
     const { peer, service, serviceId } = await extractServiceArgs(args, def.defaultServiceId);
+
+    // TODO: TBH service registration is just putting some stuff into a hashmap
+    // there should not be such a check at all
+    if (peer.internals.getConnectionState() !== 'connected') {
+        throw new Error(
+            'Could not register Aqua service because client is disconnected. Did you forget to call Fluence.connect()?',
+        );
+    }
+
     const fluence = await getFluenceInterface();
     return fluence.registerServiceImpl({
         def,

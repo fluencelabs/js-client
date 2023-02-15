@@ -127,34 +127,10 @@ export interface ClientOptions {
  * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
  * - `isDirect`: True if the peer is connected to the network directly (not through relay)
  */
-export type PeerStatus =
-    | {
-          isInitialized: false;
-          peerId: null;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          relayPeerId: PeerIdB58;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          isDirect: true;
-          relayPeerId: null;
-      };
-
 export type FluenceStartConfig = ClientOptions & { relay: RelayOptions };
+
+export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
+export type ConnectionState = typeof ConnectionStates[number];
 
 export interface IFluenceClient {
     /**
@@ -168,19 +144,27 @@ export interface IFluenceClient {
     stop(): Promise<void>;
 
     /**
-     * Get the peer's status
+     * Handle connection state changes. Immediately returns current connection state
      */
-    getStatus(): PeerStatus;
+    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState;
 
     /**
-     * Return peers SK
+     * Return peers secret key as byte array.
      */
-    getSk(): Uint8Array;
+    getPeerSecretKey(): Uint8Array;
+
+    /**
+     * Return peers public key as a base58 string (multihash/CIDv0).
+     */
+    getPeerId(): string;
 
     // TODO: come up with a working interface for
     // - particle creation
     // - particle initialization
     // - service registration
+    /**
+     * For internal use only. Do not call directly
+     */
     internals: any;
 }
 

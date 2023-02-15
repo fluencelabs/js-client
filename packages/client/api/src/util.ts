@@ -7,7 +7,7 @@ type PublicFluenceInterface = {
     registerServiceImpl: RegisterService;
 };
 
-const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | undefined => {
+export const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | undefined => {
     // @ts-ignore
     return globalThis.fluence;
 };

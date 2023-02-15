@@ -27,10 +27,10 @@ import {
 import type {
     PeerIdB58,
     IFluenceClient,
-    PeerStatus,
     KeyPairOptions,
     RelayOptions,
     ClientOptions,
+    ConnectionState,
 } from '@fluencelabs/interfaces/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
 import { dataToString, jsonify, isString, ServiceError } from './utils.js';
@@ -52,11 +52,41 @@ const DEFAULT_TTL = 7000;
 
 export type PeerConfig = ClientOptions & { relay?: RelayOptions };
 
+type PeerStatus =
+    | {
+          isInitialized: false;
+          peerId: null;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: false;
+          relayPeerId: null;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          relayPeerId: PeerIdB58;
+      }
+    | {
+          isInitialized: true;
+          peerId: PeerIdB58;
+          isConnected: true;
+          isDirect: true;
+          relayPeerId: null;
+      };
+
 /**
  * This class implements the Fluence protocol for javascript-based environments.
  * It provides all the necessary features to communicate with Fluence network
  */
 export class FluencePeer implements IFluenceClient {
+    connectionState: ConnectionState = 'disconnected';
+    connectionStateChangeHandler: (state: ConnectionState) => void = () => {};
+
     constructor(private marine: IMarine, private avmRunner: IAvmRunner) {}
 
     /**
@@ -68,10 +98,10 @@ export class FluencePeer implements IFluenceClient {
     __isFluenceAwesome = true;
 
     /**
-     * Get the peer's status
+     * TODO: remove this from here. Switch to `ConnectionState` instead
+     * @deprecated
      */
     getStatus(): PeerStatus {
-        // TODO:: use explicit mechanism for peer's state
         if (this._keyPair === undefined) {
             return {
                 isInitialized: false,
@@ -108,15 +138,22 @@ export class FluencePeer implements IFluenceClient {
         };
     }
 
-    /**
-     * Return peers SK
-     */
-    getSk(): Uint8Array {
+    getPeerId(): string {
+        return this.getStatus().peerId!;
+    }
+
+    getPeerSecretKey(): Uint8Array {
         if (!this._keyPair) {
             throw new Error("Can't get key pair: peer is not initialized");
         }
 
         return this._keyPair.toEd25519PrivateKey();
+    }
+
+    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
+        this.connectionStateChangeHandler = handler;
+
+        return this.connectionState;
     }
 
     /**
@@ -125,6 +162,7 @@ export class FluencePeer implements IFluenceClient {
      * @param config - object specifying peer configuration
      */
     async start(config: PeerConfig = {}): Promise<void> {
+        this.changeConnectionState('connecting');
         const keyPair = await makeKeyPair(config.keyPair);
         await this.init(config, keyPair);
 
@@ -133,6 +171,7 @@ export class FluencePeer implements IFluenceClient {
         if (conn !== null) {
             await this.connect(conn);
         }
+        this.changeConnectionState('connected');
     }
 
     getServices() {
@@ -178,6 +217,7 @@ export class FluencePeer implements IFluenceClient {
      * and disconnects from the Fluence network
      */
     async stop() {
+        this.changeConnectionState('disconnecting');
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
         this._stopParticleProcessing();
         await this.disconnect();
@@ -188,6 +228,7 @@ export class FluencePeer implements IFluenceClient {
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
         this._marineServices.clear();
+        this.changeConnectionState('disconnected');
     }
 
     // internal api
@@ -197,6 +238,10 @@ export class FluencePeer implements IFluenceClient {
      */
     get internals() {
         return {
+            getConnectionState: () => this.connectionState,
+
+            getRelayPeerId: () => this.getStatus().relayPeerId,
+
             parseAst: async (air: string): Promise<{ success: boolean; data: any }> => {
                 const status = this.getStatus();
 
@@ -355,6 +400,11 @@ export class FluencePeer implements IFluenceClient {
     }
 
     // private
+
+    private changeConnectionState(state: ConnectionState) {
+        this.connectionState = state;
+        this.connectionStateChangeHandler(state);
+    }
 
     // Queues for incoming and outgoing particles
 

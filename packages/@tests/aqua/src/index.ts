@@ -20,6 +20,8 @@ const rndSk = () => {
 
 export const main = async () => {
     try {
+        Fluence.onConnectionStateChange((state) => console.info('connection state changed: ', state));
+
         console.log('connecting to Fluence Network...');
         await Fluence.connect(relay, {
             // keyPair: {
@@ -31,8 +33,8 @@ export const main = async () => {
         console.log('connected');
         const p = await Fluence.getPeer();
 
-        console.log('my peer id: ', p.getStatus().peerId);
-        console.log('my sk id: ', fromByteArray(p.getSk()));
+        console.log('my peer id: ', p.getPeerId());
+        console.log('my sk id: ', fromByteArray(p.getPeerSecretKey()));
 
         console.log('running some aqua...');
         const [res, errors] = await smokeTest('my_resource');

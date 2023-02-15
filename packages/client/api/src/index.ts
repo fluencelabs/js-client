@@ -1,5 +1,11 @@
-import { getFluenceInterface } from './util.js';
-import type { IFluenceClient, ClientOptions, RelayOptions } from '@fluencelabs/interfaces';
+import { getFluenceInterface, getFluenceInterfaceFromGlobalThis } from './util.js';
+import {
+    IFluenceClient,
+    ClientOptions,
+    RelayOptions,
+    ConnectionState,
+    ConnectionStates,
+} from '@fluencelabs/interfaces';
 export type { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces';
 
 export {
@@ -52,7 +58,21 @@ export const Fluence = {
     },
 
     /**
-     * Get the underlying Fluence Peer instance
+     * Handle connection state changes. Immediately returns the current connection state
+     */
+    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
+        const optimisticResult = getFluenceInterfaceFromGlobalThis();
+        if (optimisticResult) {
+            return optimisticResult.defaultPeer.onConnectionStateChange(handler);
+        }
+
+        getFluenceInterface().then((fluence) => fluence.defaultPeer.onConnectionStateChange(handler));
+
+        return 'disconnected';
+    },
+
+    /**
+     * Get the underlying Fluence Peer instance which holds the connection to the network
      * @returns Fluence Peer instance
      */
     getPeer: async (): Promise<IFluenceClient> => {

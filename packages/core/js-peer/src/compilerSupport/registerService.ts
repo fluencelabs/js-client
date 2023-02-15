@@ -2,14 +2,6 @@ import type { RegisterService } from '@fluencelabs/interfaces';
 import { registerGlobalService, userHandlerService } from './services.js';
 
 export const registerService: RegisterService = ({ peer, def, serviceId, service }) => {
-    // TODO: TBH service registration is just putting some stuff into a hashmap
-    // there should not be such a check at all
-    if (!peer.getStatus().isInitialized) {
-        throw new Error(
-            'Could not register the service because the peer is not initialized. Are you passing the wrong peer to the register function?',
-        );
-    }
-
     // Checking for missing keys
     const requiredKeys = def.functions.tag === 'nil' ? [] : Object.keys(def.functions.fields);
     const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));
