@@ -1,7 +1,7 @@
 # Fluence JS Client
 
-[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.api)](https://www.npmjs.com/package/@fluencelabs/js-client.api)
-[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.web.standalone)](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.api?label=@fluencelabs/js-client.api)](https://www.npmjs.com/package/@fluencelabs/js-client.api)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.web.standalone?label=@fluencelabs/js-client.web.standalone)](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone)
 
 Javascript client to Fluence network
 
