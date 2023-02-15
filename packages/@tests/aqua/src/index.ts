@@ -11,22 +11,18 @@ import { smokeTest } from './_aqua/smoke_test.js';
 const relay = krasnodar[4];
 
 const rndSk = () => {
-    if (crypto.getRandomValues) {
-        return crypto.getRandomValues(new Uint8Array(32));
-    }
+    // if (getRandomValues) {
+    //     return getRandomValues(new Uint8Array(32));
+    // }
 
     // @ts-ignore
-    return globalThis.crypto.webcrypto.getRandomValues(new Uint8Array(32));
+    // return globalThis.crypto.webcrypto.getRandomValues(new Uint8Array(32));
 };
 
 export const main = async () => {
     console.log('starting fluence...');
     await Fluence.start({
-        relay: relay,
-        keyPair: {
-            type: 'Ed25519',
-            source: rndSk(),
-        },
+        relay: relay
     });
 
     console.log('started fluence');
