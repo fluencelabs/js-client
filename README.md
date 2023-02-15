@@ -71,11 +71,11 @@ it might be a good idea to add these scripts to your `package.json` file
 For example you project structure could look like this:
 
 ```
- ┣ aqua
- ┃ ┗ hello-world.aqua
+ ┣ _aqua
+ ┃ ┗ demo.aqua
  ┣ src
  ┃ ┣ _aqua
- ┃ ┃ ┗ hello-world.ts
+ ┃ ┃ ┗ demo.ts
  ┃ ┗ index.ts
  ┣ package-lock.json
  ┣ package.json
@@ -93,6 +93,17 @@ And your package json:
     "aqua:watch": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
   },
   ...
+}
+```
+
+6. Now you can import and use call aqua code from your application. e.g;
+
+```
+import { getRelayTime } from "./_aqua/demo";
+
+async function buttonClick() {
+  const time = await getRelayTime();
+  alert("relay time: " + time);
 }
 ```
 
