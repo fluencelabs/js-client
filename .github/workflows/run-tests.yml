@@ -23,6 +23,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  RUST_PEER_IMAGE: "fluencelabs/fluence:minimal"
   FORCE_COLOR: true
   CI: true
 
