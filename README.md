@@ -1,59 +1,67 @@
-# Fluence JS
+# Fluence JS Client
 
-[![npm](https://img.shields.io/npm/v/@fluencelabs/fluence)](https://www.npmjs.com/package/@fluencelabs/fluence)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.api)](https://www.npmjs.com/package/@fluencelabs/js-client.api)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.web.standalone)](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone)
 
-Official TypeScript implementation of the Fluence Peer.
+Javascript client to Fluence network
+
+## WARNING
+
+Client for NodeJS is broken. We will fix that shortly.
 
 ## Getting started
 
-To start developing applications with Fluence JS refer to the official [documentation](https://fluence.dev/docs/build/fluence-js/)
+Adding JS Client for your web application is very easy
+
+1. Pick you favorite framework
+2. Add a script tag with the JS Client bundle to your index.html. The easiest way to do so is using CDN (like https://www.jsdelivr.com/ or https://unpkg.com/) The script is large thus we highly recommend to use `async` attribute
+
+Here is an example using React App and jsdelivr cdn.
+
+```
+  <title>React App</title>
+  <script src='https://cdn.jsdelivr.net/npm/@fluencelabs/js-client.web.standalone@0.10.0/dist/js-client.min.js'
+    async></script>
+</head>
+```
+
+If you can't or don't want to use CDN, feel free to get the script directly from the npm package and host in yourself: `https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone`. You can find the script in `/dist` directory of the package. (note: that options means that the developer understands what he's doing and he knows to serve this file from his own web server)
+
+3. Install the following packages:
+
+```
+npm i @fluencelabs/js-client.api @fluencelabs/fluence-network-environment
+```
+
+4. In the beginning of your app do the following:
+
+```
+import { Fluence } from "@fluencelabs/js-client.api";
+import { krasnodar } from "@fluencelabs/fluence-network-environment";
+
+Fluence.start({
+  relay: krasnodar[3],
+});
+```
+
+## Use aqua in web application
+
+Once you've added the client you can compile aqua and run it in your application.
+
+TBD
+
+## Developing
+
+To hack on the JS Client itself refer to [dev page](./DEVLOPING.md).
+
+## Support
+
+Please, file an [issue](https://github.com/fluencelabs/fluence-js/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project). We will do our best to resolve the issue ASAP.
 
 ## Contributing
 
-While the project is still in the early stages of development, you are welcome to track progress and contribute. As the project is undergoing rapid changes, interested contributors should contact the team before embarking on larger pieces of work. All contributors should consult with and agree to our [basic contributing rules](CONTRIBUTING.md).
-
-### Setting up dev environment
-
-Fluence JS uses pnpm to manage monorepo packages. See [pnpm.io](https://pnpm.io/installation) for installation instructions.
-
-Install dependencies
-
-```bash
-pnpm install
-```
-
-Build all packages
-
-```
-pnpm -r build
-```
-
-### Running tests
-
-Tests are split into unit and integration categories. By default integration tests require a locally running Fluence node with 4310 port open for ws connections. The dependency can be started with docker
-
-```bash
- docker run --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj
-```
-
-To run all tests
-
-```bash
-pnpm -r test
-```
-
-To run only unit tests
-
-```bash
-pnpm -r test:unit
-```
-
-To run only integration tests
-
-```bash
-pnpm -r test:integration
-```
+Any interested person is welcome to contribute to the project. Please, make sure you read and follow some basic [rules](./CONTRIBUTING.md).
 
 ## License
 
-[Apache 2.0](LICENSE)
+All software code is copyright (c) Fluence Labs, Inc. under the [Apache-2.0](./LICENSE) license.
