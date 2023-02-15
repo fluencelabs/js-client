@@ -1,0 +1,13 @@
+module Export
+
+import SignResult, Sig from "../../../aqua/services.aqua"
+export Sig, DataProvider, callSig
+
+service DataProvider("data"):
+    provide_data() -> []u8
+
+func callSig(sigId: string) -> SignResult:
+    data <- DataProvider.provide_data()
+    Sig sigId
+    signature <- Sig.sign(data)
+    <- signature
