@@ -1,0 +1,168 @@
+name: "release-please"
+
+on:
+  push:
+    branches:
+      - "master"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+
+env:
+  CI: true
+  FORCE_COLOR: true
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+
+    outputs:
+      release-created: ${{ steps.release.outputs.releases_created }}
+      pr: ${{ steps.release.outputs.pr }}
+
+    steps:
+      - name: Run release-please
+        id: release
+        uses: google-github-actions/release-please-action@v3
+        with:
+          token: ${{ secrets.FLUENCEBOT_RELEASE_PLEASE_PAT }}
+          command: manifest
+          config-file: .github/release-please/config.json
+          manifest-file: .github/release-please/manifest.json
+
+      - name: Show output from release-please
+        if: steps.release.outputs.releases_created
+        env:
+          RELEASE_PLEASE_OUTPUT: ${{ toJSON(steps.release.outputs) }}
+        run: echo "${RELEASE_PLEASE_OUTPUT}" | jq
+
+  bump-version:
+    if: needs.release-please.outputs.pr != null
+    runs-on: ubuntu-latest
+    needs:
+      - release-please
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+          token: ${{ secrets.FLUENCEBOT_RELEASE_PLEASE_PAT }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+          cache: "pnpm"
+
+      - run: pnpm i --no-frozen-lockfile
+
+      - name: Commit version bump
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: Regenerate pnpm lock file"
+          branch: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+          commit_user_name: fluencebot
+          commit_user_email: devops@fluence.one
+          commit_author: fluencebot <devops@fluence.one>
+
+  fluence-js:
+    if: needs.release-please.outputs.release-created
+    runs-on: ubuntu-latest
+    needs:
+      - release-please
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/npmjs/fluencebot token | NODE_AUTH_TOKEN
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+          cache: "pnpm"
+
+      - run: pnpm i
+      - run: pnpm -r build
+
+      - name: Publish to npm registry
+        run: pnpm --no-git-checks -r publish -filter '@fluencelabs/*' --access public --tags unstable
+
+  slack:
+    if: always()
+    name: "Notify"
+    runs-on: ubuntu-latest
+
+    needs:
+      - release-please
+      - fluence-js
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: lwhiteley/dependent-jobs-result-check@v1
+        id: status
+        with:
+          statuses: failure
+          dependencies: ${{ toJSON(needs) }}
+
+      - name: Log output
+        run: |
+          echo "statuses:" "${{ steps.status.outputs.statuses }}"
+          echo "jobs:" "${{ steps.status.outputs.jobs }}"
+          echo "found any?:" "${{ steps.status.outputs.found }}"
+
+      - name: Import secrets
+        uses: hashicorp/vault-action@v2.4.3
+        with:
+          url: https://vault.fluence.dev
+          path: jwt/github
+          role: ci
+          method: jwt
+          jwtGithubAudience: "https://github.com/fluencelabs"
+          jwtTtl: 300
+          exportToken: false
+          secrets: |
+            kv/slack/release-please webhook | SLACK_WEBHOOK_URL
+
+      - uses: ravsamhq/notify-slack-action@v2
+        if: steps.status.outputs.found == 'true'
+        with:
+          status: "failure"
+          notification_title: "*{workflow}* has {status_message}"
+          message_format: "${{ steps.status.outputs.jobs }} {status_message} in <{repo_url}|{repo}>"
+          footer: "<{run_url}>"

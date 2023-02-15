@@ -4,9 +4,19 @@ on:
   pull_request:
     paths-ignore:
       - "**.md"
+      - ".github/**"
+      - "!.github/workflows/e2e.yml"
+      - "!.github/workflows/tests.yml"
+      - "!.github/workflows/snapshot.yml"
   push:
     branches:
       - "master"
+    paths-ignore:
+      - "**.md"
+      - ".github/**"
+      - "!.github/workflows/e2e.yml"
+      - "!.github/workflows/tests.yml"
+      - "!.github/workflows/snapshot.yml"
 
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"

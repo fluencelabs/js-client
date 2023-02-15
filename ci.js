@@ -74,12 +74,7 @@ function processDep(obj, name, fn) {
         return;
     }
 
-    if (!/^workspace\:/.test(obj[name])) {
-        return;
-    }
-
-    const version = obj[name].replace("workspace:", "");
-    fn(obj, version);
+    fn(obj, obj[name]);
 }
 async function getVersionsMap(allPackageJsons) {
     return new Map(await Promise.all(allPackageJsons.map(getVersion)));
@@ -125,7 +120,7 @@ async function bumpVersions(file, versionsMap) {
 
     // bump dependencies
     for (const [name, version] of versionsMap) {
-        const update = (x) => (x[name] = `workspace:${version}-${postfix}`);
+        const update = (x) => (x[name] = `${version}-${postfix}`);
         processDep(json.dependencies, name, update);
         processDep(json.devDependencies, name, update);
     }

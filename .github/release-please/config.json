@@ -1,0 +1,18 @@
+{
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "plugins": [
+    {
+      "type": "node-workspace"
+    }
+  ],
+  "packages": {
+    "packages/client/api": {},
+    "packages/js-client.node": {},
+    "packages/js-client.web.standalone": {},
+    "packages/tools": {},
+    "packages/core/interfaces": {},
+    "packages/core/js-peer": {}
+  }
+}
