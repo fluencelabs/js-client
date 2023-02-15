@@ -10,12 +10,21 @@ import { smokeTest } from './_aqua/smoke_test.js';
 
 const relay = krasnodar[4];
 
-const rndSk = () => {
-    // if (getRandomValues) {
-    //     return getRandomValues(new Uint8Array(32));
-    // }
-    // @ts-ignore
-    // return globalThis.crypto.webcrypto.getRandomValues(new Uint8Array(32));
+function generateRandomUint8Array() {
+    const uint8Array = new Uint8Array(32);
+    for (let i = 0; i < uint8Array.length; i++) {
+        uint8Array[i] = Math.floor(Math.random() * 256);
+    }
+    return uint8Array;
+}
+
+const optsWithRandomKeyPair = () => {
+    return {
+        keyPair: {
+            type: 'Ed25519',
+            source: generateRandomUint8Array(),
+        },
+    } as const;
 };
 
 export const main = async () => {
@@ -23,12 +32,7 @@ export const main = async () => {
         Fluence.onConnectionStateChange((state) => console.info('connection state changed: ', state));
 
         console.log('connecting to Fluence Network...');
-        await Fluence.connect(relay, {
-            // keyPair: {
-            //     type: 'Ed25519',
-            //     source: rndSk(),
-            // },
-        });
+        await Fluence.connect(relay, optsWithRandomKeyPair());
 
         console.log('connected');
         const p = await Fluence.getPeer();
