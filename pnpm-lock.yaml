@@ -68,7 +68,7 @@ importers:
   packages/@tests/smoke_node:
     specifiers:
       '@fluencelabs/js-client.api': 0.10.0
-      '@fluencelabs/js-client.node': 0.1.0
+      '@fluencelabs/js-client.node': 0.5.0
       '@test/aqua_for_test': workspace:*
     dependencies:
       '@fluencelabs/js-client.api': link:../../client/api
@@ -86,38 +86,38 @@ importers:
   packages/client/api:
     specifiers:
       '@fluencelabs/avm': 0.35.4
-      '@fluencelabs/interfaces': 0.5.0
-      '@fluencelabs/marine-js': 0.3.44
+      '@fluencelabs/interfaces': 0.6.0
+      '@fluencelabs/marine-js': 0.3.45
       dts-bundle-generator: 7.2.0
       microbundle: 0.15.1
     dependencies:
       '@fluencelabs/interfaces': link:../../core/interfaces
     devDependencies:
       '@fluencelabs/avm': 0.35.4
-      '@fluencelabs/marine-js': 0.3.44
+      '@fluencelabs/marine-js': 0.3.45
       dts-bundle-generator: 7.2.0
       microbundle: 0.15.1
 
   packages/client/js-client.node:
     specifiers:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/js-peer': 0.6.0
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/avm': 0.35.4
+      '@fluencelabs/js-peer': 0.7.0
+      '@fluencelabs/marine-js': 0.3.45
       '@types/platform': 1.3.4
       platform: 1.3.6
     dependencies:
-      '@fluencelabs/avm': 0.35.3
+      '@fluencelabs/avm': 0.35.4
       '@fluencelabs/js-peer': link:../../core/js-peer
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/marine-js': 0.3.45
       platform: 1.3.6
     devDependencies:
       '@types/platform': 1.3.4
 
   packages/client/js-client.web.standalone:
     specifiers:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/js-peer': 0.6.0
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/avm': 0.35.4
+      '@fluencelabs/js-peer': 0.7.0
+      '@fluencelabs/marine-js': 0.3.45
       '@rollup/plugin-inject': 5.0.3
       '@types/jest': 28.1.0
       '@types/node': 16.11.59
@@ -134,8 +134,8 @@ importers:
       buffer: 6.0.3
       process: 0.11.10
     devDependencies:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/marine-js': 0.3.42
+      '@fluencelabs/avm': 0.35.4
+      '@fluencelabs/marine-js': 0.3.45
       '@rollup/plugin-inject': 5.0.3
       '@types/jest': 28.1.0
       '@types/node': 16.11.59
@@ -154,12 +154,12 @@ importers:
 
   packages/core/interfaces:
     specifiers:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/marine-js': 0.3.44
+      '@fluencelabs/avm': 0.35.4
+      '@fluencelabs/marine-js': 0.3.45
       '@multiformats/multiaddr': 11.3.0
     devDependencies:
-      '@fluencelabs/avm': 0.35.3
-      '@fluencelabs/marine-js': 0.3.44
+      '@fluencelabs/avm': 0.35.4
+      '@fluencelabs/marine-js': 0.3.45
       '@multiformats/multiaddr': 11.3.0
 
   packages/core/js-peer:
@@ -168,10 +168,10 @@ importers:
       '@fluencelabs/aqua': 0.7.7-362
       '@fluencelabs/aqua-api': 0.9.1-373
       '@fluencelabs/aqua-lib': 0.6.0
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/avm': 0.35.4
       '@fluencelabs/fluence-network-environment': 1.0.13
-      '@fluencelabs/interfaces': 0.5.0
-      '@fluencelabs/marine-js': 0.3.44
+      '@fluencelabs/interfaces': 0.6.0
+      '@fluencelabs/marine-js': 0.3.45
       '@libp2p/crypto': 1.0.8
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
@@ -204,9 +204,9 @@ importers:
       uuid: 8.3.2
     dependencies:
       '@chainsafe/libp2p-noise': 11.0.0
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/avm': 0.35.4
       '@fluencelabs/interfaces': link:../interfaces
-      '@fluencelabs/marine-js': 0.3.44
+      '@fluencelabs/marine-js': 0.3.45
       '@libp2p/crypto': 1.0.8_uint8arraylist@2.4.3
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-keys': 1.0.7
@@ -2108,6 +2108,7 @@ packages:
 
   /@fluencelabs/avm/0.31.10:
     resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
+    dev: true
 
   /@fluencelabs/avm/0.31.4:
     resolution: {integrity: sha512-rApXdqk0NUX+Fyq9BJ1jQ7X//EfVrAg9wrjdd4K/tvo54Lgij0tY/IT+imwr/Eb4qgHgi1QMW4zT0AOlgKIKmw==}
@@ -2115,10 +2116,10 @@ packages:
 
   /@fluencelabs/avm/0.35.3:
     resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
+    dev: true
 
   /@fluencelabs/avm/0.35.4:
     resolution: {integrity: sha512-J070t5AOYIzQnNcBcYjDPUDzJTcpVboZxcrjGN4qYiOjcrtCtnnXeQKedLuBto5bRztHJdL9BzLLvzcFXhgmFQ==}
-    dev: true
 
   /@fluencelabs/connection/0.2.0_node-fetch@3.3.0:
     resolution: {integrity: sha512-0jTRI1h/j/fR2VaLIlcIm6VoP3j2jL2lI6/OaYaOnwGXmI6CbZWHNeq9eaKWycT9B1vpN9wHu0Vi7vH3pFplhg==}
@@ -2330,14 +2331,8 @@ packages:
       - typescript
     dev: true
 
-  /@fluencelabs/marine-js/0.3.42:
-    resolution: {integrity: sha512-v8FuQ7CvImFjG4kZXnE7b1h2/J3/5JWiGMc64M2AtkI2ipdk3uGB+xaIzxpx4Zcvpp9gEr2EQonpaZCu7Qx2hg==}
-    dependencies:
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
-
-  /@fluencelabs/marine-js/0.3.44:
-    resolution: {integrity: sha512-DbI/x0bRv44oqfMZJlIkVhzZByXhmnOoxpco/cglk5aAvslOSDdRssf3bZADqqUQggGdtISOZcYPM+a4tirYLQ==}
+  /@fluencelabs/marine-js/0.3.45:
+    resolution: {integrity: sha512-GmeTvaC9n6zM6FPPyoHXwe2I8F9mEeE9DKzJcqy4FkUmpI11Fu4HrTvKgJyTURJkZSu8cfrjA7ZVeYuDGHeimQ==}
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0

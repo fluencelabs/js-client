@@ -2,7 +2,7 @@ import * as platform from 'platform';
 
 import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
-import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker';
+import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils.js';
 import { WasmLoaderFromNpm } from '@fluencelabs/js-peer/dist/marine/deps-loader/node.js';
 import { WorkerLoader } from '@fluencelabs/js-peer/dist/marine/worker-script/workerLoader.js';

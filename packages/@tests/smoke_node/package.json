@@ -11,14 +11,14 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "_test": "node --loader ts-node/esm ./src/index.ts"
+        "test": "node --loader ts-node/esm ./src/index.ts"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/js-client.api": "0.10.0",
-        "@fluencelabs/js-client.node": "0.1.0",
+        "@fluencelabs/js-client.node": "0.5.0",
         "@test/aqua_for_test": "workspace:*"
     },
     "devDependencies": {}
