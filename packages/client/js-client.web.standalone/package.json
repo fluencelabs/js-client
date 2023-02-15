@@ -22,7 +22,7 @@
     },
     "devDependencies": {
         "@fluencelabs/avm": "0.35.3",
-        "@fluencelabs/marine-js": "0.3.42",
+        "@fluencelabs/marine-js": "0.3.44",
         "@types/node": "16.11.59",
         "@types/jest": "28.1.0",
         "jest": "28.1.0",
