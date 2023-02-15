@@ -1,7 +1,7 @@
-import { SecurityTetraplet } from '@fluencelabs/avm';
+import type { SecurityTetraplet } from '@fluencelabs/avm';
 import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
-import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
+// import type { MultiaddrInput } from '@multiformats/multiaddr';
+import type { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
@@ -52,7 +52,8 @@ type Node = {
     multiaddr: string;
 };
 
-export type RelayOptions = string | MultiaddrInput | Node;
+// TODO: either drop support for this exact type or get it back
+export type RelayOptions = string | /* MultiaddrInput | */ Node;
 
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
 

@@ -6,9 +6,11 @@
  * Aqua version: 0.9.4
  *
  */
-import { FluencePeer } from '@fluencelabs/fluence';
-import type { CallParams$$ } from '@fluencelabs/fluence/dist/internal/compilerSupport/v4';
-import { callFunction$$, registerService$$ } from '@fluencelabs/fluence/dist/internal/compilerSupport/v4';
+
+// eslint-disable
+//ts-nocheck
+import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client.api';
+import { v5_callFunction as callFunction$$, v5_registerService as registerService$$ } from '@fluencelabs/js-client.api';
 
 // Services
 
@@ -17,7 +19,7 @@ import { callFunction$$, registerService$$ } from '@fluencelabs/fluence/dist/int
 export type SmokeTestResult = [string | null, string[]];
 export function smokeTest(label: string, config?: { ttl?: number }): Promise<SmokeTestResult>;
 
-export function smokeTest(peer: FluencePeer, label: string, config?: { ttl?: number }): Promise<SmokeTestResult>;
+export function smokeTest(peer: IFluenceClient$$, label: string, config?: { ttl?: number }): Promise<SmokeTestResult>;
 
 export function smokeTest(...args: any) {
     let script = `

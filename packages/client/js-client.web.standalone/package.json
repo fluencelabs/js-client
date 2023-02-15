@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/js-client.web.standalone",
-    "version": "0.1.0",
+    "version": "0.11.0",
     "description": "TypeScript implementation of Fluence Peer",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.ts",
@@ -16,7 +16,7 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-peer": "0.5.0",
+        "@fluencelabs/js-peer": "0.6.0",
         "buffer": "6.0.3",
         "process": "0.11.10"
     },

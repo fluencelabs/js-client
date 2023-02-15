@@ -71,6 +71,7 @@ const buildClient = async () => {
     });
     workerConfig.build!.rollupOptions = {
         plugins: [
+            // @ts-ignore
             inject.default({
                 Buffer: ['buffer', 'Buffer'],
                 process: 'process',

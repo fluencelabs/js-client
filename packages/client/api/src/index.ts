@@ -1,40 +1,33 @@
-import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces/fluenceClient';
+import { getDefaultPeer } from './util.js';
+import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces';
+export type { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces';
 
-export { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces/fluenceClient';
+export {
+    ArrayType,
+    ArrowType,
+    ArrowWithCallbacks,
+    ArrowWithoutCallbacks,
+    BottomType,
+    FnConfig,
+    FunctionCallConstants,
+    FunctionCallDef,
+    LabeledProductType,
+    NilType,
+    NonArrowType,
+    OptionType,
+    ProductType,
+    ScalarNames,
+    ScalarType,
+    ServiceDef,
+    StructType,
+    TopType,
+    UnlabeledProductType,
+} from '@fluencelabs/interfaces';
 
-// TODO: hack needed to kinda have backward compat with compiler api
-export type FluencePeer = IFluenceClient;
-
-const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
-    // @ts-ignore
-    return globalThis.defaultPeer;
-};
-
-// TODO: DXJ-271
-const REJECT_MESSAGE = 'You probably forgot to add script tag. Read about it here: ';
-
-/**
- * Wait until the js client script it loaded and return the default peer from globalThis
- */
-export const getDefaultPeer = (): Promise<IFluenceClient> => {
-    return new Promise((resolve, reject) => {
-        let interval: NodeJS.Timer | undefined;
-        let hits = 50;
-        interval = setInterval(() => {
-            if (hits === 0) {
-                clearInterval(interval);
-                reject(REJECT_MESSAGE);
-            }
-
-            let res = getPeerFromGlobalThis();
-            if (res) {
-                clearInterval(interval);
-                resolve(res);
-            }
-            hits--;
-        }, 100);
-    });
-};
+export {
+    callFunction as v5_callFunction,
+    registerService as v5_registerService,
+} from './compilerSupport/implementation.js';
 
 /**
  * Public interface to Fluence JS

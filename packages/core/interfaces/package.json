@@ -17,6 +17,14 @@
         "./compilerSupport": {
             "import": "./dist/compilerSupport.js",
             "types": "./dist/compilerSupport.d.ts"
+        },
+        "./dist/fluenceClient": {
+            "import": "./dist/fluenceClient.js",
+            "types": "./dist/fluenceClient.d.ts"
+        },
+        "./dist/compilerSupport": {
+            "import": "./dist/compilerSupport.js",
+            "types": "./dist/compilerSupport.d.ts"
         }
     },
     "typesVersions": {
