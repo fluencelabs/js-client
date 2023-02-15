@@ -9,9 +9,9 @@
   ],
   "packages": {
     "packages/client/api": {},
-    "packages/js-client.node": {},
-    "packages/js-client.web.standalone": {},
-    "packages/tools": {},
+    "packages/client/js-client.node": {},
+    "packages/client/js-client.web.standalone": {},
+    "packages/client/tools": {},
     "packages/core/interfaces": {},
     "packages/core/js-peer": {}
   }
