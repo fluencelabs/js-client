@@ -48,7 +48,53 @@ Fluence.start({
 
 Once you've added the client you can compile aqua and run it in your application.
 
-TBD
+To compile aqua use Fluence CLI: https://github.com/fluencelabs/fluence-cli
+
+1. Install package:
+
+```
+npm i -D "@fluencelabs/fluence-cli"
+```
+
+2. Add a directory in your project for aqua code. e.g `_aqua`
+
+3. Put \*.aqua files in that directory
+
+4. Add a directory for compiled aqua files inside you sources. E.G if you app source are located in `src` folder, you can create `src/_aqua`
+
+5. To compile aqua code once run `npx fluence aqua -i ./_aqua -o ./src/_aqua/`
+   To watch for changes and recompile on the fly add `-w` flag `npx fluence aqua -i ./_aqua -o ./src/_aqua/`
+
+**Hint**
+it might be a good idea to add these scripts to your `package.json` file
+
+For example you project structure could look like this:
+
+```
+ ┣ aqua
+ ┃ ┗ hello-world.aqua
+ ┣ src
+ ┃ ┣ _aqua
+ ┃ ┃ ┗ hello-world.ts
+ ┃ ┗ index.ts
+ ┣ package-lock.json
+ ┣ package.json
+ ┗ tsconfig.json
+```
+
+And your package json:
+
+```
+{
+  ...
+  "scripts": {
+    ...
+    "aqua:compile": "fluence aqua -i ./aqua/ -o ./src/_aqua",
+    "aqua:watch": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
+  },
+  ...
+}
+```
 
 ## Developing
 
