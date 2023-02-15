@@ -14,7 +14,6 @@ const rndSk = () => {
     // if (getRandomValues) {
     //     return getRandomValues(new Uint8Array(32));
     // }
-
     // @ts-ignore
     // return globalThis.crypto.webcrypto.getRandomValues(new Uint8Array(32));
 };
@@ -22,7 +21,11 @@ const rndSk = () => {
 export const main = async () => {
     console.log('starting fluence...');
     await Fluence.start({
-        relay: relay
+        relay: relay,
+        // keyPair: {
+        //     type: 'Ed25519',
+        //     source: rndSk(),
+        // },
     });
 
     console.log('started fluence');
