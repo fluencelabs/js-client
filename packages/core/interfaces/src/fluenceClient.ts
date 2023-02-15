@@ -53,6 +53,14 @@ type Node = {
 };
 
 // TODO: either drop support for this exact type or get it back
+
+/**
+ * A node in Fluence network a client can connect to.
+ * Can be in the form of:
+ * - string: multiaddr in string format
+ * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
+ * - Node: node structure, @see Node
+ */
 export type RelayOptions = string | /* MultiaddrInput | */ Node;
 
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
@@ -66,17 +74,6 @@ export type KeyPairOptions = {
  * Configuration used when initiating Fluence Client
  */
 export interface ClientOptions {
-    /**
-     * Node in Fluence network to connect to.
-     * Can be in the form of:
-     * - string: multiaddr in string format
-     * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
-     * - Node: node structure, @see Node
-     * - Implementation of FluenceConnection class, @see FluenceConnection
-     * If not specified the will work locally and would not be able to send or receive particles.
-     */
-    relay?: RelayOptions;
-
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
@@ -157,11 +154,13 @@ export type PeerStatus =
           relayPeerId: null;
       };
 
+export type FluenceStartConfig = ClientOptions & { relay: RelayOptions };
+
 export interface IFluenceClient {
     /**
      * Get the peer's status
      */
-    start(config?: ClientOptions): Promise<void>;
+    start(config: FluenceStartConfig): Promise<void>;
 
     /**
      * Un-initializes the peer: stops all the underlying workflows, stops the Aqua VM and disconnects from the Fluence network
@@ -185,24 +184,30 @@ export interface IFluenceClient {
     internals: any;
 
     // TODO: extract this out of Client interface
-    compilerSupport: {
-        callFunction: (args: CallFunctionArgs) => Promise<unknown>;
-        registerService: (args: RegisterServiceArgs) => void;
-    };
+    // compilerSupport: {
+    //     callFunction: (args: CallFunctionArgs) => Promise<unknown>;
+    //     registerService: (args: RegisterServiceArgs) => void;
+    // };
 }
 
-export interface CallFunctionArgs {
+export interface CallAquaFunctionArgs {
     def: FunctionCallDef;
     script: string;
     config: FnConfig;
+    peer: IFluenceClient;
     args: { [key: string]: any };
 }
 
+export type CallAquaFunction = (args: CallAquaFunctionArgs) => Promise<unknown>;
+
 export interface RegisterServiceArgs {
+    peer: IFluenceClient;
     def: ServiceDef;
     serviceId: string | undefined;
     service: any;
 }
+
+export type RegisterService = (args: RegisterServiceArgs) => void;
 
 export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
     if (isFluencePeer(fluencePeerCandidate)) {

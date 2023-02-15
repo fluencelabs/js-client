@@ -6,6 +6,7 @@ import {
     getArgumentTypes,
     isReturnTypeVoid,
     IFluenceClient,
+    CallAquaFunction,
 } from '@fluencelabs/interfaces';
 
 import {
@@ -29,13 +30,7 @@ import {
  * @param args - args in the form of JSON where each key corresponds to the name of the argument
  * @returns
  */
-export function callFunctionImpl(
-    def: FunctionCallDef,
-    script: string,
-    config: FnConfig,
-    peer: IFluenceClient,
-    args: { [key: string]: any },
-): Promise<unknown> {
+export const callAquaFunction: CallAquaFunction = ({ def, script, config, peer, args }) => {
     const argumentTypes = getArgumentTypes(def);
 
     const promise = new Promise((resolve, reject) => {
@@ -87,4 +82,4 @@ export function callFunctionImpl(
     });
 
     return promise;
-}
+};

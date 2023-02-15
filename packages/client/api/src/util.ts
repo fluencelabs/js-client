@@ -1,8 +1,15 @@
-import type { IFluenceClient } from '@fluencelabs/interfaces';
+import type { CallAquaFunction, IFluenceClient, RegisterService } from '@fluencelabs/interfaces';
 
-const getPeerFromGlobalThis = (): IFluenceClient | undefined => {
+type PublicFluenceInterface = {
+    defaultPeer: IFluenceClient;
+    peerFactory: () => IFluenceClient;
+    callAquaFunction: CallAquaFunction;
+    registerServiceImpl: RegisterService;
+};
+
+const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | undefined => {
     // @ts-ignore
-    return globalThis.defaultPeer;
+    return globalThis.fluence;
 };
 
 // TODO: DXJ-271
@@ -17,7 +24,13 @@ const POLL_PEER_INTERVAL = 100;
 /**
  * Wait until the js client script it loaded and return the default peer from globalThis
  */
-export const getDefaultPeer = (): Promise<IFluenceClient> => {
+export const getFluenceInterface = (): Promise<PublicFluenceInterface> => {
+    // If the script is already loaded, then return the value immediately
+    const optimisticResult = getFluenceInterfaceFromGlobalThis();
+    if (optimisticResult) {
+        return Promise.resolve(optimisticResult);
+    }
+
     return new Promise((resolve, reject) => {
         // This function is internal
         // Make it sure that would be zero way for unnecessary types
@@ -30,7 +43,7 @@ export const getDefaultPeer = (): Promise<IFluenceClient> => {
                 reject(REJECT_MESSAGE);
             }
 
-            let res = getPeerFromGlobalThis();
+            let res = getFluenceInterfaceFromGlobalThis();
             if (res) {
                 clearInterval(interval);
                 resolve(res);

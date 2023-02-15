@@ -1,5 +1,5 @@
-import { getDefaultPeer } from './util.js';
-import type { IFluenceClient, ClientOptions } from '@fluencelabs/interfaces';
+import { getFluenceInterface } from './util.js';
+import type { IFluenceClient, ClientOptions, RelayOptions } from '@fluencelabs/interfaces';
 export type { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces';
 
 export {
@@ -30,33 +30,38 @@ export {
 } from './compilerSupport/implementation.js';
 
 /**
- * Public interface to Fluence JS
+ * Public interface to Fluence Network
  */
 export const Fluence = {
     /**
-     * Initializes the default peer: starts the Aqua VM, initializes the default call service handlers
-     * and (optionally) connect to the Fluence network
-     * @param options - object specifying peer configuration
+     * Connect to the Fluence network
+     * @param relay - relay node to connect to
+     * @param options - client options
      */
-    start: async (options?: ClientOptions): Promise<void> => {
-        const peer = await getDefaultPeer();
-        return peer.start(options);
+    connect: async (relay: RelayOptions, options?: ClientOptions): Promise<void> => {
+        const fluence = await getFluenceInterface();
+        return fluence.defaultPeer.start({ ...options, relay });
     },
 
     /**
-     * Un-initializes the default peer: stops all the underlying workflows, stops the Aqua VM
-     * and disconnects from the Fluence network
+     * Disconnect from the Fluence network
      */
-    stop: async (): Promise<void> => {
-        const peer = await getDefaultPeer();
-        return peer.stop();
+    disconnect: async (): Promise<void> => {
+        const fluence = await getFluenceInterface();
+        return fluence.defaultPeer.stop();
     },
 
     /**
-     * Get the default peer instance
-     * @returns the default peer instance
+     * Get the underlying Fluence Peer instance
+     * @returns Fluence Peer instance
      */
     getPeer: async (): Promise<IFluenceClient> => {
-        return getDefaultPeer();
+        const fluence = await getFluenceInterface();
+        return fluence.defaultPeer;
     },
+};
+
+export const DangerouslyCreateClient = async (): Promise<IFluenceClient> => {
+    const fluence = await getFluenceInterface();
+    return fluence.peerFactory();
 };

@@ -19,32 +19,33 @@ const rndSk = () => {
 };
 
 export const main = async () => {
-    console.log('starting fluence...');
-    await Fluence.start({
-        relay: relay,
-        // keyPair: {
-        //     type: 'Ed25519',
-        //     source: rndSk(),
-        // },
-    });
+    try {
+        console.log('connecting to Fluence Network...');
+        await Fluence.connect(relay, {
+            // keyPair: {
+            //     type: 'Ed25519',
+            //     source: rndSk(),
+            // },
+        });
 
-    console.log('started fluence');
-    const p = await Fluence.getPeer();
+        console.log('connected');
+        const p = await Fluence.getPeer();
 
-    console.log('my peer id: ', p.getStatus().peerId);
-    console.log('my sk id: ', fromByteArray(p.getSk()));
+        console.log('my peer id: ', p.getStatus().peerId);
+        console.log('my sk id: ', fromByteArray(p.getSk()));
 
-    console.log('running some aqua...');
-    const [res, errors] = await smokeTest('my_resource');
-    if (res === null) {
-        console.log('aqua failed, errors', errors);
-    } else {
-        console.log('aqua finished, result', res);
+        console.log('running some aqua...');
+        const [res, errors] = await smokeTest('my_resource');
+        if (res === null) {
+            console.log('aqua failed, errors', errors);
+        } else {
+            console.log('aqua finished, result', res);
+        }
+    } finally {
+        console.log('disconnecting from Fluence Network...');
+        await Fluence.disconnect();
+        console.log('disconnected');
     }
-
-    console.log('stopping fluence...');
-    await Fluence.stop();
-    console.log('stopped fluence...');
 };
 
 export const runMain = () => {

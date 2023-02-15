@@ -28,11 +28,9 @@ import type {
     PeerIdB58,
     IFluenceClient,
     PeerStatus,
-    CallFunctionArgs,
-    RegisterServiceArgs,
-    ClientOptions,
     KeyPairOptions,
     RelayOptions,
+    ClientOptions,
 } from '@fluencelabs/interfaces/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
 import { dataToString, jsonify, isString, ServiceError } from './utils.js';
@@ -49,12 +47,10 @@ import { LogLevel } from '@fluencelabs/marine-js/dist/types';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv.js';
 import { registerNodeUtils } from './_aqua/node-utils.js';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
-import { callFunctionImpl } from '../compilerSupport/callFunction.js';
-import { registerServiceImpl } from '../compilerSupport/registerService.js';
 
 const DEFAULT_TTL = 7000;
 
-export type PeerConfig = ClientOptions;
+export type PeerConfig = ClientOptions & { relay?: RelayOptions };
 
 /**
  * This class implements the Fluence protocol for javascript-based environments.
@@ -132,7 +128,7 @@ export class FluencePeer implements IFluenceClient {
         const keyPair = await makeKeyPair(config.keyPair);
         await this.init(config, keyPair);
 
-        const conn = await configToConnection(keyPair, config?.relay, config?.connectionOptions?.dialTimeoutMs);
+        const conn = await configToConnection(keyPair, config.relay, config.connectionOptions?.dialTimeoutMs);
 
         if (conn !== null) {
             await this.connect(conn);
@@ -195,16 +191,6 @@ export class FluencePeer implements IFluenceClient {
     }
 
     // internal api
-    get compilerSupport() {
-        return {
-            callFunction: (args: CallFunctionArgs): Promise<unknown> => {
-                return callFunctionImpl(args.def, args.script, args.config, this, args.args);
-            },
-            registerService: (args: RegisterServiceArgs): void => {
-                return registerServiceImpl(this, args.def, args.serviceId, args.service);
-            },
-        };
-    }
 
     /**
      * @private Is not intended to be used manually. Subject to change

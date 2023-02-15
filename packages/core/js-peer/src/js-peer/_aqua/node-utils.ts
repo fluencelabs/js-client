@@ -7,7 +7,7 @@
  *
  */
 import { CallParams } from '@fluencelabs/interfaces';
-import { registerServiceImpl } from '../../compilerSupport/registerService.js';
+import { registerServiceImpl } from './util.js';
 import { FluencePeer } from '../FluencePeer.js';
 
 // Services

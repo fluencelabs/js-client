@@ -1,6 +1,8 @@
 import * as platform from 'platform';
 
 import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer.js';
+import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/callFunction.js';
+import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils.js';
@@ -20,7 +22,7 @@ export const defaultNames = {
     },
 };
 
-export const makeDefaultPeer = () => {
+export const createPeer = () => {
     const workerLoader = new WorkerLoader();
     const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
@@ -30,8 +32,15 @@ export const makeDefaultPeer = () => {
     return new FluencePeer(marine, avm);
 };
 
+const publicFluenceInterface = {
+    peerFactory: createPeer,
+    defaultPeer: createPeer(),
+    callAquaFunction,
+    registerService,
+};
+
 // @ts-ignore
-globalThis.defaultPeer = makeDefaultPeer();
+globalThis.fluence = publicFluenceInterface;
 
 function throwIfNotSupported() {
     if (platform.name === 'Node.js' && platform.version) {

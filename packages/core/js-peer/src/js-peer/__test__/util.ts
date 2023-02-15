@@ -6,7 +6,7 @@ import { Particle } from '../Particle.js';
 import { MakeServiceCall } from '../utils.js';
 import { avmModuleLoader, controlModuleLoader } from '../utilsForNode.js';
 import { ServiceDef } from '@fluencelabs/interfaces';
-import { callFunctionImpl } from '../../compilerSupport/callFunction.js';
+import { callAquaFunction } from '../../compilerSupport/callFunction.js';
 
 import { marineLogFunction } from '../utils.js';
 import { MarineBackgroundRunner } from '../../marine/worker/index.js';
@@ -40,7 +40,13 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     const functions = Object.entries(compilationResult.functions)
         .map(([name, fnInfo]) => {
             const callFn = (peer: FluencePeer, args: { [key: string]: any }) => {
-                return callFunctionImpl(fnInfo.funcDef, fnInfo.script, {}, peer, args);
+                return callAquaFunction({
+                    def: fnInfo.funcDef,
+                    script: fnInfo.script,
+                    config: {},
+                    peer: peer,
+                    args,
+                });
             };
             return { [name]: callFn };
         })

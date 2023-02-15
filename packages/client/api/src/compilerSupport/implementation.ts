@@ -19,7 +19,7 @@ import type { IFluenceClient } from '@fluencelabs/interfaces';
 import { getArgumentTypes } from '@fluencelabs/interfaces';
 import { isFluencePeer } from '@fluencelabs/interfaces';
 
-import { getDefaultPeer } from '../util.js';
+import { getFluenceInterface } from '../util.js';
 
 /**
  * Convenience function to support Aqua `func` generation backend
@@ -31,11 +31,13 @@ import { getDefaultPeer } from '../util.js';
  */
 export const callFunction = async (rawFnArgs: Array<any>, def: FunctionCallDef, script: string): Promise<unknown> => {
     const { args, peer, config } = await extractFunctionArgs(rawFnArgs, def);
-    return peer.compilerSupport.callFunction({
+    const fluence = await getFluenceInterface();
+    return fluence.callAquaFunction({
         args,
         def,
         script,
         config: config || {},
+        peer: peer,
     });
 };
 
@@ -47,10 +49,12 @@ export const callFunction = async (rawFnArgs: Array<any>, def: FunctionCallDef, 
  */
 export const registerService = async (args: any[], def: ServiceDef): Promise<unknown> => {
     const { peer, service, serviceId } = await extractServiceArgs(args, def.defaultServiceId);
-    return peer.compilerSupport.registerService({
+    const fluence = await getFluenceInterface();
+    return fluence.registerServiceImpl({
         def,
         service,
         serviceId,
+        peer,
     });
 };
 
@@ -84,7 +88,8 @@ const extractFunctionArgs = async (
         structuredArgs = args.slice(1, numberOfExpectedArgs + 1);
         config = args[numberOfExpectedArgs + 1];
     } else {
-        peer = await getDefaultPeer();
+        const fluence = await getFluenceInterface();
+        peer = fluence.defaultPeer;
         structuredArgs = args.slice(0, numberOfExpectedArgs);
         config = args[numberOfExpectedArgs];
     }
@@ -124,7 +129,8 @@ const extractServiceArgs = async (
     if (isFluencePeer(args[0])) {
         peer = args[0];
     } else {
-        peer = await getDefaultPeer();
+        const fluence = await getFluenceInterface();
+        peer = fluence.defaultPeer;
     }
 
     if (typeof args[0] === 'string') {
