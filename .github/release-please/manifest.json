@@ -1,6 +1,8 @@
 {
-  "packages/fluence-js": "0.28.0",
-  "packages/fluence-connection": "0.2.0",
-  "packages/fluence-interfaces": "0.1.0",
-  "packages/fluence-keypair": "0.2.0"
+  "packages/client/api": "0.10.0",
+  "packages/js-client.node": "0.5.0",
+  "packages/js-client.web.standalone": "0.12.0",
+  "packages/tools": "0.1.0",
+  "packages/core/interfaces": "0.6.0",
+  "packages/core/js-peer": "0.7.0"
 }
