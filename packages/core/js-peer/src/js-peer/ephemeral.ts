@@ -157,7 +157,7 @@ export class EphemeralNetwork {
                 sendParticle = sendParticle;
             };
 
-            await peer.connect(new connectionCtor());
+            await peer._connect(new connectionCtor());
 
             const peerId = peer.getStatus().peerId!;
             const ephPeer: PeerAdapter = {
@@ -181,7 +181,7 @@ export class EphemeralNetwork {
         log.debug('Shutting down ephemeral network...');
         const peers = Array.from(this._peers.entries());
         const promises = peers.map(([k, p]) => {
-            return p.isEphemeral ? p.peer.stop() : p.peer.disconnect();
+            return p.isEphemeral ? p.peer.stop() : p.peer._disconnect();
         });
         await Promise.all(promises);
         this._peers.clear();

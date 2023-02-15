@@ -157,6 +157,22 @@ export class FluencePeer implements IFluenceClient {
     }
 
     /**
+     * Connect to the Fluence network
+     * @param relay - relay node to connect to
+     * @param options - client options
+     */
+    async connect(relay: RelayOptions, options?: ClientOptions): Promise<void> {
+        return this.start({ relay, ...options });
+    }
+
+    /**
+     * Disconnect from the Fluence network
+     */
+    disconnect(): Promise<void> {
+        return this.stop();
+    }
+
+    /**
      * Initializes the peer: starts the Aqua VM, initializes the default call service handlers
      * and (optionally) connect to the Fluence network
      * @param config - object specifying peer configuration
@@ -169,7 +185,7 @@ export class FluencePeer implements IFluenceClient {
         const conn = await configToConnection(keyPair, config.relay, config.connectionOptions?.dialTimeoutMs);
 
         if (conn !== null) {
-            await this.connect(conn);
+            await this._connect(conn);
         }
         this.changeConnectionState('connected');
     }
@@ -220,7 +236,7 @@ export class FluencePeer implements IFluenceClient {
         this.changeConnectionState('disconnecting');
         this._keyPair = undefined; // This will set peer to non-initialized state and stop particle processing
         this._stopParticleProcessing();
-        await this.disconnect();
+        await this._disconnect();
         await this.marine.stop();
         await this.avmRunner.stop();
         this._classServices = undefined;
@@ -383,7 +399,7 @@ export class FluencePeer implements IFluenceClient {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    async connect(connection: FluenceConnection): Promise<void> {
+    async _connect(connection: FluenceConnection): Promise<void> {
         if (this.connection) {
             await this.connection.disconnect();
         }
@@ -395,7 +411,7 @@ export class FluencePeer implements IFluenceClient {
     /**
      * @private Subject to change. Do not use this method directly
      */
-    async disconnect(): Promise<void> {
+    async _disconnect(): Promise<void> {
         await this.connection?.disconnect();
     }
 

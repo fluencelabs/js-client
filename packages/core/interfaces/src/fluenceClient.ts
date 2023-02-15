@@ -85,7 +85,6 @@ export interface ClientOptions {
          * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
          * The options allows to specify the timeout for that message in milliseconds.
          * If not specified the default timeout will be used
-    CallParams,
          */
         skipCheckConnection?: boolean;
 
@@ -118,15 +117,6 @@ export interface ClientOptions {
     };
 }
 
-/**
- * Information about Fluence Peer connection.
- * Represented as object with the following keys:
- * - `isInitialized`: Is the peer initialized or not.
- * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
- * - `isConnected`: Is the peer connected to network or not
- * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
- * - `isDirect`: True if the peer is connected to the network directly (not through relay)
- */
 export type FluenceStartConfig = ClientOptions & { relay: RelayOptions };
 
 export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
@@ -134,14 +124,16 @@ export type ConnectionState = typeof ConnectionStates[number];
 
 export interface IFluenceClient {
     /**
-     * Get the peer's status
+     * Connect to the Fluence network
+     * @param relay - relay node to connect to
+     * @param options - client options
      */
-    start(config: FluenceStartConfig): Promise<void>;
+    connect: (relay: RelayOptions, options?: ClientOptions) => Promise<void>;
 
     /**
-     * Un-initializes the peer: stops all the underlying workflows, stops the Aqua VM and disconnects from the Fluence network
+     * Disconnect from the Fluence network
      */
-    stop(): Promise<void>;
+    disconnect(): Promise<void>;
 
     /**
      * Handle connection state changes. Immediately returns current connection state

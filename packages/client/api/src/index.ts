@@ -46,7 +46,7 @@ export const Fluence = {
      */
     connect: async (relay: RelayOptions, options?: ClientOptions): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultPeer.start({ ...options, relay });
+        return fluence.defaultPeer.connect(relay, options);
     },
 
     /**
@@ -54,7 +54,7 @@ export const Fluence = {
      */
     disconnect: async (): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultPeer.stop();
+        return fluence.defaultPeer.disconnect();
     },
 
     /**
