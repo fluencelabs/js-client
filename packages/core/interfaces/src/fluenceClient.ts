@@ -182,12 +182,6 @@ export interface IFluenceClient {
     // - particle initialization
     // - service registration
     internals: any;
-
-    // TODO: extract this out of Client interface
-    // compilerSupport: {
-    //     callFunction: (args: CallFunctionArgs) => Promise<unknown>;
-    //     registerService: (args: RegisterServiceArgs) => void;
-    // };
 }
 
 export interface CallAquaFunctionArgs {
