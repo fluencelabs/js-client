@@ -23,7 +23,7 @@ importers:
       '@fluencelabs/aqua': 0.9.4
       '@fluencelabs/fluence-network-environment': 1.0.14
       '@fluencelabs/js-client.api': workspace:^
-      '@fluencelabs/registry': 0.7.0
+      '@fluencelabs/registry': 1.0.1
       base64-js: 1.5.1
     dependencies:
       '@fluencelabs/fluence-network-environment': 1.0.14
@@ -31,7 +31,7 @@ importers:
       base64-js: 1.5.1
     devDependencies:
       '@fluencelabs/aqua': 0.9.4_jaxubti5gf66xc76fsqhxmuwn4
-      '@fluencelabs/registry': 0.7.0
+      '@fluencelabs/registry': 1.0.1
 
   packages/@tests/frameworks/cra-ts:
     specifiers:
@@ -2324,8 +2324,8 @@ packages:
       '@wasmer/wasmfs': 0.12.0
       default-import: 1.1.5
 
-  /@fluencelabs/registry/0.7.0:
-    resolution: {integrity: sha512-9yL/CFqGgw6RvPSJZGYM7dCEVQUXrC+cHFAcNWLAcFkA3RaB4znqFYFQRFeo5VUvv1mda9l1BEdv1Q4uO17/hw==}
+  /@fluencelabs/registry/1.0.1:
+    resolution: {integrity: sha512-fOjOiOHYFpZdeGiFuqMgQNuIE/HYivhOwQ7YwTk6Dh/Gkd974+OkNQPuXVCSBits2tsGhx+s5V5QLsNeSpjBKg==}
     dependencies:
       '@fluencelabs/aqua-lib': 0.5.2
       '@fluencelabs/trust-graph': 3.1.2
