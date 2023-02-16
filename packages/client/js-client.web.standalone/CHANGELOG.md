@@ -1,5 +1,11 @@
 # Changelog
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.1 to 0.8.2
+
 ## [0.13.1](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.0...js-client.web.standalone-v0.13.1) (2023-02-16)
 
 

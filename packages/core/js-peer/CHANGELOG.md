@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.2](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.1...js-peer-v0.8.2) (2023-02-16)
+
+
+### Features
+
+* Add `getRelayPeerId` method for `IFluenceClient` ([#260](https://github.com/fluencelabs/js-client/issues/260)) ([a10278a](https://github.com/fluencelabs/js-client/commit/a10278afaa782a307feb10c4eac060094c101230))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.7.1 to 0.7.2
+
 ## [0.8.1](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.0...js-peer-v0.8.1) (2023-02-16)
 
 
