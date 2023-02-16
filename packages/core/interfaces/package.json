@@ -1,56 +1,56 @@
 {
-    "name": "@fluencelabs/interfaces",
-    "type": "module",
-    "version": "0.7.2",
-    "description": "Interfaces",
-    "main": "./dist/index.js",
-    "typings": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts"
-        },
-        "./fluenceClient": {
-            "import": "./dist/fluenceClient.js",
-            "types": "./dist/fluenceClient.d.ts"
-        },
-        "./compilerSupport": {
-            "import": "./dist/compilerSupport.js",
-            "types": "./dist/compilerSupport.d.ts"
-        },
-        "./dist/fluenceClient": {
-            "import": "./dist/fluenceClient.js",
-            "types": "./dist/fluenceClient.d.ts"
-        },
-        "./dist/compilerSupport": {
-            "import": "./dist/compilerSupport.js",
-            "types": "./dist/compilerSupport.d.ts"
-        }
+  "name": "@fluencelabs/interfaces",
+  "type": "module",
+  "version": "0.7.2",
+  "description": "Interfaces",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
-    "typesVersions": {
-        "*": {
-            "fluenceClient.d.ts": [
-                "./dist/fluenceClient.d.ts"
-            ],
-            "compilerSupport.d.ts": [
-                "./dist/compilerSupport.d.ts"
-            ]
-        }
+    "./fluenceClient": {
+      "import": "./dist/fluenceClient.js",
+      "types": "./dist/fluenceClient.d.ts"
     },
-    "engines": {
-        "node": ">=10",
-        "pnpm": ">=3"
+    "./compilerSupport": {
+      "import": "./dist/compilerSupport.js",
+      "types": "./dist/compilerSupport.d.ts"
     },
-    "scripts": {
-        "build": "tsc"
+    "./dist/fluenceClient": {
+      "import": "./dist/fluenceClient.js",
+      "types": "./dist/fluenceClient.d.ts"
     },
-    "repository": "https://github.com/fluencelabs/fluence-js",
-    "author": "Fluence Labs",
-    "license": "Apache-2.0",
-    "dependencies": {},
-    "devDependencies": {
-        "@multiformats/multiaddr": "11.3.0",
-        "@fluencelabs/avm": "0.35.4",
-        "@fluencelabs/marine-js": "0.3.45"
+    "./dist/compilerSupport": {
+      "import": "./dist/compilerSupport.js",
+      "types": "./dist/compilerSupport.d.ts"
     }
+  },
+  "typesVersions": {
+    "*": {
+      "fluenceClient.d.ts": [
+        "./dist/fluenceClient.d.ts"
+      ],
+      "compilerSupport.d.ts": [
+        "./dist/compilerSupport.d.ts"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=10",
+    "pnpm": ">=3"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": "https://github.com/fluencelabs/fluence-js",
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@multiformats/multiaddr": "11.3.0",
+    "@fluencelabs/avm": "0.35.4",
+    "@fluencelabs/marine-js": "0.3.45"
+  }
 }
