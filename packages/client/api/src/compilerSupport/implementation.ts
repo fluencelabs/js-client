@@ -60,7 +60,7 @@ export const registerService = async (args: any[], def: ServiceDef): Promise<unk
     // there should not be such a check at all
     if (peer.internals.getConnectionState() !== 'connected') {
         throw new Error(
-            'Could not register Aqua service because client is disconnected. Did you forget to call Fluence.connect()?',
+            'Could not register Aqua service because the client is disconnected. Did you forget to call Fluence.connect()?',
         );
     }
 

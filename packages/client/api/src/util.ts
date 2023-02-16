@@ -12,8 +12,12 @@ export const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | un
     return globalThis.fluence;
 };
 
-// TODO: DXJ-271
-const REJECT_MESSAGE = 'You probably forgot to add script tag. Read about it here: ';
+// TODO: fix link DXJ-271
+const REJECT_MESSAGE = `Could not load Fluence JS Client library.
+If you are using Node.js that probably means that you forgot in install or import the @fluencelabs/js-client.node package.
+If you are using a browser, then you probably forgot to add the <script> tag to your HTML.
+Please refer to the documentation page for more details: https://fluence.dev/
+`;
 
 // Let's assume that if the library has not been loaded in 5 seconds, then the user has forgotten to add the script tag
 const POLL_PEER_TIMEOUT = 5000;
