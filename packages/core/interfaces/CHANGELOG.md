@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.0...interfaces-v0.7.1) (2023-02-16)
+
+
+### Features
+
+* Simplify JS Client public API ([#257](https://github.com/fluencelabs/js-client/issues/257)) ([9daaf41](https://github.com/fluencelabs/js-client/commit/9daaf410964d43228192c829c7ff785db6e88081))
+
 ## [0.7.0](https://github.com/fluencelabs/fluence-js/compare/interfaces-v0.6.0...interfaces-v0.7.0) (2023-02-15)
 
 
