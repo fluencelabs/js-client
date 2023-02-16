@@ -72,7 +72,7 @@ export const Fluence = {
     },
 
     /**
-     * Get the underlying client instance which holds the connection to the network
+     * Low level API. Get the underlying client instance which holds the connection to the network
      * @returns IFluenceClient instance
      */
     getClient: async (): Promise<IFluenceClient> => {
@@ -81,7 +81,11 @@ export const Fluence = {
     },
 };
 
-export const dangerouslyCreateClient = async (): Promise<IFluenceClient> => {
+/**
+ * Low level API. Generally you need Fluence.connect() instead.
+ * @returns IFluenceClient instance
+ */
+export const createClient = async (): Promise<IFluenceClient> => {
     const fluence = await getFluenceInterface();
     return fluence.clientFactory();
 };
