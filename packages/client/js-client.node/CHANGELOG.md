@@ -6,6 +6,13 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.1 to 0.8.2
 
+## [0.6.4](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.3...js-client.node-v0.6.4) (2023-02-16)
+
+
+### Bug Fixes
+
+* Add .npmignore to js-client.node ([#264](https://github.com/fluencelabs/js-client/issues/264)) ([a899a53](https://github.com/fluencelabs/js-client/commit/a899a531fdfd855268ba47170ace9e281b53f0fd))
+
 ## [0.6.3](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.2...js-client.node-v0.6.3) (2023-02-16)
 
 
