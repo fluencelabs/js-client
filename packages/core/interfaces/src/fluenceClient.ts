@@ -141,14 +141,19 @@ export interface IFluenceClient {
     onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState;
 
     /**
-     * Return peers secret key as byte array.
+     * Return peer's secret key as byte array.
      */
     getPeerSecretKey(): Uint8Array;
 
     /**
-     * Return peers public key as a base58 string (multihash/CIDv0).
+     * Return peer's public key as a base58 string (multihash/CIDv0).
      */
     getPeerId(): string;
+
+    /**
+     * Return relay's public key as a base58 string (multihash/CIDv0).
+     */
+    getRelayPeerId(): string;
 
     // TODO: come up with a working interface for
     // - particle creation

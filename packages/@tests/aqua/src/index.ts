@@ -36,6 +36,9 @@ export const main = async () => {
 
         console.log('connected');
 
+        const relayPeerId = (await Fluence.getClient()).getRelayPeerId();
+        console.log('relay:', relayPeerId);
+
         await registerHelloWorld({
             hello(str) {
                 return 'Hello, ' + str + '!';
