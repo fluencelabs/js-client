@@ -81,7 +81,7 @@ export const Fluence = {
     },
 };
 
-export const DangerouslyCreateClient = async (): Promise<IFluenceClient> => {
+export const dangerouslyCreateClient = async (): Promise<IFluenceClient> => {
     const fluence = await getFluenceInterface();
     return fluence.peerFactory();
 };
