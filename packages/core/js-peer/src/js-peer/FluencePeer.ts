@@ -142,6 +142,10 @@ export class FluencePeer implements IFluenceClient {
         return this.getStatus().peerId!;
     }
 
+    getRelayPeerId(): string {
+        return this.getStatus().relayPeerId!;
+    }
+
     getPeerSecretKey(): Uint8Array {
         if (!this._keyPair) {
             throw new Error("Can't get key pair: peer is not initialized");
