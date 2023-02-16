@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.1...interfaces-v0.7.2) (2023-02-16)
+
+
+### Features
+
+* Add `getRelayPeerId` method for `IFluenceClient` ([#260](https://github.com/fluencelabs/js-client/issues/260)) ([a10278a](https://github.com/fluencelabs/js-client/commit/a10278afaa782a307feb10c4eac060094c101230))
+
 ## [0.7.1](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.0...interfaces-v0.7.1) (2023-02-16)
 
 
