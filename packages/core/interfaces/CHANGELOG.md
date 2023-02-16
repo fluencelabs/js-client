@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.2...interfaces-v0.7.3) (2023-02-16)
+
+
+### Bug Fixes
+
+* Trigger release to publish packages that were built ([#262](https://github.com/fluencelabs/js-client/issues/262)) ([47abf38](https://github.com/fluencelabs/js-client/commit/47abf3882956ffbdc52df372db26ba6252e8306b))
+
 ## [0.7.2](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.1...interfaces-v0.7.2) (2023-02-16)
 
 

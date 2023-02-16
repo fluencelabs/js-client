@@ -6,6 +6,20 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.1 to 0.8.2
 
+## [0.13.3](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.2...js-client.web.standalone-v0.13.3) (2023-02-16)
+
+
+### Bug Fixes
+
+* Trigger release to publish packages that were built ([#262](https://github.com/fluencelabs/js-client/issues/262)) ([47abf38](https://github.com/fluencelabs/js-client/commit/47abf3882956ffbdc52df372db26ba6252e8306b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.2 to 0.8.3
+
 ## [0.13.1](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.0...js-client.web.standalone-v0.13.1) (2023-02-16)
 
 
