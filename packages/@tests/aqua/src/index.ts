@@ -1,7 +1,7 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
 import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
-import { smokeTest } from './_aqua/smoke_test.js';
+import { registerHelloWorld, smokeTest } from './_aqua/smoke_test.js';
 
 // const relay = {
 //     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
@@ -35,13 +35,21 @@ export const main = async () => {
         await Fluence.connect(relay, optsWithRandomKeyPair());
 
         console.log('connected');
+
+        await registerHelloWorld({
+            hello(str) {
+                return 'Hello, ' + str + '!';
+            },
+        });
+
         const client = await Fluence.getClient();
 
         console.log('my peer id: ', client.getPeerId());
         console.log('my sk id: ', fromByteArray(client.getPeerSecretKey()));
 
         console.log('running some aqua...');
-        const [res, errors] = await smokeTest('my_resource');
+        const [res, errors, hello] = await smokeTest('my_resource');
+        console.log(hello);
         if (res === null) {
             console.log('aqua failed, errors', errors);
         } else {
