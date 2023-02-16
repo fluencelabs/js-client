@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.13.1](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.0...js-client.web.standalone-v0.13.1) (2023-02-16)
+
+
+### Features
+
+* Simplify JS Client public API ([#257](https://github.com/fluencelabs/js-client/issues/257)) ([9daaf41](https://github.com/fluencelabs/js-client/commit/9daaf410964d43228192c829c7ff785db6e88081))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.0 to 0.8.1
+
 ## [0.13.0](https://github.com/fluencelabs/fluence-js/compare/js-client.web.standalone-v0.12.0...js-client.web.standalone-v0.13.0) (2023-02-15)
 
 
