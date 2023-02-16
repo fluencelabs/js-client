@@ -108,6 +108,12 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 To hack on the Fluence JS Client itself, please refer to the [development page](./DEVELOPING.md).
 
 
+## Documentation
+
+The starting point for all documentation related to Fluence is
+[fluence.dev](https://fluence.dev/). We also have an active [YouTube channel](https://www.youtube.com/@fluencelabs).
+
+
 ## Support
 
 Please, file an [issue](https://github.com/fluencelabs/fluence-js/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project). We will do our best to resolve the issue ASAP.
