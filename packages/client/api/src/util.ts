@@ -4,7 +4,7 @@ type PublicFluenceInterface = {
     defaultPeer: IFluenceClient;
     peerFactory: () => IFluenceClient;
     callAquaFunction: CallAquaFunction;
-    registerServiceImpl: RegisterService;
+    registerService: RegisterService;
 };
 
 export const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | undefined => {

@@ -72,10 +72,10 @@ export const Fluence = {
     },
 
     /**
-     * Get the underlying Fluence Peer instance which holds the connection to the network
-     * @returns Fluence Peer instance
+     * Get the underlying client instance which holds the connection to the network
+     * @returns IFluenceClient instance
      */
-    getPeer: async (): Promise<IFluenceClient> => {
+    getClient: async (): Promise<IFluenceClient> => {
         const fluence = await getFluenceInterface();
         return fluence.defaultPeer;
     },
