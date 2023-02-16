@@ -30,7 +30,7 @@ export const injectRelayService = (def: FunctionCallDef, peer: IFluenceClient) =
         handler: () => {
             return {
                 retCode: ResultCodes.success,
-                result: peer.getStatus().relayPeerId,
+                result: peer.internals.getRelayPeerId(),
             };
         },
     };

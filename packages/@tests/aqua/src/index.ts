@@ -1,50 +1,65 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
-import { krasnodar } from '@fluencelabs/fluence-network-environment';
-import { smokeTest } from './_aqua/smoke_test.js';
+import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
+import { registerHelloWorld, smokeTest } from './_aqua/smoke_test.js';
 
 // const relay = {
 //     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
 //     peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
 // };
 
-const relay = krasnodar[4];
+const relay = randomKras();
 
-const rndSk = () => {
-    // if (getRandomValues) {
-    //     return getRandomValues(new Uint8Array(32));
-    // }
-    // @ts-ignore
-    // return globalThis.crypto.webcrypto.getRandomValues(new Uint8Array(32));
+function generateRandomUint8Array() {
+    const uint8Array = new Uint8Array(32);
+    for (let i = 0; i < uint8Array.length; i++) {
+        uint8Array[i] = Math.floor(Math.random() * 256);
+    }
+    return uint8Array;
+}
+
+const optsWithRandomKeyPair = () => {
+    return {
+        keyPair: {
+            type: 'Ed25519',
+            source: generateRandomUint8Array(),
+        },
+    } as const;
 };
 
 export const main = async () => {
-    console.log('starting fluence...');
-    await Fluence.start({
-        relay: relay,
-        // keyPair: {
-        //     type: 'Ed25519',
-        //     source: rndSk(),
-        // },
-    });
+    try {
+        Fluence.onConnectionStateChange((state) => console.info('connection state changed: ', state));
 
-    console.log('started fluence');
-    const p = await Fluence.getPeer();
+        console.log('connecting to Fluence Network...');
+        await Fluence.connect(relay, optsWithRandomKeyPair());
 
-    console.log('my peer id: ', p.getStatus().peerId);
-    console.log('my sk id: ', fromByteArray(p.getSk()));
+        console.log('connected');
 
-    console.log('running some aqua...');
-    const [res, errors] = await smokeTest('my_resource');
-    if (res === null) {
-        console.log('aqua failed, errors', errors);
-    } else {
-        console.log('aqua finished, result', res);
+        await registerHelloWorld({
+            hello(str) {
+                return 'Hello, ' + str + '!';
+            },
+        });
+
+        const client = await Fluence.getClient();
+
+        console.log('my peer id: ', client.getPeerId());
+        console.log('my sk id: ', fromByteArray(client.getPeerSecretKey()));
+
+        console.log('running some aqua...');
+        const [res, errors, hello] = await smokeTest('my_resource');
+        console.log(hello);
+        if (res === null) {
+            console.log('aqua failed, errors', errors);
+        } else {
+            console.log('aqua finished, result', res);
+        }
+    } finally {
+        console.log('disconnecting from Fluence Network...');
+        await Fluence.disconnect();
+        console.log('disconnected');
     }
-
-    console.log('stopping fluence...');
-    await Fluence.stop();
-    console.log('stopped fluence...');
 };
 
 export const runMain = () => {

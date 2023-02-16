@@ -53,6 +53,14 @@ type Node = {
 };
 
 // TODO: either drop support for this exact type or get it back
+
+/**
+ * A node in Fluence network a client can connect to.
+ * Can be in the form of:
+ * - string: multiaddr in string format
+ * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
+ * - Node: node structure, @see Node
+ */
 export type RelayOptions = string | /* MultiaddrInput | */ Node;
 
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
@@ -67,17 +75,6 @@ export type KeyPairOptions = {
  */
 export interface ClientOptions {
     /**
-     * Node in Fluence network to connect to.
-     * Can be in the form of:
-     * - string: multiaddr in string format
-     * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
-     * - Node: node structure, @see Node
-     * - Implementation of FluenceConnection class, @see FluenceConnection
-     * If not specified the will work locally and would not be able to send or receive particles.
-     */
-    relay?: RelayOptions;
-
-    /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
@@ -88,7 +85,6 @@ export interface ClientOptions {
          * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
          * The options allows to specify the timeout for that message in milliseconds.
          * If not specified the default timeout will be used
-    CallParams,
          */
         skipCheckConnection?: boolean;
 
@@ -121,88 +117,67 @@ export interface ClientOptions {
     };
 }
 
-/**
- * Information about Fluence Peer connection.
- * Represented as object with the following keys:
- * - `isInitialized`: Is the peer initialized or not.
- * - `peerId`: Peer Id of the peer. Null if the peer is not initialized
- * - `isConnected`: Is the peer connected to network or not
- * - `relayPeerId`: Peer Id of the relay the peer is connected to. If the connection is direct relayPeerId is null
- * - `isDirect`: True if the peer is connected to the network directly (not through relay)
- */
-export type PeerStatus =
-    | {
-          isInitialized: false;
-          peerId: null;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: false;
-          relayPeerId: null;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          relayPeerId: PeerIdB58;
-      }
-    | {
-          isInitialized: true;
-          peerId: PeerIdB58;
-          isConnected: true;
-          isDirect: true;
-          relayPeerId: null;
-      };
+export type FluenceStartConfig = ClientOptions & { relay: RelayOptions };
+
+export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
+export type ConnectionState = typeof ConnectionStates[number];
 
 export interface IFluenceClient {
     /**
-     * Get the peer's status
+     * Connect to the Fluence network
+     * @param relay - relay node to connect to
+     * @param options - client options
      */
-    start(config?: ClientOptions): Promise<void>;
+    connect: (relay: RelayOptions, options?: ClientOptions) => Promise<void>;
 
     /**
-     * Un-initializes the peer: stops all the underlying workflows, stops the Aqua VM and disconnects from the Fluence network
+     * Disconnect from the Fluence network
      */
-    stop(): Promise<void>;
+    disconnect(): Promise<void>;
 
     /**
-     * Get the peer's status
+     * Handle connection state changes. Immediately returns current connection state
      */
-    getStatus(): PeerStatus;
+    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState;
 
     /**
-     * Return peers SK
+     * Return peers secret key as byte array.
      */
-    getSk(): Uint8Array;
+    getPeerSecretKey(): Uint8Array;
+
+    /**
+     * Return peers public key as a base58 string (multihash/CIDv0).
+     */
+    getPeerId(): string;
 
     // TODO: come up with a working interface for
     // - particle creation
     // - particle initialization
     // - service registration
+    /**
+     * For internal use only. Do not call directly
+     */
     internals: any;
-
-    // TODO: extract this out of Client interface
-    compilerSupport: {
-        callFunction: (args: CallFunctionArgs) => Promise<unknown>;
-        registerService: (args: RegisterServiceArgs) => void;
-    };
 }
 
-export interface CallFunctionArgs {
+export interface CallAquaFunctionArgs {
     def: FunctionCallDef;
     script: string;
     config: FnConfig;
+    peer: IFluenceClient;
     args: { [key: string]: any };
 }
 
+export type CallAquaFunction = (args: CallAquaFunctionArgs) => Promise<unknown>;
+
 export interface RegisterServiceArgs {
+    peer: IFluenceClient;
     def: ServiceDef;
     serviceId: string | undefined;
     service: any;
 }
+
+export type RegisterService = (args: RegisterServiceArgs) => void;
 
 export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
     if (isFluencePeer(fluencePeerCandidate)) {

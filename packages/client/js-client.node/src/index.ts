@@ -1,6 +1,8 @@
 import * as platform from 'platform';
 
 import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer.js';
+import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/callFunction.js';
+import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils.js';
@@ -20,7 +22,7 @@ export const defaultNames = {
     },
 };
 
-export const makeDefaultPeer = () => {
+export const createClient = () => {
     const workerLoader = new WorkerLoader();
     const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
@@ -30,8 +32,15 @@ export const makeDefaultPeer = () => {
     return new FluencePeer(marine, avm);
 };
 
+const publicFluenceInterface = {
+    clientFactory: createClient,
+    defaultClient: createClient(),
+    callAquaFunction,
+    registerService,
+};
+
 // @ts-ignore
-globalThis.defaultPeer = makeDefaultPeer();
+globalThis.fluence = publicFluenceInterface;
 
 function throwIfNotSupported() {
     if (platform.name === 'Node.js' && platform.version) {
@@ -39,7 +48,7 @@ function throwIfNotSupported() {
         const major = version[0];
         if (major < 16) {
             throw new Error(
-                'FluenceJS requires node.js version >= "16.x"; Detected ' +
+                'Fluence JS Client requires node.js version >= "16.x"; Detected ' +
                     platform.description +
                     ' Please update node.js to version 16 or higher.\nYou can use https://nvm.sh utility to update node.js version: "nvm install 17 && nvm use 17 && nvm alias default 17"',
             );

@@ -1,5 +1,9 @@
 import "@fluencelabs/registry/resources-api.aqua"
 
-func smokeTest(label: string) -> ?string, *string:
+service HelloWorld("hello-world"):
+    hello(str: string) -> string
+
+func smokeTest(label: string) -> ?string, *string, string:
     res, errors <- createResource(label)
-    <- res, errors
+    hello <- HelloWorld.hello("Fluence user")
+    <- res, errors, hello
