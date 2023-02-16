@@ -46,7 +46,7 @@ export const Fluence = {
      */
     connect: async (relay: RelayOptions, options?: ClientOptions): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultPeer.connect(relay, options);
+        return fluence.defaultClient.connect(relay, options);
     },
 
     /**
@@ -54,7 +54,7 @@ export const Fluence = {
      */
     disconnect: async (): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultPeer.disconnect();
+        return fluence.defaultClient.disconnect();
     },
 
     /**
@@ -63,10 +63,10 @@ export const Fluence = {
     onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
         const optimisticResult = getFluenceInterfaceFromGlobalThis();
         if (optimisticResult) {
-            return optimisticResult.defaultPeer.onConnectionStateChange(handler);
+            return optimisticResult.defaultClient.onConnectionStateChange(handler);
         }
 
-        getFluenceInterface().then((fluence) => fluence.defaultPeer.onConnectionStateChange(handler));
+        getFluenceInterface().then((fluence) => fluence.defaultClient.onConnectionStateChange(handler));
 
         return 'disconnected';
     },
@@ -77,11 +77,11 @@ export const Fluence = {
      */
     getClient: async (): Promise<IFluenceClient> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultPeer;
+        return fluence.defaultClient;
     },
 };
 
 export const dangerouslyCreateClient = async (): Promise<IFluenceClient> => {
     const fluence = await getFluenceInterface();
-    return fluence.peerFactory();
+    return fluence.clientFactory();
 };

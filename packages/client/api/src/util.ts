@@ -1,8 +1,8 @@
 import type { CallAquaFunction, IFluenceClient, RegisterService } from '@fluencelabs/interfaces';
 
 type PublicFluenceInterface = {
-    defaultPeer: IFluenceClient;
-    peerFactory: () => IFluenceClient;
+    clientFactory: () => IFluenceClient;
+    defaultClient: IFluenceClient;
     callAquaFunction: CallAquaFunction;
     registerService: RegisterService;
 };

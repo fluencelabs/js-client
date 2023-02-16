@@ -6,7 +6,7 @@ import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker'
 import { checkConnection, marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils.js';
 import { InlinedWorkerLoader, InlinedWasmLoader } from '@fluencelabs/js-peer/dist/marine/deps-loader/common.js';
 
-const createPeer = () => {
+const createClient = () => {
     const workerLoader = new InlinedWorkerLoader('___worker___');
     const controlModuleLoader = new InlinedWasmLoader('___marine___');
     const avmModuleLoader = new InlinedWasmLoader('___avm___');
@@ -17,8 +17,8 @@ const createPeer = () => {
 };
 
 const publicFluenceInterface = {
-    peerFactory: createPeer,
-    defaultPeer: createPeer(),
+    clientFactory: createClient,
+    defaultClient: createClient(),
     callAquaFunction,
     registerService,
 };
