@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/tools",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Fluence JS Client tools",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",

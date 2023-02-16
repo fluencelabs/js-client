@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.3](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.2...js-peer-v0.8.3) (2023-02-16)
+
+
+### Bug Fixes
+
+* Trigger release to publish packages that were built ([#262](https://github.com/fluencelabs/js-client/issues/262)) ([47abf38](https://github.com/fluencelabs/js-client/commit/47abf3882956ffbdc52df372db26ba6252e8306b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.7.2 to 0.7.3
+
 ## [0.8.2](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.1...js-peer-v0.8.2) (2023-02-16)
 
 
