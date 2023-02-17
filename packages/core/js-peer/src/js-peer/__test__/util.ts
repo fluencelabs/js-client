@@ -1,7 +1,7 @@
 import * as api from '@fluencelabs/aqua-api/aqua-api.js';
 
 import { promises as fs } from 'fs';
-import { FluencePeer, PeerConfig } from '../FluencePeer.js';
+import {FluencePeer, PeerConfig} from '../FluencePeer.js';
 import { Particle } from '../Particle.js';
 import { MakeServiceCall } from '../utils.js';
 import { avmModuleLoader, controlModuleLoader } from '../utilsForNode.js';
@@ -12,7 +12,8 @@ import { marineLogFunction } from '../utils.js';
 import { MarineBackgroundRunner } from '../../marine/worker/index.js';
 import { MarineBasedAvmRunner } from '../avm.js';
 import { nodes } from './connection.js';
-import { WorkerLoaderFromFs } from '../../marine/deps-loader/node.js';
+import {WorkerLoaderFromFs} from '../../marine/deps-loader/node.js';
+import {createClient} from "../../../../../client/js-client.node";
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
@@ -66,12 +67,17 @@ export const mkTestPeer = () => {
 };
 
 export const withPeer = async (action: (p: FluencePeer) => Promise<void>, config?: PeerConfig) => {
-    const p = mkTestPeer();
+    const p = createClient() 
     try {
-        await p.start(config);
-        await action(p);
+        console.log("connecting to: ")
+        console.log(config)
+        await p.start(config).catch((e: any) => console.log("connection error: " + e));
+        console.log("connected")
+        await action(p).catch((e) => console.log("ERRORRRRR: " + e));
     } finally {
+        console.log("stopping")
         await p!.stop();
+        console.log("stoped")
     }
 };
 

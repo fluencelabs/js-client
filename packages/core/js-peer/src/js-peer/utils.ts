@@ -18,9 +18,9 @@ import log from 'loglevel';
 
 import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
-import { FluencePeer } from './FluencePeer.js';
 import { ParticleExecutionStage } from './Particle.js';
 import { LogFunction } from '@fluencelabs/marine-js/dist/types';
+import {FluencePeer} from "./FluencePeer";
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>

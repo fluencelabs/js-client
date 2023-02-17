@@ -1,7 +1,7 @@
 import { Particle } from '../../Particle.js';
 import { doNothing } from '../../utils.js';
-import { FluencePeer } from '../../FluencePeer.js';
-import { mkTestPeer } from '../util.js';
+import {createClient} from "../../../../../../client/js-client.node";
+import {FluencePeer} from "../../FluencePeer";
 
 let peer: FluencePeer;
 
@@ -13,7 +13,7 @@ describe('Sig service test suite', () => {
     });
 
     beforeEach(async () => {
-        peer = mkTestPeer();
+        peer = createClient();
         await peer.start();
     });
 
@@ -46,7 +46,7 @@ describe('Sig service test suite', () => {
         )
     `;
         const promise = new Promise<any>((resolve) => {
-            peer.internals.regHandler.common('res', 'res', (req) => {
+            peer.internals.regHandler.common('res', 'res', (req: any) => {
                 resolve(req.args);
                 return {
                     result: {},

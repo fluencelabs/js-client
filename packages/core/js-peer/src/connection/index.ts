@@ -133,36 +133,38 @@ export class RelayConnection extends FluenceConnection {
     }
 
     async connect(onIncomingParticle: ParticleHandler) {
-        await this._lib2p2Peer.start();
-
-        this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
-            pipe(
-                stream.source,
-                // @ts-ignore
-                decode(),
-                // @ts-ignore
-                (source) => map(source, (buf) => toString(buf.subarray())),
-                async (source) => {
-                    try {
-                        for await (const msg of source) {
-                            try {
-                                onIncomingParticle(msg);
-                            } catch (e) {
-                                log.error('error on handling a new incoming message: ' + e);
-                            }
-                        }
-                    } catch (e) {
-                        log.debug('connection closed: ' + e);
-                    }
-                },
-            );
-        });
-
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
-
         try {
+            await this._lib2p2Peer.start();
+
+            this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
+                pipe(
+                    stream.source,
+                    // @ts-ignore
+                    decode(),
+                    // @ts-ignore
+                    (source) => map(source, (buf) => toString(buf.subarray())),
+                    async (source) => {
+                        try {
+                            for await (const msg of source) {
+                                try {
+                                    onIncomingParticle(msg);
+                                } catch (e) {
+                                    log.error('error on handling a new incoming message: ' + e);
+                                }
+                            }
+                        } catch (e) {
+                            log.debug('connection closed: ' + e);
+                        }
+                    },
+                );
+            });
+
+            log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
+            
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);
         } catch (e: any) {
+            console.log("ERROR IN CONNECTION: " + e)
+            console.log(e)
             if (e.name === 'AggregateError' && e._errors?.length === 1) {
                 const error = e._errors[0];
                 throw new Error(`Error dialing node ${this._relayAddress}:\n${error.code}\n${error.message}`);

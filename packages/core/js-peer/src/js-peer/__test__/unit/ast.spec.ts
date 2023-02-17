@@ -1,19 +1,21 @@
-import { mkTestPeer } from '../util.js';
-
-const peer = mkTestPeer();
+import {createClient} from "../../../../../../client/js-client.node";
 
 describe('Parse ast tests', () => {
+
+    let somePeer: any;
+    
     beforeAll(async () => {
-        await peer.start();
-    });
+        somePeer = await createClient();
+        await somePeer.start();
+    }, 10000);
 
     afterAll(async () => {
-        await peer.stop();
+        await somePeer.stop();
     });
 
     it('Correct ast should be parsed correctly', async function () {
         const air = `(null)`;
-        const res = await peer.internals.parseAst(air);
+        const res = await somePeer.internals.parseAst(air);
 
         expect(res).toStrictEqual({
             success: true,
@@ -23,7 +25,7 @@ describe('Parse ast tests', () => {
 
     it('Incorrect ast should result in corresponding error', async function () {
         const air = `(null`;
-        const res = await peer.internals.parseAst(air);
+        const res = await somePeer.internals.parseAst(air);
 
         expect(res).toStrictEqual({
             success: false,
