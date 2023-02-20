@@ -1,36 +1,37 @@
 {
-  "name": "@fluencelabs/js-client.api",
-  "version": "0.11.3",
-  "description": "JS Client API",
-  "engines": {
-    "node": ">=10",
-    "pnpm": ">=3"
-  },
-  "type": "module",
-  "source": "src/index.js",
-  "main": "dist/index.js",
-  "umd:main": "dist/index.umd.js",
-  "module": "dist/index.mjs",
-  "exports": {
-    "types": "./dist/index.d.ts",
-    "require": "./dist/index.js",
-    "default": "./dist/index.modern.mjs"
-  },
-  "types": "dist/index.d.ts",
-  "typings": "dist/index.d.ts",
-  "scripts": {
-    "build": "microbundle --generateTypes false src/index.ts && dts-bundle-generator --config dtsbundle.cjs"
-  },
-  "repository": "https://github.com/fluencelabs/fluence-js",
-  "author": "Fluence Labs",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@fluencelabs/interfaces": "0.7.3"
-  },
-  "devDependencies": {
-    "@fluencelabs/avm": "0.35.4",
-    "@fluencelabs/marine-js": "0.3.45",
-    "microbundle": "0.15.1",
-    "dts-bundle-generator": "7.2.0"
-  }
+    "name": "@fluencelabs/js-client.api",
+    "version": "0.11.3",
+    "description": "JS Client API",
+    "engines": {
+        "node": ">=10",
+        "pnpm": ">=3"
+    },
+    "type": "module",
+    "source": "src/index.js",
+    "main": "dist/index.js",
+    "umd:main": "dist/index.umd.js",
+    "module": "dist/index.mjs",
+    "exports": {
+        "types": "./dist/index.d.ts",
+        "require": "./dist/index.js",
+        "default": "./dist/index.modern.mjs"
+    },
+    "types": "dist/index.d.ts",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "build": "microbundle --generateTypes false src/index.ts && dts-bundle-generator --config dtsbundle.cjs"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@fluencelabs/interfaces": "0.7.3"
+    },
+    "devDependencies": {
+        "@fluencelabs/avm": "0.35.4",
+        "@fluencelabs/marine-js": "0.3.45",
+        "microbundle": "0.15.1",
+        "dts-bundle-generator": "7.2.0",
+        "typedoc": "0.23.25"
+    }
 }

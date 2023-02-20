@@ -6,3 +6,6 @@ node_modules/
 
 # Build directory
 **/dist
+
+# temporary while we are working on the mechanism to publish docs
+./docs
