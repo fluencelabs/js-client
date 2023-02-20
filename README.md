@@ -130,7 +130,7 @@ The starting point for all documentation related to Fluence is
 
 ## Support
 
-Please, file an [issue](https://github.com/fluencelabs/fluence-js/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project). We will do our best to resolve the issue ASAP.
+Please, file an [issue](https://github.com/fluencelabs/js-client/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project). We will do our best to resolve the issue ASAP.
 
 ## Contributing
 
