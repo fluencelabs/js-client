@@ -3,11 +3,13 @@
 [![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.api?label=@fluencelabs/js-client.api)](https://www.npmjs.com/package/@fluencelabs/js-client.api)
 [![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.web.standalone?label=@fluencelabs/js-client.web.standalone)](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone)
 
-This is the Javascript client for the [Fluence](https://fluence.network) network. The main role of the JS client is to connect to Fluence Network and allow you to integrate Aqua code into your application.
+This is the Javascript client for the [Fluence](https://fluence.network) network. The main role of the JS client is to connect to the Fluence Network and allow you to integrate Aqua code into your application.
+
+## Installation
 
 Adding the Fluence JS client for your web application is very easy.
 
-## Get Started for browser-based apps
+### Browser-based Apps
 
 1. Add a script tag with the JS Client bundle to your `index.html`. The easiest way to do this is using a CDN (like [JSDELIVR](https://www.jsdelivr.com/) or [UNPKG](https://unpkg.com/)). The script is large, thus we highly recommend to use the `async` attribute.
 
@@ -23,7 +25,7 @@ Adding the Fluence JS client for your web application is very easy.
     </head>
     ```
 
-    If you cannot or don't want to use a CDN, feel free to get the script directly from the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone) and host in yourself. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
+    If you cannot or don't want to use a CDN, feel free to get the script directly from the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone) and host it yourself. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
 
 2. Install the following packages:
 
@@ -40,7 +42,7 @@ Adding the Fluence JS client for your web application is very easy.
     Fluence.connect(randomKras());
     ```
 
-## Get Started for Node.js apps
+### Node.js Apps
 
 1. Install the following packages:
 
@@ -58,7 +60,7 @@ Adding the Fluence JS client for your web application is very easy.
     Fluence.connect(randomKras());
     ```
 
-## Use Aqua in a Application
+## Usage in an Application
 
 Once you've added the client, you can compile [Aqua](https://github.com/fluencelabs/aqua) and run it in your application. To compile Aqua, use [Fluence CLI](https://github.com/fluencelabs/fluence-cli).
 
