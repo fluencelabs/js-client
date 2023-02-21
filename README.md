@@ -3,12 +3,13 @@
 [![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.api?label=@fluencelabs/js-client.api)](https://www.npmjs.com/package/@fluencelabs/js-client.api)
 [![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.web.standalone?label=@fluencelabs/js-client.web.standalone)](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone)
 
-This is the Javascript client for the [Fluence](https://fluence.network) network.
+This is the Javascript client for the [Fluence](https://fluence.network) network. The main role of the JS client is to connect to the Fluence Network and allow you to integrate Aqua code into your application.
 
+## Installation
 
-## Get Started
+Adding the Fluence JS client for your web application is very easy.
 
-Adding the Fluence JS client for your web application is very easy:
+### Browser-based Apps
 
 1. Add a script tag with the JS Client bundle to your `index.html`. The easiest way to do this is using a CDN (like [JSDELIVR](https://www.jsdelivr.com/) or [UNPKG](https://unpkg.com/)). The script is large, thus we highly recommend to use the `async` attribute.
 
@@ -16,13 +17,15 @@ Adding the Fluence JS client for your web application is very easy:
 
     ```html
     <head>
-      <title>Cool App</title>
-      <script src='https://cdn.jsdelivr.net/npm/@fluencelabs/js-client.web.standalone@0.10.0/dist/js-client.min.js'
-        async></script>
+        <title>Cool App</title>
+        <script
+            src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client.web.standalone@0.13.3/dist/js-client.min.js"
+            async
+        ></script>
     </head>
     ```
 
-    If you cannot or don't want to use a CDN, feel free to get the script directly from the `npm` package and host in yourself: `https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone`. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
+    If you cannot or don't want to use a CDN, feel free to get the script directly from the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone) and host it yourself. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
 
 2. Install the following packages:
 
@@ -34,14 +37,30 @@ Adding the Fluence JS client for your web application is very easy:
 
     ```
     import { Fluence } from "@fluencelabs/js-client.api";
-    import { krasnodar } from "@fluencelabs/fluence-network-environment";
+    import { randomKras } from '@fluencelabs/fluence-network-environment';
 
-    Fluence.start({
-      relay: krasnodar[3],
-    });
+    Fluence.connect(randomKras());
     ```
 
-## Use Aqua in a Web Application
+### Node.js Apps
+
+1. Install the following packages:
+
+    ```
+    npm i @fluencelabs/js-client.api"@fluencelabs/js-client.node @fluencelabs/fluence-network-environment
+    ```
+
+2. Add the following lines at the beginning of your code:
+
+    ```
+    import '@fluencelabs/js-client.node';
+    import { Fluence } from "@fluencelabs/js-client.api";
+    import { randomKras } from '@fluencelabs/fluence-network-environment';
+
+    Fluence.connect(randomKras());
+    ```
+
+## Usage in an Application
 
 Once you've added the client, you can compile [Aqua](https://github.com/fluencelabs/aqua) and run it in your application. To compile Aqua, use [Fluence CLI](https://github.com/fluencelabs/fluence-cli).
 
@@ -100,23 +119,18 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
     }
     ```
 
-**Warning**: Fluence JS client for Node.js is currently broken. We will fix this shortly.
-
-
 ## Development
 
 To hack on the Fluence JS Client itself, please refer to the [development page](./DEVELOPING.md).
-
 
 ## Documentation
 
 The starting point for all documentation related to Fluence is
 [fluence.dev](https://fluence.dev/). We also have an active [YouTube channel](https://www.youtube.com/@fluencelabs).
 
-
 ## Support
 
-Please, file an [issue](https://github.com/fluencelabs/fluence-js/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project). We will do our best to resolve the issue ASAP.
+Please, file an [issue](https://github.com/fluencelabs/js-client/issues) if you find a bug. You can also contact us at [Discord](https://discord.com/invite/5qSnPZKh7u) or [Telegram](https://t.me/fluence_project). We will do our best to resolve the issue ASAP.
 
 ## Contributing
 
