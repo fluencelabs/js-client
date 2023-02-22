@@ -44,6 +44,26 @@ Adding the Fluence JS client for your web application is very easy.
 
 ### Node.js Apps
 
+**Prerequisites:**
+
+Fluence JS Client only supports ESM module format. This implies that following must be configured:
+
+-   Add `"type": "module"` to your package.json.
+-   Replace `"main": "index.js"` with `"exports": "./index.js"` in your package.json.
+-   Remove `'use strict';` from all JavaScript files.
+-   Replace all `require()`/`module.export` with `import`/`export`.
+-   Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
+
+If you are using TypeScript:
+
+-   Make sure you are using TypeScript 4.7 or later.
+-   Add [`"module": "ESNext", "target": "ESNext", "moduleResolution": "nodenext"`](https://www.typescriptlang.org/tsconfig#module) to your tsconfig.json.
+-   Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
+-   Remove `namespace` usage and use `export` instead.
+-   You must use a `.js` extension in relative imports even though you're importing `.ts` files.
+
+**Installation:**
+
 1. Install the following packages:
 
     ```
