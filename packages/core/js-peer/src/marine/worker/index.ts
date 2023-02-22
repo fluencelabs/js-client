@@ -18,7 +18,9 @@ import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dis
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
 import type { IMarine, IWorkerLoader, IWasmLoader } from '../../interfaces/index.js';
 import type { MarineBackgroundInterface } from '../worker-script/index.js';
+// @ts-ignore
 import { spawn, Thread } from 'threads';
+// @ts-ignore
 import type { ModuleThread } from 'threads';
 
 export class MarineBackgroundRunner implements IMarine {

@@ -3,9 +3,9 @@ import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
 import { fromBase64Sk } from '../keypair/index.js';
 import { FluencePeer } from './FluencePeer.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
-import { avmModuleLoader, controlModuleLoader } from './utilsForNode';
-import { marineLogFunction } from './utils';
-import { MarineBasedAvmRunner } from './avm';
+import { avmModuleLoader, controlModuleLoader } from './utilsForNode.js';
+import { marineLogFunction } from './utils.js';
+import { MarineBasedAvmRunner } from './avm.js';
 
 import log from 'loglevel';
 import { WorkerLoaderFromFs } from '../marine/deps-loader/node.js';

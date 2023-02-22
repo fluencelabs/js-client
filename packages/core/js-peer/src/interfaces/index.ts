@@ -17,6 +17,7 @@
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
+// @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
 
 export type ParticleHandler = (particle: string) => void;
