@@ -17,7 +17,9 @@
 import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
 import type { Env, MarineServiceConfig } from '@fluencelabs/marine-js/dist/config';
 import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
+// @ts-ignore
 import { Observable, Subject } from 'threads/observable';
+// @ts-ignore
 import { expose } from 'threads/worker';
 
 let marineServices = new Map<string, MarineService>();

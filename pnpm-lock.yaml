@@ -123,7 +123,7 @@ importers:
       '@types/node': 16.11.59
       buffer: 6.0.3
       jest: 28.1.0
-      js-base64: 3.7.2
+      js-base64: 3.7.5
       process: 0.11.10
       ts-jest: 28.0.2
       vite: 4.0.4
@@ -140,7 +140,7 @@ importers:
       '@types/jest': 28.1.0
       '@types/node': 16.11.59
       jest: 28.1.0_@types+node@16.11.59
-      js-base64: 3.7.2
+      js-base64: 3.7.5
       ts-jest: 28.0.2_byf75w6xilfwy3ncjzlldwxox4
       vite: 4.0.4_@types+node@16.11.59
       vite-plugin-replace: 0.1.1_vite@4.0.4
@@ -192,13 +192,13 @@ importers:
       it-map: 2.0.0
       it-pipe: 2.0.5
       jest: 29.4.1
-      js-base64: 3.7.2
+      js-base64: 3.7.5
       libp2p: 0.42.2
       loglevel: 1.8.1
       multiformats: 11.0.1
       rxjs: 7.5.5
       threads: 1.7.0
-      ts-jest: 29.0.5
+      ts-jest: next
       ts-pattern: 3.3.3
       uint8arrays: 4.0.3
       uuid: 8.3.2
@@ -223,7 +223,7 @@ importers:
       it-length-prefixed: 8.0.4
       it-map: 2.0.0
       it-pipe: 2.0.5
-      js-base64: 3.7.2
+      js-base64: 3.7.5
       libp2p: 0.42.2
       loglevel: 1.8.1
       multiformats: 11.0.1
@@ -241,7 +241,7 @@ importers:
       '@types/jest': 29.4.0
       '@types/uuid': 8.3.2
       jest: 29.4.1
-      ts-jest: 29.0.5_knhdxpg4pvwuf6vrybjt5d2q5i
+      ts-jest: 29.0.0-next.1_knhdxpg4pvwuf6vrybjt5d2q5i
 
 packages:
 
@@ -10331,12 +10331,8 @@ packages:
       - ts-node
     dev: true
 
-  /js-base64/3.7.2:
-    resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
-
   /js-base64/3.7.5:
     resolution: {integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA==}
-    dev: true
 
   /js-sdsl/4.3.0:
     resolution: {integrity: sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ==}
@@ -14497,8 +14493,8 @@ packages:
       yargs-parser: 20.2.9
     dev: true
 
-  /ts-jest/29.0.5_knhdxpg4pvwuf6vrybjt5d2q5i:
-    resolution: {integrity: sha512-PL3UciSgIpQ7f6XjVOmbi96vmDHUqAyqDr8YxzopDqX3kfgYtX1cuNeBjP+L9sFXi6nzsGGA6R3fP3DDDJyrxA==}
+  /ts-jest/29.0.0-next.1_knhdxpg4pvwuf6vrybjt5d2q5i:
+    resolution: {integrity: sha512-bVo2GDuJiV+cWEYB72tdz2Ips4JDKa04bcKikPULxxUHT4fsoY1zB2zvsrJym18qrFpXyVrIdgJFLfEx2YTkbg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     hasBin: true
     peerDependencies:
