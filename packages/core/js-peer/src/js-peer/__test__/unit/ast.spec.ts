@@ -1,11 +1,11 @@
-import {createClient} from "../../../../../../client/js-client.node";
+import {mkTestNode} from "../util.js";
 
 describe('Parse ast tests', () => {
 
     let somePeer: any;
     
     beforeAll(async () => {
-        somePeer = await createClient();
+        somePeer = await mkTestNode();
         await somePeer.start();
     }, 10000);
 

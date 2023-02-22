@@ -1,7 +1,8 @@
 import { Particle } from '../../Particle.js';
 import { doNothing } from '../../utils.js';
-import {createClient} from "../../../../../../client/js-client.node";
-import {FluencePeer} from "../../FluencePeer";
+import { FluencePeer } from '../../FluencePeer.js';
+import {mkTestNode} from "../util.js";
+
 
 let peer: FluencePeer;
 
@@ -13,7 +14,7 @@ describe('Sig service test suite', () => {
     });
 
     beforeEach(async () => {
-        peer = createClient();
+        peer = await mkTestNode();
         await peer.start();
     });
 

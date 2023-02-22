@@ -12,8 +12,9 @@ import { marineLogFunction } from '../utils.js';
 import { MarineBackgroundRunner } from '../../marine/worker/index.js';
 import { MarineBasedAvmRunner } from '../avm.js';
 import { nodes } from './connection.js';
-import {WorkerLoaderFromFs} from '../../marine/deps-loader/node.js';
-import {createClient} from "../../../../../client/js-client.node";
+import {WasmLoaderFromNpm, WorkerLoaderFromFs} from '../../marine/deps-loader/node.js';
+import {defaultNames} from "../../../../../client/js-client.node/src/index.js";
+import {WorkerLoader} from "../../marine/worker-script/workerLoader.js";
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
@@ -58,6 +59,16 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     return { functions, services: compilationResult.services };
 };
 
+export const mkTestNode = () => {
+    const workerLoader = new WorkerLoader();
+    const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
+    const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
+
+    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
+    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
+    return new FluencePeer(marine, avm);
+};
+
 export const mkTestPeer = () => {
     const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
@@ -67,7 +78,7 @@ export const mkTestPeer = () => {
 };
 
 export const withPeer = async (action: (p: FluencePeer) => Promise<void>, config?: PeerConfig) => {
-    const p = createClient() 
+    const p = await mkTestNode() 
     try {
         console.log("connecting to: ")
         console.log(config)

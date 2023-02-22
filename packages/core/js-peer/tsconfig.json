@@ -4,6 +4,7 @@
         "outDir": "./dist",
         "moduleResolution": "nodenext"
     },
+    "skipLibCheck": true,
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"],
     "esModuleInterop": true

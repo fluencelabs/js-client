@@ -1,14 +1,13 @@
 import { nodes } from '../connection.js';
 import { checkConnection, doNothing, handleTimeout } from '../../utils.js';
-import {registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer} from '../util.js';
-import {FluencePeer} from "../../FluencePeer";
-import {createClient} from "../../../../../../client/js-client.node";
+import {registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer, mkTestNode} from '../util.js';
+import {FluencePeer} from "../../FluencePeer.js";
 
 describe('Typescript usage suite', () => {
 
     describe('Should expose correct peer status', () => {
-        it('Should expose correct status for uninitialized peer', () => {
-            const peer = createClient();
+        it('Should expose correct status for uninitialized peer', async () => {
+            const peer = await mkTestNode();
             const status = peer.getStatus();
 
             expect(status.isConnected).toBe(false);
