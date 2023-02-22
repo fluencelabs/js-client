@@ -6,6 +6,20 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.1 to 0.8.2
 
+## [0.13.4](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.3...js-client.web.standalone-v0.13.4) (2023-02-22)
+
+
+### Bug Fixes
+
+* `nodenext` moduleResolution for js peer ([#271](https://github.com/fluencelabs/js-client/issues/271)) ([78d98f1](https://github.com/fluencelabs/js-client/commit/78d98f15c12431dee9fdd7b9869d57760503f8c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.3 to 0.8.4
+
 ## [0.13.3](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.2...js-client.web.standalone-v0.13.3) (2023-02-16)
 
 
