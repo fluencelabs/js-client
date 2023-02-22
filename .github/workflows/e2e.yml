@@ -24,23 +24,23 @@ concurrency:
 
 jobs:
   tests:
-    name: "fluence-js"
+    name: "js-client"
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
 
-  fluence-js:
+  js-client:
     uses: ./.github/workflows/snapshot.yml
     with:
       ref: ${{ github.ref }}
 
   aqua-playground:
     needs:
-      - fluence-js
+      - js-client
 
     uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@FLU-274
     with:
-      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
+      js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
 
   status:
     runs-on: ubuntu-latest

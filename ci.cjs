@@ -43,7 +43,7 @@ async function getPackageJsonsRecursive(currentPath) {
             (await fs.readdir(currentPath, { withFileTypes: true }))
                 .filter(
                     (file) =>
-                        file.name !== "node_modules" &&
+                        file.name !== "node_modules" && file.name !== "@tests" &&
                         (file.isDirectory() || file.name === "package.json")
                 )
                 .map((file) =>
