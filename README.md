@@ -74,11 +74,11 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 
 3. Put `*.aqua` files in that directory.
 
-4. Add a directory for compiled Aqua files inside you sources. For example, if your app source is located in the `src` directory, you can create `src/_aqua`.
+4. Add a directory for compiled Aqua files inside your sources. For example, if your app source is located in the `src` directory, you can create `src/_aqua`.
 
 5. To compile Aqua code once, run `npx fluence aqua -i ./_aqua -o ./src/_aqua/`. To watch the changes and to recompile on the fly, add the `-w` flag: `npx fluence aqua -w -i ./_aqua -o ./src/_aqua/`.
 
-    **A hint**: it might be a good idea to add these scripts to your `package.json` file.
+    **Hint**: it might be a good idea to add these scripts to your `package.json` file.
     For example, you project structure could look like this:
 
     ```
