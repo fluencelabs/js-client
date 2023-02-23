@@ -43,7 +43,7 @@ importers:
       '@types/jest': 27.5.2
       '@types/node': 16.18.12
       '@types/react': 18.0.27
-      '@types/react-dom': 18.0.10
+      '@types/react-dom': 18.0.11
       react: ^18.2.0
       react-dom: ^18.2.0
       react-scripts: 5.0.1
@@ -58,7 +58,7 @@ importers:
       '@types/jest': 27.5.2
       '@types/node': 16.18.12
       '@types/react': 18.0.27
-      '@types/react-dom': 18.0.10
+      '@types/react-dom': 18.0.11
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-scripts: 5.0.1_72im5qx3m2npzev2b5222y6sne
@@ -4034,7 +4034,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@testing-library/dom': 8.20.0
-      '@types/react-dom': 18.0.10
+      '@types/react-dom': 18.0.11
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
@@ -4281,8 +4281,8 @@ packages:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
     dev: false
 
-  /@types/react-dom/18.0.10:
-    resolution: {integrity: sha512-E42GW/JA4Qv15wQdqJq8DL4JhNpB3prJgjgapN3qJT9K2zO5IIAQh4VXvCEDupoqAwnz0cY4RlXeC/ajX5SFHg==}
+  /@types/react-dom/18.0.11:
+    resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
     dependencies:
       '@types/react': 18.0.27
     dev: false
