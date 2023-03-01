@@ -16,7 +16,7 @@ export const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | un
 const REJECT_MESSAGE = `Could not load Fluence JS Client library.
 If you are using Node.js that probably means that you forgot in install or import the @fluencelabs/js-client.node package.
 If you are using a browser, then you probably forgot to add the <script> tag to your HTML.
-Please refer to the documentation page for more details: https://fluence.dev/
+Please refer to the documentation page for more details: https://fluence.dev/docs/build/js-client/installation
 `;
 
 // Let's assume that if the library has not been loaded in 5 seconds, then the user has forgotten to add the script tag
