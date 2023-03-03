@@ -6,6 +6,12 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.1 to 0.8.2
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.4 to 0.8.5
+
 ## [0.13.4](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.3...js-client.web.standalone-v0.13.4) (2023-02-22)
 
 

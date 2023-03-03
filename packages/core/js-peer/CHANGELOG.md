@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.4...js-peer-v0.8.5) (2023-03-03)
+
+
+### Bug Fixes
+
+* Increase number of inbound and outbound streams to 1024 ([#280](https://github.com/fluencelabs/js-client/issues/280)) ([1ccc483](https://github.com/fluencelabs/js-client/commit/1ccc4835328426b546f31e1646d3a49ed042fdf9))
+
 ## [0.8.4](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.3...js-peer-v0.8.4) (2023-02-22)
 
 

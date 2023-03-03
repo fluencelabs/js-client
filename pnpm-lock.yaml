@@ -101,7 +101,7 @@ importers:
   packages/client/js-client.node:
     specifiers:
       '@fluencelabs/avm': 0.35.4
-      '@fluencelabs/js-peer': 0.8.4
+      '@fluencelabs/js-peer': 0.8.5
       '@fluencelabs/marine-js': 0.3.45
       '@types/platform': 1.3.4
       platform: 1.3.6
@@ -116,7 +116,7 @@ importers:
   packages/client/js-client.web.standalone:
     specifiers:
       '@fluencelabs/avm': 0.35.4
-      '@fluencelabs/js-peer': 0.8.4
+      '@fluencelabs/js-peer': 0.8.5
       '@fluencelabs/marine-js': 0.3.45
       '@rollup/plugin-inject': 5.0.3
       '@types/jest': 28.1.0
