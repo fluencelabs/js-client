@@ -137,8 +137,8 @@ export class RelayConnection extends FluenceConnection {
         
         // TODO: make it configurable
         const handleOptions = {
-            maxInboundStreams: 128,
-            maxOutboundStreams: 128
+            maxInboundStreams: 1024,
+            maxOutboundStreams: 1024
         }
 
         this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
