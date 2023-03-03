@@ -1,4 +1,4 @@
-const peer = globalThis.defaultPeer;
+const fluence = globalThis.fluence;
 
 const relay = {
     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
@@ -51,7 +51,7 @@ const getRelayTime = (relayPeerId) => {
                 },
             },
             codomain: {
-                tag: 'unlabeledProduct',
+                tag: 'unlabeledProduct',defaultClient
                 items: [
                     {
                         tag: 'scalar',
@@ -74,7 +74,7 @@ const getRelayTime = (relayPeerId) => {
     const config = {};
 
     const args = {};
-    return peer.compilerSupport.callFunction({
+    return fluence.callFunction({
         args,
         def,
         config,
@@ -82,22 +82,18 @@ const getRelayTime = (relayPeerId) => {
     });
 };
 
-const main = async () => {
+window.main = async () => {
     console.log('starting fluence...');
-    await peer.start({
-        connectTo: relay,
-    });
+    await fluence.defaultClient.connect(relay);
     console.log('started fluence');
 
     console.log('getting relay time...');
-    const res = await getRelayTime(relay.peerId);
+    const relayTime = await getRelayTime(relay.peerId);
     console.log('got relay time, ', res);
 
     console.log('stopping fluence...');
-    await peer.stop();
+    await fluence.defaultClient.stop();
     console.log('stopped fluence...');
-};
 
-main()
-    .then(() => console.log('done!'))
-    .catch((err) => console.error('error: ', err));
+    return relayTime;
+};
