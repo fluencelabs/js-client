@@ -10,7 +10,9 @@
     },
     "type": "module",
     "scripts": {
-        "test": "node --loader ts-node/esm ./src/index.ts"
+        "build": "tsc",
+        "test": "node --loader ts-node/esm ./src/index.ts",
+        "serve": "http-server public"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

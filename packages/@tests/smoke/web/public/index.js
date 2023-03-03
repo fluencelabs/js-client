@@ -1,11 +1,11 @@
 const fluence = globalThis.fluence;
 
 const relay = {
-    multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-    peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+    multiaddr: '/dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA',
+    peerId: '12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA',
 };
 
-const getRelayTime = (relayPeerId) => {
+const getRelayTime = () => {
     const script = `
                     (xor
                      (seq
@@ -34,8 +34,7 @@ const getRelayTime = (relayPeerId) => {
                       )
                      )
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
-                    )
-    `;
+                    )`;
 
     const def = {
         functionName: 'getRelayTime',
@@ -51,7 +50,7 @@ const getRelayTime = (relayPeerId) => {
                 },
             },
             codomain: {
-                tag: 'unlabeledProduct',defaultClient
+                tag: 'unlabeledProduct',
                 items: [
                     {
                         tag: 'scalar',
@@ -74,21 +73,22 @@ const getRelayTime = (relayPeerId) => {
     const config = {};
 
     const args = {};
-    return fluence.callFunction({
+    return fluence.callAquaFunction({
         args,
         def,
-        config,
         script,
+        config,
+        peer: fluence.defaultClient,
     });
 };
 
-window.main = async () => {
+const main = async () => {
     console.log('starting fluence...');
     await fluence.defaultClient.connect(relay);
     console.log('started fluence');
 
     console.log('getting relay time...');
-    const relayTime = await getRelayTime(relay.peerId);
+    const relayTime = await getRelayTime();
     console.log('got relay time, ', res);
 
     console.log('stopping fluence...');
@@ -97,3 +97,11 @@ window.main = async () => {
 
     return relayTime;
 };
+
+const btn = document.getElementById('btn');
+
+btn.addEventListener('click', () => {
+    main().then((res) => {
+        document.getElementById('result').innerText = res;
+    });
+});

@@ -1,11 +1,13 @@
 import puppeteer from 'puppeteer';
-import path from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-import { startCdn, startContentServer, stopCdn } from '@test/test-utils';
+import { startCdn, startContentServer, stopServer } from '@test/test-utils';
 
 const port = 3000;
 const uri = `http://localhost:${port}/`;
-const publicPath = path.join(__dirname, '../public/');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const publicPath = join(__dirname, '../public/');
 
 const test = async () => {
     const cdn = startCdn();
@@ -19,13 +21,14 @@ const test = async () => {
     await page.goto(uri);
 
     console.log('Running smoke test function...');
-    const result = await page.evaluate(() => {
-        // @ts-ignore
-        return window.main();
-    });
+    // const result = await page.evaluate('window.main()');
+    const result = await page.evaluate('globalThis.main()');
 
-    cdn.close();
-    localServer.close();
+    console.log('received result: ', result);
+
+    await browser.close();
+    // stopServer(cdn);
+    // stopServer(localServer);
 
     if (!result) {
         throw new Error('Smoke test failed!');
