@@ -98,7 +98,7 @@ jobs:
           version: ${{ inputs.avm-version }}
           working-directory: packages/core/interfaces
           package-manager: pnpm
-          flags: "--save --dev"
+          flags: "--save-dev"
 
       - name: Set marine-js version in core/interfaces
         if: inputs.marine-js-version != 'null'
@@ -108,7 +108,7 @@ jobs:
           version: ${{ inputs.marine-js-version }}
           working-directory: packages/core/interfaces
           package-manager: pnpm
-          flags: "--save --dev"
+          flags: "--save-dev"
 
       - name: Set avm version in core/js-peer
         if: inputs.avm-version != 'null'
@@ -136,7 +136,7 @@ jobs:
           version: ${{ inputs.avm-version }}
           working-directory: packages/client/api
           package-manager: pnpm
-          flags: "--save --dev"
+          flags: "--save-dev"
 
       - name: Set marine-js version in client/api
         if: inputs.marine-js-version != 'null'
@@ -146,7 +146,7 @@ jobs:
           version: ${{ inputs.marine-js-version }}
           working-directory: packages/client/api
           package-manager: pnpm
-          flags: "--save --dev"
+          flags: "--save-dev"
 
       - name: Set avm version in client/js-client.web
         if: inputs.avm-version != 'null'
@@ -156,7 +156,7 @@ jobs:
           version: ${{ inputs.avm-version }}
           working-directory: packages/client/js-client.web.standalone
           package-manager: pnpm
-          flags: "--save --dev"
+          flags: "--save-dev"
 
       - name: Set marine-js version in client/js-client.web
         if: inputs.marine-js-version != 'null'
@@ -166,7 +166,7 @@ jobs:
           version: ${{ inputs.marine-js-version }}
           working-directory: packages/client/js-client.web.standalone
           package-manager: pnpm
-          flags: "--save --dev"
+          flags: "--save-dev"
 
       - name: Set avm version in client/js-client.node
         if: inputs.avm-version != 'null'
