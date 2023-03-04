@@ -14,11 +14,11 @@ on:
       ref:
         description: "git ref to checkout to"
         type: string
-        default: "v0.28.0"
+        default: "master"
     outputs:
-      fluence-js-version:
-        description: "@fluencelabs/fluence version"
-        value: ${{ jobs.publish-snapshot.outputs.fluence-js-version }}
+      js-client-snapshots:
+        description: "js-client snapshots"
+        value: ${{ jobs.publish-snapshot.outputs.snapshots }}
 
 env:
   FORCE_COLOR: true
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      fluence-js-version: "${{ steps.snapshot.outputs.version }}"
+      snapshots: "${{ steps.snapshot.outputs.snapshots }}"
 
     permissions:
       contents: read
@@ -56,22 +56,100 @@ jobs:
 
       - run: pnpm i
 
-      - name: Set avm version
+      - name: Set avm version in core/interfaces
         if: inputs.avm-version != 'null'
         uses: fluencelabs/github-actions/npm-set-dependency@main
         with:
           package: "@fluencelabs/avm"
           version: ${{ inputs.avm-version }}
-          working-directory: packages/fluence-js
+          working-directory: packages/core/interfaces
           package-manager: pnpm
+          flags: "--save --dev"
 
-      - name: Set marine-js version
+      - name: Set marine-js version in core/interfaces
         if: inputs.marine-js-version != 'null'
         uses: fluencelabs/github-actions/npm-set-dependency@main
         with:
           package: "@fluencelabs/marine-js"
           version: ${{ inputs.marine-js-version }}
-          working-directory: packages/fluence-js
+          working-directory: packages/core/interfaces
+          package-manager: pnpm
+          flags: "--save --dev"
+
+      - name: Set avm version in core/js-peer
+        if: inputs.avm-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/core/js-peer
+          package-manager: pnpm
+
+      - name: Set marine-js version in core/js-peer
+        if: inputs.marine-js-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/marine-js"
+          version: ${{ inputs.marine-js-version }}
+          working-directory: packages/core/js-peer
+          package-manager: pnpm
+
+      - name: Set avm version in client/api
+        if: inputs.avm-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/client/api
+          package-manager: pnpm
+          flags: "--save --dev"
+
+      - name: Set marine-js version in client/api
+        if: inputs.marine-js-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/marine-js"
+          version: ${{ inputs.marine-js-version }}
+          working-directory: packages/client/api
+          package-manager: pnpm
+          flags: "--save --dev"
+
+      - name: Set avm version in client/js-client.web
+        if: inputs.avm-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/client/js-client.web.standalone
+          package-manager: pnpm
+          flags: "--save --dev"
+
+      - name: Set marine-js version in client/js-client.web
+        if: inputs.marine-js-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/marine-js"
+          version: ${{ inputs.marine-js-version }}
+          working-directory: packages/client/js-client.web.standalone
+          package-manager: pnpm
+          flags: "--save --dev"
+
+      - name: Set avm version in client/js-client.node
+        if: inputs.avm-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/avm"
+          version: ${{ inputs.avm-version }}
+          working-directory: packages/client/js-client.node
+          package-manager: pnpm
+
+      - name: Set marine-js version in client/js-client.node
+        if: inputs.marine-js-version != 'null'
+        uses: fluencelabs/github-actions/npm-set-dependency@main
+        with:
+          package: "@fluencelabs/marine-js"
+          version: ${{ inputs.marine-js-version }}
+          working-directory: packages/client/js-client.node
           package-manager: pnpm
 
       - name: Import secrets
@@ -92,15 +170,13 @@ jobs:
         uses: fluencelabs/github-actions/generate-snapshot-id@main
 
       - name: Set package version
-        run: node ci.js bump-version ${{ steps.version.outputs.id }}
+        run: node ci.cjs bump-version ${{ steps.version.outputs.id }}
 
       - run: pnpm -r build
 
       - name: Publish snapshots
         id: snapshot
-        uses: fluencelabs/github-actions/npm-publish-snapshot@main
+        uses: fluencelabs/github-actions/pnpm-publish-snapshot@main
         with:
-          working-directory: packages/fluence-js
           id: ${{ steps.version.outputs.id }}
-          package-manager: pnpm
-          flags: "-r --registry https://npm.fluence.dev --no-git-checks --tag snapsot -filter '@fluencelabs/*'"
+          flags: "-r --registry https://npm.fluence.dev --no-git-checks --tag snapshot -filter '@fluencelabs/*'"
