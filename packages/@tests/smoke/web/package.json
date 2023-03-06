@@ -22,7 +22,5 @@
         "@test/test-utils": "workspace:^"
     },
     "devDependencies": {
-        "http-server": "14.1.1",
-        "puppeteer": "19.7.2"
     }
 }

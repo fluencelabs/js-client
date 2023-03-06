@@ -15,6 +15,7 @@
     "license": "Apache-2.0",
     "devDependencies": {
         "http-server": "14.1.1",
+        "puppeteer": "19.7.2",
         "@types/node": "18.13.0",
         "ts-node": "10.9.1",
         "typescript": "4.7",

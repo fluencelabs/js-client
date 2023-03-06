@@ -4,17 +4,17 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
-    const [result, setResult] = React.useState<string>('');
-    const [error, setError] = React.useState<string>('');
+    const [result, setResult] = React.useState<string | null>(null);
+    const [error, setError] = React.useState<string | null>(null);
 
     const onButtonClick = () => {
         runTest()
             .then((res) => {
                 if (res.errors.length === 0) {
                     setResult(JSON.stringify(res));
-                    setError('');
+                    setError(null);
                 } else {
-                    setResult('');
+                    setResult(null);
                     setError(res.errors.toString());
                 }
             })
@@ -35,8 +35,8 @@ function App() {
                     Click to run test
                 </button>
 
-                <div id="res">{result}</div>
-                <div id="error">{error}</div>
+                {result && <div id="res">{result}</div>}
+                {error && <div id="error">{error}</div>}
                 <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
                     Learn React
                 </a>

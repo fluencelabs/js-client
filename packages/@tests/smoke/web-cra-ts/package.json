@@ -2,6 +2,7 @@
     "name": "cra-ts",
     "version": "0.1.0",
     "private": true,
+    "type": "module",
     "dependencies": {
         "@fluencelabs/js-client.api": "workspace:^",
         "@test/aqua_for_test": "workspace:^",
@@ -18,8 +19,11 @@
         "typescript": "4.9.5",
         "web-vitals": "2.1.4"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "@test/test-utils": "workspace:^"
+    },
     "scripts": {
+        "test": "node --loader ts-node/esm ./test/index.ts",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "_test": "react-scripts test",
