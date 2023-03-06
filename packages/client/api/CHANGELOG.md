@@ -6,6 +6,13 @@
   * dependencies
     * @fluencelabs/interfaces bumped from 0.7.1 to 0.7.2
 
+## [0.11.4](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.3...js-client.api-v0.11.4) (2023-03-03)
+
+
+### Bug Fixes
+
+* **docs:** Use link to specific page in error message about incorrect JS Client library installation [DXJ 271] ([#278](https://github.com/fluencelabs/js-client/issues/278)) ([9ed1e2e](https://github.com/fluencelabs/js-client/commit/9ed1e2eafcad47e1a37367128d12a36bb63496f3))
+
 ## [0.11.3](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.2...js-client.api-v0.11.3) (2023-02-16)
 
 

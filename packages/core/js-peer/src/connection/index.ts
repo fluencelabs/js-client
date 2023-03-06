@@ -134,6 +134,12 @@ export class RelayConnection extends FluenceConnection {
 
     async connect(onIncomingParticle: ParticleHandler) {
         await this._lib2p2Peer.start();
+        
+        // TODO: make it configurable
+        const handleOptions = {
+            maxInboundStreams: 1024,
+            maxOutboundStreams: 1024
+        }
 
         this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
             pipe(
@@ -156,7 +162,7 @@ export class RelayConnection extends FluenceConnection {
                     }
                 },
             );
-        });
+        }, handleOptions);
 
         log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
 

@@ -24,58 +24,28 @@ concurrency:
 
 jobs:
   tests:
-    name: "fluence-js"
+    name: "js-client"
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
 
-  fluence-js:
+  js-client:
     uses: ./.github/workflows/snapshot.yml
     with:
       ref: ${{ github.ref }}
 
-  aqua:
-    needs:
-      - fluence-js
-
-    uses: fluencelabs/aqua/.github/workflows/snapshot.yml@main
-    with:
-      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
-
   aqua-playground:
     needs:
-      - fluence-js
-      - aqua
+      - js-client
 
     uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
-      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
-      aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
-
-  registry:
-    needs:
-      - aqua
-
-    uses: fluencelabs/registry/.github/workflows/tests.yml@main
-    with:
-      aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
-
-  fluence-cli:
-    needs:
-      - fluence-js
-      - aqua
-
-    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
-    with:
-      aqua-version: "${{ needs.aqua.outputs.aqua-version }}"
-      fluence-js-version: "${{ needs.fluence-js.outputs.fluence-js-version }}"
+      js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
 
   status:
     runs-on: ubuntu-latest
     if: always()
     needs:
-      - fluence-cli
-      - registry
       - aqua-playground
 
     steps:
