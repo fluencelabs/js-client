@@ -72,7 +72,7 @@ const getRelayTime = () => {
 
     const config = {};
 
-    const args = {};
+    const args = { relayPeerId: relay.peerId };
     return fluence.callAquaFunction({
         args,
         def,
@@ -89,7 +89,7 @@ const main = async () => {
 
     console.log('getting relay time...');
     const relayTime = await getRelayTime();
-    console.log('got relay time, ', res);
+    console.log('got relay time, ', relayTime);
 
     console.log('stopping fluence...');
     await fluence.defaultClient.stop();
@@ -102,6 +102,9 @@ const btn = document.getElementById('btn');
 
 btn.addEventListener('click', () => {
     main().then((res) => {
-        document.getElementById('result').innerText = res;
+        const inner = document.createElement('div');
+        inner.id = 'res';
+        inner.innerText = 'res';
+        document.getElementById('res-placeholder').appendChild(inner);
     });
 });

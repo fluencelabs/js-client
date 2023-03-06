@@ -17,20 +17,27 @@ const test = async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
+    // uncomment to debug what's happening inside the browser
+    // page.on('console', (msg) => console.log('// from console: ', msg.text()));
+
     console.log('going to the page in browser...');
     await page.goto(uri);
 
-    console.log('Running smoke test function...');
-    // const result = await page.evaluate('window.main()');
-    const result = await page.evaluate('globalThis.main()');
+    console.log('clicking button...');
+    await page.click('#btn');
 
-    console.log('received result: ', result);
+    console.log('waiting for result to appear...');
+    const elem = await page.waitForSelector('#res');
+
+    console.log('getting the content of result div...');
+    const content = await elem?.evaluate((x) => x.textContent);
+    console.log('raw result: ', content);
 
     await browser.close();
-    // stopServer(cdn);
-    // stopServer(localServer);
+    stopServer(cdn);
+    stopServer(localServer);
 
-    if (!result) {
+    if (!content) {
         throw new Error('Smoke test failed!');
     }
 };
