@@ -1,11 +1,19 @@
-const peer = globalThis.defaultPeer;
+const fluence = globalThis.fluence;
 
+// Relay from kras network
+// Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
 const relay = {
-    multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-    peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+    multiaddr: '/dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA',
+    peerId: '12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA',
 };
 
-const getRelayTime = (relayPeerId) => {
+// Relay running on local machine
+//const relay = {
+//    multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+//    peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+//};
+
+const getRelayTime = () => {
     const script = `
                     (xor
                      (seq
@@ -34,8 +42,7 @@ const getRelayTime = (relayPeerId) => {
                       )
                      )
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
-                    )
-    `;
+                    )`;
 
     const def = {
         functionName: 'getRelayTime',
@@ -73,31 +80,39 @@ const getRelayTime = (relayPeerId) => {
 
     const config = {};
 
-    const args = {};
-    return peer.compilerSupport.callFunction({
+    const args = { relayPeerId: relay.peerId };
+    return fluence.callAquaFunction({
         args,
         def,
-        config,
         script,
+        config,
+        peer: fluence.defaultClient,
     });
 };
 
 const main = async () => {
     console.log('starting fluence...');
-    await peer.start({
-        connectTo: relay,
-    });
+    await fluence.defaultClient.connect(relay);
     console.log('started fluence');
 
     console.log('getting relay time...');
-    const res = await getRelayTime(relay.peerId);
-    console.log('got relay time, ', res);
+    const relayTime = await getRelayTime();
+    console.log('got relay time, ', relayTime);
 
     console.log('stopping fluence...');
-    await peer.stop();
+    await fluence.defaultClient.stop();
     console.log('stopped fluence...');
+
+    return relayTime;
 };
 
-main()
-    .then(() => console.log('done!'))
-    .catch((err) => console.error('error: ', err));
+const btn = document.getElementById('btn');
+
+btn.addEventListener('click', () => {
+    main().then((res) => {
+        const inner = document.createElement('div');
+        inner.id = 'res';
+        inner.innerText = 'res';
+        document.getElementById('res-placeholder').appendChild(inner);
+    });
+});

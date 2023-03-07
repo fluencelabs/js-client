@@ -8,17 +8,18 @@
         "node": ">=10",
         "pnpm": ">=3"
     },
+    "type": "module",
     "scripts": {
-        "build": "pnpm copy-script",
-        "serve": "http-server public",
-        "copy-script": "cp ../../client/js-client.web.standalone/dist/js-client.min.js ./public"
+        "build": "tsc",
+        "commented_out_test": "node --loader ts-node/esm ./src/index.ts",
+        "serve": "http-server public"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "dependencies": {},
-    "devDependencies": {
+    "dependencies": {
         "@fluencelabs/js-client.web.standalone": "workspace:^",
-        "http-server": "14.1.1"
-    }
+        "@test/test-utils": "workspace:^"
+    },
+    "devDependencies": {}
 }

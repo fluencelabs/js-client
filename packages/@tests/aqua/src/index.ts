@@ -3,11 +3,13 @@ import { Fluence } from '@fluencelabs/js-client.api';
 import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
 import { registerHelloWorld, smokeTest } from './_aqua/smoke_test.js';
 
+// Relay running on local machine
 // const relay = {
 //     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
 //     peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
 // };
 
+// Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
 const relay = randomKras();
 
 function generateRandomUint8Array() {
@@ -27,7 +29,9 @@ const optsWithRandomKeyPair = () => {
     } as const;
 };
 
-export const main = async () => {
+export type TestResult = { res: string | null; errors: string[]; hello: string };
+
+export const runTest = async (): Promise<TestResult> => {
     try {
         Fluence.onConnectionStateChange((state) => console.info('connection state changed: ', state));
 
@@ -58,6 +62,8 @@ export const main = async () => {
         } else {
             console.log('aqua finished, result', res);
         }
+
+        return { res, errors, hello };
     } finally {
         console.log('disconnecting from Fluence Network...');
         await Fluence.disconnect();
@@ -66,7 +72,7 @@ export const main = async () => {
 };
 
 export const runMain = () => {
-    main()
+    runTest()
         .then(() => console.log('done!'))
         .catch((err) => console.error('error: ', err));
 };
