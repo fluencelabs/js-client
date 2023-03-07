@@ -4,12 +4,13 @@ import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
 import { registerHelloWorld, smokeTest } from './_aqua/smoke_test.js';
 
 // Relay running on local machine
-const relay = {
-    multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-    peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-};
+// const relay = {
+//     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+//     peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
+// };
 
-// const relay = randomKras();
+// Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
+const relay = randomKras();
 
 function generateRandomUint8Array() {
     const uint8Array = new Uint8Array(32);
