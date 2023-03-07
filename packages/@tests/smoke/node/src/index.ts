@@ -1,4 +1,4 @@
 import '@fluencelabs/js-client.node';
-import { runMain } from '@test/aqua_for_test';
+import { runTest } from '@test/aqua_for_test';
 
-runMain();
+runTest().then(() => console.log('Smoke tests succeed!'));
