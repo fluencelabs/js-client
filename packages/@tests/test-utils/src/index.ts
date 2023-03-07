@@ -18,11 +18,10 @@ export const startContentServer = (port: number, publicDir: string): Promise<Ser
         });
     });
 
-    console.log(publicDir);
-
     return new Promise<Server>((resolve) => {
         const result = server.listen(port, () => {
-            console.log(`Server started on port ${port}`);
+            console.log(`server started on port ${port}`);
+            console.log(`public dir ${publicDir}`);
             resolve(result);
         });
     });
@@ -31,7 +30,7 @@ export const startContentServer = (port: number, publicDir: string): Promise<Ser
 export const stopServer = (app: Server): Promise<void> => {
     return new Promise<void>((resolve) => {
         app.close(() => {
-            console.log('Server stopped');
+            console.log('server stopped');
             resolve();
         });
     });

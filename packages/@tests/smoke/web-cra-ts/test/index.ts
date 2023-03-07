@@ -38,8 +38,8 @@ const test = async () => {
     await stopServer(localServer);
 
     if (!content) {
-        throw new Error('Smoke test failed!');
+        throw new Error('smoke test failed!');
     }
 };
 
-test().then(() => console.log('Smoke tests succeed!'));
+test().then(() => console.log('smoke tests succeed!'));
