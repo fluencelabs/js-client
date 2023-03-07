@@ -4,14 +4,14 @@ import { fileURLToPath } from 'url';
 
 import { startCdn, startContentServer, stopServer } from '@test/test-utils';
 
-const port = 3000;
+const port = 3001;
 const uri = `http://localhost:${port}/`;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const publicPath = join(__dirname, '../build/');
 
 const test = async () => {
-    const cdn = startCdn();
-    const localServer = startContentServer(port, publicPath);
+    const cdn = await startCdn(8766);
+    const localServer = await startContentServer(port, publicPath);
 
     console.log('starting puppeteer...');
     const browser = await puppeteer.launch();
@@ -34,14 +34,12 @@ const test = async () => {
     console.log('raw result: ', content);
 
     await browser.close();
-    stopServer(cdn);
-    stopServer(localServer);
+    await stopServer(cdn);
+    await stopServer(localServer);
 
     if (!content) {
         throw new Error('Smoke test failed!');
     }
 };
 
-test()
-    .then(() => console.log('done!'))
-    .catch((err) => console.error('error: ', err));
+test().then(() => console.log('Smoke tests succeed!'));
