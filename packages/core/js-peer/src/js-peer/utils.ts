@@ -20,7 +20,6 @@ import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
 import { FluencePeer } from './FluencePeer.js';
 import { ParticleExecutionStage } from './Particle.js';
-import { LogFunction } from '@fluencelabs/marine-js/dist/types';
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>
@@ -160,29 +159,3 @@ export class ServiceError extends Error {
         Object.setPrototypeOf(this, ServiceError.prototype);
     }
 }
-
-export const marineLogFunction: LogFunction = (message) => {
-    const str = `[marine service "${message.service}"]: ${message.message}`;
-
-    const nodeProcess = (globalThis as any).process ? (globalThis as any).process : undefined;
-    if (nodeProcess && nodeProcess.stderr) {
-        nodeProcess.stderr.write(str);
-        return;
-    }
-
-    switch (message.level) {
-        case 'warn':
-            console.warn(str);
-            break;
-
-        case 'error':
-            console.error(str);
-            break;
-
-        case 'debug':
-        case 'trace':
-        case 'info':
-            console.log(str);
-            break;
-    }
-};

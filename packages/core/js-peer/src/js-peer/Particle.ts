@@ -17,7 +17,6 @@
 import { fromUint8Array, toUint8Array } from 'js-base64';
 import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
-import log from 'loglevel';
 import { ParticleContext } from '../interfaces/commonTypes.js';
 import { dataToString, jsonify } from './utils.js';
 import { Buffer } from 'buffer';
@@ -94,43 +93,6 @@ export class Particle {
             signature: [],
             data: this.data && fromUint8Array(this.data),
         });
-    }
-
-    logTo(level: LogLevel, message: string) {
-        let fn;
-        let data: string | undefined;
-        switch (level) {
-            case 'debug':
-                fn = log.debug;
-                data = dataToString(this.data);
-                break;
-            case 'error':
-                fn = log.error;
-                break;
-            case 'info':
-            case 'trace':
-                fn = log.info;
-                break;
-            case 'warn':
-                fn = log.warn;
-                break;
-            default:
-                return;
-        }
-
-        fn(
-            message,
-            jsonify({
-                id: this.id,
-                init_peer_id: this.initPeerId,
-                timestamp: this.timestamp,
-                ttl: this.ttl,
-                script: this.script,
-                signature: this.signature,
-                callResults: this.callResults,
-                data,
-            }),
-        );
     }
 }
 
