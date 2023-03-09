@@ -33,7 +33,7 @@ import type {
     ConnectionState,
 } from '@fluencelabs/interfaces/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
-import { dataToString, jsonify, isString, ServiceError } from './utils.js';
+import { jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
 import { builtInServices } from './builtins/common.js';
 import { defaultSigGuard, Sig } from './builtins/Sig.js';
@@ -463,7 +463,15 @@ export class FluencePeer implements IFluenceClient {
             .pipe(
                 tap((x) => {
                     log.trace('particle received: %p', x.particle);
-                    log.debug('particle content: %P', x.particle);
+                    log.debug('particle data: %j', {
+                        initPeerId: x.particle.initPeerId,
+                        timestamp: x.particle.timestamp,
+                        tttl: x.particle.ttl,
+                        signature: x.particle.signature,
+                    });
+
+                    log.debug('particle script: %s', x.particle.script);
+                    log.debug('particle call result: %j', x.particle.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
@@ -582,19 +590,23 @@ export class FluencePeer implements IFluenceClient {
 
                 // Do not continue if there was an error in particle interpretation
                 if (item.result instanceof Error) {
-                    log.error('interpreter failed: %o', item.result.message);
+                    log.error('interpreter failed: %s', item.result.message);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
                     return;
                 }
 
-                const toLog = { ...item.result, data: dataToString(item.result.data) };
                 if (item.result.retCode !== 0) {
-                    log.error('interpreter failed: %o', toLog);
+                    log.error(
+                        'interpreter failed: retCode: %d, message: %s',
+                        item.result.retCode,
+                        item.result.errorMessage,
+                    );
+                    log.debug('avm data: %a', item.result.data);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
 
-                log.debug('interpreter result: %o', toLog);
+                log.debug('interpreter result: retCode: %d, avm data: %a', item.result.retCode, item.result.data);
 
                 setTimeout(() => {
                     item.onStageChange({ stage: 'interpreted' });

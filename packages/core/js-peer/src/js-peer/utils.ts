@@ -136,16 +136,6 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
     }
 };
 
-export function dataToString(data: Uint8Array) {
-    const text = new TextDecoder().decode(Buffer.from(data));
-    // try to treat data as json and pretty-print it
-    try {
-        return JSON.stringify(JSON.parse(text), null, 4);
-    } catch {
-        return text;
-    }
-}
-
 export function jsonify(obj: unknown) {
     return JSON.stringify(obj, null, 4);
 }
