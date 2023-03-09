@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import log from 'loglevel';
-
 import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
 import { FluencePeer } from './FluencePeer.js';
 import { ParticleExecutionStage } from './Particle.js';
+
+import { logger } from '../util/logger.js';
+
+const log = logger('fluence:connection');
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>
@@ -125,11 +127,11 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
     try {
         const result = await promise;
         if (result != msg) {
-            log.warn("unexpected behavior. 'identity' must return the passed arguments.");
+            log.error("unexpected behavior. 'identity' must return the passed arguments.");
         }
         return true;
     } catch (e) {
-        log.error('Error on establishing connection: ', e);
+        log.error('Error on establishing connection: %o', e);
         return false;
     }
 };

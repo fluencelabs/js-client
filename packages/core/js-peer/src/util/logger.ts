@@ -30,6 +30,7 @@ type Logger = (formatter: any, ...args: any[]) => void;
 export type LoggerCommon = {
     error: Logger;
     trace: Logger;
+    debug: Logger;
 };
 
 export type LoggerMarine = {
@@ -40,7 +41,7 @@ export type LoggerMarine = {
     info: Logger;
 };
 
-export function logger(name: string) {
+export function logger(name: string): LoggerCommon {
     return {
         error: debug(`${name}:error`),
         trace: debug(`${name}:trace`),
@@ -48,7 +49,7 @@ export function logger(name: string) {
     };
 }
 
-export function marineLogger(serviceId: string) {
+export function marineLogger(serviceId: string): LoggerMarine {
     return {
         warn: debug(`fluence:marine:${serviceId}:warn`),
         error: debug(`fluence:marine:${serviceId}:error`),

@@ -8,7 +8,6 @@ import { avmModuleLoader, controlModuleLoader } from '../utilsForNode.js';
 import { ServiceDef } from '@fluencelabs/interfaces';
 import { callAquaFunction } from '../../compilerSupport/callFunction.js';
 
-import { marineLogFunction } from '../utils.js';
 import { MarineBackgroundRunner } from '../../marine/worker/index.js';
 import { MarineBasedAvmRunner } from '../avm.js';
 import { nodes } from './connection.js';
@@ -60,7 +59,7 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
 export const mkTestPeer = () => {
     const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
-    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
+    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
     return new FluencePeer(marine, avm);
 };

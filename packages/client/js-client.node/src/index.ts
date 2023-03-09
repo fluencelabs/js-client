@@ -5,7 +5,6 @@ import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/call
 import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
-import { marineLogFunction } from '@fluencelabs/js-peer/dist/js-peer/utils.js';
 import { WasmLoaderFromNpm } from '@fluencelabs/js-peer/dist/marine/deps-loader/node.js';
 import { WorkerLoader } from '@fluencelabs/js-peer/dist/marine/worker-script/workerLoader.js';
 
@@ -27,7 +26,7 @@ export const createClient = () => {
     const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
 
-    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
+    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
     return new FluencePeer(marine, avm);
 };
