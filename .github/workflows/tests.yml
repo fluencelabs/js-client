@@ -186,5 +186,7 @@ jobs:
           working-directory: packages/client/js-client.node
           package-manager: pnpm
 
+      - uses: browser-actions/setup-chrome@v1
+
       - run: pnpm -r build
       - run: pnpm -r test

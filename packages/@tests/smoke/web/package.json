@@ -11,7 +11,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "commented_out_test": "node --loader ts-node/esm ./src/index.ts",
+        "test": "node --loader ts-node/esm ./src/index.ts",
         "serve": "http-server public"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
