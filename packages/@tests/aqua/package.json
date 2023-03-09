@@ -23,6 +23,6 @@
     },
     "devDependencies": {
         "@fluencelabs/aqua": "0.9.4",
-        "@fluencelabs/registry": "0.7.0"
+        "@fluencelabs/registry": "0.8.2"
     }
 }
