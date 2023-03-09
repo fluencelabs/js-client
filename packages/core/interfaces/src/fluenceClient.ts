@@ -110,10 +110,6 @@ export interface ClientOptions {
          * Useful to see what particle id is responsible for aqua function
          */
         printParticleId?: boolean;
-        /**
-         * Log level for marine services. By default logging is turned off.
-         */
-        marineLogLevel?: LogLevel;
     };
 }
 

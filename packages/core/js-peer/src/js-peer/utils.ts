@@ -131,7 +131,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         }
         return true;
     } catch (e) {
-        log.error('Error on establishing connection: %o', e);
+        log.error('error on establishing connection: %o', e);
         return false;
     }
 };

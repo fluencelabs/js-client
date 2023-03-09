@@ -1,21 +1,15 @@
 import debug from 'debug';
 import { Particle } from '../js-peer/Particle.js';
-import { dataToString, jsonify } from '../js-peer/utils.js';
+import { dataToString } from '../js-peer/utils.js';
 
 // Format particle as a short string omitting data
-debug.formatters.ptcl_id = (ptl: Particle) => {
-    return ptl.id;
-};
-
-// Format particle as a short string omitting data
-debug.formatters.avm_data = (avmData: Uint8Array) => {
-    return dataToString(avmData);
+debug.formatters.ptcl = (particle: Particle) => {
+    return particle.id;
 };
 
 // Format particle with data
-debug.formatters.ptl_full = (particle: Particle) => {
-    return jsonify({
-        id: particle.id,
+debug.formatters.ptcl_data = (particle: Particle) => {
+    return JSON.stringify({
         init_peer_id: particle.initPeerId,
         timestamp: particle.timestamp,
         ttl: particle.ttl,
@@ -25,23 +19,28 @@ debug.formatters.ptl_full = (particle: Particle) => {
     });
 };
 
+// Format avm data as a string
+debug.formatters.avm_data = (avmData: Uint8Array) => {
+    return dataToString(avmData);
+};
+
 type Logger = (formatter: any, ...args: any[]) => void;
 
-export type LoggerCommon = {
+export interface CommonLogger {
     error: Logger;
     trace: Logger;
     debug: Logger;
-};
+}
 
-export type LoggerMarine = {
+export interface MarineLogger {
     warn: Logger;
     error: Logger;
     debug: Logger;
     trace: Logger;
     info: Logger;
-};
+}
 
-export function logger(name: string): LoggerCommon {
+export function logger(name: string): CommonLogger {
     return {
         error: debug(`${name}:error`),
         trace: debug(`${name}:trace`),
@@ -49,7 +48,7 @@ export function logger(name: string): LoggerCommon {
     };
 }
 
-export function marineLogger(serviceId: string): LoggerMarine {
+export function marineLogger(serviceId: string): MarineLogger {
     return {
         warn: debug(`fluence:marine:${serviceId}:warn`),
         error: debug(`fluence:marine:${serviceId}:error`),

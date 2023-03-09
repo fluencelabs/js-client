@@ -23,12 +23,12 @@ import { spawn, Thread } from 'threads';
 // @ts-ignore
 import type { ModuleThread } from 'threads';
 
-import { LoggerMarine, marineLogger } from '../../util/logger.js';
+import { MarineLogger, marineLogger } from '../../util/logger.js';
 
 export class MarineBackgroundRunner implements IMarine {
     private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
-    private loggers: Map<string, LoggerMarine> = new Map();
+    private loggers: Map<string, MarineLogger> = new Map();
 
     constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader) {}
 
