@@ -462,8 +462,8 @@ export class FluencePeer implements IFluenceClient {
         this._incomingParticles
             .pipe(
                 tap((x) => {
-                    log.trace('particle received: %ptcl', x.particle);
-                    log.debug('particle content: %ptcl_data', x.particle);
+                    log.trace('particle received: %p', x.particle);
+                    log.debug('particle content: %P', x.particle);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
@@ -492,11 +492,11 @@ export class FluencePeer implements IFluenceClient {
             }
 
             if (!this.connection) {
-                log.error('cannot send particle %ptcl, peer is not connected', item.particle);
+                log.error('cannot send particle %p, peer is not connected', item.particle);
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            log.trace('sending particle %ptcl into network', item.particle);
+            log.trace('sending particle %p into network', item.particle);
             this.connection
                 ?.sendParticle(item.nextPeerIds, item.particle.toString())
                 .then(() => {
@@ -511,7 +511,7 @@ export class FluencePeer implements IFluenceClient {
     private _expireParticle(item: ParticleQueueItem) {
         const particleId = item.particle.id;
         log.trace(
-            'particle %ptcl has expired after %d. Deleting particle-related queues and handlers',
+            'particle %p has expired after %d. Deleting particle-related queues and handlers',
             item.particle,
             item.particle.ttl,
         );
@@ -542,8 +542,8 @@ export class FluencePeer implements IFluenceClient {
                     // MUST happen sequentially (in a critical section).
                     // Otherwise the race might occur corrupting the prevData
 
-                    log.trace('sending particle %ptcl to interpreter', item.particle);
-                    log.debug('prevData: %avm_data', prevData);
+                    log.trace('sending particle %p to interpreter', item.particle);
+                    log.debug('prevData: %a', prevData);
 
                     const avmCallResult = await this.avmRunner.run(
                         {

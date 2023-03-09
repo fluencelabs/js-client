@@ -3,12 +3,12 @@ import { Particle } from '../js-peer/Particle.js';
 import { dataToString } from '../js-peer/utils.js';
 
 // Format particle as a short string omitting data
-debug.formatters.ptcl = (particle: Particle) => {
+debug.formatters.p = (particle: Particle) => {
     return particle.id;
 };
 
 // Format particle with data
-debug.formatters.ptcl_data = (particle: Particle) => {
+debug.formatters.P = (particle: Particle) => {
     return JSON.stringify({
         init_peer_id: particle.initPeerId,
         timestamp: particle.timestamp,
@@ -20,7 +20,7 @@ debug.formatters.ptcl_data = (particle: Particle) => {
 };
 
 // Format avm data as a string
-debug.formatters.avm_data = (avmData: Uint8Array) => {
+debug.formatters.a = (avmData: Uint8Array) => {
     return dataToString(avmData);
 };
 
@@ -41,21 +41,22 @@ export interface MarineLogger {
 }
 
 export function logger(name: string): CommonLogger {
-    return {
+    return Object.assign(debug(name), {
         error: debug(`${name}:error`),
         trace: debug(`${name}:trace`),
         debug: debug(`${name}:debug`),
-    };
+    });
 }
 
 export function marineLogger(serviceId: string): MarineLogger {
-    return {
-        warn: debug(`fluence:marine:${serviceId}:warn`),
-        error: debug(`fluence:marine:${serviceId}:error`),
-        debug: debug(`fluence:marine:${serviceId}:debug`),
-        trace: debug(`fluence:marine:${serviceId}:trace`),
-        info: debug(`fluence:marine:${serviceId}:info`),
-    };
+    const name = 'fluence:marine:${serviceId}';
+    return Object.assign(debug(name), {
+        warn: debug(`:${serviceId}:warn`),
+        error: debug(`${name}:error`),
+        debug: debug(`${name}:debug`),
+        trace: debug(`${name}:trace`),
+        info: debug(`${name}:info`),
+    });
 }
 
 export function disable() {
