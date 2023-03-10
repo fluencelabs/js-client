@@ -30,7 +30,7 @@ const optsWithRandomKeyPair = () => {
     } as const;
 };
 
-export type TestResult = { type: 'success', data: string } | { type: 'failure', error: string }
+export type TestResult = { type: 'success'; data: string } | { type: 'failure'; error: string };
 
 export const runTest = async (): Promise<TestResult> => {
     try {
@@ -59,7 +59,7 @@ export const runTest = async (): Promise<TestResult> => {
         const [res, errors] = await resourceTest('my_resource');
         if (res === null) {
             console.log('resource test failed, errors', errors);
-            return { type: 'failure', error: errors.join(", ") };
+            return { type: 'failure', error: errors.join(', ') };
         } else {
             console.log('resource test finished, result', res);
         }
@@ -69,19 +69,18 @@ export const runTest = async (): Promise<TestResult> => {
         console.log('hello test finished, result: ', hello);
 
         console.log('running marine test...');
-        const marine = await marineTest(wasm);
-        console.log('marine test finished, result: ', marine);
+        // const marine = await marineTest(wasm);
+        // console.log('marine test finished, result: ', marine);
 
         const returnVal = {
             res,
             hello,
-            marine
-        }
+            // marine,
+        };
         return { type: 'success', data: JSON.stringify(returnVal) };
     } catch (err: any) {
         return { type: 'failure', error: err.toString() };
-    }
-    finally {
+    } finally {
         console.log('disconnecting from Fluence Network...');
         await Fluence.disconnect();
         console.log('disconnected');

@@ -1,11 +1,6 @@
 import debug from 'debug';
 import { Particle } from '../js-peer/Particle.js';
 
-// Format particle as a short string omitting data
-debug.formatters.p = (particle: Particle) => {
-    return particle.id;
-};
-
 // Format avm data as a string
 debug.formatters.a = (avmData: Uint8Array) => {
     return new TextDecoder().decode(Buffer.from(avmData));

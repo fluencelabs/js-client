@@ -462,16 +462,16 @@ export class FluencePeer implements IFluenceClient {
         this._incomingParticles
             .pipe(
                 tap((x) => {
-                    log.trace('particle received: %p', x.particle);
-                    log.debug('particle data: %j', {
+                    log.trace('id %s. received:', x.particle.id);
+                    log.debug('id %s. data: %j', x.particle.id, {
                         initPeerId: x.particle.initPeerId,
                         timestamp: x.particle.timestamp,
                         tttl: x.particle.ttl,
                         signature: x.particle.signature,
                     });
 
-                    log.debug('particle script: %s', x.particle.script);
-                    log.debug('particle call result: %j', x.particle.callResults);
+                    log.debug('id %s. script: %s', x.particle.id, x.particle.script);
+                    log.debug('id %s. call results: %j', x.particle.id, x.particle.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
@@ -500,18 +500,18 @@ export class FluencePeer implements IFluenceClient {
             }
 
             if (!this.connection) {
-                log.error('cannot send particle %p, peer is not connected', item.particle);
+                log.error('id %s. cannot send, peer is not connected', item.particle.id);
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            log.trace('sending particle %p into network', item.particle);
+            log.trace('id %s. sending particle into network', item.particle.id);
             this.connection
                 ?.sendParticle(item.nextPeerIds, item.particle.toString())
                 .then(() => {
                     item.onStageChange({ stage: 'sent' });
                 })
                 .catch((e: any) => {
-                    log.error('sending failed %o', e);
+                    log.error('id %s. sending failed %o', item.particle.id, e);
                 });
         });
     }
@@ -519,8 +519,8 @@ export class FluencePeer implements IFluenceClient {
     private _expireParticle(item: ParticleQueueItem) {
         const particleId = item.particle.id;
         log.trace(
-            'particle %p has expired after %d. Deleting particle-related queues and handlers',
-            item.particle,
+            'id %s. particle has expired after %d. Deleting particle-related queues and handlers',
+            item.particle.id,
             item.particle.ttl,
         );
 
@@ -550,8 +550,8 @@ export class FluencePeer implements IFluenceClient {
                     // MUST happen sequentially (in a critical section).
                     // Otherwise the race might occur corrupting the prevData
 
-                    log.trace('sending particle %p to interpreter', item.particle);
-                    log.debug('prevData: %a', prevData);
+                    log.trace('id %s. sending particle to interpreter', item.particle.id);
+                    log.debug('id %s. prevData: %a', item.particle.id, prevData);
 
                     const avmCallResult = await this.avmRunner.run(
                         {
@@ -590,7 +590,7 @@ export class FluencePeer implements IFluenceClient {
 
                 // Do not continue if there was an error in particle interpretation
                 if (item.result instanceof Error) {
-                    log.error('interpreter failed: %s', item.result.message);
+                    log.error('id %s. interpreter failed: %s', item.particle.id, item.result.message);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
                     return;
                 }
@@ -601,12 +601,17 @@ export class FluencePeer implements IFluenceClient {
                         item.result.retCode,
                         item.result.errorMessage,
                     );
-                    log.debug('avm data: %a', item.result.data);
+                    log.debug('id %s. avm data: %a', item.particle.id, item.result.data);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
 
-                log.debug('interpreter result: retCode: %d, avm data: %a', item.result.retCode, item.result.data);
+                log.debug(
+                    'id %s. interpreter result: retCode: %d, avm data: %a',
+                    item.particle.id,
+                    item.result.retCode,
+                    item.result.data,
+                );
 
                 setTimeout(() => {
                     item.onStageChange({ stage: 'interpreted' });
