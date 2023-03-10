@@ -186,6 +186,10 @@ To enable logs, set the `localStorage.debug` variable. For example:
 localStorage.debug = 'fluence:*'
 ```
 
+**NOTE**
+
+In Chromium-based web browsers (e.g. Brave, Chrome, and Electron), the JavaScript console will—by default—only show messages logged by debug if the "Verbose" log level is enabled.
+
 ## Development
 
 To hack on the Fluence JS Client itself, please refer to the [development page](./DEVELOPING.md).
