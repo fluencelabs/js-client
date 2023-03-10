@@ -1,7 +1,8 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
 import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
-import { registerHelloWorld, smokeTest } from './_aqua/smoke_test.js';
+import { registerHelloWorld, helloTest, marineTest, resourceTest } from './_aqua/smoke_test.js';
+import { wasm } from './wasmb64.js';
 
 // Relay running on local machine
 // const relay = {
@@ -29,7 +30,7 @@ const optsWithRandomKeyPair = () => {
     } as const;
 };
 
-export type TestResult = { res: string | null; errors: string[]; hello: string };
+export type TestResult = { type: 'success', data: string } | { type: 'failure', error: string }
 
 export const runTest = async (): Promise<TestResult> => {
     try {
@@ -54,17 +55,33 @@ export const runTest = async (): Promise<TestResult> => {
         console.log('my peer id: ', client.getPeerId());
         console.log('my sk id: ', fromByteArray(client.getPeerSecretKey()));
 
-        console.log('running some aqua...');
-        const [res, errors, hello] = await smokeTest('my_resource');
-        console.log(hello);
+        console.log('running resource test...');
+        const [res, errors] = await resourceTest('my_resource');
         if (res === null) {
-            console.log('aqua failed, errors', errors);
+            console.log('resource test failed, errors', errors);
+            return { type: 'failure', error: errors.join(", ") };
         } else {
-            console.log('aqua finished, result', res);
+            console.log('resource test finished, result', res);
         }
 
-        return { res, errors, hello };
-    } finally {
+        console.log('running hello test...');
+        const hello = await helloTest();
+        console.log('hello test finished, result: ', hello);
+
+        console.log('running marine test...');
+        const marine = await marineTest(wasm);
+        console.log('marine test finished, result: ', marine);
+
+        const returnVal = {
+            res,
+            hello,
+            marine
+        }
+        return { type: 'success', data: JSON.stringify(returnVal) };
+    } catch (err: any) {
+        return { type: 'failure', error: err.toString() };
+    }
+    finally {
         console.log('disconnecting from Fluence Network...');
         await Fluence.disconnect();
         console.log('disconnected');

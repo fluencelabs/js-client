@@ -10,8 +10,8 @@
     },
     "type": "module",
     "scripts": {
-        "build": "tsc",
-        "compile-aqua": "aqua -i ./_aqua -o ./src/_aqua"
+        "build": "pnpm compile-aqua && tsc",
+        "compile-aqua": "fluence aqua -i ./_aqua -o ./src/_aqua"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -22,7 +22,9 @@
         "base64-js": "1.5.1"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.9.4",
-        "@fluencelabs/registry": "0.7.0"
+        "@fluencelabs/cli": "0.3.9",
+        "@fluencelabs/registry": "0.8.2",
+        "@fluencelabs/aqua-lib": "0.6.0",
+        "@fluencelabs/trust-graph": "3.1.2"
     }
 }

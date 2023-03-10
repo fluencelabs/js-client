@@ -1,26 +1,18 @@
-import { runTest } from '@test/aqua_for_test';
+import { runTest, TestResult } from '@test/aqua_for_test';
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
-    const [result, setResult] = React.useState<string | null>(null);
-    const [error, setError] = React.useState<string | null>(null);
+    const [result, setResult] = React.useState<TestResult | null>(null);
 
     const onButtonClick = () => {
         runTest()
             .then((res) => {
-                if (res.errors.length === 0) {
-                    setResult(JSON.stringify(res));
-                    setError(null);
-                } else {
-                    setResult(null);
-                    setError(res.errors.toString());
-                }
+                setResult(res);
             })
             .catch((err) => {
-                setResult('');
-                setError(err.toString());
+                setResult({ type: 'failure', error: err.toString() });
             });
     };
 
@@ -35,8 +27,8 @@ function App() {
                     Click to run test
                 </button>
 
-                {result && <div id="res">{result}</div>}
-                {error && <div id="error">{error}</div>}
+                {result && result.type === 'success' && <div id="res">{result.data}</div>}
+                {result && result.type === 'failure' && <div id="error">{result.error}</div>}
                 <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
                     Learn React
                 </a>

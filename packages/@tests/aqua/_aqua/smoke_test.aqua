@@ -3,7 +3,13 @@ import "@fluencelabs/registry/resources-api.aqua"
 service HelloWorld("hello-world"):
     hello(str: string) -> string
 
-func smokeTest(label: string) -> ?string, *string, string:
+func resourceTest(label: string) -> ?string, *string:
     res, errors <- createResource(label)
+    <- res, errors
+
+func helloTest() -> string:
     hello <- HelloWorld.hello("Fluence user")
-    <- res, errors, hello
+    <- hello
+
+func marineTest(wasm64: string) -> string:
+    <- "hello"
