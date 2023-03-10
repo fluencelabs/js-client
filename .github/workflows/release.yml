@@ -118,7 +118,7 @@ jobs:
       - run: pnpm -r build
 
       - name: Publish to npm registry
-        run: pnpm --no-git-checks -r publish -filter '@fluencelabs/*' --access public --tag unstable
+        run: pnpm --no-git-checks -r publish -filter '@fluencelabs/*' --access public
 
   slack:
     if: always()
