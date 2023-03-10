@@ -1,7 +1,13 @@
 import type { RegisterService } from '@fluencelabs/interfaces';
 import { registerGlobalService, userHandlerService } from './services.js';
 
+import { logger } from '../util/logger.js';
+
+const log = logger('aqua');
+
 export const registerService: RegisterService = ({ peer, def, serviceId, service }) => {
+    log.debug('registering aqua service %o', { def, serviceId, service });
+
     // Checking for missing keys
     const requiredKeys = def.functions.tag === 'nil' ? [] : Object.keys(def.functions.fields);
     const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));

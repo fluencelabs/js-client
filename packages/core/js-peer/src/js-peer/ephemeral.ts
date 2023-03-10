@@ -227,7 +227,7 @@ export class EphemeralNetwork {
     }
 
     private async _send(from: PeerIdB58, to: PeerIdB58[], particle: string) {
-        log.trace(`Sending particle from %s, to %o`, from, to);
+        log.trace(`Sending particle from %s, to %j`, from, to);
         const peer = this._peers.get(from);
         if (peer === undefined) {
             log.error(`Peer ${from}  cannot be found in ephemeral network`);

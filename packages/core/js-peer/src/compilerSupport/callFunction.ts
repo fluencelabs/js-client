@@ -19,6 +19,10 @@ import {
     injectValueService,
 } from './services.js';
 
+import { logger } from '../util/logger.js';
+
+const log = logger('aqua');
+
 /**
  * Convenience function which does all the internal work of creating particles
  * and making necessary service registrations in order to support Aqua function calls
@@ -31,6 +35,7 @@ import {
  * @returns
  */
 export const callAquaFunction: CallAquaFunction = ({ def, script, config, peer, args }) => {
+    log.debug('calling aqua function %j', { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
     const promise = new Promise((resolve, reject) => {

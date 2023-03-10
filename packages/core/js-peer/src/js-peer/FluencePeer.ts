@@ -511,7 +511,7 @@ export class FluencePeer implements IFluenceClient {
                     item.onStageChange({ stage: 'sent' });
                 })
                 .catch((e: any) => {
-                    log.error('id %s. sending failed %o', item.particle.id, e);
+                    log.error('id %s. sending failed %j', item.particle.id, e);
                 });
         });
     }
@@ -683,7 +683,7 @@ export class FluencePeer implements IFluenceClient {
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
-        log.debug('executing call service handler %o', req);
+        log.debug('executing call service handler %j', req);
         const particleId = req.particleContext.particleId;
 
         if (this.marine && this._marineServices.has(req.serviceId)) {
@@ -728,7 +728,7 @@ export class FluencePeer implements IFluenceClient {
             res.result = null;
         }
 
-        log.debug('executed call service handler, req: %o, res: %o ', req, res);
+        log.debug('executed call service handler, req: %j, res: %j ', req, res);
         return res;
     }
 

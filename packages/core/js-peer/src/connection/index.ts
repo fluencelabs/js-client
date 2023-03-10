@@ -158,11 +158,11 @@ export class RelayConnection extends FluenceConnection {
                                 try {
                                     onIncomingParticle(msg);
                                 } catch (e) {
-                                    log.error('error on handling a new incoming message: %o', e);
+                                    log.error('error on handling a new incoming message: %j', e);
                                 }
                             }
                         } catch (e) {
-                            log.debug('connection closed: %o', e);
+                            log.debug('connection closed: %j', e);
                         }
                     },
                 );
