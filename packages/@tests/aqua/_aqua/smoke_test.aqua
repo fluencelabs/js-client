@@ -11,5 +11,45 @@ func helloTest() -> string:
     hello <- HelloWorld.hello("Fluence user")
     <- hello
 
-func marineTest(wasm64: string) -> string:
-    <- "hello"
+service CalcService:
+  add(num: f64) -> f64
+  clear_state()  
+  divide(num: f64) -> f64
+  multiply(num: f64) -> f64
+  state() -> f64
+  subtract(num: f64) -> f64
+  test_logs()
+
+data ServiceCreationResult:
+    success: bool
+    service_id: ?string
+    error: ?string
+
+data RemoveResult:
+    success: bool
+    error: ?string
+
+alias ListServiceResult: []string
+
+service Srv("single_module_srv"):
+    create(wasm_b64_content: string) -> ServiceCreationResult
+    remove(service_id: string) -> RemoveResult
+    list() -> ListServiceResult
+
+
+func demo_calculation(service_id: string) -> f64:
+    CalcService service_id
+    CalcService.test_logs()
+    CalcService.add(10)
+    CalcService.multiply(5)
+    CalcService.subtract(8)
+    CalcService.divide(6)
+    res <- CalcService.state()
+    <- res
+
+func marineTest(wasm64: string) -> f64:
+    serviceResult <- Srv.create(wasm64)
+    res <- demo_calculation(serviceResult.service_id!)
+    <- res
+
+
