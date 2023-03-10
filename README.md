@@ -139,6 +139,53 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
     }
     ```
 
+## Debug
+
+JS Client uses [debug](https://github.com/debug-js/debug) library under the hood for logging. The logs namespaces are structured per component basis and follow this structure:
+
+```
+fluence:<component>:trace
+fluence:<component>:debug
+fluence:<component>:error
+```
+
+Marine JS logs have a slightly different structure:
+
+```
+fluence:marine:<service id>:trace
+fluence:marine:<service id>:debug
+fluence:marine:<service id>:info
+fluence:marine:<service id>:warn
+fluence:marine:<service id>:error
+```
+
+Each level for corresponding logging level in Marine JS.
+
+Star (`*`) can be used for wildcard namespaces. E.g `DEBUG=fluence:*`. To exclude a component minus can be used before the component name. E.g `DEBUG=fluence:*,-fluence:particle:*`
+
+### Index of components:
+
+-   `particle`: everything related to particle processing queue
+-   `aqua`: infrastructure of aqua compiler support
+-   `connection`: connection layer
+-   `marine`: Marine JS logs
+
+### Enabling logs in Node.js
+
+To enable logs pass the environment variable `DEBUG` with the corresponding log level. E.g
+
+```sh
+DEBUG=fluence:* node --loader ts-node/esm ./src/index.ts
+```
+
+### Enabling logs in Browser
+
+To enable logs set the `localStorage.debug` variable. E.g
+
+```
+localStorage.debug = 'fluence:*'
+```
+
 ## Development
 
 To hack on the Fluence JS Client itself, please refer to the [development page](./DEVELOPING.md).
@@ -159,3 +206,7 @@ Any interested person is welcome to contribute to the project. Please, make sure
 ## License
 
 All software code is copyright (c) Fluence Labs, Inc. under the [Apache-2.0](./LICENSE) license.
+
+```
+
+```
