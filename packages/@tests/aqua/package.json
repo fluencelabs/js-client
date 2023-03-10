@@ -10,7 +10,7 @@
     },
     "type": "module",
     "scripts": {
-        "build": "pnpm compile-aqua && tsc",
+        "build": "tsc",
         "compile-aqua": "fluence aqua -i ./_aqua -o ./src/_aqua"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",

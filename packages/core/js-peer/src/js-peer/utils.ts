@@ -131,7 +131,7 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
         }
         return true;
     } catch (e) {
-        log.error('error on establishing connection: %j', e);
+        log.error('error on establishing connection. Relay: %s error: %j', e, peer.getStatus().relayPeerId);
         return false;
     }
 };

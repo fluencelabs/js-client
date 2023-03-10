@@ -35,7 +35,7 @@ const log = logger('aqua');
  * @returns
  */
 export const callAquaFunction: CallAquaFunction = ({ def, script, config, peer, args }) => {
-    log.debug('calling aqua function %j', { def, script, config, args });
+    log.trace('calling aqua function %j', { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
     const promise = new Promise((resolve, reject) => {

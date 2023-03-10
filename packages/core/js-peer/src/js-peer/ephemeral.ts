@@ -125,7 +125,7 @@ export class EphemeralNetwork {
      * Starts the Ephemeral network up
      */
     async up(): Promise<void> {
-        log.debug('starting ephemeral network up...');
+        log.trace('starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
         // shared worker for all the peers
         const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
@@ -172,21 +172,21 @@ export class EphemeralNetwork {
         });
         const values = await Promise.all(promises);
         this._peers = new Map(values);
-        log.debug('ephemeral network started...');
+        log.trace('ephemeral network started...');
     }
 
     /**
      * Shuts the ephemeral network down. Will disconnect all connected peers.
      */
     async down(): Promise<void> {
-        log.debug('shutting down ephemeral network...');
+        log.trace('shutting down ephemeral network...');
         const peers = Array.from(this._peers.entries());
         const promises = peers.map(([k, p]) => {
             return p.isEphemeral ? p.peer.stop() : p.peer._disconnect();
         });
         await Promise.all(promises);
         this._peers.clear();
-        log.debug('ephemeral network shut down');
+        log.trace('ephemeral network shut down');
     }
 
     /**

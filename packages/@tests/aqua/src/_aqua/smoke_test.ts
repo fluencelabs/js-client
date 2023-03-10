@@ -783,14 +783,8 @@ export function marineTest(...args: any) {
                            (seq
                             (seq
                              (seq
-                              (seq
-                               (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-                               (call %init_peer_id% ("getDataSrv" "wasm64") [] wasm64)
-                              )
-                              (xor
-                               (call %init_peer_id% ("invalid" "list") [] dontcare)
-                               (null)
-                              )
+                              (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                              (call %init_peer_id% ("getDataSrv" "wasm64") [] wasm64)
                              )
                              (call %init_peer_id% ("single_module_srv" "create") [wasm64] serviceResult)
                             )

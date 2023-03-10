@@ -48,12 +48,6 @@ func demo_calculation(service_id: string) -> f64:
     <- res
 
 func marineTest(wasm64: string) -> f64:
-    try:
-        Srv "invalid"
-        dontcare <- Srv.list()
-    catch e:
-        a = 1
-
     serviceResult <- Srv.create(wasm64)
     res <- demo_calculation(serviceResult.service_id!)
     <- res

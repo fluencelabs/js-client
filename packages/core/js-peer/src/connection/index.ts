@@ -162,7 +162,7 @@ export class RelayConnection extends FluenceConnection {
                                 }
                             }
                         } catch (e) {
-                            log.debug('connection closed: %j', e);
+                            log.error('connection closed: %j', e);
                         }
                     },
                 );
