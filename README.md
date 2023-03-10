@@ -211,6 +211,3 @@ Any interested person is welcome to contribute to the project. Please, make sure
 
 All software code is copyright (c) Fluence Labs, Inc. under the [Apache-2.0](./LICENSE) license.
 
-```
-
-```

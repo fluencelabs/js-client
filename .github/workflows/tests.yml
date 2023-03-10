@@ -67,10 +67,6 @@ jobs:
           repository: fluencelabs/fluence-js
           ref: ${{ inputs.ref }}
 
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
-
       - name: Pull rust-peer image
         run: docker pull $RUST_PEER_IMAGE
 
