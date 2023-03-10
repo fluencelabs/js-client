@@ -58,6 +58,8 @@ export class MarineBackgroundRunner implements IMarine {
             throw 'Worker is not initialized';
         }
 
+        // The logging level is controlled by the environment variable passed to enable debug logs.
+        // We enable all possible log levels passing the control for exact printouts to the logger
         const env = logLevelToEnv('trace');
         this.loggers.set(serviceId, marineLogger(serviceId));
         return this.workerThread.createService(serviceModule, serviceId, undefined, env);
