@@ -141,7 +141,7 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 
 ## Debug
 
-JS Client uses [debug](https://github.com/debug-js/debug) library under the hood for logging. The logs namespaces are structured per component basis and follow this structure:
+JS Client uses the [debug](https://github.com/debug-js/debug) library under the hood for logging. The log namespaces are structured on a per-component basis, following this structure:
 
 ```
 fluence:<component>:trace
@@ -159,9 +159,9 @@ fluence:marine:<service id>:warn
 fluence:marine:<service id>:error
 ```
 
-Each level for corresponding logging level in Marine JS.
+Each level corresponds to a logging level in Marine JS.
 
-Star (`*`) can be used for wildcard namespaces. E.g `DEBUG=fluence:*`. To exclude a component minus can be used before the component name. E.g `DEBUG=fluence:*,-fluence:particle:*`
+Star (`*`) character can be used as a wildcard to enable logs for multiple components at once. For example, `DEBUG=fluence:*` will enable logs for all components. To exclude a component, use a minus sign before the component name. For example, `DEBUG=fluence:*,-fluence:particle:*`
 
 ### Index of components:
 
@@ -172,15 +172,15 @@ Star (`*`) can be used for wildcard namespaces. E.g `DEBUG=fluence:*`. To exclud
 
 ### Enabling logs in Node.js
 
-To enable logs pass the environment variable `DEBUG` with the corresponding log level. E.g
+enable logs, pass the environment variable `DEBUG` with the corresponding log level. For example:
 
 ```sh
 DEBUG=fluence:* node --loader ts-node/esm ./src/index.ts
 ```
 
-### Enabling logs in Browser
+### Enabling logs in the browser
 
-To enable logs set the `localStorage.debug` variable. E.g
+To enable logs, set the `localStorage.debug` variable. For example:
 
 ```
 localStorage.debug = 'fluence:*'
