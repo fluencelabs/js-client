@@ -48,7 +48,7 @@ import type { MultiaddrInput } from '@multiformats/multiaddr';
 
 import { logger } from '../util/logger.js';
 
-const log = logger('fluence:particle');
+const log = logger('particle');
 
 const DEFAULT_TTL = 7000;
 

@@ -29,9 +29,9 @@ export interface MarineLogger {
 
 export function logger(name: string): CommonLogger {
     return {
-        error: debug(`${name}:error`),
-        trace: debug(`${name}:trace`),
-        debug: debug(`${name}:debug`),
+        error: debug(`fluence:${name}:error`),
+        trace: debug(`fluence:${name}:trace`),
+        debug: debug(`fluence:${name}:debug`),
     };
 }
 

@@ -21,7 +21,7 @@ import { ParticleExecutionStage } from './Particle.js';
 
 import { logger } from '../util/logger.js';
 
-const log = logger('fluence:connection');
+const log = logger('connection');
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>

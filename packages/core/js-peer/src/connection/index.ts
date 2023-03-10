@@ -34,7 +34,7 @@ import { toString } from 'uint8arrays/to-string';
 
 import { logger } from '../util/logger.js';
 
-const log = logger('fluence:connection');
+const log = logger('connection');
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 

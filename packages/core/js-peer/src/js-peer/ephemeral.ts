@@ -25,7 +25,7 @@ interface PeerAdapter {
     connections: Set<PeerIdB58>;
 }
 
-const log = logger('fluence:ephemeral');
+const log = logger('ephemeral');
 
 export const defaultConfig = {
     peers: [
