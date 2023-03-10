@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import log from 'loglevel';
-
 import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
 import { FluencePeer } from './FluencePeer.js';
 import { ParticleExecutionStage } from './Particle.js';
-import { LogFunction } from '@fluencelabs/marine-js/dist/types';
+
+import { logger } from '../util/logger.js';
+
+const log = logger('connection');
 
 export const MakeServiceCall =
     (fn: (args: any[]) => CallServiceResultType) =>
@@ -126,24 +127,14 @@ export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<
     try {
         const result = await promise;
         if (result != msg) {
-            log.warn("unexpected behavior. 'identity' must return the passed arguments.");
+            log.error("unexpected behavior. 'identity' must return the passed arguments.");
         }
         return true;
     } catch (e) {
-        log.error('Error on establishing connection: ', e);
+        log.error('error on establishing connection. Relay: %s error: %j', e, peer.getStatus().relayPeerId);
         return false;
     }
 };
-
-export function dataToString(data: Uint8Array) {
-    const text = new TextDecoder().decode(Buffer.from(data));
-    // try to treat data as json and pretty-print it
-    try {
-        return JSON.stringify(JSON.parse(text), null, 4);
-    } catch {
-        return text;
-    }
-}
 
 export function jsonify(obj: unknown) {
     return JSON.stringify(obj, null, 4);
@@ -160,29 +151,3 @@ export class ServiceError extends Error {
         Object.setPrototypeOf(this, ServiceError.prototype);
     }
 }
-
-export const marineLogFunction: LogFunction = (message) => {
-    const str = `[marine service "${message.service}"]: ${message.message}`;
-
-    const nodeProcess = (globalThis as any).process ? (globalThis as any).process : undefined;
-    if (nodeProcess && nodeProcess.stderr) {
-        nodeProcess.stderr.write(str);
-        return;
-    }
-
-    switch (message.level) {
-        case 'warn':
-            console.warn(str);
-            break;
-
-        case 'error':
-            console.error(str);
-            break;
-
-        case 'debug':
-        case 'trace':
-        case 'info':
-            console.log(str);
-            break;
-    }
-};

@@ -139,6 +139,57 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
     }
     ```
 
+## Debug
+
+JS Client uses the [debug](https://github.com/debug-js/debug) library under the hood for logging. The log namespaces are structured on a per-component basis, following this structure:
+
+```
+fluence:<component>:trace
+fluence:<component>:debug
+fluence:<component>:error
+```
+
+Marine JS logs have a slightly different structure:
+
+```
+fluence:marine:<service id>:trace
+fluence:marine:<service id>:debug
+fluence:marine:<service id>:info
+fluence:marine:<service id>:warn
+fluence:marine:<service id>:error
+```
+
+Each level corresponds to a logging level in Marine JS.
+
+Star (`*`) character can be used as a wildcard to enable logs for multiple components at once. For example, `DEBUG=fluence:*` will enable logs for all components. To exclude a component, use a minus sign before the component name. For example, `DEBUG=fluence:*,-fluence:particle:*`
+
+### Index of components:
+
+-   `particle`: everything related to particle processing queue
+-   `aqua`: infrastructure of aqua compiler support
+-   `connection`: connection layer
+-   `marine`: Marine JS logs
+
+### Enabling logs in Node.js
+
+enable logs, pass the environment variable `DEBUG` with the corresponding log level. For example:
+
+```sh
+DEBUG=fluence:* node --loader ts-node/esm ./src/index.ts
+```
+
+### Enabling logs in the browser
+
+To enable logs, set the `localStorage.debug` variable. For example:
+
+```
+localStorage.debug = 'fluence:*'
+```
+
+**NOTE**
+
+In Chromium-based web browsers (e.g. Brave, Chrome, and Electron), the JavaScript console will—by default—only show messages logged by debug if the "Verbose" log level is enabled.
+
 ## Development
 
 To hack on the Fluence JS Client itself, please refer to the [development page](./DEVELOPING.md).
@@ -159,3 +210,4 @@ Any interested person is welcome to contribute to the project. Please, make sure
 ## License
 
 All software code is copyright (c) Fluence Labs, Inc. under the [Apache-2.0](./LICENSE) license.
+

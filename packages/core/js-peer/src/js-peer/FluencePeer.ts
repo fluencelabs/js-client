@@ -33,9 +33,8 @@ import type {
     ConnectionState,
 } from '@fluencelabs/interfaces/dist/fluenceClient';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
-import { dataToString, jsonify, isString, ServiceError } from './utils.js';
+import { jsonify, isString, ServiceError } from './utils.js';
 import { concatMap, filter, pipe, Subject, tap } from 'rxjs';
-import log from 'loglevel';
 import { builtInServices } from './builtins/common.js';
 import { defaultSigGuard, Sig } from './builtins/Sig.js';
 import { registerSig } from './_aqua/services.js';
@@ -43,10 +42,13 @@ import { registerSrv } from './_aqua/single-module-srv.js';
 import { Buffer } from 'buffer';
 
 import { JSONValue } from '@fluencelabs/avm';
-import { LogLevel } from '@fluencelabs/marine-js/dist/types';
 import { NodeUtils, Srv } from './builtins/SingleModuleSrv.js';
 import { registerNodeUtils } from './_aqua/node-utils.js';
 import type { MultiaddrInput } from '@multiformats/multiaddr';
+
+import { logger } from '../util/logger.js';
+
+const log = logger('particle');
 
 const DEFAULT_TTL = 7000;
 
@@ -220,7 +222,7 @@ export class FluencePeer implements IFluenceClient {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        await this.marine.createService(wasm, serviceId, this._marineLogLevel);
+        await this.marine.createService(wasm, serviceId);
         this._marineServices.add(serviceId);
     }
 
@@ -377,10 +379,6 @@ export class FluencePeer implements IFluenceClient {
 
         this._defaultTTL = config?.defaultTtlMs ?? DEFAULT_TTL;
 
-        if (config?.debug?.marineLogLevel) {
-            this._marineLogLevel = config.debug.marineLogLevel;
-        }
-
         await this.marine.start();
         await this.avmRunner.start();
 
@@ -434,7 +432,6 @@ export class FluencePeer implements IFluenceClient {
     // Call service handler
 
     private _marineServices = new Set<string>();
-    private _marineLogLevel?: LogLevel;
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
 
@@ -465,7 +462,16 @@ export class FluencePeer implements IFluenceClient {
         this._incomingParticles
             .pipe(
                 tap((x) => {
-                    x.particle.logTo('debug', 'particle received:');
+                    log.debug('id %s. received:', x.particle.id);
+                    log.trace('id %s. data: %j', x.particle.id, {
+                        initPeerId: x.particle.initPeerId,
+                        timestamp: x.particle.timestamp,
+                        tttl: x.particle.ttl,
+                        signature: x.particle.signature,
+                    });
+
+                    log.trace('id %s. script: %s', x.particle.id, x.particle.script);
+                    log.trace('id %s. call results: %j', x.particle.id, x.particle.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
@@ -494,26 +500,28 @@ export class FluencePeer implements IFluenceClient {
             }
 
             if (!this.connection) {
-                item.particle.logTo('error', 'cannot send particle, peer is not connected');
+                log.error('id %s. cannot send, peer is not connected', item.particle.id);
                 item.onStageChange({ stage: 'sendingError' });
                 return;
             }
-            item.particle.logTo('debug', 'sending particle:');
-            this.connection?.sendParticle(item.nextPeerIds, item.particle.toString()).then(
-                () => {
+            log.debug('id %s. sending particle into network', item.particle.id);
+            this.connection
+                ?.sendParticle(item.nextPeerIds, item.particle.toString())
+                .then(() => {
                     item.onStageChange({ stage: 'sent' });
-                },
-                (e: any) => {
-                    log.error(e);
-                },
-            );
+                })
+                .catch((e: any) => {
+                    log.error('id %s. send failed %j', item.particle.id, e);
+                });
         });
     }
 
     private _expireParticle(item: ParticleQueueItem) {
         const particleId = item.particle.id;
         log.debug(
-            `particle ${particleId} has expired after ${item.particle.ttl}. Deleting particle-related queues and handlers`,
+            'id %s. particle has expired after %d. Deleting particle-related queues and handlers',
+            item.particle.id,
+            item.particle.ttl,
         );
 
         this._particleQueues.delete(particleId);
@@ -540,11 +548,10 @@ export class FluencePeer implements IFluenceClient {
                     // IMPORTANT!
                     // AVM runner execution and prevData <-> newData swapping
                     // MUST happen sequentially (in a critical section).
-                    // Otherwise the race between runner might occur corrupting the prevData
+                    // Otherwise the race might occur corrupting the prevData
 
-                    item.particle.logTo('debug', 'Sending particle to interpreter');
-                    log.debug('prevData: ', dataToString(prevData));
-
+                    log.debug('id %s. sending particle to interpreter', item.particle.id);
+                    log.trace('id %s. prevData: %a', item.particle.id, prevData);
                     const avmCallResult = await this.avmRunner.run(
                         {
                             initPeerId: item.particle.initPeerId,
@@ -582,19 +589,29 @@ export class FluencePeer implements IFluenceClient {
 
                 // Do not continue if there was an error in particle interpretation
                 if (item.result instanceof Error) {
-                    log.error('Interpreter failed: ', jsonify(item.result.message));
+                    log.error('id %s. interpreter failed: %s', item.particle.id, item.result.message);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
                     return;
                 }
 
-                const toLog = { ...item.result, data: dataToString(item.result.data) };
                 if (item.result.retCode !== 0) {
-                    log.error('Interpreter failed: ', jsonify(toLog));
+                    log.error(
+                        'id %s. interpreter failed: retCode: %d, message: %s',
+                        item.particle.id,
+                        item.result.retCode,
+                        item.result.errorMessage,
+                    );
+                    log.trace('id %s. avm data: %a', item.particle.id, item.result.data);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
 
-                log.debug('Interpreter result: ', jsonify(toLog));
+                log.trace(
+                    'id %s. interpreter result: retCode: %d, avm data: %a',
+                    item.particle.id,
+                    item.result.retCode,
+                    item.result.data,
+                );
 
                 setTimeout(() => {
                     item.onStageChange({ stage: 'interpreted' });
@@ -666,8 +683,8 @@ export class FluencePeer implements IFluenceClient {
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
-        log.debug('executing call service handler', jsonify(req));
         const particleId = req.particleContext.particleId;
+        log.trace('id %s. executing call service handler %j', particleId, req);
 
         if (this.marine && this._marineServices.has(req.serviceId)) {
             const result = await this.marine.callService(req.serviceId, req.fnName, req.args, undefined);
@@ -711,7 +728,7 @@ export class FluencePeer implements IFluenceClient {
             res.result = null;
         }
 
-        log.debug('executed call service handler, req and res are: ', jsonify(req), jsonify(res));
+        log.trace('id %s. executed call service handler, req: %j, res: %j ', particleId, req, res);
         return res;
     }
 

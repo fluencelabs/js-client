@@ -4,11 +4,11 @@ import { fromBase64Sk } from '../keypair/index.js';
 import { FluencePeer } from './FluencePeer.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
 import { avmModuleLoader, controlModuleLoader } from './utilsForNode.js';
-import { marineLogFunction } from './utils.js';
 import { MarineBasedAvmRunner } from './avm.js';
 
-import log from 'loglevel';
 import { WorkerLoaderFromFs } from '../marine/deps-loader/node.js';
+
+import { logger } from '../util/logger.js';
 
 interface EphemeralConfig {
     peers: Array<{
@@ -24,6 +24,8 @@ interface PeerAdapter {
     onIncoming: ParticleHandler;
     connections: Set<PeerIdB58>;
 }
+
+const log = logger('ephemeral');
 
 export const defaultConfig = {
     peers: [
@@ -123,15 +125,14 @@ export class EphemeralNetwork {
      * Starts the Ephemeral network up
      */
     async up(): Promise<void> {
-        log.debug('Starting ephemeral network up...');
+        log.trace('starting ephemeral network up...');
         const allPeerIds = this.config.peers.map((x) => x.peerId);
         // shared worker for all the peers
         const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
         const promises = this.config.peers.map(async (x) => {
-            const logLevel = undefined;
-            const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
-            const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, logLevel);
+            const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
+            const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
             const peer = new FluencePeer(marine, avm);
             const sendParticle = async (nextPeerIds: string[], particle: string): Promise<void> => {
                 this._send(peer.getStatus().peerId!, nextPeerIds, particle);
@@ -171,21 +172,21 @@ export class EphemeralNetwork {
         });
         const values = await Promise.all(promises);
         this._peers = new Map(values);
-        log.debug('Ephemeral network started...');
+        log.trace('ephemeral network started...');
     }
 
     /**
      * Shuts the ephemeral network down. Will disconnect all connected peers.
      */
     async down(): Promise<void> {
-        log.debug('Shutting down ephemeral network...');
+        log.trace('shutting down ephemeral network...');
         const peers = Array.from(this._peers.entries());
         const promises = peers.map(([k, p]) => {
             return p.isEphemeral ? p.peer.stop() : p.peer._disconnect();
         });
         await Promise.all(promises);
         this._peers.clear();
-        log.debug('Ephemeral network shut down');
+        log.trace('ephemeral network shut down');
     }
 
     /**
@@ -226,7 +227,7 @@ export class EphemeralNetwork {
     }
 
     private async _send(from: PeerIdB58, to: PeerIdB58[], particle: string) {
-        log.info(`Sending particle from ${from}, to ${JSON.stringify(to)}`);
+        log.trace(`Sending particle from %s, to %j`, from, to);
         const peer = this._peers.get(from);
         if (peer === undefined) {
             log.error(`Peer ${from}  cannot be found in ephemeral network`);

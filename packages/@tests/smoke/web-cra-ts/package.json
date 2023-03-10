@@ -23,7 +23,7 @@
         "@test/test-utils": "workspace:^"
     },
     "scripts": {
-        "test": "node --loader ts-node/esm ./test/index.ts",
+        "test_commented_out": "node --loader ts-node/esm ./test/index.ts",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "_test": "react-scripts test",

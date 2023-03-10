@@ -32,7 +32,9 @@ import map from 'it-map';
 import { fromString } from 'uint8arrays/from-string';
 import { toString } from 'uint8arrays/to-string';
 
-import log from 'loglevel';
+import { logger } from '../util/logger.js';
+
+const log = logger('connection');
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
@@ -134,37 +136,41 @@ export class RelayConnection extends FluenceConnection {
 
     async connect(onIncomingParticle: ParticleHandler) {
         await this._lib2p2Peer.start();
-        
+
         // TODO: make it configurable
         const handleOptions = {
             maxInboundStreams: 1024,
-            maxOutboundStreams: 1024
-        }
+            maxOutboundStreams: 1024,
+        };
 
-        this._lib2p2Peer.handle([PROTOCOL_NAME], async ({ connection, stream }) => {
-            pipe(
-                stream.source,
-                // @ts-ignore
-                decode(),
-                // @ts-ignore
-                (source) => map(source, (buf) => toString(buf.subarray())),
-                async (source) => {
-                    try {
-                        for await (const msg of source) {
-                            try {
-                                onIncomingParticle(msg);
-                            } catch (e) {
-                                log.error('error on handling a new incoming message: ' + e);
+        this._lib2p2Peer.handle(
+            [PROTOCOL_NAME],
+            async ({ connection, stream }) => {
+                pipe(
+                    stream.source,
+                    // @ts-ignore
+                    decode(),
+                    // @ts-ignore
+                    (source) => map(source, (buf) => toString(buf.subarray())),
+                    async (source) => {
+                        try {
+                            for await (const msg of source) {
+                                try {
+                                    onIncomingParticle(msg);
+                                } catch (e) {
+                                    log.error('error on handling a new incoming message: %j', e);
+                                }
                             }
+                        } catch (e) {
+                            log.error('connection closed: %j', e);
                         }
-                    } catch (e) {
-                        log.debug('connection closed: ' + e);
-                    }
-                },
-            );
-        }, handleOptions);
+                    },
+                );
+            },
+            handleOptions,
+        );
 
-        log.debug(`dialing to the node with client's address: ` + this._lib2p2Peer.peerId.toString());
+        log.debug("dialing to the node with client's address: %s", this._lib2p2Peer.peerId.toString());
 
         try {
             this._connection = await this._lib2p2Peer.dial(this._relayAddress);

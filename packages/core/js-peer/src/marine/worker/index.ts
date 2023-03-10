@@ -23,14 +23,14 @@ import { spawn, Thread } from 'threads';
 // @ts-ignore
 import type { ModuleThread } from 'threads';
 
+import { MarineLogger, marineLogger } from '../../util/logger.js';
+
 export class MarineBackgroundRunner implements IMarine {
     private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
-    constructor(
-        private workerLoader: IWorkerLoader,
-        private controlModuleLoader: IWasmLoader,
-        private logFunction: LogFunction,
-    ) {}
+    private loggers: Map<string, MarineLogger> = new Map();
+
+    constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader) {}
 
     async start(): Promise<void> {
         if (this.workerThread) {
@@ -42,16 +42,26 @@ export class MarineBackgroundRunner implements IMarine {
         const worker = this.workerLoader.getValue();
         const wasm = this.controlModuleLoader.getValue();
         this.workerThread = await spawn<MarineBackgroundInterface>(worker, { timeout: 99999999 });
-        this.workerThread.onLogMessage().subscribe(this.logFunction);
+        const logfn: LogFunction = (message) => {
+            const serviceLogger = this.loggers.get(message.service);
+            if (!serviceLogger) {
+                return;
+            }
+            serviceLogger[message.level](message.message);
+        };
+        this.workerThread.onLogMessage().subscribe(logfn);
         await this.workerThread.init(wasm);
     }
 
-    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string, logLevel?: LogLevel): Promise<void> {
+    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
         if (!this.workerThread) {
             throw 'Worker is not initialized';
         }
 
-        const env = logLevel ? logLevelToEnv(logLevel) : {};
+        // The logging level is controlled by the environment variable passed to enable debug logs.
+        // We enable all possible log levels passing the control for exact printouts to the logger
+        const env = logLevelToEnv('trace');
+        this.loggers.set(serviceId, marineLogger(serviceId));
         return this.workerThread.createService(serviceModule, serviceId, undefined, env);
     }
 
