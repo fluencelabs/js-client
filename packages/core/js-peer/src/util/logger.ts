@@ -36,9 +36,9 @@ export function logger(name: string): CommonLogger {
 }
 
 export function marineLogger(serviceId: string): MarineLogger {
-    const name = 'fluence:marine:${serviceId}';
+    const name = `fluence:marine:${serviceId}`;
     return {
-        warn: debug(`:${serviceId}:warn`),
+        warn: debug(`${name}:warn`),
         error: debug(`${name}:error`),
         debug: debug(`${name}:debug`),
         trace: debug(`${name}:trace`),

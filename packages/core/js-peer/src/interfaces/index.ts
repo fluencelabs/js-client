@@ -33,7 +33,7 @@ export abstract class FluenceConnection {
 }
 
 export interface IMarine extends IModule {
-    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string, logLevel?: LogLevel): Promise<void>;
+    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void>;
 
     callService(
         serviceId: string,

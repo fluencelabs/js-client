@@ -53,12 +53,12 @@ export class MarineBackgroundRunner implements IMarine {
         await this.workerThread.init(wasm);
     }
 
-    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string, logLevel?: LogLevel): Promise<void> {
+    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
         if (!this.workerThread) {
             throw 'Worker is not initialized';
         }
 
-        const env = logLevel ? logLevelToEnv(logLevel) : {};
+        const env = logLevelToEnv('trace');
         this.loggers.set(serviceId, marineLogger(serviceId));
         return this.workerThread.createService(serviceModule, serviceId, undefined, env);
     }

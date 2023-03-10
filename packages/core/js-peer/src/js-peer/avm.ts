@@ -1,10 +1,9 @@
 import type { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
 import { deserializeAvmResult, serializeAvmArgs } from '@fluencelabs/avm';
-import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
 import type { IMarine, IAvmRunner, IWasmLoader } from '../interfaces/index.js';
 
 export class MarineBasedAvmRunner implements IAvmRunner {
-    constructor(private marine: IMarine, private avmWasmLoader: IWasmLoader, private logLevel: LogLevel | undefined) {}
+    constructor(private marine: IMarine, private avmWasmLoader: IWasmLoader) {}
 
     async run(
         runParams: RunParameters,
@@ -29,7 +28,7 @@ export class MarineBasedAvmRunner implements IAvmRunner {
     async start(): Promise<void> {
         await this.marine.start();
         await this.avmWasmLoader.start();
-        await this.marine.createService(this.avmWasmLoader.getValue(), 'avm', this.logLevel);
+        await this.marine.createService(this.avmWasmLoader.getValue(), 'avm');
     }
 
     async stop(): Promise<void> {}

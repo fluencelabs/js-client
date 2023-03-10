@@ -27,7 +27,7 @@ export const createClient = () => {
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
 
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
-    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
+    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
     return new FluencePeer(marine, avm);
 };
 

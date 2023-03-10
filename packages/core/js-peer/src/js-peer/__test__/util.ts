@@ -60,7 +60,7 @@ export const mkTestPeer = () => {
     const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
-    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
+    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
     return new FluencePeer(marine, avm);
 };
 

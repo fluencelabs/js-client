@@ -131,9 +131,8 @@ export class EphemeralNetwork {
         const workerLoader = new WorkerLoaderFromFs('../../marine/worker-script');
 
         const promises = this.config.peers.map(async (x) => {
-            const logLevel = undefined;
             const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
-            const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, logLevel);
+            const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
             const peer = new FluencePeer(marine, avm);
             const sendParticle = async (nextPeerIds: string[], particle: string): Promise<void> => {
                 this._send(peer.getStatus().peerId!, nextPeerIds, particle);
