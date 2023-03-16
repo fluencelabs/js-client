@@ -61,6 +61,10 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
 
+      - name: Setup tmate session
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -88,7 +92,7 @@ jobs:
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
-      - run: pnpm i
+      - run: pnpm -r i
 
       - name: Set avm version in core/interfaces
         if: inputs.avm-version != 'null'
