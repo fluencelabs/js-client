@@ -12,7 +12,7 @@
     "scripts": {
         "build": "tsc",
         "compile-aqua": "aqua -i ./aqua/  -o ./src/internal/_aqua",
-        "test": "vitest run"
+        "test": "cp ./packages/core/js-peer/dist/marine/worker-script/index.js ./packages/core/js-peer/src/marine/worker-script/ && vitest run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

@@ -1,4 +1,3 @@
-import exp from 'constants';
 import { it, describe, expect } from 'vitest';
 
 import { handleTimeout } from '../../utils.js';
