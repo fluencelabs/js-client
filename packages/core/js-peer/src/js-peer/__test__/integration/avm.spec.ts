@@ -1,3 +1,5 @@
+import { it, describe, expect } from 'vitest';
+
 import { handleTimeout } from '../../utils.js';
 import { registerHandlersHelper, withPeer } from '../util.js';
 

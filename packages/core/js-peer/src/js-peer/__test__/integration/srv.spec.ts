@@ -1,3 +1,4 @@
+import { it, describe, expect, beforeAll } from 'vitest';
 import * as path from 'path';
 import * as url from 'url';
 import { compileAqua, withPeer } from '../util.js';

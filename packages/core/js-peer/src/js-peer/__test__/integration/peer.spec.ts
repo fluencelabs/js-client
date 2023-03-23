@@ -1,7 +1,10 @@
+import { it, describe, expect } from 'vitest';
+
 import { nodes } from '../connection.js';
 import { checkConnection, doNothing, handleTimeout } from '../../utils.js';
 import { registerHandlersHelper, mkTestPeer, withPeer, withConnectedPeer } from '../util.js';
 import { FluencePeer } from '../../FluencePeer.js';
+import { isFluencePeer } from '@fluencelabs/interfaces';
 
 describe('Typescript usage suite', () => {
     it('should perform test for FluencePeer class correctly', () => {
@@ -12,10 +15,10 @@ describe('Typescript usage suite', () => {
         const undefinedVal = undefined;
 
         // act
-        const isPeerPeer = FluencePeer.isInstance(peer);
-        const isNumberPeer = FluencePeer.isInstance(number);
-        const isObjectPeer = FluencePeer.isInstance(object);
-        const isUndefinedPeer = FluencePeer.isInstance(undefinedVal);
+        const isPeerPeer = isFluencePeer(peer);
+        const isNumberPeer = isFluencePeer(number);
+        const isObjectPeer = isFluencePeer(object);
+        const isUndefinedPeer = isFluencePeer(undefinedVal);
 
         // act
         expect(isPeerPeer).toBe(true);
@@ -196,7 +199,7 @@ describe('Typescript usage suite', () => {
 
                     expect(isConnected).toBeTruthy();
                 },
-                { connectTo: nodes[0], dialTimeoutMs: 100000 },
+                { relay: nodes[0], connectionOptions: { dialTimeoutMs: 100000 } },
             );
         });
 
@@ -207,18 +210,7 @@ describe('Typescript usage suite', () => {
 
                     expect(isConnected).toBeTruthy();
                 },
-                { connectTo: nodes[0], skipCheckConnection: true },
-            );
-        });
-
-        it('With connection options: checkConnectionTTL', async () => {
-            await withPeer(
-                async (peer) => {
-                    const isConnected = await checkConnection(peer);
-
-                    expect(isConnected).toBeTruthy();
-                },
-                { connectTo: nodes[0], checkConnectionTimeoutMs: 1000 },
+                { relay: nodes[0], connectionOptions: { skipCheckConnection: true } },
             );
         });
 
@@ -229,7 +221,7 @@ describe('Typescript usage suite', () => {
 
                     expect(isConnected).toBeFalsy();
                 },
-                { connectTo: nodes[0], defaultTtlMs: 1 },
+                { relay: nodes[0], defaultTtlMs: 1 },
             );
         });
     });
