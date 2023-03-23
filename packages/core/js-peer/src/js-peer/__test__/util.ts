@@ -36,6 +36,10 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
 
     const compilationResult = await api.Aqua.compile(new api.Path(aquaFile), [], undefined);
 
+    if (compilationResult.errors.length > 0) {
+        throw new Error('Aqua compilation failed. Error: ' + compilationResult.errors.join('/n'));
+    }
+
     const functions = Object.entries(compilationResult.functions)
         .map(([name, fnInfo]) => {
             const callFn = (peer: FluencePeer, args: { [key: string]: any }) => {

@@ -187,10 +187,10 @@ importers:
   packages/core/js-peer:
     specifiers:
       '@chainsafe/libp2p-noise': 11.0.0
-      '@fluencelabs/aqua': 0.7.7-362
-      '@fluencelabs/aqua-api': 0.9.1-373
+      '@fluencelabs/aqua-api': 0.9.3
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/avm': 0.35.4
+      '@fluencelabs/cli': 0.3.9
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@fluencelabs/interfaces': 0.7.3
       '@fluencelabs/marine-js': 0.3.45
@@ -254,9 +254,9 @@ importers:
       uint8arrays: 4.0.3
       uuid: 8.3.2
     devDependencies:
-      '@fluencelabs/aqua': 0.7.7-362_sxyfz5frysr7cnkewysdljfvwu
-      '@fluencelabs/aqua-api': 0.9.1-373
+      '@fluencelabs/aqua-api': 0.9.3
       '@fluencelabs/aqua-lib': 0.6.0
+      '@fluencelabs/cli': 0.3.9_qpxy5lgkhl6krmgytbtmcegdtu
       '@fluencelabs/fluence-network-environment': 1.0.13
       '@types/bs58': 4.0.1
       '@types/debug': 4.1.7
@@ -2050,7 +2050,7 @@ packages:
   /@ethereumjs/tx/3.3.2:
     resolution: {integrity: sha512-6AaJhwg4ucmwTvw/1qLaZUX5miWrwZ4nLOUsKyb/HtzS3BMw/CasKhdi1ims9mBKeK9sOJCH4qGKOBGyJCeeog==}
     dependencies:
-      '@ethereumjs/common': 2.5.0
+      '@ethereumjs/common': 2.6.5
       ethereumjs-util: 7.1.5
     dev: true
 
@@ -2380,14 +2380,8 @@ packages:
     resolution: {integrity: sha512-OBRH6HEJQlD6qqVyit491OsI/Vr3GfSzEaf9GkHe9tOABZsu58gpiTQDFIC/cpmTG1YGq2oZcx9nsyRc5CkNTw==}
     dev: true
 
-  /@fluencelabs/aqua-api/0.9.1-373:
-    resolution: {integrity: sha512-q0A2z/FXOlc9UKCQ/Kf00ig0VpgdJ9woITYSj1tnVo9X3kR71gSv4loCQmukJoqlVZXzfQ8r+spalwBerin89A==}
-    dev: true
-
-  /@fluencelabs/aqua-ipfs/0.5.5:
-    resolution: {integrity: sha512-TBSClVs2r3FhgxVFSDPXzJNP0/EqHbIaVSY9U6LTzBDUdZDItu8Yt+Rsjj4LX5X4kOwo94ADkYG0UG8nKC1L5A==}
-    dependencies:
-      '@fluencelabs/aqua-lib': 0.5.2
+  /@fluencelabs/aqua-api/0.9.3:
+    resolution: {integrity: sha512-ieM2e7qMXgm9BPSSd2fxVbqLlYkR/a/aVTAQXO8gdx2rKKFqnTgFX4gpSOTxrrCMshi8OnXfd2OZi1hsJHTnKA==}
     dev: true
 
   /@fluencelabs/aqua-ipfs/0.5.8:
@@ -2402,29 +2396,6 @@ packages:
 
   /@fluencelabs/aqua-lib/0.6.0:
     resolution: {integrity: sha512-ifjtCM93KO3LhzPkMxqmXhwLmrg/scjOiyTihEVg7ns5N+BVzaK1eWzdOdqGdl9ZVoah43pdlQUepEo7VdRmsw==}
-    dev: true
-
-  /@fluencelabs/aqua/0.7.7-362_sxyfz5frysr7cnkewysdljfvwu:
-    resolution: {integrity: sha512-CwvBc3wKQdvnDM4Zxj6yFE5MR2oeh+EZ++m2hLvENt7OWl3cnZVR4cJQkRxMMLVT0MxRwLiy97UIBwGsPqlSCA==}
-    hasBin: true
-    dependencies:
-      '@fluencelabs/aqua-ipfs': 0.5.5
-      '@fluencelabs/aqua-lib': 0.5.2
-      '@fluencelabs/fluence': 0.26.3-snapshot-4_sxyfz5frysr7cnkewysdljfvwu
-      '@fluencelabs/fluence-network-environment': 1.0.13
-      ipfs-http-client: 50.1.2_node-fetch@3.3.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/jest'
-      - babel-jest
-      - bufferutil
-      - encoding
-      - esbuild
-      - jest
-      - node-fetch
-      - supports-color
-      - typescript
-      - utf-8-validate
     dev: true
 
   /@fluencelabs/aqua/0.9.1-374_jaxubti5gf66xc76fsqhxmuwn4:
@@ -2454,10 +2425,6 @@ packages:
     resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
     dev: true
 
-  /@fluencelabs/avm/0.31.4:
-    resolution: {integrity: sha512-rApXdqk0NUX+Fyq9BJ1jQ7X//EfVrAg9wrjdd4K/tvo54Lgij0tY/IT+imwr/Eb4qgHgi1QMW4zT0AOlgKIKmw==}
-    dev: true
-
   /@fluencelabs/avm/0.35.3:
     resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
     dev: true
@@ -2482,6 +2449,77 @@ packages:
       '@oclif/plugin-help': 5.2.7_4bewfcp2iebiwuold25d6rgcsy
       '@oclif/plugin-not-found': 2.3.21_4bewfcp2iebiwuold25d6rgcsy
       '@walletconnect/universal-provider': 2.4.7_mqijgjbnahaa3tnbkktxyzzb3a
+      ajv: 8.12.0
+      camelcase: 7.0.1
+      chokidar: 3.5.3
+      countly-sdk-nodejs: 22.6.0
+      decompress: 4.2.1
+      dotenv: 16.0.3
+      ethers: 5.7.2
+      filenamify: 5.1.1
+      inquirer: 9.1.4
+      ipfs-http-client: 60.0.0
+      it-all: 1.0.6
+      lodash-es: 4.17.21
+      lokijs: 1.5.12
+      multiaddr: 10.0.1_node-fetch@2.6.9
+      node-fetch: 2.6.9
+      platform: 1.3.6
+      replace-homedir: 2.0.0
+      web3: 1.8.2
+      yaml: 2.2.1
+      yaml-diff-patch: 2.0.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@ethersproject/abi'
+      - '@ethersproject/providers'
+      - '@nomicfoundation/hardhat-chai-matchers'
+      - '@nomicfoundation/hardhat-network-helpers'
+      - '@nomiclabs/hardhat-ethers'
+      - '@nomiclabs/hardhat-etherscan'
+      - '@react-native-async-storage/async-storage'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@typechain/ethers-v5'
+      - '@typechain/hardhat'
+      - '@types/chai'
+      - '@types/jest'
+      - '@types/mocha'
+      - '@types/node'
+      - babel-jest
+      - bufferutil
+      - chai
+      - debug
+      - encoding
+      - esbuild
+      - hardhat
+      - hardhat-gas-reporter
+      - jest
+      - solidity-coverage
+      - supports-color
+      - ts-node
+      - typechain
+      - typescript
+      - utf-8-validate
+    dev: true
+
+  /@fluencelabs/cli/0.3.9_qpxy5lgkhl6krmgytbtmcegdtu:
+    resolution: {integrity: sha512-xJYi7+AHrWt6RgWnr7Efr8Jpv0dNLoWhiCMvgSbXoFpIZzQAyNDgk5hnCdwIQ/eiJcNg0GHY0gyC+Q/d5YKc1Q==}
+    engines: {node: '=16'}
+    hasBin: true
+    dependencies:
+      '@fluencelabs/aqua-api': 0.10.3
+      '@fluencelabs/deal-aurora': 0.1.8_gc7gatgk3jrcbnir3tz2izmvqi
+      '@fluencelabs/fluence': 0.28.0_zchmlqqvawdfhvpuz6nrqhtseq
+      '@fluencelabs/fluence-network-environment': 1.0.14
+      '@iarna/toml': 2.2.5
+      '@mswjs/interceptors': 0.19.5
+      '@oclif/color': 1.0.4
+      '@oclif/core': 2.6.2_4bewfcp2iebiwuold25d6rgcsy
+      '@oclif/plugin-autocomplete': 2.1.4_4bewfcp2iebiwuold25d6rgcsy
+      '@oclif/plugin-help': 5.2.7_4bewfcp2iebiwuold25d6rgcsy
+      '@oclif/plugin-not-found': 2.3.21_4bewfcp2iebiwuold25d6rgcsy
+      '@walletconnect/universal-provider': 2.4.7_uz4bki5hahbpc2hwfvrjhsfeca
       ajv: 8.12.0
       camelcase: 7.0.1
       chokidar: 3.5.3
@@ -2622,43 +2660,6 @@ packages:
   /@fluencelabs/fluence-network-environment/1.0.14:
     resolution: {integrity: sha512-lMiH+7obmJW2Q+PMUR/vNAuX6TcVqlKmsWAHvnBogH7s8IeMT+UGN8qrweILWmE57G7MfauB302dIFQowR9tug==}
 
-  /@fluencelabs/fluence/0.26.3-snapshot-4_sxyfz5frysr7cnkewysdljfvwu:
-    resolution: {integrity: sha512-M/iQhnViXfMaATj3gFPQXrZe9zSVcyN9F9A9hfJBUn0VLamhmbfeIoSZeheK8VGBxYbRGcrtoqLPTy1vJQVgVw==}
-    engines: {node: '>=10', pnpm: '>=3'}
-    hasBin: true
-    dependencies:
-      '@fluencelabs/avm': 0.31.4
-      '@fluencelabs/connection': 0.2.0_node-fetch@3.3.0
-      '@fluencelabs/interfaces': 0.1.0
-      '@fluencelabs/keypair': 0.2.0
-      '@fluencelabs/marine-js': 0.3.18_cnngzrja2umb46xxazlucyx2qu
-      async: 3.2.3
-      base64-js: 1.5.1
-      browser-or-node: 2.1.1
-      bs58: 5.0.0
-      buffer: 6.0.3
-      cids: 1.1.9
-      loglevel: 1.8.0
-      multiformats: 9.6.5
-      peer-id: 0.16.0
-      platform: 1.3.6
-      rxjs: 7.5.5
-      ts-pattern: 3.3.3
-      uuid: 8.3.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/jest'
-      - babel-jest
-      - bufferutil
-      - encoding
-      - esbuild
-      - jest
-      - node-fetch
-      - supports-color
-      - typescript
-      - utf-8-validate
-    dev: true
-
   /@fluencelabs/fluence/0.27.5_jaxubti5gf66xc76fsqhxmuwn4:
     resolution: {integrity: sha512-nMCzd/oHHk5/yWdg/+rPB+sc8X+fQ5YgwPhGVDoxFs8/CmIr1G5Na8Y6l8rrigasgQd+LV5GtAyh50Oq7/IXkg==}
     engines: {node: '>=10', pnpm: '>=3'}
@@ -2745,25 +2746,6 @@ packages:
       js-base64: 3.7.5
       libp2p-crypto: 0.21.2
       peer-id: 0.16.0
-    dev: true
-
-  /@fluencelabs/marine-js/0.3.18_cnngzrja2umb46xxazlucyx2qu:
-    resolution: {integrity: sha512-aNuGtyY910kJvtRwfqmZKjVs+1l3LVWShv5xvkY04faHm65nX3sZLe8UHwughdja/4ixV1IFKlaTUgw2u3Sf5A==}
-    dependencies:
-      '@wasmer/wasi': 0.12.0
-      '@wasmer/wasmfs': 0.12.0
-      browser-or-node: 2.1.1
-      buffer: 6.0.3
-      threads: 1.7.0
-      ts-jest: 27.1.5_cnngzrja2umb46xxazlucyx2qu
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/jest'
-      - babel-jest
-      - esbuild
-      - jest
-      - supports-color
-      - typescript
     dev: true
 
   /@fluencelabs/marine-js/0.3.37_cnngzrja2umb46xxazlucyx2qu:
@@ -3404,6 +3386,20 @@ packages:
     dependencies:
       '@json-rpc-tools/utils': 1.7.6
       axios: 0.21.4
+      safe-json-utils: 1.1.1
+      ws: 7.5.9
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+    dev: true
+
+  /@json-rpc-tools/provider/1.7.6_debug@4.3.4:
+    resolution: {integrity: sha512-z7D3xvJ33UfCGv77n40lbzOYjZKVM3k2+5cV7xS8G6SCvKTzMkhkUYuD/qzQUNT4cG/lv0e9mRToweEEVLVVmA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+    dependencies:
+      '@json-rpc-tools/utils': 1.7.6
+      axios: 0.21.4_debug@4.3.4
       safe-json-utils: 1.1.1
       ws: 7.5.9
     transitivePeerDependencies:
@@ -6047,6 +6043,33 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@walletconnect/universal-provider/2.4.7_uz4bki5hahbpc2hwfvrjhsfeca:
+    resolution: {integrity: sha512-xlefq2ahAsH3SpcsofWQQ5JT3Tz9NLAViA8FW07PHhfuf9p7OLp+Mu1wKxQEoBilyvfYRF4R5MTyTPy1wqJiRA==}
+    dependencies:
+      '@walletconnect/jsonrpc-http-connection': 1.0.6
+      '@walletconnect/jsonrpc-provider': 1.0.8
+      '@walletconnect/jsonrpc-types': 1.0.2
+      '@walletconnect/jsonrpc-utils': 1.0.6
+      '@walletconnect/logger': 2.0.1
+      '@walletconnect/sign-client': 2.4.7_mqijgjbnahaa3tnbkktxyzzb3a
+      '@walletconnect/types': 2.4.7_mqijgjbnahaa3tnbkktxyzzb3a
+      '@walletconnect/utils': 2.4.7_mqijgjbnahaa3tnbkktxyzzb3a
+      eip1193-provider: 1.0.1_debug@4.3.4
+      events: 3.3.0
+      pino: 7.11.0
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - bufferutil
+      - debug
+      - encoding
+      - lokijs
+      - typescript
+      - utf-8-validate
+    dev: true
+
   /@walletconnect/utils/2.4.7_mqijgjbnahaa3tnbkktxyzzb3a:
     resolution: {integrity: sha512-t3kW0qLClnejTTKg3y/o/MmJb5ZDGfD13YT9Nw56Up3qq/pwVfTtWjt8vJOQWMIm0hZgjgESivcf6/wuu3/Oqw==}
     dependencies:
@@ -6681,10 +6704,6 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /async/3.2.3:
-    resolution: {integrity: sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==}
-    dev: true
-
   /async/3.2.4:
     resolution: {integrity: sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==}
 
@@ -6740,6 +6759,14 @@ packages:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
       follow-redirects: 1.15.2
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
+  /axios/0.21.4_debug@4.3.4:
+    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+    dependencies:
+      follow-redirects: 1.15.2_debug@4.3.4
     transitivePeerDependencies:
       - debug
     dev: true
@@ -8990,6 +9017,16 @@ packages:
       - utf-8-validate
     dev: true
 
+  /eip1193-provider/1.0.1_debug@4.3.4:
+    resolution: {integrity: sha512-kSuqwQ26d7CzuS/t3yRXo2Su2cVH0QfvyKbr2H7Be7O5YDyIq4hQGCNTo5wRdP07bt+E2R/8nPCzey4ojBHf7g==}
+    dependencies:
+      '@json-rpc-tools/provider': 1.7.6_debug@4.3.4
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+    dev: true
+
   /ejs/3.1.8:
     resolution: {integrity: sha512-/sXZeMlhS0ArkfX2Aw780gJzXSMPnKjtspYZv+f3NiKLlubezAHDU5+9xz6gd3/NhG3txQCo6xlglmTS+oTGEQ==}
     engines: {node: '>=0.10.0'}
@@ -10277,6 +10314,18 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+
+  /follow-redirects/1.15.2_debug@4.3.4:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+    dev: true
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -14923,10 +14972,6 @@ packages:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
-  /multiformats/9.6.5:
-    resolution: {integrity: sha512-vMwf/FUO+qAPvl3vlSZEgEVFY/AxeZq5yg761ScF3CZsXgmTi/HGkicUiNN0CI4PW8FiY2P0OLklOcmQjdQJhw==}
-    dev: true
-
   /multiformats/9.9.0:
     resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
     dev: true
@@ -17745,6 +17790,7 @@ packages:
     resolution: {integrity: sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==}
     dependencies:
       tslib: 2.5.0
+    dev: false
 
   /rxjs/7.8.0:
     resolution: {integrity: sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==}

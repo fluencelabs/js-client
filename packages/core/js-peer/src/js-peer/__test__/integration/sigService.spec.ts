@@ -16,7 +16,9 @@ let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, '../data/sigService.aqua'));
+        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/sigService.aqua');
+        const { services, functions } = await compileAqua(pathToAquaFiles);
+
         aqua = functions;
         sigDef = services.Sig;
         dataProviderDef = services.DataProvider;

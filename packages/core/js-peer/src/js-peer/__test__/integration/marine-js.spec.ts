@@ -10,7 +10,8 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 describe('Marine js tests', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, '../data/marine-js.aqua'));
+        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/marine-js.aqua');
+        const { services, functions } = await compileAqua(pathToAquaFiles);
         aqua = functions;
     });
 
