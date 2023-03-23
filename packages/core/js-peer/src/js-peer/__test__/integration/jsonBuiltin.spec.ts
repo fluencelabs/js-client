@@ -1,3 +1,5 @@
+import { it, describe, expect, beforeEach, afterEach } from 'vitest';
+
 import { Particle } from '../../Particle.js';
 import { doNothing } from '../../utils.js';
 import { FluencePeer } from '../../FluencePeer.js';

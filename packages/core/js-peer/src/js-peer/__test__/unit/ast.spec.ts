@@ -1,3 +1,5 @@
+import { it, describe, expect, beforeAll, afterAll } from 'vitest';
+
 import { mkTestPeer } from '../util.js';
 
 const peer = mkTestPeer();

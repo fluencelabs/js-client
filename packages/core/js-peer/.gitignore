@@ -19,3 +19,6 @@ node_modules/
 jspm_packages/
 
 .idea
+
+# workaround to make integration tests work
+src/marine/worker-script/index.js

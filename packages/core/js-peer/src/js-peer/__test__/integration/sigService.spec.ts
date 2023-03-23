@@ -1,10 +1,12 @@
+import { it, describe, expect, beforeAll } from 'vitest';
+
 import * as path from 'path';
 import * as url from 'url';
 import { KeyPair } from '../../../keypair/index.js';
 import { allowServiceFn } from '../../builtins/securityGuard.js';
 import { Sig } from '../../builtins/Sig.js';
 import { compileAqua, withPeer } from '../util.js';
-import { registerServiceImpl } from '../../compilerSupport/registerService.js';
+import { registerService } from '../../../compilerSupport/registerService.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -14,7 +16,9 @@ let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, '../data/sigService.aqua'));
+        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/sigService.aqua');
+        const { services, functions } = await compileAqua(pathToAquaFiles);
+
         aqua = functions;
         sigDef = services.Sig;
         dataProviderDef = services.DataProvider;
@@ -26,11 +30,16 @@ describe('Sig service test suite', () => {
             const customSig = new Sig(customKeyPair);
             const data = [1, 2, 3, 4, 5];
 
-            registerServiceImpl(peer, sigDef, 'CustomSig', customSig);
+            registerService({ peer, def: sigDef, serviceId: 'CustomSig', service: customSig });
 
-            registerServiceImpl(peer, dataProviderDef, 'data', {
-                provide_data: () => {
-                    return data;
+            registerService({
+                peer,
+                def: dataProviderDef,
+                serviceId: 'data',
+                service: {
+                    provide_data: () => {
+                        return data;
+                    },
                 },
             });
 
@@ -50,11 +59,16 @@ describe('Sig service test suite', () => {
             const customSig = new Sig(customKeyPair);
             const data = [1, 2, 3, 4, 5];
 
-            registerServiceImpl(peer, sigDef, 'CustomSig', customSig);
+            registerService({ peer, def: sigDef, serviceId: 'CustomSig', service: customSig });
 
-            registerServiceImpl(peer, dataProviderDef, 'data', {
-                provide_data: () => {
-                    return data;
+            registerService({
+                peer,
+                def: dataProviderDef,
+                serviceId: 'data',
+                service: {
+                    provide_data: () => {
+                        return data;
+                    },
                 },
             });
 
@@ -69,9 +83,14 @@ describe('Sig service test suite', () => {
             const sig = peer.getServices().sig;
 
             const data = [1, 2, 3, 4, 5];
-            registerServiceImpl(peer, dataProviderDef, 'data', {
-                provide_data: () => {
-                    return data;
+            registerService({
+                peer: peer,
+                def: dataProviderDef,
+                serviceId: 'data',
+                service: {
+                    provide_data: () => {
+                        return data;
+                    },
                 },
             });
 

@@ -11,11 +11,8 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "compile-aqua": "aqua -i ./aqua/  -o ./src/internal/_aqua",
-        "test:smoke": "node ./dist/js-peer/__test__/integration/smokeTest.js",
-        "test": "NODE_OPTIONS=--experimental-vm-modules pnpm jest",
-        "test:unit": "NODE_OPTIONS=--experimental-vm-modules pnpm jest --testPathPattern=src/__test__/unit",
-        "test:integration": "NODE_OPTIONS=--experimental-vm-modules pnpm jest --testPathPattern=src/__test__/integration"
+        "compile-aqua": "fluence aqua -i ./aqua/  -o ./aqua",
+        "test": "node ./copy-worker-script-workaround.mjs  && vitest run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -52,15 +49,13 @@
         "@multiformats/multiaddr": "11.3.0"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.7-362",
-        "@fluencelabs/aqua-api": "0.9.1-373",
+        "@fluencelabs/cli": "0.3.9",
+        "@fluencelabs/aqua-api": "0.9.3",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "@types/bs58": "4.0.1",
         "@types/uuid": "8.3.2",
-        "@types/jest": "29.4.0",
         "@types/debug": "4.1.7",
-        "jest": "29.4.1",
-        "ts-jest": "next"
+        "vitest": "0.29.7"
     }
 }

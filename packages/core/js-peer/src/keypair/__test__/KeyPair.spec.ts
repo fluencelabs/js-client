@@ -1,3 +1,4 @@
+import { it, describe, expect } from 'vitest';
 import { toUint8Array } from 'js-base64';
 import * as bs58 from 'bs58';
 import { KeyPair } from '../index.js';

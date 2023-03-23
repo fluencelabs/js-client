@@ -1,3 +1,4 @@
+import { it, describe, expect, beforeAll } from 'vitest';
 import * as path from 'path';
 import * as url from 'url';
 import { compileAqua, withPeer } from '../util.js';
@@ -7,7 +8,8 @@ let aqua: any;
 
 describe('Srv service test suite', () => {
     beforeAll(async () => {
-        const { services, functions } = await compileAqua(path.join(__dirname, '../data/srv.aqua'));
+        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/srv.aqua');
+        const { services, functions } = await compileAqua(pathToAquaFiles);
         aqua = functions;
     });
 
