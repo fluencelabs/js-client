@@ -4,15 +4,16 @@ import { handleTimeout } from '../../utils.js';
 import { nodes } from '../connection.js';
 import { mkTestPeer, registerHandlersHelper } from '../util.js';
 
-describe('Smoke test', async () => {
-    // arrange
-    const peer = mkTestPeer();
-    await peer.start({
-        relay: nodes[0],
-    });
+describe('Smoke test', () => {
+    it('Simple call', async () => {
+        // arrange
+        const peer = mkTestPeer();
+        await peer.start({
+            relay: nodes[0],
+        });
 
-    const result = await new Promise<string[]>((resolve, reject) => {
-        const script = `
+        const result = await new Promise<string[]>((resolve, reject) => {
+            const script = `
     (xor
         (seq
             (call %init_peer_id% ("load" "relay") [] init_relay)
@@ -26,34 +27,35 @@ describe('Smoke test', async () => {
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )
     )`;
-        const particle = peer.internals.createNewParticle(script);
+            const particle = peer.internals.createNewParticle(script);
 
-        if (particle instanceof Error) {
-            return reject(particle.message);
-        }
+            if (particle instanceof Error) {
+                return reject(particle.message);
+            }
 
-        registerHandlersHelper(peer, particle, {
-            load: {
-                relay: () => {
-                    return peer.getStatus().relayPeerId;
+            registerHandlersHelper(peer, particle, {
+                load: {
+                    relay: () => {
+                        return peer.getStatus().relayPeerId;
+                    },
                 },
-            },
-            callback: {
-                callback: (args: any) => {
-                    const [val] = args;
-                    resolve(val);
+                callback: {
+                    callback: (args: any) => {
+                        const [val] = args;
+                        resolve(val);
+                    },
+                    error: (args: any) => {
+                        const [error] = args;
+                        reject(error);
+                    },
                 },
-                error: (args: any) => {
-                    const [error] = args;
-                    reject(error);
-                },
-            },
+            });
+
+            peer.internals.initiateParticle(particle, handleTimeout(reject));
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        await peer.stop();
+
+        expect(result).toBe('hello world!');
     });
-
-    await peer.stop();
-
-    expect(result).toBe('hello world!');
 });
