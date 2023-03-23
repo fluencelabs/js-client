@@ -1,8 +1,11 @@
+import exp from 'constants';
+import { it, describe, expect } from 'vitest';
+
 import { handleTimeout } from '../../utils.js';
 import { nodes } from '../connection.js';
 import { mkTestPeer, registerHandlersHelper } from '../util.js';
 
-const smokeTest = async () => {
+describe('Smoke test', async () => {
     // arrange
     const peer = mkTestPeer();
     await peer.start({
@@ -53,15 +56,5 @@ const smokeTest = async () => {
 
     await peer.stop();
 
-    if (result[0] !== 'hello world!') {
-        throw new Error('Expecting "hello wrold!" got ' + result[0]);
-    }
-};
-
-smokeTest()
-    .then(() => {
-        console.log('Test passed');
-    })
-    .catch((err) => {
-        console.error('Test failed: ', err);
-    });
+    expect(result).toBe('hello world!');
+});

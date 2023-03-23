@@ -1,3 +1,5 @@
+import { it, describe, expect, test } from 'vitest';
+
 import { CallParams } from '@fluencelabs/interfaces';
 import { toUint8Array } from 'js-base64';
 import { CallServiceData } from '../../../interfaces/commonTypes.js';
