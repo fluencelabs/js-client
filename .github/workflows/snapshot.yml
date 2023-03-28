@@ -165,18 +165,14 @@ jobs:
           secrets: |
             kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
+      - run: pnpm -r build
+
       - name: Generate snapshot version
         id: version
         uses: fluencelabs/github-actions/generate-snapshot-id@main
-
-      - name: Set package version
-        run: node ci.cjs bump-version ${{ steps.version.outputs.id }}
-
-      - run: pnpm -r build
 
       - name: Publish snapshots
         id: snapshot
         uses: fluencelabs/github-actions/pnpm-publish-snapshot@main
         with:
           id: ${{ steps.version.outputs.id }}
-          flags: "-r --registry https://npm.fluence.dev --no-git-checks --tag snapshot -filter '@fluencelabs/*'"
