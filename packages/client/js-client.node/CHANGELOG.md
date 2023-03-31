@@ -18,6 +18,20 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.4 to 0.8.5
 
+## [0.6.7](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.6...js-client.node-v0.6.7) (2023-03-31)
+
+
+### Features
+
+* **logs:** Use `debug.js` library for logging [DXJ-327] ([#285](https://github.com/fluencelabs/js-client/issues/285)) ([e95c34a](https://github.com/fluencelabs/js-client/commit/e95c34a79220bd8ecdcee806802ac3d69a2af0cb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.5 to 0.8.6
+
 ## [0.6.4](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.3...js-client.node-v0.6.4) (2023-02-16)
 
 
