@@ -12,7 +12,7 @@
     "scripts": {
         "build": "tsc",
         "compile-aqua": "fluence aqua -i ./aqua/  -o ./aqua",
-        "test": "node ./copy-worker-script-workaround.mjs  && vitest run"
+        "test": "node ./copy-worker-script-workaround.mjs  && vitest --threads false run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

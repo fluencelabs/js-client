@@ -1,13 +1,4 @@
-import {
-    ArrowWithoutCallbacks,
-    FnConfig,
-    FunctionCallDef,
-    NonArrowType,
-    getArgumentTypes,
-    isReturnTypeVoid,
-    IFluenceClient,
-    CallAquaFunction,
-} from '@fluencelabs/interfaces';
+import { getArgumentTypes, isReturnTypeVoid, CallAquaFunction } from '@fluencelabs/interfaces';
 
 import {
     injectRelayService,

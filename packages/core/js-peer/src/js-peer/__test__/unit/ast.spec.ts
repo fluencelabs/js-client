@@ -1,16 +1,18 @@
 import { it, describe, expect, beforeAll, afterAll } from 'vitest';
 
-import { mkTestPeer } from '../util.js';
+import { mkTestPeer } from '../../../__test__/util.js';
+import { FluencePeer } from '../../FluencePeer.js';
 
-const peer = mkTestPeer();
+let peer: FluencePeer;
 
 describe('Parse ast tests', () => {
     beforeAll(async () => {
+        peer = await mkTestPeer();
         await peer.start();
     });
 
     afterAll(async () => {
-        await peer.stop();
+        await peer?.stop();
     });
 
     it('Correct ast should be parsed correctly', async function () {

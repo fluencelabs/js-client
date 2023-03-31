@@ -15,3 +15,5 @@ export const nodes = [
         peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
     },
 ];
+
+export const RELAY = nodes[0].multiaddr;

@@ -1,7 +1,6 @@
 import { it, describe, expect } from 'vitest';
-
-import { handleTimeout } from '../../utils.js';
-import { registerHandlersHelper, withPeer } from '../util.js';
+import { registerHandlersHelper, withPeer } from '../../../__test__/util.js';
+import { handleTimeout } from '../../Particle.js';
 
 describe('Avm spec', () => {
     it('Simple call', async () => {
@@ -10,7 +9,7 @@ describe('Avm spec', () => {
                 const script = `
                 (call %init_peer_id% ("print" "print") ["1"])
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = peer.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -45,7 +44,7 @@ describe('Avm spec', () => {
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = peer.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);

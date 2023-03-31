@@ -7,7 +7,7 @@ import { Buffer } from 'buffer';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
 
 export const defaultGuard = (peer: FluencePeer) => {
-    return allowOnlyParticleOriginatedAt<any>(peer.getStatus().peerId!);
+    return allowOnlyParticleOriginatedAt<any>(peer.keyPair.getPeerId());
 };
 
 export class Srv implements SrvDef {

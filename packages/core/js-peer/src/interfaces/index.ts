@@ -14,22 +14,33 @@
  * limitations under the License.
  */
 
+import type { Observable, Subscribable } from 'rxjs';
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
-import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
+import type { JSONArray, JSONObject } from '@fluencelabs/marine-js/dist/types';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
+import { Particle } from '../js-peer/Particle.js';
 
 export type ParticleHandler = (particle: string) => void;
 
 /**
  * Base class for connectivity layer to Fluence Network
  */
+/*
 export abstract class FluenceConnection {
     abstract readonly relayPeerId: PeerIdB58 | null;
     abstract connect(onIncomingParticle: ParticleHandler): Promise<void>;
     abstract disconnect(): Promise<void>;
     abstract sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void>;
+}
+*/
+
+export interface IConnection {
+    particleSource: Subscribable<Particle>;
+    sendParticle(nextPeerIds: PeerIdB58[], particle: Particle): Promise<void>;
+    getRelayPeerId(): PeerIdB58;
+    supportsRelay(): boolean;
 }
 
 export interface IMarine extends IModule {

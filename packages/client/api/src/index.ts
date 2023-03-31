@@ -1,12 +1,6 @@
 import { getFluenceInterface, getFluenceInterfaceFromGlobalThis } from './util.js';
-import {
-    IFluenceClient,
-    ClientOptions,
-    RelayOptions,
-    ConnectionState,
-    ConnectionStates,
-} from '@fluencelabs/interfaces';
-export type { IFluenceClient, ClientOptions, CallParams } from '@fluencelabs/interfaces';
+import { IFluenceClient, ClientConfig, RelayOptions, ConnectionState, ConnectionStates } from '@fluencelabs/interfaces';
+export type { IFluenceClient, ClientConfig as ClientOptions, CallParams } from '@fluencelabs/interfaces';
 
 export {
     ArrayType,
@@ -42,11 +36,12 @@ export const Fluence = {
     /**
      * Connect to the Fluence network
      * @param relay - relay node to connect to
-     * @param options - client options
+     * @param config - client configuration
      */
-    connect: async (relay: RelayOptions, options?: ClientOptions): Promise<void> => {
+    connect: async (relay: RelayOptions, config?: ClientConfig): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultClient.connect(relay, options);
+        const client = await fluence.clientFactory(relay, config);
+        fluence.defaultClient = client;
     },
 
     /**
@@ -54,7 +49,7 @@ export const Fluence = {
      */
     disconnect: async (): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultClient.disconnect();
+        return fluence.defaultClient?.disconnect();
     },
 
     /**
@@ -62,11 +57,13 @@ export const Fluence = {
      */
     onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
         const optimisticResult = getFluenceInterfaceFromGlobalThis();
-        if (optimisticResult) {
+        if (optimisticResult && optimisticResult.defaultClient) {
             return optimisticResult.defaultClient.onConnectionStateChange(handler);
         }
 
-        getFluenceInterface().then((fluence) => fluence.defaultClient.onConnectionStateChange(handler));
+        getFluenceInterface().then((fluence) => {
+            fluence.defaultClient?.onConnectionStateChange(handler);
+        });
 
         return 'disconnected';
     },
@@ -77,7 +74,7 @@ export const Fluence = {
      */
     getClient: async (): Promise<IFluenceClient> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultClient;
+        return fluence.defaultClient!;
     },
 };
 
@@ -85,7 +82,7 @@ export const Fluence = {
  * Low level API. Generally you need Fluence.connect() instead.
  * @returns IFluenceClient instance
  */
-export const createClient = async (): Promise<IFluenceClient> => {
+export const createClient = async (relay: RelayOptions, config?: ClientConfig): Promise<IFluenceClient> => {
     const fluence = await getFluenceInterface();
-    return fluence.clientFactory();
+    return await fluence.clientFactory(relay, config);
 };

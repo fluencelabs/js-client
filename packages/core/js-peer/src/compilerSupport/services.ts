@@ -6,12 +6,12 @@ import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../inte
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
 import {
-    IFluenceClient,
     CallParams,
     ArrowWithoutCallbacks,
     FunctionCallConstants,
     FunctionCallDef,
     NonArrowType,
+    IFluenceInternalApi,
 } from '@fluencelabs/interfaces';
 
 export interface ServiceDescription {
@@ -23,7 +23,7 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: IFluenceClient) => {
+export const injectRelayService = (def: FunctionCallDef, peer: IFluenceInternalApi) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
@@ -168,10 +168,14 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
     return callParams;
 };
 
-export const registerParticleScopeService = (peer: IFluenceClient, particle: Particle, service: ServiceDescription) => {
+export const registerParticleScopeService = (
+    peer: IFluenceInternalApi,
+    particle: Particle,
+    service: ServiceDescription,
+) => {
     peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
 };
 
-export const registerGlobalService = (peer: IFluenceClient, service: ServiceDescription) => {
+export const registerGlobalService = (peer: IFluenceInternalApi, service: ServiceDescription) => {
     peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
 };

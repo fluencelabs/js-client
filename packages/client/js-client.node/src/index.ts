@@ -1,6 +1,7 @@
 import * as platform from 'platform';
 
-import { FluencePeer } from '@fluencelabs/js-peer/dist/js-peer/FluencePeer.js';
+import type { RelayOptions, ClientConfig, IFluenceClient } from '@fluencelabs/interfaces';
+import { ClientPeer, makeClientPeerConfig } from '@fluencelabs/js-peer/dist/clientPeer/ClientPeer.js';
 import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/callFunction.js';
 import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
@@ -21,19 +22,19 @@ export const defaultNames = {
     },
 };
 
-export const createClient = () => {
+const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
     const workerLoader = new WorkerLoader();
     const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
 
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
-    return new FluencePeer(marine, avm);
+    const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
+    return new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
 };
 
 const publicFluenceInterface = {
     clientFactory: createClient,
-    defaultClient: createClient(),
     callAquaFunction,
     registerService,
 };

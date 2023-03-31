@@ -1,5 +1,6 @@
 import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
 import { KeyPair } from '../../keypair/index.js';
+import { FluencePeer } from '../FluencePeer.js';
 import { SigDef } from '../_aqua/services.js';
 import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard.js';
 
@@ -18,11 +19,7 @@ export const defaultSigGuard = (peerId: PeerIdB58) => {
 };
 
 export class Sig implements SigDef {
-    private _keyPair: KeyPair;
-
-    constructor(keyPair: KeyPair) {
-        this._keyPair = keyPair;
-    }
+    constructor(private keyPair: KeyPair) {}
 
     /**
      * Configurable security guard for sign method
@@ -35,7 +32,7 @@ export class Sig implements SigDef {
      * Gets the public key of KeyPair. Required by aqua
      */
     get_peer_id() {
-        return this._keyPair.getPeerId();
+        return this.keyPair.getPeerId();
     }
 
     /**
@@ -53,7 +50,7 @@ export class Sig implements SigDef {
             };
         }
 
-        const signedData = await this._keyPair.signBytes(Uint8Array.from(data));
+        const signedData = await this.keyPair.signBytes(Uint8Array.from(data));
 
         return {
             success: true,
@@ -66,6 +63,10 @@ export class Sig implements SigDef {
      * Verifies the signature. Required by aqua
      */
     verify(signature: number[], data: number[]): Promise<boolean> {
-        return this._keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
+        return this.keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
     }
 }
+
+export const getDefaultSig = (peer: FluencePeer) => {
+    peer.registerMarineService;
+};

@@ -7,7 +7,7 @@
  *
  */
 import { CallParams } from '@fluencelabs/interfaces';
-import { registerServiceImpl } from './util.js';
+import { registerService } from '../../compilerSupport/registerService.js';
 import { FluencePeer } from '../FluencePeer.js';
 
 // Services
@@ -27,9 +27,11 @@ export interface SrvDef {
 }
 
 export function registerSrv(peer: FluencePeer, serviceId: string, service: any) {
-    registerServiceImpl(
-        peer,
-        {
+    registerService({
+        peer: peer as any,
+        serviceId,
+        service,
+        def: {
             defaultServiceId: 'single_module_srv',
             functions: {
                 tag: 'labeledProduct',
@@ -130,9 +132,7 @@ export function registerSrv(peer: FluencePeer, serviceId: string, service: any) 
                 },
             },
         },
-        serviceId,
-        service,
-    );
+    });
 }
 
 // Functions

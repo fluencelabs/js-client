@@ -3,7 +3,7 @@ import { it, describe, expect, beforeAll } from 'vitest';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as path from 'path';
-import { compileAqua, withPeer } from '../util.js';
+import { compileAqua, withPeer } from '../../../__test__/util.js';
 
 let aqua: any;
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));

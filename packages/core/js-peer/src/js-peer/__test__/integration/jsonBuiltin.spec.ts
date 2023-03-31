@@ -1,9 +1,9 @@
 import { it, describe, expect, beforeEach, afterEach } from 'vitest';
 
 import { Particle } from '../../Particle.js';
-import { doNothing } from '../../utils.js';
 import { FluencePeer } from '../../FluencePeer.js';
-import { mkTestPeer } from '../util.js';
+import { mkTestPeer } from '../../../__test__/util.js';
+import { doNothing } from '../../serviceUtils.js';
 
 let peer: FluencePeer;
 
@@ -15,7 +15,7 @@ describe('Sig service test suite', () => {
     });
 
     beforeEach(async () => {
-        peer = mkTestPeer();
+        peer = await mkTestPeer();
         await peer.start();
     });
 
@@ -56,7 +56,7 @@ describe('Sig service test suite', () => {
                 };
             });
         });
-        const p = peer.internals.createNewParticle(script) as Particle;
+        const p = Particle.createNew(script, peer.keyPair.getPeerId(), 7000);
         await peer.internals.initiateParticle(p, doNothing);
 
         const [nestedFirst, nestedSecond, outerFirst, outerSecond, outerFirstString, outerFirstParsed] = await promise;

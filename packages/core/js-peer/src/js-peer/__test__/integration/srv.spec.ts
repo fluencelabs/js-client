@@ -1,7 +1,7 @@
 import { it, describe, expect, beforeAll } from 'vitest';
 import * as path from 'path';
 import * as url from 'url';
-import { compileAqua, withPeer } from '../util.js';
+import { compileAqua, withPeer } from '../../../__test__/util.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 let aqua: any;

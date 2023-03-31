@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
+import type { JSONArray, JSONObject } from '@fluencelabs/marine-js/dist/types';
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
 import type { IMarine, IWorkerLoader, IWasmLoader } from '../../interfaces/index.js';
 import type { MarineBackgroundInterface } from '../worker-script/index.js';

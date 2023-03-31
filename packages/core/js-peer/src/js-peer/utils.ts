@@ -14,140 +14,17 @@
  * limitations under the License.
  */
 
-import { Buffer } from 'buffer';
 import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
-import { FluencePeer } from './FluencePeer.js';
 import { ParticleExecutionStage } from './Particle.js';
-
-import { logger } from '../util/logger.js';
-
-const log = logger('connection');
-
-export const MakeServiceCall =
-    (fn: (args: any[]) => CallServiceResultType) =>
-    (req: CallServiceData): CallServiceResult => ({
-        retCode: ResultCodes.success,
-        result: fn(req.args),
-    });
-
-export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage) => {
-    if (stage.stage === 'expired') {
-        fn();
-    }
-};
-export const doNothing = (..._args: Array<unknown>) => undefined;
-
-/**
- * Checks the network connection by sending a ping-like request to relay node
- * @param { FluenceClient } peer - The Fluence Client instance.
- */
-export const checkConnection = async (peer: FluencePeer, ttl?: number): Promise<boolean> => {
-    if (!peer.getStatus().isConnected) {
-        return false;
-    }
-
-    const msg = Math.random().toString(36).substring(7);
-
-    const promise = new Promise<string>((resolve, reject) => {
-        const script = `
-    (xor
-        (seq
-            (call %init_peer_id% ("load" "relay") [] init_relay)
-            (seq
-                (call %init_peer_id% ("load" "msg") [] msg)
-                (seq 
-                    (call init_relay ("op" "identity") [msg] result)
-                    (call %init_peer_id% ("callback" "callback") [result])
-                )
-            )
-        )
-        (seq 
-            (call init_relay ("op" "identity") [])
-            (call %init_peer_id% ("callback" "error") [%last_error%])
-        )
-    )`;
-        const particle = peer.internals.createNewParticle(script, ttl);
-
-        if (particle instanceof Error) {
-            return reject(particle.message);
-        }
-
-        peer.internals.regHandler.forParticle(
-            particle.id,
-            'load',
-            'relay',
-            MakeServiceCall(() => {
-                return peer.getStatus().relayPeerId;
-            }),
-        );
-
-        peer.internals.regHandler.forParticle(
-            particle.id,
-            'load',
-            'msg',
-            MakeServiceCall(() => {
-                return msg;
-            }),
-        );
-
-        peer.internals.regHandler.forParticle(
-            particle.id,
-            'callback',
-            'callback',
-            MakeServiceCall((args) => {
-                const [val] = args;
-                setTimeout(() => {
-                    resolve(val);
-                }, 0);
-                return {};
-            }),
-        );
-
-        peer.internals.regHandler.forParticle(
-            particle.id,
-            'callback',
-            'error',
-            MakeServiceCall((args) => {
-                const [error] = args;
-                setTimeout(() => {
-                    reject(error);
-                }, 0);
-                return {};
-            }),
-        );
-
-        peer.internals.initiateParticle(
-            particle,
-            handleTimeout(() => {
-                reject('particle timed out');
-            }),
-        );
-    });
-
-    try {
-        const result = await promise;
-        if (result != msg) {
-            log.error("unexpected behavior. 'identity' must return the passed arguments.");
-        }
-        return true;
-    } catch (e) {
-        log.error('error on establishing connection. Relay: %s error: %j', e, peer.getStatus().relayPeerId);
-        return false;
-    }
-};
 
 export function jsonify(obj: unknown) {
     return JSON.stringify(obj, null, 4);
 }
 
-export const isString = (x: unknown): x is string => {
-    return x !== null && typeof x === 'string';
+export const isString = (unknown: unknown): unknown is string => {
+    return unknown !== null && typeof unknown === 'string';
 };
 
-export class ServiceError extends Error {
-    constructor(message: string) {
-        super(message);
-
-        Object.setPrototypeOf(this, ServiceError.prototype);
-    }
-}
+export const isObject = (unknown: unknown): unknown is object => {
+    return unknown !== null && typeof unknown === 'object';
+};

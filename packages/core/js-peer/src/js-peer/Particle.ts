@@ -15,7 +15,7 @@
  */
 
 import { fromUint8Array, toUint8Array } from 'js-base64';
-import { CallResultsArray, LogLevel } from '@fluencelabs/avm';
+import { CallResultsArray } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
 import { ParticleContext } from '../interfaces/commonTypes.js';
 import { Buffer } from 'buffer';
@@ -34,7 +34,7 @@ export class Particle {
         public initPeerId: string,
     ) {}
 
-    static createNew(script: string, ttl: number, initPeerId: string): Particle {
+    static createNew(script: string, initPeerId: string, ttl: number): Particle {
         return new Particle(genUUID(), Date.now(), script, Buffer.from([]), ttl, initPeerId);
     }
 
@@ -108,6 +108,12 @@ export interface ParticleQueueItem {
     particle: Particle;
     onStageChange: (state: ParticleExecutionStage) => void;
 }
+
+export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage) => {
+    if (stage.stage === 'expired') {
+        fn();
+    }
+};
 
 function genUUID() {
     return uuidv4();

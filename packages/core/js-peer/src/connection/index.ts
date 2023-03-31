@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { PeerIdB58 } from '@fluencelabs/interfaces';
-import { FluenceConnection, ParticleHandler } from '../interfaces/index.js';
+import { ParticleHandler, IModule, IConnection } from '../interfaces/index.js';
 import { pipe } from 'it-pipe';
 import { encode, decode } from 'it-length-prefixed';
 import type { PeerId } from '@libp2p/interface-peer-id';
@@ -25,23 +25,25 @@ import { mplex } from '@libp2p/mplex';
 import { webSockets } from '@libp2p/websockets';
 import { all } from '@libp2p/websockets/filters';
 import { multiaddr } from '@multiformats/multiaddr';
-import type { MultiaddrInput, Multiaddr } from '@multiformats/multiaddr';
-import type { Connection } from '@libp2p/interface-connection';
+import type { Multiaddr } from '@multiformats/multiaddr';
 
 import map from 'it-map';
 import { fromString } from 'uint8arrays/from-string';
 import { toString } from 'uint8arrays/to-string';
 
 import { logger } from '../util/logger.js';
+import { Subject, Subscribable } from 'rxjs';
+import { Particle } from '../js-peer/Particle.js';
+import { throwIfHasNoPeerId } from '../js-peer/libp2pUtils.js';
 
 const log = logger('connection');
 
 export const PROTOCOL_NAME = '/fluence/particle/2.0.0';
 
 /**
- * Options to configure fluence connection
+ * Options to configure fluence relay connection
  */
-export interface FluenceConnectionOptions {
+export interface RelayConnectionConfig {
     /**
      * Peer id of the Fluence Peer
      */
@@ -50,32 +52,65 @@ export interface FluenceConnectionOptions {
     /**
      * Multiaddress of the relay to make connection to
      */
-    relayAddress: MultiaddrInput;
+    relayAddress: Multiaddr;
 
     /**
      * The dialing timeout in milliseconds
      */
     dialTimeoutMs?: number;
+
+    /**
+     * The maximum number of inbound streams for the libp2p node.
+     * Default: 1024
+     */
+    maxInboundStreams?: number;
+
+    /**
+     * The maximum number of outbound streams for the libp2p node.
+     * Default: 1024
+     */
+    maxOutboundStreams?: number;
 }
 
 /**
  * Implementation for JS peers which connects to Fluence through relay node
  */
-export class RelayConnection extends FluenceConnection {
-    constructor(
-        public peerId: PeerIdB58,
-        private _lib2p2Peer: Libp2p,
-        private _relayAddress: Multiaddr,
-        public readonly relayPeerId: PeerIdB58,
-    ) {
-        super();
+export class RelayConnection implements IModule, IConnection {
+    private relayAddress: Multiaddr;
+    private lib2p2Peer: Libp2p | null = null;
+    private handleOptions: {
+        maxInboundStreams: number;
+        maxOutboundStreams: number;
+    };
+
+    constructor(private options: RelayConnectionConfig) {
+        this.relayAddress = multiaddr(this.options.relayAddress);
+        throwIfHasNoPeerId(this.relayAddress);
+        this.handleOptions = {
+            maxInboundStreams: this.options.maxInboundStreams ?? 1024,
+            maxOutboundStreams: this.options.maxOutboundStreams ?? 1024,
+        };
     }
 
-    private _connection?: Connection;
+    getRelayPeerId(): string {
+        // since we check for peer id in constructor, we can safely use ! here
+        return this.relayAddress.getPeerId()!;
+    }
 
-    static async createConnection(options: FluenceConnectionOptions): Promise<RelayConnection> {
+    supportsRelay(): boolean {
+        return true;
+    }
+
+    particleSource = new Subject<Particle>();
+
+    async start(): Promise<void> {
+        // check if already started
+        if (this.lib2p2Peer !== null) {
+            return;
+        }
+
         const lib2p2Peer = await createLibp2p({
-            peerId: options.peerId,
+            peerId: this.options.peerId,
             transports: [
                 webSockets({
                     filter: all,
@@ -85,28 +120,27 @@ export class RelayConnection extends FluenceConnection {
             connectionEncryption: [noise()],
         });
 
-        const relayMultiaddr = multiaddr(options.relayAddress);
-        const relayPeerId = relayMultiaddr.getPeerId();
-        if (relayPeerId === null) {
-            throw new Error('Specified multiaddr is invalid or missing peer id: ' + options.relayAddress);
+        this.lib2p2Peer = lib2p2Peer;
+        this.lib2p2Peer.start();
+        await this.connect();
+    }
+
+    async stop(): Promise<void> {
+        // check if already stopped
+        if (this.lib2p2Peer === null) {
+            return;
         }
 
-        return new RelayConnection(
-            // force new line
-            options.peerId.toString(),
-            lib2p2Peer,
-            relayMultiaddr,
-            relayPeerId,
-        );
+        await this.lib2p2Peer.unhandle(PROTOCOL_NAME);
+        await this.lib2p2Peer.stop();
     }
 
-    async disconnect() {
-        await this._lib2p2Peer.unhandle(PROTOCOL_NAME);
-        await this._lib2p2Peer.stop();
-    }
+    async sendParticle(nextPeerIds: PeerIdB58[], particle: Particle): Promise<void> {
+        if (this.lib2p2Peer === null) {
+            throw new Error('Relay connection is not started');
+        }
 
-    async sendParticle(nextPeerIds: PeerIdB58[], particle: string): Promise<void> {
-        if (nextPeerIds.length !== 1 && nextPeerIds[0] !== this.relayPeerId) {
+        if (nextPeerIds.length !== 1 && nextPeerIds[0] !== this.getRelayPeerId()) {
             throw new Error(
                 `Relay connection only accepts peer id of the connected relay. Got: ${JSON.stringify(
                     nextPeerIds,
@@ -123,27 +157,25 @@ export class RelayConnection extends FluenceConnection {
         const sink = this._connection.streams[0].sink;
         */
 
-        const stream = await this._lib2p2Peer.dialProtocol(this._relayAddress, PROTOCOL_NAME);
+        const stream = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
         const sink = stream.sink;
 
         pipe(
-            [fromString(particle)],
+            [fromString(particle.toString())],
             // @ts-ignore
             encode(),
             sink,
         );
     }
 
-    async connect(onIncomingParticle: ParticleHandler) {
-        await this._lib2p2Peer.start();
+    private async connect() {
+        if (this.lib2p2Peer === null) {
+            throw new Error('Relay connection is not started');
+        }
 
         // TODO: make it configurable
-        const handleOptions = {
-            maxInboundStreams: 1024,
-            maxOutboundStreams: 1024,
-        };
 
-        this._lib2p2Peer.handle(
+        this.lib2p2Peer.handle(
             [PROTOCOL_NAME],
             async ({ connection, stream }) => {
                 pipe(
@@ -156,7 +188,8 @@ export class RelayConnection extends FluenceConnection {
                         try {
                             for await (const msg of source) {
                                 try {
-                                    onIncomingParticle(msg);
+                                    const particle = Particle.fromString(msg);
+                                    this.particleSource.next(particle);
                                 } catch (e) {
                                     log.error('error on handling a new incoming message: %j', e);
                                 }
@@ -167,17 +200,17 @@ export class RelayConnection extends FluenceConnection {
                     },
                 );
             },
-            handleOptions,
+            this.handleOptions,
         );
 
-        log.debug("dialing to the node with client's address: %s", this._lib2p2Peer.peerId.toString());
+        log.debug("dialing to the node with client's address: %s", this.lib2p2Peer.peerId.toString());
 
         try {
-            this._connection = await this._lib2p2Peer.dial(this._relayAddress);
+            await this.lib2p2Peer.dial(this.relayAddress);
         } catch (e: any) {
             if (e.name === 'AggregateError' && e._errors?.length === 1) {
                 const error = e._errors[0];
-                throw new Error(`Error dialing node ${this._relayAddress}:\n${error.code}\n${error.message}`);
+                throw new Error(`Error dialing node ${this.relayAddress}:\n${error.code}\n${error.message}`);
             } else {
                 throw e;
             }

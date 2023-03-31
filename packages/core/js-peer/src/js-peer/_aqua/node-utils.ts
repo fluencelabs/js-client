@@ -7,7 +7,7 @@
  *
  */
 import { CallParams } from '@fluencelabs/interfaces';
-import { registerServiceImpl } from './util.js';
+import { registerService } from '../../compilerSupport/registerService.js';
 import { FluencePeer } from '../FluencePeer.js';
 
 // Services
@@ -22,9 +22,11 @@ export interface NodeUtilsDef {
 }
 
 export function registerNodeUtils(peer: FluencePeer, serviceId: string, service: any) {
-    registerServiceImpl(
-        peer,
-        {
+    registerService({
+        peer: peer as any,
+        service: service,
+        serviceId: serviceId,
+        def: {
             defaultServiceId: 'node_utils',
             functions: {
                 tag: 'labeledProduct',
@@ -73,9 +75,7 @@ export function registerNodeUtils(peer: FluencePeer, serviceId: string, service:
                 },
             },
         },
-        serviceId,
-        service,
-    );
+    });
 }
 
 // Functions

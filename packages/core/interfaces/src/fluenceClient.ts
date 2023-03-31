@@ -1,6 +1,4 @@
 import type { SecurityTetraplet } from '@fluencelabs/avm';
-import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
-// import type { MultiaddrInput } from '@multiformats/multiaddr';
 import type { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
 
 /**
@@ -52,16 +50,13 @@ type Node = {
     multiaddr: string;
 };
 
-// TODO: either drop support for this exact type or get it back
-
 /**
  * A node in Fluence network a client can connect to.
  * Can be in the form of:
  * - string: multiaddr in string format
- * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
  * - Node: node structure, @see Node
  */
-export type RelayOptions = string | /* MultiaddrInput | */ Node;
+export type RelayOptions = string | Node;
 
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
 
@@ -73,7 +68,7 @@ export type KeyPairOptions = {
 /**
  * Configuration used when initiating Fluence Client
  */
-export interface ClientOptions {
+export interface ClientConfig {
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
@@ -113,18 +108,21 @@ export interface ClientOptions {
     };
 }
 
-export type FluenceStartConfig = ClientOptions & { relay: RelayOptions };
-
 export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
-export type ConnectionState = typeof ConnectionStates[number];
+export type ConnectionState = (typeof ConnectionStates)[number];
 
-export interface IFluenceClient {
+export interface IFluenceInternalApi {
+    /**
+     * Internal API
+     */
+    internals: any;
+}
+
+export interface IFluenceClient extends IFluenceInternalApi {
     /**
      * Connect to the Fluence network
-     * @param relay - relay node to connect to
-     * @param options - client options
      */
-    connect: (relay: RelayOptions, options?: ClientOptions) => Promise<void>;
+    connect: () => Promise<void>;
 
     /**
      * Disconnect from the Fluence network
@@ -150,29 +148,20 @@ export interface IFluenceClient {
      * Return relay's public key as a base58 string (multihash/CIDv0).
      */
     getRelayPeerId(): string;
-
-    // TODO: come up with a working interface for
-    // - particle creation
-    // - particle initialization
-    // - service registration
-    /**
-     * For internal use only. Do not call directly
-     */
-    internals: any;
 }
 
 export interface CallAquaFunctionArgs {
+    peer: IFluenceInternalApi;
     def: FunctionCallDef;
     script: string;
     config: FnConfig;
-    peer: IFluenceClient;
     args: { [key: string]: any };
 }
 
 export type CallAquaFunction = (args: CallAquaFunctionArgs) => Promise<unknown>;
 
 export interface RegisterServiceArgs {
-    peer: IFluenceClient;
+    peer: IFluenceInternalApi;
     def: ServiceDef;
     serviceId: string | undefined;
     service: any;

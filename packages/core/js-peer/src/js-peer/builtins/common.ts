@@ -20,7 +20,7 @@ import { sha256 } from 'multiformats/hashes/sha2';
 import { CallServiceResult } from '@fluencelabs/avm';
 
 import { GenericCallServiceHandler, ResultCodes } from '../../interfaces/commonTypes.js';
-import { jsonify } from '../utils.js';
+import { isString, jsonify } from '../utils.js';
 import { Buffer } from 'buffer';
 
 //@ts-ignore
@@ -594,12 +594,4 @@ const checkForArgumentType = (req: { args: Array<unknown> }, index: number, type
     if (actual !== type) {
         return error(`Argument ${index} expected to be of type ${type}, Got ${actual}`);
     }
-};
-
-export const isString = (unknown: unknown): unknown is string => {
-    return unknown !== null && typeof unknown === 'string';
-};
-
-export const isObject = (unknown: unknown): unknown is object => {
-    return unknown !== null && typeof unknown === 'object';
 };

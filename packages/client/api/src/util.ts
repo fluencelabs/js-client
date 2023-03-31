@@ -1,8 +1,14 @@
-import type { CallAquaFunction, IFluenceClient, RegisterService } from '@fluencelabs/interfaces';
+import type {
+    CallAquaFunction,
+    ClientConfig,
+    IFluenceClient,
+    RegisterService,
+    RelayOptions,
+} from '@fluencelabs/interfaces';
 
 type PublicFluenceInterface = {
-    clientFactory: () => IFluenceClient;
-    defaultClient: IFluenceClient;
+    defaultClient: IFluenceClient | undefined;
+    clientFactory: (relay: RelayOptions, config?: ClientConfig) => Promise<IFluenceClient>;
     callAquaFunction: CallAquaFunction;
     registerService: RegisterService;
 };
