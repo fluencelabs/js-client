@@ -165,6 +165,9 @@ jobs:
           secrets: |
             kv/npm-registry/basicauth/ci token | NODE_AUTH_TOKEN
 
+      - name: Set package version
+        run: node ci.cjs bump-version ${{ steps.version.outputs.id }}
+
       - run: pnpm -r build
 
       - name: Generate snapshot version
@@ -176,3 +179,4 @@ jobs:
         uses: fluencelabs/github-actions/pnpm-publish-snapshot@main
         with:
           id: ${{ steps.version.outputs.id }}
+          set-version: false
