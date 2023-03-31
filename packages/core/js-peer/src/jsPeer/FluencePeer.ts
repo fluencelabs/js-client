@@ -23,7 +23,7 @@ import {
     GenericCallServiceHandler,
     ResultCodes,
 } from '../interfaces/commonTypes.js';
-import type { PeerIdB58 } from '@fluencelabs/interfaces/dist/fluenceClient';
+import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import { Particle, ParticleExecutionStage, ParticleQueueItem } from '../particle/Particle.js';
 import { jsonify, isString } from '../util/utils.js';
 import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';

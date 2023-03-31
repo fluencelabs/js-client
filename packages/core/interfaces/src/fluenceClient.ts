@@ -1,54 +1,4 @@
-import type { SecurityTetraplet } from '@fluencelabs/avm';
-import type { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
-
-/**
- * Peer ID's id as a base58 string (multihash/CIDv0).
- */
-export type PeerIdB58 = string;
-
-/**
- * Additional information about a service call
- * @typeparam ArgName
- */
-export interface CallParams<ArgName extends string | null> {
-    /**
-     * The identifier of particle which triggered the call
-     */
-    particleId: string;
-
-    /**
-     * The peer id which created the particle
-     */
-    initPeerId: PeerIdB58;
-
-    /**
-     * Particle's timestamp when it was created
-     */
-    timestamp: number;
-
-    /**
-     * Time to live in milliseconds. The time after the particle should be expired
-     */
-    ttl: number;
-
-    /**
-     * Particle's signature
-     */
-    signature?: string;
-
-    /**
-     * Security tetraplets
-     */
-    tetraplets: ArgName extends string ? Record<ArgName, SecurityTetraplet[]> : Record<string, never>;
-}
-
-/**
- * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
- */
-type Node = {
-    peerId: PeerIdB58;
-    multiaddr: string;
-};
+import type { Node } from './commonTypes.js';
 
 /**
  * A node in Fluence network a client can connect to.
@@ -58,8 +8,14 @@ type Node = {
  */
 export type RelayOptions = string | Node;
 
+/**
+ * Fluence Peer's key pair types
+ */
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
 
+/**
+ * Options to specify key pair used in Fluence Peer
+ */
 export type KeyPairOptions = {
     type: 'Ed25519';
     source: 'random' | Uint8Array;
@@ -149,25 +105,6 @@ export interface IFluenceClient extends IFluenceInternalApi {
      */
     getRelayPeerId(): string;
 }
-
-export interface CallAquaFunctionArgs {
-    peer: IFluenceInternalApi;
-    def: FunctionCallDef;
-    script: string;
-    config: FnConfig;
-    args: { [key: string]: any };
-}
-
-export type CallAquaFunction = (args: CallAquaFunctionArgs) => Promise<unknown>;
-
-export interface RegisterServiceArgs {
-    peer: IFluenceInternalApi;
-    def: ServiceDef;
-    serviceId: string | undefined;
-    service: any;
-}
-
-export type RegisterService = (args: RegisterServiceArgs) => void;
 
 export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
     if (isFluencePeer(fluencePeerCandidate)) {
