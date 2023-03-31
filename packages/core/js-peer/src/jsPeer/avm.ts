@@ -1,9 +1,9 @@
 import type { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
 import { deserializeAvmResult, serializeAvmArgs } from '@fluencelabs/avm';
-import type { IMarine, IAvmRunner, IWasmLoader } from '../interfaces/index.js';
+import { IAvmRunner, IMarineHost, IWasmLoader } from '../marine/interfaces.js';
 
 export class MarineBasedAvmRunner implements IAvmRunner {
-    constructor(private marine: IMarine, private avmWasmLoader: IWasmLoader) {}
+    constructor(private marine: IMarineHost, private avmWasmLoader: IWasmLoader) {}
 
     async run(
         runParams: RunParameters,

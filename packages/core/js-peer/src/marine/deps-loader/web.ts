@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import { LazyLoader } from '../../interfaces/index.js';
+import { LazyLoader } from '../interfaces.js';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);

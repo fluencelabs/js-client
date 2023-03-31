@@ -1,16 +1,16 @@
 import type {
-    CallAquaFunction,
+    CallAquaFunctionType,
     ClientConfig,
     IFluenceClient,
-    RegisterService,
+    RegisterServiceType,
     RelayOptions,
 } from '@fluencelabs/interfaces';
 
 type PublicFluenceInterface = {
     defaultClient: IFluenceClient | undefined;
     clientFactory: (relay: RelayOptions, config?: ClientConfig) => Promise<IFluenceClient>;
-    callAquaFunction: CallAquaFunction;
-    registerService: RegisterService;
+    callAquaFunction: CallAquaFunctionType;
+    registerService: RegisterServiceType;
 };
 
 export const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | undefined => {

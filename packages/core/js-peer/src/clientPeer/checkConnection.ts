@@ -1,7 +1,7 @@
 import { ClientPeer } from './ClientPeer.js';
 
 import { logger } from '../util/logger.js';
-import { WrapFnIntoServiceCall } from '../jsPeer/serviceUtils.js';
+import { WrapFnIntoServiceCall } from '../jsServiceHost/serviceUtils.js';
 import { handleTimeout } from '../particle/Particle.js';
 
 const log = logger('connection');

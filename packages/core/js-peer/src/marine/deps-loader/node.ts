@@ -1,5 +1,4 @@
 import { createRequire } from 'module';
-import { LazyLoader } from '../../interfaces/index.js';
 
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
@@ -8,6 +7,7 @@ import { Worker } from 'threads';
 import { Buffer } from 'buffer';
 import * as fs from 'fs';
 import * as path from 'path';
+import { LazyLoader } from '../interfaces.js';
 
 const require = createRequire(import.meta.url);
 

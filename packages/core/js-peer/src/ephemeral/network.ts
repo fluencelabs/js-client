@@ -1,5 +1,4 @@
 import { PeerIdB58 } from '@fluencelabs/interfaces';
-import { ParticleHandler, IConnection, IAvmRunner, IMarine } from '../interfaces/index.js';
 import { fromBase64Sk, KeyPair } from '../keypair/index.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
 
@@ -12,6 +11,8 @@ import { Particle } from '../particle/Particle.js';
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { FluencePeer } from '../jsPeer/FluencePeer.js';
+import { IConnection } from '../connection/interfaces.js';
+import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
 
 const log = logger('ephemeral');
 
@@ -177,7 +178,7 @@ export class EphemeralConnection implements IConnection, IEphemeralConnection {
 class EphemeralPeer extends FluencePeer {
     ephemeralConnection: EphemeralConnection;
 
-    constructor(keyPair: KeyPair, marine: IMarine, avm: IAvmRunner) {
+    constructor(keyPair: KeyPair, marine: IMarineHost, avm: IAvmRunner) {
         const conn = new EphemeralConnection(keyPair.getPeerId());
         super({}, keyPair, marine, avm, conn);
 

@@ -2,7 +2,6 @@ import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 
 import { Particle } from '../particle/Particle.js';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../interfaces/commonTypes.js';
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
 import {
@@ -13,6 +12,7 @@ import {
     NonArrowType,
     IFluenceInternalApi,
 } from '@fluencelabs/interfaces';
+import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interface.js';
 
 export interface ServiceDescription {
     serviceId: string;

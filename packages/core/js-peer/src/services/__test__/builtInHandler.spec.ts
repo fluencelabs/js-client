@@ -2,11 +2,11 @@ import { it, describe, expect, test } from 'vitest';
 
 import { CallParams } from '@fluencelabs/interfaces';
 import { toUint8Array } from 'js-base64';
-import { CallServiceData } from '../../interfaces/commonTypes.js';
 import { KeyPair } from '../../keypair/index.js';
 import { Sig, defaultSigGuard } from '../Sig.js';
 import { allowServiceFn } from '../securityGuard.js';
 import { builtInServices } from '../builtins.js';
+import { CallServiceData } from '../../jsServiceHost/interface.js';
 
 const a10b20 = `{
     "a": 10,

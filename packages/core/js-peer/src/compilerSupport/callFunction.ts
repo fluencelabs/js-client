@@ -1,4 +1,4 @@
-import { getArgumentTypes, isReturnTypeVoid, CallAquaFunction } from '@fluencelabs/interfaces';
+import { getArgumentTypes, isReturnTypeVoid, CallAquaFunctionType } from '@fluencelabs/interfaces';
 
 import {
     injectRelayService,
@@ -25,7 +25,7 @@ const log = logger('aqua');
  * @param args - args in the form of JSON where each key corresponds to the name of the argument
  * @returns
  */
-export const callAquaFunction: CallAquaFunction = ({ def, script, config, peer, args }) => {
+export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, peer, args }) => {
     log.trace('calling aqua function %j', { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 

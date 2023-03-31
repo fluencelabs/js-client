@@ -1,10 +1,10 @@
 import { it, describe, expect } from 'vitest';
-import { CallServiceData } from '../../interfaces/commonTypes.js';
 import { handleTimeout } from '../../particle/Particle.js';
-import { doNothing } from '../../jsPeer/serviceUtils.js';
+import { doNothing } from '../../jsServiceHost/serviceUtils.js';
 import { registerHandlersHelper, withClient } from '../../util/testUtils.js';
 import { checkConnection } from '../checkConnection.js';
 import { nodes, RELAY } from './connection.js';
+import { CallServiceData } from '../../jsServiceHost/interface.js';
 
 describe('FluenceClient usage test suite', () => {
     it('should make a call through network', async () => {

@@ -1,8 +1,7 @@
 import { it, describe, expect, beforeEach, afterEach } from 'vitest';
-import { ResultCodes } from '../../interfaces/commonTypes.js';
 import { FluencePeer } from '../../jsPeer/FluencePeer.js';
+import { CallServiceData, ResultCodes } from '../../jsServiceHost/interface.js';
 import { KeyPair } from '../../keypair/index.js';
-import { TestPeer } from '../../util/testUtils.js';
 import { EphemeralNetworkClient } from '../client.js';
 
 import { EphemeralNetwork, defaultConfig } from '../network.js';
@@ -62,7 +61,7 @@ describe('Ephemeral networks tests', () => {
         const particle = client.internals.createNewParticle(script);
 
         const promise = new Promise<string>((resolve) => {
-            client.internals.regHandler.forParticle(particle.id, 'test', 'test', (req) => {
+            client.internals.regHandler.forParticle(particle.id, 'test', 'test', (req: CallServiceData) => {
                 resolve('success');
                 return {
                     result: 'test',

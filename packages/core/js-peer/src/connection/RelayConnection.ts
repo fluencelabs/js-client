@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { PeerIdB58 } from '@fluencelabs/interfaces';
-import { ParticleHandler, IModule, IConnection } from '../interfaces/index.js';
 import { pipe } from 'it-pipe';
 import { encode, decode } from 'it-length-prefixed';
 import type { PeerId } from '@libp2p/interface-peer-id';
@@ -32,9 +31,12 @@ import { fromString } from 'uint8arrays/from-string';
 import { toString } from 'uint8arrays/to-string';
 
 import { logger } from '../util/logger.js';
-import { Subject, Subscribable } from 'rxjs';
-import { Particle } from '../particle/Particle.js';
+import { Subject } from 'rxjs';
 import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
+import { IConnection } from './interfaces.js';
+import { IParticle } from '../particle/interfaces.js';
+import { Particle, serializeToString } from '../particle/Particle.js';
+import { IModule } from '../util/commonTypes.js';
 
 const log = logger('connection');
 
@@ -101,7 +103,7 @@ export class RelayConnection implements IModule, IConnection {
         return true;
     }
 
-    particleSource = new Subject<Particle>();
+    particleSource = new Subject<IParticle>();
 
     async start(): Promise<void> {
         // check if already started
@@ -135,7 +137,7 @@ export class RelayConnection implements IModule, IConnection {
         await this.lib2p2Peer.stop();
     }
 
-    async sendParticle(nextPeerIds: PeerIdB58[], particle: Particle): Promise<void> {
+    async sendParticle(nextPeerIds: PeerIdB58[], particle: IParticle): Promise<void> {
         if (this.lib2p2Peer === null) {
             throw new Error('Relay connection is not started');
         }
@@ -161,7 +163,7 @@ export class RelayConnection implements IModule, IConnection {
         const sink = stream.sink;
 
         pipe(
-            [fromString(particle.toString())],
+            [fromString(serializeToString(particle))],
             // @ts-ignore
             encode(),
             sink,
@@ -172,8 +174,6 @@ export class RelayConnection implements IModule, IConnection {
         if (this.lib2p2Peer === null) {
             throw new Error('Relay connection is not started');
         }
-
-        // TODO: make it configurable
 
         this.lib2p2Peer.handle(
             [PROTOCOL_NAME],

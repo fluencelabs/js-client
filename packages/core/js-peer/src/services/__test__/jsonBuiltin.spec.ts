@@ -3,7 +3,7 @@ import { it, describe, expect, beforeEach, afterEach } from 'vitest';
 import { Particle } from '../../particle/Particle.js';
 import { FluencePeer } from '../../jsPeer/FluencePeer.js';
 import { mkTestPeer } from '../../util/testUtils.js';
-import { doNothing } from '../../jsPeer/serviceUtils.js';
+import { doNothing } from '../../jsServiceHost/serviceUtils.js';
 
 let peer: FluencePeer;
 

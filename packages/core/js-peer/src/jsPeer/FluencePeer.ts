@@ -15,16 +15,17 @@
  */
 import 'buffer';
 
-import { IAvmRunner, IMarine, IConnection } from '../interfaces/index.js';
 import { KeyPair } from '../keypair/index.js';
-import {
-    CallServiceData,
-    CallServiceResult,
-    GenericCallServiceHandler,
-    ResultCodes,
-} from '../interfaces/commonTypes.js';
+
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
-import { Particle, ParticleExecutionStage, ParticleQueueItem } from '../particle/Particle.js';
+import {
+    cloneWithNewData,
+    getActualTTL,
+    hasExpired,
+    Particle,
+    ParticleExecutionStage,
+    ParticleQueueItem,
+} from '../particle/Particle.js';
 import { jsonify, isString } from '../util/utils.js';
 import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
 import { builtInServices } from '../services/builtins.js';
@@ -33,12 +34,21 @@ import { registerSig } from '../services/_aqua/services.js';
 import { registerSrv } from '../services/_aqua/single-module-srv.js';
 import { Buffer } from 'buffer';
 
-import { JSONValue } from '@fluencelabs/avm';
 import { NodeUtils, Srv } from '../services/SingleModuleSrv.js';
 import { registerNodeUtils } from '../services/_aqua/node-utils.js';
 
 import { logger } from '../util/logger.js';
-import { ServiceError } from './serviceUtils.js';
+import { getParticleContext, ServiceError } from '../jsServiceHost/serviceUtils.js';
+import { IParticle } from '../particle/interfaces.js';
+import { IConnection } from '../connection/interfaces.js';
+import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
+import {
+    CallServiceData,
+    CallServiceResult,
+    GenericCallServiceHandler,
+    ResultCodes,
+} from '../jsServiceHost/interface.js';
+import { JSONValue } from '../util/commonTypes.js';
 
 const log = logger('particle');
 
@@ -72,7 +82,7 @@ export abstract class FluencePeer {
     constructor(
         protected readonly config: PeerConfig,
         public readonly keyPair: KeyPair,
-        protected readonly marine: IMarine,
+        protected readonly marine: IMarineHost,
         protected readonly avmRunner: IAvmRunner,
         protected readonly connection: IConnection,
     ) {
@@ -114,7 +124,7 @@ export abstract class FluencePeer {
 
         this.particleSourceSubscription = this.connection.particleSource.subscribe({
             next: (p) => {
-                this._incomingParticles.next({ particle: p, onStageChange: () => {} });
+                this._incomingParticles.next({ particle: p, callResults: [], onStageChange: () => {} });
             },
         });
 
@@ -222,7 +232,7 @@ export abstract class FluencePeer {
                 }
             },
 
-            createNewParticle: (script: string, ttl: number = this.defaultTTL): Particle => {
+            createNewParticle: (script: string, ttl: number = this.defaultTTL): IParticle => {
                 return Particle.createNew(script, this.keyPair.getPeerId(), ttl);
             },
 
@@ -230,7 +240,7 @@ export abstract class FluencePeer {
              * Initiates a new particle execution starting from local peer
              * @param particle - particle to start execution of
              */
-            initiateParticle: (particle: Particle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
+            initiateParticle: (particle: IParticle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.isInitialized) {
                     throw new Error('Cannot initiate new particle: peer is not initialized');
                 }
@@ -241,6 +251,7 @@ export abstract class FluencePeer {
 
                 this._incomingParticles.next({
                     particle: particle,
+                    callResults: [],
                     onStageChange: onStageChange,
                 });
             },
@@ -312,17 +323,17 @@ export abstract class FluencePeer {
     private _startParticleProcessing() {
         this._incomingParticles
             .pipe(
-                tap((x) => {
-                    log.debug('id %s. received:', x.particle.id);
-                    log.trace('id %s. data: %j', x.particle.id, {
-                        initPeerId: x.particle.initPeerId,
-                        timestamp: x.particle.timestamp,
-                        tttl: x.particle.ttl,
-                        signature: x.particle.signature,
+                tap((item) => {
+                    log.debug('id %s. received:', item.particle.id);
+                    log.trace('id %s. data: %j', item.particle.id, {
+                        initPeerId: item.particle.initPeerId,
+                        timestamp: item.particle.timestamp,
+                        tttl: item.particle.ttl,
+                        signature: item.particle.signature,
                     });
 
-                    log.trace('id %s. script: %s', x.particle.id, x.particle.script);
-                    log.trace('id %s. call results: %j', x.particle.id, x.particle.callResults);
+                    log.trace('id %s. script: %s', item.particle.id, item.particle.script);
+                    log.trace('id %s. call results: %j', item.particle.id, item.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
@@ -336,7 +347,7 @@ export abstract class FluencePeer {
 
                     const timeout = setTimeout(() => {
                         this._expireParticle(item);
-                    }, p.actualTtl());
+                    }, getActualTTL(p));
 
                     this.timeouts.push(timeout);
                 }
@@ -413,7 +424,7 @@ export abstract class FluencePeer {
                         item.particle.script,
                         prevData,
                         item.particle.data,
-                        item.particle.callResults,
+                        item.callResults,
                     );
 
                     if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
@@ -434,7 +445,7 @@ export abstract class FluencePeer {
                 }
 
                 // Do not proceed further if the particle is expired
-                if (item.particle.hasExpired()) {
+                if (hasExpired(item.particle)) {
                     return;
                 }
 
@@ -470,9 +481,7 @@ export abstract class FluencePeer {
 
                 // send particle further if requested
                 if (item.result.nextPeerPks.length > 0) {
-                    const newParticle = item.particle.clone();
-                    const newData = Buffer.from(item.result.data);
-                    newParticle.data = newData;
+                    const newParticle = cloneWithNewData(item.particle, Buffer.from(item.result.data));
                     this._outgoingParticles.next({
                         ...item,
                         particle: newParticle,
@@ -489,10 +498,10 @@ export abstract class FluencePeer {
                             args: cr.arguments,
                             serviceId: cr.serviceId,
                             tetraplets: cr.tetraplets,
-                            particleContext: item.particle.getParticleContext(),
+                            particleContext: getParticleContext(item.particle),
                         };
 
-                        if (item.particle.hasExpired()) {
+                        if (hasExpired(item.particle)) {
                             // just in case do not call any services if the particle is already expired
                             return;
                         }
@@ -518,11 +527,12 @@ export abstract class FluencePeer {
                                     retCode: res.retCode,
                                 };
 
-                                const newParticle = item.particle.clone();
-                                newParticle.callResults = [[key, serviceResult]];
-                                newParticle.data = Buffer.from([]);
-
-                                particlesQueue.next({ ...item, particle: newParticle });
+                                const newParticle = cloneWithNewData(item.particle, Buffer.from([]));
+                                particlesQueue.next({
+                                    ...item,
+                                    particle: newParticle,
+                                    callResults: [[key, serviceResult]],
+                                });
                             });
                     }
                 } else {
@@ -607,10 +617,10 @@ function registerDefaultServices(peer: FluencePeer) {
 function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) => void) {
     return pipe(
         tap((item: ParticleQueueItem) => {
-            if (item.particle.hasExpired()) {
+            if (hasExpired(item.particle)) {
                 onParticleExpiration(item);
             }
         }),
-        filter((x: ParticleQueueItem) => !x.particle.hasExpired()),
+        filter((x: ParticleQueueItem) => !hasExpired(x.particle)),
     );
 }

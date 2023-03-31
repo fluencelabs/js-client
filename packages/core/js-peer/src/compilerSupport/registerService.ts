@@ -1,11 +1,11 @@
-import type { RegisterService } from '@fluencelabs/interfaces';
+import type { RegisterServiceType } from '@fluencelabs/interfaces';
 import { registerGlobalService, userHandlerService } from './services.js';
 
 import { logger } from '../util/logger.js';
 
 const log = logger('aqua');
 
-export const registerService: RegisterService = ({ peer, def, serviceId, service }) => {
+export const registerService: RegisterServiceType = ({ peer, def, serviceId, service }) => {
     log.trace('registering aqua service %o', { def, serviceId, service });
 
     // Checking for missing keys

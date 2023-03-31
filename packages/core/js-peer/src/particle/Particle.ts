@@ -17,25 +17,26 @@
 import { fromUint8Array, toUint8Array } from 'js-base64';
 import { CallResultsArray } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
-import { ParticleContext } from '../interfaces/commonTypes.js';
 import { Buffer } from 'buffer';
+import { IParticle } from './interfaces.js';
+import { ParticleContext } from '../jsServiceHost/interface.js';
 
-export class Particle {
-    // TODO: make it not optional (should be added to the constructor)
-    signature?: string;
-    callResults: CallResultsArray = [];
+export class Particle implements IParticle {
+    readonly signature: undefined;
 
     constructor(
-        public id: string,
-        public timestamp: number,
-        public script: string,
-        public data: Uint8Array,
-        public ttl: number,
-        public initPeerId: string,
-    ) {}
+        public readonly id: string,
+        public readonly timestamp: number,
+        public readonly script: string,
+        public readonly data: Uint8Array,
+        public readonly ttl: number,
+        public readonly initPeerId: string,
+    ) {
+        this.signature = undefined;
+    }
 
     static createNew(script: string, initPeerId: string, ttl: number): Particle {
-        return new Particle(genUUID(), Date.now(), script, Buffer.from([]), ttl, initPeerId);
+        return new Particle(uuidv4(), Date.now(), script, Buffer.from([]), ttl, initPeerId);
     }
 
     static fromString(str: string): Particle {
@@ -49,51 +50,54 @@ export class Particle {
             json.init_peer_id,
         );
 
-        res.signature = json.signature;
-
         return res;
-    }
-
-    getParticleContext(): ParticleContext {
-        return {
-            particleId: this.id,
-            initPeerId: this.initPeerId,
-            timestamp: this.timestamp,
-            ttl: this.ttl,
-            signature: this.signature,
-        };
-    }
-
-    actualTtl(): number {
-        return this.timestamp + this.ttl - Date.now();
-    }
-
-    hasExpired(): boolean {
-        return this.actualTtl() <= 0;
-    }
-
-    clone(): Particle {
-        const res = new Particle(this.id, this.timestamp, this.script, this.data, this.ttl, this.initPeerId);
-
-        res.signature = this.signature;
-        res.callResults = this.callResults;
-        return res;
-    }
-
-    toString(): string {
-        return JSON.stringify({
-            action: 'Particle',
-            id: this.id,
-            init_peer_id: this.initPeerId,
-            timestamp: this.timestamp,
-            ttl: this.ttl,
-            script: this.script,
-            // TODO: copy signature from a particle after signatures will be implemented on nodes
-            signature: [],
-            data: this.data && fromUint8Array(this.data),
-        });
     }
 }
+
+/**
+ * Returns actual ttl of a particle, i.e. ttl - time passed since particle creation
+ */
+export const getActualTTL = (particle: IParticle): number => {
+    return particle.timestamp + particle.ttl - Date.now();
+};
+
+/**
+ * Returns true if particle has expired
+ */
+export const hasExpired = (particle: IParticle): boolean => {
+    return getActualTTL(particle) <= 0;
+};
+
+/**
+ * Creates a particle clone with new data
+ */
+export const cloneWithNewData = (particle: IParticle, newData: Uint8Array): IParticle => {
+    return new Particle(particle.id, particle.timestamp, particle.script, newData, particle.ttl, particle.initPeerId);
+};
+
+/**
+ * Creates a deep copy of a particle
+ */
+export const fullClone = (particle: IParticle): IParticle => {
+    return JSON.parse(JSON.stringify(particle));
+};
+
+/**
+ * Serializes particle into string suitable for sending through network
+ */
+export const serializeToString = (particle: IParticle): string => {
+    return JSON.stringify({
+        action: 'Particle',
+        id: particle.id,
+        init_peer_id: particle.initPeerId,
+        timestamp: particle.timestamp,
+        ttl: particle.ttl,
+        script: particle.script,
+        // TODO: copy signature from a particle after signatures will be implemented on nodes
+        signature: [],
+        data: particle.data && fromUint8Array(particle.data),
+    });
+};
 
 export type ParticleExecutionStage =
     | { stage: 'received' }
@@ -105,7 +109,8 @@ export type ParticleExecutionStage =
     | { stage: 'expired' };
 
 export interface ParticleQueueItem {
-    particle: Particle;
+    particle: IParticle;
+    callResults: CallResultsArray;
     onStageChange: (state: ParticleExecutionStage) => void;
 }
 
@@ -114,7 +119,3 @@ export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage)
         fn();
     }
 };
-
-function genUUID() {
-    return uuidv4();
-}

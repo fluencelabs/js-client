@@ -10,11 +10,11 @@ import { MarineBackgroundRunner } from '../marine/worker/index.js';
 import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { WorkerLoader } from '../marine/worker-script/workerLoader.js';
 import { KeyPair } from '../keypair/index.js';
-import { IConnection } from '../interfaces/index.js';
 import { Subject, Subscribable } from 'rxjs';
-import { WrapFnIntoServiceCall } from '../jsPeer/serviceUtils.js';
+import { WrapFnIntoServiceCall } from '../jsServiceHost/serviceUtils.js';
 import { ClientPeer, makeClientPeerConfig } from '../clientPeer/ClientPeer.js';
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
+import { IConnection } from '../connection/interfaces.js';
 
 export const registerHandlersHelper = (
     peer: FluencePeer,
