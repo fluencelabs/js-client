@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/js-client.api",
-  "version": "0.11.4",
+  "version": "0.11.5",
   "description": "JS Client API",
   "engines": {
     "node": ">=10",
@@ -25,7 +25,7 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@fluencelabs/interfaces": "0.7.3"
+    "@fluencelabs/interfaces": "0.7.4"
   },
   "devDependencies": {
     "@fluencelabs/avm": "0.35.4",

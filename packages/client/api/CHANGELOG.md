@@ -6,6 +6,12 @@
   * dependencies
     * @fluencelabs/interfaces bumped from 0.7.1 to 0.7.2
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.7.3 to 0.7.4
+
 ## [0.11.4](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.3...js-client.api-v0.11.4) (2023-03-03)
 
 
