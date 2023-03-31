@@ -2,8 +2,8 @@ import { ClientConfig, ConnectionState, IFluenceClient, PeerIdB58, RelayOptions 
 import { RelayConnection, RelayConnectionConfig } from '../connection/index.js';
 import { IAvmRunner, IMarine } from '../interfaces/index.js';
 import { fromOpts, KeyPair } from '../keypair/index.js';
-import { FluencePeer, PeerConfig } from '../js-peer/FluencePeer.js';
-import { relayOptionToMultiaddr } from '../js-peer/libp2pUtils.js';
+import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
+import { relayOptionToMultiaddr } from '../util/libp2pUtils.js';
 
 export const makeClientPeerConfig = async (
     relay: RelayOptions,

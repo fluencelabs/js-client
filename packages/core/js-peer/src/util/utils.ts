@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { CallServiceData, CallServiceResult, CallServiceResultType, ResultCodes } from '../interfaces/commonTypes.js';
-import { ParticleExecutionStage } from './Particle.js';
-
 export function jsonify(obj: unknown) {
     return JSON.stringify(obj, null, 4);
 }

@@ -1,8 +1,8 @@
 import { it, describe, expect } from 'vitest';
-import { registerHandlersHelper, withPeer } from '../../../__test__/util.js';
-import { handleTimeout } from '../../Particle.js';
+import { registerHandlersHelper, withPeer } from '../../util/testUtils.js';
+import { handleTimeout } from '../../particle/Particle.js';
 
-describe('Avm spec', () => {
+describe('Basic AVM functionality in Fluence Peer tests', () => {
     it('Simple call', async () => {
         await withPeer(async (peer) => {
             const res = await new Promise<string[]>((resolve, reject) => {

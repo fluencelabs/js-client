@@ -1,7 +1,7 @@
 import { it, describe, expect, beforeAll, afterAll } from 'vitest';
 
-import { mkTestPeer } from '../../../__test__/util.js';
-import { FluencePeer } from '../../FluencePeer.js';
+import { mkTestPeer } from '../../util/testUtils.js';
+import { FluencePeer } from '../FluencePeer.js';
 
 let peer: FluencePeer;
 

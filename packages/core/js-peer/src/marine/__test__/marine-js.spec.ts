@@ -3,14 +3,14 @@ import { it, describe, expect, beforeAll } from 'vitest';
 import * as fs from 'fs';
 import * as url from 'url';
 import * as path from 'path';
-import { compileAqua, withPeer } from '../../../__test__/util.js';
+import { compileAqua, withPeer } from '../../util/testUtils.js';
 
 let aqua: any;
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 describe('Marine js tests', () => {
     beforeAll(async () => {
-        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/marine-js.aqua');
+        const pathToAquaFiles = path.join(__dirname, '../../../aqua_test/marine-js.aqua');
         const { services, functions } = await compileAqua(pathToAquaFiles);
         aqua = functions;
     });
@@ -18,7 +18,7 @@ describe('Marine js tests', () => {
     it('should call marine service correctly', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = await fs.promises.readFile(path.join(__dirname, '../data/greeting.wasm'));
+            const wasm = await fs.promises.readFile(path.join(__dirname, '../../../data_for_test/greeting.wasm'));
             await peer.registerMarineService(wasm, 'greeting');
 
             // act

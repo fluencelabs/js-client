@@ -1,8 +1,8 @@
 import { it, describe, expect } from 'vitest';
 import { CallServiceData } from '../../interfaces/commonTypes.js';
-import { handleTimeout } from '../../js-peer/Particle.js';
-import { doNothing } from '../../js-peer/serviceUtils.js';
-import { registerHandlersHelper, withClient } from '../../__test__/util.js';
+import { handleTimeout } from '../../particle/Particle.js';
+import { doNothing } from '../../jsPeer/serviceUtils.js';
+import { registerHandlersHelper, withClient } from '../../util/testUtils.js';
 import { checkConnection } from '../checkConnection.js';
 import { nodes, RELAY } from './connection.js';
 

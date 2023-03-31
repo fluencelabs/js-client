@@ -1,8 +1,8 @@
 import { it, describe, expect, beforeEach, afterEach } from 'vitest';
 import { ResultCodes } from '../../interfaces/commonTypes.js';
-import { FluencePeer } from '../../js-peer/FluencePeer.js';
+import { FluencePeer } from '../../jsPeer/FluencePeer.js';
 import { KeyPair } from '../../keypair/index.js';
-import { TestPeer } from '../../__test__/util.js';
+import { TestPeer } from '../../util/testUtils.js';
 import { EphemeralNetworkClient } from '../client.js';
 
 import { EphemeralNetwork, defaultConfig } from '../network.js';

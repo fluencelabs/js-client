@@ -1,6 +1,6 @@
 import { PeerIdB58 } from '@fluencelabs/interfaces';
-import { MarineBasedAvmRunner } from '../js-peer/avm.js';
-import { FluencePeer, PeerConfig } from '../js-peer/FluencePeer.js';
+import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
+import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
 import { KeyPair } from '../keypair/index.js';
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 import { WorkerLoader } from '../marine/worker-script/workerLoader.js';

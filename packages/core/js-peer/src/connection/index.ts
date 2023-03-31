@@ -33,8 +33,8 @@ import { toString } from 'uint8arrays/to-string';
 
 import { logger } from '../util/logger.js';
 import { Subject, Subscribable } from 'rxjs';
-import { Particle } from '../js-peer/Particle.js';
-import { throwIfHasNoPeerId } from '../js-peer/libp2pUtils.js';
+import { Particle } from '../particle/Particle.js';
+import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
 
 const log = logger('connection');
 

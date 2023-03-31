@@ -1,14 +1,14 @@
 import { it, describe, expect, beforeAll } from 'vitest';
 import * as path from 'path';
 import * as url from 'url';
-import { compileAqua, withPeer } from '../../../__test__/util.js';
+import { compileAqua, withPeer } from '../../util/testUtils.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 let aqua: any;
 
 describe('Srv service test suite', () => {
     beforeAll(async () => {
-        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/srv.aqua');
+        const pathToAquaFiles = path.join(__dirname, '../../../aqua_test/srv.aqua');
         const { services, functions } = await compileAqua(pathToAquaFiles);
         aqua = functions;
     });
@@ -16,7 +16,7 @@ describe('Srv service test suite', () => {
     it('Use custom srv service, success path', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = path.join(__dirname, '../data/greeting.wasm');
+            const wasm = path.join(__dirname, '../../../data_for_test/greeting.wasm');
 
             // act
             const res = await aqua.happy_path(peer, { file_path: wasm });
@@ -29,7 +29,7 @@ describe('Srv service test suite', () => {
     it('List deployed services', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = path.join(__dirname, '../data/greeting.wasm');
+            const wasm = path.join(__dirname, '../../../data_for_test/greeting.wasm');
 
             // act
             const res = await aqua.list_services(peer, { file_path: wasm });
@@ -42,7 +42,7 @@ describe('Srv service test suite', () => {
     it('Correct error for removed services', async () => {
         await withPeer(async (peer) => {
             // arrange
-            const wasm = path.join(__dirname, '../data/greeting.wasm');
+            const wasm = path.join(__dirname, '../../../data_for_test/greeting.wasm');
 
             // act
             const res = await aqua.service_removed(peer, { file_path: wasm });

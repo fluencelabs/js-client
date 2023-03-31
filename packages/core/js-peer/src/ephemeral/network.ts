@@ -7,11 +7,11 @@ import { WorkerLoaderFromFs } from '../marine/deps-loader/node.js';
 
 import { logger } from '../util/logger.js';
 import { Subject } from 'rxjs';
-import { Particle } from '../js-peer/Particle.js';
+import { Particle } from '../particle/Particle.js';
 
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
-import { MarineBasedAvmRunner } from '../js-peer/avm.js';
-import { FluencePeer } from '../js-peer/FluencePeer.js';
+import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
+import { FluencePeer } from '../jsPeer/FluencePeer.js';
 
 const log = logger('ephemeral');
 

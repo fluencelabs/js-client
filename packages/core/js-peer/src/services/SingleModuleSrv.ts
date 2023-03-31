@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { SrvDef } from '../_aqua/single-module-srv.js';
-import { NodeUtilsDef } from '../_aqua/node-utils.js';
-import { FluencePeer } from '../FluencePeer.js';
+import { SrvDef } from './_aqua/single-module-srv.js';
+import { NodeUtilsDef } from './_aqua/node-utils.js';
+import { FluencePeer } from '../jsPeer/FluencePeer.js';
 import { CallParams } from '@fluencelabs/interfaces';
 import { Buffer } from 'buffer';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';

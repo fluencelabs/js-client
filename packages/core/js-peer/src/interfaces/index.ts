@@ -20,7 +20,7 @@ import type { JSONArray, JSONObject } from '@fluencelabs/marine-js/dist/types';
 import type { RunParameters, CallResultsArray, InterpreterResult } from '@fluencelabs/avm';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
-import { Particle } from '../js-peer/Particle.js';
+import { Particle } from '../particle/Particle.js';
 
 export type ParticleHandler = (particle: string) => void;
 

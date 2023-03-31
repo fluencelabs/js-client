@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { Particle } from '../js-peer/Particle.js';
+import { Particle } from '../particle/Particle.js';
 
 // Format avm data as a string
 debug.formatters.a = (avmData: Uint8Array) => {

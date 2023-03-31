@@ -1,4 +1,4 @@
-import { jsonify } from '../js-peer/utils.js';
+import { jsonify } from '../util/utils.js';
 import { match } from 'ts-pattern';
 import type { ArrowType, ArrowWithoutCallbacks, NonArrowType } from '@fluencelabs/interfaces';
 import { CallServiceData } from '../interfaces/commonTypes.js';

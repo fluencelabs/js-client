@@ -1,18 +1,18 @@
 import * as api from '@fluencelabs/aqua-api/aqua-api.js';
 
 import { promises as fs } from 'fs';
-import { FluencePeer, PeerConfig } from '../js-peer/FluencePeer.js';
-import { Particle } from '../js-peer/Particle.js';
+import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
+import { Particle } from '../particle/Particle.js';
 import { ClientConfig, IFluenceClient, RelayOptions, ServiceDef } from '@fluencelabs/interfaces';
 import { callAquaFunction } from '../compilerSupport/callFunction.js';
 
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
-import { MarineBasedAvmRunner } from '../js-peer/avm.js';
+import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { WorkerLoader } from '../marine/worker-script/workerLoader.js';
 import { KeyPair } from '../keypair/index.js';
 import { IConnection } from '../interfaces/index.js';
 import { Subject, Subscribable } from 'rxjs';
-import { WrapFnIntoServiceCall } from '../js-peer/serviceUtils.js';
+import { WrapFnIntoServiceCall } from '../jsPeer/serviceUtils.js';
 import { ClientPeer, makeClientPeerConfig } from '../clientPeer/ClientPeer.js';
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 

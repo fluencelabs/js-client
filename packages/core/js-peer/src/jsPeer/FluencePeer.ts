@@ -24,18 +24,18 @@ import {
     ResultCodes,
 } from '../interfaces/commonTypes.js';
 import type { PeerIdB58 } from '@fluencelabs/interfaces/dist/fluenceClient';
-import { Particle, ParticleExecutionStage, ParticleQueueItem } from './Particle.js';
-import { jsonify, isString } from './utils.js';
+import { Particle, ParticleExecutionStage, ParticleQueueItem } from '../particle/Particle.js';
+import { jsonify, isString } from '../util/utils.js';
 import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
-import { builtInServices } from './builtins/common.js';
-import { defaultSigGuard, Sig } from './builtins/Sig.js';
-import { registerSig } from './_aqua/services.js';
-import { registerSrv } from './_aqua/single-module-srv.js';
+import { builtInServices } from '../services/builtins.js';
+import { defaultSigGuard, Sig } from '../services/Sig.js';
+import { registerSig } from '../services/_aqua/services.js';
+import { registerSrv } from '../services/_aqua/single-module-srv.js';
 import { Buffer } from 'buffer';
 
 import { JSONValue } from '@fluencelabs/avm';
-import { NodeUtils, Srv } from './builtins/SingleModuleSrv.js';
-import { registerNodeUtils } from './_aqua/node-utils.js';
+import { NodeUtils, Srv } from '../services/SingleModuleSrv.js';
+import { registerNodeUtils } from '../services/_aqua/node-utils.js';
 
 import { logger } from '../util/logger.js';
 import { ServiceError } from './serviceUtils.js';

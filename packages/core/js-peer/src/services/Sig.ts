@@ -1,7 +1,7 @@
 import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
-import { KeyPair } from '../../keypair/index.js';
-import { FluencePeer } from '../FluencePeer.js';
-import { SigDef } from '../_aqua/services.js';
+import { KeyPair } from '../keypair/index.js';
+import { FluencePeer } from '../jsPeer/FluencePeer.js';
+import { SigDef } from './_aqua/services.js';
 import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard.js';
 
 export const defaultSigGuard = (peerId: PeerIdB58) => {

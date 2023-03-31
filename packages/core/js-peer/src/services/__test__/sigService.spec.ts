@@ -2,11 +2,11 @@ import { it, describe, expect, beforeAll } from 'vitest';
 
 import * as path from 'path';
 import * as url from 'url';
-import { KeyPair } from '../../../keypair/index.js';
-import { allowServiceFn } from '../../builtins/securityGuard.js';
-import { Sig } from '../../builtins/Sig.js';
-import { registerService } from '../../../compilerSupport/registerService.js';
-import { compileAqua, withPeer } from '../../../__test__/util.js';
+import { KeyPair } from '../../keypair/index.js';
+import { allowServiceFn } from '../securityGuard.js';
+import { Sig } from '../Sig.js';
+import { registerService } from '../../compilerSupport/registerService.js';
+import { compileAqua, withPeer } from '../../util/testUtils.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -16,7 +16,7 @@ let dataProviderDef: any;
 
 describe('Sig service test suite', () => {
     beforeAll(async () => {
-        const pathToAquaFiles = path.join(__dirname, '../../../../aqua_test/sigService.aqua');
+        const pathToAquaFiles = path.join(__dirname, '../../../aqua_test/sigService.aqua');
         const { services, functions } = await compileAqua(pathToAquaFiles);
 
         aqua = functions;
