@@ -1,9 +1,9 @@
 import { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
-import { IModule, JSONArray, JSONObject } from '../util/commonTypes.js';
+import { IStartable, JSONArray, JSONObject } from '../util/commonTypes.js';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
 
-export interface IMarineHost extends IModule {
+export interface IMarineHost extends IStartable {
     createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void>;
 
     callService(
@@ -14,7 +14,7 @@ export interface IMarineHost extends IModule {
     ): Promise<unknown>;
 }
 
-export interface IAvmRunner extends IModule {
+export interface IAvmRunner extends IStartable {
     run(
         runParams: RunParameters,
         air: string,
@@ -28,11 +28,11 @@ export interface IValueLoader<T> {
     getValue(): T;
 }
 
-export interface IWasmLoader extends IValueLoader<SharedArrayBuffer | Buffer>, IModule {}
+export interface IWasmLoader extends IValueLoader<SharedArrayBuffer | Buffer>, IStartable {}
 
-export interface IWorkerLoader extends IValueLoader<WorkerImplementation>, IModule {}
+export interface IWorkerLoader extends IValueLoader<WorkerImplementation>, IStartable {}
 
-export class LazyLoader<T> implements IModule, IValueLoader<T> {
+export class LazyLoader<T> implements IStartable, IValueLoader<T> {
     private value: T | null = null;
 
     constructor(private loadValue: () => Promise<T> | T) {}

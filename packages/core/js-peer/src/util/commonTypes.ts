@@ -1,4 +1,4 @@
-export interface IModule {
+export interface IStartable {
     start(): Promise<void>;
     stop(): Promise<void>;
 }

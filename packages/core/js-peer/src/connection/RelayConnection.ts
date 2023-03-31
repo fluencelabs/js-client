@@ -36,7 +36,7 @@ import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
 import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
 import { Particle, serializeToString } from '../particle/Particle.js';
-import { IModule } from '../util/commonTypes.js';
+import { IStartable } from '../util/commonTypes.js';
 
 const log = logger('connection');
 
@@ -77,7 +77,7 @@ export interface RelayConnectionConfig {
 /**
  * Implementation for JS peers which connects to Fluence through relay node
  */
-export class RelayConnection implements IModule, IConnection {
+export class RelayConnection implements IStartable, IConnection {
     private relayAddress: Multiaddr;
     private lib2p2Peer: Libp2p | null = null;
     private handleOptions: {
