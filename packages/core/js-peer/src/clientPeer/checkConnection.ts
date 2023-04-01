@@ -31,7 +31,7 @@ export const checkConnection = async (peer: ClientPeer, ttl?: number): Promise<b
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )
     )`;
-        const particle = peer.createNewParticle(script, ttl);
+        const particle = peer.internals.createNewParticle(script, ttl);
 
         if (particle instanceof Error) {
             return reject(particle.message);

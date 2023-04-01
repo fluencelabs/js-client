@@ -43,6 +43,18 @@ export interface ClientConfig {
          * The dialing timeout in milliseconds
          */
         dialTimeoutMs?: number;
+
+        /**
+         * The maximum number of inbound streams for the libp2p node.
+         * Default: 1024
+         */
+        maxInboundStreams?: number;
+
+        /**
+         * The maximum number of outbound streams for the libp2p node.
+         * Default: 1024
+         */
+        maxOutboundStreams?: number;
     };
 
     /**

@@ -1,5 +1,5 @@
 import { it, describe, expect, beforeEach, afterEach } from 'vitest';
-import { FluencePeer } from '../../jsPeer/FluencePeer.js';
+import { DEFAULT_CONFIG, FluencePeer } from '../../jsPeer/FluencePeer.js';
 import { CallServiceData, ResultCodes } from '../../jsServiceHost/interface.js';
 import { KeyPair } from '../../keypair/index.js';
 import { EphemeralNetworkClient } from '../client.js';
@@ -16,7 +16,7 @@ describe('Ephemeral networks tests', () => {
         await en.up();
 
         const kp = await KeyPair.randomEd25519();
-        client = new EphemeralNetworkClient({}, kp, en, relay);
+        client = new EphemeralNetworkClient(DEFAULT_CONFIG, kp, en, relay);
         await client.start();
     });
 

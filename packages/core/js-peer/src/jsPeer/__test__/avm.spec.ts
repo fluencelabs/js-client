@@ -9,7 +9,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                 const script = `
                 (call %init_peer_id% ("print" "print") ["1"])
             `;
-                const particle = peer.createNewParticle(script);
+                const particle = peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -44,7 +44,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
             `;
-                const particle = peer.createNewParticle(script);
+                const particle = peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);

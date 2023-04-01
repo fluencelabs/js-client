@@ -5,6 +5,10 @@ import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
 import { relayOptionToMultiaddr } from '../util/libp2pUtils.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
 
+const DEFAULT_TTL_MS = 7000;
+const MAX_OUTBOUND_STREAMS = 1024;
+const MAX_INBOUND_STREAMS = 1024;
+
 export const makeClientPeerConfig = async (
     relay: RelayOptions,
     config: ClientConfig,
@@ -15,13 +19,17 @@ export const makeClientPeerConfig = async (
 
     return {
         peerConfig: {
-            debug: config?.debug,
-            defaultTtlMs: config?.defaultTtlMs,
+            debug: {
+                printParticleId: config?.debug?.printParticleId || false,
+            },
+            defaultTtlMs: config?.defaultTtlMs || DEFAULT_TTL_MS,
         },
         relayConfig: {
             peerId: keyPair.getLibp2pPeerId(),
             relayAddress: relayAddress,
             dialTimeoutMs: config?.connectionOptions?.dialTimeoutMs,
+            maxInboundStreams: config?.connectionOptions?.maxInboundStreams || MAX_OUTBOUND_STREAMS,
+            maxOutboundStreams: config?.connectionOptions?.maxOutboundStreams || MAX_INBOUND_STREAMS,
         },
         keyPair: keyPair,
     };

@@ -10,7 +10,7 @@ import { Particle } from '../particle/Particle.js';
 
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
-import { FluencePeer } from '../jsPeer/FluencePeer.js';
+import { DEFAULT_CONFIG, FluencePeer } from '../jsPeer/FluencePeer.js';
 import { IConnection } from '../connection/interfaces.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
 
@@ -180,7 +180,7 @@ class EphemeralPeer extends FluencePeer {
 
     constructor(keyPair: KeyPair, marine: IMarineHost, avm: IAvmRunner) {
         const conn = new EphemeralConnection(keyPair.getPeerId());
-        super({}, keyPair, marine, avm, conn);
+        super(DEFAULT_CONFIG, keyPair, marine, avm, conn);
 
         this.ephemeralConnection = conn;
     }

@@ -65,13 +65,13 @@ export interface RelayConnectionConfig {
      * The maximum number of inbound streams for the libp2p node.
      * Default: 1024
      */
-    maxInboundStreams?: number;
+    maxInboundStreams: number;
 
     /**
      * The maximum number of outbound streams for the libp2p node.
      * Default: 1024
      */
-    maxOutboundStreams?: number;
+    maxOutboundStreams: number;
 }
 
 /**
@@ -80,18 +80,10 @@ export interface RelayConnectionConfig {
 export class RelayConnection implements IStartable, IConnection {
     private relayAddress: Multiaddr;
     private lib2p2Peer: Libp2p | null = null;
-    private handleOptions: {
-        maxInboundStreams: number;
-        maxOutboundStreams: number;
-    };
 
-    constructor(private options: RelayConnectionConfig) {
-        this.relayAddress = multiaddr(this.options.relayAddress);
+    constructor(private config: RelayConnectionConfig) {
+        this.relayAddress = multiaddr(this.config.relayAddress);
         throwIfHasNoPeerId(this.relayAddress);
-        this.handleOptions = {
-            maxInboundStreams: this.options.maxInboundStreams ?? 1024,
-            maxOutboundStreams: this.options.maxOutboundStreams ?? 1024,
-        };
     }
 
     getRelayPeerId(): string {
@@ -112,7 +104,7 @@ export class RelayConnection implements IStartable, IConnection {
         }
 
         const lib2p2Peer = await createLibp2p({
-            peerId: this.options.peerId,
+            peerId: this.config.peerId,
             transports: [
                 webSockets({
                     filter: all,
@@ -120,6 +112,9 @@ export class RelayConnection implements IStartable, IConnection {
             ],
             streamMuxers: [mplex()],
             connectionEncryption: [noise()],
+            connectionManager: {
+                dialTimeout: this.config.dialTimeoutMs,
+            },
         });
 
         this.lib2p2Peer = lib2p2Peer;
@@ -200,7 +195,10 @@ export class RelayConnection implements IStartable, IConnection {
                     },
                 );
             },
-            this.handleOptions,
+            {
+                maxInboundStreams: this.config.maxInboundStreams,
+                maxOutboundStreams: this.config.maxOutboundStreams,
+            },
         );
 
         log.debug("dialing to the node with client's address: %s", this.lib2p2Peer.peerId.toString());

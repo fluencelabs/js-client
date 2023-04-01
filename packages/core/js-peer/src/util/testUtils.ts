@@ -1,7 +1,7 @@
 import * as api from '@fluencelabs/aqua-api/aqua-api.js';
 
 import { promises as fs } from 'fs';
-import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
+import { DEFAULT_CONFIG, FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
 import { Particle } from '../particle/Particle.js';
 import { ClientConfig, IFluenceClient, RelayOptions, ServiceDef } from '@fluencelabs/interfaces';
 import { callAquaFunction } from '../compilerSupport/callFunction.js';
@@ -79,13 +79,12 @@ class NoopConnection implements IConnection {
 
 export class TestPeer extends FluencePeer {
     constructor(keyPair: KeyPair, connection: IConnection) {
-        const config = {};
         const workerLoader = new WorkerLoader();
         const controlModuleLoader = new WasmLoaderFromNpm('@fluencelabs/marine-js', 'marine-js.wasm');
         const avmModuleLoader = new WasmLoaderFromNpm('@fluencelabs/avm', 'avm.wasm');
         const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
         const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
-        super(config, keyPair, marine, avm, connection);
+        super(DEFAULT_CONFIG, keyPair, marine, avm, connection);
     }
 }
 

@@ -52,26 +52,31 @@ import { JSONValue } from '../util/commonTypes.js';
 
 const log = logger('particle');
 
-const DEFAULT_TTL = 7000;
-
 export type PeerConfig = {
     /**
      * Sets the default TTL for all particles originating from the peer with no TTL specified.
      * If the originating particle's TTL is defined then that value will be used
      * If the option is not set default TTL will be 7000
      */
-    defaultTtlMs?: number;
+    defaultTtlMs: number;
 
     /**
      * Enables\disabled various debugging features
      */
-    debug?: {
+    debug: {
         /**
          * If set to true, newly initiated particle ids will be printed to console.
          * Useful to see what particle id is responsible for aqua function
          */
-        printParticleId?: boolean;
+        printParticleId: boolean;
     };
+};
+
+export const DEFAULT_CONFIG: PeerConfig = {
+    debug: {
+        printParticleId: false,
+    },
+    defaultTtlMs: 7000,
 };
 
 /**
@@ -86,7 +91,7 @@ export abstract class FluencePeer {
         protected readonly avmRunner: IAvmRunner,
         protected readonly connection: IConnection,
     ) {
-        this.defaultTTL = this.config?.defaultTtlMs ?? DEFAULT_TTL;
+        this._initServices();
     }
 
     /**
@@ -97,36 +102,13 @@ export abstract class FluencePeer {
      */
     __isFluenceAwesome = true;
 
-    public readonly defaultTTL: number;
-
     async start(): Promise<void> {
-        const peerId = this.keyPair.getPeerId();
-
         if (this.config?.debug?.printParticleId) {
             this.printParticleId = true;
         }
 
         await this.marine.start();
         await this.avmRunner.start();
-
-        registerDefaultServices(this);
-
-        this._classServices = {
-            sig: new Sig(this.keyPair),
-            srv: new Srv(this),
-        };
-        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
-        registerSig(this, 'sig', this._classServices.sig);
-        registerSig(this, peerId, this._classServices.sig);
-
-        registerSrv(this, 'single_module_srv', this._classServices.srv);
-        registerNodeUtils(this, 'node_utils', new NodeUtils(this));
-
-        this.particleSourceSubscription = this.connection.particleSource.subscribe({
-            next: (p) => {
-                this._incomingParticles.next({ particle: p, callResults: [], onStageChange: () => {} });
-            },
-        });
 
         this._startParticleProcessing();
         this.isInitialized = true;
@@ -141,7 +123,6 @@ export abstract class FluencePeer {
         this._stopParticleProcessing();
         await this.marine.stop();
         await this.avmRunner.stop();
-        this._classServices = undefined;
 
         this._particleSpecificHandlers.clear();
         this._commonHandlers.clear();
@@ -178,16 +159,6 @@ export abstract class FluencePeer {
         this._marineServices.delete(serviceId);
     }
 
-    /**
-     * Creates a new particle originating from the local peer
-     * @param script - particle's air script
-     * @param ttl  - particle's time to live
-     * @returns new particle
-     */
-    createNewParticle(script: string, ttl: number = this.defaultTTL): Particle {
-        return Particle.createNew(script, this.keyPair.getPeerId(), ttl);
-    }
-
     // internal api
 
     /**
@@ -195,7 +166,7 @@ export abstract class FluencePeer {
      */
     get internals() {
         return {
-            getServices: () => this._classServices!,
+            getServices: () => this._classServices,
 
             getRelayPeerId: () => {
                 if (this.connection.supportsRelay()) {
@@ -232,7 +203,7 @@ export abstract class FluencePeer {
                 }
             },
 
-            createNewParticle: (script: string, ttl: number = this.defaultTTL): IParticle => {
+            createNewParticle: (script: string, ttl: number = this.config.defaultTtlMs): IParticle => {
                 return Particle.createNew(script, this.keyPair.getPeerId(), ttl);
             },
 
@@ -303,7 +274,8 @@ export abstract class FluencePeer {
     private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
     private _commonHandlers = new Map<string, GenericCallServiceHandler>();
 
-    private _classServices?: {
+    // @ts-expect-error - initialized in constructor through `_initServices` call
+    private _classServices: {
         sig: Sig;
         srv: Srv;
     };
@@ -320,7 +292,31 @@ export abstract class FluencePeer {
     private particleSourceSubscription?: Unsubscribable;
     private particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
+    private _initServices() {
+        this._classServices = {
+            sig: new Sig(this.keyPair),
+            srv: new Srv(this),
+        };
+
+        const peerId = this.keyPair.getPeerId();
+
+        registerDefaultServices(this);
+
+        this._classServices.sig.securityGuard = defaultSigGuard(peerId);
+        registerSig(this, 'sig', this._classServices.sig);
+        registerSig(this, peerId, this._classServices.sig);
+
+        registerSrv(this, 'single_module_srv', this._classServices.srv);
+        registerNodeUtils(this, 'node_utils', new NodeUtils(this));
+    }
+
     private _startParticleProcessing() {
+        this.particleSourceSubscription = this.connection.particleSource.subscribe({
+            next: (p) => {
+                this._incomingParticles.next({ particle: p, callResults: [], onStageChange: () => {} });
+            },
+        });
+
         this._incomingParticles
             .pipe(
                 tap((item) => {
