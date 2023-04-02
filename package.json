@@ -8,9 +8,6 @@
         "node": ">=10",
         "pnpm": ">=3"
     },
-    "scripts": {
-        "simulate-cdn": "http-server -p 8766 ./packages/client/js-client.web.standalone/dist"
-    },
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "devDependencies": {

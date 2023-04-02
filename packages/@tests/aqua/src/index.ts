@@ -79,8 +79,6 @@ export const runTest = async (): Promise<TestResult> => {
             // marine,
         };
         return { type: 'success', data: JSON.stringify(returnVal) };
-    } catch (err: any) {
-        return { type: 'failure', error: err.toString() };
     } finally {
         console.log('disconnecting from Fluence Network...');
         await Fluence.disconnect();
