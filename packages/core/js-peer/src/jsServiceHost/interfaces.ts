@@ -90,8 +90,8 @@ export interface CallServiceData {
     /**
      * Function name as specified in `call` air instruction
      */
-
     fnName: string;
+
     /**
      * Arguments as specified in `call` air instruction
      */

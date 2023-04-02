@@ -84,7 +84,10 @@ export const Fluence = {
      */
     getClient: async (): Promise<IFluenceClient> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultClient!;
+        if (!fluence.defaultClient) {
+            throw new Error('Fluence client is not initialized. Call Fluence.connect() first');
+        }
+        return fluence.defaultClient;
     },
 };
 

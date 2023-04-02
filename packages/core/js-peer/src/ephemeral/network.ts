@@ -259,6 +259,9 @@ export class EphemeralNetwork {
         log.trace('ephemeral network shut down');
     }
 
+    /**
+     * Gets a relay connection to the specified peer.
+     */
     getRelayConnection(peerId: PeerIdB58, relayPeerId: PeerIdB58): IConnection {
         const relay = this.peers.get(relayPeerId);
         if (relay === undefined) {

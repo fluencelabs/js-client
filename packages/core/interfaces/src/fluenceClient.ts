@@ -31,6 +31,9 @@ export interface ClientConfig {
      */
     keyPair?: KeyPairOptions;
 
+    /**
+     * Options to configure the connection to the Fluence network
+     */
     connectionOptions?: {
         /**
          * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
@@ -76,7 +79,14 @@ export interface ClientConfig {
     };
 }
 
+/**
+ * Fluence JS Client connection states as string literals
+ */
 export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
+
+/**
+ * Fluence JS Client connection states
+ */
 export type ConnectionState = (typeof ConnectionStates)[number];
 
 export interface IFluenceInternalApi {
@@ -86,6 +96,9 @@ export interface IFluenceInternalApi {
     internals: any;
 }
 
+/**
+ * Public API of Fluence JS Client
+ */
 export interface IFluenceClient extends IFluenceInternalApi {
     /**
      * Connect to the Fluence network
@@ -118,6 +131,9 @@ export interface IFluenceClient extends IFluenceInternalApi {
     getRelayPeerId(): string;
 }
 
+/**
+ * For internal use. Checks if the object is a Fluence Peer
+ */
 export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
     if (isFluencePeer(fluencePeerCandidate)) {
         return fluencePeerCandidate;
@@ -126,6 +142,9 @@ export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => 
     throw new Error(`Argument ${fluencePeerCandidate} is not a Fluence Peer`);
 };
 
+/**
+ * For internal use. Checks if the object is a Fluence Peer
+ */
 export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluenceClient => {
     if (fluencePeerCandidate && (fluencePeerCandidate as any).__isFluenceAwesome) {
         return true;

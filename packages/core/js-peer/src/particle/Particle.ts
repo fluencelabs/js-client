@@ -98,21 +98,30 @@ export const serializeToString = (particle: IParticle): string => {
     });
 };
 
+/**
+ * When particle is executed, it goes through different stages. The type describes all possible stages and their parameters
+ */
 export type ParticleExecutionStage =
     | { stage: 'received' }
     | { stage: 'interpreted' }
     | { stage: 'interpreterError'; errorMessage: string }
     | { stage: 'localWorkDone' }
     | { stage: 'sent' }
-    | { stage: 'sendingError' }
+    | { stage: 'sendingError'; errorMessage: string }
     | { stage: 'expired' };
 
+/**
+ * Particle queue item is a wrapper around particle, which contains additional information about particle execution
+ */
 export interface ParticleQueueItem {
     particle: IParticle;
     callResults: CallResultsArray;
     onStageChange: (state: ParticleExecutionStage) => void;
 }
 
+/**
+ * Helper function to handle particle at expired stage
+ */
 export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage) => {
     if (stage.stage === 'expired') {
         fn();

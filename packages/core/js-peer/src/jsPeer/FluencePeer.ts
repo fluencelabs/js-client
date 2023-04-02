@@ -36,7 +36,7 @@ import { NodeUtils, Srv } from '../services/SingleModuleSrv.js';
 import { registerNodeUtils } from '../services/_aqua/node-utils.js';
 
 import { logger } from '../util/logger.js';
-import { getParticleContext, ServiceError } from '../jsServiceHost/serviceUtils.js';
+import { getParticleContext, registerDefaultServices, ServiceError } from '../jsServiceHost/serviceUtils.js';
 import { IParticle } from '../particle/interfaces.js';
 import { IConnection } from '../connection/interfaces.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
@@ -342,7 +342,7 @@ export abstract class FluencePeer {
                 })
                 .catch((e: any) => {
                     log_particle.error('id %s. send failed %j', item.particle.id, e);
-                    item.onStageChange({ stage: 'sendingError' });
+                    item.onStageChange({ stage: 'sendingError', errorMessage: e.toString() });
                 });
         });
     }
@@ -546,14 +546,6 @@ export abstract class FluencePeer {
         });
         this._particleQueues.clear();
     }
-}
-
-function registerDefaultServices(peer: FluencePeer) {
-    Object.entries(builtInServices).forEach(([serviceId, service]) => {
-        Object.entries(service).forEach(([fnName, fn]) => {
-            peer.internals.regHandler.common(serviceId, fnName, fn);
-        });
-    });
 }
 
 function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) => void) {

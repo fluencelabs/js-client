@@ -75,5 +75,5 @@ describe('Ephemeral networks tests', () => {
 
         // assert
         await expect(promise).resolves.toBe('success');
-    }, 20000);
+    });
 });

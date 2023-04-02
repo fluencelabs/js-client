@@ -4,13 +4,28 @@ import { Buffer } from 'buffer';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
 
+/**
+ * Contract for marine host implementations. Marine host is responsible for creating calling and removing marine services
+ */
 export interface IMarineHost extends IStartable {
+    /**
+     * Creates marine service from the given module and service id
+     */
     createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void>;
 
+    /**
+     * Removes marine service with the given service id
+     */
     removeService(serviceId: string): void;
 
+    /**
+     * Returns true if any service with the specified service id is registered
+     */
     containsService(serviceId: string): boolean;
 
+    /**
+     * Calls the specified function of the specified service with the given arguments
+     */
     callService(
         serviceId: string,
         functionName: string,
@@ -19,7 +34,13 @@ export interface IMarineHost extends IStartable {
     ): Promise<unknown>;
 }
 
+/**
+ * Interface for different implementations of AVM runner
+ */
 export interface IAvmRunner extends IStartable {
+    /**
+     * Run AVM interpreter with the specified parameters
+     */
     run(
         runParams: RunParameters,
         air: string,
@@ -29,14 +50,26 @@ export interface IAvmRunner extends IStartable {
     ): Promise<InterpreterResult | Error>;
 }
 
+/**
+ * Interface for something which can hold a value
+ */
 export interface IValueLoader<T> {
     getValue(): T;
 }
 
+/**
+ * Interface for something which can load wasm files
+ */
 export interface IWasmLoader extends IValueLoader<SharedArrayBuffer | Buffer>, IStartable {}
 
+/**
+ * Interface for something which can thread.js based worker
+ */
 export interface IWorkerLoader extends IValueLoader<WorkerImplementation>, IStartable {}
 
+/**
+ * Lazy loader for some value. Value is loaded only when `start` method is called
+ */
 export class LazyLoader<T> implements IStartable, IValueLoader<T> {
     private value: T | null = null;
 

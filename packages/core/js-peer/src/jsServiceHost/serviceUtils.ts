@@ -1,4 +1,6 @@
+import { FluencePeer } from '../jsPeer/FluencePeer.js';
 import { IParticle } from '../particle/interfaces.js';
+import { builtInServices } from '../services/builtins.js';
 import {
     CallServiceData,
     CallServiceResult,
@@ -33,3 +35,11 @@ export const getParticleContext = (particle: IParticle): ParticleContext => {
         signature: particle.signature,
     };
 };
+
+export function registerDefaultServices(peer: FluencePeer) {
+    Object.entries(builtInServices).forEach(([serviceId, service]) => {
+        Object.entries(service).forEach(([fnName, fn]) => {
+            peer.internals.regHandler.common(serviceId, fnName, fn);
+        });
+    });
+}

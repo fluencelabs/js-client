@@ -170,8 +170,14 @@ describe('FluenceClient usage test suite', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, doNothing);
+                peer.internals.initiateParticle(particle, (stage) => {
+                    if (stage.stage === 'sendingError') {
+                        reject(stage.errorMessage);
+                    }
+                });
             });
+
+            await promise;
 
             await expect(promise).rejects.toMatch(
                 'Particle is expected to be sent to only the single peer (relay which client is connected to)',

@@ -8,6 +8,9 @@ import { MarineBackgroundRunner } from '../marine/worker/index.js';
 import { EphemeralNetwork } from './network.js';
 import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
 
+/**
+ * Ephemeral network client is a FluencePeer that connects to a relay peer in an ephemeral network.
+ */
 export class EphemeralNetworkClient extends FluencePeer {
     constructor(config: PeerConfig, keyPair: KeyPair, network: EphemeralNetwork, relay: PeerIdB58) {
         const workerLoader = new WorkerLoader();

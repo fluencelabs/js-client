@@ -97,7 +97,6 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
         return this.stop();
     }
 
-    // async connect(): Promise<void> {
     async start(): Promise<void> {
         log.trace('connecting to Fluence network');
         this.changeConnectionState('connecting');
@@ -108,7 +107,6 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
         log.trace('connected');
     }
 
-    // async disconnect(): Promise<void> {
     async stop(): Promise<void> {
         log.trace('disconnecting from Fluence network');
         this.changeConnectionState('disconnecting');
