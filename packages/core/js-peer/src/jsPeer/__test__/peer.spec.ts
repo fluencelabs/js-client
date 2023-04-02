@@ -63,9 +63,9 @@ describe('FluencePeer usage test suite', () => {
 
             await expect(res).rejects.toMatchObject({
                 message: expect.stringContaining(
-                    `No handler has been registered for serviceId='incorrect' fnName='incorrect' args='[]'\"'`,
+                    `"No service found for service call: serviceId='incorrect', fnName='incorrect' args='[]'"`,
                 ),
-                // instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
+                instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
             });
         });
     });

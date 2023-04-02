@@ -12,6 +12,7 @@ import { WorkerLoader } from '../marine/worker-script/workerLoader.js';
 import { KeyPair } from '../keypair/index.js';
 import { Subject, Subscribable } from 'rxjs';
 import { WrapFnIntoServiceCall } from '../jsServiceHost/serviceUtils.js';
+import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
 import { ClientPeer, makeClientPeerConfig } from '../clientPeer/ClientPeer.js';
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 import { IConnection } from '../connection/interfaces.js';
@@ -83,8 +84,9 @@ export class TestPeer extends FluencePeer {
         const controlModuleLoader = new WasmLoaderFromNpm('@fluencelabs/marine-js', 'marine-js.wasm');
         const avmModuleLoader = new WasmLoaderFromNpm('@fluencelabs/avm', 'avm.wasm');
         const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
+        const jsHost = new JsServiceHost();
         const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
-        super(DEFAULT_CONFIG, keyPair, marine, avm, connection);
+        super(DEFAULT_CONFIG, keyPair, marine, jsHost, avm, connection);
     }
 }
 

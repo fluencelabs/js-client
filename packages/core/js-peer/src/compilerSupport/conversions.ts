@@ -1,7 +1,7 @@
 import { jsonify } from '../util/utils.js';
 import { match } from 'ts-pattern';
 import type { ArrowType, ArrowWithoutCallbacks, NonArrowType } from '@fluencelabs/interfaces';
-import { CallServiceData } from '../jsServiceHost/interface.js';
+import { CallServiceData } from '../jsServiceHost/interfaces.js';
 
 /**
  * Convert value from its representation in aqua language to representation in typescript

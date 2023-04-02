@@ -5,7 +5,7 @@ import {
     CallServiceResultType,
     ParticleContext,
     ResultCodes,
-} from './interface.js';
+} from './interfaces.js';
 
 export const doNothing = (..._args: Array<unknown>) => undefined;
 

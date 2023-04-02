@@ -48,7 +48,7 @@ describe('Srv service test suite', () => {
             const res = await aqua.service_removed(peer, { file_path: wasm });
 
             // assert
-            expect(res).toMatch('No handler has been registered for serviceId');
+            expect(res).toMatch('No service found for service call');
         });
     });
 

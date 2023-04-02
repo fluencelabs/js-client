@@ -2,6 +2,47 @@ import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import type { SecurityTetraplet } from '@fluencelabs/avm';
 import { JSONValue } from '../util/commonTypes.js';
 
+export interface IJsServiceHost {
+    /**
+     * Returns true if any handler for the specified serviceId is registered
+     */
+    containsService(serviceId: string): boolean;
+
+    /**
+     * Find call service handler for specified particle
+     * @param serviceId Service ID as specified in `call` air instruction
+     * @param fnName Function name as specified in `call` air instruction
+     * @param particleId Particle ID
+     */
+    getHandler(serviceId: string, fnName: string, particleId: string): GenericCallServiceHandler | null;
+
+    /**
+     * Execute service call for specified call service data
+     */
+    callService(req: CallServiceData): Promise<CallServiceResult | null>;
+
+    /**
+     * Register handler for all particles
+     */
+    registerGlobalHandler(serviceId: string, fnName: string, handler: GenericCallServiceHandler): void;
+
+    /**
+     * Register handler which will be called only for particle with the specific id
+     */
+    registerParticleScopeHandler(
+        particleId: string,
+        serviceId: string,
+        fnName: string,
+        handler: GenericCallServiceHandler,
+    ): void;
+
+    /**
+     * Removes all handlers associated with the specified particle scope
+     * @param particleId Particle ID to remove handlers for
+     */
+    removeParticleScopeHandlers(particleId: string): void;
+}
+
 export enum ResultCodes {
     success = 0,
     error = 1,
@@ -49,8 +90,8 @@ export interface CallServiceData {
     /**
      * Function name as specified in `call` air instruction
      */
-    fnName: string;
 
+    fnName: string;
     /**
      * Arguments as specified in `call` air instruction
      */

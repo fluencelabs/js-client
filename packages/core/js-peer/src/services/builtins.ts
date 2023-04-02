@@ -21,7 +21,7 @@ import { CallServiceResult } from '@fluencelabs/avm';
 
 import { isString, jsonify } from '../util/utils.js';
 import { Buffer } from 'buffer';
-import { GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interface.js';
+import { GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
 
 //@ts-ignore
 const { encode, decode } = bs58.default;

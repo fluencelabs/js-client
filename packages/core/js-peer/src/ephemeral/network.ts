@@ -13,6 +13,7 @@ import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { DEFAULT_CONFIG, FluencePeer } from '../jsPeer/FluencePeer.js';
 import { IConnection } from '../connection/interfaces.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
+import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
 
 const log = logger('ephemeral');
 
@@ -180,7 +181,7 @@ class EphemeralPeer extends FluencePeer {
 
     constructor(keyPair: KeyPair, marine: IMarineHost, avm: IAvmRunner) {
         const conn = new EphemeralConnection(keyPair.getPeerId());
-        super(DEFAULT_CONFIG, keyPair, marine, avm, conn);
+        super(DEFAULT_CONFIG, keyPair, marine, new JsServiceHost(), avm, conn);
 
         this.ephemeralConnection = conn;
     }

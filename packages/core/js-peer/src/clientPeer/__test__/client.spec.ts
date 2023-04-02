@@ -4,7 +4,7 @@ import { doNothing } from '../../jsServiceHost/serviceUtils.js';
 import { registerHandlersHelper, withClient } from '../../util/testUtils.js';
 import { checkConnection } from '../checkConnection.js';
 import { nodes, RELAY } from './connection.js';
-import { CallServiceData } from '../../jsServiceHost/interface.js';
+import { CallServiceData } from '../../jsServiceHost/interfaces.js';
 
 describe('FluenceClient usage test suite', () => {
     it('should make a call through network', async () => {

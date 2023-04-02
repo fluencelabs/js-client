@@ -6,7 +6,7 @@ import { KeyPair } from '../../keypair/index.js';
 import { Sig, defaultSigGuard } from '../Sig.js';
 import { allowServiceFn } from '../securityGuard.js';
 import { builtInServices } from '../builtins.js';
-import { CallServiceData } from '../../jsServiceHost/interface.js';
+import { CallServiceData } from '../../jsServiceHost/interfaces.js';
 
 const a10b20 = `{
     "a": 10,

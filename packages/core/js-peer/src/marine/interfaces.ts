@@ -6,6 +6,10 @@ import type { WorkerImplementation } from 'threads/dist/types/master';
 export interface IMarineHost extends IStartable {
     createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void>;
 
+    removeService(serviceId: string): void;
+
+    containsService(serviceId: string): boolean;
+
     callService(
         serviceId: string,
         functionName: string,

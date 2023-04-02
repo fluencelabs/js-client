@@ -4,6 +4,7 @@ import { fromOpts, KeyPair } from '../keypair/index.js';
 import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
 import { relayOptionToMultiaddr } from '../util/libp2pUtils.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
+import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
 
 const DEFAULT_TTL_MS = 7000;
 const MAX_OUTBOUND_STREAMS = 1024;
@@ -48,7 +49,7 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     ) {
         const relayConnection = new RelayConnection(relayConfig);
 
-        super(peerConfig, keyPair, marine, avmRunner, relayConnection);
+        super(peerConfig, keyPair, marine, new JsServiceHost(), avmRunner, relayConnection);
         this.relayPeerId = relayConnection.getRelayPeerId();
         this.relayConnection = relayConnection;
     }

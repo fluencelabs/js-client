@@ -1,6 +1,6 @@
 import { it, describe, expect, beforeEach, afterEach } from 'vitest';
 import { DEFAULT_CONFIG, FluencePeer } from '../../jsPeer/FluencePeer.js';
-import { CallServiceData, ResultCodes } from '../../jsServiceHost/interface.js';
+import { CallServiceData, ResultCodes } from '../../jsServiceHost/interfaces.js';
 import { KeyPair } from '../../keypair/index.js';
 import { EphemeralNetworkClient } from '../client.js';
 

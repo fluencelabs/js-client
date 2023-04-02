@@ -12,7 +12,7 @@ import {
     NonArrowType,
     IFluenceInternalApi,
 } from '@fluencelabs/interfaces';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interface.js';
+import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
 
 export interface ServiceDescription {
     serviceId: string;

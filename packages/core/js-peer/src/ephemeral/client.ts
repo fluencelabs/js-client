@@ -6,6 +6,7 @@ import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
 import { WorkerLoader } from '../marine/worker-script/workerLoader.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
 import { EphemeralNetwork } from './network.js';
+import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
 
 export class EphemeralNetworkClient extends FluencePeer {
     constructor(config: PeerConfig, keyPair: KeyPair, network: EphemeralNetwork, relay: PeerIdB58) {
@@ -15,6 +16,6 @@ export class EphemeralNetworkClient extends FluencePeer {
         const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
         const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
         const conn = network.getRelayConnection(keyPair.getPeerId(), relay);
-        super(config, keyPair, marine, avm, conn);
+        super(config, keyPair, marine, new JsServiceHost(), avm, conn);
     }
 }

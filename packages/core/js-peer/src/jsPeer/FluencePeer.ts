@@ -46,8 +46,9 @@ import {
     CallServiceData,
     CallServiceResult,
     GenericCallServiceHandler,
+    IJsServiceHost,
     ResultCodes,
-} from '../jsServiceHost/interface.js';
+} from '../jsServiceHost/interfaces.js';
 import { JSONValue } from '../util/commonTypes.js';
 
 const log = logger('particle');
@@ -87,7 +88,8 @@ export abstract class FluencePeer {
     constructor(
         protected readonly config: PeerConfig,
         public readonly keyPair: KeyPair,
-        protected readonly marine: IMarineHost,
+        protected readonly marineHost: IMarineHost,
+        protected readonly jsServiceHost: IJsServiceHost,
         protected readonly avmRunner: IAvmRunner,
         protected readonly connection: IConnection,
     ) {
@@ -107,7 +109,7 @@ export abstract class FluencePeer {
             this.printParticleId = true;
         }
 
-        await this.marine.start();
+        await this.marineHost.start();
         await this.avmRunner.start();
 
         this._startParticleProcessing();
@@ -119,14 +121,11 @@ export abstract class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
-        this.particleSourceSubscription?.unsubscribe();
+        this._particleSourceSubscription?.unsubscribe();
         this._stopParticleProcessing();
-        await this.marine.stop();
+        await this.marineHost.stop();
         await this.avmRunner.stop();
 
-        this._particleSpecificHandlers.clear();
-        this._commonHandlers.clear();
-        this._marineServices.clear();
         this.isInitialized = false;
     }
 
@@ -140,15 +139,15 @@ export abstract class FluencePeer {
      * @param serviceId - the service id by which the service can be accessed in aqua
      */
     async registerMarineService(wasm: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
-        if (!this.marine) {
+        if (!this.marineHost) {
             throw new Error("Can't register marine service: peer is not initialized");
         }
-        if (this._containsService(serviceId)) {
+
+        if (this.jsServiceHost.containsService(serviceId)) {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
-        await this.marine.createService(wasm, serviceId);
-        this._marineServices.add(serviceId);
+        await this.marineHost.createService(wasm, serviceId);
     }
 
     /**
@@ -156,7 +155,7 @@ export abstract class FluencePeer {
      * @param serviceId - the service id to remove
      */
     removeMarineService(serviceId: string): void {
-        this._marineServices.delete(serviceId);
+        this.marineHost.removeService(serviceId);
     }
 
     // internal api
@@ -181,7 +180,7 @@ export abstract class FluencePeer {
                     new Error("Can't use avm: peer is not initialized");
                 }
 
-                const res = await this.marine.callService('avm', 'ast', [air], undefined);
+                const res = await this.marineHost.callService('avm', 'ast', [air], undefined);
                 if (!isString(res)) {
                     throw new Error(`Call to avm:ast expected to return string. Actual return: ${res}`);
                 }
@@ -234,31 +233,11 @@ export abstract class FluencePeer {
                 /**
                  * Register handler for all particles
                  */
-                common: (
-                    // force new line
-                    serviceId: string,
-                    fnName: string,
-                    handler: GenericCallServiceHandler,
-                ) => {
-                    this._commonHandlers.set(serviceFnKey(serviceId, fnName), handler);
-                },
+                common: this.jsServiceHost.registerGlobalHandler.bind(this.jsServiceHost),
                 /**
                  * Register handler which will be called only for particle with the specific id
                  */
-                forParticle: (
-                    particleId: string,
-                    serviceId: string,
-                    fnName: string,
-                    handler: GenericCallServiceHandler,
-                ) => {
-                    let psh = this._particleSpecificHandlers.get(particleId);
-                    if (psh === undefined) {
-                        psh = new Map<string, GenericCallServiceHandler>();
-                        this._particleSpecificHandlers.set(particleId, psh);
-                    }
-
-                    psh.set(serviceFnKey(serviceId, fnName), handler);
-                },
+                forParticle: this.jsServiceHost.registerParticleScopeHandler.bind(this.jsServiceHost),
             },
         };
     }
@@ -267,12 +246,11 @@ export abstract class FluencePeer {
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
     private _outgoingParticles = new Subject<ParticleQueueItem & { nextPeerIds: PeerIdB58[] }>();
+    private _timeouts: Array<NodeJS.Timeout> = [];
+    private _particleSourceSubscription?: Unsubscribable;
+    private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
-    // Call service handler
-
-    private _marineServices = new Set<string>();
-    private _particleSpecificHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
-    private _commonHandlers = new Map<string, GenericCallServiceHandler>();
+    // Internal peer state
 
     // @ts-expect-error - initialized in constructor through `_initServices` call
     private _classServices: {
@@ -280,17 +258,8 @@ export abstract class FluencePeer {
         srv: Srv;
     };
 
-    private _containsService(serviceId: string): boolean {
-        return this._marineServices.has(serviceId) || this._commonHandlers.has(serviceId);
-    }
-
-    // Internal peer state
-
     private isInitialized = false;
     private printParticleId = false;
-    private timeouts: Array<NodeJS.Timeout> = [];
-    private particleSourceSubscription?: Unsubscribable;
-    private particleQueues = new Map<string, Subject<ParticleQueueItem>>();
 
     private _initServices() {
         this._classServices = {
@@ -311,7 +280,7 @@ export abstract class FluencePeer {
     }
 
     private _startParticleProcessing() {
-        this.particleSourceSubscription = this.connection.particleSource.subscribe({
+        this._particleSourceSubscription = this.connection.particleSource.subscribe({
             next: (p) => {
                 this._incomingParticles.next({ particle: p, callResults: [], onStageChange: () => {} });
             },
@@ -335,17 +304,17 @@ export abstract class FluencePeer {
             )
             .subscribe((item) => {
                 const p = item.particle;
-                let particlesQueue = this.particleQueues.get(p.id);
+                let particlesQueue = this._particleQueues.get(p.id);
 
                 if (!particlesQueue) {
                     particlesQueue = this._createParticlesProcessingQueue();
-                    this.particleQueues.set(p.id, particlesQueue);
+                    this._particleQueues.set(p.id, particlesQueue);
 
                     const timeout = setTimeout(() => {
                         this._expireParticle(item);
                     }, getActualTTL(p));
 
-                    this.timeouts.push(timeout);
+                    this._timeouts.push(timeout);
                 }
 
                 particlesQueue.next(item);
@@ -383,8 +352,8 @@ export abstract class FluencePeer {
             item.particle.ttl,
         );
 
-        this.particleQueues.delete(particleId);
-        this._particleSpecificHandlers.delete(particleId);
+        this._particleQueues.delete(particleId);
+        this.jsServiceHost.removeParticleScopeHandlers(particleId);
 
         item.onStageChange({ stage: 'expired' });
     }
@@ -398,7 +367,7 @@ export abstract class FluencePeer {
                 filterExpiredParticles(this._expireParticle.bind(this)),
 
                 concatMap(async (item) => {
-                    if (!this.isInitialized || this.marine === undefined) {
+                    if (!this.isInitialized || this.marineHost === undefined) {
                         // If `.stop()` was called return null to stop particle processing immediately
                         return null;
                     }
@@ -512,7 +481,7 @@ export abstract class FluencePeer {
 
                                 return {
                                     retCode: ResultCodes.error,
-                                    result: `Handler failed. fnName="${req.fnName}" serviceId="${
+                                    result: `Service call failed. fnName="${req.fnName}" serviceId="${
                                         req.serviceId
                                     }" error: ${err.toString()}`,
                                 };
@@ -543,8 +512,8 @@ export abstract class FluencePeer {
         const particleId = req.particleContext.particleId;
         log.trace('id %s. executing call service handler %j', particleId, req);
 
-        if (this.marine && this._marineServices.has(req.serviceId)) {
-            const result = await this.marine.callService(req.serviceId, req.fnName, req.args, undefined);
+        if (this.marineHost && this.marineHost.containsService(req.serviceId)) {
+            const result = await this.marineHost.callService(req.serviceId, req.fnName, req.args, undefined);
 
             return {
                 retCode: ResultCodes.success,
@@ -552,37 +521,15 @@ export abstract class FluencePeer {
             };
         }
 
-        const key = serviceFnKey(req.serviceId, req.fnName);
-        const psh = this._particleSpecificHandlers.get(particleId);
-        let handler: GenericCallServiceHandler | undefined;
+        let res = await this.jsServiceHost.callService(req);
 
-        // we should prioritize handler for this particle if there is one
-        // if particle-specific handlers exist for this particle try getting handler there
-        if (psh !== undefined) {
-            handler = psh.get(key);
-        }
-
-        // then try to find a common handler for all particles with this service-fn key
-        // if there is no particle-specific handler, get one from common map
-        if (handler === undefined) {
-            handler = this._commonHandlers.get(key);
-        }
-
-        // if no handler is found return useful error message to AVM
-        if (handler === undefined) {
-            return {
+        if (res === null) {
+            res = {
                 retCode: ResultCodes.error,
-                result: `No handler has been registered for serviceId='${req.serviceId}' fnName='${
+                result: `No service found for service call: serviceId='${req.serviceId}', fnName='${
                     req.fnName
                 }' args='${jsonify(req.args)}'`,
             };
-        }
-
-        // if we found a handler, execute it
-        const res = await handler(req);
-
-        if (res.result === undefined) {
-            res.result = null;
         }
 
         log.trace('id %s. executed call service handler, req: %j, res: %j ', particleId, req, res);
@@ -591,15 +538,11 @@ export abstract class FluencePeer {
 
     private _stopParticleProcessing() {
         // do not hang if the peer has been stopped while some of the timeouts are still being executed
-        this.timeouts.forEach((timeout) => {
+        this._timeouts.forEach((timeout) => {
             clearTimeout(timeout);
         });
-        this.particleQueues.clear();
+        this._particleQueues.clear();
     }
-}
-
-function serviceFnKey(serviceId: string, fnName: string) {
-    return `${serviceId}/${fnName}`;
 }
 
 function registerDefaultServices(peer: FluencePeer) {
