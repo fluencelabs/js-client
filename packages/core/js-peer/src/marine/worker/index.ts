@@ -21,6 +21,7 @@ import type { MarineBackgroundInterface } from '../worker-script/index.js';
 import { spawn, Thread } from 'threads';
 // @ts-ignore
 import type { ModuleThread } from 'threads';
+import { Buffer } from 'buffer';
 
 import { MarineLogger, marineLogger } from '../../util/logger.js';
 import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';

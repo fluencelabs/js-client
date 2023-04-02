@@ -5,6 +5,9 @@ import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
 import { relayOptionToMultiaddr } from '../util/libp2pUtils.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
 import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
+import { logger } from '../util/logger.js';
+
+const log = logger('client');
 
 const DEFAULT_TTL_MS = 7000;
 const MAX_OUTBOUND_STREAMS = 1024;
@@ -84,20 +87,34 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
      * Connect to the Fluence network
      */
     async connect(): Promise<void> {
+        return this.start();
+    }
+
+    // /**
+    //  * Disconnect from the Fluence network
+    //  */
+    async disconnect(): Promise<void> {
+        return this.stop();
+    }
+
+    // async connect(): Promise<void> {
+    async start(): Promise<void> {
+        log.trace('connecting to Fluence network');
         this.changeConnectionState('connecting');
         await super.start();
         await this.relayConnection.start();
-        // TODO: check connection here
+        // TODO: check connection (`checkConnection` function) here
         this.changeConnectionState('connected');
+        log.trace('connected');
     }
 
-    /**
-     * Disconnect from the Fluence network
-     */
-    async disconnect(): Promise<void> {
+    // async disconnect(): Promise<void> {
+    async stop(): Promise<void> {
+        log.trace('disconnecting from Fluence network');
         this.changeConnectionState('disconnecting');
         await this.relayConnection.stop();
-        await this.stop();
+        await super.stop();
         this.changeConnectionState('disconnected');
+        log.trace('disconnected');
     }
 }

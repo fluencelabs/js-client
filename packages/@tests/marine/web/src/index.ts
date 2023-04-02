@@ -1,8 +1,3 @@
-import { Buffer } from 'buffer';
-
-// @ts-ignore
-window.Buffer = Buffer;
-
 import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
 import { InlinedWorkerLoader, WasmWebLoader } from '@fluencelabs/marine.deps-loader.web';
 import { callAvm, JSONArray, JSONObject } from '@fluencelabs/avm';

@@ -58,7 +58,8 @@ export const Fluence = {
      */
     disconnect: async (): Promise<void> => {
         const fluence = await getFluenceInterface();
-        return fluence.defaultClient?.disconnect();
+        await fluence.defaultClient?.disconnect();
+        fluence.defaultClient = undefined;
     },
 
     /**

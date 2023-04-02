@@ -1,5 +1,6 @@
 import { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
 import { IStartable, JSONArray, JSONObject } from '../util/commonTypes.js';
+import { Buffer } from 'buffer';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
 

@@ -17,6 +17,7 @@
 import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
 import type { Env, MarineServiceConfig } from '@fluencelabs/marine-js/dist/config';
 import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
+import { Buffer } from 'buffer';
 // @ts-ignore
 import { Observable, Subject } from 'threads/observable';
 // @ts-ignore

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'buffer';
-
 import { KeyPair } from '../keypair/index.js';
 
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
@@ -51,7 +49,8 @@ import {
 } from '../jsServiceHost/interfaces.js';
 import { JSONValue } from '../util/commonTypes.js';
 
-const log = logger('particle');
+const log_particle = logger('particle');
+const log_peer = logger('peer');
 
 export type PeerConfig = {
     /**
@@ -105,6 +104,7 @@ export abstract class FluencePeer {
     __isFluenceAwesome = true;
 
     async start(): Promise<void> {
+        log_peer.trace('starting Fluence peer');
         if (this.config?.debug?.printParticleId) {
             this.printParticleId = true;
         }
@@ -114,6 +114,7 @@ export abstract class FluencePeer {
 
         this._startParticleProcessing();
         this.isInitialized = true;
+        log_peer.trace('started Fluence peer');
     }
 
     /**
@@ -121,12 +122,14 @@ export abstract class FluencePeer {
      * and disconnects from the Fluence network
      */
     async stop() {
+        log_peer.trace('stopping Fluence peer');
         this._particleSourceSubscription?.unsubscribe();
         this._stopParticleProcessing();
         await this.marineHost.stop();
         await this.avmRunner.stop();
 
         this.isInitialized = false;
+        log_peer.trace('stopped Fluence peer');
     }
 
     /**
@@ -289,16 +292,16 @@ export abstract class FluencePeer {
         this._incomingParticles
             .pipe(
                 tap((item) => {
-                    log.debug('id %s. received:', item.particle.id);
-                    log.trace('id %s. data: %j', item.particle.id, {
+                    log_particle.debug('id %s. received:', item.particle.id);
+                    log_particle.trace('id %s. data: %j', item.particle.id, {
                         initPeerId: item.particle.initPeerId,
                         timestamp: item.particle.timestamp,
                         tttl: item.particle.ttl,
                         signature: item.particle.signature,
                     });
 
-                    log.trace('id %s. script: %s', item.particle.id, item.particle.script);
-                    log.trace('id %s. call results: %j', item.particle.id, item.callResults);
+                    log_particle.trace('id %s. script: %s', item.particle.id, item.particle.script);
+                    log_particle.trace('id %s. call results: %j', item.particle.id, item.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
             )
@@ -326,7 +329,7 @@ export abstract class FluencePeer {
                 return;
             }
 
-            log.debug(
+            log_particle.debug(
                 'id %s. sending particle into network. Next peer ids: %s',
                 item.particle.id,
                 item.nextPeerIds.toString(),
@@ -338,7 +341,7 @@ export abstract class FluencePeer {
                     item.onStageChange({ stage: 'sent' });
                 })
                 .catch((e: any) => {
-                    log.error('id %s. send failed %j', item.particle.id, e);
+                    log_particle.error('id %s. send failed %j', item.particle.id, e);
                     item.onStageChange({ stage: 'sendingError' });
                 });
         });
@@ -346,7 +349,7 @@ export abstract class FluencePeer {
 
     private _expireParticle(item: ParticleQueueItem) {
         const particleId = item.particle.id;
-        log.debug(
+        log_particle.debug(
             'id %s. particle has expired after %d. Deleting particle-related queues and handlers',
             item.particle.id,
             item.particle.ttl,
@@ -377,8 +380,8 @@ export abstract class FluencePeer {
                     // MUST happen sequentially (in a critical section).
                     // Otherwise the race might occur corrupting the prevData
 
-                    log.debug('id %s. sending particle to interpreter', item.particle.id);
-                    log.trace('id %s. prevData: %a', item.particle.id, prevData);
+                    log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
+                    log_particle.trace('id %s. prevData: %a', item.particle.id, prevData);
                     const avmCallResult = await this.avmRunner.run(
                         {
                             initPeerId: item.particle.initPeerId,
@@ -416,24 +419,24 @@ export abstract class FluencePeer {
 
                 // Do not continue if there was an error in particle interpretation
                 if (item.result instanceof Error) {
-                    log.error('id %s. interpreter failed: %s', item.particle.id, item.result.message);
+                    log_particle.error('id %s. interpreter failed: %s', item.particle.id, item.result.message);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
                     return;
                 }
 
                 if (item.result.retCode !== 0) {
-                    log.error(
+                    log_particle.error(
                         'id %s. interpreter failed: retCode: %d, message: %s',
                         item.particle.id,
                         item.result.retCode,
                         item.result.errorMessage,
                     );
-                    log.trace('id %s. avm data: %a', item.particle.id, item.result.data);
+                    log_particle.trace('id %s. avm data: %a', item.particle.id, item.result.data);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
 
-                log.trace(
+                log_particle.trace(
                     'id %s. interpreter result: retCode: %d, avm data: %a',
                     item.particle.id,
                     item.result.retCode,
@@ -510,7 +513,7 @@ export abstract class FluencePeer {
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
         const particleId = req.particleContext.particleId;
-        log.trace('id %s. executing call service handler %j', particleId, req);
+        log_particle.trace('id %s. executing call service handler %j', particleId, req);
 
         if (this.marineHost && this.marineHost.containsService(req.serviceId)) {
             const result = await this.marineHost.callService(req.serviceId, req.fnName, req.args, undefined);
@@ -532,7 +535,7 @@ export abstract class FluencePeer {
             };
         }
 
-        log.trace('id %s. executed call service handler, req: %j, res: %j ', particleId, req, res);
+        log_particle.trace('id %s. executed call service handler, req: %j, res: %j ', particleId, req, res);
         return res;
     }
 

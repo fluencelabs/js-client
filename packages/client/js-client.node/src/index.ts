@@ -30,7 +30,9 @@ const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<
     const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
     const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
     const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
-    return new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
+    const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
+    await client.connect();
+    return client;
 };
 
 const publicFluenceInterface = {

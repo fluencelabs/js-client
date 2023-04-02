@@ -19,7 +19,6 @@ import { CallResultsArray } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
 import { Buffer } from 'buffer';
 import { IParticle } from './interfaces.js';
-import { ParticleContext } from '../jsServiceHost/interfaces.js';
 
 export class Particle implements IParticle {
     readonly signature: undefined;
