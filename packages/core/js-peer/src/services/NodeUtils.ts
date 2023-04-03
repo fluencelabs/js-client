@@ -1,11 +1,12 @@
 import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
 import { defaultGuard } from './SingleModuleSrv.js';
-import { NodeUtilsDef } from './_aqua/node-utils.js';
+import { NodeUtilsDef, registerNodeUtils } from './_aqua/node-utils.js';
 import { SecurityGuard } from './securityGuard.js';
 import { readFile } from 'fs/promises';
+import { FluencePeer } from '../jsPeer/FluencePeer.js';
 
 export class NodeUtils implements NodeUtilsDef {
-    constructor(private peer: IFluenceInternalApi) {
+    constructor(private peer: FluencePeer) {
         this.securityGuard_readFile = defaultGuard(this.peer);
     }
 
@@ -37,3 +38,8 @@ export class NodeUtils implements NodeUtilsDef {
         }
     }
 }
+
+// HACK:: security guard functions must be ported to user API
+export const doRegisterNodeUtils = (peer: any) => {
+    registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
+};

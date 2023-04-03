@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { SrvDef } from './_aqua/single-module-srv.js';
 import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
+import { CallParams } from '@fluencelabs/interfaces';
 import { Buffer } from 'buffer';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
 
-export const defaultGuard = (peer: IFluenceInternalApi) => {
-    return allowOnlyParticleOriginatedAt<any>(peer.internals.getPeerId());
+export const defaultGuard = (peer: FluencePeer) => {
+    return allowOnlyParticleOriginatedAt<any>(peer.keyPair.getPeerId());
 };
 
 export class Srv implements SrvDef {

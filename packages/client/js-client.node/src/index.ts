@@ -8,8 +8,7 @@ import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/js-peer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { WasmLoaderFromNpm } from '@fluencelabs/js-peer/dist/marine/deps-loader/node.js';
 import { WorkerLoader } from '@fluencelabs/js-peer/dist/marine/worker-script/workerLoader.js';
-import { registerNodeUtils } from '@fluencelabs/js-peer/dist/services/_aqua/node-utils.js';
-import { NodeUtils } from '@fluencelabs/js-peer/dist/services/NodeUtils.js';
+import { doRegisterNodeUtils } from '@fluencelabs/js-peer/dist/services/NodeUtils.js';
 
 throwIfNotSupported();
 
@@ -39,7 +38,7 @@ const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<
 };
 
 function registerNodeOnlyServices(client: IFluenceClient) {
-    registerNodeUtils(client, 'node_utils', new NodeUtils(client));
+    doRegisterNodeUtils(client);
 }
 
 const publicFluenceInterface = {
