@@ -34,7 +34,7 @@ export class MarineBackgroundRunner implements IMarineHost {
 
     constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader) {}
 
-    containsService(serviceId: string): boolean {
+    hasService(serviceId: string): boolean {
         return this.marineServices.has(serviceId);
     }
 

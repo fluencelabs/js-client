@@ -22,7 +22,7 @@ export class JsServiceHost implements IJsServiceHost {
     /**
      * Returns true if any handler for the specified serviceId is registered
      */
-    containsService(serviceId: string): boolean {
+    hasService(serviceId: string): boolean {
         return this.commonHandlers.has(serviceId) || this.particleScopeHandlers.has(serviceId);
     }
 

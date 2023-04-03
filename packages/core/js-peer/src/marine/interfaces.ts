@@ -36,7 +36,7 @@ export interface IMarineHost extends IStartable {
     /**
      * Returns true if any service with the specified service id is registered
      */
-    containsService(serviceId: string): boolean;
+    hasService(serviceId: string): boolean;
 
     /**
      * Calls the specified function of the specified service with the given arguments

@@ -144,7 +144,7 @@ export abstract class FluencePeer {
             throw new Error("Can't register marine service: peer is not initialized");
         }
 
-        if (this.jsServiceHost.containsService(serviceId)) {
+        if (this.jsServiceHost.hasService(serviceId)) {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
 
@@ -512,7 +512,7 @@ export abstract class FluencePeer {
         const particleId = req.particleContext.particleId;
         log_particle.trace('id %s. executing call service handler %j', particleId, req);
 
-        if (this.marineHost && this.marineHost.containsService(req.serviceId)) {
+        if (this.marineHost && this.marineHost.hasService(req.serviceId)) {
             const result = await this.marineHost.callService(req.serviceId, req.fnName, req.args, undefined);
 
             return {

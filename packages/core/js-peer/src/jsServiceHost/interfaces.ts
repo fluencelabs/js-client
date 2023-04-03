@@ -17,11 +17,15 @@ import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import type { SecurityTetraplet } from '@fluencelabs/avm';
 import { JSONValue } from '../util/commonTypes.js';
 
+/**
+ * JS Service host a low level interface for managing pure javascript services. 
+ * It operates on a notion of Call Service Handlers - functions which are called when a `call` air instruction is executed on the local peer.
+ */
 export interface IJsServiceHost {
     /**
      * Returns true if any handler for the specified serviceId is registered
      */
-    containsService(serviceId: string): boolean;
+    hasService(serviceId: string): boolean;
 
     /**
      * Find call service handler for specified particle
