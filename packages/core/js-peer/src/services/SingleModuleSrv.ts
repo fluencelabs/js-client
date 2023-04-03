@@ -31,10 +31,11 @@ export class Srv implements SrvDef {
         try {
             const newServiceId = uuidv4();
             const buffer = Buffer.from(wasm_b64_content, 'base64');
-            const sab = new SharedArrayBuffer(buffer.length);
-            const tmp = new Uint8Array(sab);
-            tmp.set(buffer, 0);
-            await this.peer.registerMarineService(sab, newServiceId);
+            // TODO:: figure out why SharedArrayBuffer is not working here
+            // const sab = new SharedArrayBuffer(buffer.length);
+            // const tmp = new Uint8Array(sab);
+            // tmp.set(buffer, 0);
+            await this.peer.registerMarineService(buffer, newServiceId);
             this.services.add(newServiceId);
 
             return {
