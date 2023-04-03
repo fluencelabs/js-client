@@ -60,7 +60,6 @@ export class Srv implements SrvDef {
                 error: null,
             };
         } catch (err: any) {
-            console.log(err);
             return {
                 success: true,
                 service_id: null,
