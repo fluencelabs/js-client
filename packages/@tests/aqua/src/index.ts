@@ -72,7 +72,6 @@ export const runTest = async (): Promise<TestResult> => {
         const hello = await helloTest();
         console.log('hello test finished, result: ', hello);
 
-        // TODO: some wired error shit about SharedArrayBuffer
         console.log('running marine test...');
         const marine = await marineTest(wasm);
         console.log('marine test finished, result: ', marine);
