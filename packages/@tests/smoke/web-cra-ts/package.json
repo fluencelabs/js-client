@@ -24,6 +24,7 @@
     },
     "scripts": {
         "test_commented_out": "node --loader ts-node/esm ./test/index.ts",
+        "simulate-cdn": "http-server -p 8766 ../../../client/js-client.web.standalone/dist",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "_test": "react-scripts test",

@@ -14,29 +14,40 @@
  * limitations under the License.
  */
 
-import type { JSONArray, JSONObject, LogLevel } from '@fluencelabs/marine-js/dist/types';
+import type { JSONArray, JSONObject } from '@fluencelabs/marine-js/dist/types';
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
-import type { IMarine, IWorkerLoader, IWasmLoader } from '../../interfaces/index.js';
 import type { MarineBackgroundInterface } from '../worker-script/index.js';
 // @ts-ignore
 import { spawn, Thread } from 'threads';
 // @ts-ignore
 import type { ModuleThread } from 'threads';
+import { Buffer } from 'buffer';
 
 import { MarineLogger, marineLogger } from '../../util/logger.js';
+import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';
 
-export class MarineBackgroundRunner implements IMarine {
+export class MarineBackgroundRunner implements IMarineHost {
+    private marineServices = new Set<string>();
     private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
     private loggers: Map<string, MarineLogger> = new Map();
 
     constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader) {}
 
+    hasService(serviceId: string): boolean {
+        return this.marineServices.has(serviceId);
+    }
+
+    removeService(serviceId: string): void {
+        this.marineServices.delete(serviceId);
+    }
+
     async start(): Promise<void> {
         if (this.workerThread) {
             return;
         }
 
+        this.marineServices = new Set();
         await this.workerLoader.start();
         await this.controlModuleLoader.start();
         const worker = this.workerLoader.getValue();
@@ -53,7 +64,7 @@ export class MarineBackgroundRunner implements IMarine {
         await this.workerThread.init(wasm);
     }
 
-    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
+    async createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
         if (!this.workerThread) {
             throw 'Worker is not initialized';
         }
@@ -62,7 +73,8 @@ export class MarineBackgroundRunner implements IMarine {
         // We enable all possible log levels passing the control for exact printouts to the logger
         const env = logLevelToEnv('trace');
         this.loggers.set(serviceId, marineLogger(serviceId));
-        return this.workerThread.createService(serviceModule, serviceId, undefined, env);
+        await this.workerThread.createService(serviceModule, serviceId, undefined, env);
+        this.marineServices.add(serviceId);
     }
 
     callService(
@@ -83,6 +95,7 @@ export class MarineBackgroundRunner implements IMarine {
             return;
         }
 
+        this.marineServices.clear();
         await this.workerThread.terminate();
         await Thread.terminate(this.workerThread);
     }

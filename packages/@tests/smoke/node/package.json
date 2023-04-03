@@ -11,8 +11,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "test": "node --loader ts-node/esm ./src/index.ts",
-        "test_logs": "DEBUG=fluence:particle:* node --loader ts-node/esm ./src/index.ts"
+        "test_commented_out": "node --loader ts-node/esm ./src/index.ts"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

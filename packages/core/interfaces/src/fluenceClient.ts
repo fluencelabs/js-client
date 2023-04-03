@@ -1,70 +1,36 @@
-import type { SecurityTetraplet } from '@fluencelabs/avm';
-import type { LogLevel } from '@fluencelabs/marine-js/dist/types';
-// import type { MultiaddrInput } from '@multiformats/multiaddr';
-import type { FnConfig, FunctionCallDef, ServiceDef } from './compilerSupport.js';
-
-/**
- * Peer ID's id as a base58 string (multihash/CIDv0).
+/*
+ * Copyright 2023 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-export type PeerIdB58 = string;
-
-/**
- * Additional information about a service call
- * @typeparam ArgName
- */
-export interface CallParams<ArgName extends string | null> {
-    /**
-     * The identifier of particle which triggered the call
-     */
-    particleId: string;
-
-    /**
-     * The peer id which created the particle
-     */
-    initPeerId: PeerIdB58;
-
-    /**
-     * Particle's timestamp when it was created
-     */
-    timestamp: number;
-
-    /**
-     * Time to live in milliseconds. The time after the particle should be expired
-     */
-    ttl: number;
-
-    /**
-     * Particle's signature
-     */
-    signature?: string;
-
-    /**
-     * Security tetraplets
-     */
-    tetraplets: ArgName extends string ? Record<ArgName, SecurityTetraplet[]> : Record<string, never>;
-}
-
-/**
- * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
- */
-type Node = {
-    peerId: PeerIdB58;
-    multiaddr: string;
-};
-
-// TODO: either drop support for this exact type or get it back
+import type { Node } from './commonTypes.js';
 
 /**
  * A node in Fluence network a client can connect to.
  * Can be in the form of:
  * - string: multiaddr in string format
- * - Multiaddr: multiaddr object, @see https://github.com/multiformats/js-multiaddr
  * - Node: node structure, @see Node
  */
-export type RelayOptions = string | /* MultiaddrInput | */ Node;
+export type RelayOptions = string | Node;
 
+/**
+ * Fluence Peer's key pair types
+ */
 export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
 
+/**
+ * Options to specify key pair used in Fluence Peer
+ */
 export type KeyPairOptions = {
     type: 'Ed25519';
     source: 'random' | Uint8Array;
@@ -73,13 +39,16 @@ export type KeyPairOptions = {
 /**
  * Configuration used when initiating Fluence Client
  */
-export interface ClientOptions {
+export interface ClientConfig {
     /**
      * Specify the KeyPair to be used to identify the Fluence Peer.
      * Will be generated randomly if not specified
      */
     keyPair?: KeyPairOptions;
 
+    /**
+     * Options to configure the connection to the Fluence network
+     */
     connectionOptions?: {
         /**
          * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
@@ -92,6 +61,18 @@ export interface ClientOptions {
          * The dialing timeout in milliseconds
          */
         dialTimeoutMs?: number;
+
+        /**
+         * The maximum number of inbound streams for the libp2p node.
+         * Default: 1024
+         */
+        maxInboundStreams?: number;
+
+        /**
+         * The maximum number of outbound streams for the libp2p node.
+         * Default: 1024
+         */
+        maxOutboundStreams?: number;
     };
 
     /**
@@ -113,18 +94,31 @@ export interface ClientOptions {
     };
 }
 
-export type FluenceStartConfig = ClientOptions & { relay: RelayOptions };
-
+/**
+ * Fluence JS Client connection states as string literals
+ */
 export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
-export type ConnectionState = typeof ConnectionStates[number];
 
-export interface IFluenceClient {
+/**
+ * Fluence JS Client connection states
+ */
+export type ConnectionState = (typeof ConnectionStates)[number];
+
+export interface IFluenceInternalApi {
+    /**
+     * Internal API
+     */
+    internals: any;
+}
+
+/**
+ * Public API of Fluence JS Client
+ */
+export interface IFluenceClient extends IFluenceInternalApi {
     /**
      * Connect to the Fluence network
-     * @param relay - relay node to connect to
-     * @param options - client options
      */
-    connect: (relay: RelayOptions, options?: ClientOptions) => Promise<void>;
+    connect: () => Promise<void>;
 
     /**
      * Disconnect from the Fluence network
@@ -150,36 +144,11 @@ export interface IFluenceClient {
      * Return relay's public key as a base58 string (multihash/CIDv0).
      */
     getRelayPeerId(): string;
-
-    // TODO: come up with a working interface for
-    // - particle creation
-    // - particle initialization
-    // - service registration
-    /**
-     * For internal use only. Do not call directly
-     */
-    internals: any;
 }
 
-export interface CallAquaFunctionArgs {
-    def: FunctionCallDef;
-    script: string;
-    config: FnConfig;
-    peer: IFluenceClient;
-    args: { [key: string]: any };
-}
-
-export type CallAquaFunction = (args: CallAquaFunctionArgs) => Promise<unknown>;
-
-export interface RegisterServiceArgs {
-    peer: IFluenceClient;
-    def: ServiceDef;
-    serviceId: string | undefined;
-    service: any;
-}
-
-export type RegisterService = (args: RegisterServiceArgs) => void;
-
+/**
+ * For internal use. Checks if the object is a Fluence Peer
+ */
 export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
     if (isFluencePeer(fluencePeerCandidate)) {
         return fluencePeerCandidate;
@@ -188,6 +157,9 @@ export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => 
     throw new Error(`Argument ${fluencePeerCandidate} is not a Fluence Peer`);
 };
 
+/**
+ * For internal use. Checks if the object is a Fluence Peer
+ */
 export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluenceClient => {
     if (fluencePeerCandidate && (fluencePeerCandidate as any).__isFluenceAwesome) {
         return true;

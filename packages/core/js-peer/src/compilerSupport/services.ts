@@ -1,18 +1,33 @@
+/*
+ * Copyright 2023 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { SecurityTetraplet } from '@fluencelabs/avm';
 import { match } from 'ts-pattern';
 
-import { Particle } from '../js-peer/Particle.js';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../interfaces/commonTypes.js';
+import { Particle } from '../particle/Particle.js';
 
 import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
 import {
-    IFluenceClient,
     CallParams,
     ArrowWithoutCallbacks,
     FunctionCallConstants,
     FunctionCallDef,
     NonArrowType,
+    IFluenceInternalApi,
 } from '@fluencelabs/interfaces';
+import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
 
 export interface ServiceDescription {
     serviceId: string;
@@ -23,7 +38,7 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: IFluenceClient) => {
+export const injectRelayService = (def: FunctionCallDef, peer: IFluenceInternalApi) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
@@ -168,10 +183,14 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
     return callParams;
 };
 
-export const registerParticleScopeService = (peer: IFluenceClient, particle: Particle, service: ServiceDescription) => {
+export const registerParticleScopeService = (
+    peer: IFluenceInternalApi,
+    particle: Particle,
+    service: ServiceDescription,
+) => {
     peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
 };
 
-export const registerGlobalService = (peer: IFluenceClient, service: ServiceDescription) => {
+export const registerGlobalService = (peer: IFluenceInternalApi, service: ServiceDescription) => {
     peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
 };

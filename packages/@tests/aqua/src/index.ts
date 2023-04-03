@@ -1,5 +1,6 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
+import type { ClientConfig } from '@fluencelabs/js-client.api';
 import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
 import { registerHelloWorld, helloTest, marineTest, resourceTest } from './_aqua/smoke_test.js';
 import { wasm } from './wasmb64.js';
@@ -11,7 +12,9 @@ import { wasm } from './wasmb64.js';
 // };
 
 // Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
-const relay = randomKras();
+// TODO DXJ-356: use local peers instead of kras
+// const relay = randomKras();
+const relay = kras[4];
 
 function generateRandomUint8Array() {
     const uint8Array = new Uint8Array(32);
@@ -21,7 +24,7 @@ function generateRandomUint8Array() {
     return uint8Array;
 }
 
-const optsWithRandomKeyPair = () => {
+const optsWithRandomKeyPair = (): ClientConfig => {
     return {
         keyPair: {
             type: 'Ed25519',
@@ -37,6 +40,7 @@ export const runTest = async (): Promise<TestResult> => {
         Fluence.onConnectionStateChange((state) => console.info('connection state changed: ', state));
 
         console.log('connecting to Fluence Network...');
+        console.log('multiaddr: ', relay.multiaddr);
         await Fluence.connect(relay, optsWithRandomKeyPair());
 
         console.log('connected');
@@ -68,10 +72,9 @@ export const runTest = async (): Promise<TestResult> => {
         const hello = await helloTest();
         console.log('hello test finished, result: ', hello);
 
-        // TODO: some wired error shit about SharedArrayBuffer
-        // console.log('running marine test...');
-        // const marine = await marineTest(wasm);
-        // console.log('marine test finished, result: ', marine);
+        console.log('running marine test...');
+        const marine = await marineTest(wasm);
+        console.log('marine test finished, result: ', marine);
 
         const returnVal = {
             res,
@@ -79,8 +82,6 @@ export const runTest = async (): Promise<TestResult> => {
             // marine,
         };
         return { type: 'success', data: JSON.stringify(returnVal) };
-    } catch (err: any) {
-        return { type: 'failure', error: err.toString() };
     } finally {
         console.log('disconnecting from Fluence Network...');
         await Fluence.disconnect();

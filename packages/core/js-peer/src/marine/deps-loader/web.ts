@@ -1,5 +1,22 @@
+/*
+ * Copyright 2023 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { Buffer } from 'buffer';
-import { LazyLoader } from '../../interfaces/index.js';
+import { LazyLoader } from '../interfaces.js';
+// @ts-ignore
+import type { WorkerImplementation } from 'threads/dist/types/master';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
@@ -17,7 +34,7 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
  * @param filePath - path to the wasm file relative to current origin
  * @returns Either SharedArrayBuffer or Buffer with the wasm file
  */
-export const loadWasmFromServer = async (filePath: string): Promise<SharedArrayBuffer | Buffer> => {
+export const loadWasmFromUrl = async (filePath: string): Promise<SharedArrayBuffer | Buffer> => {
     const fullUrl = window.location.origin + '/' + filePath;
     const res = await fetch(fullUrl);
     const ab = await res.arrayBuffer();
@@ -33,8 +50,14 @@ export const loadWasmFromServer = async (filePath: string): Promise<SharedArrayB
     return buffer;
 };
 
-export class WebLoaderFromUrl extends LazyLoader<SharedArrayBuffer | Buffer> {
+export class WasmLoaderFromUrl extends LazyLoader<SharedArrayBuffer | Buffer> {
     constructor(filePath: string) {
-        super(() => loadWasmFromServer(filePath));
+        super(() => loadWasmFromUrl(filePath));
+    }
+}
+
+export class WorkerLoaderFromUrl extends LazyLoader<WorkerImplementation> {
+    constructor(scriptPath: string) {
+        super(() => new Worker(scriptPath));
     }
 }
