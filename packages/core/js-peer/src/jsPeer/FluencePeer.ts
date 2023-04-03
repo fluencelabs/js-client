@@ -26,14 +26,12 @@ import {
 } from '../particle/Particle.js';
 import { jsonify, isString } from '../util/utils.js';
 import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
-import { builtInServices } from '../services/builtins.js';
 import { defaultSigGuard, Sig } from '../services/Sig.js';
 import { registerSig } from '../services/_aqua/services.js';
 import { registerSrv } from '../services/_aqua/single-module-srv.js';
 import { Buffer } from 'buffer';
 
-import { NodeUtils, Srv } from '../services/SingleModuleSrv.js';
-import { registerNodeUtils } from '../services/_aqua/node-utils.js';
+import { Srv } from '../services/SingleModuleSrv.js';
 
 import { logger } from '../util/logger.js';
 import { getParticleContext, registerDefaultServices, ServiceError } from '../jsServiceHost/serviceUtils.js';
@@ -279,7 +277,6 @@ export abstract class FluencePeer {
         registerSig(this, peerId, this._classServices.sig);
 
         registerSrv(this, 'single_module_srv', this._classServices.srv);
-        registerNodeUtils(this, 'node_utils', new NodeUtils(this));
     }
 
     private _startParticleProcessing() {

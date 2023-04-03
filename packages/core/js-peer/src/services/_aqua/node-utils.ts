@@ -6,9 +6,8 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { CallParams } from '@fluencelabs/interfaces';
+import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
 import { registerService } from '../../compilerSupport/registerService.js';
-import { FluencePeer } from '../../jsPeer/FluencePeer.js';
 
 // Services
 
@@ -21,9 +20,9 @@ export interface NodeUtilsDef {
         | Promise<{ content: string | null; error: string | null; success: boolean }>;
 }
 
-export function registerNodeUtils(peer: FluencePeer, serviceId: string, service: any) {
+export function registerNodeUtils(peer: IFluenceInternalApi, serviceId: string, service: any) {
     registerService({
-        peer: peer as any,
+        peer: peer,
         service: service,
         serviceId: serviceId,
         def: {

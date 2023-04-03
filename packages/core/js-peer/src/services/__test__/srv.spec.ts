@@ -2,6 +2,8 @@ import { it, describe, expect, beforeAll } from 'vitest';
 import * as path from 'path';
 import * as url from 'url';
 import { compileAqua, withPeer } from '../../util/testUtils.js';
+import { registerNodeUtils } from '../_aqua/node-utils.js';
+import { NodeUtils } from '../NodeUtils.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 let aqua: any;
@@ -16,6 +18,7 @@ describe('Srv service test suite', () => {
     it('Use custom srv service, success path', async () => {
         await withPeer(async (peer) => {
             // arrange
+            registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
             const wasm = path.join(__dirname, '../../../data_for_test/greeting.wasm');
 
             // act
@@ -29,6 +32,7 @@ describe('Srv service test suite', () => {
     it('List deployed services', async () => {
         await withPeer(async (peer) => {
             // arrange
+            registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
             const wasm = path.join(__dirname, '../../../data_for_test/greeting.wasm');
 
             // act
@@ -42,6 +46,7 @@ describe('Srv service test suite', () => {
     it('Correct error for removed services', async () => {
         await withPeer(async (peer) => {
             // arrange
+            registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
             const wasm = path.join(__dirname, '../../../data_for_test/greeting.wasm');
 
             // act
@@ -55,6 +60,7 @@ describe('Srv service test suite', () => {
     it('Correct error for file not found', async () => {
         await withPeer(async (peer) => {
             // arrange
+            registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
 
             // act
             const res = await aqua.file_not_found(peer, {});
@@ -67,6 +73,7 @@ describe('Srv service test suite', () => {
     it('Correct error for removing non existing service', async () => {
         await withPeer(async (peer) => {
             // arrange
+            registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
 
             // act
             const res = await aqua.removing_non_exiting(peer, {});

@@ -6,9 +6,8 @@
  * Aqua version: 0.7.7-362
  *
  */
-import { CallParams } from '@fluencelabs/interfaces';
+import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
 import { registerService } from '../../compilerSupport/registerService.js';
-import { FluencePeer } from '../../jsPeer/FluencePeer.js';
 
 // Services
 
@@ -26,7 +25,7 @@ export interface SrvDef {
     ) => { error: string | null; success: boolean } | Promise<{ error: string | null; success: boolean }>;
 }
 
-export function registerSrv(peer: FluencePeer, serviceId: string, service: any) {
+export function registerSrv(peer: IFluenceInternalApi, serviceId: string, service: any) {
     registerService({
         peer: peer as any,
         serviceId,

@@ -1,13 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { SrvDef } from './_aqua/single-module-srv.js';
-import { NodeUtilsDef } from './_aqua/node-utils.js';
 import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { CallParams } from '@fluencelabs/interfaces';
+import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
 import { Buffer } from 'buffer';
 import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
 
-export const defaultGuard = (peer: FluencePeer) => {
-    return allowOnlyParticleOriginatedAt<any>(peer.keyPair.getPeerId());
+export const defaultGuard = (peer: IFluenceInternalApi) => {
+    return allowOnlyParticleOriginatedAt<any>(peer.internals.getPeerId());
 };
 
 export class Srv implements SrvDef {
@@ -44,6 +43,7 @@ export class Srv implements SrvDef {
                 error: null,
             };
         } catch (err: any) {
+            console.log(err);
             return {
                 success: true,
                 service_id: null,
@@ -81,51 +81,5 @@ export class Srv implements SrvDef {
 
     list() {
         return Array.from(this.services.values());
-    }
-}
-
-export class NodeUtils implements NodeUtilsDef {
-    constructor(private peer: FluencePeer) {
-        this.securityGuard_readFile = defaultGuard(this.peer);
-    }
-
-    securityGuard_readFile: SecurityGuard<'path'>;
-
-    async read_file(path: string, callParams: CallParams<'path'>) {
-        // TODO: split node-only and universal services into different client packages
-        // if (!isNode) {
-        //     return {
-        //         success: false,
-        //         error: 'read_file is only supported in node.js',
-        //         content: null,
-        //     };
-        // }
-
-        if (!this.securityGuard_readFile(callParams)) {
-            return {
-                success: false,
-                error: 'Security guard validation failed',
-                content: null,
-            };
-        }
-
-        try {
-            // eval('require') is needed so that
-            // webpack will complain about missing dependencies for web target
-            const r = eval('require');
-            const fs = r('fs').promises;
-            const data = await fs.readFile(path);
-            return {
-                success: true,
-                content: data,
-                error: null,
-            };
-        } catch (err: any) {
-            return {
-                success: false,
-                error: err.message,
-                content: null,
-            };
-        }
     }
 }
