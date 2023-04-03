@@ -12,7 +12,8 @@ import { wasm } from './wasmb64.js';
 // };
 
 // Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
-const relay = randomKras();
+// const relay = randomKras();
+const relay = kras[4];
 
 function generateRandomUint8Array() {
     const uint8Array = new Uint8Array(32);
@@ -39,6 +40,7 @@ export const runTest = async (): Promise<TestResult> => {
         Fluence.onConnectionStateChange((state) => console.info('connection state changed: ', state));
 
         console.log('connecting to Fluence Network...');
+        console.log('multiaddr: ', relay.multiaddr);
         await Fluence.connect(relay, optsWithRandomKeyPair());
 
         console.log('connected');
