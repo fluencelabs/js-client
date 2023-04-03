@@ -30,7 +30,6 @@ const optsWithRandomKeyPair = (): ClientConfig => {
             type: 'Ed25519',
             source: generateRandomUint8Array(),
         },
-        defaultTtlMs: 10000,
     } as const;
 };
 
