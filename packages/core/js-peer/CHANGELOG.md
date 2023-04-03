@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.8.6](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.5...js-peer-v0.8.6) (2023-03-31)
+
+
+### Features
+
+* **logs:** Use `debug.js` library for logging [DXJ-327] ([#285](https://github.com/fluencelabs/js-client/issues/285)) ([e95c34a](https://github.com/fluencelabs/js-client/commit/e95c34a79220bd8ecdcee806802ac3d69a2af0cb))
+* **test:** Automate smoke tests for JS Client [DXJ-293] ([#282](https://github.com/fluencelabs/js-client/issues/282)) ([10d7eae](https://github.com/fluencelabs/js-client/commit/10d7eaed809dde721b582d4b3228a48bbec50884))
+
+
+### Bug Fixes
+
+* **test:** All tests are working with vitest [DXJ-306] ([#291](https://github.com/fluencelabs/js-client/issues/291)) ([58ad3ca](https://github.com/fluencelabs/js-client/commit/58ad3ca6f666e8580997bb47609947645903436d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.7.3 to 0.7.4
+
 ## [0.8.5](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.4...js-peer-v0.8.5) (2023-03-03)
 
 

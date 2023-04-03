@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.3...interfaces-v0.7.4) (2023-03-31)
+
+
+### Features
+
+* **logs:** Use `debug.js` library for logging [DXJ-327] ([#285](https://github.com/fluencelabs/js-client/issues/285)) ([e95c34a](https://github.com/fluencelabs/js-client/commit/e95c34a79220bd8ecdcee806802ac3d69a2af0cb))
+
 ## [0.7.3](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.2...interfaces-v0.7.3) (2023-02-16)
 
 
