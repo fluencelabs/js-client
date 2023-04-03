@@ -8,6 +8,11 @@ on:
       - "!.github/workflows/e2e.yml"
       - "!.github/workflows/tests.yml"
       - "!.github/workflows/snapshot.yml"
+    types:
+      - "labeled"
+      - "synchronize"
+      - "opened"
+      - "reopened"
   push:
     branches:
       - "master"
@@ -23,13 +28,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: "js-client"
-    uses: ./.github/workflows/tests.yml
-    with:
-      ref: ${{ github.ref }}
-
   js-client:
+    if: >
+      github.event_name == 'push' ||
+      contains(github.event.pull_request.labels.*.name, 'e2e')
     uses: ./.github/workflows/snapshot.yml
     with:
       ref: ${{ github.ref }}
@@ -42,25 +44,10 @@ jobs:
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
 
-  status:
-    runs-on: ubuntu-latest
-    if: always()
+  fluence-cli:
     needs:
-      - aqua-playground
+      - js-client
 
-    steps:
-      - uses: lwhiteley/dependent-jobs-result-check@v1
-        id: status
-        with:
-          statuses: failure,cancelled,skipped
-          dependencies: ${{ toJSON(needs) }}
-
-      - name: Log output
-        run: |
-          echo "statuses:" "${{ steps.status.outputs.statuses }}"
-          echo "jobs:" "${{ steps.status.outputs.jobs }}"
-          echo "found any?:" "${{ steps.status.outputs.found }}"
-
-      - name: Fail run
-        if: fromJSON(steps.status.outputs.found)
-        run: exit 1
+    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
+    with:
+      js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
