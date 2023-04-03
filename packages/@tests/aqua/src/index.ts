@@ -1,5 +1,6 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
+import type { ClientConfig } from '@fluencelabs/js-client.api';
 import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
 import { registerHelloWorld, helloTest, marineTest, resourceTest } from './_aqua/smoke_test.js';
 import { wasm } from './wasmb64.js';
@@ -21,12 +22,13 @@ function generateRandomUint8Array() {
     return uint8Array;
 }
 
-const optsWithRandomKeyPair = () => {
+const optsWithRandomKeyPair = (): ClientConfig => {
     return {
         keyPair: {
             type: 'Ed25519',
             source: generateRandomUint8Array(),
         },
+        defaultTtlMs: 10000,
     } as const;
 };
 

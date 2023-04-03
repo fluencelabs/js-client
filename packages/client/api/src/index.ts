@@ -22,7 +22,7 @@ import {
     CallAquaFunctionType,
     RegisterServiceType,
 } from '@fluencelabs/interfaces';
-export type { IFluenceClient, ClientConfig as ClientOptions, CallParams } from '@fluencelabs/interfaces';
+export type { IFluenceClient, ClientConfig, CallParams } from '@fluencelabs/interfaces';
 
 export {
     ArrayType,
