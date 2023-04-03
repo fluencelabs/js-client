@@ -12,6 +12,7 @@ import { wasm } from './wasmb64.js';
 // };
 
 // Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
+// TODO: use local peers instead of kras
 // const relay = randomKras();
 const relay = kras[4];
 
