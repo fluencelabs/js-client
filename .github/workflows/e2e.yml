@@ -48,6 +48,6 @@ jobs:
     needs:
       - js-client
 
-    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@FLU-300
+    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
