@@ -42,6 +42,14 @@ jobs:
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
 
+  fluence-cli:
+    needs:
+      - js-client
+
+    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@FLU-300
+    with:
+      js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
+
   status:
     runs-on: ubuntu-latest
     if: always()
