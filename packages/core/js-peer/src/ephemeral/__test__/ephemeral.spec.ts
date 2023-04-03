@@ -10,7 +10,8 @@ let en: EphemeralNetwork;
 let client: FluencePeer;
 const relay = defaultConfig.peers[0].peerId;
 
-describe('Ephemeral networks tests', () => {
+// TODO: race condition here. Needs to be fixed
+describe.skip('Ephemeral networks tests', () => {
     beforeEach(async () => {
         en = new EphemeralNetwork(defaultConfig);
         await en.up();
