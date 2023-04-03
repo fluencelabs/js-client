@@ -51,26 +51,3 @@ jobs:
     uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@FLU-300
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-
-  status:
-    runs-on: ubuntu-latest
-    if: always()
-    needs:
-      - aqua-playground
-
-    steps:
-      - uses: lwhiteley/dependent-jobs-result-check@v1
-        id: status
-        with:
-          statuses: failure,cancelled,skipped
-          dependencies: ${{ toJSON(needs) }}
-
-      - name: Log output
-        run: |
-          echo "statuses:" "${{ steps.status.outputs.statuses }}"
-          echo "jobs:" "${{ steps.status.outputs.jobs }}"
-          echo "found any?:" "${{ steps.status.outputs.found }}"
-
-      - name: Fail run
-        if: fromJSON(steps.status.outputs.found)
-        run: exit 1
