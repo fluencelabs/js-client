@@ -137,6 +137,23 @@ importers:
     devDependencies:
       '@types/platform': 1.3.4
 
+  packages/client/js-client.web:
+    specifiers:
+      '@fluencelabs/interfaces': 0.7.4
+      '@fluencelabs/js-peer': 0.8.6
+      '@types/jest': 28.1.0
+      '@types/node': 16.11.59
+      jest: 28.1.0
+      ts-jest: 28.0.2
+    dependencies:
+      '@fluencelabs/interfaces': link:../../core/interfaces
+      '@fluencelabs/js-peer': link:../../core/js-peer
+    devDependencies:
+      '@types/jest': 28.1.0
+      '@types/node': 16.11.59
+      jest: 28.1.0_@types+node@16.11.59
+      ts-jest: 28.0.2_m4pn7vsromlf5ffrouypoapnnq
+
   packages/client/js-client.web.standalone:
     specifiers:
       '@fluencelabs/avm': 0.35.4

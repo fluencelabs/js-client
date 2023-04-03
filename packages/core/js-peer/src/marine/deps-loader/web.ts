@@ -15,6 +15,8 @@
  */
 import { Buffer } from 'buffer';
 import { LazyLoader } from '../interfaces.js';
+// @ts-ignore
+import type { WorkerImplementation } from 'threads/dist/types/master';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
@@ -32,7 +34,7 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
  * @param filePath - path to the wasm file relative to current origin
  * @returns Either SharedArrayBuffer or Buffer with the wasm file
  */
-export const loadWasmFromServer = async (filePath: string): Promise<SharedArrayBuffer | Buffer> => {
+export const loadWasmFromUrl = async (filePath: string): Promise<SharedArrayBuffer | Buffer> => {
     const fullUrl = window.location.origin + '/' + filePath;
     const res = await fetch(fullUrl);
     const ab = await res.arrayBuffer();
@@ -48,8 +50,14 @@ export const loadWasmFromServer = async (filePath: string): Promise<SharedArrayB
     return buffer;
 };
 
-export class WebLoaderFromUrl extends LazyLoader<SharedArrayBuffer | Buffer> {
+export class WasmLoaderFromUrl extends LazyLoader<SharedArrayBuffer | Buffer> {
     constructor(filePath: string) {
-        super(() => loadWasmFromServer(filePath));
+        super(() => loadWasmFromUrl(filePath));
+    }
+}
+
+export class WorkerLoaderFromUrl extends LazyLoader<WorkerImplementation> {
+    constructor(scriptPath: string) {
+        super(() => new Worker(scriptPath));
     }
 }

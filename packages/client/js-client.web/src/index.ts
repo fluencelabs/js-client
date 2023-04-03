@@ -13,26 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MarineBackgroundRunner } from '@fluencelabs/marine.background-runner';
-import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/avm';
-import { marineLogFunction } from '@fluencelabs/js-peer/dist/utils';
-import { FluencePeer } from '@fluencelabs/js-peer/dist/FluencePeer';
-import { InlinedWorkerLoader, WasmWebLoader } from '@fluencelabs/marine.deps-loader.web';
+import type { RelayOptions, ClientConfig, IFluenceClient } from '@fluencelabs/interfaces';
+import { ClientPeer, makeClientPeerConfig } from '@fluencelabs/js-peer/dist/clientPeer/ClientPeer.js';
+import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/callFunction.js';
+import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
+import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/jsPeer/avm.js';
+import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker';
+import { WasmLoaderFromUrl, WorkerLoaderFromUrl } from '@fluencelabs/js-peer/dist/marine/deps-loader/web.js';
 
-export const defaultNames = {
-    avm: 'avm.wasm',
+const defaultNames = {
     marine: 'marine-js.wasm',
+    avm: 'avm.wasm',
+    worker: 'worker-script.js',
 };
 
-export const makeDefaultPeer = () => {
-    const workerLoader = new InlinedWorkerLoader();
-    const controlModuleLoader = new WasmWebLoader(defaultNames.marine);
-    const avmModuleLoader = new WasmWebLoader(defaultNames.avm);
+const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
+    const workerLoader = new WorkerLoaderFromUrl(defaultNames.worker);
+    const controlModuleLoader = new WasmLoaderFromUrl(defaultNames.marine);
+    const avmModuleLoader = new WasmLoaderFromUrl(defaultNames.avm);
 
-    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, marineLogFunction);
-    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader, undefined);
-    return new FluencePeer(marine, avm);
+    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
+    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
+    const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
+    const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
+    await client.connect();
+    return client;
+};
+
+const publicFluenceInterface = {
+    clientFactory: createClient,
+    callAquaFunction,
+    registerService,
 };
 
 // @ts-ignore
-globalThis.defaultPeer = makeDefaultPeer();
+globalThis.fluence = publicFluenceInterface;
