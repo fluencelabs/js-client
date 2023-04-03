@@ -38,7 +38,7 @@ jobs:
     needs:
       - js-client
 
-    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@main
+    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
       ref: feat/update-js-client
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
