@@ -1,6 +1,7 @@
 {
   "packages/client/api": "0.11.5",
   "packages/client/js-client.node": "0.6.7",
+  "packages/client/js-client.web": "0.1.0",
   "packages/client/js-client.web.standalone": "0.13.6",
   "packages/client/tools": "0.2.1",
   "packages/core/interfaces": "0.7.4",
