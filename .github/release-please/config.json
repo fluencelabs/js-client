@@ -10,6 +10,7 @@
   "packages": {
     "packages/client/api": {},
     "packages/client/js-client.node": {},
+    "packages/client/js-client.web": {},
     "packages/client/js-client.web.standalone": {},
     "packages/client/tools": {},
     "packages/core/interfaces": {},
