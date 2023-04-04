@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.5](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.4...interfaces-v0.7.5) (2023-04-04)
+
+
+### Features
+
+* Cleaning up technical debts ([#295](https://github.com/fluencelabs/js-client/issues/295)) ([0b2f12d](https://github.com/fluencelabs/js-client/commit/0b2f12d8ac223db341d6c30ff403166b3eae2e56))
+
 ## [0.7.4](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.3...interfaces-v0.7.4) (2023-03-31)
 
 
