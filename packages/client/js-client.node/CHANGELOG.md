@@ -18,6 +18,21 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.4 to 0.8.5
 
+## [0.6.8](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.7...js-client.node-v0.6.8) (2023-04-04)
+
+
+### Features
+
+* Cleaning up technical debts ([#295](https://github.com/fluencelabs/js-client/issues/295)) ([0b2f12d](https://github.com/fluencelabs/js-client/commit/0b2f12d8ac223db341d6c30ff403166b3eae2e56))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.6 to 0.8.7
+    * @fluencelabs/interfaces bumped from 0.7.4 to 0.7.5
+
 ## [0.6.7](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.6...js-client.node-v0.6.7) (2023-03-31)
 
 
