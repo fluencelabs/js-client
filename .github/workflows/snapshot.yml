@@ -27,7 +27,7 @@ env:
 jobs:
   publish-snapshot:
     name: "Publish snapshot"
-    runs-on: ubuntu-latest
+    runs-on: builder
 
     outputs:
       snapshots: "${{ steps.snapshot.outputs.snapshots }}"
