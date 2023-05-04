@@ -93,7 +93,7 @@ jobs:
           cache: "pnpm"
 
       - name: Override dependencies
-        uses: fluencelabs/github-actions/pnpm-set-dependency@FLU-317-fix
+        uses: fluencelabs/github-actions/pnpm-set-dependency@main
         with:
           dependencies: |
             {
