@@ -103,6 +103,6 @@ jobs:
 
       - uses: browser-actions/setup-chrome@v1
 
-      - run: pnpm -r i
+      - run: pnpm -r --no-frozen-lockfile i
       - run: pnpm -r build
       - run: pnpm -r test
