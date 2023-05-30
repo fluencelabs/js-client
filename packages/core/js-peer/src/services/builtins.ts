@@ -563,6 +563,13 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             }
         },
     },
+
+    'run-console': {
+        print: (req) => {
+            console.log(...req.args);
+            return success({});
+        },
+    },
 } as const;
 
 const checkForArgumentsCount = (req: { args: Array<unknown> }, count: number) => {
