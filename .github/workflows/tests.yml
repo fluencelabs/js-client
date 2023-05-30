@@ -38,7 +38,6 @@ jobs:
       matrix:
         node-version:
           - 16.x
-          - 17.x
           - 18.x
 
     steps:
@@ -93,105 +92,17 @@ jobs:
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
-      - run: pnpm -r i
-
-      - name: Set avm version in core/interfaces
-        if: inputs.avm-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
+      - name: Override dependencies
+        uses: fluencelabs/github-actions/pnpm-set-dependency@main
         with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/core/interfaces
-          package-manager: pnpm
-          flags: "--save-dev"
-
-      - name: Set marine-js version in core/interfaces
-        if: inputs.marine-js-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/marine-js"
-          version: ${{ inputs.marine-js-version }}
-          working-directory: packages/core/interfaces
-          package-manager: pnpm
-          flags: "--save-dev"
-
-      - name: Set avm version in core/js-peer
-        if: inputs.avm-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/core/js-peer
-          package-manager: pnpm
-
-      - name: Set marine-js version in core/js-peer
-        if: inputs.marine-js-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/marine-js"
-          version: ${{ inputs.marine-js-version }}
-          working-directory: packages/core/js-peer
-          package-manager: pnpm
-
-      - name: Set avm version in client/api
-        if: inputs.avm-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/client/api
-          package-manager: pnpm
-          flags: "--save-dev"
-
-      - name: Set marine-js version in client/api
-        if: inputs.marine-js-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/marine-js"
-          version: ${{ inputs.marine-js-version }}
-          working-directory: packages/client/api
-          package-manager: pnpm
-          flags: "--save-dev"
-
-      - name: Set avm version in client/js-client.web
-        if: inputs.avm-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/client/js-client.web.standalone
-          package-manager: pnpm
-          flags: "--save-dev"
-
-      - name: Set marine-js version in client/js-client.web
-        if: inputs.marine-js-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/marine-js"
-          version: ${{ inputs.marine-js-version }}
-          working-directory: packages/client/js-client.web.standalone
-          package-manager: pnpm
-          flags: "--save-dev"
-
-      - name: Set avm version in client/js-client.node
-        if: inputs.avm-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/avm"
-          version: ${{ inputs.avm-version }}
-          working-directory: packages/client/js-client.node
-          package-manager: pnpm
-
-      - name: Set marine-js version in client/js-client.node
-        if: inputs.marine-js-version != 'null'
-        uses: fluencelabs/github-actions/npm-set-dependency@main
-        with:
-          package: "@fluencelabs/marine-js"
-          version: ${{ inputs.marine-js-version }}
-          working-directory: packages/client/js-client.node
-          package-manager: pnpm
+          dependencies: |
+            {
+              "@fluencelabs/avm": "${{ inputs.avm-version }}",
+              "@fluencelabs/marine-js": "${{ inputs.marine-js-version }}"
+            }
 
       - uses: browser-actions/setup-chrome@v1
 
+      - run: pnpm -r --no-frozen-lockfile i
       - run: pnpm -r build
       - run: pnpm -r test
