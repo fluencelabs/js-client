@@ -29,9 +29,11 @@ import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
 import { defaultSigGuard, Sig } from '../services/Sig.js';
 import { registerSig } from '../services/_aqua/services.js';
 import { registerSrv } from '../services/_aqua/single-module-srv.js';
+import { registerTracing } from '../services/_aqua/tracing.js';
 import { Buffer } from 'buffer';
 
 import { Srv } from '../services/SingleModuleSrv.js';
+import { Tracing } from '../services/Tracing.js';
 
 import { logger } from '../util/logger.js';
 import { getParticleContext, registerDefaultServices, ServiceError } from '../jsServiceHost/serviceUtils.js';
@@ -257,6 +259,7 @@ export abstract class FluencePeer {
     private _classServices: {
         sig: Sig;
         srv: Srv;
+        tracing: Tracing;
     };
 
     private isInitialized = false;
@@ -266,6 +269,7 @@ export abstract class FluencePeer {
         this._classServices = {
             sig: new Sig(this.keyPair),
             srv: new Srv(this),
+            tracing: new Tracing()
         };
 
         const peerId = this.keyPair.getPeerId();
@@ -277,12 +281,14 @@ export abstract class FluencePeer {
         registerSig(this, peerId, this._classServices.sig);
 
         registerSrv(this, 'single_module_srv', this._classServices.srv);
+
+        registerTracing(this, this._classServices.tracing);
     }
 
     private _startParticleProcessing() {
         this._particleSourceSubscription = this.connection.particleSource.subscribe({
             next: (p) => {
-                this._incomingParticles.next({ particle: p, callResults: [], onStageChange: () => {} });
+                this._incomingParticles.next({ particle: p, callResults: [], onStageChange: () => { } });
             },
         });
 
@@ -481,9 +487,8 @@ export abstract class FluencePeer {
 
                                 return {
                                     retCode: ResultCodes.error,
-                                    result: `Service call failed. fnName="${req.fnName}" serviceId="${
-                                        req.serviceId
-                                    }" error: ${err.toString()}`,
+                                    result: `Service call failed. fnName="${req.fnName}" serviceId="${req.serviceId
+                                        }" error: ${err.toString()}`,
                                 };
                             })
                             .then((res) => {
@@ -526,9 +531,8 @@ export abstract class FluencePeer {
         if (res === null) {
             res = {
                 retCode: ResultCodes.error,
-                result: `No service found for service call: serviceId='${req.serviceId}', fnName='${
-                    req.fnName
-                }' args='${jsonify(req.args)}'`,
+                result: `No service found for service call: serviceId='${req.serviceId}', fnName='${req.fnName
+                    }' args='${jsonify(req.args)}'`,
             };
         }
 
