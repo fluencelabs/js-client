@@ -11,7 +11,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "compile-aqua": "fluence aqua -i ./aqua/  -o ./aqua",
+        "compile-aqua": "fluence aqua -i ./aqua/  -o ./src/services/_aqua",
         "test": "node ./copy-worker-script-workaround.mjs  && vitest --threads false run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
