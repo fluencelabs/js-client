@@ -28,7 +28,7 @@
         "buffer": "6.0.3",
         "@libp2p/peer-id": "2.0.1",
         "rxjs": "7.5.5",
-        "ts-pattern": "3.3.3",
+        "ts-pattern": "4.3.0",
         "uuid": "8.3.2",
         "threads": "1.7.0",
         "@libp2p/crypto": "1.0.8",
