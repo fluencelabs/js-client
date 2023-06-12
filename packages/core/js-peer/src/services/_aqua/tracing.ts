@@ -9,58 +9,52 @@
  *
  */
 import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client.api';
-import {
-    v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
-} from '@fluencelabs/js-client.api';
-    
-
+import { v5_callFunction as callFunction$$, v5_registerService as registerService$$ } from '@fluencelabs/js-client.api';
 
 // Services
 
 export interface TracingDef {
-    tracingEvent: (arrowName: string, event: string, callParams: CallParams$$<'arrowName' | 'event'>) => void | Promise<void>;
+    tracingEvent: (
+        arrowName: string,
+        event: string,
+        callParams: CallParams$$<'arrowName' | 'event'>,
+    ) => void | Promise<void>;
 }
 export function registerTracing(service: TracingDef): void;
 export function registerTracing(serviceId: string, service: TracingDef): void;
 export function registerTracing(peer: IFluenceClient$$, service: TracingDef): void;
 export function registerTracing(peer: IFluenceClient$$, serviceId: string, service: TracingDef): void;
-       
 
 export function registerTracing(...args: any) {
-    registerService$$(
-        args,
-        {
-    "defaultServiceId" : "tracingSrv",
-    "functions" : {
-        "tag" : "labeledProduct",
-        "fields" : {
-            "tracingEvent" : {
-                "tag" : "arrow",
-                "domain" : {
-                    "tag" : "labeledProduct",
-                    "fields" : {
-                        "arrowName" : {
-                            "tag" : "scalar",
-                            "name" : "string"
+    registerService$$(args, {
+        defaultServiceId: 'tracingSrv',
+        functions: {
+            tag: 'labeledProduct',
+            fields: {
+                tracingEvent: {
+                    tag: 'arrow',
+                    domain: {
+                        tag: 'labeledProduct',
+                        fields: {
+                            arrowName: {
+                                tag: 'scalar',
+                                name: 'string',
+                            },
+                            event: {
+                                tag: 'scalar',
+                                name: 'string',
+                            },
                         },
-                        "event" : {
-                            "tag" : "scalar",
-                            "name" : "string"
-                        }
-                    }
+                    },
+                    codomain: {
+                        tag: 'nil',
+                    },
                 },
-                "codomain" : {
-                    "tag" : "nil"
-                }
-            }
-        }
-    }
+            },
+        },
+    });
 }
-    );
-}
-      
-// Functions
 
+// Functions
 
 /* eslint-enable */
