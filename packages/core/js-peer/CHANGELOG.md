@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.8](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.7...js-peer-v0.8.8) (2023-05-30)
+
+
+### Features
+
+* add run-console ([#305](https://github.com/fluencelabs/js-client/issues/305)) ([cf1f029](https://github.com/fluencelabs/js-client/commit/cf1f02963c1d7e1a17866f5798901a0f61b8bc31))
+
 ## [0.8.7](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.6...js-peer-v0.8.7) (2023-04-04)
 
 
