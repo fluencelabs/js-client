@@ -16,12 +16,9 @@
 
 import { CallParams } from '@fluencelabs/interfaces';
 import { TracingDef } from './_aqua/tracing.js';
-import { logger } from '../util/logger.js';
-
-const log = logger('aqua');
 
 export class Tracing implements TracingDef {
     tracingEvent(arrowName: string, event: string, callParams: CallParams<'arrowName' | 'event'>): void {
-        log.trace('[%s] (%s) %s', callParams.particleId, arrowName, event);
+        console.log('[%s] (%s) %s', callParams.particleId, arrowName, event);
     }
 }
