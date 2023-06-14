@@ -280,7 +280,7 @@ export abstract class FluencePeer {
         registerSig(this, 'sig', this._classServices.sig);
         registerSig(this, peerId, this._classServices.sig);
         registerSrv(this, 'single_module_srv', this._classServices.srv);
-        registerTracing(this, this._classServices.tracing);
+        registerTracing(this, 'tracingSrv', this._classServices.tracing);
     }
 
     private _startParticleProcessing() {
