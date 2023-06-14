@@ -81,7 +81,9 @@ export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, pe
             }
 
             if (stage.stage === 'expired') {
-                reject(`Request timed out after ${particle.ttl} for ${def.functionName} (particle id: ${particle.id})`);
+                reject(
+                    `Particle expired after ttl of ${particle.ttl}ms for function ${def.functionName} (particle id: ${particle.id})`,
+                );
             }
 
             if (stage.stage === 'interpreterError') {
