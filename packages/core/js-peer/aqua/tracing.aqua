@@ -1,0 +1,2 @@
+service Tracing("tracingSrv"):
+  tracingEvent(arrowName: string, event: string)

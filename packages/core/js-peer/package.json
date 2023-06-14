@@ -11,8 +11,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "compile-aqua": "fluence aqua -i ./aqua/  -o ./aqua",
-        "test": "node ./copy-worker-script-workaround.mjs  && vitest --threads false run"
+        "test": "node ./copy-worker-script-workaround.mjs && vitest --threads false run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
@@ -49,7 +48,6 @@
         "@multiformats/multiaddr": "11.3.0"
     },
     "devDependencies": {
-        "@fluencelabs/cli": "0.3.9",
         "@fluencelabs/aqua-api": "0.9.3",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@fluencelabs/fluence-network-environment": "1.0.13",
