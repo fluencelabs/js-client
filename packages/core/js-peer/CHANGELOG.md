@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.9](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.8...js-peer-v0.8.9) (2023-06-14)
+
+
+### Features
+
+* Add tracing service [fixes DXJ-388] ([#307](https://github.com/fluencelabs/js-client/issues/307)) ([771086f](https://github.com/fluencelabs/js-client/commit/771086fddf52b7a5a1280894c7238e409cdf6a64))
+* improve ttl error message ([#300](https://github.com/fluencelabs/js-client/issues/300)) ([9821183](https://github.com/fluencelabs/js-client/commit/9821183d53870240cb5700be67cb8d57533b954b))
+
 ## [0.8.8](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.7...js-peer-v0.8.8) (2023-05-30)
 
 
