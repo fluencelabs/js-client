@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -141,8 +145,8 @@ importers:
         version: link:../../core/interfaces
     devDependencies:
       '@fluencelabs/avm':
-        specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
-        version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
+        specifier: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
+        version: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
       '@fluencelabs/marine-js':
         specifier: 0.3.45
         version: 0.3.45
@@ -156,8 +160,8 @@ importers:
   packages/client/js-client.node:
     dependencies:
       '@fluencelabs/avm':
-        specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
-        version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
+        specifier: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
+        version: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
       '@fluencelabs/interfaces':
         specifier: 0.7.5
         version: link:../../core/interfaces
@@ -213,8 +217,8 @@ importers:
         version: 0.11.10
     devDependencies:
       '@fluencelabs/avm':
-        specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
-        version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
+        specifier: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
+        version: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
       '@fluencelabs/marine-js':
         specifier: 0.3.45
         version: 0.3.45
@@ -255,8 +259,8 @@ importers:
   packages/core/interfaces:
     devDependencies:
       '@fluencelabs/avm':
-        specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
-        version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
+        specifier: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
+        version: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
       '@fluencelabs/marine-js':
         specifier: 0.3.45
         version: 0.3.45
@@ -270,8 +274,8 @@ importers:
         specifier: 11.0.0
         version: 11.0.0
       '@fluencelabs/avm':
-        specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
-        version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
+        specifier: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
+        version: 0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0
       '@fluencelabs/interfaces':
         specifier: 0.7.5
         version: link:../interfaces
@@ -401,11 +405,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
-
-  /@achingbrain/node-fetch@2.6.7:
-    resolution: {integrity: sha512-iTASGs+HTFK5E4ZqcMsHmeJ4zodyq8L38lZV33jwqcBJYoUt3HjN4+ot+O9/0b+ke8ddE7UgOtVuZN/OkV19/g==}
-    engines: {node: 4.x || >=6.0.0}
-    dev: true
 
   /@achingbrain/ssdp@4.0.4:
     resolution: {integrity: sha512-fY/ShiYJmhLdr45Vn2+f88xTqZjBSH3X3F+EJu/89cjB1JIkMCVtD5CQaaS38YknIL8cEcNhjMZM4cdE3ckSSQ==}
@@ -2724,6 +2723,9 @@ packages:
   /@fluencelabs/avm@0.35.3:
     resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
     dev: true
+
+  /@fluencelabs/avm@0.39.1-feat-VM-276-aquavm-keypair-5c1e584-1606-1.0:
+    resolution: {integrity: sha512-+9okrEE9hdOiZOE6M57LMj7swYRXHTbFFgQ26GaDl3dYhBFSM+v8+S0zhIjzFyz7MyJrcoBJ5Cz3IixvV63fUA==}
 
   /@fluencelabs/cli@0.3.9(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@nomicfoundation/hardhat-chai-matchers@1.0.6)(@nomicfoundation/hardhat-network-helpers@1.0.8)(@nomiclabs/hardhat-ethers@2.2.3)(@nomiclabs/hardhat-etherscan@3.1.7)(@typechain/ethers-v5@10.2.1)(@typechain/hardhat@6.1.6)(@types/chai@4.3.5)(@types/mocha@9.1.1)(@types/node@18.13.0)(chai@4.3.7)(hardhat-gas-reporter@1.0.9)(hardhat@2.15.0)(jest@27.5.1)(solidity-coverage@0.7.22)(ts-node@10.9.1)(typechain@8.2.0)(typescript@4.7.2):
     resolution: {integrity: sha512-xJYi7+AHrWt6RgWnr7Efr8Jpv0dNLoWhiCMvgSbXoFpIZzQAyNDgk5hnCdwIQ/eiJcNg0GHY0gyC+Q/d5YKc1Q==}
@@ -11820,7 +11822,7 @@ packages:
       nanoid: 3.3.6
       native-abort-controller: 1.0.4(abort-controller@3.0.0)
       native-fetch: 3.0.0(@achingbrain/node-fetch@2.6.7)
-      node-fetch: /@achingbrain/node-fetch@2.6.7
+      node-fetch: '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz'
       react-native-fetch-api: 2.0.0
       stream-to-it: 0.2.4
     dev: true
@@ -15132,7 +15134,7 @@ packages:
     peerDependencies:
       node-fetch: '*'
     dependencies:
-      node-fetch: /@achingbrain/node-fetch@2.6.7
+      node-fetch: '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz'
     dev: true
 
   /native-fetch@3.0.0(node-fetch@2.6.11):
@@ -21440,7 +21442,9 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
 
-  '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz':
-    resolution: {tarball: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz}
-    name: '@fluencelabs/avm'
-    version: 0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0
+  '@registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz':
+    resolution: {tarball: https://registry.npmjs.org/@achingbrain/node-fetch/-/node-fetch-2.6.7.tgz}
+    name: '@achingbrain/node-fetch'
+    version: 2.6.7
+    engines: {node: 4.x || >=6.0.0}
+    dev: true
