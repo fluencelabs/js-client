@@ -12,6 +12,20 @@
   * dependencies
     * @fluencelabs/interfaces bumped from 0.7.3 to 0.7.4
 
+## [0.11.7](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.6...js-client.api-v0.11.7) (2023-06-20)
+
+
+### Features
+
+* support signatures [fixes DXJ-389] ([#310](https://github.com/fluencelabs/js-client/issues/310)) ([a60dfe0](https://github.com/fluencelabs/js-client/commit/a60dfe0d680b4d9ac5092dec64e2ebf478bf80eb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.7.5 to 0.7.6
+
 ## [0.11.6](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.5...js-client.api-v0.11.6) (2023-04-04)
 
 

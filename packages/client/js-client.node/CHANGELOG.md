@@ -30,6 +30,21 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.8 to 0.8.9
 
+## [0.6.11](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.10...js-client.node-v0.6.11) (2023-06-20)
+
+
+### Features
+
+* support signatures [fixes DXJ-389] ([#310](https://github.com/fluencelabs/js-client/issues/310)) ([a60dfe0](https://github.com/fluencelabs/js-client/commit/a60dfe0d680b4d9ac5092dec64e2ebf478bf80eb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.9 to 0.8.10
+    * @fluencelabs/interfaces bumped from 0.7.5 to 0.7.6
+
 ## [0.6.8](https://github.com/fluencelabs/js-client/compare/js-client.node-v0.6.7...js-client.node-v0.6.8) (2023-04-04)
 
 
