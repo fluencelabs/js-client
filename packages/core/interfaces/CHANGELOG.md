@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.6](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.5...interfaces-v0.7.6) (2023-06-20)
+
+
+### Features
+
+* support signatures [fixes DXJ-389] ([#310](https://github.com/fluencelabs/js-client/issues/310)) ([a60dfe0](https://github.com/fluencelabs/js-client/commit/a60dfe0d680b4d9ac5092dec64e2ebf478bf80eb))
+
 ## [0.7.5](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.4...interfaces-v0.7.5) (2023-04-04)
 
 

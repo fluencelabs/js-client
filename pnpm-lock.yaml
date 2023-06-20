@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -137,7 +141,7 @@ importers:
   packages/client/api:
     dependencies:
       '@fluencelabs/interfaces':
-        specifier: 0.7.5
+        specifier: 0.7.6
         version: link:../../core/interfaces
     devDependencies:
       '@fluencelabs/avm':
@@ -159,10 +163,10 @@ importers:
         specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
         version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
       '@fluencelabs/interfaces':
-        specifier: 0.7.5
+        specifier: 0.7.6
         version: link:../../core/interfaces
       '@fluencelabs/js-peer':
-        specifier: 0.8.9
+        specifier: 0.8.10
         version: link:../../core/js-peer
       '@fluencelabs/marine-js':
         specifier: 0.3.45
@@ -178,10 +182,10 @@ importers:
   packages/client/js-client.web:
     dependencies:
       '@fluencelabs/interfaces':
-        specifier: 0.7.5
+        specifier: 0.7.6
         version: link:../../core/interfaces
       '@fluencelabs/js-peer':
-        specifier: 0.8.9
+        specifier: 0.8.10
         version: link:../../core/js-peer
     devDependencies:
       '@types/jest':
@@ -200,10 +204,10 @@ importers:
   packages/client/js-client.web.standalone:
     dependencies:
       '@fluencelabs/interfaces':
-        specifier: 0.7.5
+        specifier: 0.7.6
         version: link:../../core/interfaces
       '@fluencelabs/js-peer':
-        specifier: 0.8.9
+        specifier: 0.8.10
         version: link:../../core/js-peer
       buffer:
         specifier: 6.0.3
@@ -273,7 +277,7 @@ importers:
         specifier: https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz
         version: '@github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz'
       '@fluencelabs/interfaces':
-        specifier: 0.7.5
+        specifier: 0.7.6
         version: link:../interfaces
       '@fluencelabs/marine-js':
         specifier: 0.3.45
