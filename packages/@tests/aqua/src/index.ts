@@ -1,20 +1,13 @@
 import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client.api';
 import type { ClientConfig } from '@fluencelabs/js-client.api';
-import { kras, randomKras } from '@fluencelabs/fluence-network-environment';
 import { registerHelloWorld, helloTest, marineTest, resourceTest } from './_aqua/smoke_test.js';
 import { wasm } from './wasmb64.js';
 
-// Relay running on local machine
-// const relay = {
-//     multiaddr: '/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-//     peerId: '12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3',
-// };
-
-// Currently the tests executes some calls to registry. And they fail for a single local node setup. So we use kras instead.
-// TODO DXJ-356: use local peers instead of kras
-// const relay = randomKras();
-const relay = kras[4];
+const relay = {
+    multiaddr: '/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR',
+    peerId: '12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR',
+};
 
 function generateRandomUint8Array() {
     const uint8Array = new Uint8Array(32);
