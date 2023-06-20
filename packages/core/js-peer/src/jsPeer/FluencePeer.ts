@@ -16,6 +16,7 @@
 import { KeyPair } from '../keypair/index.js';
 
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
+import { KeyPairFormat } from '@fluencelabs/avm';
 import {
     cloneWithNewData,
     getActualTTL,
@@ -297,7 +298,7 @@ export abstract class FluencePeer {
                     log_particle.trace('id %s. data: %j', item.particle.id, {
                         initPeerId: item.particle.initPeerId,
                         timestamp: item.particle.timestamp,
-                        tttl: item.particle.ttl,
+                        ttl: item.particle.ttl,
                         signature: item.particle.signature,
                     });
 
@@ -389,6 +390,9 @@ export abstract class FluencePeer {
                             currentPeerId: this.keyPair.getPeerId(),
                             timestamp: item.particle.timestamp,
                             ttl: item.particle.ttl,
+                            keyFormat: KeyPairFormat.Ed25519,
+                            particleId: item.particle.id,
+                            secretKeyBytes: this.keyPair.toEd25519PrivateKey(),
                         },
                         item.particle.script,
                         prevData,
