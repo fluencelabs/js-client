@@ -36,11 +36,11 @@ jobs:
     with:
       ref: ${{ github.ref }}
 
-  aqua-playground:
+  aqua:
     needs:
       - js-client
 
-    uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
+    uses: fluencelabs/aqua/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
       rust-peer-image: "docker.fluence.dev/nox:minimal_aquavm-0-39-1"
