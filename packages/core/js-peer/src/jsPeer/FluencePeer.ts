@@ -77,7 +77,7 @@ export const DEFAULT_CONFIG: PeerConfig = {
     debug: {
         printParticleId: false,
     },
-    defaultTtlMs: 7000,
+    defaultTtlMs: 120000,
 };
 
 /**
