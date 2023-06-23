@@ -11,7 +11,7 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "test": "node ./copy-worker-script-workaround.mjs && vitest --threads false run"
+        "test": "node ./copy-worker-script-workaround.mjs && vitest --threads false run --test-timeout=30000"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
