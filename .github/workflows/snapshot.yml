@@ -37,10 +37,10 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout fluence-js
+      - name: Checkout js-client
         uses: actions/checkout@v3
         with:
-          repository: fluencelabs/fluence-js
+          repository: fluencelabs/js-client
           ref: ${{ inputs.ref }}
 
       - uses: pnpm/action-setup@v2.2.4
