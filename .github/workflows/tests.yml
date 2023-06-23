@@ -24,6 +24,7 @@ env:
   RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
   FORCE_COLOR: true
   CI: true
+  DEBUG: '*'
 
 jobs:
   fluence-js:
