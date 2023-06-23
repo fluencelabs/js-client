@@ -106,3 +106,8 @@ jobs:
       - run: pnpm -r --no-frozen-lockfile i
       - run: pnpm -r build
       - run: pnpm -r test
+      
+      - name: Dump rust-peer logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
+
