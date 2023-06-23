@@ -43,6 +43,7 @@ jobs:
     uses: fluencelabs/aqua/.github/workflows/tests.yml@FLU-353
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
+      ref: FLU-353
 
   fluence-cli:
     needs:
@@ -51,3 +52,4 @@ jobs:
     uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@FLU-353
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
+      ref: FLU-353
