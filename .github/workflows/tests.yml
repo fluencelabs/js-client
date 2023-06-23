@@ -6,7 +6,7 @@ on:
       rust-peer-image:
         description: "rust-peer image tag"
         type: string
-        default: "docker.fluence.dev/nox:unstable_ipfs"
+        default: "fluencelabs/nox:unstable_ipfs"
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
