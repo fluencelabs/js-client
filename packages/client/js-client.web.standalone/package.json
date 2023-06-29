@@ -22,7 +22,7 @@
         "process": "0.11.10"
     },
     "devDependencies": {
-        "@fluencelabs/avm": "https://github.com/fluencelabs/js-client/raw/feat/add-signatures/avm-0.39.1-feat-VM-276-aquavm-keypair-e2816f6-1588-1.0.tgz",
+        "@fluencelabs/avm": "0.40.0",
         "@fluencelabs/marine-js": "0.3.45",
         "@types/node": "16.11.59",
         "@types/jest": "28.1.0",

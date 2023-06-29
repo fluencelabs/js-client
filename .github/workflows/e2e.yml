@@ -43,7 +43,7 @@ jobs:
     uses: fluencelabs/aqua-playground/.github/workflows/tests.yml@master
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      rust-peer-image: "docker.fluence.dev/nox:minimal_aquavm-0-39-1"
+      rust-peer-image: "fluencelabs/nox:unstable_minimal"
 
   fluence-cli:
     needs:
@@ -52,4 +52,4 @@ jobs:
     uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      rust-peer-image: "docker.fluence.dev/nox:minimal_aquavm-0-39-1"
+      rust-peer-image: "fluencelabs/nox:unstable_minimal"
