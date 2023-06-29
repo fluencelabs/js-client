@@ -24,6 +24,25 @@
   * dependencies
     * @fluencelabs/js-peer bumped from 0.8.8 to 0.8.9
 
+## [0.14.0](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.10...js-client.web.standalone-v0.14.0) (2023-06-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **avm:** avm 0.40.0 (https://github.com/fluencelabs/js-client/pull/315)
+
+### Features
+
+* **avm:** avm 0.40.0 (https://github.com/fluencelabs/js-client/pull/315) ([8bae6e2](https://github.com/fluencelabs/js-client/commit/8bae6e24e62153b567f320ccecc7bce76bc826d1))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-peer bumped from 0.8.10 to 0.9.0
+    * @fluencelabs/interfaces bumped from 0.7.6 to 0.8.0
+
 ## [0.13.10](https://github.com/fluencelabs/js-client/compare/js-client.web.standalone-v0.13.9...js-client.web.standalone-v0.13.10) (2023-06-20)
 
 
