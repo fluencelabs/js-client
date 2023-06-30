@@ -12,6 +12,24 @@
   * dependencies
     * @fluencelabs/interfaces bumped from 0.7.3 to 0.7.4
 
+## [0.12.0](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.7...js-client.api-v0.12.0) (2023-06-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **avm:** avm 0.40.0 (https://github.com/fluencelabs/js-client/pull/315)
+
+### Features
+
+* **avm:** avm 0.40.0 (https://github.com/fluencelabs/js-client/pull/315) ([8bae6e2](https://github.com/fluencelabs/js-client/commit/8bae6e24e62153b567f320ccecc7bce76bc826d1))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.7.6 to 0.8.0
+
 ## [0.11.7](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.11.6...js-client.api-v0.11.7) (2023-06-20)
 
 

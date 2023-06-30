@@ -21,7 +21,7 @@ describe('FluenceClient usage test suite', () => {
                 (call %init_peer_id% ("callback" "callback") [result])
             )
         )
-        (seq 
+        (seq
             (call init_relay ("op" "identity") [])
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )

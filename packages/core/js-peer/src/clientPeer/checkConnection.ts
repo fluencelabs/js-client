@@ -111,7 +111,7 @@ export const checkConnection = async (peer: ClientPeer, ttl?: number): Promise<b
         }
         return true;
     } catch (e) {
-        log.error('error on establishing connection. Relay: %s error: %j', e, peer.getRelayPeerId());
+        log.error('error on establishing connection. Relay: %s error: %j', peer.getRelayPeerId(), e);
         return false;
     }
 };
