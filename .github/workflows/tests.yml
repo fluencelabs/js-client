@@ -6,7 +6,11 @@ on:
       nox-image:
         description: "nox image tag"
         type: string
+<<<<<<< HEAD
         default: "fluencelabs/nox:unstable_minimal"
+=======
+        default: "fluencelabs/nox:unstable_ipfs"
+>>>>>>> origin/master
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
@@ -24,6 +28,7 @@ env:
   NOX_IMAGE: "${{ inputs.nox-image }}"
   FORCE_COLOR: true
   CI: true
+#   DEBUG: '*'
 
 jobs:
   js-client:
@@ -101,4 +106,12 @@ jobs:
 
       - run: pnpm -r --no-frozen-lockfile i
       - run: pnpm -r build
+<<<<<<< HEAD
       - run: pnpm -r test
+=======
+      - run: pnpm -r test
+
+      - name: Dump rust-peer logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
+>>>>>>> origin/master

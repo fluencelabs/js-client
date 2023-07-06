@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.0](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.6...interfaces-v0.8.0) (2023-06-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **avm:** avm 0.40.0 (https://github.com/fluencelabs/js-client/pull/315)
+
+### Features
+
+* **avm:** avm 0.40.0 (https://github.com/fluencelabs/js-client/pull/315) ([8bae6e2](https://github.com/fluencelabs/js-client/commit/8bae6e24e62153b567f320ccecc7bce76bc826d1))
+
 ## [0.7.6](https://github.com/fluencelabs/js-client/compare/interfaces-v0.7.5...interfaces-v0.7.6) (2023-06-20)
 
 
