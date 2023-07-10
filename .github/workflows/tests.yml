@@ -3,10 +3,10 @@ name: Run tests with worflow_call
 on:
   workflow_call:
     inputs:
-      rust-peer-image:
-        description: "rust-peer image tag"
+      nox-image:
+        description: "nox image tag"
         type: string
-        default: "fluencelabs/nox:unstable_ipfs"
+        default: "fluencelabs/nox:unstable_minimal"
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
@@ -21,13 +21,12 @@ on:
         default: "master"
 
 env:
-  RUST_PEER_IMAGE: "${{ inputs.rust-peer-image }}"
+  NOX_IMAGE: "${{ inputs.nox-image }}"
   FORCE_COLOR: true
   CI: true
-#   DEBUG: '*'
 
 jobs:
-  fluence-js:
+  js-client:
     name: "Run tests"
     runs-on: ubuntu-latest
 
@@ -62,20 +61,16 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
 
-      - name: Setup tmate session
-        if: failure()
-        uses: mxschmitt/action-tmate@v3
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
           repository: fluencelabs/fluence-js
           ref: ${{ inputs.ref }}
 
-      - name: Pull rust-peer image
-        run: docker pull $RUST_PEER_IMAGE
+      - name: Pull nox image
+        run: docker pull $NOX_IMAGE
 
-      - name: Run rust-peer
+      - name: Run nox network
         uses: isbang/compose-action@v1.4.1
         with:
           compose-file: ".github/e2e/docker-compose.yml"
