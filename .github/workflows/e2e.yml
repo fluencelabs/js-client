@@ -40,16 +40,14 @@ jobs:
     needs:
       - js-client
 
-    uses: fluencelabs/aqua/.github/workflows/tests.yml@FLU-353
+    uses: fluencelabs/aqua/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      ref: FLU-353
 
   fluence-cli:
     needs:
       - js-client
 
-    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@FLU-353
+    uses: fluencelabs/fluence-cli/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      ref: FLU-353
