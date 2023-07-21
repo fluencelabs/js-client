@@ -82,12 +82,12 @@ If you are using TypeScript:
 
 ## Usage in an Application
 
-Once you've added the client, you can compile [Aqua](https://github.com/fluencelabs/aqua) and run it in your application. To compile Aqua, use [flox](https://github.com/fluencelabs/flox).
+Once you've added the client, you can compile [Aqua](https://github.com/fluencelabs/aqua) and run it in your application. To compile Aqua, use [Fluence CLI](https://github.com/fluencelabs/cli).
 
 1. Install the package:
 
     ```
-    npm i -D "@fluencelabs/flox"
+    npm i -D @fluencelabs/cli
     ```
 
 2. Add a directory in your project for Aqua code, e.g., `_aqua`.
