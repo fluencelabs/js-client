@@ -73,7 +73,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         // We enable all possible log levels passing the control for exact printouts to the logger
         const env = logLevelToEnv('trace');
         this.loggers.set(serviceId, marineLogger(serviceId));
-        await this.workerThread.createService(serviceModule, serviceId, undefined, env);
+        await this.workerThread.createService(serviceModule, serviceId, env);
         this.marineServices.add(serviceId);
     }
 

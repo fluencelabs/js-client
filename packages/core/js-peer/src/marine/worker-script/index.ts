@@ -15,7 +15,7 @@
  */
 
 import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
-import type { Env, MarineServiceConfig } from '@fluencelabs/marine-js/dist/config';
+import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } from '@fluencelabs/marine-js/dist/config'
 import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
 import { Buffer } from 'buffer';
 // @ts-ignore
@@ -25,6 +25,27 @@ import { expose } from 'threads/worker';
 
 let marineServices = new Map<string, MarineService>();
 let controlModule: WebAssembly.Module | undefined;
+
+const createSimpleModuleDescriptor = (name: string, wasm_bytes: Uint8Array, envs?: Env): ModuleDescriptor => {
+    return {
+        import_name: name,
+        wasm_bytes: wasm_bytes,
+        config: {
+            logger_enabled: true,
+            logging_mask: 0,
+            wasi: {
+                envs: {...envs},
+                preopened_files: new Set(),
+                mapped_dirs: new Map,
+            }
+        }
+    }
+}
+const createSimpleMarineService = (name: string, wasm_bytes: Uint8Array, env? : Env): MarineServiceConfig => {
+    return {
+        modules_config: [createSimpleModuleDescriptor(name, wasm_bytes, env)],
+    }
+}
 
 const onLogMessage = new Subject<LogMessage>();
 
@@ -40,17 +61,15 @@ const toExpose = {
     createService: async (
         wasm: SharedArrayBuffer | Buffer,
         serviceId: string,
-        marineConfig?: MarineServiceConfig,
         envs?: Env,
     ): Promise<void> => {
         if (!controlModule) {
             throw new Error('MarineJS is not initialized. To initialize call `init` function');
         }
 
-        const service = await WebAssembly.compile(asArray(wasm));
+        let marineConfig = createSimpleMarineService(serviceId, new Uint8Array(wasm), envs);
         const srv = new MarineService(
             controlModule,
-            service,
             serviceId,
             onLogMessage.next.bind(onLogMessage),
             marineConfig,
