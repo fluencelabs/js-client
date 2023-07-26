@@ -27,7 +27,7 @@ describe('Srv service test suite', () => {
             // assert
             expect(res).toBe('Hi, test');
         });
-    }), 10000;
+    }, 10000);
 
     it('List deployed services', async () => {
         await withPeer(async (peer) => {
