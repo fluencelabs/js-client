@@ -1,0 +1,44 @@
+{
+    "name": "@fluencelabs/marine-worker",
+    "version": "1.0.0",
+    "description": "Marine worker",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/marine-worker.umd.cjs",
+    "module": "/dist/marine-worker.js",
+    "exports": {
+        ".": {
+            "import": "./dist/marine-worker.js",
+            "require": "./dist/marine-worker.umd.cjs"
+        },
+        "./dist/marine-worker.js": {
+            "import": "./dist/marine-worker.js"
+        },
+        "./dist/marine-worker.umd.сjs": {
+            "import": "./dist/marine-worker.umd.cjs"
+        }
+    },
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "vite build"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "keywords": [],
+    "devDependencies": {
+        "@rollup/plugin-inject": "5.0.3",
+        "@types/node": "20.4.5",
+        "node-stdlib-browser": "1.2.0",
+        "typescript": "5.1.6",
+        "vite": "4.0.4",
+        "vitest": "0.29.7"
+    },
+    "dependencies": {
+        "@fluencelabs/marine-js": "0.3.45",
+        "observable-fns": "0.6.1",
+        "threads": "1.7.0"
+    }
+}

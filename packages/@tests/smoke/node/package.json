@@ -19,7 +19,6 @@
     "dependencies": {
         "@fluencelabs/js-client.api": "workspace:^",
         "@fluencelabs/js-client.node": "workspace:^",
-        "@test/aqua_for_test": "workspace:^"
-    },
-    "devDependencies": {}
+        "@test/aqua_for_test": "workspace:../../aqua"
+    }
 }

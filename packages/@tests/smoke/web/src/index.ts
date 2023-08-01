@@ -14,7 +14,7 @@ const test = async () => {
     const localServer = await startContentServer(port, publicPath);
 
     console.log('starting puppeteer...');
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
 
     // uncomment to debug what's happening inside the browser
@@ -27,7 +27,7 @@ const test = async () => {
     await page.click('#btn');
 
     console.log('waiting for result to appear...');
-    const elem = await page.waitForSelector('#res');
+    const elem = await page.waitForSelector('#res', {timeout: 10000000});
 
     console.log('getting the content of result div...');
     const content = await elem?.evaluate((x) => x.textContent);

@@ -20,9 +20,14 @@ import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/regis
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/jsPeer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { InlinedWorkerLoader, InlinedWasmLoader } from '@fluencelabs/js-peer/dist/marine/deps-loader/common.js';
+import { BlobWorker } from 'threads';
+import fetch from 'cross-fetch';
+
+import WorkerInlineUrl from '@fluencelabs/marine-worker/dist/marine-worker.umd.сjs?url';
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
-    const workerLoader = new InlinedWorkerLoader('___worker___');
+    const workerBlob = await fetch(WorkerInlineUrl).then(res => res.blob());
+    const workerLoader = new BlobWorker(workerBlob);
     const controlModuleLoader = new InlinedWasmLoader('___marine___');
     const avmModuleLoader = new InlinedWasmLoader('___avm___');
 

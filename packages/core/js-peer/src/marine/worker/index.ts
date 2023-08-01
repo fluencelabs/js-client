@@ -25,6 +25,8 @@ import { Buffer } from 'buffer';
 
 import { MarineLogger, marineLogger } from '../../util/logger.js';
 import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';
+// @ts-ignore
+import type { WorkerImplementation } from 'threads/dist/types/master';
 
 export class MarineBackgroundRunner implements IMarineHost {
     private marineServices = new Set<string>();
@@ -32,7 +34,7 @@ export class MarineBackgroundRunner implements IMarineHost {
 
     private loggers: Map<string, MarineLogger> = new Map();
 
-    constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader) {}
+    constructor(private worker: WorkerImplementation, private controlModuleLoader: IWasmLoader) {}
 
     hasService(serviceId: string): boolean {
         return this.marineServices.has(serviceId);
@@ -48,11 +50,9 @@ export class MarineBackgroundRunner implements IMarineHost {
         }
 
         this.marineServices = new Set();
-        await this.workerLoader.start();
         await this.controlModuleLoader.start();
-        const worker = this.workerLoader.getValue();
         const wasm = this.controlModuleLoader.getValue();
-        this.workerThread = await spawn<MarineBackgroundInterface>(worker, { timeout: 99999999 });
+        this.workerThread = await spawn<MarineBackgroundInterface>(this.worker, { timeout: 99999999 });
         const logfn: LogFunction = (message) => {
             const serviceLogger = this.loggers.get(message.service);
             if (!serviceLogger) {

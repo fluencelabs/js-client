@@ -1,17 +1,20 @@
 import * as fs from 'fs';
-import * as path from 'path';
+import path, { dirname, join, resolve } from 'path';
 import { fromUint8Array } from 'js-base64';
+import type { InlineConfig, PluginOption } from 'vite';
 import { build } from 'vite';
 import { createRequire } from 'module';
-import type { InlineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import * as inject from '@rollup/plugin-inject';
+import inject from '@rollup/plugin-inject';
 import { replaceCodePlugin } from 'vite-plugin-replace';
+import stdLibBrowser from 'node-stdlib-browser';
+import { fileURLToPath } from 'url';
 
 const require = createRequire(import.meta.url);
 
+
 const getWorkerScriptPathOrDie = () => {
-    const scriptPath = path.resolve('../../core/js-peer/dist/marine/worker-script/index.js');
+    const scriptPath = resolve('../../core/js-peer/dist/marine/worker-script/index.js');
     if (!fs.existsSync(scriptPath)) {
         console.error('Worker script not found, looking at: ' + scriptPath);
         process.exit(1);
@@ -25,8 +28,9 @@ const commonConfig = (opts: {
     name: string;
     entry: string;
 }): InlineConfig & Required<Pick<InlineConfig, 'build'>> => {
+    const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
+    // @ts-ignore
     return {
-        mode: 'production',
         build: {
             minify: 'esbuild',
             lib: {
@@ -37,7 +41,11 @@ const commonConfig = (opts: {
             outDir: opts.outDir,
         },
         base: '',
-        plugins: [tsconfigPaths()],
+        plugins: [tsconfigPaths(), {...inject({
+                global: [esbuildShim, 'global'],
+                process: [esbuildShim, 'process'],
+                Buffer: [esbuildShim, 'Buffer']
+            }), enforce: 'post'}] as PluginOption[],
         optimizeDeps: {
             esbuildOptions: {
                 define: {
@@ -45,6 +53,14 @@ const commonConfig = (opts: {
                 },
             },
         },
+        resolve: {
+            alias: {
+                ...stdLibBrowser,
+                net: 'node-stdlib-browser/esm/mock/net',
+                dgram: path.resolve(dirname(fileURLToPath(import.meta.url)), 'mocks/dgram'),
+                module: path.resolve(dirname(fileURLToPath(import.meta.url)), 'mocks/module'),
+            }
+        }
     };
 };
 
@@ -56,7 +72,7 @@ const readAsBase64 = async (filePath: string): Promise<string> => {
 
 const readWasmFromNpmAsBase64 = (pkg: string, wasmFileName: string): Promise<string> => {
     const pkgPath = require.resolve(pkg);
-    const wasmFilePath = path.join(path.dirname(pkgPath), wasmFileName);
+    const wasmFilePath = join(dirname(pkgPath), wasmFileName);
     return readAsBase64(wasmFilePath);
 };
 
@@ -69,15 +85,6 @@ const buildClient = async () => {
         entry: getWorkerScriptPathOrDie(),
         name: 'worker-script',
     });
-    workerConfig.build!.rollupOptions = {
-        plugins: [
-            // @ts-ignore
-            inject.default({
-                Buffer: ['buffer', 'Buffer'],
-                process: 'process',
-            }),
-        ],
-    };
 
     await build(workerConfig);
 

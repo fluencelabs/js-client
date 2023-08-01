@@ -15,15 +15,19 @@
  */
 import * as platform from 'platform';
 
-import type { RelayOptions, ClientConfig, IFluenceClient } from '@fluencelabs/interfaces';
+import type { ClientConfig, IFluenceClient, RelayOptions } from '@fluencelabs/interfaces';
 import { ClientPeer, makeClientPeerConfig } from '@fluencelabs/js-peer/dist/clientPeer/ClientPeer.js';
 import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/callFunction.js';
 import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/jsPeer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { WasmLoaderFromNpm } from '@fluencelabs/js-peer/dist/marine/deps-loader/node.js';
-import { WorkerLoader } from '@fluencelabs/js-peer/dist/marine/worker-script/workerLoader.js';
 import { doRegisterNodeUtils } from '@fluencelabs/js-peer/dist/services/NodeUtils.js';
+import WorkerInlineUrl from '@fluencelabs/marine-worker/dist/marine-worker.umd.сjs?url';
+
+// @ts-ignore
+import { BlobWorker } from 'threads';
+import fetch from 'cross-fetch';
 
 throwIfNotSupported();
 
@@ -39,7 +43,8 @@ export const defaultNames = {
 };
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
-    const workerLoader = new WorkerLoader();
+    const workerBlob = await fetch(WorkerInlineUrl).then(res => res.blob());
+    const workerLoader = new BlobWorker(workerBlob);
     const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
 
