@@ -23,7 +23,7 @@ import { InlinedWorkerLoader, InlinedWasmLoader } from '@fluencelabs/js-peer/dis
 import { BlobWorker } from 'threads';
 import fetch from 'cross-fetch';
 
-import WorkerInlineUrl from '@fluencelabs/marine-worker/dist/marine-worker.umd.сjs?url';
+import WorkerInlineUrl from '@fluencelabs/marine-worker/dist/marine-worker.js?url';
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
     const workerBlob = await fetch(WorkerInlineUrl).then(res => res.blob());

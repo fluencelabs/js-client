@@ -20,6 +20,7 @@ import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/d
 import { Observable, Subject } from 'observable-fns';
 // @ts-ignore no types provided for package
 import { expose } from 'threads';
+import * as Buffer from 'buffer';
 
 let marineServices = new Map<string, MarineService>();
 let controlModule: WebAssembly.Module | undefined;
@@ -27,12 +28,12 @@ let controlModule: WebAssembly.Module | undefined;
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
-    init: async (controlModuleWasm: ArrayBuffer): Promise<void> => {
-        controlModule = await WebAssembly.compile(controlModuleWasm);
+    init: async (controlModuleWasm: SharedArrayBuffer | Buffer): Promise<void> => {
+        controlModule = await WebAssembly.compile(new Uint8Array(controlModuleWasm));
     },
 
     createService: async (
-        wasm: ArrayBuffer,
+        wasm: SharedArrayBuffer | Buffer,
         serviceId: string,
         marineConfig?: MarineServiceConfig,
         envs?: Env,
@@ -41,7 +42,7 @@ const toExpose = {
             throw new Error('MarineJS is not initialized. To initialize call `init` function');
         }
 
-        const service = await WebAssembly.compile(wasm);
+        const service = await WebAssembly.compile(new Uint8Array(wasm));
         const srv = new MarineService(
             controlModule,
             service,
