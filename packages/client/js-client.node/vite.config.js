@@ -2,6 +2,7 @@ import {defineConfig} from 'vite'
 import {resolve} from 'path';
 import {builtinModules} from "module";
 import { replaceCodePlugin } from "vite-plugin-replace";
+import inject from '@rollup/plugin-inject';
 
 export default defineConfig({
     build: {
@@ -11,16 +12,28 @@ export default defineConfig({
             name: 'JSClient',
         },
         rollupOptions: {
-            external: builtinModules
+            external: [...builtinModules, ...builtinModules.map(bm => `node:${bm}`), 'ws', 'worker_threads'],
+            plugins: [
+                inject({
+                    'WebSocket': ['ws', 'WebSocket'],
+                    self: 'global',
+                    'WorkerScope': ['worker_threads', '*'], 
+                    'Worker': ['worker_threads', 'Worker'],
+                    'isMainThread': ['worker_threads', 'isMainThread'],
+                })
+            ]
         },
-        commonjsOptions: {
-            esmExternals: true,
-            dynamicRequireRoot: '/Users/a.mamedov/WebstormProjects/js-client/node_modules/.pnpm',
-            dynamicRequireTargets: ['./default-gateway@6.0.3/node_modules/default-gateway/*.js'],
-            ignoreDynamicRequires: true,
-        }
     },
     plugins: [replaceCodePlugin({
-        replacements: [{from: 'require(`./${file}.js`)', to: ''}]
-    })]
+        replacements: [
+            {from: 'require(`./${file}.js`)', to: 'require(`./linux.js`)'},
+            {from: 'const { name, version } = req(\'../../package.json\')', to: 'const { name, version } = { name: \'ssdp\', version: \'4.0.4\' }'},
+            {from: 'eval("require")("worker_threads")', to: 'WorkerScope'},
+            {from: 'eval("require")("worker_threads")', to: 'WorkerScope'},
+        ]
+    })],
+    resolve: {
+        browserField: false,
+        conditions: ['node']
+    }
 })

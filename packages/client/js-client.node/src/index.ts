@@ -23,11 +23,13 @@ import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/jsPeer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
 import { WasmLoaderFromNpm } from '@fluencelabs/js-peer/dist/marine/deps-loader/node.js';
 import { doRegisterNodeUtils } from '@fluencelabs/js-peer/dist/services/NodeUtils.js';
+import { encode, decode } from 'js-base64';
+import parseDataURL from "data-urls";
+
 import WorkerInlineUrl from '@fluencelabs/marine-worker/dist/marine-worker.umd.сjs?url';
 
 // @ts-ignore
-import { BlobWorker } from 'threads';
-import fetch from 'cross-fetch';
+import { BlobWorker, Worker } from 'threads';
 
 throwIfNotSupported();
 
@@ -43,8 +45,9 @@ export const defaultNames = {
 };
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
-    const workerBlob = await fetch(WorkerInlineUrl).then(res => res.blob());
-    const workerLoader = new BlobWorker(workerBlob);
+    const data = /data:application\/\w+?;base64,(.+)/.exec(WorkerInlineUrl)?.[1]!;
+    
+    const workerLoader = BlobWorker.fromText(decode(data));
     const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
     const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
 
