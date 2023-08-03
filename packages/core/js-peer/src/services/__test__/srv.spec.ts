@@ -27,7 +27,7 @@ describe('Srv service test suite', () => {
             // assert
             expect(res).toBe('Hi, test');
         });
-    }, 10000);
+    });
 
     it('List deployed services', async () => {
         await withPeer(async (peer) => {
@@ -41,7 +41,7 @@ describe('Srv service test suite', () => {
             // assert
             expect(res).toHaveLength(3);
         });
-    }, 10000);
+    });
 
     it('Correct error for removed services', async () => {
         await withPeer(async (peer) => {
@@ -55,7 +55,7 @@ describe('Srv service test suite', () => {
             // assert
             expect(res).toMatch('No service found for service call');
         });
-    }, 10000);
+    });
 
     it('Correct error for file not found', async () => {
         await withPeer(async (peer) => {
@@ -68,7 +68,7 @@ describe('Srv service test suite', () => {
             // assert
             expect(res).toMatch("ENOENT: no such file or directory, open '/random/incorrect/file'");
         });
-    }, 10000);
+    });
 
     it('Correct error for removing non existing service', async () => {
         await withPeer(async (peer) => {
@@ -81,5 +81,5 @@ describe('Srv service test suite', () => {
             // assert
             expect(res).toMatch('Service with id random_id not found');
         });
-    }, 10000);
+    });
 });

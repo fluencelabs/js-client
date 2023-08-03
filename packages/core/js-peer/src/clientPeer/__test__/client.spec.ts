@@ -103,7 +103,7 @@ describe('FluenceClient usage test suite', () => {
                 expect(await res).toEqual('test');
             });
         });
-    }, 10000);
+    });
 
     describe('should make connection to network', () => {
         it('address as string', async () => {

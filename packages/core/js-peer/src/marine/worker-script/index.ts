@@ -26,10 +26,9 @@ import { expose } from 'threads/worker';
 let marineServices = new Map<string, MarineService>();
 let controlModule: WebAssembly.Module | undefined;
 
-const createSimpleModuleDescriptor = (name: string, wasm_bytes: Uint8Array, envs?: Env): ModuleDescriptor => {
+const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
     return {
         import_name: name,
-        wasm_bytes: wasm_bytes,
         config: {
             logger_enabled: true,
             logging_mask: 0,
@@ -41,9 +40,9 @@ const createSimpleModuleDescriptor = (name: string, wasm_bytes: Uint8Array, envs
         }
     }
 }
-const createSimpleMarineService = (name: string, wasm_bytes: Uint8Array, env? : Env): MarineServiceConfig => {
+const createSimpleMarineService = (name: string, env? : Env): MarineServiceConfig => {
     return {
-        modules_config: [createSimpleModuleDescriptor(name, wasm_bytes, env)],
+        modules_config: [createSimpleModuleDescriptor(name, env)],
     }
 }
 
@@ -67,12 +66,14 @@ const toExpose = {
             throw new Error('MarineJS is not initialized. To initialize call `init` function');
         }
 
-        let marineConfig = createSimpleMarineService(serviceId, new Uint8Array(wasm), envs);
+        const marineConfig = createSimpleMarineService(serviceId, envs);
+        const modules = {[serviceId]: new Uint8Array(wasm)}
         const srv = new MarineService(
             controlModule,
             serviceId,
             onLogMessage.next.bind(onLogMessage),
             marineConfig,
+            modules,
             envs,
         );
         await srv.init();

@@ -55,7 +55,7 @@ describe('FluencePeer usage test suite', () => {
 
             expect(res).toBe('test');
         });
-    }, 10000);
+    });
 
     it('Should throw correct message when calling non existing local service', async function () {
         await withPeer(async (peer) => {
@@ -68,7 +68,7 @@ describe('FluencePeer usage test suite', () => {
                 instruction: 'call %init_peer_id% ("incorrect" "incorrect") [] res',
             });
         });
-    }, 10000);
+    });
 
     it('Should not crash if undefined is passed as a variable', async () => {
         await withPeer(async (peer) => {
