@@ -16,7 +16,7 @@
 
 import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
 import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } from '@fluencelabs/marine-js/dist/config'
-import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
+import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluencelabs/marine-js/dist/types';
 import { Buffer } from 'buffer';
 // @ts-ignore
 import { Observable, Subject } from 'threads/observable';
@@ -87,7 +87,7 @@ const toExpose = {
         onLogMessage.complete();
     },
 
-    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any): unknown => {
+    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: CallParameters): unknown => {
         const srv = marineServices.get(serviceId);
         if (!srv) {
             throw new Error(`service with id=${serviceId} not found`);

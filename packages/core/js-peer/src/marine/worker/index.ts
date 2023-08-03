@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { JSONArray, JSONObject } from '@fluencelabs/marine-js/dist/types';
+import type { JSONArray, JSONObject, CallParameters } from '@fluencelabs/marine-js/dist/types';
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
 import type { MarineBackgroundInterface } from '../worker-script/index.js';
 // @ts-ignore
@@ -81,7 +81,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         serviceId: string,
         functionName: string,
         args: JSONArray | JSONObject,
-        callParams: any,
+        callParams: CallParameters,
     ): Promise<unknown> {
         if (!this.workerThread) {
             throw 'Worker is not initialized';
