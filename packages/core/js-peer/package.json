@@ -20,7 +20,7 @@
     "dependencies": {
         "@fluencelabs/interfaces": "0.8.0",
         "@fluencelabs/avm": "0.40.0",
-        "@fluencelabs/marine-js": "0.7.0",
+        "@fluencelabs/marine-js": "0.7.2",
         "multiformats": "11.0.1",
         "debug": "4.3.4",
         "async": "3.2.4",
