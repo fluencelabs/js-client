@@ -27,7 +27,7 @@
         "webpack": "5.88.2"
     },
     "devDependencies": {
-        "@fluencelabs/avm": "0.40.0",
+        "@fluencelabs/avm": "0.43.1",
         "@fluencelabs/marine-js": "0.3.45",
         "@rollup/plugin-inject": "5.0.3",
         "@types/jest": "28.1.0",
