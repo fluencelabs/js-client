@@ -145,8 +145,8 @@ importers:
         version: link:../../core/interfaces
     devDependencies:
       '@fluencelabs/avm':
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: 0.43.1
+        version: 0.43.1
       '@fluencelabs/marine-js':
         specifier: 0.3.45
         version: 0.3.45
@@ -160,8 +160,8 @@ importers:
   packages/client/js-client.node:
     dependencies:
       '@fluencelabs/avm':
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: 0.43.1
+        version: 0.43.1
       '@fluencelabs/interfaces':
         specifier: 0.8.0
         version: link:../../core/interfaces
@@ -217,8 +217,8 @@ importers:
         version: 0.11.10
     devDependencies:
       '@fluencelabs/avm':
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: 0.43.1
+        version: 0.43.1
       '@fluencelabs/marine-js':
         specifier: 0.3.45
         version: 0.3.45
@@ -259,8 +259,8 @@ importers:
   packages/core/interfaces:
     devDependencies:
       '@fluencelabs/avm':
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: 0.43.1
+        version: 0.43.1
       '@fluencelabs/marine-js':
         specifier: 0.3.45
         version: 0.3.45
@@ -274,8 +274,8 @@ importers:
         specifier: 11.0.0
         version: 11.0.0
       '@fluencelabs/avm':
-        specifier: 0.40.0
-        version: 0.40.0
+        specifier: 0.43.1
+        version: 0.43.1
       '@fluencelabs/interfaces':
         specifier: 0.8.0
         version: link:../interfaces
@@ -2729,8 +2729,8 @@ packages:
     resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
     dev: true
 
-  /@fluencelabs/avm@0.40.0:
-    resolution: {integrity: sha512-DkCht5+Tg8txRlLIXdP/CPKXmvZqWvJk8Nb89r0JmykPelgI2xTlSkKcAtVrNnGIhp0ghS+HXq2KXVYwu2Il1Q==}
+  /@fluencelabs/avm@0.43.1:
+    resolution: {integrity: sha512-6tGOMT/2S3ANrqvPLjPUUHgnZCibdIJQH25lsfPN9wBhAcS+0DsYuh1rQWiiJ7xVpps/tuwzFX7gecMmr7hsnQ==}
 
   /@fluencelabs/cli@0.3.9(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@nomicfoundation/hardhat-chai-matchers@1.0.6)(@nomicfoundation/hardhat-network-helpers@1.0.8)(@nomiclabs/hardhat-ethers@2.2.3)(@nomiclabs/hardhat-etherscan@3.1.7)(@typechain/ethers-v5@10.2.1)(@typechain/hardhat@6.1.6)(@types/chai@4.3.5)(@types/mocha@9.1.1)(@types/node@18.13.0)(chai@4.3.7)(hardhat-gas-reporter@1.0.9)(hardhat@2.15.0)(jest@27.5.1)(solidity-coverage@0.7.22)(ts-node@10.9.1)(typechain@8.2.0)(typescript@4.7.2):
     resolution: {integrity: sha512-xJYi7+AHrWt6RgWnr7Efr8Jpv0dNLoWhiCMvgSbXoFpIZzQAyNDgk5hnCdwIQ/eiJcNg0GHY0gyC+Q/d5YKc1Q==}
@@ -6563,6 +6563,7 @@ packages:
   /amdefine@1.0.1:
     resolution: {integrity: sha512-S2Hw0TtNkMJhIabBwIojKL9YHO5T0n5eNqWJ7Lrlel/zDbftQpxpapi8tZs3X1HWa+u+QeydGmzzNU0m09+Rcg==}
     engines: {node: '>=0.4.2'}
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -9748,6 +9749,7 @@ packages:
   /esm@3.2.25:
     resolution: {integrity: sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==}
     engines: {node: '>=6'}
+    requiresBuild: true
     optional: true
 
   /espree@9.5.2:
