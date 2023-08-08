@@ -16,7 +16,7 @@
 
 import type { JSONArray, JSONObject, CallParameters } from '@fluencelabs/marine-js/dist/types';
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
-import type { MarineBackgroundInterface } from '../worker-script/index.js';
+import type { MarineBackgroundInterface } from '@fluencelabs/marine-worker';
 // @ts-ignore
 import { spawn, Thread } from 'threads';
 // @ts-ignore
@@ -51,7 +51,7 @@ export class MarineBackgroundRunner implements IMarineHost {
 
         this.marineServices = new Set();
         await this.controlModuleLoader.start();
-        const wasm = this.controlModuleLoader.getValue();
+        const wasm = await this.controlModuleLoader.getValue();
         this.workerThread = await spawn<MarineBackgroundInterface>(this.worker, { timeout: 99999999 });
         const logfn: LogFunction = (message) => {
             const serviceLogger = this.loggers.get(message.service);
@@ -64,7 +64,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         await this.workerThread.init(wasm);
     }
 
-    async createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
+    async createService(serviceModule: WebAssembly.Module, serviceId: string): Promise<void> {
         if (!this.workerThread) {
             throw 'Worker is not initialized';
         }

@@ -21,6 +21,7 @@
         "@fluencelabs/marine-worker": "workspace:*",
         "buffer": "6.0.3",
         "cross-fetch": "4.0.0",
+        "data-urls": "4.0.0",
         "process": "0.11.10",
         "threads": "1.7.0",
         "vite-plugin-node-polyfills": "0.9.0",
@@ -29,7 +30,9 @@
     "devDependencies": {
         "@fluencelabs/avm": "0.43.1",
         "@fluencelabs/marine-js": "0.7.2",
+        "@laynezh/vite-plugin-lib-assets": "0.4.1",
         "@rollup/plugin-inject": "5.0.3",
+        "@types/data-urls": "3.0.1",
         "@types/jest": "28.1.0",
         "@types/node": "16.11.59",
         "crypto-browserify": "3.12.0",
@@ -45,6 +48,8 @@
         "vite-plugin-external": "1.2.8",
         "vite-plugin-externals": "0.6.2",
         "vite-plugin-replace": "0.1.1",
+        "vite-plugin-top-level-await": "1.3.1",
+        "vite-plugin-wasm": "3.2.2",
         "vite-tsconfig-paths": "4.0.3"
     }
 }

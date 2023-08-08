@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// @ts-nocheck
 import { PeerIdB58 } from '@fluencelabs/interfaces';
 import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';

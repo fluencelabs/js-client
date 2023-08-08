@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import path, { dirname, join, resolve } from 'path';
 import { fromUint8Array } from 'js-base64';
 import type { InlineConfig, PluginOption } from 'vite';
@@ -9,6 +9,10 @@ import inject from '@rollup/plugin-inject';
 import { replaceCodePlugin } from 'vite-plugin-replace';
 import stdLibBrowser from 'node-stdlib-browser';
 import { fileURLToPath } from 'url';
+import wasm from 'vite-plugin-wasm';
+import topLevelAwait from 'vite-plugin-top-level-await';
+import libAssetsPlugin from '@laynezh/vite-plugin-lib-assets'
+import pkg from './package.json' assert { type: 'json' }; 
 
 const require = createRequire(import.meta.url);
 
@@ -45,7 +49,10 @@ const commonConfig = (opts: {
                 global: [esbuildShim, 'global'],
                 process: [esbuildShim, 'process'],
                 Buffer: [esbuildShim, 'Buffer']
-            }), enforce: 'post'}] as PluginOption[],
+            }), enforce: 'post'}, libAssetsPlugin({
+            include: ['**/*.wasm', '**/marine-worker.js'],
+            publicUrl: '/'
+        })] as PluginOption[],
         optimizeDeps: {
             esbuildOptions: {
                 define: {
@@ -60,6 +67,13 @@ const commonConfig = (opts: {
                 dgram: path.resolve(dirname(fileURLToPath(import.meta.url)), 'mocks/dgram'),
                 module: path.resolve(dirname(fileURLToPath(import.meta.url)), 'mocks/module'),
             }
+        },
+        define: {
+            __CLIENT_ENV__: 'browser',
+            __MARINE_VERSION__: pkg.devDependencies['@fluencelabs/marine-js'],
+            __AVM_VERSION__: pkg.devDependencies['@fluencelabs/avm'],
+            __WORKER_VERSION__: pkg.version,
+            __CDN_ROOT__: 'https://unpkg.com/'
         }
     };
 };
@@ -86,7 +100,7 @@ const buildClient = async () => {
         name: 'worker-script',
     });
 
-    await build(workerConfig);
+    // await build(workerConfig);
 
     // build js-client
     const jsClientConfig = commonConfig({
@@ -94,29 +108,6 @@ const buildClient = async () => {
         entry: './src/index.ts',
         name: 'js-client',
     });
-
-    const workerScriptB64 = await readAsBase64('./tmp/worker-script.umd.cjs');
-    const avmBase64 = await readWasmFromNpmAsBase64('@fluencelabs/avm', 'avm.wasm');
-    const marineBase64 = await readWasmFromNpmAsBase64('@fluencelabs/marine-js', 'marine-js.wasm');
-
-    jsClientConfig.plugins!.push(
-        replaceCodePlugin({
-            replacements: [
-                {
-                    from: '___worker___',
-                    to: workerScriptB64,
-                },
-                {
-                    from: '___avm___',
-                    to: avmBase64,
-                },
-                {
-                    from: '___marine___',
-                    to: marineBase64,
-                },
-            ],
-        }),
-    );
 
     await build(jsClientConfig);
 

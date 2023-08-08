@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const CDN_PUBLIC_PATH = join(__dirname, '../../../client/js-client.web.standalone/dist/');
+export const CDN_PUBLIC_PATH = join(__dirname, '../../../client/js-client.web.standalone/dist/');
 
 export const startCdn = (port: number) => startContentServer(port, CDN_PUBLIC_PATH);
 
@@ -15,6 +15,10 @@ export const startContentServer = (port: number, publicDir: string): Promise<Ser
     const server = createServer((request, response) => {
         return handler(request, response, {
             public: publicDir,
+            rewrites: [{
+                source: '/js-client.min.js',
+                destination: '/source/js-client.min.js'
+            }]
         });
     });
 

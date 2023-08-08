@@ -3,6 +3,8 @@ import {resolve} from 'path';
 import {builtinModules} from "module";
 import { replaceCodePlugin } from "vite-plugin-replace";
 import inject from '@rollup/plugin-inject';
+import pkg from './package.json' assert { type: 'json' };
+import libAssetsPlugin from "@laynezh/vite-plugin-lib-assets";
 
 export default defineConfig({
     build: {
@@ -31,9 +33,15 @@ export default defineConfig({
             {from: 'eval("require")("worker_threads")', to: 'WorkerScope'},
             {from: 'eval("require")("worker_threads")', to: 'WorkerScope'},
         ]
+    }), libAssetsPlugin({
+        include: ['**/marine-worker.umd.cjs'],
+        publicUrl: '/'
     })],
     resolve: {
         browserField: false,
         conditions: ['node']
+    },
+    define: {
+        __CLIENT_ENV__: 'node'
     }
 })

@@ -21,38 +21,68 @@ import { callAquaFunction } from '@fluencelabs/js-peer/dist/compilerSupport/call
 import { registerService } from '@fluencelabs/js-peer/dist/compilerSupport/registerService.js';
 import { MarineBasedAvmRunner } from '@fluencelabs/js-peer/dist/jsPeer/avm.js';
 import { MarineBackgroundRunner } from '@fluencelabs/js-peer/dist/marine/worker/index.js';
-import { WasmLoaderFromNpm } from '@fluencelabs/js-peer/dist/marine/deps-loader/node.js';
 import { doRegisterNodeUtils } from '@fluencelabs/js-peer/dist/services/NodeUtils.js';
-import { encode, decode } from 'js-base64';
-import parseDataURL from "data-urls";
-
-import WorkerInlineUrl from '@fluencelabs/marine-worker/dist/marine-worker.umd.сjs?url';
 
 // @ts-ignore
 import { BlobWorker, Worker } from 'threads';
+import fetch from 'cross-fetch';
+import fs from 'fs';
 
 throwIfNotSupported();
 
-export const defaultNames = {
-    avm: {
-        file: 'avm.wasm',
-        package: '@fluencelabs/avm',
-    },
-    marine: {
-        file: 'marine-js.wasm',
-        package: '@fluencelabs/marine-js',
-    },
-};
+const WORKER_VERSION = '__WORKER_VERSION__';
+const MARINE_VERSION = '__MARINE_VERSION__';
+const AVM_VERSION = '__AVM_VERSION__';
+const CDN_ROOT = '__CDN_ROOT__';
+const CLIENT_ENV = '__CLIENT_ENV__' as 'browser' | 'node';
+
+async function fetchWorker(packageName: string, assetPath: string, version: string) {
+    if (CLIENT_ENV === 'browser') {
+        return fetch(new globalThis.URL(`${packageName}@${version}${assetPath}`, CDN_ROOT)).then(res => res.text());
+    } else {
+        const file = await new Promise<Buffer>((resolve, reject) => {
+            // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
+            fs.readFile(new globalThis.URL(`../node_modules/${packageName}${assetPath}`, import.meta.url), (err, data) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(data);
+            });
+        });
+        return file.toString();
+    }
+}
+
+async function fetchWasm(packageName: string, assetPath: string, version: string) {
+    if (CLIENT_ENV === 'browser') {
+        return fetch(new globalThis.URL(`${packageName}@${version}${assetPath}`, CDN_ROOT)).then(WebAssembly.compileStreaming);
+    } else {
+        const file = await new Promise<Buffer>((resolve, reject) => {
+            // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
+            fs.readFile(new globalThis.URL(`../node_modules/${packageName}${assetPath}`, import.meta.url), (err, data) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(data);
+            });
+        });
+        return WebAssembly.compile(file);
+    }
+}
+
+const workerFile = CLIENT_ENV === 'browser' ? '/dist/browser/marine-worker.js' : '/dist/node/marine-worker.umd.cjs';
+const fetchWorkerCode = () => fetchWorker('@fluencelabs/marine-worker', workerFile, WORKER_VERSION);
+const fetchMarineJsWasm = () => fetchWasm('@fluencelabs/marine-js', '/dist/marine-js.wasm', MARINE_VERSION);
+const fetchAvmWasm = () => fetchWasm('@fluencelabs/avm', '/dist/avm.wasm', AVM_VERSION);
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
-    const data = /data:application\/\w+?;base64,(.+)/.exec(WorkerInlineUrl)?.[1]!;
-    
-    const workerLoader = BlobWorker.fromText(decode(data));
-    const controlModuleLoader = new WasmLoaderFromNpm(defaultNames.marine.package, defaultNames.marine.file);
-    const avmModuleLoader = new WasmLoaderFromNpm(defaultNames.avm.package, defaultNames.avm.file);
+    const workerCode = await fetchWorkerCode();
+    const workerLoader = BlobWorker.fromText(workerCode);
 
-    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
-    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
+    const marine = new MarineBackgroundRunner(workerLoader, { getValue: fetchMarineJsWasm, start: () => Promise.resolve(), stop: () => Promise.resolve() });
+    const avm = new MarineBasedAvmRunner(marine, { getValue: fetchAvmWasm, start: () => Promise.resolve(), stop: () => Promise.resolve() });
     const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
     const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
     registerNodeOnlyServices(client);

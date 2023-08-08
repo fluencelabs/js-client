@@ -44,7 +44,7 @@ export class MarineBasedAvmRunner implements IAvmRunner {
     async start(): Promise<void> {
         await this.marine.start();
         await this.avmWasmLoader.start();
-        await this.marine.createService(this.avmWasmLoader.getValue(), 'avm');
+        await this.marine.createService(await this.avmWasmLoader.getValue(), 'avm');
     }
 
     async stop(): Promise<void> {}

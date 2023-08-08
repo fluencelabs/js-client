@@ -1,13 +1,17 @@
 {
     "name": "@fluencelabs/marine-worker",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Marine worker",
     "files": [
         "dist"
     ],
     "main": "./dist/marine-worker.umd.cjs",
-    "module": "/dist/marine-worker.js",
+    "module": "./dist/marine-worker.js",
+    "types": "./dist/index.d.ts",
     "exports": {
+        ".": {
+            "types": "./dist/index.d.ts"
+        },
         "./dist/marine-worker.js": {
             "node": "./dist/node/marine-worker.js",
             "browser": "./dist/browser/marine-worker.js"
@@ -33,6 +37,7 @@
         "node-stdlib-browser": "1.2.0",
         "typescript": "5.1.6",
         "vite": "4.0.4",
+        "vite-plugin-dts": "3.4.0",
         "vite-plugin-replace": "0.1.1",
         "vitest": "0.29.7"
     },
