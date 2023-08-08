@@ -28,7 +28,7 @@
         "@fluencelabs/interfaces": "0.8.0"
     },
     "devDependencies": {
-        "@fluencelabs/avm": "0.40.0",
+        "@fluencelabs/avm": "0.43.1",
         "@fluencelabs/marine-js": "0.7.2",
         "microbundle": "0.15.1",
         "dts-bundle-generator": "7.2.0"

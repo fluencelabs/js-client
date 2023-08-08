@@ -50,7 +50,7 @@
     "dependencies": {},
     "devDependencies": {
         "@multiformats/multiaddr": "11.3.0",
-        "@fluencelabs/avm": "0.40.0",
+        "@fluencelabs/avm": "0.43.1",
         "@fluencelabs/marine-js": "0.7.2"
     }
 }
