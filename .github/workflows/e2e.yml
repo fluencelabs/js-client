@@ -51,3 +51,4 @@ jobs:
     uses: fluencelabs/flox/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
+      nox-image: "@fluencelabs/nox:minimal_unstable"
