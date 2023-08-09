@@ -304,8 +304,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1
       '@libp2p/peer-id-factory':
-        specifier: 2.0.1
-        version: 2.0.1
+        specifier: 2.0.4
+        version: 2.0.4
       '@libp2p/websockets':
         specifier: 5.0.3
         version: 5.0.3
@@ -3928,8 +3928,8 @@ packages:
       '@libp2p/peer-id': 2.0.1
     dev: false
 
-  /@libp2p/peer-id-factory@2.0.1:
-    resolution: {integrity: sha512-CRJmqwNQhDC51sQ9lf6EqEY8HuywwymMVffL2kIYI5ts5k+6gvIXzoSxLf3V3o+OxcroXG4KG0uGxxAi5DUXSA==}
+  /@libp2p/peer-id-factory@2.0.4:
+    resolution: {integrity: sha512-+0D+oklFzHpjRI3v7uw3PMMx00P36DV7YvAgL0+gpos0VzR/BI9tRiM6dpObZTrQ1hxp78F03p+qR1Zy9Qnmuw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@libp2p/crypto': 1.0.8(uint8arraylist@2.4.3)
@@ -3937,7 +3937,7 @@ packages:
       '@libp2p/interface-peer-id': 2.0.1
       '@libp2p/peer-id': 2.0.1
       multiformats: 11.0.1
-      protons-runtime: 4.0.2(uint8arraylist@2.4.3)
+      protons-runtime: 5.0.0(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.3
     dev: false
@@ -14147,7 +14147,7 @@ packages:
       '@libp2p/multistream-select': 3.1.9
       '@libp2p/peer-collections': 3.0.2
       '@libp2p/peer-id': 2.0.1
-      '@libp2p/peer-id-factory': 2.0.1
+      '@libp2p/peer-id-factory': 2.0.4
       '@libp2p/peer-record': 5.0.4
       '@libp2p/peer-store': 6.0.4
       '@libp2p/tracked-map': 3.0.3
