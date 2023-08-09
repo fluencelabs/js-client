@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.1](https://github.com/fluencelabs/js-client/compare/js-peer-v0.9.0...js-peer-v0.9.1) (2023-08-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.43.1 ([#322](https://github.com/fluencelabs/js-client/issues/322)) ([c1d1fa6](https://github.com/fluencelabs/js-client/commit/c1d1fa6659b6dc2c6707786748b3410fab7f1bcd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.8.0 to 0.8.1
+
 ## [0.9.0](https://github.com/fluencelabs/js-client/compare/js-peer-v0.8.10...js-peer-v0.9.0) (2023-06-29)
 
 
