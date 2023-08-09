@@ -30,7 +30,7 @@
         "ts-pattern": "3.3.3",
         "uuid": "8.3.2",
         "threads": "1.7.0",
-        "@libp2p/crypto": "1.0.8",
+        "@libp2p/crypto": "1.0.17",
         "@libp2p/peer-id-factory": "2.0.1",
         "@libp2p/interface-peer-id": "2.0.1",
         "@libp2p/interface-keys": "1.0.7",

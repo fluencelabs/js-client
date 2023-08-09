@@ -283,8 +283,8 @@ importers:
         specifier: 0.7.2
         version: 0.7.2
       '@libp2p/crypto':
-        specifier: 1.0.8
-        version: 1.0.8(uint8arraylist@2.4.3)
+        specifier: 1.0.17
+        version: 1.0.17
       '@libp2p/interface-connection':
         specifier: 3.0.8
         version: 3.0.8
@@ -1859,7 +1859,7 @@ packages:
     resolution: {integrity: sha512-NEl5aIv6muz9OL+dsa3INEU89JX0NViBxOy7NwwG8eNRPUDHo5E3ZTMSHXQpVx1K/ofoNS4ANO9xwezY6ss5GA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@libp2p/crypto': 1.0.8(uint8arraylist@2.4.3)
+      '@libp2p/crypto': 1.0.17
       '@libp2p/interface-connection-encrypter': 3.0.6
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-metrics': 4.0.8
@@ -3568,22 +3568,6 @@ packages:
       uint8arrays: 4.0.3
     dev: false
 
-  /@libp2p/crypto@1.0.8(uint8arraylist@2.4.3):
-    resolution: {integrity: sha512-L0nOms1gJKwT5HRzDiEzTon+VOqilez6jIx+J27aSRJjgK+PpWGP2pmo5t0K60EGbIkDK0XDMjQkj0TUecDk5g==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      '@libp2p/interface-keys': 1.0.7
-      '@noble/ed25519': 1.7.3
-      '@noble/secp256k1': 1.7.1
-      err-code: 3.0.1
-      multiformats: 10.0.3
-      node-forge: 1.3.1
-      protons-runtime: 4.0.2(uint8arraylist@2.4.3)
-      uint8arrays: 4.0.3
-    transitivePeerDependencies:
-      - uint8arraylist
-    dev: false
-
   /@libp2p/interface-address-manager@2.0.5:
     resolution: {integrity: sha512-e2vLstKkYlAG2PZe6SEBpnnP2Y/ej6URue+zAiyjJPuXoOGNzHyLaqcv7MKye171OEf9dg5wv1gFphWcUJJbSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -3932,7 +3916,7 @@ packages:
     resolution: {integrity: sha512-CRJmqwNQhDC51sQ9lf6EqEY8HuywwymMVffL2kIYI5ts5k+6gvIXzoSxLf3V3o+OxcroXG4KG0uGxxAi5DUXSA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@libp2p/crypto': 1.0.8(uint8arraylist@2.4.3)
+      '@libp2p/crypto': 1.0.17
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-peer-id': 2.0.1
       '@libp2p/peer-id': 2.0.1
@@ -14124,7 +14108,7 @@ packages:
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
       '@achingbrain/nat-port-mapper': 1.0.9
-      '@libp2p/crypto': 1.0.8(uint8arraylist@2.4.3)
+      '@libp2p/crypto': 1.0.17
       '@libp2p/interface-address-manager': 2.0.5
       '@libp2p/interface-connection': 3.0.8
       '@libp2p/interface-connection-encrypter': 3.0.6
@@ -14993,11 +14977,6 @@ packages:
       uint8arrays: 3.1.1
       varint: 6.0.0
     dev: true
-
-  /multiformats@10.0.3:
-    resolution: {integrity: sha512-K2yGSmstS/oEmYiEIieHb53jJCaqp4ERPDQAYrm5sV3UUrVDZeshJQCK6GHAKyIGufU1vAcbS0PdAAZmC7Tzcw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dev: false
 
   /multiformats@11.0.1:
     resolution: {integrity: sha512-atWruyH34YiknSdL5yeIir00EDlJRpHzELYQxG7Iy29eCyL+VrZHpPrX5yqlik3jnuqpLpRKVZ0SGVb9UzKaSA==}
