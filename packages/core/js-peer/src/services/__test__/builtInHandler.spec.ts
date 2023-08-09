@@ -129,6 +129,12 @@ describe('Tests for default handler', () => {
             // act
             const fn = builtInServices[req.serviceId][req.fnName];
             const res = await fn(req);
+            
+            // Our test cases above depend on node error message. In node 20 error message for JSON.parse has changed.
+            // Simple and fast solution for this specific case is to unify both variations into node 18 version error format.
+            if (res.result === 'Unexpected token \'i\', "incorrect" is not valid JSON') {
+                res.result = 'Unexpected token i in JSON at position 0';
+            }
 
             // assert
             expect(res).toMatchObject({
