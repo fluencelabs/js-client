@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "@fluencelabs/avm": "0.43.1",
-        "@fluencelabs/marine-js": "0.3.45",
+        "@fluencelabs/marine-js": "0.7.2",
         "microbundle": "0.15.1",
         "dts-bundle-generator": "7.2.0"
     }

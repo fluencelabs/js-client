@@ -25,6 +25,7 @@ import {
     ParticleExecutionStage,
     ParticleQueueItem,
 } from '../particle/Particle.js';
+import { defaultCallParameters } from "@fluencelabs/marine-js/dist/types"
 import { jsonify, isString } from '../util/utils.js';
 import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
 import { defaultSigGuard, Sig } from '../services/Sig.js';
@@ -184,7 +185,7 @@ export abstract class FluencePeer {
                     new Error("Can't use avm: peer is not initialized");
                 }
 
-                const res = await this.marineHost.callService('avm', 'ast', [air], undefined);
+                const res = await this.marineHost.callService('avm', 'ast', [air], defaultCallParameters);
                 if (!isString(res)) {
                     throw new Error(`Call to avm:ast expected to return string. Actual return: ${res}`);
                 }
@@ -521,7 +522,8 @@ export abstract class FluencePeer {
         log_particle.trace('id %s. executing call service handler %j', particleId, req);
 
         if (this.marineHost && this.marineHost.hasService(req.serviceId)) {
-            const result = await this.marineHost.callService(req.serviceId, req.fnName, req.args, undefined);
+            // TODO build correct CallParameters instead of default ones
+            const result = await this.marineHost.callService(req.serviceId, req.fnName, req.args, defaultCallParameters);
 
             return {
                 retCode: ResultCodes.success,
