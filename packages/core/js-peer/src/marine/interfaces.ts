@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
-import { IStartable, JSONArray, JSONObject } from '../util/commonTypes.js';
+import { IStartable, JSONArray, JSONObject, CallParameters } from '../util/commonTypes.js';
 import { Buffer } from 'buffer';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
@@ -45,7 +45,7 @@ export interface IMarineHost extends IStartable {
         serviceId: string,
         functionName: string,
         args: JSONArray | JSONObject,
-        callParams: any,
+        callParams: CallParameters,
     ): Promise<unknown>;
 }
 

@@ -16,6 +16,7 @@
 import type { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
 import { deserializeAvmResult, serializeAvmArgs } from '@fluencelabs/avm';
 import { IAvmRunner, IMarineHost, IWasmLoader } from '../marine/interfaces.js';
+import { defaultCallParameters } from "@fluencelabs/marine-js/dist/types"
 
 export class MarineBasedAvmRunner implements IAvmRunner {
     constructor(private marine: IMarineHost, private avmWasmLoader: IWasmLoader) {}
@@ -31,7 +32,7 @@ export class MarineBasedAvmRunner implements IAvmRunner {
 
         let avmCallResult: InterpreterResult | Error;
         try {
-            const res = await this.marine.callService('avm', 'invoke', args, undefined);
+            const res = await this.marine.callService('avm', 'invoke', args, defaultCallParameters);
             avmCallResult = deserializeAvmResult(res);
         } catch (e) {
             avmCallResult = e instanceof Error ? e : new Error((e as any).toString());

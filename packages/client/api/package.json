@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/js-client.api",
-    "version": "0.12.0",
+    "version": "0.12.1",
     "description": "JS Client API",
     "engines": {
         "node": ">=10",
@@ -25,11 +25,11 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/interfaces": "0.8.0"
+        "@fluencelabs/interfaces": "0.8.1"
     },
     "devDependencies": {
-        "@fluencelabs/avm": "0.40.0",
-        "@fluencelabs/marine-js": "0.3.45",
+        "@fluencelabs/avm": "0.43.1",
+        "@fluencelabs/marine-js": "0.7.2",
         "microbundle": "0.15.1",
         "dts-bundle-generator": "7.2.0"
     }

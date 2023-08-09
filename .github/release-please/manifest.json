@@ -1,9 +1,9 @@
 {
-  "packages/client/api": "0.12.0",
-  "packages/client/js-client.node": "0.7.0",
-  "packages/client/js-client.web": "0.2.4",
-  "packages/client/js-client.web.standalone": "0.14.0",
+  "packages/client/api": "0.12.1",
+  "packages/client/js-client.node": "0.7.1",
+  "packages/client/js-client.web": "0.2.5",
+  "packages/client/js-client.web.standalone": "0.14.1",
   "packages/client/tools": "0.2.1",
-  "packages/core/interfaces": "0.8.0",
-  "packages/core/js-peer": "0.9.0"
+  "packages/core/interfaces": "0.8.1",
+  "packages/core/js-peer": "0.9.1"
 }
