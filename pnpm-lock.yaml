@@ -141,7 +141,7 @@ importers:
   packages/client/api:
     dependencies:
       '@fluencelabs/interfaces':
-        specifier: 0.8.0
+        specifier: 0.8.1
         version: link:../../core/interfaces
     devDependencies:
       '@fluencelabs/avm':
@@ -163,10 +163,10 @@ importers:
         specifier: 0.43.1
         version: 0.43.1
       '@fluencelabs/interfaces':
-        specifier: 0.8.0
+        specifier: 0.8.1
         version: link:../../core/interfaces
       '@fluencelabs/js-peer':
-        specifier: 0.9.0
+        specifier: 0.9.1
         version: link:../../core/js-peer
       '@fluencelabs/marine-js':
         specifier: 0.7.2
@@ -182,10 +182,10 @@ importers:
   packages/client/js-client.web:
     dependencies:
       '@fluencelabs/interfaces':
-        specifier: 0.8.0
+        specifier: 0.8.1
         version: link:../../core/interfaces
       '@fluencelabs/js-peer':
-        specifier: 0.9.0
+        specifier: 0.9.1
         version: link:../../core/js-peer
     devDependencies:
       '@types/jest':
@@ -204,10 +204,10 @@ importers:
   packages/client/js-client.web.standalone:
     dependencies:
       '@fluencelabs/interfaces':
-        specifier: 0.8.0
+        specifier: 0.8.1
         version: link:../../core/interfaces
       '@fluencelabs/js-peer':
-        specifier: 0.9.0
+        specifier: 0.9.1
         version: link:../../core/js-peer
       buffer:
         specifier: 6.0.3
@@ -277,7 +277,7 @@ importers:
         specifier: 0.43.1
         version: 0.43.1
       '@fluencelabs/interfaces':
-        specifier: 0.8.0
+        specifier: 0.8.1
         version: link:../interfaces
       '@fluencelabs/marine-js':
         specifier: 0.7.2
