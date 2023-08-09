@@ -39,7 +39,7 @@
         "it-pipe": "2.0.5",
         "it-map": "2.0.0",
         "uint8arrays": "4.0.3",
-        "@chainsafe/libp2p-noise": "11.0.0",
+        "@chainsafe/libp2p-noise": "11.0.4",
         "libp2p": "0.42.2",
         "@libp2p/interfaces": "3.3.1",
         "@libp2p/interface-connection": "3.0.8",

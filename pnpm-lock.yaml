@@ -271,8 +271,8 @@ importers:
   packages/core/js-peer:
     dependencies:
       '@chainsafe/libp2p-noise':
-        specifier: 11.0.0
-        version: 11.0.0
+        specifier: 11.0.4
+        version: 11.0.4
       '@fluencelabs/avm':
         specifier: 0.43.1
         version: 0.43.1
@@ -1855,11 +1855,11 @@ packages:
   /@chainsafe/is-ip@2.0.1:
     resolution: {integrity: sha512-nqSJ8u2a1Rv9FYbyI8qpDhTYujaKEyLknNrTejLYoSWmdeg+2WB7R6BZqPZYfrJzDxVi3rl6ZQuoaEvpKRZWgQ==}
 
-  /@chainsafe/libp2p-noise@11.0.0:
-    resolution: {integrity: sha512-NEl5aIv6muz9OL+dsa3INEU89JX0NViBxOy7NwwG8eNRPUDHo5E3ZTMSHXQpVx1K/ofoNS4ANO9xwezY6ss5GA==}
+  /@chainsafe/libp2p-noise@11.0.4:
+    resolution: {integrity: sha512-X7kA6a3/QPFxNFwgUJ8vubDu5qBDcDT0nhD+jL7g60IFKZu//HFH7oqsNCZa12yx0oR1fEYOR62iHDt2GHyWBQ==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@libp2p/crypto': 1.0.8(uint8arraylist@2.4.3)
+      '@libp2p/crypto': 1.0.17
       '@libp2p/interface-connection-encrypter': 3.0.6
       '@libp2p/interface-keys': 1.0.7
       '@libp2p/interface-metrics': 4.0.8
@@ -1872,10 +1872,10 @@ packages:
       '@stablelib/x25519': 1.0.3
       it-length-prefixed: 8.0.4
       it-pair: 2.0.6
-      it-pb-stream: 2.0.4
+      it-pb-stream: 3.2.1
       it-pipe: 2.0.5
       it-stream-types: 1.0.5
-      protons-runtime: 4.0.2(uint8arraylist@2.4.3)
+      protons-runtime: 5.0.0(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.3
     transitivePeerDependencies:
@@ -12447,13 +12447,16 @@ packages:
       it-length-prefixed: 5.0.3
     dev: true
 
-  /it-pb-stream@2.0.4:
-    resolution: {integrity: sha512-p0chBIT3HrZt3hIqvBEi+NgZxxT25MTJ362nKoHmzA/k/WsUPPbeSz7Ad+wRcGxZn2O5JEXCS5lOGRjSDSnlNg==}
+  /it-pb-stream@3.2.1:
+    resolution: {integrity: sha512-vKE04Zv5MUcwxPNE9bIEfYK3rd/Klj5ORGD1D8Bn5f0mbCLGfouSrqZP1Jntg2osqQg4BN5dKKS2BbfwyGUI3Q==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      it-handshake: 4.1.3
-      it-length-prefixed: 8.0.4
+      err-code: 3.0.1
+      it-length-prefixed: 9.0.1
+      it-pushable: 3.1.3
       it-stream-types: 1.0.5
+      protons-runtime: 5.0.0(uint8arraylist@2.4.3)
+      uint8-varint: 1.0.6
       uint8arraylist: 2.4.3
     dev: false
 
