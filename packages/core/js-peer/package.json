@@ -25,7 +25,7 @@
         "async": "3.2.4",
         "bs58": "5.0.0",
         "buffer": "6.0.3",
-        "@libp2p/peer-id": "2.0.1",
+        "@libp2p/peer-id": "2.0.4",
         "rxjs": "7.5.5",
         "ts-pattern": "3.3.3",
         "uuid": "8.3.2",
