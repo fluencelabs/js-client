@@ -26,7 +26,7 @@ export interface IMarineHost extends IStartable {
     /**
      * Creates marine service from the given module and service id
      */
-    createService(serviceModule: WebAssembly.Module, serviceId: string): Promise<void>;
+    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void>;
 
     /**
      * Removes marine service with the given service id
@@ -75,7 +75,7 @@ export interface IValueLoader<T> {
 /**
  * Interface for something which can load wasm files
  */
-export interface IWasmLoader extends IValueLoader<Promise<WebAssembly.Module>>, IStartable {}
+export interface IWasmLoader extends IValueLoader<SharedArrayBuffer | Buffer>, IStartable {}
 
 /**
  * Interface for something which can thread.js based worker

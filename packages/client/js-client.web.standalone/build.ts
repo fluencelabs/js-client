@@ -6,13 +6,10 @@ import { build } from 'vite';
 import { createRequire } from 'module';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import inject from '@rollup/plugin-inject';
-import { replaceCodePlugin } from 'vite-plugin-replace';
 import stdLibBrowser from 'node-stdlib-browser';
 import { fileURLToPath } from 'url';
-import wasm from 'vite-plugin-wasm';
-import topLevelAwait from 'vite-plugin-top-level-await';
 import libAssetsPlugin from '@laynezh/vite-plugin-lib-assets'
-import pkg from './package.json' assert { type: 'json' }; 
+import pkg from './package.json' assert { type: 'json' };
 
 const require = createRequire(import.meta.url);
 
@@ -72,7 +69,7 @@ const commonConfig = (opts: {
             __CLIENT_ENV__: 'browser',
             __MARINE_VERSION__: pkg.devDependencies['@fluencelabs/marine-js'],
             __AVM_VERSION__: pkg.devDependencies['@fluencelabs/avm'],
-            __WORKER_VERSION__: pkg.version,
+            __WORKER_VERSION__: pkg.devDependencies['@fluencelabs/marine-worker'].split(':')[1],
             __CDN_ROOT__: 'https://unpkg.com/'
         }
     };

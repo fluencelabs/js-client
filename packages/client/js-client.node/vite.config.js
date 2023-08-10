@@ -40,8 +40,5 @@ export default defineConfig({
     resolve: {
         browserField: false,
         conditions: ['node']
-    },
-    define: {
-        __CLIENT_ENV__: 'node'
     }
 })

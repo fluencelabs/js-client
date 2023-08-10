@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @ts-ignore
-import type { WorkerImplementation } from 'threads/dist/types/master';
-// @ts-ignore
-import { Worker } from 'threads';
-import { LazyLoader } from '../interfaces.js';
 
-export class WorkerLoader extends LazyLoader<WorkerImplementation> {
-    constructor() {
-        super(() => new Worker('../../../node_modules/@fluencelabs/marine-worker/dist/node/marine-worker.umd.cjs'));
-    }
-}
+import { readFile } from 'fs/promises';
+
+const file = await readFile('./node_modules/@fluencelabs/marine-js/dist/marine-js.wasm');
+const wasm = await WebAssembly.compileStreaming(new Response(file, {
+    headers: {'Content-Type': 'application/wasm'}
+}))
+console.log(wasm);

@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/marine-worker",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Marine worker",
     "files": [
         "dist"
@@ -42,7 +42,8 @@
         "vitest": "0.29.7"
     },
     "dependencies": {
-        "@fluencelabs/marine-js": "0.3.45",
+        "@fluencelabs/avm": "0.43.1",
+        "@fluencelabs/marine-js": "0.7.2",
         "observable-fns": "0.6.1",
         "threads": "1.7.0"
     }

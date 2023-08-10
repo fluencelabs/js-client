@@ -18,8 +18,9 @@ import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
 import { defaultGuard } from './SingleModuleSrv.js';
 import { NodeUtilsDef, registerNodeUtils } from './_aqua/node-utils.js';
 import { SecurityGuard } from './securityGuard.js';
-import { readFile } from 'fs/promises';
+import * as fs from 'fs';
 import { FluencePeer } from '../jsPeer/FluencePeer.js';
+import { Buffer } from 'buffer';
 
 export class NodeUtils implements NodeUtilsDef {
     constructor(private peer: FluencePeer) {
@@ -39,10 +40,18 @@ export class NodeUtils implements NodeUtilsDef {
 
         try {
             // Strange enough, but Buffer type works here, while reading with encoding 'utf-8' doesn't
-            const data: any = await readFile(path);
+            const data = await new Promise<Buffer>((resolve, reject) => {
+                fs.readFile(path, (err, data) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(data);
+                })
+            });
             return {
                 success: true,
-                content: data,
+                content: data.toString(),
                 error: null,
             };
         } catch (err: any) {

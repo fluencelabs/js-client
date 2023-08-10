@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @ts-nocheck
 import { PeerIdB58 } from '@fluencelabs/interfaces';
 import { fromBase64Sk, KeyPair } from '../keypair/index.js';
 import { MarineBackgroundRunner } from '../marine/worker/index.js';

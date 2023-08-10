@@ -15,38 +15,60 @@
  */
 
 import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
-import type { Env, MarineServiceConfig } from '@fluencelabs/marine-js/dist/config';
-import type { JSONArray, JSONObject, LogMessage } from '@fluencelabs/marine-js/dist/types';
+import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } from '@fluencelabs/marine-js/dist/config';
+import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluencelabs/marine-js/dist/types';
 import { Observable, Subject } from 'observable-fns';
 // @ts-ignore no types provided for package
 import { expose } from 'threads';
+import * as Buffer from 'buffer';
 
 let marineServices = new Map<string, MarineService>();
 let controlModule: WebAssembly.Module | undefined;
 
+const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
+    return {
+        import_name: name,
+        config: {
+            logger_enabled: true,
+            logging_mask: 0,
+            wasi: {
+                envs: {...envs},
+                preopened_files: new Set(),
+                mapped_dirs: new Map,
+            }
+        }
+    }
+}
+const createSimpleMarineService = (name: string, env? : Env): MarineServiceConfig => {
+    return {
+        modules_config: [createSimpleModuleDescriptor(name, env)],
+    }
+}
+
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
-    init: async (_controlModule: WebAssembly.Module): Promise<void> => {
-        controlModule = _controlModule;
+    init: async (controlModuleWasm: SharedArrayBuffer | Buffer): Promise<void> => {
+        controlModule = await WebAssembly.compile(new Uint8Array(controlModuleWasm));
     },
 
     createService: async (
-        service: WebAssembly.Module,
+        wasm: SharedArrayBuffer | Buffer,
         serviceId: string,
-        marineConfig?: MarineServiceConfig,
         envs?: Env,
     ): Promise<void> => {
         if (!controlModule) {
             throw new Error('MarineJS is not initialized. To initialize call `init` function');
         }
-        
+
+        const marineConfig = createSimpleMarineService(serviceId, envs);
+        const modules = {[serviceId]: new Uint8Array(wasm)}
         const srv = new MarineService(
             controlModule,
-            service,
             serviceId,
             onLogMessage.next.bind(onLogMessage),
             marineConfig,
+            modules,
             envs,
         );
         await srv.init();
@@ -60,7 +82,7 @@ const toExpose = {
         onLogMessage.complete();
     },
 
-    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any): unknown => {
+    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: CallParameters): unknown => {
         const srv = marineServices.get(serviceId);
         if (!srv) {
             throw new Error(`service with id=${serviceId} not found`);
