@@ -51,7 +51,7 @@ export class NodeUtils implements NodeUtilsDef {
             });
             return {
                 success: true,
-                content: data.toString(),
+                content: data as unknown as string,
                 error: null,
             };
         } catch (err: any) {
