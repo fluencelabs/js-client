@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import { readFile } from 'fs/promises';
+import { createRequire } from 'module';
 
-const file = await readFile('./node_modules/@fluencelabs/marine-js/dist/marine-js.wasm');
-const wasm = await WebAssembly.compileStreaming(new Response(file, {
-    headers: {'Content-Type': 'application/wasm'}
-}))
-console.log(wasm);
+const require = createRequire(import.meta.url);
+const workerFilePath = require.resolve('@fluencelabs/marine-worker');
+console.log(workerFilePath);

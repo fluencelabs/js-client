@@ -1,9 +1,0 @@
-{
-    "extends": "../../../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "./dist",
-        "moduleResolution": "node",
-        "resolveJsonModule": true
-    },
-    "exclude": ["node_modules", "dist"]
-}

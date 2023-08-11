@@ -18,10 +18,10 @@ import type { JSONArray, JSONObject, CallParameters } from '@fluencelabs/marine-
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
 import type { MarineBackgroundInterface } from '@fluencelabs/marine-worker';
 // @ts-ignore
-import { spawn, Thread } from 'threads';
-// @ts-ignore
 import type { ModuleThread } from 'threads';
 import { Buffer } from 'buffer';
+// @ts-ignore
+import { spawn, Thread } from 'threads';
 
 import { MarineLogger, marineLogger } from '../../util/logger.js';
 import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';
@@ -49,10 +49,12 @@ export class MarineBackgroundRunner implements IMarineHost {
 
         this.marineServices = new Set();
         await this.workerLoader.start();
+        const worker = await this.workerLoader.getValue();
         await this.controlModuleLoader.start();
-        const worker = this.workerLoader.getValue();
         const wasm = this.controlModuleLoader.getValue();
-        this.workerThread = await spawn<MarineBackgroundInterface>(worker, { timeout: 99999999 });
+        console.log('before spawn');
+        this.workerThread = await spawn<MarineBackgroundInterface>(worker);
+        console.log('after spawn');
         const logfn: LogFunction = (message) => {
             const serviceLogger = this.loggers.get(message.service);
             if (!serviceLogger) {

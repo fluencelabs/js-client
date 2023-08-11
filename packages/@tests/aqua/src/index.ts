@@ -1,6 +1,6 @@
 import { fromByteArray } from 'base64-js';
-import { Fluence } from '@fluencelabs/js-client.api';
-import type { ClientConfig } from '@fluencelabs/js-client.api';
+import { Fluence } from '@fluencelabs/js-peer';
+import type { ClientConfig } from '@fluencelabs/js-peer';
 import { registerHelloWorld, helloTest, marineTest, resourceTest } from './_aqua/smoke_test.js';
 import { wasm } from './wasmb64.js';
 

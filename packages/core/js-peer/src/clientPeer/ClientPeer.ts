@@ -115,7 +115,9 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     async start(): Promise<void> {
         log.trace('connecting to Fluence network');
         this.changeConnectionState('connecting');
+        console.log('starting runners..');
         await super.start();
+        console.log('runners started');
         await this.relayConnection.start();
         // TODO: check connection (`checkConnection` function) here
         this.changeConnectionState('connected');

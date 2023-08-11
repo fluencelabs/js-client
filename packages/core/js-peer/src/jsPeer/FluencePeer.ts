@@ -111,8 +111,11 @@ export abstract class FluencePeer {
             this.printParticleId = true;
         }
 
+        console.log('1.')
         await this.marineHost.start();
+        console.log('marine runner started');
         await this.avmRunner.start();
+        console.log('avm runner started');
 
         this._startParticleProcessing();
         this.isInitialized = true;
