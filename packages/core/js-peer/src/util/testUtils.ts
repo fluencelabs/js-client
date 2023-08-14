@@ -23,7 +23,6 @@ import { ClientConfig, IFluenceClient, RelayOptions, ServiceDef } from '@fluence
 import { callAquaFunction } from '../compilerSupport/callFunction.js';
 
 import { MarineBackgroundRunner } from '../marine/worker/index.js';
-import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { WorkerLoader } from '../marine/worker-script/workerLoader.js';
 import { KeyPair } from '../keypair/index.js';
 import { Subject, Subscribable } from 'rxjs';
@@ -99,10 +98,9 @@ export class TestPeer extends FluencePeer {
         const workerLoader = new WorkerLoader();
         const controlModuleLoader = new WasmLoaderFromNpm('@fluencelabs/marine-js', 'marine-js.wasm');
         const avmModuleLoader = new WasmLoaderFromNpm('@fluencelabs/avm', 'avm.wasm');
-        const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
+        const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, avmModuleLoader);
         const jsHost = new JsServiceHost();
-        const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
-        super(DEFAULT_CONFIG, keyPair, marine, jsHost, avm, connection);
+        super(DEFAULT_CONFIG, keyPair, marine, jsHost, connection);
     }
 }
 
@@ -130,10 +128,9 @@ export const withClient = async (
     const workerLoader = new WorkerLoader();
     const controlModuleLoader = new WasmLoaderFromNpm('@fluencelabs/marine-js', 'marine-js.wasm');
     const avmModuleLoader = new WasmLoaderFromNpm('@fluencelabs/avm', 'avm.wasm');
-    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
-    const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
+    const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, avmModuleLoader);
     const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
-    const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
+    const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
     try {
         await client.connect();
         await action(client);

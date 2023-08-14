@@ -63,11 +63,10 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
         relayConfig: RelayConnectionConfig,
         keyPair: KeyPair,
         marine: IMarineHost,
-        avmRunner: IAvmRunner,
     ) {
         const relayConnection = new RelayConnection(relayConfig);
 
-        super(peerConfig, keyPair, marine, new JsServiceHost(), avmRunner, relayConnection);
+        super(peerConfig, keyPair, marine, new JsServiceHost(), relayConnection);
         this.relayPeerId = relayConnection.getRelayPeerId();
         this.relayConnection = relayConnection;
     }

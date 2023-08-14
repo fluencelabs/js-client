@@ -16,7 +16,7 @@
 import { KeyPair } from '../keypair/index.js';
 
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
-import { KeyPairFormat } from '@fluencelabs/avm';
+import { deserializeAvmResult, InterpreterResult, KeyPairFormat, serializeAvmArgs } from '@fluencelabs/avm';
 import {
     cloneWithNewData,
     getActualTTL,
@@ -91,7 +91,6 @@ export abstract class FluencePeer {
         public readonly keyPair: KeyPair,
         protected readonly marineHost: IMarineHost,
         protected readonly jsServiceHost: IJsServiceHost,
-        protected readonly avmRunner: IAvmRunner,
         protected readonly connection: IConnection,
     ) {
         this._initServices();
@@ -110,12 +109,8 @@ export abstract class FluencePeer {
         if (this.config?.debug?.printParticleId) {
             this.printParticleId = true;
         }
-
-        console.log('1.')
+        
         await this.marineHost.start();
-        console.log('marine runner started');
-        await this.avmRunner.start();
-        console.log('avm runner started');
 
         this._startParticleProcessing();
         this.isInitialized = true;
@@ -131,7 +126,6 @@ export abstract class FluencePeer {
         this._particleSourceSubscription?.unsubscribe();
         this._stopParticleProcessing();
         await this.marineHost.stop();
-        await this.avmRunner.stop();
 
         this.isInitialized = false;
         log_peer.trace('stopped Fluence peer');
@@ -388,7 +382,8 @@ export abstract class FluencePeer {
 
                     log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
                     log_particle.trace('id %s. prevData: %a', item.particle.id, prevData);
-                    const avmCallResult = await this.avmRunner.run(
+
+                    const args = serializeAvmArgs(
                         {
                             initPeerId: item.particle.initPeerId,
                             currentPeerId: this.keyPair.getPeerId(),
@@ -403,6 +398,14 @@ export abstract class FluencePeer {
                         item.particle.data,
                         item.callResults,
                     );
+
+                    let avmCallResult: InterpreterResult | Error;
+                    try {
+                        const res = await this.marineHost.callService('avm', 'invoke', args, defaultCallParameters);
+                        avmCallResult = deserializeAvmResult(res);
+                    } catch (e) {
+                        avmCallResult = e instanceof Error ? e : new Error((e as any).toString());
+                    }
 
                     if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
                         const newData = Buffer.from(avmCallResult.data);

@@ -6,14 +6,15 @@
         "node": ">=10",
         "pnpm": ">=3"
     },
-    "types": "./dist/node/index.js",
+    "types": "./dist/types/index.d.ts",
     "exports": {
+        "types": "./dist/types/index.d.ts",
         "node": "./dist/node/index.js",
         "default": "./dist/browser/index.js"
     },
     "type": "module",
     "scripts": {
-        "build": "tsc --noEmit && node --loader ts-node/esm build.ts",
+        "build": "tsc --emitDeclarationOnly && node --loader ts-node/esm build.ts",
         "test": "vitest --threads false run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",

@@ -32,7 +32,7 @@ export class MarineBackgroundRunner implements IMarineHost {
 
     private loggers: Map<string, MarineLogger> = new Map();
 
-    constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader) {}
+    constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader, private avmWasmLoader: IWasmLoader) {}
 
     hasService(serviceId: string): boolean {
         return this.marineServices.has(serviceId);
@@ -52,6 +52,9 @@ export class MarineBackgroundRunner implements IMarineHost {
         const worker = await this.workerLoader.getValue();
         await this.controlModuleLoader.start();
         const wasm = this.controlModuleLoader.getValue();
+        
+        await this.avmWasmLoader.start();
+        
         console.log('before spawn');
         this.workerThread = await spawn<MarineBackgroundInterface>(worker);
         console.log('after spawn');
@@ -64,6 +67,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         };
         this.workerThread.onLogMessage().subscribe(logfn);
         await this.workerThread.init(wasm);
+        await this.createService(this.avmWasmLoader.getValue(), 'avm');
     }
 
     async createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {

@@ -32,7 +32,6 @@ import type { ClientConfig, IFluenceClient, RelayOptions, ConnectionState, CallA
 import { ClientPeer, makeClientPeerConfig } from './clientPeer/ClientPeer.js';
 import { callAquaFunction } from './compilerSupport/callFunction.js';
 import { registerService } from './compilerSupport/registerService.js';
-import { MarineBasedAvmRunner } from './jsPeer/avm.js';
 import { MarineBackgroundRunner } from './marine/worker/index.js';
 // @ts-ignore
 import { BlobWorker } from 'threads';
@@ -49,10 +48,11 @@ const AVM_VERSION = '__AVM_VERSION__';
 const CDN_ROOT = 'https://unpkg.com/';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
-const require = createRequire(import.meta.url);
 
 async function fetchResource(packageName: string, assetPath: string, version: string) {
     if (isNode) {
+        const require = createRequire(import.meta.url);
+        
         const file = await new Promise<Buffer>((resolve, reject) => {
             // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
             const workerFilePath = require.resolve(packageName + assetPath);
@@ -99,8 +99,8 @@ export const createClient = async (relay: RelayOptions, config: ClientConfig): P
     const avmWasm = bufferToSharedArrayBuffer(Buffer.from(await fetchAvmWasm()));
 
     const marine = new MarineBackgroundRunner({
-        async getValue() {
-            return Promise.resolve(workerLoader);
+        getValue() {
+            return workerLoader;
         }, start(): Promise<void> {
             return Promise.resolve(undefined);
         }, stop(): Promise<void> {
@@ -114,8 +114,7 @@ export const createClient = async (relay: RelayOptions, config: ClientConfig): P
         }, stop(): Promise<void> {
             return Promise.resolve(undefined);
         }
-    });
-    const avm = new MarineBasedAvmRunner(marine, {
+    }, {
         getValue() {
             return avmWasm;
         }, start(): Promise<void> {
@@ -125,7 +124,7 @@ export const createClient = async (relay: RelayOptions, config: ClientConfig): P
         }
     });
     const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
-    const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine, avm);
+    const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
     if (isNode) {
         registerNodeOnlyServices(client);
     }

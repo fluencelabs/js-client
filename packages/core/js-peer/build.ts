@@ -8,7 +8,6 @@ import stdLibBrowser from 'node-stdlib-browser';
 import { fileURLToPath } from 'url';
 import { replaceCodePlugin } from 'vite-plugin-replace';
 import pkg from './package.json' assert { type: 'json' };
-import dtsPlugin from 'vite-plugin-dts';
 
 const require = createRequire(import.meta.url);
 
@@ -53,7 +52,7 @@ const commonConfig = (isNode: boolean): InlineConfig & Required<Pick<InlineConfi
                 }
             })
         },
-        plugins: [tsconfigPaths(), dtsPlugin(), ...(isNode ? [replaceCodePlugin({
+        plugins: [tsconfigPaths(), ...(isNode ? [replaceCodePlugin({
             replacements: [
                 { from: 'require(`./${file}.js`)', to: 'require(`./linux.js`)' },
                 {

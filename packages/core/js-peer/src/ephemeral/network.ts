@@ -24,7 +24,6 @@ import { Subject } from 'rxjs';
 import { Particle } from '../particle/Particle.js';
 
 import { WasmLoaderFromNpm } from '../marine/deps-loader/node.js';
-import { MarineBasedAvmRunner } from '../jsPeer/avm.js';
 import { DEFAULT_CONFIG, FluencePeer } from '../jsPeer/FluencePeer.js';
 import { IConnection } from '../connection/interfaces.js';
 import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
@@ -194,9 +193,9 @@ export class EphemeralConnection implements IConnection, IEphemeralConnection {
 class EphemeralPeer extends FluencePeer {
     ephemeralConnection: EphemeralConnection;
 
-    constructor(keyPair: KeyPair, marine: IMarineHost, avm: IAvmRunner) {
+    constructor(keyPair: KeyPair, marine: IMarineHost) {
         const conn = new EphemeralConnection(keyPair.getPeerId());
-        super(DEFAULT_CONFIG, keyPair, marine, new JsServiceHost(), avm, conn);
+        super(DEFAULT_CONFIG, keyPair, marine, new JsServiceHost(), conn);
 
         this.ephemeralConnection = conn;
     }
@@ -228,14 +227,13 @@ export class EphemeralNetwork {
 
         const promises = this.config.peers.map(async (x) => {
             const kp = await fromBase64Sk(x.sk);
-            const marine = new MarineBackgroundRunner(this.workerLoader, this.controlModuleLoader);
-            const avm = new MarineBasedAvmRunner(marine, this.avmModuleLoader);
+            const marine = new MarineBackgroundRunner(this.workerLoader, this.controlModuleLoader, this.avmModuleLoader);
             const peerId = kp.getPeerId();
             if (peerId !== x.peerId) {
                 throw new Error(`Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`);
             }
 
-            return new EphemeralPeer(kp, marine, avm);
+            return new EphemeralPeer(kp, marine);
         });
 
         const peers = await Promise.all(promises);

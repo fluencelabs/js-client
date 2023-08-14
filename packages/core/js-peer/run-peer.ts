@@ -19,7 +19,6 @@ import { ClientPeer } from './src/clientPeer/ClientPeer.js';
 import { WorkerLoader } from './src/marine/worker-script/workerLoader.js';
 import { WasmLoaderFromNpm } from './src/marine/deps-loader/node.js';
 import { MarineBackgroundRunner } from './src/marine/worker/index.js';
-import { MarineBasedAvmRunner } from './src/jsPeer/avm.js';
 import { multiaddr } from '@multiformats/multiaddr';
 
 // const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
@@ -32,8 +31,7 @@ import { multiaddr } from '@multiformats/multiaddr';
 const workerLoader = new WorkerLoader();
 const controlModuleLoader = new WasmLoaderFromNpm('@fluencelabs/marine-js', 'marine-js.wasm');
 const avmModuleLoader = new WasmLoaderFromNpm('@fluencelabs/avm', 'avm.wasm');
-const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader);
-const avm = new MarineBasedAvmRunner(marine, avmModuleLoader);
+const marine = new MarineBackgroundRunner(workerLoader, controlModuleLoader, avmModuleLoader);
 
 const r = await KeyPair.randomEd25519();
 const clientPeer = new ClientPeer({
@@ -47,5 +45,5 @@ const clientPeer = new ClientPeer({
     dialTimeoutMs: undefined,
     maxInboundStreams: 1024,
     maxOutboundStreams: 1024,
-}, r, marine, avm);
+}, r, marine);
 await clientPeer.connect();
