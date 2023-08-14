@@ -22,9 +22,6 @@ import { Observable, Subject } from 'observable-fns';
 import { expose } from 'threads';
 import * as Buffer from 'buffer';
 
-let marineServices = new Map<string, MarineService>();
-let controlModule: WebAssembly.Module | undefined;
-
 const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
     return {
         import_name: name,
@@ -45,11 +42,13 @@ const createSimpleMarineService = (name: string, env? : Env): MarineServiceConfi
     }
 }
 
+let marineServices = new Map<string, MarineService>();
+let controlModule: WebAssembly.Module | undefined;
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
-    init: async (controlModuleWasm: SharedArrayBuffer | Buffer): Promise<void> => {
-        controlModule = await WebAssembly.compile(new Uint8Array(controlModuleWasm));
+    init: (controlModuleWasm: SharedArrayBuffer | Buffer) => {
+        controlModule = new WebAssembly.Module(new Uint8Array(controlModuleWasm));
     },
 
     createService: async (
@@ -59,6 +58,10 @@ const toExpose = {
     ): Promise<void> => {
         if (!controlModule) {
             throw new Error('MarineJS is not initialized. To initialize call `init` function');
+        }
+
+        if (marineServices.has(serviceId)) {
+            throw new Error(`Service with name ${serviceId} already registered`);
         }
 
         const marineConfig = createSimpleMarineService(serviceId, envs);
@@ -75,10 +78,20 @@ const toExpose = {
         marineServices.set(serviceId, srv);
     },
 
+    hasService: (serviceId: string) => {
+        return marineServices.has(serviceId);
+    },
+
+    removeService: (serviceId: string) => {
+        marineServices.get(serviceId)?.terminate();
+        return marineServices.delete(serviceId);
+    },
+
     terminate: () => {
         marineServices.forEach((val, key) => {
             val.terminate();
         });
+        marineServices.clear();
         onLogMessage.complete();
     },
 
