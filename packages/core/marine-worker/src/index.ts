@@ -15,7 +15,7 @@
  */
 
 import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
-import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } from '@fluencelabs/marine-js/dist/config';
+import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } from '@fluencelabs/marine-js/dist/config'
 import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluencelabs/marine-js/dist/types';
 import { Observable, Subject } from 'observable-fns';
 // @ts-ignore no types provided for package
