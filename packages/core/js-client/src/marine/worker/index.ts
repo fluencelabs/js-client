@@ -25,6 +25,8 @@ import { spawn, Thread } from 'threads';
 
 import { MarineLogger, marineLogger } from '../../util/logger.js';
 import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';
+// @ts-ignore
+import { WorkerImplementation } from 'threads/dist/types/master';
 
 export class MarineBackgroundRunner implements IMarineHost {
     private workerThread?: MarineBackgroundInterface;
@@ -54,12 +56,13 @@ export class MarineBackgroundRunner implements IMarineHost {
             throw new Error('Worker thread already initialized');
         }
         
-        await this.workerLoader.start();
-        const worker = await this.workerLoader.getValue();
         await this.controlModuleLoader.start();
         const wasm = this.controlModuleLoader.getValue();
         
         await this.avmWasmLoader.start();
+
+        await this.workerLoader.start();
+        const worker = this.workerLoader.getValue();
         
         const workerThread = await spawn<MarineBackgroundInterface>(worker);
         const logfn: LogFunction = (message) => {

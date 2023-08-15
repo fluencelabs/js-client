@@ -34,7 +34,7 @@ import { callAquaFunction } from './compilerSupport/callFunction.js';
 import { registerService } from './compilerSupport/registerService.js';
 import { MarineBackgroundRunner } from './marine/worker/index.js';
 // @ts-ignore
-import { BlobWorker } from 'threads';
+import { BlobWorker, Worker } from 'threads';
 import * as fs from 'fs';
 import process from 'process';
 import { Buffer } from 'buffer';
@@ -93,19 +93,20 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
 
 export const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
     const workerCode = await fetchWorkerCode();
-    const workerLoader = BlobWorker.fromText(workerCode);
-
+    
     const marineJsWasm = bufferToSharedArrayBuffer(Buffer.from(await fetchMarineJsWasm()));
     const avmWasm = bufferToSharedArrayBuffer(Buffer.from(await fetchAvmWasm()));
-
+    
     const marine = new MarineBackgroundRunner({
         getValue() {
-            return workerLoader;
-        }, start(): Promise<void> {
+            return BlobWorker.fromText(workerCode)
+        },
+        start() {
             return Promise.resolve(undefined);
-        }, stop(): Promise<void> {
+        },
+        stop() {
             return Promise.resolve(undefined);
-        }
+        },
     }, {
         getValue() {
             return marineJsWasm;
