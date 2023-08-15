@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export const CDN_PUBLIC_PATH = join(__dirname, '../../../core/js-peer/dist/browser');
+export const CDN_PUBLIC_PATH = join(__dirname, '../../../core/js-client/dist/browser');
 
 export const startCdn = (port: number) => startContentServer(port, CDN_PUBLIC_PATH);
 
