@@ -78,6 +78,19 @@ const toExpose = {
         marineServices.set(serviceId, srv);
     },
 
+    hasService: (serviceId: string) => {
+        return marineServices.has(serviceId);
+    },
+
+    removeService: (serviceId: string) => {
+        if (serviceId === 'avm') {
+            throw new Error('Cannot remove \'avm\' service');
+        }
+        
+        marineServices.get(serviceId)?.terminate();
+        return marineServices.delete(serviceId);
+    },
+
     terminate: () => {
         marineServices.forEach((val, key) => {
             val.terminate();
