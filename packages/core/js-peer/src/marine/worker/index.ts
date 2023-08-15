@@ -55,9 +55,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         
         await this.avmWasmLoader.start();
         
-        console.log('before spawn');
         this.workerThread = await spawn<MarineBackgroundInterface>(worker);
-        console.log('after spawn');
         const logfn: LogFunction = (message) => {
             const serviceLogger = this.loggers.get(message.service);
             if (!serviceLogger) {

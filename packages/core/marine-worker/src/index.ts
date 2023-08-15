@@ -78,24 +78,14 @@ const toExpose = {
         marineServices.set(serviceId, srv);
     },
 
-    hasService: (serviceId: string) => {
-        return marineServices.has(serviceId);
-    },
-
-    removeService: (serviceId: string) => {
-        marineServices.get(serviceId)?.terminate();
-        return marineServices.delete(serviceId);
-    },
-
     terminate: () => {
         marineServices.forEach((val, key) => {
             val.terminate();
         });
-        marineServices.clear();
         onLogMessage.complete();
     },
 
-    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: CallParameters): unknown => {
+    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any): unknown => {
         const srv = marineServices.get(serviceId);
         if (!srv) {
             throw new Error(`service with id=${serviceId} not found`);

@@ -7,21 +7,20 @@
     ],
     "main": "./dist/node/marine-worker.umd.cjs",
     "unpkg": "./dist/browser/marine-worker.umd.cjs",
-    "module": "./dist/marine-worker.js",
-    "types": "./dist/index.d.ts",
+    "types": "./dist/types/index.d.ts",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
+            "types": "./dist/types/index.d.ts",
             "node": "./dist/node/marine-worker.umd.cjs",
-            "browser": "./dist/browser/marine-worker.umd.cjs"
+            "default": "./dist/browser/marine-worker.umd.cjs"
         },
         "./dist/marine-worker.js": {
             "node": "./dist/node/marine-worker.js",
-            "browser": "./dist/browser/marine-worker.js"
+            "default": "./dist/browser/marine-worker.js"
         },
         "./dist/marine-worker.umd.cjs": {
             "node": "./dist/node/marine-worker.umd.cjs",
-            "browser": "./dist/browser/marine-worker.umd.cjs"
+            "default": "./dist/browser/marine-worker.umd.cjs"
         }
     },
     "type": "module",
