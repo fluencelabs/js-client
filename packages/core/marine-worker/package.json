@@ -26,7 +26,7 @@
     "type": "module",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "node --loader ts-node/esm build.ts"
+        "build": "tsc --emitDeclarationOnly && node --loader ts-node/esm build.ts"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",

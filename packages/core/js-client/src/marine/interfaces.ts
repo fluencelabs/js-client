@@ -31,12 +31,12 @@ export interface IMarineHost extends IStartable {
     /**
      * Removes marine service with the given service id
      */
-    removeService(serviceId: string): void;
+    removeService(serviceId: string): Promise<void>;
 
     /**
      * Returns true if any service with the specified service id is registered
      */
-    hasService(serviceId: string): boolean;
+    hasService(serviceId: string): Promise<boolean>;
 
     /**
      * Calls the specified function of the specified service with the given arguments

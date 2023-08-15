@@ -20,7 +20,7 @@ import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluence
 import { Observable, Subject } from 'observable-fns';
 // @ts-ignore no types provided for package
 import { expose } from 'threads';
-import * as Buffer from 'buffer';
+import { Buffer } from 'buffer';
 
 const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
     return {
@@ -47,7 +47,7 @@ let controlModule: WebAssembly.Module | undefined;
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
-    init: (controlModuleWasm: SharedArrayBuffer | Buffer) => {
+    init: async (controlModuleWasm: SharedArrayBuffer | Buffer) => {
         controlModule = new WebAssembly.Module(new Uint8Array(controlModuleWasm));
     },
 
@@ -78,11 +78,11 @@ const toExpose = {
         marineServices.set(serviceId, srv);
     },
 
-    hasService: (serviceId: string) => {
+    hasService: async (serviceId: string) => {
         return marineServices.has(serviceId);
     },
 
-    removeService: (serviceId: string) => {
+    removeService: async (serviceId: string) => {
         if (serviceId === 'avm') {
             throw new Error('Cannot remove \'avm\' service');
         }
@@ -91,14 +91,15 @@ const toExpose = {
         return marineServices.delete(serviceId);
     },
 
-    terminate: () => {
+    terminate: async () => {
         marineServices.forEach((val, key) => {
             val.terminate();
         });
+        marineServices.clear();
         onLogMessage.complete();
     },
 
-    callService: (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any): unknown => {
+    callService: async (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any) => {
         const srv = marineServices.get(serviceId);
         if (!srv) {
             throw new Error(`service with id=${serviceId} not found`);
@@ -112,6 +113,16 @@ const toExpose = {
     },
 };
 
-export type MarineBackgroundInterface = typeof toExpose;
+type ExposedInterface<T extends {[key: string]: (...args: any[]) => unknown}> = {
+    [P in keyof T]: T[P] extends () => Observable<infer O> 
+        ? T[P]
+        : (...p: Parameters<T[P]>) => (
+            ReturnType<T[P]> extends Promise<unknown>
+                ? ReturnType<T[P]>
+                : Promise<ReturnType<T[P]>>
+        );
+};
+
+export type MarineBackgroundInterface = ExposedInterface<typeof toExpose>;
 
 expose(toExpose);

@@ -27,27 +27,33 @@ import { MarineLogger, marineLogger } from '../../util/logger.js';
 import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';
 
 export class MarineBackgroundRunner implements IMarineHost {
-    private marineServices = new Set<string>();
-    private workerThread?: ModuleThread<MarineBackgroundInterface>;
+    private workerThread?: MarineBackgroundInterface;
 
     private loggers: Map<string, MarineLogger> = new Map();
 
     constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader, private avmWasmLoader: IWasmLoader) {}
 
-    hasService(serviceId: string): boolean {
-        return this.marineServices.has(serviceId);
+    async hasService(serviceId: string) {
+        if (!this.workerThread) {
+            throw new Error('Worker is not initialized');
+        }
+        
+        return this.workerThread.hasService(serviceId);
     }
 
-    removeService(serviceId: string): void {
-        this.marineServices.delete(serviceId);
+    async removeService(serviceId: string) {
+        if (!this.workerThread) {
+            throw new Error('Worker is not initialized');
+        }
+        
+        await this.workerThread.removeService(serviceId);
     }
 
     async start(): Promise<void> {
         if (this.workerThread) {
-            return;
+            throw new Error('Worker thread already initialized');
         }
-
-        this.marineServices = new Set();
+        
         await this.workerLoader.start();
         const worker = await this.workerLoader.getValue();
         await this.controlModuleLoader.start();
@@ -55,7 +61,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         
         await this.avmWasmLoader.start();
         
-        this.workerThread = await spawn<MarineBackgroundInterface>(worker);
+        const workerThread = await spawn<MarineBackgroundInterface>(worker);
         const logfn: LogFunction = (message) => {
             const serviceLogger = this.loggers.get(message.service);
             if (!serviceLogger) {
@@ -63,14 +69,15 @@ export class MarineBackgroundRunner implements IMarineHost {
             }
             serviceLogger[message.level](message.message);
         };
-        this.workerThread.onLogMessage().subscribe(logfn);
-        await this.workerThread.init(wasm);
+        workerThread.onLogMessage().subscribe(logfn);
+        await workerThread.init(wasm);
+        this.workerThread = workerThread;
         await this.createService(this.avmWasmLoader.getValue(), 'avm');
     }
 
     async createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
         if (!this.workerThread) {
-            throw 'Worker is not initialized';
+            throw new Error('Worker is not initialized');
         }
 
         // The logging level is controlled by the environment variable passed to enable debug logs.
@@ -78,10 +85,9 @@ export class MarineBackgroundRunner implements IMarineHost {
         const env = logLevelToEnv('trace');
         this.loggers.set(serviceId, marineLogger(serviceId));
         await this.workerThread.createService(serviceModule, serviceId, env);
-        this.marineServices.add(serviceId);
     }
 
-    callService(
+    async callService(
         serviceId: string,
         functionName: string,
         args: JSONArray | JSONObject,
@@ -98,8 +104,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         if (!this.workerThread) {
             return;
         }
-
-        this.marineServices.clear();
+        
         await this.workerThread.terminate();
         await Thread.terminate(this.workerThread);
     }

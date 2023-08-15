@@ -6,7 +6,6 @@ import inject from '@rollup/plugin-inject';
 import merge from 'deepmerge';
 import { fileURLToPath } from 'url';
 import { replaceCodePlugin } from 'vite-plugin-replace';
-import dtsPlugin from 'vite-plugin-dts';
 
 const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
@@ -24,7 +23,7 @@ const browserConfig: InlineConfig = await merge(commonConfig, defineConfig({
     build: {
         outDir: 'dist/browser',
     },
-    plugins: [dtsPlugin({outDir: 'dist'}), {
+    plugins: [{
         // @ts-ignore
         ...inject({
             global: [esbuildShim, 'global'],

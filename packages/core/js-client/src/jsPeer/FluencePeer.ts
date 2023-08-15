@@ -156,8 +156,8 @@ export abstract class FluencePeer {
      * Removes the specified marine service from the Fluence peer
      * @param serviceId - the service id to remove
      */
-    removeMarineService(serviceId: string): void {
-        this.marineHost.removeService(serviceId);
+    async removeMarineService(serviceId: string): Promise<void> {
+        await this.marineHost.removeService(serviceId);
     }
 
     // internal api
@@ -527,7 +527,7 @@ export abstract class FluencePeer {
         const particleId = req.particleContext.particleId;
         log_particle.trace('id %s. executing call service handler %j', particleId, req);
 
-        if (this.marineHost && this.marineHost.hasService(req.serviceId)) {
+        if (this.marineHost && await this.marineHost.hasService(req.serviceId)) {
             // TODO build correct CallParameters instead of default ones
             const result = await this.marineHost.callService(req.serviceId, req.fnName, req.args, defaultCallParameters);
 

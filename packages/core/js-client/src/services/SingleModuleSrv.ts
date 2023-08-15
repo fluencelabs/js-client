@@ -70,7 +70,7 @@ export class Srv implements SrvDef {
 
     securityGuard_remove: SecurityGuard<'service_id'>;
 
-    remove(service_id: string, callParams: CallParams<'service_id'>) {
+    async remove(service_id: string, callParams: CallParams<'service_id'>) {
         if (!this.securityGuard_remove(callParams)) {
             return {
                 success: false,
@@ -86,7 +86,7 @@ export class Srv implements SrvDef {
             };
         }
 
-        this.peer.removeMarineService(service_id);
+        await this.peer.removeMarineService(service_id);
         this.services.delete(service_id);
 
         return {
