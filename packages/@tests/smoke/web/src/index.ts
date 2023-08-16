@@ -19,7 +19,7 @@ const test = async () => {
     }
 
     console.log('starting puppeteer...');
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch();
     const page = (await browser.pages())[0];
 
     // uncomment to debug what's happening inside the browser
@@ -33,7 +33,7 @@ const test = async () => {
     await page.click('#btn');
 
     console.log('waiting for result to appear...');
-    const elem = await page.waitForSelector('#res', {timeout: 10000000});
+    const elem = await page.waitForSelector('#res');
 
     console.log('getting the content of result div...');
     const content = await elem?.evaluate((x) => x.textContent);
