@@ -84,7 +84,7 @@ const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '', WO
 const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm', MARINE_VERSION).then(res => res.arrayBuffer());
 const fetchAvmWasm = () => fetchResource('@fluencelabs/avm', '/dist/avm.wasm', AVM_VERSION).then(res => res.arrayBuffer());
 
-export const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
+const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
     const workerCode = await fetchWorkerCode();
     
     const marineJsWasm = await fetchMarineJsWasm();
@@ -213,4 +213,5 @@ globalThis.fluence = {
     registerService,
 };
 
-export { callAquaFunction, registerService };
+export { createClient, callAquaFunction, registerService };
+export { getFluenceInterface, getFluenceInterfaceFromGlobalThis } from './util/loadClient.js';

@@ -18,20 +18,15 @@ import type { JSONArray, JSONObject, CallParameters } from '@fluencelabs/marine-
 import { LogFunction, logLevelToEnv } from '@fluencelabs/marine-js/dist/types';
 import type { MarineBackgroundInterface } from '@fluencelabs/marine-worker';
 // @ts-ignore
-import type { ModuleThread } from 'threads';
-import { Buffer } from 'buffer';
-// @ts-ignore
-import { spawn, Thread } from 'threads';
+import { ModuleThread, spawn, Thread } from 'threads';
 
 import { MarineLogger, marineLogger } from '../../util/logger.js';
 import { IMarineHost, IWasmLoader, IWorkerLoader } from '../interfaces.js';
-// @ts-ignore
-import { WorkerImplementation } from 'threads/dist/types/master';
 
 export class MarineBackgroundRunner implements IMarineHost {
     private workerThread?: MarineBackgroundInterface;
 
-    private loggers: Map<string, MarineLogger> = new Map();
+    private loggers = new Map<string, MarineLogger>();
 
     constructor(private workerLoader: IWorkerLoader, private controlModuleLoader: IWasmLoader, private avmWasmLoader: IWasmLoader) {}
 
