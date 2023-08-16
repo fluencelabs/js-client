@@ -84,18 +84,11 @@ const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '', WO
 const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm', MARINE_VERSION).then(res => res.arrayBuffer());
 const fetchAvmWasm = () => fetchResource('@fluencelabs/avm', '/dist/avm.wasm', AVM_VERSION).then(res => res.arrayBuffer());
 
-const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
-    const sab = new SharedArrayBuffer(buffer.length);
-    const tmp = new Uint8Array(sab);
-    tmp.set(buffer, 0);
-    return sab;
-};
-
 export const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
     const workerCode = await fetchWorkerCode();
     
-    const marineJsWasm = bufferToSharedArrayBuffer(Buffer.from(await fetchMarineJsWasm()));
-    const avmWasm = bufferToSharedArrayBuffer(Buffer.from(await fetchAvmWasm()));
+    const marineJsWasm = await fetchMarineJsWasm();
+    const avmWasm = await fetchAvmWasm();
     
     const marine = new MarineBackgroundRunner({
         getValue() {

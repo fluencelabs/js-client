@@ -75,7 +75,7 @@ export interface IValueLoader<T> {
 /**
  * Interface for something which can load wasm files
  */
-export interface IWasmLoader extends IValueLoader<SharedArrayBuffer | Buffer>, IStartable {}
+export interface IWasmLoader extends IValueLoader<ArrayBuffer | SharedArrayBuffer>, IStartable {}
 
 /**
  * Interface for something which can thread.js based worker

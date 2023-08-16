@@ -20,7 +20,6 @@ import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluence
 import { Observable, Subject } from 'observable-fns';
 // @ts-ignore no types provided for package
 import { expose } from 'threads';
-import { Buffer } from 'buffer';
 
 const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
     return {
@@ -47,12 +46,12 @@ let controlModule: WebAssembly.Module | undefined;
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
-    init: async (controlModuleWasm: SharedArrayBuffer | Buffer) => {
+    init: async (controlModuleWasm: ArrayBuffer | SharedArrayBuffer) => {
         controlModule = new WebAssembly.Module(new Uint8Array(controlModuleWasm));
     },
 
     createService: async (
-        wasm: SharedArrayBuffer | Buffer,
+        wasm: ArrayBuffer | SharedArrayBuffer,
         serviceId: string,
         envs?: Env,
     ): Promise<void> => {

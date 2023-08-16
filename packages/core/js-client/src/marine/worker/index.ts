@@ -78,7 +78,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         await this.createService(this.avmWasmLoader.getValue(), 'avm');
     }
 
-    async createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void> {
+    async createService(serviceModule: ArrayBuffer | SharedArrayBuffer, serviceId: string): Promise<void> {
         if (!this.workerThread) {
             throw new Error('Worker is not initialized');
         }
