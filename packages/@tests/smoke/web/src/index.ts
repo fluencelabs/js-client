@@ -40,7 +40,6 @@ const test = async () => {
     console.log('raw result: ', content);
 
     await browser.close();
-    // await stopServer(cdn);
     await stopServer(localServer);
 
     if (!content) {

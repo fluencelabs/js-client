@@ -31,7 +31,7 @@
         "dts-bundle-generator": "7.2.0",
         "microbundle": "0.15.1"
     },
-    "peerDependencies": {
+    "dependencies": {
         "@fluencelabs/js-client": "workspace:*"
     }
 }
