@@ -9,6 +9,7 @@
   ],
   "packages": {
     "packages/client/api": {},
-    "packages/core/js-client": {}
+    "packages/core/js-client": {},
+    "packages/core/marine-worker": {}
   }
 }

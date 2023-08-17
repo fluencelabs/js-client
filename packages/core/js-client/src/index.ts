@@ -30,7 +30,7 @@ const WORKER_VERSION = '__WORKER_VERSION__';
 const MARINE_VERSION = '__MARINE_VERSION__';
 const AVM_VERSION = '__AVM_VERSION__';
 // Default CDN. Later we can add more.
-const CDN_ROOT = 'https://unpkg.com/';
+const CDN_ROOT = '__CDN_ROOT__';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
 

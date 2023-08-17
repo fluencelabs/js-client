@@ -1,3 +1,4 @@
 {
-  "packages/client/api": "0.12.1"
+  "packages/client/api": "0.12.1",
+  "packages/core/marine-worker": "0.2.8"
 }
