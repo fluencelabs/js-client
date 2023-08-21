@@ -84,8 +84,7 @@ const commonConfig = (isNode: boolean): InlineConfig & Required<Pick<InlineConfi
         define: {
             __MARINE_VERSION__: pkg.devDependencies['@fluencelabs/marine-js'],
             __AVM_VERSION__: pkg.devDependencies['@fluencelabs/avm'],
-            __WORKER_VERSION__: pkg.devDependencies['@fluencelabs/marine-worker'].split(':')[1],
-            __CDN_ROOT__: 'https://unpkg.com/'
+            __WORKER_VERSION__: pkg.devDependencies['@fluencelabs/marine-worker']
         },
     };
 };

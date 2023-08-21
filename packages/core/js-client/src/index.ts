@@ -20,50 +20,16 @@ import { registerService } from './compilerSupport/registerService.js';
 import { MarineBackgroundRunner } from './marine/worker/index.js';
 // @ts-ignore
 import { BlobWorker, Worker } from 'threads';
-import * as fs from 'fs';
-import process from 'process';
-import { Buffer } from 'buffer';
 import { doRegisterNodeUtils } from './services/NodeUtils.js';
-import { createRequire } from 'module';
+import { fetchResource } from './fetchers/index.js';
+import process from 'process';
 
 const WORKER_VERSION = '__WORKER_VERSION__';
 const MARINE_VERSION = '__MARINE_VERSION__';
 const AVM_VERSION = '__AVM_VERSION__';
-// Default CDN. Later we can add more.
-const CDN_ROOT = '__CDN_ROOT__';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
 
-async function fetchResource(packageName: string, assetPath: string, version: string) {
-    if (isNode) {
-        const require = createRequire(import.meta.url);
-        
-        const file = await new Promise<Buffer>((resolve, reject) => {
-            // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
-            const workerFilePath = require.resolve(packageName + assetPath);
-            fs.readFile(workerFilePath, (err, data) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve(data);
-            });
-        });
-        return new Response(file, {
-            headers: {
-                'Content-type':
-                    assetPath.endsWith('.wasm')
-                        ? 'application/wasm'
-                        : assetPath.endsWith('.js')
-                            ? 'application/javascript'
-                            : 'application/text'
-            }
-        });
-    } else {
-        // Will work everywhere fetch is supported.
-        return fetch(new globalThis.URL(`${packageName}@${version}${assetPath}`, CDN_ROOT));
-    }
-}
 
 const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '', WORKER_VERSION).then(res => res.text());
 const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm', MARINE_VERSION).then(res => res.arrayBuffer());
