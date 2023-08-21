@@ -113,13 +113,11 @@ const toExpose = {
 };
 
 type ExposedInterface<T extends {[key: string]: (...args: any[]) => unknown}> = {
-    [P in keyof T]: T[P] extends () => Observable<infer O> 
+    [P in keyof T]: ReturnType<T[P]> extends Observable<unknown>
         ? T[P]
-        : (...p: Parameters<T[P]>) => (
-            ReturnType<T[P]> extends Promise<unknown>
-                ? ReturnType<T[P]>
-                : Promise<ReturnType<T[P]>>
-        );
+        : ReturnType<T[P]> extends Promise<unknown>
+            ? T[P]
+            : (...args: Parameters<T[P]>) => Promise<ReturnType<T[P]>>
 };
 
 export type MarineBackgroundInterface = ExposedInterface<typeof toExpose>;

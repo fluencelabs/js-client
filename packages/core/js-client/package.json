@@ -55,7 +55,7 @@
         "@fluencelabs/avm": "0.43.1",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "@fluencelabs/marine-js": "0.7.2",
-        "@fluencelabs/marine-worker": "workspace:*",
+        "@fluencelabs/marine-worker": "0.2.10",
         "@rollup/plugin-inject": "5.0.3",
         "@types/bs58": "4.0.1",
         "@types/debug": "4.1.7",

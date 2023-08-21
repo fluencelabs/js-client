@@ -266,7 +266,7 @@ importers:
         specifier: 0.7.2
         version: 0.7.2
       '@fluencelabs/marine-worker':
-        specifier: workspace:*
+        specifier: 0.2.10
         version: link:../marine-worker
       '@rollup/plugin-inject':
         specifier: 5.0.3
