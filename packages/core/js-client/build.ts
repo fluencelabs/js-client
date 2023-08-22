@@ -16,7 +16,7 @@ const commonConfig = (isNode: boolean): InlineConfig & Required<Pick<InlineConfi
     const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
     return {
         build: {
-            target: isNode ? 'es2022' : 'modules',
+            target: 'modules',
             minify: 'esbuild',
             lib: {
                 entry: './src/index.ts',
@@ -72,13 +72,7 @@ const commonConfig = (isNode: boolean): InlineConfig & Required<Pick<InlineConfi
         },
         resolve: {
             browserField: !isNode,
-            conditions: isNode ? ['node'] : ['browser'],
-            alias: {
-                ...stdLibBrowser,
-                net: 'node-stdlib-browser/esm/mock/net',
-                dgram: path.resolve(dirname(fileURLToPath(import.meta.url)), 'mocks/dgram'),
-                module: path.resolve(dirname(fileURLToPath(import.meta.url)), 'mocks/module'),
-            }
+            conditions: isNode ? ['node'] : ['browser']
         },
         // Used only by browser
         define: {

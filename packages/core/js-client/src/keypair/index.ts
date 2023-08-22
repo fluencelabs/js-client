@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import type { PeerId } from '@libp2p/interface-peer-id';
+import type { PeerId } from '@libp2p/interface/peer-id';
 import { generateKeyPairFromSeed, generateKeyPair } from '@libp2p/crypto/keys';
 import { createFromPrivKey } from '@libp2p/peer-id-factory';
-import type { PrivateKey } from '@libp2p/interface-keys';
+import type { PrivateKey } from '@libp2p/interface/keys';
 import { toUint8Array } from 'js-base64';
 import * as bs58 from 'bs58';
 import { KeyPairOptions } from '@fluencelabs/interfaces';

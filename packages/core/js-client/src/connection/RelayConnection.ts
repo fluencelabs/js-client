@@ -16,7 +16,7 @@
 import { PeerIdB58 } from '@fluencelabs/interfaces';
 import { pipe } from 'it-pipe';
 import { encode, decode } from 'it-length-prefixed';
-import type { PeerId } from '@libp2p/interface-peer-id';
+import type { PeerId } from '@libp2p/interface/peer-id';
 import { createLibp2p, Libp2p } from 'libp2p';
 
 import { noise } from '@chainsafe/libp2p-noise';
@@ -115,6 +115,10 @@ export class RelayConnection implements IStartable, IConnection {
             connectionManager: {
                 dialTimeout: this.config.dialTimeoutMs,
             },
+            connectionGater: {
+                // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
+                denyDialMultiaddr: () => Promise.resolve(false)
+            }
         });
 
         this.lib2p2Peer = lib2p2Peer;

@@ -15,7 +15,6 @@
  */
 import { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
 import { IStartable, JSONArray, JSONObject, CallParameters } from '../util/commonTypes.js';
-import { Buffer } from 'buffer';
 // @ts-ignore
 import type { WorkerImplementation } from 'threads/dist/types/master';
 
@@ -26,7 +25,7 @@ export interface IMarineHost extends IStartable {
     /**
      * Creates marine service from the given module and service id
      */
-    createService(serviceModule: SharedArrayBuffer | Buffer, serviceId: string): Promise<void>;
+    createService(serviceModule: ArrayBuffer | SharedArrayBuffer, serviceId: string): Promise<void>;
 
     /**
      * Removes marine service with the given service id

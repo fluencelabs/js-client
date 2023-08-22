@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { createRequire } from 'module';
-import { Buffer } from 'buffer';
+import module from 'module';
 import fs from 'fs';
 
 export async function fetchResource(packageName: string, assetPath: string, version: string) {
-    const require = createRequire(import.meta.url);
+    const require = module.createRequire(import.meta.url);
 
-    const file = await new Promise<Buffer>((resolve, reject) => {
+    const file = await new Promise<ArrayBuffer>((resolve, reject) => {
         // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
         const workerFilePath = require.resolve(packageName + assetPath);
         fs.readFile(workerFilePath, (err, data) => {

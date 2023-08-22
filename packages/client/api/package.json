@@ -32,6 +32,6 @@
         "microbundle": "0.15.1"
     },
     "dependencies": {
-        "@fluencelabs/js-client": "workspace:*"
+        "@fluencelabs/js-client": "0.0.4"
     }
 }

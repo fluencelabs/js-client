@@ -1,11 +1,14 @@
 {
     "name": "@fluencelabs/js-client",
-    "version": "0.0.1",
+    "version": "0.0.4",
     "description": "TypeScript implementation of Fluence Peer",
     "engines": {
         "node": ">=10",
         "pnpm": ">=3"
     },
+    "files": [
+        "dist"
+    ],
     "types": "./dist/types/index.d.ts",
     "exports": {
         "types": "./dist/types/index.d.ts",
@@ -21,17 +24,14 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@chainsafe/libp2p-noise": "11.0.0",
+        "@chainsafe/libp2p-noise": "13.0.0",
         "@fluencelabs/interfaces": "0.8.1",
-        "@libp2p/crypto": "1.0.8",
-        "@libp2p/interface-connection": "3.0.8",
-        "@libp2p/interface-keys": "1.0.7",
-        "@libp2p/interface-peer-id": "2.0.1",
-        "@libp2p/interfaces": "3.3.1",
-        "@libp2p/mplex": "7.1.1",
-        "@libp2p/peer-id": "2.0.1",
-        "@libp2p/peer-id-factory": "2.0.1",
-        "@libp2p/websockets": "5.0.3",
+        "@libp2p/crypto": "2.0.3",
+        "@libp2p/interface": "0.1.2",
+        "@libp2p/mplex": "9.0.4",
+        "@libp2p/peer-id": "3.0.2",
+        "@libp2p/peer-id-factory": "3.0.3",
+        "@libp2p/websockets": "7.0.4",
         "@multiformats/multiaddr": "11.3.0",
         "async": "3.2.4",
         "bs58": "5.0.0",
@@ -41,7 +41,7 @@
         "it-map": "2.0.0",
         "it-pipe": "2.0.5",
         "js-base64": "3.7.5",
-        "libp2p": "0.42.2",
+        "libp2p": "0.46.6",
         "multiformats": "11.0.1",
         "rxjs": "7.5.5",
         "threads": "1.7.0",
