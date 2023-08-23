@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-export async function fetchResource(packageName: string, assetPath: string, version: string) {
-    return fetch(new globalThis.URL(`${packageName}@${version}${assetPath}`, 'https://unpkg.com/'));
+export async function fetchResource(assetPath: string, version: string) {
+    return fetch(new globalThis.URL(`@fluencelabs/js-client@${version}/dist` + assetPath, `https://unpkg.com/`));
 }

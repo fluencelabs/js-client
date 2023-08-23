@@ -24,16 +24,17 @@ import { doRegisterNodeUtils } from './services/NodeUtils.js';
 import { fetchResource } from './fetchers/index.js';
 import process from 'process';
 
-const WORKER_VERSION = '__WORKER_VERSION__';
-const MARINE_VERSION = '__MARINE_VERSION__';
-const AVM_VERSION = '__AVM_VERSION__';
+import avmWasmUrl from '../node_modules/@fluencelabs/avm/dist/avm.wasm?url';
+import marineJsWasmUrl from '../node_modules/@fluencelabs/marine-js/dist/marine-js.wasm?url';
+import workerCodeUrl from '../node_modules/@fluencelabs/marine-worker/dist/__ENV__/marine-worker.umd.cjs?url';
+
+const JS_CLIENT_VERSION = '__JS_CLIENT_VERSION__';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
 
-
-const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '', WORKER_VERSION).then(res => res.text());
-const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm', MARINE_VERSION).then(res => res.arrayBuffer());
-const fetchAvmWasm = () => fetchResource('@fluencelabs/avm', '/dist/avm.wasm', AVM_VERSION).then(res => res.arrayBuffer());
+const fetchWorkerCode = () => fetchResource(workerCodeUrl, JS_CLIENT_VERSION).then(res => res.text());
+const fetchMarineJsWasm = () => fetchResource(marineJsWasmUrl, JS_CLIENT_VERSION).then(res => res.arrayBuffer());
+const fetchAvmWasm = () => fetchResource(avmWasmUrl, JS_CLIENT_VERSION).then(res => res.arrayBuffer());
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
     const workerCode = await fetchWorkerCode();

@@ -20,11 +20,11 @@ import process from 'process';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
 
-export async function fetchResource(packageName: string, assetPath: string, version: string) {
+export async function fetchResource(assetPath: string, version: string) {
     switch (true) {
         case isNode:
-            return fetchResourceNode(packageName, assetPath, version);
+            return fetchResourceNode(assetPath, version);
         default:
-            return fetchResourceBrowser(packageName, assetPath, version);
+            return fetchResourceBrowser(assetPath, version);
     }
 }

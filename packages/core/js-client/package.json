@@ -1,14 +1,16 @@
 {
     "name": "@fluencelabs/js-client",
-    "version": "0.0.4",
+    "version": "0.0.10",
     "description": "TypeScript implementation of Fluence Peer",
     "engines": {
         "node": ">=10",
-        "pnpm": ">=3"
+        "pnpm": ">=8"
     },
     "files": [
         "dist"
     ],
+    "main": "./dist/browser/index.js",
+    "unpkg": "./dist/browser/index.js",
     "types": "./dist/types/index.d.ts",
     "exports": {
         "types": "./dist/types/index.d.ts",
@@ -17,7 +19,7 @@
     },
     "type": "module",
     "scripts": {
-        "build": "tsc --emitDeclarationOnly && node --loader ts-node/esm build.ts",
+        "build": "node --loader ts-node/esm build.ts && tsc --emitDeclarationOnly",
         "test": "vitest --threads false run"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
@@ -55,7 +57,8 @@
         "@fluencelabs/avm": "0.43.1",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "@fluencelabs/marine-js": "0.7.2",
-        "@fluencelabs/marine-worker": "0.2.10",
+        "@fluencelabs/marine-worker": "workspace:*",
+        "@laynezh/vite-plugin-lib-assets": "0.5.2",
         "@rollup/plugin-inject": "5.0.3",
         "@types/bs58": "4.0.1",
         "@types/debug": "4.1.7",

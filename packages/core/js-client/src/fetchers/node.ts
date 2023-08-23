@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import module from 'module';
 import fs from 'fs';
+import url from 'url';
+import path from 'path';
 
-export async function fetchResource(packageName: string, assetPath: string, version: string) {
-    const require = module.createRequire(import.meta.url);
-
+export async function fetchResource(assetPath: string, version: string) {
     const file = await new Promise<ArrayBuffer>((resolve, reject) => {
         // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
-        const workerFilePath = require.resolve(packageName + assetPath);
+        const root = path.dirname(url.fileURLToPath(import.meta.url));
+        const workerFilePath = path.join(root, '..', assetPath);
         fs.readFile(workerFilePath, (err, data) => {
             if (err) {
                 reject(err);
@@ -30,7 +30,7 @@ export async function fetchResource(packageName: string, assetPath: string, vers
             }
             resolve(data);
         });
-    });
+    }); 
     return new Response(file, {
         headers: {
             'Content-type':

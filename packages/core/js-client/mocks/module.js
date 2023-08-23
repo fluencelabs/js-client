@@ -1,1 +1,0 @@
-export const createRequire = () => () => ({name: '@achingbrain/ssdp', version: '4.0.4'});
