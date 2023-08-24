@@ -72,15 +72,11 @@ const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<
     const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
     const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
     if (isNode) {
-        registerNodeOnlyServices(client);
+        doRegisterNodeUtils(client);
     }
     await client.connect();
     return client;
 };
-
-function registerNodeOnlyServices(client: IFluenceClient) {
-    doRegisterNodeUtils(client);
-}
 
 /**
  * Public interface to Fluence Network
