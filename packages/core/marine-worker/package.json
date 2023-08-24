@@ -1,0 +1,51 @@
+{
+    "name": "@fluencelabs/marine-worker",
+    "version": "0.2.10",
+    "description": "Marine worker",
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/node/marine-worker.umd.cjs",
+    "unpkg": "./dist/browser/marine-worker.umd.cjs",
+    "types": "./dist/types/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "node": "./dist/node/marine-worker.umd.cjs",
+            "default": "./dist/browser/marine-worker.umd.cjs"
+        },
+        "./dist/marine-worker.js": {
+            "node": "./dist/node/marine-worker.js",
+            "default": "./dist/browser/marine-worker.js"
+        },
+        "./dist/marine-worker.umd.cjs": {
+            "node": "./dist/node/marine-worker.umd.cjs",
+            "default": "./dist/browser/marine-worker.umd.cjs"
+        }
+    },
+    "type": "module",
+    "scripts": {
+        "build": "tsc --emitDeclarationOnly && node --loader ts-node/esm build.ts"
+    },
+    "repository": "https://github.com/fluencelabs/fluence-js",
+    "author": "Fluence Labs",
+    "license": "Apache-2.0",
+    "keywords": [],
+    "devDependencies": {
+        "@rollup/plugin-inject": "5.0.3",
+        "@types/node": "20.4.5",
+        "deepmerge": "4.3.1",
+        "node-stdlib-browser": "1.2.0",
+        "typescript": "5.1.6",
+        "vite": "4.0.4",
+        "vite-plugin-dts": "3.4.0",
+        "vite-plugin-replace": "0.1.1",
+        "vitest": "0.29.7"
+    },
+    "dependencies": {
+        "@fluencelabs/avm": "0.43.1",
+        "@fluencelabs/marine-js": "0.7.2",
+        "observable-fns": "0.6.1",
+        "threads": "1.7.0"
+    }
+}

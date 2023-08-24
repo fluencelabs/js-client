@@ -1,9 +1,6 @@
 {
   "packages/client/api": "0.12.1",
-  "packages/client/js-client.node": "0.7.1",
-  "packages/client/js-client.web": "0.2.5",
-  "packages/client/js-client.web.standalone": "0.14.1",
-  "packages/client/tools": "0.2.1",
-  "packages/core/interfaces": "0.8.1",
-  "packages/core/js-peer": "0.9.1"
+  "packages/core/js-client": "0.0.10",
+  "packages/core/marine-worker": "0.2.10",
+  "packages/core/interfaces": "0.8.1"
 }

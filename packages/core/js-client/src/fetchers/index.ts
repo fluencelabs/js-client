@@ -14,4 +14,17 @@
  * limitations under the License.
  */
 
-export * from '@fluencelabs/js-client';
+import { fetchResource as fetchResourceBrowser } from './browser.js';
+import { fetchResource as fetchResourceNode } from './node.js';
+import process from 'process';
+
+const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
+
+export async function fetchResource(assetPath: string, version: string) {
+    switch (true) {
+        case isNode:
+            return fetchResourceNode(assetPath, version);
+        default:
+            return fetchResourceBrowser(assetPath, version);
+    }
+}

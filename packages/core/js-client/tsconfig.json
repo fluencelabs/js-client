@@ -1,0 +1,11 @@
+{
+    "extends": "../../../tsconfig.json",
+    "compilerOptions": {
+        "types": ["vite/client"],
+        "outDir": "dist/types",
+        "esModuleInterop": true,
+        "resolveJsonModule": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"],
+}

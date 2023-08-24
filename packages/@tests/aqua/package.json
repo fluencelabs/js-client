@@ -18,6 +18,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/js-client.api": "workspace:^",
+        "@fluencelabs/js-client": "workspace:^",
         "base64-js": "1.5.1"
     },
     "devDependencies": {

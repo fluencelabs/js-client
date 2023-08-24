@@ -24,13 +24,14 @@
     "repository": "https://github.com/fluencelabs/fluence-js",
     "author": "Fluence Labs",
     "license": "Apache-2.0",
-    "dependencies": {
-        "@fluencelabs/interfaces": "0.8.1"
-    },
     "devDependencies": {
         "@fluencelabs/avm": "0.43.1",
+        "@fluencelabs/interfaces": "workspace:*",
         "@fluencelabs/marine-js": "0.7.2",
-        "microbundle": "0.15.1",
-        "dts-bundle-generator": "7.2.0"
+        "dts-bundle-generator": "7.2.0",
+        "microbundle": "0.15.1"
+    },
+    "dependencies": {
+        "@fluencelabs/js-client": "0.0.10"
     }
 }

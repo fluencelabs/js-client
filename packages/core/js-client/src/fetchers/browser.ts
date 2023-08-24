@@ -14,4 +14,6 @@
  * limitations under the License.
  */
 
-export * from '@fluencelabs/js-client';
+export async function fetchResource(assetPath: string, version: string) {
+    return fetch(new globalThis.URL(`@fluencelabs/js-client@${version}/dist` + assetPath, `https://unpkg.com/`));
+}

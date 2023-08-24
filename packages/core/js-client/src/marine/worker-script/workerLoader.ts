@@ -13,5 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// @ts-ignore
+import type { WorkerImplementation } from 'threads/dist/types/master';
+// @ts-ignore
+import { Worker } from 'threads';
+import { LazyLoader } from '../interfaces.js';
 
-export * from '@fluencelabs/js-client';
+export class WorkerLoader extends LazyLoader<WorkerImplementation> {
+    constructor() {
+        super(() => new Worker('../../../node_modules/@fluencelabs/marine-worker/dist/node/marine-worker.umd.cjs'));
+    }
+}

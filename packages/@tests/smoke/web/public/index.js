@@ -84,7 +84,7 @@ const getRelayTime = () => {
 
 const main = async () => {
     console.log('starting fluence...');
-    await fluence.defaultClient.connect(relay);
+    fluence.defaultClient = await fluence.clientFactory(relay);
     console.log('started fluence');
 
     console.log('getting relay time...');
@@ -104,7 +104,7 @@ btn.addEventListener('click', () => {
     main().then((res) => {
         const inner = document.createElement('div');
         inner.id = 'res';
-        inner.innerText = 'res';
+        inner.innerText = res;
         document.getElementById('res-placeholder').appendChild(inner);
     });
 });

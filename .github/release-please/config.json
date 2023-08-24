@@ -9,11 +9,8 @@
   ],
   "packages": {
     "packages/client/api": {},
-    "packages/client/js-client.node": {},
-    "packages/client/js-client.web": {},
-    "packages/client/js-client.web.standalone": {},
-    "packages/client/tools": {},
+    "packages/core/js-client": {},
     "packages/core/interfaces": {},
-    "packages/core/js-peer": {}
+    "packages/core/marine-worker": {}
   }
 }
