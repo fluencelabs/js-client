@@ -11,6 +11,7 @@
     ],
     "main": "./dist/browser/index.js",
     "unpkg": "./dist/browser/index.js",
+    "types": "./dist/types/index.d.ts",
     "exports": {
         "types": "./dist/types/index.d.ts",
         "node": "./dist/node/index.js",
