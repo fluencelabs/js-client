@@ -59,11 +59,9 @@ const commonConfig = (isNode: boolean): InlineConfig & Required<Pick<InlineConfi
             publicUrl: '/',
         }), ...(isNode ? [replaceCodePlugin({
         replacements: [
-            { from: 'require(`./${file}.js`)', to: 'require(`./linux.js`)' },
-            {
-                from: 'const { name, version } = req(\'../../package.json\')',
-                to: 'const { name, version } = { name: \'ssdp\', version: \'4.0.4\' }'
-            },
+            // After 'threads' package is built, it produces wrong output, which throws runtime errors.
+            // This code aims to fix such places.
+            // Should remove this after we move from threads to other package.
             { from: 'eval("require")("worker_threads")', to: 'WorkerScope' },
             { from: 'eval("require")("worker_threads")', to: 'WorkerScope' },
         ]
