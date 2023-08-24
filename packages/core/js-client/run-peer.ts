@@ -21,10 +21,13 @@ import { WasmLoaderFromNpm } from './src/marine/deps-loader/node.js';
 import { MarineBackgroundRunner } from './src/marine/worker/index.js';
 import { multiaddr } from '@multiformats/multiaddr';
 
-// const key = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
-// const keyBytes = toUint8Array(key);
+// Use this snippet in case you need to create private key from specific seed 
 //
-// const privKey = await generateKeyPairFromSeed('Ed25519', keyBytes, 256);
+//
+// const seed = '+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=';
+// const seedBytes = toUint8Array(seed);
+//
+// const privKey = await generateKeyPairFromSeed('Ed25519', seedBytes, 256);
 // const peer = new ClientPeer({}, new KeyPair(privKey, "12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR"));
 // await peer.start();
 
