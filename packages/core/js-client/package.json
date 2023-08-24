@@ -1,7 +1,7 @@
 {
     "name": "@fluencelabs/js-client",
     "version": "0.0.10",
-    "description": "TypeScript implementation of Fluence Peer",
+    "description": "Client for interacting with Fluence network",
     "engines": {
         "node": ">=10",
         "pnpm": ">=8"
@@ -11,7 +11,6 @@
     ],
     "main": "./dist/browser/index.js",
     "unpkg": "./dist/browser/index.js",
-    "types": "./dist/types/index.d.ts",
     "exports": {
         "types": "./dist/types/index.d.ts",
         "node": "./dist/node/index.js",
@@ -53,9 +52,7 @@
     },
     "devDependencies": {
         "@fluencelabs/aqua-api": "0.9.3",
-        "@fluencelabs/aqua-lib": "0.6.0",
         "@fluencelabs/avm": "0.43.1",
-        "@fluencelabs/fluence-network-environment": "1.0.13",
         "@fluencelabs/marine-js": "0.7.2",
         "@fluencelabs/marine-worker": "workspace:*",
         "@laynezh/vite-plugin-lib-assets": "0.5.2",
@@ -65,7 +62,6 @@
         "@types/uuid": "8.3.2",
         "node-stdlib-browser": "1.2.0",
         "vite": "4.0.4",
-        "vite-plugin-dts": "3.4.0",
         "vite-plugin-replace": "0.1.1",
         "vite-tsconfig-paths": "4.0.3",
         "vitest": "0.29.7"
