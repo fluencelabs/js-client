@@ -85,7 +85,6 @@ const getRelayTime = () => {
 const main = async () => {
     console.log('starting fluence...');
     fluence.defaultClient = await fluence.clientFactory(relay);
-    // await fluence.defaultClient.connect(relay);
     console.log('started fluence');
 
     console.log('getting relay time...');

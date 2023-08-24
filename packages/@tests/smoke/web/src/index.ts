@@ -29,7 +29,6 @@ const test = async () => {
     await page.goto(uri);
 
     console.log('clicking button...');
-    // await page.waitForTimeout(10000000);
     await page.click('#btn');
 
     console.log('waiting for result to appear...');
