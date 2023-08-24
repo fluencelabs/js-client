@@ -12,6 +12,27 @@
   * dependencies
     * @fluencelabs/interfaces bumped from 0.7.3 to 0.7.4
 
+## [0.13.0](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.12.1...js-client.api-v0.13.0) (2023-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Unify all packages ([#327](https://github.com/fluencelabs/js-client/issues/327))
+
+### Features
+
+* Unify all packages ([#327](https://github.com/fluencelabs/js-client/issues/327)) ([97c2491](https://github.com/fluencelabs/js-client/commit/97c24918d84b34e7ac58337838dc8343cbd44b19))
+* use marine-js 0.7.2 ([#321](https://github.com/fluencelabs/js-client/issues/321)) ([c99a509](https://github.com/fluencelabs/js-client/commit/c99a509c8743471856b0beb25696ffe7357d5399))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-client bumped from 0.0.10 to 0.1.0
+  * devDependencies
+    * @fluencelabs/interfaces bumped to 0.8.2
+
 ## [0.12.1](https://github.com/fluencelabs/js-client/compare/js-client.api-v0.12.0...js-client.api-v0.12.1) (2023-08-08)
 
 

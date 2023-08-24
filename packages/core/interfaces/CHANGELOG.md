@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/fluencelabs/js-client/compare/interfaces-v0.8.1...interfaces-v0.8.2) (2023-08-24)
+
+
+### Features
+
+* use marine-js 0.7.2 ([#321](https://github.com/fluencelabs/js-client/issues/321)) ([c99a509](https://github.com/fluencelabs/js-client/commit/c99a509c8743471856b0beb25696ffe7357d5399))
+
 ## [0.8.1](https://github.com/fluencelabs/js-client/compare/interfaces-v0.8.0...interfaces-v0.8.1) (2023-08-08)
 
 

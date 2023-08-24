@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.0.10...js-client-v0.1.0) (2023-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Unify all packages ([#327](https://github.com/fluencelabs/js-client/issues/327))
+
+### Features
+
+* Unify all packages ([#327](https://github.com/fluencelabs/js-client/issues/327)) ([97c2491](https://github.com/fluencelabs/js-client/commit/97c24918d84b34e7ac58337838dc8343cbd44b19))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped from 0.8.1 to 0.8.2
+  * devDependencies
+    * @fluencelabs/marine-worker bumped to 0.3.0
+
 ## [0.9.1](https://github.com/fluencelabs/js-client/compare/js-peer-v0.9.0...js-peer-v0.9.1) (2023-08-08)
 
 
