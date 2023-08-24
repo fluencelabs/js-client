@@ -403,7 +403,7 @@ export abstract class FluencePeer {
                         const res = await this.marineHost.callService('avm', 'invoke', args, defaultCallParameters);
                         avmCallResult = deserializeAvmResult(res);
                     } catch (e) {
-                        avmCallResult = e instanceof Error ? e : new Error((e as any).toString());
+                        avmCallResult = e instanceof Error ? e : new Error(String(e));
                     }
 
                     if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
