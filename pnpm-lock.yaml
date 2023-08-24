@@ -135,7 +135,7 @@ importers:
   packages/client/api:
     dependencies:
       '@fluencelabs/js-client':
-        specifier: 0.0.10
+        specifier: 0.1.0
         version: link:../../core/js-client
     devDependencies:
       '@fluencelabs/avm':
@@ -172,7 +172,7 @@ importers:
         specifier: 13.0.0
         version: 13.0.0
       '@fluencelabs/interfaces':
-        specifier: 0.8.1
+        specifier: 0.8.2
         version: link:../interfaces
       '@libp2p/crypto':
         specifier: 2.0.3
@@ -206,7 +206,7 @@ importers:
         version: 6.0.3
       debug:
         specifier: 4.3.4
-        version: 4.3.4
+        version: 4.3.4(supports-color@8.1.1)
       it-length-prefixed:
         specifier: 8.0.4
         version: 8.0.4
@@ -273,13 +273,13 @@ importers:
         version: 1.2.0
       vite:
         specifier: 4.0.4
-        version: 4.0.4(@types/node@20.4.5)
+        version: 4.0.4(@types/node@18.13.0)
       vite-plugin-replace:
         specifier: 0.1.1
         version: 0.1.1(vite@4.0.4)
       vite-tsconfig-paths:
         specifier: 4.0.3
-        version: 4.0.3(vite@4.0.4)
+        version: 4.0.3(typescript@4.7.2)(vite@4.0.4)
       vitest:
         specifier: 0.29.7
         version: 0.29.7
@@ -4569,7 +4569,7 @@ packages:
     dependencies:
       '@libp2p/interface-peer-id': 2.0.2
       '@multiformats/multiaddr': 12.1.7
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       interface-datastore: 8.2.3
       multiformats: 11.0.2
     transitivePeerDependencies:
@@ -4580,7 +4580,7 @@ packages:
     dependencies:
       '@libp2p/interface': 0.1.2
       '@multiformats/multiaddr': 12.1.7
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       interface-datastore: 8.2.3
       multiformats: 12.0.1
     transitivePeerDependencies:
@@ -9666,17 +9666,6 @@ packages:
     dependencies:
       ms: 2.1.3
 
-  /debug@4.3.4:
-    resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: 2.1.2
-
   /debug@4.3.4(supports-color@8.1.1):
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
     engines: {node: '>=6.0'}
@@ -10001,7 +9990,7 @@ packages:
     resolution: {integrity: sha512-Lm/eXB7yAQLJ5WxlBGwYfBY7utduXPZykcSmcG6K7ozM0wrZFvxZavhT6PqI0kd/5CUTfev/RrEFQqyU4CGPew==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       native-fetch: 4.0.2(undici@5.22.1)
       receptacle: 1.3.2
       undici: 5.22.1
@@ -20003,7 +19992,7 @@ packages:
     resolution: {integrity: sha512-Mx5NBSHX3sQYR6iI9VYbgHKBLisyB+xROCBGjjWm1O9wb9vfLxdaGtmT/KCjUqMsSNW6nERzCW3T6H43LqjDZQ==}
     dependencies:
       callsites: 3.1.0
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       is-observable: 2.1.0
       observable-fns: 0.6.1
     optionalDependencies:
@@ -20262,7 +20251,7 @@ packages:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 20.4.5
-      acorn: 8.10.0
+      acorn: 8.9.0
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -20275,7 +20264,7 @@ packages:
   /ts-pattern@3.3.3:
     resolution: {integrity: sha512-Z5EFi6g6wyX3uDFHqxF5W5c5h663oZg9O6aOiAT7fqNu0HPSfCxtHzrQ7SblTy738Mrg2Ezorky8H5aUOm8Pvg==}
 
-  /tsconfck@2.1.1:
+  /tsconfck@2.1.1(typescript@4.7.2):
     resolution: {integrity: sha512-ZPCkJBKASZBmBUNqGHmRhdhM8pJYDdOXp4nRgj/O0JwUwsMq50lCDRQP/M5GBNAA0elPrq4gAeu4dkaVCuKWww==}
     engines: {node: ^14.13.1 || ^16 || >=18}
     hasBin: true
@@ -20284,6 +20273,8 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+    dependencies:
+      typescript: 4.7.2
     dev: true
 
   /tsconfig-paths@3.14.2:
@@ -20779,7 +20770,7 @@ packages:
     hasBin: true
     dependencies:
       cac: 6.7.14
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       mlly: 1.3.0
       pathe: 1.1.1
       picocolors: 1.0.0
@@ -20823,21 +20814,55 @@ packages:
     peerDependencies:
       vite: ^2
     dependencies:
-      vite: 4.0.4(@types/node@20.4.5)
+      vite: 4.0.4(@types/node@18.13.0)
     dev: true
 
-  /vite-tsconfig-paths@4.0.3(vite@4.0.4):
+  /vite-tsconfig-paths@4.0.3(typescript@4.7.2)(vite@4.0.4):
     resolution: {integrity: sha512-gRO2Q/tOkV+9kMht5tz90+IaEKvW2zCnvwJV3tp2ruPNZOTM5rF+yXorJT4ggmAMYEaJ3nyXjx5P5jY5FwiZ+A==}
     peerDependencies:
       vite: '>2.0.0-0'
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       globrex: 0.1.2
-      tsconfck: 2.1.1
-      vite: 4.0.4(@types/node@20.4.5)
+      tsconfck: 2.1.1(typescript@4.7.2)
+      vite: 4.0.4(@types/node@18.13.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: true
+
+  /vite@4.0.4(@types/node@18.13.0):
+    resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 18.13.0
+      esbuild: 0.16.17
+      postcss: 8.4.24
+      resolve: 1.22.4
+      rollup: 3.25.1
+    optionalDependencies:
+      fsevents: 2.3.3
     dev: true
 
   /vite@4.0.4(@types/node@20.4.5):
@@ -20913,7 +20938,7 @@ packages:
       acorn-walk: 8.2.0
       cac: 6.7.14
       chai: 4.3.7
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@8.1.1)
       local-pkg: 0.4.3
       pathe: 1.1.1
       picocolors: 1.0.0
