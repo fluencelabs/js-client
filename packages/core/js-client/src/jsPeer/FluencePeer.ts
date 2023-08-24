@@ -109,7 +109,6 @@ export abstract class FluencePeer {
         if (this.config?.debug?.printParticleId) {
             this.printParticleId = true;
         }
-        
         await this.marineHost.start();
 
         this._startParticleProcessing();
