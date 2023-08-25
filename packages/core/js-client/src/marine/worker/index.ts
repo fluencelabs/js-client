@@ -80,7 +80,7 @@ export class MarineBackgroundRunner implements IMarineHost {
 
         // The logging level is controlled by the environment variable passed to enable debug logs.
         // We enable all possible log levels passing the control for exact printouts to the logger
-        const env = logLevelToEnv('trace');
+        const env = logLevelToEnv('info');
         this.loggers.set(serviceId, marineLogger(serviceId));
         await this.workerThread.createService(serviceModule, serviceId, env);
     }
