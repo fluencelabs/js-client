@@ -18,6 +18,6 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@fluencelabs/js-client": "workspace:*",
-        "@test/aqua_for_test": "workspace:../../aqua"
+        "@test/aqua_for_test": "workspace:*"
     }
 }
