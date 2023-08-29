@@ -380,7 +380,7 @@ export abstract class FluencePeer {
                     // Otherwise the race might occur corrupting the prevData
 
                     log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
-                    log_particle.trace('id %s. prevData: %a', item.particle.id, prevData);
+                    log_particle.trace('id %s. prevData: %b', item.particle.id, prevData);
 
                     const args = serializeAvmArgs(
                         {
@@ -442,13 +442,13 @@ export abstract class FluencePeer {
                         item.result.retCode,
                         item.result.errorMessage,
                     );
-                    log_particle.trace('id %s. avm data: %a', item.particle.id, item.result.data);
+                    log_particle.trace('id %s. avm data: %b', item.particle.id, item.result.data);
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
 
                 log_particle.trace(
-                    'id %s. interpreter result: retCode: %d, avm data: %a',
+                    'id %s. interpreter result: retCode: %d, avm data: %b',
                     item.particle.id,
                     item.result.retCode,
                     item.result.data,
