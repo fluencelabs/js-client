@@ -18,7 +18,7 @@ import debug from 'debug';
 import { Buffer } from 'buffer';
 
 // Format avm data as a string
-debug.formatters.b = (avmData: Uint8Array) => {
+debug.formatters.d = (avmData: Uint8Array) => {
     return new TextDecoder().decode(Buffer.from(avmData));
 };
 
