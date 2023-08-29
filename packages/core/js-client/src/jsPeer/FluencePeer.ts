@@ -359,6 +359,10 @@ export abstract class FluencePeer {
 
         item.onStageChange({ stage: 'expired' });
     }
+    
+    private decodeAvmData(data: Uint8Array) {
+        return new TextDecoder().decode(data.buffer);
+    }
 
     private _createParticlesProcessingQueue() {
         const particlesQueue = new Subject<ParticleQueueItem>();
@@ -380,7 +384,7 @@ export abstract class FluencePeer {
                     // Otherwise the race might occur corrupting the prevData
 
                     log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
-                    log_particle.trace('id %s. prevData: %s', item.particle.id, new TextDecoder().decode(prevData.buffer));
+                    log_particle.trace('id %s. prevData: %s', item.particle.id, this.decodeAvmData(prevData));
 
                     const args = serializeAvmArgs(
                         {
@@ -442,7 +446,7 @@ export abstract class FluencePeer {
                         item.result.retCode,
                         item.result.errorMessage,
                     );
-                    log_particle.trace('id %s. avm data: %s', item.particle.id, new TextDecoder().decode(item.result.data.buffer));
+                    log_particle.trace('id %s. avm data: %s', item.particle.id, this.decodeAvmData(item.result.data));
                     item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
                     return;
                 }
@@ -451,7 +455,7 @@ export abstract class FluencePeer {
                     'id %s. interpreter result: retCode: %d, avm data: %s',
                     item.particle.id,
                     item.result.retCode,
-                    new TextDecoder().decode(item.result.data.buffer),
+                    this.decodeAvmData(item.result.data)
                 );
 
                 setTimeout(() => {
