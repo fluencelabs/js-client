@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/js-client.api",
-    "version": "0.13.0",
+    "version": "0.13.1",
     "description": "JS Client API",
     "engines": {
         "node": ">=10",
@@ -32,6 +32,6 @@
         "microbundle": "0.15.1"
     },
     "dependencies": {
-        "@fluencelabs/js-client": "0.1.0"
+        "@fluencelabs/js-client": "0.1.1"
     }
 }
