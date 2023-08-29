@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.0...js-client-v0.1.1) (2023-08-25)
+
+
+### Bug Fixes
+
+* Use info log level instead trace [Fixes DXJ-457] ([#328](https://github.com/fluencelabs/js-client/issues/328)) ([477c6f0](https://github.com/fluencelabs/js-client/commit/477c6f0c151ef6759aaa2802c5e9907065d58e17))
+
 ## [0.1.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.0.10...js-client-v0.1.0) (2023-08-24)
 
 
