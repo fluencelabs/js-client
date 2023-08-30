@@ -2,15 +2,15 @@
     "name": "@test/aqua_for_test",
     "version": "0.1.0",
     "description": "Shared aqua code for tests",
-    "exports": {
-        ".": "./src/index.ts"
-    },
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.ts",
     "engines": {
         "node": ">=10",
         "pnpm": ">=3"
     },
     "type": "module",
     "scripts": {
+        "build": "tsc",
         "compile-aqua": "fluence aqua -i ./_aqua -o ./src/_aqua"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
