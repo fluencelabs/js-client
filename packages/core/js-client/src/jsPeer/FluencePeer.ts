@@ -263,7 +263,7 @@ export abstract class FluencePeer {
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
     private _outgoingConnections = new Subject<Observable<void>>();
-    private _outgoingConnectionsFinished = lastValueFrom(this._outgoingConnections.pipe(mergeAll()));
+    private _outgoingConnectionsFinished = lastValueFrom(this._outgoingConnections.pipe(mergeAll()), { defaultValue: undefined });
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleSourceSubscription?: Unsubscribable;
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
