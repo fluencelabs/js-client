@@ -124,8 +124,8 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     async stop(): Promise<void> {
         log.trace('disconnecting from Fluence network');
         this.changeConnectionState('disconnecting');
-        await this.relayConnection.stop();
         await super.stop();
+        await this.relayConnection.stop();
         this.changeConnectionState('disconnected');
         log.trace('disconnected');
     }
