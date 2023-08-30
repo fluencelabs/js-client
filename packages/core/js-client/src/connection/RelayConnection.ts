@@ -161,7 +161,7 @@ export class RelayConnection implements IStartable, IConnection {
         const stream = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
         const sink = stream.sink;
 
-        pipe(
+        return pipe(
             [fromString(serializeToString(particle))],
             // @ts-ignore
             encode(),

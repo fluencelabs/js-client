@@ -25,9 +25,20 @@ import {
     ParticleExecutionStage,
     ParticleQueueItem,
 } from '../particle/Particle.js';
-import { defaultCallParameters } from "@fluencelabs/marine-js/dist/types"
+import { defaultCallParameters } from '@fluencelabs/marine-js/dist/types'
 import { jsonify, isString } from '../util/utils.js';
-import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
+import {
+    concatAll,
+    concatMap,
+    filter,
+    from,
+    lastValueFrom, mergeAll,
+    Observable,
+    pipe,
+    Subject,
+    tap,
+    Unsubscribable
+} from 'rxjs';
 import { defaultSigGuard, Sig } from '../services/Sig.js';
 import { registerSig } from '../services/_aqua/services.js';
 import { registerSrv } from '../services/_aqua/single-module-srv.js';
@@ -122,6 +133,10 @@ export abstract class FluencePeer {
      */
     async stop() {
         log_peer.trace('stopping Fluence peer');
+        this._outgoingConnections.complete();
+        await this._outgoingConnectionsFinished;
+        log_peer.trace('all outgoing connections finished');
+        
         this._particleSourceSubscription?.unsubscribe();
         this._stopParticleProcessing();
         await this.marineHost.stop();
@@ -210,6 +225,7 @@ export abstract class FluencePeer {
             /**
              * Initiates a new particle execution starting from local peer
              * @param particle - particle to start execution of
+             * @param onStageChange - callback for reacting on particle state changes
              */
             initiateParticle: (particle: IParticle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.isInitialized) {
@@ -246,7 +262,8 @@ export abstract class FluencePeer {
     // Queues for incoming and outgoing particles
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
-    private _outgoingParticles = new Subject<ParticleQueueItem & { nextPeerIds: PeerIdB58[] }>();
+    private _outgoingConnections = new Subject<Observable<void>>();
+    private _outgoingConnectionsFinished = lastValueFrom(this._outgoingConnections.pipe(mergeAll()));
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleSourceSubscription?: Unsubscribable;
     private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
@@ -321,29 +338,6 @@ export abstract class FluencePeer {
 
                 particlesQueue.next(item);
             });
-
-        this._outgoingParticles.subscribe((item) => {
-            // Do not send particle after the peer has been stopped
-            if (!this.isInitialized) {
-                return;
-            }
-
-            log_particle.debug(
-                'id %s. sending particle into network. Next peer ids: %s',
-                item.particle.id,
-                item.nextPeerIds.toString(),
-            );
-
-            this.connection
-                ?.sendParticle(item.nextPeerIds, item.particle)
-                .then(() => {
-                    item.onStageChange({ stage: 'sent' });
-                })
-                .catch((e: any) => {
-                    log_particle.error('id %s. send failed %j', item.particle.id, e);
-                    item.onStageChange({ stage: 'sendingError', errorMessage: e.toString() });
-                });
-        });
     }
 
     private _expireParticle(item: ParticleQueueItem) {
@@ -359,7 +353,7 @@ export abstract class FluencePeer {
 
         item.onStageChange({ stage: 'expired' });
     }
-    
+
     private decodeAvmData(data: Uint8Array) {
         return new TextDecoder().decode(data.buffer);
     }
@@ -465,11 +459,30 @@ export abstract class FluencePeer {
                 // send particle further if requested
                 if (item.result.nextPeerPks.length > 0) {
                     const newParticle = cloneWithNewData(item.particle, Buffer.from(item.result.data));
-                    this._outgoingParticles.next({
-                        ...item,
-                        particle: newParticle,
-                        nextPeerIds: item.result.nextPeerPks,
-                    });
+
+                    // Do not send particle after the peer has been stopped
+                    if (!this.isInitialized) {
+                        return;
+                    }
+
+                    log_particle.debug(
+                        'id %s. sending particle into network. Next peer ids: %s',
+                        newParticle.id,
+                        item.result.nextPeerPks.toString(),
+                    );
+                    
+                    const connectionPromise = this.connection
+                        ?.sendParticle(item.result.nextPeerPks, newParticle)
+                        .then(() => {
+                            log_particle.trace('id %s. send successful', newParticle.id);
+                            item.onStageChange({ stage: 'sent' });
+                        })
+                        .catch((e: any) => {
+                            log_particle.error('id %s. send failed %j', newParticle.id, e);
+                            item.onStageChange({ stage: 'sendingError', errorMessage: e.toString() });
+                        });
+                    
+                    this._outgoingConnections.next(from(connectionPromise));
                 }
 
                 // execute call requests if needed
