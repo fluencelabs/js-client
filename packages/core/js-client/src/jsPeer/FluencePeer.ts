@@ -136,9 +136,6 @@ export abstract class FluencePeer {
      */
     async stop() {
         log_peer.trace('stopping Fluence peer');
-        this._outgoingConnections.complete();
-        await this._outgoingConnectionsFinished;
-        log_peer.trace('all outgoing connections finished');
         
         this._particleSourceSubscription?.unsubscribe();
 
@@ -271,8 +268,6 @@ export abstract class FluencePeer {
     // Queues for incoming and outgoing particles
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
-    private _outgoingConnections = new Subject<Observable<void>>();
-    private _outgoingConnectionsFinished = lastValueFrom(this._outgoingConnections.pipe(mergeAll()), { defaultValue: undefined });
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleSourceSubscription?: Unsubscribable;
     private _incomingParticlePromise?: Promise<void>;
@@ -451,7 +446,7 @@ export abstract class FluencePeer {
                                     item.result.nextPeerPks.toString(),
                                 );
 
-                                const connectionPromise = this.connection
+                                await this.connection
                                     ?.sendParticle(item.result.nextPeerPks, newParticle)
                                     .then(() => {
                                         log_particle.trace('id %s. send successful', newParticle.id);
@@ -461,8 +456,6 @@ export abstract class FluencePeer {
                                         log_particle.error('id %s. send failed %j', newParticle.id, e);
                                         item.onStageChange({ stage: 'sendingError', errorMessage: e.toString() });
                                     });
-
-                                this._outgoingConnections.next(from(connectionPromise));
                             }
 
                             // execute call requests if needed

@@ -37,7 +37,7 @@ import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
 import { Particle, serializeToString } from '../particle/Particle.js';
 import { IStartable } from '../util/commonTypes.js';
-import debug from 'debug';
+import { Connection } from '@libp2p/interface/connection';
 
 const log = logger('connection');
 
@@ -177,7 +177,7 @@ export class RelayConnection implements IStartable, IConnection {
             throw new Error('Relay connection is not started');
         }
 
-        this.lib2p2Peer.handle(
+        await this.lib2p2Peer.handle(
             [PROTOCOL_NAME],
             async ({ connection, stream }) => {
                 pipe(
