@@ -27,10 +27,10 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@chainsafe/libp2p-noise": "13.0.0",
+        "@chainsafe/libp2p-yamux": "5.0.0",
         "@fluencelabs/interfaces": "0.8.2",
         "@libp2p/crypto": "2.0.3",
         "@libp2p/interface": "0.1.2",
-        "@libp2p/mplex": "9.0.4",
         "@libp2p/peer-id": "3.0.2",
         "@libp2p/peer-id-factory": "3.0.3",
         "@libp2p/websockets": "7.0.4",

@@ -20,7 +20,7 @@ import type { PeerId } from '@libp2p/interface/peer-id';
 import { createLibp2p, Libp2p } from 'libp2p';
 
 import { noise } from '@chainsafe/libp2p-noise';
-import { mplex } from '@libp2p/mplex';
+import { yamux } from '@chainsafe/libp2p-yamux';
 import { webSockets } from '@libp2p/websockets';
 import { all } from '@libp2p/websockets/filters';
 import { multiaddr } from '@multiformats/multiaddr';
@@ -37,6 +37,7 @@ import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
 import { Particle, serializeToString } from '../particle/Particle.js';
 import { IStartable } from '../util/commonTypes.js';
+import debug from 'debug';
 
 const log = logger('connection');
 
@@ -110,7 +111,7 @@ export class RelayConnection implements IStartable, IConnection {
                     filter: all,
                 }),
             ],
-            streamMuxers: [mplex()],
+            streamMuxers: [yamux()],
             connectionEncryption: [noise()],
             connectionManager: {
                 dialTimeout: this.config.dialTimeoutMs,
@@ -158,15 +159,17 @@ export class RelayConnection implements IStartable, IConnection {
         const sink = this._connection.streams[0].sink;
         */
 
+        log.trace('sending particle...');
         const stream = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
+        log.trace('created stream with id ', stream.id);
         const sink = stream.sink;
 
-        return pipe(
+        await pipe(
             [fromString(serializeToString(particle))],
-            // @ts-ignore
             encode(),
             sink,
         );
+        log.trace('data written to sink');
     }
 
     private async connect() {
@@ -188,6 +191,7 @@ export class RelayConnection implements IStartable, IConnection {
                             for await (const msg of source) {
                                 try {
                                     const particle = Particle.fromString(msg);
+                                    log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
                                     this.particleSource.next(particle);
                                 } catch (e) {
                                     log.error('error on handling a new incoming message: %j', e);
