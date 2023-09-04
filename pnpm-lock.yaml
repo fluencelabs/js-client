@@ -126,14 +126,26 @@ importers:
         specifier: 6.1.1
         version: 6.1.1
 
+  packages/core/interfaces:
+    devDependencies:
+      '@fluencelabs/avm':
+        specifier: 0.43.1
+        version: 0.43.1
+      '@fluencelabs/marine-js':
+        specifier: 0.7.2
+        version: 0.7.2
+      '@multiformats/multiaddr':
+        specifier: 11.3.0
+        version: 11.3.0
+
   packages/core/js-client:
     dependencies:
       '@chainsafe/libp2p-noise':
         specifier: 13.0.0
         version: 13.0.0
       '@fluencelabs/interfaces':
-        specifier: 0.8.2
-        version: link:../../interfaces
+        specifier: workspace:*
+        version: link:../interfaces
       '@libp2p/crypto':
         specifier: 2.0.3
         version: 2.0.3
@@ -286,18 +298,6 @@ importers:
       vitest:
         specifier: 0.29.7
         version: 0.29.7
-
-  packages/interfaces:
-    devDependencies:
-      '@fluencelabs/avm':
-        specifier: 0.43.1
-        version: 0.43.1
-      '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
-      '@multiformats/multiaddr':
-        specifier: 11.3.0
-        version: 11.3.0
 
 packages:
 
