@@ -18,9 +18,10 @@ import type { FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interfa
 import type { IFluenceClient } from '@fluencelabs/interfaces';
 import { getArgumentTypes } from '@fluencelabs/interfaces';
 import { callAquaFunction, Fluence, registerService } from './index.js';
+import { FluencePeer } from './jsPeer/FluencePeer.js';
 
 export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluenceClient => {
-    return Boolean(fluencePeerCandidate && (fluencePeerCandidate as any).__isFluenceAwesome);
+    return fluencePeerCandidate instanceof FluencePeer;
 };
 
 /**
