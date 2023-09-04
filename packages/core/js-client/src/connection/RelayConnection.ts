@@ -78,7 +78,7 @@ export interface RelayConnectionConfig {
 /**
  * Implementation for JS peers which connects to Fluence through relay node
  */
-export class RelayConnection implements IStartable, IConnection {
+export class RelayConnection implements IConnection {
     private relayAddress: Multiaddr;
     private lib2p2Peer: Libp2p | null = null;
 

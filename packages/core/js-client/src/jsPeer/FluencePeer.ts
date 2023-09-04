@@ -127,6 +127,7 @@ export abstract class FluencePeer {
 
         this._startParticleProcessing();
         this.isInitialized = true;
+        await this.connection.start();
         log_peer.trace('started Fluence peer');
     }
 
@@ -146,7 +147,7 @@ export abstract class FluencePeer {
         
         this._stopParticleProcessing();
         await this.marineHost.stop();
-
+        await this.connection.stop();
         this.isInitialized = false;
         log_peer.trace('stopped Fluence peer');
     }

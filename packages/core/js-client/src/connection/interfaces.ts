@@ -16,11 +16,12 @@
 import type { PeerIdB58 } from '@fluencelabs/interfaces';
 import type { Subscribable } from 'rxjs';
 import { IParticle } from '../particle/interfaces.js';
+import { IStartable } from '../util/commonTypes.js';
 
 /**
  * Interface for connection used in Fluence Peer.
  */
-export interface IConnection {
+export interface IConnection extends IStartable {
     /**
      * Observable that emits particles received from the connection.
      */
