@@ -1,5 +1,4 @@
 {
-  "packages/client/api": "0.13.1",
   "packages/core/js-client": "0.1.1",
   "packages/core/marine-worker": "0.3.0",
   "packages/core/interfaces": "0.8.2"
