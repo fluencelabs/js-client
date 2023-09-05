@@ -140,7 +140,7 @@ export abstract class FluencePeer {
         
         this._particleSourceSubscription?.unsubscribe();
 
-        log_peer.trace('Waiting all particles finish execution');
+        log_peer.trace('Waiting for all particles to finish execution');
         this._incomingParticles.complete();
         await this._incomingParticlePromise;
         log_peer.trace('All particles finished execution');
