@@ -331,7 +331,6 @@ export abstract class FluencePeer {
                     let firstRun = true;
                     
                     return group$.pipe(
-                        filterExpiredParticles(this._expireParticle.bind(this)),
                         concatMap(async (item) => {
                             if (firstRun) {
                                 const timeout = setTimeout(() => {
@@ -393,12 +392,7 @@ export abstract class FluencePeer {
                         filterExpiredParticles<ParticleQueueItem & {result: Error | InterpreterResult }>(this._expireParticle.bind(this)),
                         concatMap(async (item) => {
                             // If peer was stopped, do not proceed further
-                            if (item === null || !this.isInitialized) {
-                                return;
-                            }
-
-                            // Do not proceed further if the particle is expired
-                            if (hasExpired(item.particle)) {
+                            if (!this.isInitialized) {
                                 return;
                             }
 
