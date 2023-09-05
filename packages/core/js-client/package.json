@@ -53,7 +53,7 @@
     },
     "devDependencies": {
         "@fluencelabs/aqua-api": "0.9.3",
-        "@fluencelabs/avm": "0.43.1",
+        "@fluencelabs/avm": "0.46.0",
         "@fluencelabs/marine-js": "0.7.2",
         "@fluencelabs/marine-worker": "workspace:*",
         "@laynezh/vite-plugin-lib-assets": "0.5.2",

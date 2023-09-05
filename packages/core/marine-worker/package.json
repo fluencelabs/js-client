@@ -43,7 +43,7 @@
         "vitest": "0.29.7"
     },
     "dependencies": {
-        "@fluencelabs/avm": "0.43.1",
+        "@fluencelabs/avm": "0.46.0",
         "@fluencelabs/marine-js": "0.7.2",
         "observable-fns": "0.6.1",
         "threads": "1.7.0"
