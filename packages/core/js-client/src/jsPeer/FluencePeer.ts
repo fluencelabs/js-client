@@ -562,7 +562,7 @@ export abstract class FluencePeer {
     }
 }
 
-function filterExpiredParticles<T extends ParticleQueueItem = ParticleQueueItem>(onParticleExpiration: (item: T) => void) {
+function filterExpiredParticles<T extends ParticleQueueItem>(onParticleExpiration: (item: T) => void) {
     return pipe(
         tap((item: T) => {
             if (hasExpired(item.particle)) {
