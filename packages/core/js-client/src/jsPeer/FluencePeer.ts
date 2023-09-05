@@ -96,14 +96,6 @@ export abstract class FluencePeer {
         this._initServices();
     }
 
-    /**
-     * Internal contract to cast unknown objects to IFluenceClient.
-     * If an unknown object has this property then we assume it is in fact a Peer and it implements IFluenceClient
-     * Check against this variable MUST NOT be coupled with any `FluencePeer` because otherwise it might get bundled
-     * brining a lot of unnecessary stuff alongside with it
-     */
-    __isFluenceAwesome = true;
-
     async start(): Promise<void> {
         log_peer.trace('starting Fluence peer');
         if (this.config?.debug?.printParticleId) {

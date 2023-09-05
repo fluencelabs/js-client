@@ -4,7 +4,6 @@
     "private": true,
     "type": "module",
     "dependencies": {
-        "@fluencelabs/js-client.api": "workspace:^",
         "@test/aqua_for_test": "workspace:^",
         "@testing-library/jest-dom": "5.16.5",
         "@testing-library/react": "13.4.0",

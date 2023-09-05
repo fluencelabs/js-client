@@ -17,8 +17,12 @@
 import type { FnConfig, FunctionCallDef, ServiceDef } from '@fluencelabs/interfaces';
 import type { IFluenceClient } from '@fluencelabs/interfaces';
 import { getArgumentTypes } from '@fluencelabs/interfaces';
-import { isFluencePeer } from '@fluencelabs/interfaces';
 import { callAquaFunction, Fluence, registerService } from './index.js';
+import { FluencePeer } from './jsPeer/FluencePeer.js';
+
+export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluenceClient => {
+    return fluencePeerCandidate instanceof FluencePeer;
+};
 
 /**
  * Convenience function to support Aqua `func` generation backend

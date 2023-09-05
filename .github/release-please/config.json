@@ -8,9 +8,7 @@
     }
   ],
   "packages": {
-    "packages/client/api": {},
     "packages/core/js-client": {},
-    "packages/core/interfaces": {},
     "packages/core/marine-worker": {}
   }
 }

@@ -8,11 +8,11 @@
  * Aqua version: 0.10.2
  *
  */
-import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client.api';
+import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';
 import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,
-} from '@fluencelabs/js-client.api';
+} from '@fluencelabs/js-client';
     
 
 
