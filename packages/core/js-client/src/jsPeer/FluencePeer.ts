@@ -352,7 +352,7 @@ export abstract class FluencePeer {
                             // Otherwise the race might occur corrupting the prevData
 
                             log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
-                            log_particle.trace('id %s. prevData: %s', item.particle.id, this.decodeAvmData(prevData));
+                            log_particle.trace('id %s. prevData: %s', item.particle.id, this.decodeAvmData(prevData).slice(0, 50));
 
                             const args = serializeAvmArgs(
                                 {
