@@ -28,3 +28,4 @@ jobs:
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
+      nox-image: "docker.fluence.dev/nox:ipfs_renovate-air-interpreter-wasm-0-x_3135_1"
