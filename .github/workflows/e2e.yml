@@ -52,4 +52,3 @@ jobs:
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
       nox-image: "docker.fluence.dev/nox:ipfs_renovate-air-interpreter-wasm-0-x_3158_2"
-      
