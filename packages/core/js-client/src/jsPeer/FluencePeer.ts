@@ -390,7 +390,7 @@ export abstract class FluencePeer {
                         }),
                         filter((item): item is NonNullable<typeof item>  => item !== null),
                         filterExpiredParticles<ParticleQueueItem & {result: Error | InterpreterResult }>(this._expireParticle.bind(this)),
-                        concatMap(async (item) => {
+                        mergeMap(async (item) => {
                             // If peer was stopped, do not proceed further
                             if (!this.isInitialized) {
                                 return;
@@ -425,6 +425,8 @@ export abstract class FluencePeer {
                             setTimeout(() => {
                                 item.onStageChange({ stage: 'interpreted' });
                             }, 0);
+                            
+                            let connectionPromise: Promise<void> = Promise.resolve();
 
                             // send particle further if requested
                             if (item.result.nextPeerPks.length > 0) {
@@ -441,7 +443,7 @@ export abstract class FluencePeer {
                                     item.result.nextPeerPks.toString(),
                                 );
 
-                                await this.connection
+                                connectionPromise = this.connection
                                     ?.sendParticle(item.result.nextPeerPks, newParticle)
                                     .then(() => {
                                         log_particle.trace('id %s. send successful', newParticle.id);
@@ -464,11 +466,7 @@ export abstract class FluencePeer {
                                         tetraplets: cr.tetraplets,
                                         particleContext: getParticleContext(item.particle),
                                     };
-
-                                    if (hasExpired(item.particle)) {
-                                        // just in case do not call any services if the particle is already expired
-                                        return;
-                                    }
+                                    
                                     this._execSingleCallRequest(req)
                                         .catch((err): CallServiceResult => {
                                             if (err instanceof ServiceError) {
@@ -502,7 +500,10 @@ export abstract class FluencePeer {
                             } else {
                                 item.onStageChange({ stage: 'localWorkDone' });
                             }
-                        })
+                            
+                            return connectionPromise;
+                        }),
+                        
                     )
                 })
             ), { defaultValue: undefined });
