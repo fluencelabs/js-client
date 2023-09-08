@@ -19,8 +19,7 @@ import { handleTimeout } from '../../particle/Particle.js';
 import { CallServiceData, ResultCodes } from '../../jsServiceHost/interfaces.js';
 
 describe('FluencePeer flow tests', () => {
-    // TODO: fix this test
-    it.skip('should not process concurrently single service in the same function', async function () {
+    it('should execute par instruction in parallel', async function () {
         await withPeer(async (peer) => {
             const res = await new Promise<any>((resolve, reject) => {
                 const script = `
@@ -38,19 +37,8 @@ describe('FluencePeer flow tests', () => {
 
                 const particle = peer.internals.createNewParticle(script);
                 
-                let hasInnerCall = false;
-                
                 peer.internals.regHandler.forParticle(particle.id, 'flow', 'timeout', (req: CallServiceData) => {
                     const [timeout, message] = req.args;
-                    
-                    if (hasInnerCall) {
-                        return {
-                            result: "Single service processed concurrently",
-                            retCode: ResultCodes.error,
-                        };
-                    }
-                    
-                    hasInnerCall = true;
                     
                     return new Promise((resolve) => {
                         setTimeout(() => {
@@ -58,7 +46,6 @@ describe('FluencePeer flow tests', () => {
                                 result: message,
                                 retCode: ResultCodes.success,
                             };
-                            hasInnerCall = false;
                             resolve(res);
                         }, timeout);
                     });
@@ -94,5 +81,5 @@ describe('FluencePeer flow tests', () => {
 
             await expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));
         });
-    });
+    }, 1500);
 });
