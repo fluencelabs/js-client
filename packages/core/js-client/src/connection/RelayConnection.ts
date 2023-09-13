@@ -36,8 +36,8 @@ import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
 import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
 import { Particle, serializeToString } from '../particle/Particle.js';
-import { IStartable } from '../util/commonTypes.js';
-import { Connection } from '@libp2p/interface/connection';
+import { identifyService } from 'libp2p/identify';
+import { pingService } from 'libp2p/ping';
 
 const log = logger('connection');
 
@@ -119,6 +119,12 @@ export class RelayConnection implements IConnection {
             connectionGater: {
                 // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
                 denyDialMultiaddr: () => Promise.resolve(false)
+            },
+            services: {
+                identify: identifyService({
+                    runOnConnectionOpen: false,
+                }),
+                ping: pingService()
             }
         });
 
