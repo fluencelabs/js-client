@@ -55,20 +55,13 @@ export const makeClientPeerConfig = async (
 };
 
 export class ClientPeer extends FluencePeer implements IFluenceClient {
-    private relayPeerId: PeerIdB58;
-    private relayConnection: RelayConnection;
-
     constructor(
         peerConfig: PeerConfig,
         relayConfig: RelayConnectionConfig,
         keyPair: KeyPair,
         marine: IMarineHost,
     ) {
-        const relayConnection = new RelayConnection(relayConfig);
-
-        super(peerConfig, keyPair, marine, new JsServiceHost(), relayConnection);
-        this.relayPeerId = relayConnection.getRelayPeerId();
-        this.relayConnection = relayConnection;
+        super(peerConfig, keyPair, marine, new JsServiceHost(), new RelayConnection(relayConfig));
     }
 
     getPeerId(): string {
@@ -83,7 +76,7 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     connectionStateChangeHandler: (state: ConnectionState) => void = () => {};
 
     getRelayPeerId(): string {
-        return this.relayPeerId;
+        return this.internals.getRelayPeerId();
     }
 
     onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
@@ -115,7 +108,6 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
         log.trace('connecting to Fluence network');
         this.changeConnectionState('connecting');
         await super.start();
-        await this.relayConnection.start();
         // TODO: check connection (`checkConnection` function) here
         this.changeConnectionState('connected');
         log.trace('connected');
@@ -124,7 +116,6 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     async stop(): Promise<void> {
         log.trace('disconnecting from Fluence network');
         this.changeConnectionState('disconnecting');
-        await this.relayConnection.stop();
         await super.stop();
         this.changeConnectionState('disconnected');
         log.trace('disconnected');

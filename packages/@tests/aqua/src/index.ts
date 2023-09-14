@@ -2,6 +2,7 @@ import { fromByteArray } from 'base64-js';
 import { Fluence } from '@fluencelabs/js-client';
 import type { ClientConfig } from '@fluencelabs/js-client';
 import { registerHelloWorld, helloTest, marineTest, resourceTest } from './_aqua/smoke_test.js';
+import { test as particleTest } from './_aqua/finalize_particle.js';
 import { wasm } from './wasmb64.js';
 
 const relay = {
@@ -67,6 +68,10 @@ export const runTest = async (): Promise<TestResult> => {
 
         console.log('running marine test...');
         const marine = await marineTest(wasm);
+
+        console.log('running particle test...');
+        await particleTest();
+        
         console.log('marine test finished, result: ', marine);
 
         const returnVal = {

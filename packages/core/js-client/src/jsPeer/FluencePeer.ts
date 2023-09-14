@@ -25,9 +25,23 @@ import {
     ParticleExecutionStage,
     ParticleQueueItem,
 } from '../particle/Particle.js';
-import { defaultCallParameters } from "@fluencelabs/marine-js/dist/types"
+import { defaultCallParameters } from '@fluencelabs/marine-js/dist/types'
 import { jsonify, isString } from '../util/utils.js';
-import { concatMap, filter, pipe, Subject, tap, Unsubscribable } from 'rxjs';
+import {
+    concatAll,
+    concatMap,
+    filter,
+    from,
+    groupBy,
+    lastValueFrom,
+    mergeAll,
+    mergeMap,
+    Observable,
+    pipe,
+    Subject,
+    tap,
+    Unsubscribable
+} from 'rxjs';
 import { defaultSigGuard, Sig } from '../services/Sig.js';
 import { registerSig } from '../services/_aqua/services.js';
 import { registerSrv } from '../services/_aqua/single-module-srv.js';
@@ -105,6 +119,7 @@ export abstract class FluencePeer {
 
         this._startParticleProcessing();
         this.isInitialized = true;
+        await this.connection.start();
         log_peer.trace('started Fluence peer');
     }
 
@@ -114,10 +129,17 @@ export abstract class FluencePeer {
      */
     async stop() {
         log_peer.trace('stopping Fluence peer');
+        
         this._particleSourceSubscription?.unsubscribe();
+
+        log_peer.trace('Waiting for all particles to finish execution');
+        this._incomingParticles.complete();
+        await this._incomingParticlePromise;
+        log_peer.trace('All particles finished execution');
+        
         this._stopParticleProcessing();
         await this.marineHost.stop();
-
+        await this.connection.stop();
         this.isInitialized = false;
         log_peer.trace('stopped Fluence peer');
     }
@@ -202,6 +224,7 @@ export abstract class FluencePeer {
             /**
              * Initiates a new particle execution starting from local peer
              * @param particle - particle to start execution of
+             * @param onStageChange - callback for reacting on particle state changes
              */
             initiateParticle: (particle: IParticle, onStageChange: (stage: ParticleExecutionStage) => void): void => {
                 if (!this.isInitialized) {
@@ -238,10 +261,9 @@ export abstract class FluencePeer {
     // Queues for incoming and outgoing particles
 
     private _incomingParticles = new Subject<ParticleQueueItem>();
-    private _outgoingParticles = new Subject<ParticleQueueItem & { nextPeerIds: PeerIdB58[] }>();
     private _timeouts: Array<NodeJS.Timeout> = [];
     private _particleSourceSubscription?: Unsubscribable;
-    private _particleQueues = new Map<string, Subject<ParticleQueueItem>>();
+    private _incomingParticlePromise?: Promise<void>;
 
     // Internal peer state
 
@@ -280,7 +302,7 @@ export abstract class FluencePeer {
             },
         });
 
-        this._incomingParticles
+        this._incomingParticlePromise = lastValueFrom(this._incomingParticles
             .pipe(
                 tap((item) => {
                     log_particle.debug('id %s. received:', item.particle.id);
@@ -295,47 +317,188 @@ export abstract class FluencePeer {
                     log_particle.trace('id %s. call results: %j', item.particle.id, item.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
-            )
-            .subscribe((item) => {
-                const p = item.particle;
-                let particlesQueue = this._particleQueues.get(p.id);
+                groupBy(item => item.particle.id),
+                mergeMap(group$ => {
+                    let prevData: Uint8Array = Buffer.from([]);
+                    let firstRun = true;
+                    
+                    return group$.pipe(
+                        concatMap(async (item) => {
+                            if (firstRun) {
+                                const timeout = setTimeout(() => {
+                                    this._expireParticle(item);
+                                }, getActualTTL(item.particle));
 
-                if (!particlesQueue) {
-                    particlesQueue = this._createParticlesProcessingQueue();
-                    this._particleQueues.set(p.id, particlesQueue);
+                                this._timeouts.push(timeout);
+                                firstRun = false;
+                            }
+                            
+                            if (!this.isInitialized || this.marineHost === undefined) {
+                                // If `.stop()` was called return null to stop particle processing immediately
+                                return null;
+                            }
 
-                    const timeout = setTimeout(() => {
-                        this._expireParticle(item);
-                    }, getActualTTL(p));
+                            // IMPORTANT!
+                            // AVM runner execution and prevData <-> newData swapping
+                            // MUST happen sequentially (in a critical section).
+                            // Otherwise the race might occur corrupting the prevData
 
-                    this._timeouts.push(timeout);
-                }
+                            log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
+                            log_particle.trace('id %s. prevData: %s', item.particle.id, this.decodeAvmData(prevData).slice(0, 50));
 
-                particlesQueue.next(item);
-            });
+                            const args = serializeAvmArgs(
+                                {
+                                    initPeerId: item.particle.initPeerId,
+                                    currentPeerId: this.keyPair.getPeerId(),
+                                    timestamp: item.particle.timestamp,
+                                    ttl: item.particle.ttl,
+                                    keyFormat: KeyPairFormat.Ed25519,
+                                    particleId: item.particle.id,
+                                    secretKeyBytes: this.keyPair.toEd25519PrivateKey(),
+                                },
+                                item.particle.script,
+                                prevData,
+                                item.particle.data,
+                                item.callResults,
+                            );
 
-        this._outgoingParticles.subscribe((item) => {
-            // Do not send particle after the peer has been stopped
-            if (!this.isInitialized) {
-                return;
-            }
+                            let avmCallResult: InterpreterResult | Error;
+                            try {
+                                const res = await this.marineHost.callService('avm', 'invoke', args, defaultCallParameters);
+                                avmCallResult = deserializeAvmResult(res);
+                            } catch (e) {
+                                avmCallResult = e instanceof Error ? e : new Error(String(e));
+                            }
 
-            log_particle.debug(
-                'id %s. sending particle into network. Next peer ids: %s',
-                item.particle.id,
-                item.nextPeerIds.toString(),
-            );
+                            if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
+                                const newData = Buffer.from(avmCallResult.data);
+                                prevData = newData;
+                            }
 
-            this.connection
-                ?.sendParticle(item.nextPeerIds, item.particle)
-                .then(() => {
-                    item.onStageChange({ stage: 'sent' });
+                            return {
+                                ...item,
+                                result: avmCallResult,
+                            };
+                        }),
+                        filter((item): item is NonNullable<typeof item>  => item !== null),
+                        filterExpiredParticles<ParticleQueueItem & {result: Error | InterpreterResult }>(this._expireParticle.bind(this)),
+                        mergeMap(async (item) => {
+                            // If peer was stopped, do not proceed further
+                            if (!this.isInitialized) {
+                                return;
+                            }
+
+                            // Do not continue if there was an error in particle interpretation
+                            if (item.result instanceof Error) {
+                                log_particle.error('id %s. interpreter failed: %s', item.particle.id, item.result.message);
+                                item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
+                                return;
+                            }
+
+                            if (item.result.retCode !== 0) {
+                                log_particle.error(
+                                    'id %s. interpreter failed: retCode: %d, message: %s',
+                                    item.particle.id,
+                                    item.result.retCode,
+                                    item.result.errorMessage,
+                                );
+                                log_particle.trace('id %s. avm data: %s', item.particle.id, this.decodeAvmData(item.result.data));
+                                item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
+                                return;
+                            }
+
+                            log_particle.trace(
+                                'id %s. interpreter result: retCode: %d, avm data: %s',
+                                item.particle.id,
+                                item.result.retCode,
+                                this.decodeAvmData(item.result.data)
+                            );
+
+                            setTimeout(() => {
+                                item.onStageChange({ stage: 'interpreted' });
+                            }, 0);
+                            
+                            let connectionPromise: Promise<void> = Promise.resolve();
+
+                            // send particle further if requested
+                            if (item.result.nextPeerPks.length > 0) {
+                                const newParticle = cloneWithNewData(item.particle, Buffer.from(item.result.data));
+
+                                // Do not send particle after the peer has been stopped
+                                if (!this.isInitialized) {
+                                    return;
+                                }
+
+                                log_particle.debug(
+                                    'id %s. sending particle into network. Next peer ids: %s',
+                                    newParticle.id,
+                                    item.result.nextPeerPks.toString(),
+                                );
+
+                                connectionPromise = this.connection
+                                    ?.sendParticle(item.result.nextPeerPks, newParticle)
+                                    .then(() => {
+                                        log_particle.trace('id %s. send successful', newParticle.id);
+                                        item.onStageChange({ stage: 'sent' });
+                                    })
+                                    .catch((e: any) => {
+                                        log_particle.error('id %s. send failed %j', newParticle.id, e);
+                                        item.onStageChange({ stage: 'sendingError', errorMessage: e.toString() });
+                                    });
+                            }
+
+                            // execute call requests if needed
+                            // and put particle with the results back to queue
+                            if (item.result.callRequests.length > 0) {
+                                for (const [key, cr] of item.result.callRequests) {
+                                    const req = {
+                                        fnName: cr.functionName,
+                                        args: cr.arguments,
+                                        serviceId: cr.serviceId,
+                                        tetraplets: cr.tetraplets,
+                                        particleContext: getParticleContext(item.particle),
+                                    };
+                                    
+                                    this._execSingleCallRequest(req)
+                                        .catch((err): CallServiceResult => {
+                                            if (err instanceof ServiceError) {
+                                                return {
+                                                    retCode: ResultCodes.error,
+                                                    result: err.message,
+                                                };
+                                            }
+
+                                            return {
+                                                retCode: ResultCodes.error,
+                                                result: `Service call failed. fnName="${req.fnName}" serviceId="${
+                                                    req.serviceId
+                                                }" error: ${err.toString()}`,
+                                            };
+                                        })
+                                        .then((res) => {
+                                            const serviceResult = {
+                                                result: jsonify(res.result),
+                                                retCode: res.retCode,
+                                            };
+
+                                            const newParticle = cloneWithNewData(item.particle, Buffer.from([]));
+                                            this._incomingParticles.next({
+                                                ...item,
+                                                particle: newParticle,
+                                                callResults: [[key, serviceResult]],
+                                            });
+                                        });
+                                }
+                            } else {
+                                item.onStageChange({ stage: 'localWorkDone' });
+                            }
+                            
+                            return connectionPromise;
+                        }),
+                        
+                    )
                 })
-                .catch((e: any) => {
-                    log_particle.error('id %s. send failed %j', item.particle.id, e);
-                    item.onStageChange({ stage: 'sendingError', errorMessage: e.toString() });
-                });
-        });
+            ), { defaultValue: undefined });
     }
 
     private _expireParticle(item: ParticleQueueItem) {
@@ -345,177 +508,14 @@ export abstract class FluencePeer {
             item.particle.id,
             item.particle.ttl,
         );
-
-        this._particleQueues.delete(particleId);
+        
         this.jsServiceHost.removeParticleScopeHandlers(particleId);
 
         item.onStageChange({ stage: 'expired' });
     }
-    
+
     private decodeAvmData(data: Uint8Array) {
         return new TextDecoder().decode(data.buffer);
-    }
-
-    private _createParticlesProcessingQueue() {
-        const particlesQueue = new Subject<ParticleQueueItem>();
-        let prevData: Uint8Array = Buffer.from([]);
-
-        particlesQueue
-            .pipe(
-                filterExpiredParticles(this._expireParticle.bind(this)),
-
-                concatMap(async (item) => {
-                    if (!this.isInitialized || this.marineHost === undefined) {
-                        // If `.stop()` was called return null to stop particle processing immediately
-                        return null;
-                    }
-
-                    // IMPORTANT!
-                    // AVM runner execution and prevData <-> newData swapping
-                    // MUST happen sequentially (in a critical section).
-                    // Otherwise the race might occur corrupting the prevData
-
-                    log_particle.debug('id %s. sending particle to interpreter', item.particle.id);
-                    log_particle.trace('id %s. prevData: %s', item.particle.id, this.decodeAvmData(prevData));
-
-                    const args = serializeAvmArgs(
-                        {
-                            initPeerId: item.particle.initPeerId,
-                            currentPeerId: this.keyPair.getPeerId(),
-                            timestamp: item.particle.timestamp,
-                            ttl: item.particle.ttl,
-                            keyFormat: KeyPairFormat.Ed25519,
-                            particleId: item.particle.id,
-                            secretKeyBytes: this.keyPair.toEd25519PrivateKey(),
-                        },
-                        item.particle.script,
-                        prevData,
-                        item.particle.data,
-                        item.callResults,
-                    );
-
-                    let avmCallResult: InterpreterResult | Error;
-                    try {
-                        const res = await this.marineHost.callService('avm', 'invoke', args, defaultCallParameters);
-                        avmCallResult = deserializeAvmResult(res);
-                    } catch (e) {
-                        avmCallResult = e instanceof Error ? e : new Error(String(e));
-                    }
-
-                    if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
-                        const newData = Buffer.from(avmCallResult.data);
-                        prevData = newData;
-                    }
-
-                    return {
-                        ...item,
-                        result: avmCallResult,
-                    };
-                }),
-            )
-            .subscribe((item) => {
-                // If peer was stopped, do not proceed further
-                if (item === null || !this.isInitialized) {
-                    return;
-                }
-
-                // Do not proceed further if the particle is expired
-                if (hasExpired(item.particle)) {
-                    return;
-                }
-
-                // Do not continue if there was an error in particle interpretation
-                if (item.result instanceof Error) {
-                    log_particle.error('id %s. interpreter failed: %s', item.particle.id, item.result.message);
-                    item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.message });
-                    return;
-                }
-
-                if (item.result.retCode !== 0) {
-                    log_particle.error(
-                        'id %s. interpreter failed: retCode: %d, message: %s',
-                        item.particle.id,
-                        item.result.retCode,
-                        item.result.errorMessage,
-                    );
-                    log_particle.trace('id %s. avm data: %s', item.particle.id, this.decodeAvmData(item.result.data));
-                    item.onStageChange({ stage: 'interpreterError', errorMessage: item.result.errorMessage });
-                    return;
-                }
-
-                log_particle.trace(
-                    'id %s. interpreter result: retCode: %d, avm data: %s',
-                    item.particle.id,
-                    item.result.retCode,
-                    this.decodeAvmData(item.result.data)
-                );
-
-                setTimeout(() => {
-                    item.onStageChange({ stage: 'interpreted' });
-                }, 0);
-
-                // send particle further if requested
-                if (item.result.nextPeerPks.length > 0) {
-                    const newParticle = cloneWithNewData(item.particle, Buffer.from(item.result.data));
-                    this._outgoingParticles.next({
-                        ...item,
-                        particle: newParticle,
-                        nextPeerIds: item.result.nextPeerPks,
-                    });
-                }
-
-                // execute call requests if needed
-                // and put particle with the results back to queue
-                if (item.result.callRequests.length > 0) {
-                    for (const [key, cr] of item.result.callRequests) {
-                        const req = {
-                            fnName: cr.functionName,
-                            args: cr.arguments,
-                            serviceId: cr.serviceId,
-                            tetraplets: cr.tetraplets,
-                            particleContext: getParticleContext(item.particle),
-                        };
-
-                        if (hasExpired(item.particle)) {
-                            // just in case do not call any services if the particle is already expired
-                            return;
-                        }
-                        this._execSingleCallRequest(req)
-                            .catch((err): CallServiceResult => {
-                                if (err instanceof ServiceError) {
-                                    return {
-                                        retCode: ResultCodes.error,
-                                        result: err.message,
-                                    };
-                                }
-
-                                return {
-                                    retCode: ResultCodes.error,
-                                    result: `Service call failed. fnName="${req.fnName}" serviceId="${
-                                        req.serviceId
-                                    }" error: ${err.toString()}`,
-                                };
-                            })
-                            .then((res) => {
-                                const serviceResult = {
-                                    result: jsonify(res.result),
-                                    retCode: res.retCode,
-                                };
-
-                                const newParticle = cloneWithNewData(item.particle, Buffer.from([]));
-                                particlesQueue.next({
-                                    ...item,
-                                    particle: newParticle,
-                                    callResults: [[key, serviceResult]],
-                                });
-                            });
-                    }
-                } else {
-                    item.onStageChange({ stage: 'localWorkDone' });
-                }
-            });
-
-        return particlesQueue;
     }
 
     private async _execSingleCallRequest(req: CallServiceData): Promise<CallServiceResult> {
@@ -552,17 +552,16 @@ export abstract class FluencePeer {
         this._timeouts.forEach((timeout) => {
             clearTimeout(timeout);
         });
-        this._particleQueues.clear();
     }
 }
 
-function filterExpiredParticles(onParticleExpiration: (item: ParticleQueueItem) => void) {
+function filterExpiredParticles<T extends ParticleQueueItem>(onParticleExpiration: (item: T) => void) {
     return pipe(
-        tap((item: ParticleQueueItem) => {
+        tap((item: T) => {
             if (hasExpired(item.particle)) {
                 onParticleExpiration(item);
             }
         }),
-        filter((x: ParticleQueueItem) => !hasExpired(x.particle)),
+        filter((x) => !hasExpired(x.particle)),
     );
 }

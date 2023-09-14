@@ -129,12 +129,20 @@ export interface IEphemeralConnection extends IConnection {
     receiveParticle(particle: Particle): void;
 }
 
-export class EphemeralConnection implements IConnection, IEphemeralConnection {
+export class EphemeralConnection implements IEphemeralConnection {
     readonly selfPeerId: PeerIdB58;
     readonly connections: Map<PeerIdB58, IEphemeralConnection> = new Map();
 
     constructor(selfPeerId: PeerIdB58) {
         this.selfPeerId = selfPeerId;
+    }
+    
+    start(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    stop(): Promise<void> {
+        return Promise.resolve();
     }
 
     connectToOther(other: IEphemeralConnection) {

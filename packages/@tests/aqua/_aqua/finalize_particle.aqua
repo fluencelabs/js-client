@@ -1,0 +1,6 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+export test
+
+func test():
+    on HOST_PEER_ID:
+        Op.noop()

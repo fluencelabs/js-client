@@ -20,7 +20,7 @@ import type { PeerId } from '@libp2p/interface/peer-id';
 import { createLibp2p, Libp2p } from 'libp2p';
 
 import { noise } from '@chainsafe/libp2p-noise';
-import { mplex } from '@libp2p/mplex';
+import { yamux } from '@chainsafe/libp2p-yamux';
 import { webSockets } from '@libp2p/websockets';
 import { all } from '@libp2p/websockets/filters';
 import { multiaddr } from '@multiformats/multiaddr';
@@ -36,7 +36,8 @@ import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
 import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
 import { Particle, serializeToString } from '../particle/Particle.js';
-import { IStartable } from '../util/commonTypes.js';
+import { identifyService } from 'libp2p/identify';
+import { pingService } from 'libp2p/ping';
 
 const log = logger('connection');
 
@@ -77,7 +78,7 @@ export interface RelayConnectionConfig {
 /**
  * Implementation for JS peers which connects to Fluence through relay node
  */
-export class RelayConnection implements IStartable, IConnection {
+export class RelayConnection implements IConnection {
     private relayAddress: Multiaddr;
     private lib2p2Peer: Libp2p | null = null;
 
@@ -110,7 +111,7 @@ export class RelayConnection implements IStartable, IConnection {
                     filter: all,
                 }),
             ],
-            streamMuxers: [mplex()],
+            streamMuxers: [yamux()],
             connectionEncryption: [noise()],
             connectionManager: {
                 dialTimeout: this.config.dialTimeoutMs,
@@ -118,6 +119,12 @@ export class RelayConnection implements IStartable, IConnection {
             connectionGater: {
                 // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
                 denyDialMultiaddr: () => Promise.resolve(false)
+            },
+            services: {
+                identify: identifyService({
+                    runOnConnectionOpen: false,
+                }),
+                ping: pingService()
             }
         });
 
@@ -158,15 +165,17 @@ export class RelayConnection implements IStartable, IConnection {
         const sink = this._connection.streams[0].sink;
         */
 
+        log.trace('sending particle...');
         const stream = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
+        log.trace('created stream with id ', stream.id);
         const sink = stream.sink;
 
-        pipe(
+        await pipe(
             [fromString(serializeToString(particle))],
-            // @ts-ignore
             encode(),
             sink,
         );
+        log.trace('data written to sink');
     }
 
     private async connect() {
@@ -174,7 +183,7 @@ export class RelayConnection implements IStartable, IConnection {
             throw new Error('Relay connection is not started');
         }
 
-        this.lib2p2Peer.handle(
+        await this.lib2p2Peer.handle(
             [PROTOCOL_NAME],
             async ({ connection, stream }) => {
                 pipe(
@@ -188,6 +197,7 @@ export class RelayConnection implements IStartable, IConnection {
                             for await (const msg of source) {
                                 try {
                                     const particle = Particle.fromString(msg);
+                                    log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
                                     this.particleSource.next(particle);
                                 } catch (e) {
                                     log.error('error on handling a new incoming message: %j', e);

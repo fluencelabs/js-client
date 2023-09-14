@@ -80,6 +80,14 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
 };
 
 class NoopConnection implements IConnection {
+    start(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    stop(): Promise<void> {
+        return Promise.resolve();
+    }
+    
     getRelayPeerId(): string {
         return 'nothing_here';
     }
