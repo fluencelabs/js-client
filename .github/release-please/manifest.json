@@ -1,4 +1,4 @@
 {
-  "packages/core/js-client": "0.1.4",
+  "packages/core/js-client": "0.1.5",
   "packages/core/marine-worker": "0.3.1"
 }
