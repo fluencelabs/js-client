@@ -104,7 +104,7 @@ export class RelayConnection implements IConnection {
             return;
         }
 
-        const lib2p2Peer = await createLibp2p({
+        this.lib2p2Peer = await createLibp2p({
             peerId: this.config.peerId,
             transports: [
                 webSockets({
@@ -121,15 +121,16 @@ export class RelayConnection implements IConnection {
                 denyDialMultiaddr: () => Promise.resolve(false)
             },
             services: {
-                identify: identifyService({
-                    runOnConnectionOpen: false,
-                }),
+                identify: identifyService(),
                 ping: pingService()
             }
         });
 
-        this.lib2p2Peer = lib2p2Peer;
-        this.lib2p2Peer.start();
+        const supportedProtocols = (await this.lib2p2Peer.peerStore.get(this.lib2p2Peer.peerId)).protocols;
+        await this.lib2p2Peer.peerStore.patch(this.lib2p2Peer.peerId, {
+            protocols: [...supportedProtocols, PROTOCOL_NAME]
+        });
+        
         await this.connect();
     }
 
@@ -156,16 +157,8 @@ export class RelayConnection implements IConnection {
             );
         }
 
-        /*
-        TODO:: find out why this doesn't work and a new connection has to be established each time
-        if (this._connection.streams.length !== 1) {
-            throw new Error('Incorrect number of streams in FluenceConnection');
-        }
-
-        const sink = this._connection.streams[0].sink;
-        */
-
         log.trace('sending particle...');
+        // Reusing active connection here
         const stream = await this.lib2p2Peer.dialProtocol(this.relayAddress, PROTOCOL_NAME);
         log.trace('created stream with id ', stream.id);
         const sink = stream.sink;
