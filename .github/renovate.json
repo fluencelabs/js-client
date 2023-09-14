@@ -4,6 +4,7 @@
     "config:base",
     ":semanticCommitTypeAll(chore)"
   ],
+  "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{configDescription}}}{{{controls}}}{{{footer}}}",
   "enabledManagers": ["npm", "github-actions"],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
