@@ -146,24 +146,6 @@ export interface IFluenceClient extends IFluenceInternalApi {
     getRelayPeerId(): string;
 }
 
-/**
- * For internal use. Checks if the object is a Fluence Peer
- */
-export const asFluencePeer = (fluencePeerCandidate: unknown): IFluenceClient => {
-    if (isFluencePeer(fluencePeerCandidate)) {
-        return fluencePeerCandidate;
-    }
 
-    throw new Error(`Argument ${fluencePeerCandidate} is not a Fluence Peer`);
-};
 
-/**
- * For internal use. Checks if the object is a Fluence Peer
- */
-export const isFluencePeer = (fluencePeerCandidate: unknown): fluencePeerCandidate is IFluenceClient => {
-    if (fluencePeerCandidate && (fluencePeerCandidate as any).__isFluenceAwesome) {
-        return true;
-    }
 
-    return false;
-};

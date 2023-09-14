@@ -1,6 +1,6 @@
 import { it, describe, expect } from 'vitest';
 
-import { isFluencePeer } from '@fluencelabs/interfaces';
+import { isFluencePeer } from '../../api.js';
 import { mkTestPeer, registerHandlersHelper, withPeer } from '../../util/testUtils.js';
 import { handleTimeout } from '../../particle/Particle.js';
 import { FluencePeer } from '../FluencePeer.js';
