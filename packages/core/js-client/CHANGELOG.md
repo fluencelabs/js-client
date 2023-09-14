@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.3...js-client-v0.1.4) (2023-09-14)
+
+
+### Bug Fixes
+
+* Fire and forget [fixes DXJ-446] ([#336](https://github.com/fluencelabs/js-client/issues/336)) ([e0a970d](https://github.com/fluencelabs/js-client/commit/e0a970d86a13f1617778a461c1c4d558d7dbafcb))
+
 ## [0.1.3](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.2...js-client-v0.1.3) (2023-09-07)
 
 
