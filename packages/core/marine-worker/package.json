@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/marine-worker",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Marine worker",
     "files": [
         "dist"
