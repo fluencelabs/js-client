@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.3.1...marine-worker-v0.3.2) (2023-09-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.47.0 ([#341](https://github.com/fluencelabs/js-client/issues/341)) ([f186f20](https://github.com/fluencelabs/js-client/commit/f186f209366c29f12e6677e03564ee2fa14b51ae))
+
 ## [0.3.1](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.3.0...marine-worker-v0.3.1) (2023-09-07)
 
 
