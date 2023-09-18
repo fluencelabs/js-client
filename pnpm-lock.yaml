@@ -126,7 +126,7 @@ importers:
         specifier: 6.1.1
         version: 6.1.1
 
-  packages/core/aqua-wrapper:
+  packages/core/aqua-to-js-compiler:
     dependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.12.0
@@ -140,6 +140,40 @@ importers:
       '@fluencelabs/js-client':
         specifier: '*'
         version: link:../js-client
+      '@fluencelabs/registry':
+        specifier: 0.8.7
+        version: 0.8.7
+      '@fluencelabs/spell':
+        specifier: 0.5.20
+        version: 0.5.20
+      '@fluencelabs/trust-graph':
+        specifier: 0.4.7
+        version: 0.4.7
+      ts-pattern:
+        specifier: 5.0.5
+        version: 5.0.5
+    devDependencies:
+      typescript:
+        specifier: 5.1.6
+        version: 5.1.6
+      vitest:
+        specifier: 0.29.7
+        version: 0.29.7
+
+  packages/core/aqua-to-js-compiler/dist:
+    dependencies:
+      '@fluencelabs/aqua-api':
+        specifier: 0.12.0
+        version: 0.12.0
+      '@fluencelabs/aqua-lib':
+        specifier: 0.7.3
+        version: 0.7.3
+      '@fluencelabs/interfaces':
+        specifier: workspace:*
+        version: link:../../interfaces
+      '@fluencelabs/js-client':
+        specifier: '*'
+        version: link:../../js-client
       '@fluencelabs/registry':
         specifier: 0.8.7
         version: 0.8.7
@@ -19640,7 +19674,7 @@ packages:
     hasBin: true
     dependencies:
       '@jridgewell/source-map': 0.3.3
-      acorn: 8.9.0
+      acorn: 8.10.0
       commander: 2.20.3
       source-map-support: 0.5.21
     dev: false
