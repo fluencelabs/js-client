@@ -126,6 +126,40 @@ importers:
         specifier: 6.1.1
         version: 6.1.1
 
+  packages/core/aqua-wrapper:
+    dependencies:
+      '@fluencelabs/aqua-api':
+        specifier: 0.12.0
+        version: 0.12.0
+      '@fluencelabs/aqua-lib':
+        specifier: 0.7.3
+        version: 0.7.3
+      '@fluencelabs/interfaces':
+        specifier: workspace:*
+        version: link:../interfaces
+      '@fluencelabs/js-client':
+        specifier: '*'
+        version: link:../js-client
+      '@fluencelabs/registry':
+        specifier: 0.8.7
+        version: 0.8.7
+      '@fluencelabs/spell':
+        specifier: 0.5.20
+        version: 0.5.20
+      '@fluencelabs/trust-graph':
+        specifier: 0.4.7
+        version: 0.4.7
+      ts-pattern:
+        specifier: 5.0.5
+        version: 5.0.5
+    devDependencies:
+      typescript:
+        specifier: 5.1.6
+        version: 5.1.6
+      vitest:
+        specifier: 0.29.7
+        version: 0.29.7
+
   packages/core/interfaces:
     devDependencies:
       '@fluencelabs/avm':
@@ -3792,7 +3826,6 @@ packages:
 
   /@fluencelabs/aqua-api@0.12.0:
     resolution: {integrity: sha512-8D1SfmBDm0mmg3tuYrlpU8L6+bRlCSVRkhlU4CXMJFSMiVMrSF2WV+KFTP4GcOB3N4pNOONEwHMQo4xNWwzGhg==}
-    dev: true
 
   /@fluencelabs/aqua-api@0.9.3:
     resolution: {integrity: sha512-ieM2e7qMXgm9BPSSd2fxVbqLlYkR/a/aVTAQXO8gdx2rKKFqnTgFX4gpSOTxrrCMshi8OnXfd2OZi1hsJHTnKA==}
@@ -3811,6 +3844,14 @@ packages:
   /@fluencelabs/aqua-lib@0.6.0:
     resolution: {integrity: sha512-ifjtCM93KO3LhzPkMxqmXhwLmrg/scjOiyTihEVg7ns5N+BVzaK1eWzdOdqGdl9ZVoah43pdlQUepEo7VdRmsw==}
     dev: true
+
+  /@fluencelabs/aqua-lib@0.7.0:
+    resolution: {integrity: sha512-mJEaxfAQb6ogVM4l4qw7INK6kvLA2Y161ErwL7IVeVSkKXIeYq/qio2p2au35LYvhBNsKc7XP2qc0uztCmxZzA==}
+    dev: false
+
+  /@fluencelabs/aqua-lib@0.7.3:
+    resolution: {integrity: sha512-+JVbWmHeGB+X/BSqmk6/B0gwWJ4bEAxkepVTN8l0mVrJ5zRRmYaCKVplWy6Z3W012m3VVK3A1o3rm/fgfVrQkw==}
+    dev: false
 
   /@fluencelabs/aqua@0.9.1-374(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2):
     resolution: {integrity: sha512-jF6oVE4h7bP/dQArKEfsy4UxbQbzACfVIBY/TFUL5D3np4ssjxrh15Y3gl1PwSWjlaPcDeFvAuStmcqfYQmLqQ==}
@@ -4096,6 +4137,29 @@ packages:
       '@fluencelabs/aqua-lib': 0.6.0
       '@fluencelabs/trust-graph': 3.0.4
     dev: true
+
+  /@fluencelabs/registry@0.8.7:
+    resolution: {integrity: sha512-43bmb1v4p5ORvaiLBrUAl+hRPo3luxxBVrJgqTvipJa2OEg2wCRA/Wo9s4M7Lchnv3NoYLOyNTzNyFopQRKILA==}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.7.0
+      '@fluencelabs/trust-graph': 0.4.1
+    dev: false
+
+  /@fluencelabs/spell@0.5.20:
+    resolution: {integrity: sha512-QFbknWwALLUWMzpWkFt34McuwTz9xwQuiPP1zXqhPqVZ1J6g8F3gwHHtzgHFW5Z7WrRmwsL+IQtFJy8YZubhDw==}
+    dev: false
+
+  /@fluencelabs/trust-graph@0.4.1:
+    resolution: {integrity: sha512-V/6ts4q/Y0uKMS6orVpPyxfdd99YFMkm9wN9U2IFtlBUWNsQZG369FK9qEizwsSRCqTchMHYs8Vh4wgZ2uRfuQ==}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.7.3
+    dev: false
+
+  /@fluencelabs/trust-graph@0.4.7:
+    resolution: {integrity: sha512-e4TxWimUh9GBWjqSO8WGsSqjZfyIs6f39/8Pzfo6PCcNoSf8FPaaO817Pw4FmAXYEKR1IalIUX3CDdym3NlHWw==}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.7.3
+    dev: false
 
   /@fluencelabs/trust-graph@3.0.4:
     resolution: {integrity: sha512-4CWe/dBuZwrj5iU6mTrLz5JCSy5v1fw7dYjD65Pz05xWAbLH2jw72YIJfbMX0utzb1qiM8CooXv1XKPgutCIHQ==}
@@ -19892,6 +19956,10 @@ packages:
   /ts-pattern@3.3.3:
     resolution: {integrity: sha512-Z5EFi6g6wyX3uDFHqxF5W5c5h663oZg9O6aOiAT7fqNu0HPSfCxtHzrQ7SblTy738Mrg2Ezorky8H5aUOm8Pvg==}
 
+  /ts-pattern@5.0.5:
+    resolution: {integrity: sha512-tL0w8U/pgaacOmkb9fRlYzWEUDCfVjjv9dD4wHTgZ61MjhuMt46VNWTG747NqW6vRzoWIKABVhFSOJ82FvXrfA==}
+    dev: false
+
   /tsconfck@2.1.1(typescript@4.7.2):
     resolution: {integrity: sha512-ZPCkJBKASZBmBUNqGHmRhdhM8pJYDdOXp4nRgj/O0JwUwsMq50lCDRQP/M5GBNAA0elPrq4gAeu4dkaVCuKWww==}
     engines: {node: ^14.13.1 || ^16 || >=18}
@@ -20566,7 +20634,7 @@ packages:
       '@vitest/runner': 0.29.7
       '@vitest/spy': 0.29.7
       '@vitest/utils': 0.29.7
-      acorn: 8.9.0
+      acorn: 8.10.0
       acorn-walk: 8.2.0
       cac: 6.7.14
       chai: 4.3.7
