@@ -26,7 +26,7 @@ interface PackageJson {
 }
 
 export async function getPackageJsonContent(): Promise<PackageJson> {
-    const content = await readFile(path.join('..', 'package.json'));
+    const content = await readFile(new URL(path.join('..', 'package.json'), import.meta.url));
     const pkg = JSON.parse(content.toString());
     return pkg;
 }
