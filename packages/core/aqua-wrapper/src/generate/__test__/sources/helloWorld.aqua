@@ -1,6 +1,0 @@
-service StringExtra("service-id"):
-    addNameToHello: string -> string
-
-func helloWorld(name: string) -> string:
-    res <- StringExtra.addNameToHello(name)
-    <- res

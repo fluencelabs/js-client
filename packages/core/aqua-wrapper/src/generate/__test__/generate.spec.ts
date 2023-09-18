@@ -14,8 +14,28 @@
  * limitations under the License.
  */
 
-import { describe } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import * as fs from 'fs';
+import generate from '../index.js';
+import { compileFromPath } from '@fluencelabs/aqua-api';
+import * as url from 'url';
 
 describe('Aqua to js/ts compiler', () => {
-    
+    it('compiles smoke tests successfully', async () => {
+        const res = await compileFromPath({
+            filePath: url.fileURLToPath(new URL('./sources/smoke_test.aqua', import.meta.url)),
+            imports: ['./node_modules'],
+            targetType: 'air'
+        });
+        
+        const jsResult = generate(res, 'js');
+        const jsSnapshot = fs.readFileSync(new URL('./snapshots/smoke_test.js', import.meta.url))
+        
+        expect(jsResult).toEqual(jsSnapshot.toString());
+
+        const tsResult = generate(res, 'ts');
+        const tsSnapshot = fs.readFileSync(new URL('./snapshots/smoke_test.ts', import.meta.url))
+
+        expect(tsResult).toEqual(tsSnapshot.toString());
+    });
 });

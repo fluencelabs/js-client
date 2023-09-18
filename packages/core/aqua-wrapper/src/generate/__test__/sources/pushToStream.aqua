@@ -1,9 +1,0 @@
-service OpA("pop"):
-  get_str() -> string
-
-func get_results() -> []string:
-    results: *string
-    results <<- "hello"
-    str <- OpA.get_str()
-    results <<- str
-    <- results

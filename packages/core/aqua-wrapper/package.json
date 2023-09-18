@@ -5,7 +5,7 @@
     "description": "Tool for generating aqua wrapper",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "vitest run"
     },
     "keywords": [],
     "author": "Fluence Labs",

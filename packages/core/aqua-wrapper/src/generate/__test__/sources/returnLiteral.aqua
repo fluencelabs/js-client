@@ -1,2 +1,0 @@
-func returnLiteral() -> string:
-    <- "some literal"

@@ -1,7 +1,0 @@
-module Ret declares *
-
-export someFunc
-
-func someFunc(cb: []string -> ()):
-	ifaces: *string
-	cb(ifaces)

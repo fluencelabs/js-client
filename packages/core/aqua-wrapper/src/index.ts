@@ -35,14 +35,14 @@ import * as fs from 'fs';
 import generate from './generate/index.js';
 
 const res = await compileFromPath({
-    filePath: './src/generate/__test__/sources/abilities.aqua',
+    filePath: './src/generate/__test__/sources/smoke_test.aqua',
     imports: ['./node_modules'],
-    targetType: 'ts'
+    targetType: 'air'
 });
 
-// const data = generate(res, 'ts');
+const data = generate(res, 'ts');
 
-fs.writeFileSync('./src/generate/__test__/snapshots/abilities.ts', res.generatedSources[0].tsSource);
+fs.writeFileSync('./src/generate/__test__/snapshots/smoke_test.ts', data);
 
 
 process.exit();
