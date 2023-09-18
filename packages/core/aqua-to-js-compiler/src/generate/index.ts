@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import header from './header.js';
-import { getAquaApiVersion, getPackageJsonContent } from '../utils.js';
+import { getPackageJsonContent } from '../utils.js';
 import { FunctionGenerator } from './function.js';
 import { CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
 import { JSTypeGenerator, TSTypeGenerator } from './interfaces.js';

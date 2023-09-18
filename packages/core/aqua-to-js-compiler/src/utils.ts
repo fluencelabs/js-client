@@ -16,6 +16,7 @@
 
 import { NonArrowType, ProductType } from '@fluencelabs/interfaces';
 import { readFile } from 'fs/promises';
+import path from 'path';
 
 interface PackageJson {
     version: string;
@@ -25,7 +26,7 @@ interface PackageJson {
 }
 
 export async function getPackageJsonContent(): Promise<PackageJson> {
-    const content = await readFile('../package.json');
+    const content = await readFile(path.join('..', 'package.json'));
     const pkg = JSON.parse(content.toString());
     return pkg;
 }
