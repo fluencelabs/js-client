@@ -126,11 +126,15 @@ importers:
         specifier: 6.1.1
         version: 6.1.1
 
-  packages/core/aqua-to-js-compiler:
+  packages/core/aqua-compiler:
     dependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.12.0
         version: 0.12.0
+      ts-pattern:
+        specifier: 5.0.5
+        version: 5.0.5
+    devDependencies:
       '@fluencelabs/aqua-lib':
         specifier: 0.7.3
         version: 0.7.3
@@ -138,7 +142,7 @@ importers:
         specifier: workspace:*
         version: link:../interfaces
       '@fluencelabs/js-client':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../js-client
       '@fluencelabs/registry':
         specifier: 0.8.7
@@ -149,44 +153,6 @@ importers:
       '@fluencelabs/trust-graph':
         specifier: 0.4.7
         version: 0.4.7
-      ts-pattern:
-        specifier: 5.0.5
-        version: 5.0.5
-    devDependencies:
-      typescript:
-        specifier: 5.1.6
-        version: 5.1.6
-      vitest:
-        specifier: 0.29.7
-        version: 0.29.7
-
-  packages/core/aqua-to-js-compiler/dist:
-    dependencies:
-      '@fluencelabs/aqua-api':
-        specifier: 0.12.0
-        version: 0.12.0
-      '@fluencelabs/aqua-lib':
-        specifier: 0.7.3
-        version: 0.7.3
-      '@fluencelabs/interfaces':
-        specifier: workspace:*
-        version: link:../../interfaces
-      '@fluencelabs/js-client':
-        specifier: '*'
-        version: link:../../js-client
-      '@fluencelabs/registry':
-        specifier: 0.8.7
-        version: 0.8.7
-      '@fluencelabs/spell':
-        specifier: 0.5.20
-        version: 0.5.20
-      '@fluencelabs/trust-graph':
-        specifier: 0.4.7
-        version: 0.4.7
-      ts-pattern:
-        specifier: 5.0.5
-        version: 5.0.5
-    devDependencies:
       typescript:
         specifier: 5.1.6
         version: 5.1.6
@@ -3881,11 +3847,11 @@ packages:
 
   /@fluencelabs/aqua-lib@0.7.0:
     resolution: {integrity: sha512-mJEaxfAQb6ogVM4l4qw7INK6kvLA2Y161ErwL7IVeVSkKXIeYq/qio2p2au35LYvhBNsKc7XP2qc0uztCmxZzA==}
-    dev: false
+    dev: true
 
   /@fluencelabs/aqua-lib@0.7.3:
     resolution: {integrity: sha512-+JVbWmHeGB+X/BSqmk6/B0gwWJ4bEAxkepVTN8l0mVrJ5zRRmYaCKVplWy6Z3W012m3VVK3A1o3rm/fgfVrQkw==}
-    dev: false
+    dev: true
 
   /@fluencelabs/aqua@0.9.1-374(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2):
     resolution: {integrity: sha512-jF6oVE4h7bP/dQArKEfsy4UxbQbzACfVIBY/TFUL5D3np4ssjxrh15Y3gl1PwSWjlaPcDeFvAuStmcqfYQmLqQ==}
@@ -4177,23 +4143,23 @@ packages:
     dependencies:
       '@fluencelabs/aqua-lib': 0.7.0
       '@fluencelabs/trust-graph': 0.4.1
-    dev: false
+    dev: true
 
   /@fluencelabs/spell@0.5.20:
     resolution: {integrity: sha512-QFbknWwALLUWMzpWkFt34McuwTz9xwQuiPP1zXqhPqVZ1J6g8F3gwHHtzgHFW5Z7WrRmwsL+IQtFJy8YZubhDw==}
-    dev: false
+    dev: true
 
   /@fluencelabs/trust-graph@0.4.1:
     resolution: {integrity: sha512-V/6ts4q/Y0uKMS6orVpPyxfdd99YFMkm9wN9U2IFtlBUWNsQZG369FK9qEizwsSRCqTchMHYs8Vh4wgZ2uRfuQ==}
     dependencies:
       '@fluencelabs/aqua-lib': 0.7.3
-    dev: false
+    dev: true
 
   /@fluencelabs/trust-graph@0.4.7:
     resolution: {integrity: sha512-e4TxWimUh9GBWjqSO8WGsSqjZfyIs6f39/8Pzfo6PCcNoSf8FPaaO817Pw4FmAXYEKR1IalIUX3CDdym3NlHWw==}
     dependencies:
       '@fluencelabs/aqua-lib': 0.7.3
-    dev: false
+    dev: true
 
   /@fluencelabs/trust-graph@3.0.4:
     resolution: {integrity: sha512-4CWe/dBuZwrj5iU6mTrLz5JCSy5v1fw7dYjD65Pz05xWAbLH2jw72YIJfbMX0utzb1qiM8CooXv1XKPgutCIHQ==}
