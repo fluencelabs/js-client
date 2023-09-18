@@ -229,7 +229,7 @@ export interface ServiceDef {
     /**
      * Default service id. If the service has no default id the value should be undefined
      */
-    defaultServiceId?: {};
+    defaultServiceId?: string;
 
     /**
      * List of functions which the service consists of
