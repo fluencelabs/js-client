@@ -18,6 +18,10 @@ import { ServiceDef } from '@fluencelabs/interfaces';
 import { recursiveRenameLaquaProps } from '../utils.js';
 import { TypeGenerator } from './interfaces.js';
 
+interface DefaultServiceId {
+    s_Some__f_value?: string
+}
+
 export class ServiceGenerator {
     constructor(
         private typeGenerator: TypeGenerator
@@ -50,8 +54,8 @@ export class ServiceGenerator {
     private serviceToJson(service: ServiceDef): string {
         return JSON.stringify({
             ...(
-                service.defaultServiceId.s_Some__f_value
-                    ? { defaultServiceId: service.defaultServiceId.s_Some__f_value }
+                (service.defaultServiceId as DefaultServiceId)?.s_Some__f_value
+                    ? { defaultServiceId: (service.defaultServiceId as DefaultServiceId).s_Some__f_value }
                     : {}
             ),
             functions: recursiveRenameLaquaProps(service.functions)
