@@ -23,11 +23,11 @@ import { ServiceGenerator } from './service.js';
 
 type OutputType = 'js' | 'ts';
 
-export default function ({ services, functions }: CompilationResult, outputType: OutputType) {
+export default async function ({ services, functions }: CompilationResult, outputType: OutputType) {
     const typeGenerator = outputType === 'js' ? new JSTypeGenerator() : new TSTypeGenerator(); 
     return `/* eslint-disable */
 // @ts-nocheck
-${header(outputType === 'js', getAquaApiVersion())}
+${header(outputType === 'js', await getAquaApiVersion())}
 
 // Services
 ${new ServiceGenerator(typeGenerator).generate(services)}
