@@ -15,9 +15,7 @@
  */
 
 import { AquaFunction } from '@fluencelabs/aqua-api/aqua-api.js';
-import { capitalize, getFuncArgs, recursiveRenameLaquaProps } from '../utils.js';
-import { genTypeName } from '../common.js';
-import { CLIENT } from '../constants.js';
+import { recursiveRenameLaquaProps } from '../utils.js';
 import { TypeGenerator } from './interfaces.js';
 
 export class FunctionGenerator {
@@ -32,7 +30,7 @@ export class FunctionGenerator {
     private generateFunction(func: AquaFunction) {
         const scriptConstName = func.funcDef.functionName + '_script';
         return `export const ${scriptConstName} = \`
-${func.script}\`
+${func.script}\`;
 
 ${this.typeGenerator.funcType(func)}
 export function ${func.funcDef.functionName}(${this.typeGenerator.type('...args', 'any[]')}) {
@@ -40,7 +38,7 @@ export function ${func.funcDef.functionName}(${this.typeGenerator.type('...args'
         args,
         ${JSON.stringify(recursiveRenameLaquaProps(func.funcDef), null, 4)},
         ${scriptConstName}
-    )
+    );
 }`
     }
 }
