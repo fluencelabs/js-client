@@ -17,10 +17,17 @@
 import { NonArrowType, ProductType } from '@fluencelabs/interfaces';
 import { readFile } from 'fs/promises';
 
-export async function getAquaApiVersion() {
+interface PackageJson {
+    version: string;
+    dependencies: {
+        ['@fluencelabs/aqua-api']: string
+    }
+}
+
+export async function getPackageJsonContent(): Promise<PackageJson> {
     const content = await readFile('../package.json');
     const pkg = JSON.parse(content.toString());
-    return pkg.dependencies['@fluencelabs/aqua-api'];
+    return pkg;
 }
 
 export function getFuncArgs(domain: ProductType<NonArrowType>): [string, NonArrowType][] {
