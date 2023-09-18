@@ -3,9 +3,10 @@
     "type": "module",
     "version": "0.0.0",
     "description": "Tool for generating aqua wrapper",
-    "main": "index.js",
+    "main": "dist/index.js",
     "scripts": {
-        "test": "vitest run"
+        "test": "vitest run",
+        "build": "tsc"
     },
     "keywords": [],
     "author": "Fluence Labs",

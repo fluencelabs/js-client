@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import pkg from '../package.json' assert { type: 'json' };
-import { ArrowType, NonArrowType, ProductType } from '@fluencelabs/interfaces';
+import { NonArrowType, ProductType } from '@fluencelabs/interfaces';
+import { readFile } from 'fs/promises';
 
-export function getAquaApiVersion() {
+export async function getAquaApiVersion() {
+    const content = await readFile('../package.json');
+    const pkg = JSON.parse(content.toString());
     return pkg.dependencies['@fluencelabs/aqua-api'];
 }
 
