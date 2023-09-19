@@ -24,28 +24,30 @@ type InputSource = 'file' | 'string';
 
 type OutputType = 'js' | 'ts';
 
-type LanguageOutput = {
-    type: OutputType;
+interface JsOutput {
     sources: string;
-    types?: string;
-};
+    types: string;
+}
+
+interface TsOutput {
+    sources: string;
+}
+
+type LanguageOutput = JsOutput | TsOutput;
 
 export default async function(src: InputSource, outputType: OutputType): Promise<LanguageOutput> {
     const res = await compileFromPath({
         filePath: './src/generate/__test__/sources/smoke_test.aqua',
-        imports: ['./node_modules'],
-        targetType: 'air'
+        imports: ['./node_modules']
     });
     
     if (outputType === 'js') {
         return {
-            type: 'js',
             sources: await generateSources(res, 'js'),
             types: await generateTypes(res)
         }
     } else {
         return {
-            type: 'ts',
             sources: await generateSources(res, 'ts'),
         }
     }
