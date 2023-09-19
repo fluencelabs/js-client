@@ -27,9 +27,8 @@ export interface PackageJson {
 }
 
 export async function getPackageJsonContent(): Promise<PackageJson> {
-    const content = await readFile(new URL(path.join('..', 'package.json'), import.meta.url));
-    const pkg = JSON.parse(content.toString());
-    return pkg;
+    const content = await readFile(new URL(path.join('..', 'package.json'), import.meta.url), 'utf-8');
+    return JSON.parse(content);
 }
 
 export function getFuncArgs(domain: ProductType<NonArrowType | ArrowWithoutCallbacks>): [string, NonArrowType | ArrowWithoutCallbacks][] {
