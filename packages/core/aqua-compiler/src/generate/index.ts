@@ -14,6 +14,52 @@
  * limitations under the License.
  */
 
-export * from './interfaces.js';
-export * from './function.js';
-export * from './service.js';
+import { JSTypeGenerator, OutputType, TSTypeGenerator } from './interfaces.js';
+import { getPackageJsonContent } from '../utils.js';
+import { ServiceGenerator } from './service.js';
+import { FunctionGenerator } from './function.js';
+import { CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
+import header from './header.js';
+
+export async function generateSources({ services, functions }: CompilationResult, outputType: OutputType) {
+    const typeGenerator = outputType === 'js' ? new JSTypeGenerator() : new TSTypeGenerator();
+    const { version, dependencies } = await getPackageJsonContent();
+    return `/* eslint-disable */
+// @ts-nocheck
+${header(version, dependencies['@fluencelabs/aqua-api'], outputType)};
+
+// Services
+${new ServiceGenerator(typeGenerator).generate(services)}
+
+// Functions
+${new FunctionGenerator(typeGenerator).generate(functions)}
+
+/* eslint-enable */
+`
+}
+
+export async function generateTypes({ services, functions }: CompilationResult) {
+    const typeGenerator = new TSTypeGenerator();
+    const { version, dependencies } = await getPackageJsonContent();
+    
+    const generatedServices = Object.entries(services)
+        .map(([srvName, srvDef]) => typeGenerator.serviceType(srvName, srvDef))
+        .join('\n');
+    
+    const generatedFunctions = Object.entries(functions)
+        .map(([funcName, funcDef]) => typeGenerator.funcType(funcDef))
+        .join('\n');
+    
+    return `/* eslint-disable */
+// @ts-nocheck
+${header(version, dependencies['@fluencelabs/aqua-api'], 'ts')};
+
+// Services
+${generatedServices}
+
+// Functions
+${generatedFunctions}
+
+/* eslint-enable */
+`
+}

@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-import { CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
-import { FunctionGenerator, JSTypeGenerator, ServiceGenerator, TSTypeGenerator } from './generate/index.js';
-import { getPackageJsonContent } from './utils.js';
+import {
+    generateSources,
+    generateTypes,
+} from './generate/index.js';
+import { compileFromPath } from '@fluencelabs/aqua-api';
+
+type InputSource = 'file' | 'string';
 
 type OutputType = 'js' | 'ts';
 
-export default async function ({ services, functions }: CompilationResult, outputType: OutputType) {
-    const typeGenerator = outputType === 'js' ? new JSTypeGenerator() : new TSTypeGenerator();
-    const { version, dependencies } = await getPackageJsonContent();
-    return `/* eslint-disable */
-// @ts-nocheck
-/**
- *
- * This file is generated using:
- * @fluencelabs/aqua-api version: ${dependencies['@fluencelabs/aqua-api']}
- * @fluencelabs/aqua-compiler version: ${version}
- * If you find any bugs in generated AIR, please write an issue on GitHub: https://github.com/fluencelabs/aqua/issues
- * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
- *
- */
-${outputType === 'ts' ? 'import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from \'@fluencelabs/js-client\';' : ''}
+type LanguageOutput = {
+    type: OutputType;
+    sources: string;
+    types?: string;
+};
 
-import {
-    v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
-} from '@fluencelabs/js-client';
-
-// Services
-${new ServiceGenerator(typeGenerator).generate(services)}
-
-// Functions
-${new FunctionGenerator(typeGenerator).generate(functions)}
-
-/* eslint-enable */
-`
+export default async function(src: InputSource, outputType: OutputType): Promise<LanguageOutput> {
+    const res = await compileFromPath({
+        filePath: './src/generate/__test__/sources/smoke_test.aqua',
+        imports: ['./node_modules'],
+        targetType: 'air'
+    });
+    
+    if (outputType === 'js') {
+        return {
+            type: 'js',
+            sources: await generateSources(res, 'js'),
+            types: await generateTypes(res)
+        }
+    } else {
+        return {
+            type: 'ts',
+            sources: await generateSources(res, 'ts'),
+        }
+    }
 };

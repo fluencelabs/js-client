@@ -16,7 +16,7 @@
 
 import { AquaFunction, CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
 import { CLIENT } from '../constants.js';
-import { FunctionCallDef, ServiceDef } from '@fluencelabs/interfaces';
+import { ServiceDef } from '@fluencelabs/interfaces';
 import { genTypeName, typeToTs } from '../common.js';
 import { capitalize, getFuncArgs } from '../utils.js';
 
@@ -123,3 +123,5 @@ export class JSTypeGenerator implements TypeGenerator {
 export interface EntityGenerator {
     generate(compilationResult: CompilationResult): string;
 }
+
+export type OutputType = 'js' | 'ts';
