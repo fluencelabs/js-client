@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { EntityGenerator, OutputType } from './interfaces.js';
-import { CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
+import { OutputType } from './interfaces.js';
 
 export default function(compilerVer: string, aquaApiVer: string, outputType: OutputType) {
     return `/**

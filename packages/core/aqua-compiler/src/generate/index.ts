@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { JSTypeGenerator, OutputType, TSTypeGenerator } from './interfaces.js';
+import { CompilationResult, JSTypeGenerator, OutputType, TSTypeGenerator } from './interfaces.js';
 import { getPackageJsonContent } from '../utils.js';
 import { ServiceGenerator } from './service.js';
 import { FunctionGenerator } from './function.js';
-import { CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
 import header from './header.js';
 
 export async function generateSources({ services, functions }: CompilationResult, outputType: OutputType) {

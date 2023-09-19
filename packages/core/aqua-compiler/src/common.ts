@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { ArrowType, NonArrowType, ProductType } from '@fluencelabs/interfaces';
+import { ArrowType, ArrowWithoutCallbacks, NonArrowType, ProductType } from '@fluencelabs/interfaces';
 import { match, P } from 'ts-pattern';
 import { getFuncArgs } from './utils.js';
 
-export function genTypeName(t: NonArrowType, name: string): readonly [string | undefined, string] {
+export function genTypeName(t: NonArrowType | ProductType<NonArrowType> | ArrowWithoutCallbacks, name: string): readonly [string | undefined, string] {
     const genType = typeToTs(t);
     return match(t)
         .with(
@@ -43,7 +43,7 @@ export function genTypeName(t: NonArrowType, name: string): readonly [string | u
         ).otherwise(() => [undefined, genType] as const);
 }
 
-export function typeToTs(t: NonArrowType | ArrowType<NonArrowType> | ProductType<NonArrowType>): string {
+export function typeToTs(t: NonArrowType | ArrowWithoutCallbacks | ProductType<NonArrowType>): string {
     return match(t)
         .with(
             { tag: 'nil' },

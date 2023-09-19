@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { AquaFunction } from '@fluencelabs/aqua-api/aqua-api.js';
 import { recursiveRenameLaquaProps } from '../utils.js';
-import { TypeGenerator } from './interfaces.js';
+import { AquaFunction, TypeGenerator } from './interfaces.js';
 
 export class FunctionGenerator {
     constructor(

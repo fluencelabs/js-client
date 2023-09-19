@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NonArrowType, ProductType } from '@fluencelabs/interfaces';
+import { ArrowWithoutCallbacks, NonArrowType, ProductType } from '@fluencelabs/interfaces';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
@@ -31,7 +31,7 @@ export async function getPackageJsonContent(): Promise<PackageJson> {
     return pkg;
 }
 
-export function getFuncArgs(domain: ProductType<NonArrowType>): [string, NonArrowType][] {
+export function getFuncArgs(domain: ProductType<NonArrowType | ArrowWithoutCallbacks>): [string, NonArrowType | ArrowWithoutCallbacks][] {
     if (domain.tag === 'labeledProduct') {
         return Object.entries(domain.fields).map(([label, type]) => [label, type]);
     } else if (domain.tag === 'unlabeledProduct') {

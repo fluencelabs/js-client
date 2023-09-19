@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { AquaFunction, CompilationResult } from '@fluencelabs/aqua-api/aqua-api.js';
 import { CLIENT } from '../constants.js';
-import { ServiceDef } from '@fluencelabs/interfaces';
+import { FunctionCallDef, ServiceDef } from '@fluencelabs/interfaces';
 import { genTypeName, typeToTs } from '../common.js';
 import { capitalize, getFuncArgs } from '../utils.js';
 
@@ -55,7 +54,7 @@ export class TSTypeGenerator implements TypeGenerator {
             argsDefs.join(',\n'),
             [`    peer: ${CLIENT}`, ...argsDefs].join(',\n')
         ];
-
+        
         const [resTypeDesc, resType] = genTypeName(funcDef.arrow.codomain, capitalize(funcDef.functionName) + "Result");
 
         return [
@@ -118,6 +117,16 @@ export class JSTypeGenerator implements TypeGenerator {
     serviceType(): string {
         return '';
     }
+}
+
+export interface AquaFunction {
+    funcDef: FunctionCallDef;
+    script: string;
+}
+
+export interface CompilationResult {
+    services: Record<string, ServiceDef>;
+    functions: Record<string, AquaFunction>;
 }
 
 export interface EntityGenerator {
