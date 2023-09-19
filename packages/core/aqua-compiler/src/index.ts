@@ -35,11 +35,23 @@ interface TsOutput {
 
 type LanguageOutput = JsOutput | TsOutput;
 
+const res = await compileFromPath({
+    filePath: './src/generate/__test__/sources/smoke_test.aqua',
+    imports: ['./node_modules']
+});
+
+const content = await generateTypes(res);
+console.log();
+process.exit();
+
 export default async function(src: InputSource, outputType: OutputType): Promise<LanguageOutput> {
     const res = await compileFromPath({
         filePath: './src/generate/__test__/sources/smoke_test.aqua',
         imports: ['./node_modules']
     });
+    
+    console.log(generateTypes(res));
+    process.exit();
     
     if (outputType === 'js') {
         return {

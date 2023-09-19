@@ -22,24 +22,20 @@ import header from './header.js';
 
 export async function generateSources({ services, functions }: CompilationResult, outputType: OutputType) {
     const typeGenerator = outputType === 'js' ? new JSTypeGenerator() : new TSTypeGenerator();
-    const { version, dependencies } = await getPackageJsonContent();
-    return `/* eslint-disable */
-// @ts-nocheck
-${header(version, dependencies['@fluencelabs/aqua-api'], outputType)};
+    const { version, devDependencies } = await getPackageJsonContent();
+    return `${header(version, devDependencies['@fluencelabs/aqua-api'], outputType)}
 
 // Services
 ${new ServiceGenerator(typeGenerator).generate(services)}
 
 // Functions
 ${new FunctionGenerator(typeGenerator).generate(functions)}
-
-/* eslint-enable */
 `
 }
 
 export async function generateTypes({ services, functions }: CompilationResult) {
     const typeGenerator = new TSTypeGenerator();
-    const { version, dependencies } = await getPackageJsonContent();
+    const { version, devDependencies } = await getPackageJsonContent();
     
     const generatedServices = Object.entries(services)
         .map(([srvName, srvDef]) => typeGenerator.serviceType(srvName, srvDef))
@@ -49,7 +45,7 @@ export async function generateTypes({ services, functions }: CompilationResult) 
         .map(([funcName, funcDef]) => typeGenerator.funcType(funcDef))
         .join('\n');
     
-    return `${header(version, dependencies['@fluencelabs/aqua-api'], 'ts')};
+    return `${header(version, devDependencies['@fluencelabs/aqua-api'], 'ts')}
 
 // Services
 ${generatedServices}

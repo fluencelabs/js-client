@@ -15,10 +15,17 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import * as fs from 'fs';
-import generate from '../index.js';
+import fs from 'fs/promises';
+import { generateTypes, generateSources } from '../index.js';
 import { compileFromPath } from '@fluencelabs/aqua-api';
-import * as url from 'url';
+import url from 'url';
+import { getPackageJsonContent, PackageJson } from '../../utils.js';
+
+function replacePackageTypes(generated: string, pkg: PackageJson) {
+    return generated
+        .replace('@fluencelabs/aqua-api version: 0.0.0', '@fluencelabs/aqua-api version: ' + pkg.devDependencies['@fluencelabs/aqua-api'])
+        .replace('@fluencelabs/aqua-compiler version: 0.0.0', '@fluencelabs/aqua-compiler version: ' + pkg.version);
+}
 
 describe('Aqua to js/ts compiler', () => {
     it('compiles smoke tests successfully', async () => {
@@ -28,14 +35,20 @@ describe('Aqua to js/ts compiler', () => {
             targetType: 'air'
         });
         
-        const jsResult = generate(res, 'js');
-        const jsSnapshot = fs.readFileSync(new URL('./snapshots/smoke_test.js', import.meta.url))
+        const pkg = await getPackageJsonContent();
         
-        expect(jsResult).toEqual(jsSnapshot.toString());
+        const jsResult = await generateSources(res, 'js');
+        const jsTypes = await generateTypes(res);
+        
+        const jsSnapshot = await fs.readFile(new URL('./snapshots/smoke_test.js', import.meta.url), 'utf-8');
+        const jsSnapshotTypes = await fs.readFile(new URL('./snapshots/smoke_test.d.ts', import.meta.url), 'utf-8');
+        
+        expect(jsResult).toEqual(replacePackageTypes(jsSnapshot, pkg));
+        expect(jsTypes).toEqual(replacePackageTypes(jsSnapshotTypes, pkg));
 
-        const tsResult = generate(res, 'ts');
-        const tsSnapshot = fs.readFileSync(new URL('./snapshots/smoke_test.ts', import.meta.url))
+        const tsResult = await generateSources(res, 'ts');
+        const tsSnapshot = await fs.readFile(new URL('./snapshots/smoke_test.ts', import.meta.url), 'utf-8');
 
-        expect(tsResult).toEqual(tsSnapshot.toString());
+        expect(tsResult).toEqual(replacePackageTypes(tsSnapshot, pkg));
     });
 });

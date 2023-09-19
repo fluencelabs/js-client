@@ -18,9 +18,10 @@ import { ArrowWithoutCallbacks, NonArrowType, ProductType } from '@fluencelabs/i
 import { readFile } from 'fs/promises';
 import path from 'path';
 
-interface PackageJson {
+export interface PackageJson {
+    name: string;
     version: string;
-    dependencies: {
+    devDependencies: {
         ['@fluencelabs/aqua-api']: string
     }
 }
