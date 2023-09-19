@@ -18,9 +18,7 @@ import {
     generateSources,
     generateTypes,
 } from './generate/index.js';
-import { compileFromPath } from '@fluencelabs/aqua-api';
-
-type InputSource = 'file' | 'string';
+import { CompilationResult } from './generate/interfaces.js';
 
 type OutputType = 'js' | 'ts';
 
@@ -35,32 +33,11 @@ interface TsOutput {
 
 type LanguageOutput = JsOutput | TsOutput;
 
-const res = await compileFromPath({
-    filePath: './src/generate/__test__/sources/smoke_test.aqua',
-    imports: ['./node_modules']
-});
-
-const content = await generateTypes(res);
-console.log();
-process.exit();
-
-export default async function(src: InputSource, outputType: OutputType): Promise<LanguageOutput> {
-    const res = await compileFromPath({
-        filePath: './src/generate/__test__/sources/smoke_test.aqua',
-        imports: ['./node_modules']
-    });
-    
-    console.log(generateTypes(res));
-    process.exit();
-    
-    if (outputType === 'js') {
-        return {
-            sources: await generateSources(res, 'js'),
-            types: await generateTypes(res)
-        }
-    } else {
-        return {
-            sources: await generateSources(res, 'ts'),
-        }
-    }
+export default async function(res: CompilationResult, outputType: OutputType): Promise<LanguageOutput> {
+    return outputType === 'js' ? {
+        sources: await generateSources(res, 'js'),
+        types: await generateTypes(res)
+    } : {
+        sources: await generateSources(res, 'ts'),
+    };
 };
