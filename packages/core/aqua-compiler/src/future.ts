@@ -26,6 +26,7 @@ import {
 } from '@fluencelabs/interfaces';
 
 // Type definitions for inferring ts types from air json definition
+// In the future we may remove string type declaration and move to type inference.
 
 type GetTsTypeFromScalar<T extends ScalarType> = T['name'] extends 'u8' | 'u16' | 'u32' | 'u64' | 'i8' | 'i16' | 'i32' | 'i64' | 'f32' | 'f64'
     ? number
