@@ -17,7 +17,9 @@
 import { OutputType } from './interfaces.js';
 
 export default function(compilerVer: string, aquaApiVer: string, outputType: OutputType) {
-    return `/**
+    return `/* eslint-disable */
+// @ts-nocheck
+ /**
  *
  * This file is generated using:
  * @fluencelabs/aqua-api version: ${aquaApiVer}

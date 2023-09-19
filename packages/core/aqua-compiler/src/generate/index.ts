@@ -49,16 +49,12 @@ export async function generateTypes({ services, functions }: CompilationResult) 
         .map(([funcName, funcDef]) => typeGenerator.funcType(funcDef))
         .join('\n');
     
-    return `/* eslint-disable */
-// @ts-nocheck
-${header(version, dependencies['@fluencelabs/aqua-api'], 'ts')};
+    return `${header(version, dependencies['@fluencelabs/aqua-api'], 'ts')};
 
 // Services
 ${generatedServices}
 
 // Functions
 ${generatedFunctions}
-
-/* eslint-enable */
 `
 }
