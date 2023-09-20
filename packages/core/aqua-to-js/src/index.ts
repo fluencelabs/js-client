@@ -18,10 +18,8 @@ import {
     generateSources,
     generateTypes,
 } from './generate/index.js';
-import { CompilationResult } from './generate/interfaces.js';
+import { CompilationResult, OutputType } from './generate/interfaces.js';
 import { getPackageJsonContent } from './utils.js';
-
-type OutputType = 'js' | 'ts';
 
 interface JsOutput {
     sources: string;
