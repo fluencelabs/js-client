@@ -4,12 +4,12 @@
  *
  * This file is generated using:
  * @fluencelabs/aqua-api version: 0.0.0
- * @fluencelabs/aqua-compiler version: 0.0.0
+ * @fluencelabs/aqua-to-js version: 0.0.0
  * If you find any bugs in generated AIR, please write an issue on GitHub: https://github.com/fluencelabs/aqua/issues
  * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
  *
  */
-
+import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';
 
 import {
     v5_callFunction as callFunction$$,
@@ -17,8 +17,16 @@ import {
 } from '@fluencelabs/js-client';
 
 // Services
-
-export function registerSrv(...args) {
+export interface SrvDef {
+    create: (wasm_b64_content: string, callParams: CallParams$$<'wasm_b64_content'>) => { error: string | null; service_id: string | null; success: boolean; } | Promise<{ error: string | null; service_id: string | null; success: boolean; }>;
+    list: (callParams: CallParams$$<null>) => string[] | Promise<string[]>;
+    remove: (service_id: string, callParams: CallParams$$<'service_id'>) => { error: string | null; success: boolean; } | Promise<{ error: string | null; success: boolean; }>;
+}
+export function registerSrv(service: SrvDef): void;
+export function registerSrv(serviceId: string, service: SrvDef): void;
+export function registerSrv(peer: IFluenceClient$$, service: SrvDef): void;
+export function registerSrv(peer: IFluenceClient$$, serviceId: string, service: SrvDef): void;
+export function registerSrv(...args: any[]) {
     registerService$$(
         args,
         {
@@ -125,8 +133,20 @@ export function registerSrv(...args) {
     );
 }
 
-
-export function registerCalcService(...args) {
+export interface CalcServiceDef {
+    add: (num: number, callParams: CallParams$$<'num'>) => number | Promise<number>;
+    clear_state: (callParams: CallParams$$<null>) => void | Promise<void>;
+    divide: (num: number, callParams: CallParams$$<'num'>) => number | Promise<number>;
+    multiply: (num: number, callParams: CallParams$$<'num'>) => number | Promise<number>;
+    state: (callParams: CallParams$$<null>) => number | Promise<number>;
+    subtract: (num: number, callParams: CallParams$$<'num'>) => number | Promise<number>;
+    test_logs: (callParams: CallParams$$<null>) => void | Promise<void>;
+}
+export function registerCalcService(service: CalcServiceDef): void;
+export function registerCalcService(serviceId: string, service: CalcServiceDef): void;
+export function registerCalcService(peer: IFluenceClient$$, service: CalcServiceDef): void;
+export function registerCalcService(peer: IFluenceClient$$, serviceId: string, service: CalcServiceDef): void;
+export function registerCalcService(...args: any[]) {
     registerService$$(
         args,
         {
@@ -256,8 +276,14 @@ export function registerCalcService(...args) {
     );
 }
 
-
-export function registerHelloWorld(...args) {
+export interface HelloWorldDef {
+    hello: (str: string, callParams: CallParams$$<'str'>) => string | Promise<string>;
+}
+export function registerHelloWorld(service: HelloWorldDef): void;
+export function registerHelloWorld(serviceId: string, service: HelloWorldDef): void;
+export function registerHelloWorld(peer: IFluenceClient$$, service: HelloWorldDef): void;
+export function registerHelloWorld(peer: IFluenceClient$$, serviceId: string, service: HelloWorldDef): void;
+export function registerHelloWorld(...args: any[]) {
     registerService$$(
         args,
         {
@@ -514,8 +540,20 @@ export const resourceTest_script = `
 )
 `;
 
+export type ResourceTestResult = [string | null, string[]]
 
-export function resourceTest(...args) {
+export function resourceTest(
+    label: string,
+    config?: {ttl?: number}
+): Promise<ResourceTestResult>;
+
+export function resourceTest(
+    peer: IFluenceClient$$,
+    label: string,
+    config?: {ttl?: number}
+): Promise<ResourceTestResult>;
+
+export function resourceTest(...args: any[]) {
     return callFunction$$(
         args,
         {
@@ -578,8 +616,16 @@ export const helloTest_script = `
 )
 `;
 
+export function helloTest(
+    config?: {ttl?: number}
+): Promise<string>;
 
-export function helloTest(...args) {
+export function helloTest(
+    peer: IFluenceClient$$,
+    config?: {ttl?: number}
+): Promise<string>;
+
+export function helloTest(...args: any[]) {
     return callFunction$$(
         args,
         {
@@ -645,8 +691,18 @@ export const demo_calculation_script = `
 )
 `;
 
+export function demo_calculation(
+    service_id: string,
+    config?: {ttl?: number}
+): Promise<number>;
 
-export function demo_calculation(...args) {
+export function demo_calculation(
+    peer: IFluenceClient$$,
+    service_id: string,
+    config?: {ttl?: number}
+): Promise<number>;
+
+export function demo_calculation(...args: any[]) {
     return callFunction$$(
         args,
         {
@@ -720,8 +776,18 @@ export const marineTest_script = `
 )
 `;
 
+export function marineTest(
+    wasm64: string,
+    config?: {ttl?: number}
+): Promise<number>;
 
-export function marineTest(...args) {
+export function marineTest(
+    peer: IFluenceClient$$,
+    wasm64: string,
+    config?: {ttl?: number}
+): Promise<number>;
+
+export function marineTest(...args: any[]) {
     return callFunction$$(
         args,
         {

@@ -10,6 +10,6 @@
   "packages": {
     "packages/core/js-client": {},
     "packages/core/marine-worker": {},
-    "packages/core/aqua-compiler": {}
+    "packages/core/aqua-to-js": {}
   }
 }

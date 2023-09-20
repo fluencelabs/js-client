@@ -23,7 +23,7 @@ export default function(compilerVer: string, aquaApiVer: string, outputType: Out
  *
  * This file is generated using:
  * @fluencelabs/aqua-api version: ${aquaApiVer}
- * @fluencelabs/aqua-compiler version: ${compilerVer}
+ * @fluencelabs/aqua-to-js version: ${compilerVer}
  * If you find any bugs in generated AIR, please write an issue on GitHub: https://github.com/fluencelabs/aqua/issues
  * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
  *

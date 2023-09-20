@@ -24,7 +24,7 @@ import { getPackageJsonContent, PackageJson } from '../../utils.js';
 function replacePackageTypes(generated: string, pkg: PackageJson) {
     return generated
         .replace('@fluencelabs/aqua-api version: 0.0.0', '@fluencelabs/aqua-api version: ' + pkg.devDependencies['@fluencelabs/aqua-api'])
-        .replace('@fluencelabs/aqua-compiler version: 0.0.0', '@fluencelabs/aqua-compiler version: ' + pkg.version);
+        .replace('@fluencelabs/aqua-to-js version: 0.0.0', '@fluencelabs/aqua-to-js version: ' + pkg.version);
 }
 
 describe('Aqua to js/ts compiler', () => {

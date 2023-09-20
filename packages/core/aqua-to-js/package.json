@@ -1,5 +1,5 @@
 {
-    "name": "@fluencelabs/aqua-compiler",
+    "name": "@fluencelabs/aqua-to-js",
     "type": "module",
     "version": "0.0.0",
     "description": "Tool for generating aqua wrapper",
