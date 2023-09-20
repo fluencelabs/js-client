@@ -22,43 +22,37 @@ interface DefaultServiceId {
     s_Some__f_value?: string
 }
 
-export class ServiceGenerator {
-    constructor(
-        private typeGenerator: TypeGenerator
-    ) {}
+export function generateServices(typeGenerator: TypeGenerator, services: Record<string, ServiceDef>) {
+    const generated = Object.entries(services).map(([srvName, srvDef]) => generateService(typeGenerator, srvName, srvDef)).join('\n\n');
 
-    generate(services: Record<string, ServiceDef>): string {
-        const generated = Object.entries(services).map(([srvName, srvDef]) => this.generateService(srvName, srvDef)).join('\n\n');
+    return generated + '\n';
+}
 
-        return generated + '\n';
-    }
+function generateService(typeGenerator: TypeGenerator, srvName: string, srvDef: ServiceDef) {
+    return [
+        typeGenerator.serviceType(srvName, srvDef),
+        generateRegisterServiceOverload(typeGenerator, srvName, srvDef)
+    ].join('\n');
+}
 
-    private generateService(srvName: string, srvDef: ServiceDef) {
-        return [
-            this.typeGenerator.serviceType(srvName, srvDef),
-            this.generateRegisterServiceOverload(srvName, srvDef)
-        ].join('\n');
-    }
+function generateRegisterServiceOverload(typeGenerator: TypeGenerator, srvName: string, srvDef: ServiceDef) {
+    return [
+        `export function register${srvName}(${typeGenerator.type('...args', 'any[]')}) {`,
+        '    registerService$$(',
+        '        args,',
+        `        ${serviceToJson(srvDef)}`,
+        '    );',
+        '}'
+    ].join('\n');
+}
 
-    private generateRegisterServiceOverload(srvName: string, srvDef: ServiceDef) {
-        return [
-            `export function register${srvName}(${this.typeGenerator.type('...args', 'any[]')}) {`,
-            '    registerService$$(',
-            '        args,',
-            `        ${this.serviceToJson(srvDef)}`,
-            '    );',
-            '}'
-        ].join('\n');
-    }
-
-    private serviceToJson(service: ServiceDef): string {
-        return JSON.stringify({
-            ...(
-                (service.defaultServiceId as DefaultServiceId)?.s_Some__f_value
-                    ? { defaultServiceId: (service.defaultServiceId as DefaultServiceId).s_Some__f_value }
-                    : {}
-            ),
-            functions: recursiveRenameLaquaProps(service.functions)
-        }, null, 4);
-    }
+function serviceToJson(service: ServiceDef): string {
+    return JSON.stringify({
+        ...(
+            (service.defaultServiceId as DefaultServiceId)?.s_Some__f_value
+                ? { defaultServiceId: (service.defaultServiceId as DefaultServiceId).s_Some__f_value }
+                : {}
+        ),
+        functions: recursiveRenameLaquaProps(service.functions)
+    }, null, 4);
 }

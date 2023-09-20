@@ -17,27 +17,21 @@
 import { recursiveRenameLaquaProps } from '../utils.js';
 import { AquaFunction, TypeGenerator } from './interfaces.js';
 
-export class FunctionGenerator {
-    constructor(
-        private typeGenerator: TypeGenerator
-    ) {}
-    
-    generate(functions: Record<string, AquaFunction>) {
-        return Object.values(functions).map(func => this.generateFunction(func)).join('\n\n');
-    }
+export function generateFunctions(typeGenerator: TypeGenerator, functions: Record<string, AquaFunction>) {
+    return Object.values(functions).map(func => generateFunction(typeGenerator, func)).join('\n\n');
+}
 
-    private generateFunction(func: AquaFunction) {
-        const scriptConstName = func.funcDef.functionName + '_script';
-        return `export const ${scriptConstName} = \`
+function generateFunction(typeGenerator: TypeGenerator, func: AquaFunction) {
+    const scriptConstName = func.funcDef.functionName + '_script';
+    return `export const ${scriptConstName} = \`
 ${func.script}\`;
 
-${this.typeGenerator.funcType(func)}
-export function ${func.funcDef.functionName}(${this.typeGenerator.type('...args', 'any[]')}) {
+${typeGenerator.funcType(func)}
+export function ${func.funcDef.functionName}(${typeGenerator.type('...args', 'any[]')}) {
     return callFunction$$(
         args,
         ${JSON.stringify(recursiveRenameLaquaProps(func.funcDef), null, 4)},
         ${scriptConstName}
     );
 }`
-    }
 }
