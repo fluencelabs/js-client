@@ -17,7 +17,7 @@
 import { OutputType } from './interfaces.js';
 import { PackageJson } from '../utils.js';
 
-export default function({ version, devDependencies }: PackageJson, outputType: OutputType) {
+export default function generateHeader({ version, devDependencies }: PackageJson, outputType: OutputType) {
     return `/* eslint-disable */
 // @ts-nocheck
 /**
