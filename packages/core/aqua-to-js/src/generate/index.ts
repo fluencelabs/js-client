@@ -47,10 +47,10 @@ export async function generateTypes({ services, functions }: CompilationResult, 
     
     return `${header(version, devDependencies['@fluencelabs/aqua-api'], 'ts')}
 
-// Services
+${Object.entries(services).length > 0 ? `// Services
 ${generatedServices}
-
-// Functions
+` : ''}
+${Object.entries(functions).length > 0 ? `// Functions
 ${generatedFunctions}
-`
+`: ''}`
 }
