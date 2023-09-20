@@ -19,6 +19,7 @@ import {
     generateTypes,
 } from './generate/index.js';
 import { CompilationResult } from './generate/interfaces.js';
+import { getPackageJsonContent } from './utils.js';
 
 type OutputType = 'js' | 'ts';
 
@@ -34,10 +35,12 @@ interface TsOutput {
 type LanguageOutput = JsOutput | TsOutput;
 
 export default async function(res: CompilationResult, outputType: OutputType): Promise<LanguageOutput> {
+    const packageJson = await getPackageJsonContent();
+    
     return outputType === 'js' ? {
-        sources: await generateSources(res, 'js'),
-        types: await generateTypes(res)
+        sources: await generateSources(res, 'js', packageJson),
+        types: await generateTypes(res, packageJson)
     } : {
-        sources: await generateSources(res, 'ts'),
+        sources: await generateSources(res, 'ts', packageJson),
     };
 };
