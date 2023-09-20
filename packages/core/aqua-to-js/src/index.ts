@@ -32,9 +32,12 @@ interface TsOutput {
     sources: string;
 }
 
-type LanguageOutput = JsOutput | TsOutput;
+type LanguageOutput = {
+    "js": JsOutput,
+    "ts": TsOutput
+};
 
-export default async function aquaToJs(res: CompilationResult, outputType: OutputType): Promise<LanguageOutput> {
+export default async function aquaToJs<T extends OutputType>(res: CompilationResult, outputType: T): Promise<LanguageOutput[T]> {
     const packageJson = await getPackageJsonContent();
     
     return outputType === 'js' ? {
@@ -42,5 +45,5 @@ export default async function aquaToJs(res: CompilationResult, outputType: Outpu
         types: await generateTypes(res, packageJson)
     } : {
         sources: await generateSources(res, 'ts', packageJson),
-    };
+    } as LanguageOutput[T];
 };
