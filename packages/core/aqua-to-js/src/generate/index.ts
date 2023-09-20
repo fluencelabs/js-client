@@ -22,8 +22,7 @@ import header from './header.js';
 
 export async function generateSources({ services, functions }: CompilationResult, outputType: OutputType, packageJson: PackageJson) {
     const typeGenerator = outputType === 'js' ? new JSTypeGenerator() : new TSTypeGenerator();
-    const { version, devDependencies } = packageJson;
-    return `${header(version, devDependencies['@fluencelabs/aqua-api'], outputType)}
+    return `${header(packageJson, outputType)}
 
 ${Object.entries(services).length > 0 ? `// Services
 ${generateServices(typeGenerator, services)}
@@ -35,7 +34,6 @@ ${generateFunctions(typeGenerator, functions)}
 
 export async function generateTypes({ services, functions }: CompilationResult, packageJson: PackageJson) {
     const typeGenerator = new TSTypeGenerator();
-    const { version, devDependencies } = packageJson;
     
     const generatedServices = Object.entries(services)
         .map(([srvName, srvDef]) => typeGenerator.serviceType(srvName, srvDef))
@@ -45,7 +43,7 @@ export async function generateTypes({ services, functions }: CompilationResult, 
         .map(([funcName, funcDef]) => typeGenerator.funcType(funcDef))
         .join('\n');
     
-    return `${header(version, devDependencies['@fluencelabs/aqua-api'], 'ts')}
+    return `${header(packageJson, 'ts')}
 
 ${Object.entries(services).length > 0 ? `// Services
 ${generatedServices}

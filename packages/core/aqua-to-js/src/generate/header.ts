@@ -15,15 +15,16 @@
  */
 
 import { OutputType } from './interfaces.js';
+import { PackageJson } from '../utils.js';
 
-export default function(compilerVer: string, aquaApiVer: string, outputType: OutputType) {
+export default function({ version, devDependencies }: PackageJson, outputType: OutputType) {
     return `/* eslint-disable */
 // @ts-nocheck
 /**
  *
  * This file is generated using:
- * @fluencelabs/aqua-api version: ${aquaApiVer}
- * @fluencelabs/aqua-to-js version: ${compilerVer}
+ * @fluencelabs/aqua-api version: ${devDependencies['@fluencelabs/aqua-api']}
+ * @fluencelabs/aqua-to-js version: ${version}
  * If you find any bugs in generated AIR, please write an issue on GitHub: https://github.com/fluencelabs/aqua/issues
  * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
  *
