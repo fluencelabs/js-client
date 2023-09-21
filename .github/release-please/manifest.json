@@ -1,5 +1,5 @@
 {
   "packages/core/js-client": "0.1.6",
   "packages/core/marine-worker": "0.3.2",
-  "packages/core/aqua-to-js": "0.0.0"
+  "packages/core/aqua-to-js": "1.0.0"
 }

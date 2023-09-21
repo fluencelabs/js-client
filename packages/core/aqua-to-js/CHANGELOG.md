@@ -1,0 +1,12 @@
+# Changelog
+
+## 1.0.0 (2023-09-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **aqua-compiler:** JS-client aqua wrapper [fixes DXJ-461] ([#347](https://github.com/fluencelabs/js-client/issues/347))
+
+### Features
+
+* **aqua-compiler:** JS-client aqua wrapper [fixes DXJ-461] ([#347](https://github.com/fluencelabs/js-client/issues/347)) ([7fff3b1](https://github.com/fluencelabs/js-client/commit/7fff3b1c0374eef76ab4e665b13cf97b5c50ff70))
