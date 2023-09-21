@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-type SomeNonArrowTypes = ScalarType | OptionType | ArrayType | StructType | TopType | BottomType;
+type SimpleTypes = ScalarType | OptionType | ArrayType | StructType | TopType | BottomType | NilType;
 
-export type NonArrowType = SomeNonArrowTypes | ProductType<SomeNonArrowTypes>;
+export type NonArrowType = SimpleTypes | ProductType<SimpleTypes>;
 
 export type TopType = {
     /**
@@ -108,35 +108,31 @@ export type StructType = {
     fields: { [key: string]: NonArrowType };
 };
 
-export type LabeledProductType<T> =
-    | {
-          /**
-           * Type descriptor. Used for pattern-matching
-           */
-          tag: 'labeledProduct';
+export type LabeledProductType<T> = {
+    /**
+     * Type descriptor. Used for pattern-matching
+     */
+    tag: 'labeledProduct';
 
-          /**
-           * Labelled product fields
-           */
-          fields: { [key: string]: T };
-      }
-    | NilType;
+    /**
+     * Labelled product fields
+     */
+    fields: { [key: string]: T };
+};
 
-export type UnlabeledProductType<T> =
-    | {
-          /**
-           * Type descriptor. Used for pattern-matching
-           */
-          tag: 'unlabeledProduct';
+export type UnlabeledProductType<T> = {
+    /**
+     * Type descriptor. Used for pattern-matching
+     */
+    tag: 'unlabeledProduct';
 
-          /**
-           * Items in unlabelled product
-           */
-          items: Array<T>;
-      }
-    | NilType;
+    /**
+     * Items in unlabelled product
+     */
+    items: Array<T>;
+};
 
-export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T>;
+export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T> | NilType;
 
 /**
  * ArrowType is a profunctor pointing its domain to codomain.
@@ -238,7 +234,7 @@ export interface ServiceDef {
     /**
      * List of functions which the service consists of
      */
-    functions: LabeledProductType<ArrowWithoutCallbacks>;
+    functions: LabeledProductType<ArrowWithoutCallbacks> | NilType;
 }
 
 /**
