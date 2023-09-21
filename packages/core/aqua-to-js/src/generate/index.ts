@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-import { CompilationResult, JSTypeGenerator, OutputType, TSTypeGenerator } from './interfaces.js';
+import { CompilationResult, JSTypeGenerator, OutputType, TSTypeGenerator, TypeGenerator } from './interfaces.js';
 import { PackageJson } from '../utils.js';
 import { generateServices } from './service.js';
 import { generateFunctions } from './function.js';
 import header from './header.js';
 
+const typeGenerators: Record<OutputType, TypeGenerator> = { 
+    'js': new JSTypeGenerator(),
+    'ts': new TSTypeGenerator()
+};
+
 export async function generateSources({ services, functions }: CompilationResult, outputType: OutputType, packageJson: PackageJson) {
-    const typeGenerator = outputType === 'js' ? new JSTypeGenerator() : new TSTypeGenerator();
+    const typeGenerator = typeGenerators[outputType];
     return `${header(packageJson, outputType)}
 
 ${Object.entries(services).length > 0 ? `// Services
@@ -33,7 +38,7 @@ ${generateFunctions(typeGenerator, functions)}
 }
 
 export async function generateTypes({ services, functions }: CompilationResult, packageJson: PackageJson) {
-    const typeGenerator = new TSTypeGenerator();
+    const typeGenerator = typeGenerators['ts'];
     
     const generatedServices = Object.entries(services)
         .map(([srvName, srvDef]) => typeGenerator.serviceType(srvName, srvDef))
