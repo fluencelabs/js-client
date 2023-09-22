@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.7](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.6...js-client-v0.1.7) (2023-09-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.48.0 ([#350](https://github.com/fluencelabs/js-client/issues/350)) ([945908a](https://github.com/fluencelabs/js-client/commit/945908a992976f2ad953bcaa3918741f890ffeeb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/marine-worker bumped to 0.3.3
+
 ## [0.1.6](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.5...js-client-v0.1.6) (2023-09-15)
 
 

@@ -1,6 +1,6 @@
 {
     "name": "@fluencelabs/js-client",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "Client for interacting with Fluence network",
     "engines": {
         "node": ">=10",
