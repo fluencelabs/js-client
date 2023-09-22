@@ -10,6 +10,8 @@
   "packages": {
     "packages/core/js-client": {},
     "packages/core/marine-worker": {},
-    "packages/core/aqua-to-js": {}
+    "packages/core/aqua-to-js": {
+        "release-as": "0.0.1"
+    }
   }
 }
