@@ -20,11 +20,13 @@ interface PackageJsonContent {
 }
 
 // This will be substituted in build phase
-const packageJsonContent: PackageJsonContent = JSON.parse(`[__PACKAGE_JSON_CONTENT__]`)[0];
+const packageJsonContentString = `__PACKAGE_JSON_CONTENT__`;
+let parsedPackageJsonContent: PackageJsonContent;
 
 const PRIMARY_CDN = "https://unpkg.com/"; 
 
 export async function fetchResource(pkg: string, assetPath: string) {
+    const packageJsonContent = parsedPackageJsonContent || (parsedPackageJsonContent = JSON.parse(packageJsonContentString));
     const version = packageJsonContent.dependencies[pkg] || packageJsonContent.devDependencies[pkg];
     
     if (version === undefined) {
