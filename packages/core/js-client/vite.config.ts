@@ -17,6 +17,7 @@
 import inject from '@rollup/plugin-inject';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { createRequire } from 'module';
+import { readFileSync } from 'fs';
 
 const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
@@ -51,5 +52,8 @@ export default {
                 global: 'globalThis',
             },
         },
+    },
+    define: {
+        __PACKAGE_JSON_CONTENT__: readFileSync('./package.json', 'utf-8')
     },
 }

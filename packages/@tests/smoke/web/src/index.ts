@@ -19,7 +19,7 @@ const test = async () => {
     }
 
     console.log('starting puppeteer...');
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: false});
     const page = (await browser.pages())[0];
 
     // uncomment to debug what's happening inside the browser

@@ -15,19 +15,21 @@
  */
 
 interface PackageJsonContent {
-    dependencies: Record<string, string>
+    dependencies: Record<string, string | undefined>;
+    devDependencies: Record<string, string | undefined>;
 }
 
 // This will be substituted in build phase
-const packageJsonContent = '__PACKAGE_JSON_CONTENT__' as unknown as PackageJsonContent;
+const packageJsonContent: PackageJsonContent = JSON.parse(`__PACKAGE_JSON_CONTENT__`);
 
 const PRIMARY_CDN = "https://unpkg.com/"; 
 
 export async function fetchResource(pkg: string, assetPath: string) {
-    const version = packageJsonContent.dependencies[pkg];
+    const version = packageJsonContent.dependencies[pkg] || packageJsonContent.devDependencies[pkg];
     
     if (version === undefined) {
-        throw new Error(`Cannot find version of ${pkg} in package.json. Available versions: ${Object.keys(packageJsonContent.dependencies).join(',')}`);
+        const availableDeps = [...Object.keys(packageJsonContent.dependencies), ...Object.keys(packageJsonContent.devDependencies)];
+        throw new Error(`Cannot find version of ${pkg} in package.json. Available versions: ${availableDeps.join(',')}`);
     }
     
     const refinedAssetPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;

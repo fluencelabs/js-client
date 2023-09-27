@@ -29,7 +29,7 @@ import module from 'module';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
 
-const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '/dist/browser/marine-worker.umd.js').then(res => res.text());
+const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '/dist/browser/marine-worker.umd.cjs').then(res => res.text());
 const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm').then(res => res.arrayBuffer());
 const fetchAvmWasm = () => fetchResource('@fluencelabs/avm', '/dist/avm.wasm').then(res => res.arrayBuffer());
 
