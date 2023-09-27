@@ -1,8 +1,8 @@
 {
     "extends": "../../../tsconfig.json",
     "compilerOptions": {
-        "types": ["vite/client"],
-        "outDir": "dist/types",
+        "types": ["vite/client", "node"],
+        "outDir": "./dist",
         "esModuleInterop": true,
         "resolveJsonModule": true
     },

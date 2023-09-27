@@ -14,6 +14,23 @@
  * limitations under the License.
  */
 
-export async function fetchResource(assetPath: string, version: string) {
-    return fetch(new globalThis.URL(`@fluencelabs/js-client@${version}/dist` + assetPath, `https://unpkg.com/`));
+interface PackageJsonContent {
+    dependencies: Record<string, string>
+}
+
+// This will be substituted in build phase
+const packageJsonContent = '__PACKAGE_JSON_CONTENT__' as unknown as PackageJsonContent;
+
+const PRIMARY_CDN = "https://unpkg.com/"; 
+
+export async function fetchResource(pkg: string, assetPath: string) {
+    const version = packageJsonContent.dependencies[pkg];
+    
+    if (version === undefined) {
+        throw new Error(`Cannot find version of ${pkg} in package.json. Available versions: ${Object.keys(packageJsonContent.dependencies).join(',')}`);
+    }
+    
+    const refinedAssetPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
+    
+    return fetch(new globalThis.URL(`${pkg}@${version}/` + refinedAssetPath, PRIMARY_CDN));
 }

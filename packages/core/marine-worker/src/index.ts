@@ -19,7 +19,7 @@ import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } f
 import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluencelabs/marine-js/dist/types';
 import { Observable, Subject } from 'observable-fns';
 // @ts-ignore no types provided for package
-import { expose } from 'threads';
+import { expose } from 'threads/worker';
 
 const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
     return {
