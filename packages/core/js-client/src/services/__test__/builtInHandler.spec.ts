@@ -122,7 +122,7 @@ describe('Tests for default handler', () => {
                     initPeerId: 'init peer id',
                     timestamp: 595951200,
                     ttl: 595961200,
-                    signature: 'sig',
+                    signature: new Uint8Array([]),
                 },
             };
 
@@ -156,7 +156,7 @@ describe('Tests for default handler', () => {
                 initPeerId: 'init peer id',
                 timestamp: 595951200,
                 ttl: 595961200,
-                signature: 'sig',
+                signature: new Uint8Array([]),
             },
         };
 
