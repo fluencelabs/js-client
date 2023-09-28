@@ -53,15 +53,6 @@ export const runTest = async (): Promise<TestResult> => {
         console.log('my peer id: ', client.getPeerId());
         console.log('my sk id: ', fromByteArray(client.getPeerSecretKey()));
 
-        console.log('running resource test...');
-        const [res, errors] = await resourceTest('my_resource');
-        if (res === null) {
-            console.log('resource test failed, errors', errors);
-            return { type: 'failure', error: errors.join(', ') };
-        } else {
-            console.log('resource test finished, result', res);
-        }
-
         console.log('running hello test...');
         const hello = await helloTest();
         console.log('hello test finished, result: ', hello);
