@@ -66,9 +66,8 @@ export const runTest = async (): Promise<TestResult> => {
         console.log('marine test finished, result: ', marine);
 
         const returnVal = {
-            res,
             hello,
-            // marine,
+            marine,
         };
         return { type: 'success', data: JSON.stringify(returnVal) };
     } finally {
