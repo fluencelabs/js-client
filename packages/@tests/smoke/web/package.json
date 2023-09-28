@@ -12,7 +12,7 @@
     "scripts": {
         "build": "tsc",
         "simulate-cdn": "http-server -p 8765 ../../../client/js-client.web.standalone/dist",
-        "test_commented_out": "node --loader ts-node/esm ./src/index.ts",
+        "test": "node --loader ts-node/esm ./src/index.ts",
         "serve": "http-server public"
     },
     "repository": "https://github.com/fluencelabs/fluence-js",
