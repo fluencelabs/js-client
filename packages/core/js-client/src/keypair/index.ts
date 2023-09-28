@@ -67,12 +67,8 @@ export class KeyPair {
         return this.key.marshal().subarray(0, 32);
     }
 
-    signBytes(data: Uint8Array): Promise<Uint8Array> {
-        return this.key.sign(data);
-    }
-
-    verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
-        return this.key.public.verify(data, signature);
+    getPrivateKey(): PrivateKey {
+        return this.key;
     }
 }
 

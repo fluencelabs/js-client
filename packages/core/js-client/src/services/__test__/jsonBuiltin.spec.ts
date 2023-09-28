@@ -56,7 +56,7 @@ describe('Sig service test suite', () => {
                 };
             });
         });
-        const p = peer.internals.createNewParticle(script);
+        const p = await peer.internals.createNewParticle(script);
         await peer.internals.initiateParticle(p, doNothing);
 
         const [nestedFirst, nestedSecond, outerFirst, outerSecond, outerFirstString, outerFirstParsed] = await promise;

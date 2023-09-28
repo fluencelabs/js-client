@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { fromUint8Array, toUint8Array } from 'js-base64';
+import { atob, fromUint8Array, toUint8Array } from 'js-base64';
 import { CallResultsArray } from '@fluencelabs/avm';
 import { v4 as uuidv4 } from 'uuid';
 import { Buffer } from 'buffer';
 import { IParticle } from './interfaces.js';
+import { concat } from 'uint8arrays/concat';
+import { numberToLittleEndianBytes } from '../util/bytes.js';
+import { KeyPair } from '../keypair/index.js';
+import { PrivateKey, PublicKey } from '@libp2p/interface/keys';
 
 export class Particle implements IParticle {
-    readonly signature: undefined;
-
     constructor(
         public readonly id: string,
         public readonly timestamp: number,
@@ -30,12 +32,15 @@ export class Particle implements IParticle {
         public readonly data: Uint8Array,
         public readonly ttl: number,
         public readonly initPeerId: string,
-    ) {
-        this.signature = undefined;
-    }
+        public readonly signature: Uint8Array
+    ) {}
 
-    static createNew(script: string, initPeerId: string, ttl: number): Particle {
-        return new Particle(uuidv4(), Date.now(), script, Buffer.from([]), ttl, initPeerId);
+    static async createNew(script: string, initPeerId: string, ttl: number, privateKey: PrivateKey): Promise<Particle> {
+        const id = uuidv4();
+        const timestamp = Date.now();
+        const message = buildParticleMessage({ id, initPeerId, timestamp, ttl, script });
+        const signature = await privateKey.sign(message);
+        return new Particle(uuidv4(), Date.now(), script, Buffer.from([]), ttl, initPeerId, signature);
     }
 
     static fromString(str: string): Particle {
@@ -47,10 +52,26 @@ export class Particle implements IParticle {
             toUint8Array(json.data),
             json.ttl,
             json.init_peer_id,
+            toUint8Array(json.signature)
         );
 
         return res;
     }
+}
+
+/**
+ * Builds particle message for signing
+ */
+export const buildParticleMessage = ({ id, initPeerId, timestamp, ttl, script }: Omit<IParticle, 'signature' | 'data'>): Uint8Array => {
+    const en = new TextEncoder();
+
+    return concat([
+        en.encode(id),
+        en.encode(initPeerId),
+        numberToLittleEndianBytes(timestamp, 'u64'),
+        numberToLittleEndianBytes(ttl, 'u32'),
+        en.encode(script),
+    ]);
 }
 
 /**
@@ -68,10 +89,18 @@ export const hasExpired = (particle: IParticle): boolean => {
 };
 
 /**
+ * Validates that particle signature is correct
+ */
+export const verifySignature = async (particle: IParticle, publicKey: PublicKey): Promise<boolean> => {
+    const message = buildParticleMessage(particle);
+    return publicKey.verify(message, particle.signature);
+}
+
+/**
  * Creates a particle clone with new data
  */
 export const cloneWithNewData = (particle: IParticle, newData: Uint8Array): IParticle => {
-    return new Particle(particle.id, particle.timestamp, particle.script, newData, particle.ttl, particle.initPeerId);
+    return new Particle(particle.id, particle.timestamp, particle.script, newData, particle.ttl, particle.initPeerId, particle.signature);
 };
 
 /**
@@ -92,8 +121,7 @@ export const serializeToString = (particle: IParticle): string => {
         timestamp: particle.timestamp,
         ttl: particle.ttl,
         script: particle.script,
-        // TODO: copy signature from a particle after signatures will be implemented on nodes
-        signature: [],
+        signature: fromUint8Array(particle.signature),
         data: particle.data && fromUint8Array(particle.data),
     });
 };

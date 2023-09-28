@@ -5,11 +5,11 @@ import { handleTimeout } from '../../particle/Particle.js';
 describe('Basic AVM functionality in Fluence Peer tests', () => {
     it('Simple call', async () => {
         await withPeer(async (peer) => {
-            const res = await new Promise<string[]>((resolve, reject) => {
+            const res = await new Promise<string[]>(async (resolve, reject) => {
                 const script = `
                 (call %init_peer_id% ("print" "print") ["1"])
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -33,7 +33,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
 
     it('Par call', async () => {
         await withPeer(async (peer) => {
-            const res = await new Promise<string[]>((resolve, reject) => {
+            const res = await new Promise<string[]>(async (resolve, reject) => {
                 const res: any[] = [];
                 const script = `
                 (seq
@@ -44,7 +44,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -70,7 +70,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
 
     it('Timeout in par call: race', async () => {
         await withPeer(async (peer) => {
-            const res = await new Promise((resolve, reject) => {
+            const res = await new Promise(async (resolve, reject) => {
                 const script = `
                 (seq
                     (call %init_peer_id% ("op" "identity") ["slow_result"] arg) 
@@ -86,7 +86,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     )
                 )
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -109,7 +109,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
 
     it('Timeout in par call: wait', async () => {
         await withPeer(async (peer) => {
-            const res = await new Promise((resolve, reject) => {
+            const res = await new Promise(async (resolve, reject) => {
                 const script = `
                 (seq
                     (call %init_peer_id% ("op" "identity") ["timeout_msg"] arg) 
@@ -136,7 +136,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     )
                 )
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);

@@ -66,7 +66,9 @@ export class Sig implements SigDef {
             };
         }
 
-        const signedData = await this.keyPair.signBytes(Uint8Array.from(data));
+        const privateKey = this.keyPair.getPrivateKey();
+
+        const signedData = await privateKey.sign(Uint8Array.from(data));
 
         return {
             success: true,
@@ -79,7 +81,9 @@ export class Sig implements SigDef {
      * Verifies the signature. Required by aqua
      */
     verify(signature: number[], data: number[]): Promise<boolean> {
-        return this.keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
+        const privateKey = this.keyPair.getPrivateKey();
+        const publicKey = privateKey.public;
+        return publicKey.verify(Uint8Array.from(data), Uint8Array.from(signature));
     }
 }
 

@@ -44,8 +44,10 @@ export interface IImmutableParticlePart {
      */
     readonly initPeerId: PeerIdB58;
 
-    // TODO: implement particle signatures
-    readonly signature: undefined;
+    /**
+     * Particle's signature. Concatenation of bytes of all immutable particle fields.
+     */
+    readonly signature: Uint8Array;
 }
 
 /**

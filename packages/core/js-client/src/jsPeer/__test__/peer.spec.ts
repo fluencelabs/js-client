@@ -28,14 +28,14 @@ describe('FluencePeer usage test suite', () => {
 
     it('Should successfully call identity on local peer', async function () {
         await withPeer(async (peer) => {
-            const res = await new Promise<string>((resolve, reject) => {
+            const res = await new Promise<string>(async (resolve, reject) => {
                 const script = `
             (seq
                 (call %init_peer_id% ("op" "identity") ["test"] res)
                 (call %init_peer_id% ("callback" "callback") [res])
             )
             `;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -72,7 +72,7 @@ describe('FluencePeer usage test suite', () => {
 
     it('Should not crash if undefined is passed as a variable', async () => {
         await withPeer(async (peer) => {
-            const res = await new Promise<any>((resolve, reject) => {
+            const res = await new Promise<any>(async (resolve, reject) => {
                 const script = `
         (seq
             (call %init_peer_id% ("load" "arg") [] arg)
@@ -81,7 +81,7 @@ describe('FluencePeer usage test suite', () => {
                 (call %init_peer_id% ("callback" "callback") [res])
             )
         )`;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -112,13 +112,13 @@ describe('FluencePeer usage test suite', () => {
 
     it('Should not crash if an error ocurred in user-defined handler', async () => {
         await withPeer(async (peer) => {
-            const promise = new Promise<any>((_resolve, reject) => {
+            const promise = new Promise<any>(async (_resolve, reject) => {
                 const script = `
         (xor
             (call %init_peer_id% ("load" "arg") [] arg)
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )`;
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -149,13 +149,13 @@ describe('FluencePeer usage test suite', () => {
 });
 
 async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
-    return new Promise<any[]>((resolve, reject) => {
+    return new Promise<any[]>(async (resolve, reject) => {
         const script = `
     (xor
         (call %init_peer_id% ("incorrect" "incorrect") [] res)
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
-        const particle = peer.internals.createNewParticle(script);
+        const particle = await peer.internals.createNewParticle(script);
 
         if (particle instanceof Error) {
             return reject(particle.message);

@@ -21,7 +21,7 @@ import { CallServiceData, ResultCodes } from '../../jsServiceHost/interfaces.js'
 describe('FluencePeer flow tests', () => {
     it('should execute par instruction in parallel', async function () {
         await withPeer(async (peer) => {
-            const res = await new Promise<any>((resolve, reject) => {
+            const res = await new Promise<any>(async (resolve, reject) => {
                 const script = `
                 (par
                     (seq
@@ -35,7 +35,7 @@ describe('FluencePeer flow tests', () => {
                 )
                 `;
 
-                const particle = peer.internals.createNewParticle(script);
+                const particle = await peer.internals.createNewParticle(script);
                 
                 peer.internals.regHandler.forParticle(particle.id, 'flow', 'timeout', (req: CallServiceData) => {
                     const [timeout, message] = req.args;

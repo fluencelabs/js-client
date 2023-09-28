@@ -44,8 +44,8 @@ export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, pe
     log.trace('calling aqua function %j', { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
-    const promise = new Promise((resolve, reject) => {
-        const particle = peer.internals.createNewParticle(script, config?.ttl);
+    const promise = new Promise(async (resolve, reject) => {
+        const particle = await peer.internals.createNewParticle(script, config?.ttl);
 
         if (particle instanceof Error) {
             return reject(particle.message);
