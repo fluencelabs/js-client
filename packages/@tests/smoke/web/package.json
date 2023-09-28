@@ -22,5 +22,7 @@
         "@fluencelabs/js-client": "workspace:^",
         "@test/test-utils": "workspace:../../test-utils"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "puppeteer": "19.7.2"
+    }
 }
