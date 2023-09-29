@@ -41,12 +41,13 @@ const log = logger('aqua');
  * @param args - args in the form of JSON where each key corresponds to the name of the argument
  * @returns
  */
-export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, peer, args }) => {
+export const callAquaFunction: CallAquaFunctionType = async ({ def, script, config, peer, args }) => {
     log.trace('calling aqua function %j', { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
+    const particle = await peer.internals.createNewParticle(script, config?.ttl);
 
-    return peer.internals.createNewParticle(script, config?.ttl).then((particle: IParticle) => new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         if (particle instanceof Error) {
             return reject(particle.message);
         }
@@ -92,5 +93,5 @@ export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, pe
                 );
             }
         });
-    }));
+    })
 };
