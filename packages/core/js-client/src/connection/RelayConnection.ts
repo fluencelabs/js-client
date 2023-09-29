@@ -193,7 +193,9 @@ export class RelayConnection implements IConnection {
                 log.trace('particle signature is incorrect. rejecting particle with id: %s', particle.id);
             }
         } catch (e) {
-            log.error('error on handling an incoming message: %O. particle id: %s', e, particle?.id ?? '0');
+            const particleId = particle?.id
+            const particleIdMessage = typeof particleId === 'string' ? `. particle id: ${particleId}` : '';
+            log.error(`error on handling an incoming message: %O%s`, e, particleIdMessage);
         }
     }
 
