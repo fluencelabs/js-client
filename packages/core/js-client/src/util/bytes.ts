@@ -16,16 +16,16 @@
 
 type Size = 'u32' | 'u64';
 
-export function numberToBytes(n: number, s: Size, e: boolean) {
-    const sizeMap = {
-        'u32': 4,
-        'u64': 8
-    } as const;
+const sizeMap = {
+    'u32': 4,
+    'u64': 8
+} as const;
 
+function numberToBytes(n: number, s: Size, littleEndian: boolean) {
     const size = sizeMap[s];
     const buffer = new ArrayBuffer(size);
     const dv = new DataView(buffer);
-    dv.setUint32(0, n, e);
+    dv.setUint32(0, n, littleEndian);
     return new Uint8Array(buffer);
 }
 
