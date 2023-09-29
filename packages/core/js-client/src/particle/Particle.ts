@@ -59,12 +59,12 @@ export class Particle implements IParticle {
     }
 }
 
+const en = new TextEncoder();
+
 /**
  * Builds particle message for signing
  */
 export const buildParticleMessage = ({ id, timestamp, ttl, script }: Omit<IParticle, 'initPeerId' | 'signature' | 'data'>): Uint8Array => {
-    const en = new TextEncoder();
-
     return concat([
         en.encode(id),
         numberToLittleEndianBytes(timestamp, 'u64'),
