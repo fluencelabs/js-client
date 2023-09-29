@@ -10,14 +10,14 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
             `;
             const particle = await peer.internals.createNewParticle(script);
             
-            const res = await new Promise<string[]>((resolve, reject) => {
+            const res = await new Promise<string>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
 
                 registerHandlersHelper(peer, particle, {
                     print: {
-                        print: (args: Array<Array<string>>) => {
+                        print: (args: Array<string>) => {
                             const [res] = args;
                             resolve(res);
                         },
