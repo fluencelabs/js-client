@@ -45,7 +45,7 @@ export interface IImmutableParticlePart {
     readonly initPeerId: PeerIdB58;
 
     /**
-     * Particle's signature. Concatenation of bytes of all immutable particle fields.
+     * Particle's signature of concatenation of bytes of all immutable particle fields.
      */
     readonly signature: Uint8Array;
 }
