@@ -19,10 +19,11 @@
         "web-vitals": "2.1.4"
     },
     "devDependencies": {
-        "@test/test-utils": "workspace:^"
+        "@test/test-utils": "workspace:^",
+        "puppeteer": "19.7.2"
     },
     "scripts": {
-        "test_commented_out": "node --loader ts-node/esm ./test/index.ts",
+        "test": "node --loader ts-node/esm ./test/index.ts",
         "simulate-cdn": "http-server -p 8766 ../../../client/js-client.web.standalone/dist",
         "start": "react-scripts start",
         "build": "react-scripts build",

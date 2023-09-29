@@ -23,28 +23,32 @@ import { BlobWorker, Worker } from 'threads';
 import { doRegisterNodeUtils } from './services/NodeUtils.js';
 import { fetchResource } from './fetchers/index.js';
 import process from 'process';
-
-import avmWasmUrl from '../node_modules/@fluencelabs/avm/dist/avm.wasm?url';
-import marineJsWasmUrl from '../node_modules/@fluencelabs/marine-js/dist/marine-js.wasm?url';
-import workerCodeUrl from '../node_modules/@fluencelabs/marine-worker/dist/__ENV__/marine-worker.umd.cjs?url';
-
-const JS_CLIENT_VERSION = '__JS_CLIENT_VERSION__';
+import path from 'path';
+import url from 'url';
+import module from 'module';
 
 const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
 
-const fetchWorkerCode = () => fetchResource(workerCodeUrl, JS_CLIENT_VERSION).then(res => res.text());
-const fetchMarineJsWasm = () => fetchResource(marineJsWasmUrl, JS_CLIENT_VERSION).then(res => res.arrayBuffer());
-const fetchAvmWasm = () => fetchResource(avmWasmUrl, JS_CLIENT_VERSION).then(res => res.arrayBuffer());
+const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '/dist/browser/marine-worker.umd.cjs').then(res => res.text());
+const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm').then(res => res.arrayBuffer());
+const fetchAvmWasm = () => fetchResource('@fluencelabs/avm', '/dist/avm.wasm').then(res => res.arrayBuffer());
 
 const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
-    const workerCode = await fetchWorkerCode();
-    
     const marineJsWasm = await fetchMarineJsWasm();
     const avmWasm = await fetchAvmWasm();
     
     const marine = new MarineBackgroundRunner({
-        getValue() {
-            return BlobWorker.fromText(workerCode)
+        async getValue() {
+            if (isNode) {
+                const require = module.createRequire(import.meta.url);
+                const pathToThisFile = path.dirname(url.fileURLToPath(import.meta.url));
+                const pathToWorker = require.resolve('@fluencelabs/marine-worker');
+                const relativePathToWorker = path.relative(pathToThisFile, pathToWorker);
+                return new Worker(relativePathToWorker);
+            } else {
+                const workerCode = await fetchWorkerCode();
+                return BlobWorker.fromText(workerCode)
+            }
         },
         start() {
             return Promise.resolve(undefined);

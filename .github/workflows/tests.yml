@@ -6,7 +6,7 @@ on:
       nox-image:
         description: "nox image tag"
         type: string
-        default: "fluencelabs/nox:minimal_0.2.5"
+        default: "fluencelabs/nox:minimal_0.2.9"
       avm-version:
         description: "@fluencelabs/avm version"
         type: string

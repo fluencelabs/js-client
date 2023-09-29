@@ -21,6 +21,6 @@ import { LazyLoader } from '../interfaces.js';
 
 export class WorkerLoader extends LazyLoader<WorkerImplementation> {
     constructor() {
-        super(() => new Worker('../../../node_modules/@fluencelabs/marine-worker/dist/node/marine-worker.umd.cjs'));
+        super(() => new Worker('../../../node_modules/@fluencelabs/marine-worker/dist/index.js'));
     }
 }
