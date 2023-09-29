@@ -23,8 +23,7 @@ import { noise } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
 import { webSockets } from '@libp2p/websockets';
 import { all } from '@libp2p/websockets/filters';
-import type { Multiaddr } from '@multiformats/multiaddr';
-import { multiaddr } from '@multiformats/multiaddr';
+import { multiaddr, type Multiaddr } from '@multiformats/multiaddr';
 
 import map from 'it-map';
 import { fromString } from 'uint8arrays/from-string';
@@ -172,6 +171,30 @@ export class RelayConnection implements IConnection {
         );
         log.trace('data written to sink');
     }
+    
+    private async processIncomingMessage(msg: string) {
+        let particle: Particle | undefined;
+        try {
+            particle = Particle.fromString(msg);
+            const initPeerId = peerIdFromString(particle.initPeerId);
+
+            if (initPeerId.publicKey === undefined) {
+                log.error('cannot retrieve public key from init_peer_id. particle id: %s. init_peer_id: %s', particle.id, particle.initPeerId);
+                return;
+            }
+
+            const publicKey = unmarshalPublicKey(initPeerId.publicKey);
+            log.trace('got particle from stream with id %s and particle id %s', particle.id, particle.id);
+            const isVerified = await verifySignature(particle, publicKey);
+            if (isVerified) {
+                this.particleSource.next(particle);
+            } else {
+                log.trace('particle signature is incorrect. rejecting particle with id: %s', particle.id);
+            }
+        } catch (e) {
+            log.error('error on handling a new incoming message: %j. particle id: %s', e, particle?.id ?? '0');
+        }
+    }
 
     private async connect() {
         if (this.lib2p2Peer === null) {
@@ -187,26 +210,7 @@ export class RelayConnection implements IConnection {
                 async (source) => {
                     try {
                         for await (const msg of source) {
-                            try {
-                                const particle = Particle.fromString(msg);
-                                const initPeerId = peerIdFromString(particle.initPeerId);
-                                
-                                if (initPeerId.type !== 'Ed25519') {
-                                    log.error('unsupported peer id format in particle with id = %s. expected: %s. given: %s', particle.id, 'Ed25519', initPeerId.type);
-                                    return;
-                                }
-                                
-                                const publicKey = unmarshalPublicKey(initPeerId.publicKey);
-                                log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
-                                const isVerified = await verifySignature(particle, publicKey);
-                                if (isVerified) {
-                                    this.particleSource.next(particle);
-                                } else {
-                                    log.trace('particle signature doesn\'t match with the message. rejecting particle with id: %s', particle.id);
-                                }
-                            } catch (e) {
-                                log.error('error on handling a new incoming message: %j', e);
-                            }
+                            await this.processIncomingMessage(msg);
                         }
                     } catch (e) {
                         log.error('connection closed: %j', e);

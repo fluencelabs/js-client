@@ -11,7 +11,7 @@ describe('FluenceClient usage test suite', () => {
         await withClient(RELAY, {}, async (peer) => {
             // arrange
 
-            const result = await new Promise<string[]>(async (resolve, reject) => {
+            const result = await new Promise<string>(async (resolve, reject) => {
                 const script = `
     (xor
         (seq
