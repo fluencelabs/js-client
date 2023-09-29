@@ -64,6 +64,7 @@ import {
     ResultCodes,
 } from '../jsServiceHost/interfaces.js';
 import { JSONValue } from '../util/commonTypes.js';
+import { fromUint8Array } from 'js-base64';
 
 const log_particle = logger('particle');
 const log_peer = logger('peer');
@@ -317,7 +318,7 @@ export abstract class FluencePeer {
                     log_particle.trace('id %s. call results: %j', item.particle.id, item.callResults);
                 }),
                 filterExpiredParticles(this._expireParticle.bind(this)),
-                groupBy(item => item.particle.id),
+                groupBy(item => fromUint8Array(item.particle.signature)),
                 mergeMap(group$ => {
                     let prevData: Uint8Array = Buffer.from([]);
                     let firstRun = true;
