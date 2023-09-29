@@ -218,8 +218,8 @@ export abstract class FluencePeer {
                 }
             },
 
-            createNewParticle: async (script: string, ttl: number = this.config.defaultTtlMs): Promise<IParticle> => {
-                return await Particle.createNew(script, this.keyPair.getPeerId(), ttl, this.keyPair);
+            createNewParticle: (script: string, ttl: number = this.config.defaultTtlMs): Promise<IParticle> => {
+                return Particle.createNew(script, this.keyPair.getPeerId(), ttl, this.keyPair);
             },
 
             /**
