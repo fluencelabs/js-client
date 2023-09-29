@@ -51,7 +51,7 @@ export class Particle implements IParticle {
             toUint8Array(json.data),
             json.ttl,
             json.init_peer_id,
-            toUint8Array(json.signature)
+            new Uint8Array(json.signature)
         );
 
         return res;
@@ -90,8 +90,10 @@ export const hasExpired = (particle: IParticle): boolean => {
  * Validates that particle signature is correct
  */
 export const verifySignature = async (particle: IParticle, keyPair: KeyPair): Promise<boolean> => {
-    const message = buildParticleMessage(particle);
-    return keyPair.verify(message, particle.signature);
+    // TODO: Uncomment this when nox roll out particle signatures
+    return true;
+    // const message = buildParticleMessage(particle);
+    // return keyPair.verify(message, particle.signature);
 }
 
 /**
@@ -119,7 +121,7 @@ export const serializeToString = (particle: IParticle): string => {
         timestamp: particle.timestamp,
         ttl: particle.ttl,
         script: particle.script,
-        signature: particle.signature,
+        signature: Array.from(particle.signature),
         data: particle.data && fromUint8Array(particle.data),
     });
 };

@@ -28,7 +28,7 @@ describe('FluenceClient usage test suite', () => {
 
             const particle = await peer.internals.createNewParticle(script);
             
-            const result = new Promise<string>((resolve, reject) => {
+            const result = await new Promise<string>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
