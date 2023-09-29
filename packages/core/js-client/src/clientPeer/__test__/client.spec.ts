@@ -11,8 +11,7 @@ describe('FluenceClient usage test suite', () => {
         await withClient(RELAY, {}, async (peer) => {
             // arrange
 
-            const result = await new Promise<string>(async (resolve, reject) => {
-                const script = `
+            const script = `
     (xor
         (seq
             (call %init_peer_id% ("load" "relay") [] init_relay)
@@ -26,8 +25,10 @@ describe('FluenceClient usage test suite', () => {
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )
     )`;
-                const particle = await peer.internals.createNewParticle(script);
 
+            const particle = await peer.internals.createNewParticle(script);
+            
+            const result = new Promise<string>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
@@ -149,14 +150,13 @@ describe('FluenceClient usage test suite', () => {
 
     it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
         await withClient(RELAY, {}, async (peer) => {
-            const promise = new Promise(async (resolve, reject) => {
-                const script = `
+            const script = `
     (xor
         (call "incorrect_peer_id" ("any" "service") [])
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
-                const particle = await peer.internals.createNewParticle(script);
-
+            const particle = await peer.internals.createNewParticle(script);
+            const promise = new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }

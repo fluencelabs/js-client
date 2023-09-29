@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getArgumentTypes, isReturnTypeVoid, CallAquaFunctionType } from '@fluencelabs/interfaces';
+import { CallAquaFunctionType, getArgumentTypes, isReturnTypeVoid } from '@fluencelabs/interfaces';
 
 import {
+    errorHandlingService,
     injectRelayService,
+    injectValueService,
     registerParticleScopeService,
     responseService,
-    errorHandlingService,
     ServiceDescription,
     userHandlerService,
-    injectValueService,
 } from './services.js';
 
 import { logger } from '../util/logger.js';
+import { IParticle } from '../particle/interfaces.js';
 
 const log = logger('aqua');
 
@@ -44,9 +45,8 @@ export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, pe
     log.trace('calling aqua function %j', { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
-    const promise = new Promise(async (resolve, reject) => {
-        const particle = await peer.internals.createNewParticle(script, config?.ttl);
 
+    return peer.internals.createNewParticle(script, config?.ttl).then((particle: IParticle) => new Promise((resolve, reject) => {
         if (particle instanceof Error) {
             return reject(particle.message);
         }
@@ -92,7 +92,5 @@ export const callAquaFunction: CallAquaFunctionType = ({ def, script, config, pe
                 );
             }
         });
-    });
-
-    return promise;
+    }));
 };

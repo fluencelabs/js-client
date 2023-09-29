@@ -39,6 +39,7 @@ import { identifyService } from 'libp2p/identify';
 import { pingService } from 'libp2p/ping';
 import { unmarshalPublicKey } from '@libp2p/crypto/keys';
 import { peerIdFromString } from '@libp2p/peer-id';
+import { Stream } from '@libp2p/interface/connection';
 
 const log = logger('connection');
 
@@ -172,7 +173,7 @@ export class RelayConnection implements IConnection {
         log.trace('data written to sink');
     }
     
-    private async processIncomingMessage(msg: string) {
+    private async processIncomingMessage(msg: string, stream: Stream) {
         let particle: Particle | undefined;
         try {
             particle = Particle.fromString(msg);
@@ -184,7 +185,7 @@ export class RelayConnection implements IConnection {
             }
 
             const publicKey = unmarshalPublicKey(initPeerId.publicKey);
-            log.trace('got particle from stream with id %s and particle id %s', particle.id, particle.id);
+            log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
             const isVerified = await verifySignature(particle, publicKey);
             if (isVerified) {
                 this.particleSource.next(particle);
@@ -210,7 +211,7 @@ export class RelayConnection implements IConnection {
                 async (source) => {
                     try {
                         for await (const msg of source) {
-                            await this.processIncomingMessage(msg);
+                            await this.processIncomingMessage(msg, stream);
                         }
                     } catch (e) {
                         log.error('connection closed: %j', e);
