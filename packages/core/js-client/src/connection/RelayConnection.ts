@@ -192,7 +192,7 @@ export class RelayConnection implements IConnection {
                 log.trace('particle signature is incorrect. rejecting particle with id: %s', particle.id);
             }
         } catch (e) {
-            log.error('error on handling a new incoming message: %j. particle id: %s', e, particle?.id ?? '0');
+            log.error('error on handling an incoming message: %O. particle id: %s', e, particle?.id ?? '0');
         }
     }
 
