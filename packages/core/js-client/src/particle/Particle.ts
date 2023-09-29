@@ -39,7 +39,7 @@ export class Particle implements IParticle {
         const timestamp = Date.now();
         const message = buildParticleMessage({ id, timestamp, ttl, script });
         const signature = await keyPair.signBytes(message);
-        return new Particle(uuidv4(), Date.now(), script, Buffer.from([]), ttl, initPeerId, signature);
+        return new Particle(id, Date.now(), script, Buffer.from([]), ttl, initPeerId, signature);
     }
 
     static fromString(str: string): Particle {
