@@ -38,7 +38,7 @@ export class Particle implements IParticle {
     static async createNew(script: string, initPeerId: string, ttl: number, privateKey: PrivateKey): Promise<Particle> {
         const id = uuidv4();
         const timestamp = Date.now();
-        const message = buildParticleMessage({ id, initPeerId, timestamp, ttl, script });
+        const message = buildParticleMessage({ id, timestamp, ttl, script });
         const signature = await privateKey.sign(message);
         return new Particle(uuidv4(), Date.now(), script, Buffer.from([]), ttl, initPeerId, signature);
     }
