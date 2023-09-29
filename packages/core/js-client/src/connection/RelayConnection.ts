@@ -40,6 +40,7 @@ import { pingService } from 'libp2p/ping';
 import { unmarshalPublicKey } from '@libp2p/crypto/keys';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { Stream } from '@libp2p/interface/connection';
+import { KeyPair } from '../keypair/index.js';
 
 const log = logger('connection');
 
@@ -177,6 +178,7 @@ export class RelayConnection implements IConnection {
         let particle: Particle | undefined;
         try {
             particle = Particle.fromString(msg);
+            log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
             const initPeerId = peerIdFromString(particle.initPeerId);
 
             if (initPeerId.publicKey === undefined) {
@@ -184,9 +186,8 @@ export class RelayConnection implements IConnection {
                 return;
             }
 
-            const publicKey = unmarshalPublicKey(initPeerId.publicKey);
-            log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
-            const isVerified = await verifySignature(particle, publicKey);
+            const keyPair = await KeyPair.fromPublicKey(initPeerId.publicKey);
+            const isVerified = await verifySignature(particle, keyPair);
             if (isVerified) {
                 this.particleSource.next(particle);
             } else {

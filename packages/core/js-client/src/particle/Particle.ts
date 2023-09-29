@@ -22,7 +22,6 @@ import { IParticle } from './interfaces.js';
 import { concat } from 'uint8arrays/concat';
 import { numberToLittleEndianBytes } from '../util/bytes.js';
 import { KeyPair } from '../keypair/index.js';
-import { PrivateKey, PublicKey } from '@libp2p/interface/keys';
 
 export class Particle implements IParticle {
     constructor(
@@ -35,11 +34,11 @@ export class Particle implements IParticle {
         public readonly signature: Uint8Array
     ) {}
 
-    static async createNew(script: string, initPeerId: string, ttl: number, privateKey: PrivateKey): Promise<Particle> {
+    static async createNew(script: string, initPeerId: string, ttl: number, keyPair: KeyPair): Promise<Particle> {
         const id = uuidv4();
         const timestamp = Date.now();
         const message = buildParticleMessage({ id, timestamp, ttl, script });
-        const signature = await privateKey.sign(message);
+        const signature = await keyPair.signBytes(message);
         return new Particle(uuidv4(), Date.now(), script, Buffer.from([]), ttl, initPeerId, signature);
     }
 
@@ -90,9 +89,9 @@ export const hasExpired = (particle: IParticle): boolean => {
 /**
  * Validates that particle signature is correct
  */
-export const verifySignature = async (particle: IParticle, publicKey: PublicKey): Promise<boolean> => {
+export const verifySignature = async (particle: IParticle, keyPair: KeyPair): Promise<boolean> => {
     const message = buildParticleMessage(particle);
-    return publicKey.verify(message, particle.signature);
+    return keyPair.verify(message, particle.signature);
 }
 
 /**
@@ -120,7 +119,7 @@ export const serializeToString = (particle: IParticle): string => {
         timestamp: particle.timestamp,
         ttl: particle.ttl,
         script: particle.script,
-        signature: fromUint8Array(particle.signature),
+        signature: particle.signature,
         data: particle.data && fromUint8Array(particle.data),
     });
 };

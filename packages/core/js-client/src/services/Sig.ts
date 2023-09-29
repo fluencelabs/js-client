@@ -66,9 +66,7 @@ export class Sig implements SigDef {
             };
         }
 
-        const privateKey = this.keyPair.getPrivateKey();
-
-        const signedData = await privateKey.sign(Uint8Array.from(data));
+        const signedData = await this.keyPair.signBytes(Uint8Array.from(data));
 
         return {
             success: true,
