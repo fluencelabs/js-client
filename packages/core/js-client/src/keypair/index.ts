@@ -59,12 +59,6 @@ export class KeyPair {
         const lib2p2Pid = await createFromPrivKey(key);
         return new KeyPair(key, key.public, lib2p2Pid);
     }
-    
-    static async fromPublicKey(publicKey: Uint8Array): Promise<KeyPair> {
-        const pk = unmarshalPublicKey(publicKey);
-        const lib2p2Pid = await createFromPubKey(pk);
-        return new KeyPair(undefined, pk, lib2p2Pid);
-    }
 
     getPeerId(): string {
         return this.libp2pPeerId.toString();

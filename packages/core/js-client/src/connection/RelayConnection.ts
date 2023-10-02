@@ -185,9 +185,8 @@ export class RelayConnection implements IConnection {
                 log.error('cannot retrieve public key from init_peer_id. particle id: %s. init_peer_id: %s', particle.id, particle.initPeerId);
                 return;
             }
-
-            const keyPair = await KeyPair.fromPublicKey(initPeerId.publicKey);
-            const isVerified = await verifySignature(particle, keyPair);
+            
+            const isVerified = await verifySignature(particle, initPeerId.publicKey);
             if (isVerified) {
                 this.particleSource.next(particle);
             } else {

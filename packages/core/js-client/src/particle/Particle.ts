@@ -22,6 +22,7 @@ import { IParticle } from './interfaces.js';
 import { concat } from 'uint8arrays/concat';
 import { numberToLittleEndianBytes } from '../util/bytes.js';
 import { KeyPair } from '../keypair/index.js';
+import { unmarshalPublicKey } from '@libp2p/crypto/keys';
 
 export class Particle implements IParticle {
     constructor(
@@ -89,11 +90,11 @@ export const hasExpired = (particle: IParticle): boolean => {
 /**
  * Validates that particle signature is correct
  */
-export const verifySignature = async (particle: IParticle, keyPair: KeyPair): Promise<boolean> => {
+export const verifySignature = async (particle: IParticle, publicKey: Uint8Array): Promise<boolean> => {
     // TODO: Uncomment this when nox roll out particle signatures
     return true;
     // const message = buildParticleMessage(particle);
-    // return keyPair.verify(message, particle.signature);
+    // return unmarshalPublicKey(publicKey).verify(message, particle.signature);
 }
 
 /**
