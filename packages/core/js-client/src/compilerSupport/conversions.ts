@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { jsonify } from '../util/utils.js';
-import { match } from 'ts-pattern';
-import type { ArrowType, ArrowWithoutCallbacks, NonArrowType } from '@fluencelabs/interfaces';
-import { CallServiceData } from '../jsServiceHost/interfaces.js';
+
+import type {
+    ArrowType,
+    ArrowWithoutCallbacks,
+    NonArrowType,
+} from "@fluencelabs/interfaces";
+import { match } from "ts-pattern";
+
+import { CallServiceData } from "../jsServiceHost/interfaces.js";
+import { jsonify } from "../util/utils.js";
 
 /**
  * Convert value from its representation in aqua language to representation in typescript
@@ -26,10 +32,10 @@ import { CallServiceData } from '../jsServiceHost/interfaces.js';
  */
 export const aqua2ts = (value: any, type: NonArrowType): any => {
     const res = match(type)
-        .with({ tag: 'nil' }, () => {
+        .with({ tag: "nil" }, () => {
             return null;
         })
-        .with({ tag: 'option' }, (opt) => {
+        .with({ tag: "option" }, (opt) => {
             if (value.length === 0) {
                 return null;
             } else {
@@ -37,25 +43,32 @@ export const aqua2ts = (value: any, type: NonArrowType): any => {
             }
         })
         // @ts-ignore
-        .with({ tag: 'scalar' }, { tag: 'bottomType' }, { tag: 'topType' }, () => {
-            return value;
+        .with(
+            { tag: "scalar" },
+            { tag: "bottomType" },
+            { tag: "topType" },
+            () => {
+                return value;
+            },
+        )
+        .with({ tag: "array" }, (arr) => {
+            return value.map((y: any) => {
+                return aqua2ts(y, arr.type);
+            });
         })
-        .with({ tag: 'array' }, (arr) => {
-            return value.map((y: any) => aqua2ts(y, arr.type));
-        })
-        .with({ tag: 'struct' }, (x) => {
+        .with({ tag: "struct" }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = aqua2ts(value[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: "labeledProduct" }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = aqua2ts(value[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: "unlabeledProduct" }, (x) => {
             return x.items.map((type, index) => {
                 return aqua2ts(value[index], type);
             });
@@ -63,8 +76,9 @@ export const aqua2ts = (value: any, type: NonArrowType): any => {
         // uncomment to check that every pattern in matched
         // .exhaustive();
         .otherwise(() => {
-            throw new Error('Unexpected tag: ' + jsonify(type));
+            throw new Error("Unexpected tag: " + jsonify(type));
         });
+
     return res;
 };
 
@@ -74,25 +88,30 @@ export const aqua2ts = (value: any, type: NonArrowType): any => {
  * @param arrow - aqua type definition
  * @returns arguments in typescript representation
  */
-export const aquaArgs2Ts = (req: CallServiceData, arrow: ArrowWithoutCallbacks) => {
+export const aquaArgs2Ts = (
+    req: CallServiceData,
+    arrow: ArrowWithoutCallbacks,
+) => {
     const argTypes = match(arrow.domain)
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: "labeledProduct" }, (x) => {
             return Object.values(x.fields);
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: "unlabeledProduct" }, (x) => {
             return x.items;
         })
-        .with({ tag: 'nil' }, (x) => {
+        .with({ tag: "nil" }, (x) => {
             return [];
         })
         // uncomment to check that every pattern in matched
         // .exhaustive()
         .otherwise(() => {
-            throw new Error('Unexpected tag: ' + jsonify(arrow.domain));
+            throw new Error("Unexpected tag: " + jsonify(arrow.domain));
         });
 
     if (req.args.length !== argTypes.length) {
-        throw new Error(`incorrect number of arguments, expected: ${argTypes.length}, got: ${req.args.length}`);
+        throw new Error(
+            `incorrect number of arguments, expected: ${argTypes.length}, got: ${req.args.length}`,
+        );
     }
 
     return req.args.map((arg, index) => {
@@ -108,10 +127,10 @@ export const aquaArgs2Ts = (req: CallServiceData, arrow: ArrowWithoutCallbacks) 
  */
 export const ts2aqua = (value: any, type: NonArrowType): any => {
     const res = match(type)
-        .with({ tag: 'nil' }, () => {
+        .with({ tag: "nil" }, () => {
             return null;
         })
-        .with({ tag: 'option' }, (opt) => {
+        .with({ tag: "option" }, (opt) => {
             if (value === null || value === undefined) {
                 return [];
             } else {
@@ -119,25 +138,32 @@ export const ts2aqua = (value: any, type: NonArrowType): any => {
             }
         })
         // @ts-ignore
-        .with({ tag: 'scalar' }, { tag: 'bottomType' }, { tag: 'topType' }, () => {
-            return value;
+        .with(
+            { tag: "scalar" },
+            { tag: "bottomType" },
+            { tag: "topType" },
+            () => {
+                return value;
+            },
+        )
+        .with({ tag: "array" }, (arr) => {
+            return value.map((y: any) => {
+                return ts2aqua(y, arr.type);
+            });
         })
-        .with({ tag: 'array' }, (arr) => {
-            return value.map((y: any) => ts2aqua(y, arr.type));
-        })
-        .with({ tag: 'struct' }, (x) => {
+        .with({ tag: "struct" }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = ts2aqua(value[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: "labeledProduct" }, (x) => {
             return Object.entries(x.fields).reduce((agg, [key, type]) => {
                 const val = ts2aqua(value[key], type);
                 return { ...agg, [key]: val };
             }, {});
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: "unlabeledProduct" }, (x) => {
             return x.items.map((type, index) => {
                 return ts2aqua(value[index], type);
             });
@@ -145,7 +171,7 @@ export const ts2aqua = (value: any, type: NonArrowType): any => {
         // uncomment to check that every pattern in matched
         // .exhaustive()
         .otherwise(() => {
-            throw new Error('Unexpected tag: ' + jsonify(type));
+            throw new Error("Unexpected tag: " + jsonify(type));
         });
 
     return res;
@@ -157,8 +183,11 @@ export const ts2aqua = (value: any, type: NonArrowType): any => {
  * @param arrowType - the arrow type which describes the service
  * @returns - value represented in aqua
  */
-export const returnType2Aqua = (returnValue: any, arrowType: ArrowType<NonArrowType>) => {
-    if (arrowType.codomain.tag === 'nil') {
+export const returnType2Aqua = (
+    returnValue: any,
+    arrowType: ArrowType<NonArrowType>,
+) => {
+    if (arrowType.codomain.tag === "nil") {
         return {};
     }
 
@@ -181,12 +210,15 @@ export const returnType2Aqua = (returnValue: any, arrowType: ArrowType<NonArrowT
  * @param arrow - aqua type definition
  * @returns response value in typescript representation
  */
-export const responseServiceValue2ts = (req: CallServiceData, arrow: ArrowType<any>) => {
+export const responseServiceValue2ts = (
+    req: CallServiceData,
+    arrow: ArrowType<any>,
+) => {
     return match(arrow.codomain)
-        .with({ tag: 'nil' }, () => {
+        .with({ tag: "nil" }, () => {
             return undefined;
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
+        .with({ tag: "unlabeledProduct" }, (x) => {
             if (x.items.length === 0) {
                 return undefined;
             }
@@ -195,7 +227,9 @@ export const responseServiceValue2ts = (req: CallServiceData, arrow: ArrowType<a
                 return aqua2ts(req.args[0], x.items[0]);
             }
 
-            return req.args.map((y, index) => aqua2ts(y, x.items[index]));
+            return req.args.map((y, index) => {
+                return aqua2ts(y, x.items[index]);
+            });
         })
         .exhaustive();
 };

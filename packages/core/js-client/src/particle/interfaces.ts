@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PeerIdB58 } from '@fluencelabs/interfaces';
+
+import { PeerIdB58 } from "@fluencelabs/interfaces";
 
 /**
  * Immutable part of the particle.

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { RelayOptions } from '@fluencelabs/interfaces';
-import { multiaddr, Multiaddr } from '@multiformats/multiaddr';
-import { isString } from './utils.js';
+import { RelayOptions } from "@fluencelabs/interfaces";
+import { multiaddr, Multiaddr } from "@multiformats/multiaddr";
+
+import { isString } from "./utils.js";
 
 export function relayOptionToMultiaddr(relay: RelayOptions): Multiaddr {
     const multiaddrString = isString(relay) ? relay : relay.multiaddr;
@@ -29,7 +30,11 @@ export function relayOptionToMultiaddr(relay: RelayOptions): Multiaddr {
 
 export function throwIfHasNoPeerId(ma: Multiaddr): void {
     const peerId = ma.getPeerId();
+
     if (!peerId) {
-        throw new Error('Specified multiaddr is invalid or missing peer id: ' + ma.toString());
+        throw new Error(
+            "Specified multiaddr is invalid or missing peer id: " +
+                ma.toString(),
+        );
     }
 }

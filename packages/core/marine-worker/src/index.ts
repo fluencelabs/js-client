@@ -1,5 +1,5 @@
-/*
- * Copyright 2022 Fluence Labs Limited
+/**
+ * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,57 @@
  * limitations under the License.
  */
 
-import { MarineService } from '@fluencelabs/marine-js/dist/MarineService';
-import type { Env, MarineModuleConfig, MarineServiceConfig, ModuleDescriptor } from '@fluencelabs/marine-js/dist/config'
-import type { JSONArray, JSONObject, LogMessage, CallParameters } from '@fluencelabs/marine-js/dist/types';
-import { Observable, Subject } from 'observable-fns';
+import type {
+    Env,
+    MarineServiceConfig,
+    ModuleDescriptor,
+} from "@fluencelabs/marine-js/dist/config";
+import { MarineService } from "@fluencelabs/marine-js/dist/MarineService";
+import type {
+    JSONArray,
+    JSONObject,
+    LogMessage,
+} from "@fluencelabs/marine-js/dist/types";
+import { Observable, Subject } from "observable-fns";
 // @ts-ignore no types provided for package
-import { expose } from 'threads/worker';
+import { expose } from "threads/worker";
 
-const createSimpleModuleDescriptor = (name: string, envs?: Env): ModuleDescriptor => {
+const createSimpleModuleDescriptor = (
+    name: string,
+    envs?: Env,
+): ModuleDescriptor => {
     return {
         import_name: name,
         config: {
             logger_enabled: true,
             logging_mask: 0,
             wasi: {
-                envs: {...envs},
+                envs: { ...envs },
                 preopened_files: new Set(),
-                mapped_dirs: new Map,
-            }
-        }
-    }
-}
-const createSimpleMarineService = (name: string, env? : Env): MarineServiceConfig => {
+                mapped_dirs: new Map(),
+            },
+        },
+    };
+};
+
+const createSimpleMarineService = (
+    name: string,
+    env?: Env,
+): MarineServiceConfig => {
     return {
         modules_config: [createSimpleModuleDescriptor(name, env)],
-    }
-}
+    };
+};
 
-let marineServices = new Map<string, MarineService>();
+const marineServices = new Map<string, MarineService>();
 let controlModule: WebAssembly.Module | undefined;
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
     init: async (controlModuleWasm: ArrayBuffer | SharedArrayBuffer) => {
-        controlModule = new WebAssembly.Module(new Uint8Array(controlModuleWasm));
+        controlModule = new WebAssembly.Module(
+            new Uint8Array(controlModuleWasm),
+        );
     },
 
     createService: async (
@@ -56,15 +73,20 @@ const toExpose = {
         envs?: Env,
     ): Promise<void> => {
         if (!controlModule) {
-            throw new Error('MarineJS is not initialized. To initialize call `init` function');
+            throw new Error(
+                "MarineJS is not initialized. To initialize call `init` function",
+            );
         }
 
         if (marineServices.has(serviceId)) {
-            throw new Error(`Service with name ${serviceId} already registered`);
+            throw new Error(
+                `Service with name ${serviceId} already registered`,
+            );
         }
 
         const marineConfig = createSimpleMarineService(serviceId, envs);
-        const modules = {[serviceId]: new Uint8Array(wasm)}
+        const modules = { [serviceId]: new Uint8Array(wasm) };
+
         const srv = new MarineService(
             controlModule,
             serviceId,
@@ -73,6 +95,7 @@ const toExpose = {
             modules,
             envs,
         );
+
         await srv.init();
         marineServices.set(serviceId, srv);
     },
@@ -82,10 +105,10 @@ const toExpose = {
     },
 
     removeService: async (serviceId: string) => {
-        if (serviceId === 'avm') {
-            throw new Error('Cannot remove \'avm\' service');
+        if (serviceId === "avm") {
+            throw new Error("Cannot remove 'avm' service");
         }
-        
+
         marineServices.get(serviceId)?.terminate();
         return marineServices.delete(serviceId);
     },
@@ -94,12 +117,19 @@ const toExpose = {
         marineServices.forEach((val, key) => {
             val.terminate();
         });
+
         marineServices.clear();
         onLogMessage.complete();
     },
 
-    callService: async (serviceId: string, functionName: string, args: JSONArray | JSONObject, callParams: any) => {
+    callService: async (
+        serviceId: string,
+        functionName: string,
+        args: JSONArray | JSONObject,
+        callParams: any,
+    ) => {
         const srv = marineServices.get(serviceId);
+
         if (!srv) {
             throw new Error(`service with id=${serviceId} not found`);
         }
@@ -112,12 +142,14 @@ const toExpose = {
     },
 };
 
-type ExposedInterface<T extends {[key: string]: (...args: any[]) => unknown}> = {
+type ExposedInterface<
+    T extends { [key: string]: (...args: any[]) => unknown },
+> = {
     [P in keyof T]: ReturnType<T[P]> extends Observable<unknown>
         ? T[P]
         : ReturnType<T[P]> extends Promise<unknown>
-            ? T[P]
-            : (...args: Parameters<T[P]>) => Promise<ReturnType<T[P]>>
+        ? T[P]
+        : (...args: Parameters<T[P]>) => Promise<ReturnType<T[P]>>;
 };
 
 export type MarineBackgroundInterface = ExposedInterface<typeof toExpose>;

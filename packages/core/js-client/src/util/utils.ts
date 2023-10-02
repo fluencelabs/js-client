@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Fluence Labs Limited
+/**
+ * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ export function jsonify(obj: unknown) {
 }
 
 export const isString = (unknown: unknown): unknown is string => {
-    return unknown !== null && typeof unknown === 'string';
+    return unknown !== null && typeof unknown === "string";
 };
 
 export const isObject = (unknown: unknown): unknown is object => {
-    return unknown !== null && typeof unknown === 'object';
+    return unknown !== null && typeof unknown === "object";
 };

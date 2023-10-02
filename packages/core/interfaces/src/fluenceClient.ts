@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { Node } from './commonTypes.js';
+
+import type { Node } from "./commonTypes.js";
 
 /**
  * A node in Fluence network a client can connect to.
@@ -26,14 +27,14 @@ export type RelayOptions = string | Node;
 /**
  * Fluence Peer's key pair types
  */
-export type KeyTypes = 'RSA' | 'Ed25519' | 'secp256k1';
+export type KeyTypes = "RSA" | "Ed25519" | "secp256k1";
 
 /**
  * Options to specify key pair used in Fluence Peer
  */
 export type KeyPairOptions = {
-    type: 'Ed25519';
-    source: 'random' | Uint8Array;
+    type: "Ed25519";
+    source: "random" | Uint8Array;
 };
 
 /**
@@ -97,7 +98,12 @@ export interface ClientConfig {
 /**
  * Fluence JS Client connection states as string literals
  */
-export const ConnectionStates = ['disconnected', 'connecting', 'connected', 'disconnecting'] as const;
+export const ConnectionStates = [
+    "disconnected",
+    "connecting",
+    "connected",
+    "disconnecting",
+] as const;
 
 /**
  * Fluence JS Client connection states
@@ -128,7 +134,9 @@ export interface IFluenceClient extends IFluenceInternalApi {
     /**
      * Handle connection state changes. Immediately returns current connection state
      */
-    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState;
+    onConnectionStateChange(
+        handler: (state: ConnectionState) => void,
+    ): ConnectionState;
 
     /**
      * Return peer's secret key as byte array.
@@ -145,7 +153,3 @@ export interface IFluenceClient extends IFluenceInternalApi {
      */
     getRelayPeerId(): string;
 }
-
-
-
-

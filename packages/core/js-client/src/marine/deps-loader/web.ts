@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Buffer } from 'buffer';
-import { LazyLoader } from '../interfaces.js';
+
+import { Buffer } from "buffer";
+
+import type { WorkerImplementation } from "threads/dist/types/master";
+
+import { LazyLoader } from "../interfaces.js";
 // @ts-ignore
-import type { WorkerImplementation } from 'threads/dist/types/master';
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
     const sab = new SharedArrayBuffer(buffer.length);
@@ -34,8 +37,10 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
  * @param filePath - path to the wasm file relative to current origin
  * @returns Either SharedArrayBuffer or Buffer with the wasm file
  */
-export const loadWasmFromUrl = async (filePath: string): Promise<SharedArrayBuffer | Buffer> => {
-    const fullUrl = window.location.origin + '/' + filePath;
+export const loadWasmFromUrl = async (
+    filePath: string,
+): Promise<SharedArrayBuffer | Buffer> => {
+    const fullUrl = window.location.origin + "/" + filePath;
     const res = await fetch(fullUrl);
     const ab = await res.arrayBuffer();
     new Uint8Array(ab);
@@ -52,12 +57,16 @@ export const loadWasmFromUrl = async (filePath: string): Promise<SharedArrayBuff
 
 export class WasmLoaderFromUrl extends LazyLoader<SharedArrayBuffer | Buffer> {
     constructor(filePath: string) {
-        super(() => loadWasmFromUrl(filePath));
+        super(() => {
+            return loadWasmFromUrl(filePath);
+        });
     }
 }
 
 export class WorkerLoaderFromUrl extends LazyLoader<WorkerImplementation> {
     constructor(scriptPath: string) {
-        super(() => new Worker(scriptPath));
+        super(() => {
+            return new Worker(scriptPath);
+        });
     }
 }

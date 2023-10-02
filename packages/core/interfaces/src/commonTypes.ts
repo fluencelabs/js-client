@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { SecurityTetraplet } from '@fluencelabs/avm';
+
+import type { SecurityTetraplet } from "@fluencelabs/avm";
 
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
@@ -61,5 +62,7 @@ export interface CallParams<ArgName extends string | null> {
     /**
      * Security tetraplets
      */
-    tetraplets: ArgName extends string ? Record<ArgName, SecurityTetraplet[]> : Record<string, never>;
+    tetraplets: ArgName extends string
+        ? Record<ArgName, SecurityTetraplet[]>
+        : Record<string, never>;
 }

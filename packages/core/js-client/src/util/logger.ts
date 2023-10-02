@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import debug from 'debug';
+import debug from "debug";
 
 type Logger = (formatter: any, ...args: any[]) => void;
 

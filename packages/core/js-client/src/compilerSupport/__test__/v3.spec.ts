@@ -1,19 +1,36 @@
-import { it, describe, expect, test } from 'vitest';
-import { aqua2ts, ts2aqua } from '../conversions.js';
+/**
+ * Copyright 2023 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-const i32 = { tag: 'scalar', name: 'i32' } as const;
+import { it, describe, expect, test } from "vitest";
+
+import { aqua2ts, ts2aqua } from "../conversions.js";
+
+const i32 = { tag: "scalar", name: "i32" } as const;
 
 const opt_i32 = {
-    tag: 'option',
+    tag: "option",
     type: i32,
 } as const;
 
-const array_i32 = { tag: 'array', type: i32 };
+const array_i32 = { tag: "array", type: i32 };
 
-const array_opt_i32 = { tag: 'array', type: opt_i32 };
+const array_opt_i32 = { tag: "array", type: opt_i32 };
 
 const labeledProduct = {
-    tag: 'labeledProduct',
+    tag: "labeledProduct",
     fields: {
         a: i32,
         b: opt_i32,
@@ -22,8 +39,8 @@ const labeledProduct = {
 };
 
 const struct = {
-    tag: 'struct',
-    name: 'someStruct',
+    tag: "struct",
+    name: "someStruct",
     fields: {
         a: i32,
         b: opt_i32,
@@ -61,7 +78,7 @@ const structs = [
 ];
 
 const labeledProduct2 = {
-    tag: 'labeledProduct',
+    tag: "labeledProduct",
     fields: {
         x: i32,
         y: i32,
@@ -69,15 +86,15 @@ const labeledProduct2 = {
 };
 
 const nestedLabeledProductType = {
-    tag: 'labeledProduct',
+    tag: "labeledProduct",
     fields: {
         a: labeledProduct2,
         b: {
-            tag: 'option',
+            tag: "option",
             type: labeledProduct2,
         },
         c: {
-            tag: 'array',
+            tag: "array",
             type: labeledProduct2,
         },
     },
@@ -151,7 +168,7 @@ const nestedStructs = [
     },
 ];
 
-describe('Conversion from aqua to typescript', () => {
+describe("Conversion from aqua to typescript", () => {
     test.each`
         aqua                     | ts                     | type
         ${1}                     | ${1}                   | ${i32}
@@ -171,7 +188,7 @@ describe('Conversion from aqua to typescript', () => {
         ${nestedStructs[1].aqua} | ${nestedStructs[1].ts} | ${nestedLabeledProductType}
     `(
         //
-        'aqua: $aqua. ts: $ts. type: $type',
+        "aqua: $aqua. ts: $ts. type: $type",
         async ({ aqua, ts, type }) => {
             // arrange
 
@@ -186,11 +203,11 @@ describe('Conversion from aqua to typescript', () => {
     );
 });
 
-describe('Conversion corner cases', () => {
-    it('Should accept undefined in object entry', () => {
+describe("Conversion corner cases", () => {
+    it("Should accept undefined in object entry", () => {
         // arrange
         const type = {
-            tag: 'labeledProduct',
+            tag: "labeledProduct",
             fields: {
                 x: opt_i32,
                 y: opt_i32,
@@ -200,6 +217,7 @@ describe('Conversion corner cases', () => {
         const valueInTs = {
             x: 1,
         };
+
         const valueInAqua = {
             x: [1],
             y: [],

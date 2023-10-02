@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 // @ts-ignore
-import { BlobWorker } from 'threads';
-import { fromBase64, toUint8Array } from 'js-base64';
+import { Buffer } from "buffer";
+
+import { fromBase64, toUint8Array } from "js-base64";
+import { BlobWorker } from "threads";
 // @ts-ignore
-import type { WorkerImplementation } from 'threads/dist/types/master';
-import { Buffer } from 'buffer';
-import { LazyLoader } from '../interfaces.js';
+import type { WorkerImplementation } from "threads/dist/types/master";
+
+import { LazyLoader } from "../interfaces.js";
 
 export class InlinedWorkerLoader extends LazyLoader<WorkerImplementation> {
     constructor(b64script: string) {

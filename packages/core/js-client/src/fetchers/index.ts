@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { fetchResource as fetchResourceBrowser } from './browser.js';
-import { fetchResource as fetchResourceNode } from './node.js';
-import process from 'process';
+import process from "process";
 
-const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
+import { fetchResource as fetchResourceBrowser } from "./browser.js";
+import { fetchResource as fetchResourceNode } from "./node.js";
+
+const isNode =
+    typeof process !== "undefined" && process?.release?.name === "node";
 
 export async function fetchResource(pkg: string, path: string) {
     switch (true) {

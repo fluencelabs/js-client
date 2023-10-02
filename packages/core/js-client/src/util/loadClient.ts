@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,16 +20,21 @@ import type {
     IFluenceClient,
     RegisterServiceType,
     RelayOptions,
-} from '@fluencelabs/interfaces';
+} from "@fluencelabs/interfaces";
 
 type PublicFluenceInterface = {
     defaultClient: IFluenceClient | undefined;
-    clientFactory: (relay: RelayOptions, config?: ClientConfig) => Promise<IFluenceClient>;
+    clientFactory: (
+        relay: RelayOptions,
+        config?: ClientConfig,
+    ) => Promise<IFluenceClient>;
     callAquaFunction: CallAquaFunctionType;
     registerService: RegisterServiceType;
 };
 
-export const getFluenceInterfaceFromGlobalThis = (): PublicFluenceInterface | undefined => {
+export const getFluenceInterfaceFromGlobalThis = ():
+    | PublicFluenceInterface
+    | undefined => {
     // @ts-ignore
     return globalThis.fluence;
 };
@@ -53,6 +58,7 @@ const POLL_PEER_INTERVAL = 100;
 export const getFluenceInterface = (): Promise<PublicFluenceInterface> => {
     // If the script is already loaded, then return the value immediately
     const optimisticResult = getFluenceInterfaceFromGlobalThis();
+
     if (optimisticResult) {
         return Promise.resolve(optimisticResult);
     }
@@ -63,17 +69,20 @@ export const getFluenceInterface = (): Promise<PublicFluenceInterface> => {
         // to break out into the public API
         let interval: any;
         let hits = POLL_PEER_TIMEOUT / POLL_PEER_INTERVAL;
+
         interval = setInterval(() => {
             if (hits === 0) {
                 clearInterval(interval);
                 reject(REJECT_MESSAGE);
             }
 
-            let res = getFluenceInterfaceFromGlobalThis();
+            const res = getFluenceInterfaceFromGlobalThis();
+
             if (res) {
                 clearInterval(interval);
                 resolve(res);
             }
+
             hits--;
         }, POLL_PEER_INTERVAL);
     });

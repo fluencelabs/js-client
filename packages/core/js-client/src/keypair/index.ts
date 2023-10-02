@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Fluence Labs Limited
+/**
+ * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import type { PeerId } from '@libp2p/interface/peer-id';
-import { generateKeyPairFromSeed, generateKeyPair, unmarshalPublicKey } from '@libp2p/crypto/keys';
-import { createFromPrivKey, createFromPubKey } from '@libp2p/peer-id-factory';
-import type { PrivateKey, PublicKey } from '@libp2p/interface/keys';
-import { toUint8Array } from 'js-base64';
-import * as bs58 from 'bs58';
-import { KeyPairOptions } from '@fluencelabs/interfaces';
+import { KeyPairOptions } from "@fluencelabs/interfaces";
+import { generateKeyPairFromSeed, generateKeyPair } from "@libp2p/crypto/keys";
+import type { PrivateKey, PublicKey } from "@libp2p/interface/keys";
+import type { PeerId } from "@libp2p/interface/peer-id";
+import { createFromPrivKey } from "@libp2p/peer-id-factory";
+import * as bs58 from "bs58";
+import { toUint8Array } from "js-base64";
 
 // @ts-ignore
 const { decode } = bs58.default;
@@ -36,7 +36,7 @@ export class KeyPair {
     constructor(
         private privateKey: PrivateKey | undefined,
         private publicKey: PublicKey,
-        private libp2pPeerId: PeerId
+        private libp2pPeerId: PeerId,
     ) {}
 
     /**
@@ -45,7 +45,7 @@ export class KeyPair {
      * @returns - Promise with the created KeyPair
      */
     static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
-        const key = await generateKeyPairFromSeed('Ed25519', seed, 256);
+        const key = await generateKeyPairFromSeed("Ed25519", seed, 256);
         const lib2p2Pid = await createFromPrivKey(key);
         return new KeyPair(key, key.public, lib2p2Pid);
     }
@@ -55,7 +55,7 @@ export class KeyPair {
      * @returns - Promise with the created KeyPair
      */
     static async randomEd25519(): Promise<KeyPair> {
-        const key = await generateKeyPair('Ed25519');
+        const key = await generateKeyPair("Ed25519");
         const lib2p2Pid = await createFromPrivKey(key);
         return new KeyPair(key, key.public, lib2p2Pid);
     }
@@ -69,15 +69,17 @@ export class KeyPair {
      */
     toEd25519PrivateKey(): Uint8Array {
         if (this.privateKey === undefined) {
-            throw new Error('Private key not supplied');
+            throw new Error("Private key not supplied");
         }
+
         return this.privateKey.marshal().subarray(0, 32);
     }
 
     signBytes(data: Uint8Array): Promise<Uint8Array> {
         if (this.privateKey === undefined) {
-            throw new Error('Private key not supplied');
+            throw new Error("Private key not supplied");
         }
+
         return this.privateKey.sign(data);
     }
 
@@ -97,7 +99,7 @@ export const fromBase58Sk = (sk: string): Promise<KeyPair> => {
 };
 
 export const fromOpts = (opts: KeyPairOptions): Promise<KeyPair> => {
-    if (opts.source === 'random') {
+    if (opts.source === "random") {
         return KeyPair.randomEd25519();
     }
 

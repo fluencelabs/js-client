@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,46 +16,60 @@
 
 import {
     ArrayType,
-    BottomType, LabeledProductType,
+    BottomType,
+    LabeledProductType,
     NilType,
     NonArrowType,
     OptionType,
     ScalarType,
     StructType,
-    TopType, UnlabeledProductType
-} from '@fluencelabs/interfaces';
+    TopType,
+    UnlabeledProductType,
+} from "@fluencelabs/interfaces";
 
 // Type definitions for inferring ts types from air json definition
 // In the future we may remove string type declaration and move to type inference.
 
-type GetTsTypeFromScalar<T extends ScalarType> = T['name'] extends 'u8' | 'u16' | 'u32' | 'u64' | 'i8' | 'i16' | 'i32' | 'i64' | 'f32' | 'f64'
+type GetTsTypeFromScalar<T extends ScalarType> = T["name"] extends
+    | "u8"
+    | "u16"
+    | "u32"
+    | "u64"
+    | "i8"
+    | "i16"
+    | "i32"
+    | "i64"
+    | "f32"
+    | "f64"
     ? number
-    : T['name'] extends 'bool'
-        ? boolean
-        : T['name'] extends 'string'
-            ? string
-            : never;
+    : T["name"] extends "bool"
+    ? boolean
+    : T["name"] extends "string"
+    ? string
+    : never;
 
-type MapTuple<T> = { [K in keyof T]: T[K] extends NonArrowType ? GetTsType<T[K]> : never }
+type MapTuple<T> = {
+    [K in keyof T]: T[K] extends NonArrowType ? GetTsType<T[K]> : never;
+};
 
 type GetTsType<T extends NonArrowType> = T extends NilType
     ? null
     : T extends ArrayType
-        ? GetTsType<T['type']>[]
-        : T extends StructType
-            ? { [K in keyof T]: GetTsType<T> }
-            : T extends OptionType
-                ? GetTsType<T['type']> | null
-                : T extends ScalarType
-                    ? GetTsTypeFromScalar<T>
-                    : T extends TopType
-                        ? unknown
-                        : T extends BottomType
-                            ? never
-                            : T extends Exclude<UnlabeledProductType<infer H>, NilType>
-                                ? MapTuple<H>
-                                : T extends Exclude<LabeledProductType<infer H>, NilType>
-                                    ? H extends NonArrowType
-                                        ? { [K in keyof T['fields']]: GetTsType<H> }
-                                        : never
-                                    : never;
+    ? GetTsType<T["type"]>[]
+    : T extends StructType
+    ? { [K in keyof T]: GetTsType<T> }
+    : T extends OptionType
+    ? GetTsType<T["type"]> | null
+    : T extends ScalarType
+    ? GetTsTypeFromScalar<T>
+    : T extends TopType
+    ? unknown
+    : T extends BottomType
+    ? never
+    : T extends Exclude<UnlabeledProductType<infer H>, NilType>
+    ? MapTuple<H>
+    : T extends Exclude<LabeledProductType<infer H>, NilType>
+    ? H extends NonArrowType
+        ? { [K in keyof T["fields"]]: GetTsType<H> }
+        : never
+    : never;

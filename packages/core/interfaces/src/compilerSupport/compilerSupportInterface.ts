@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { IFluenceInternalApi } from '../fluenceClient.js';
-import { FnConfig, FunctionCallDef, ServiceDef } from './aquaTypeDefinitions.js';
+
+import { IFluenceInternalApi } from "../fluenceClient.js";
+
+import {
+    FnConfig,
+    FunctionCallDef,
+    ServiceDef,
+} from "./aquaTypeDefinitions.js";
 
 /**
  * Arguments passed to Aqua function
@@ -54,7 +60,9 @@ export interface CallAquaFunctionArgs {
 /**
  * Call a function from Aqua script
  */
-export type CallAquaFunctionType = (args: CallAquaFunctionArgs) => Promise<unknown>;
+export type CallAquaFunctionType = (
+    args: CallAquaFunctionArgs,
+) => Promise<unknown>;
 
 /**
  * Arguments for registerService function

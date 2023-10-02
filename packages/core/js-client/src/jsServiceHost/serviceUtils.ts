@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,25 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { IParticle } from '../particle/interfaces.js';
-import { builtInServices } from '../services/builtins.js';
+
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { IParticle } from "../particle/interfaces.js";
+import { builtInServices } from "../services/builtins.js";
+
 import {
     CallServiceData,
     CallServiceResult,
     CallServiceResultType,
     ParticleContext,
     ResultCodes,
-} from './interfaces.js';
+} from "./interfaces.js";
 
-export const doNothing = (..._args: Array<unknown>) => undefined;
+export const doNothing = (..._args: Array<unknown>) => {
+    return undefined;
+};
 
-export const WrapFnIntoServiceCall =
-    (fn: (args: any[]) => CallServiceResultType) =>
-    (req: CallServiceData): CallServiceResult => ({
-        retCode: ResultCodes.success,
-        result: fn(req.args),
-    });
+export const WrapFnIntoServiceCall = (
+    fn: (args: any[]) => CallServiceResultType,
+) => {
+    return (req: CallServiceData): CallServiceResult => {
+        return {
+            retCode: ResultCodes.success,
+            result: fn(req.args),
+        };
+    };
+};
 
 export class ServiceError extends Error {
     constructor(message: string) {

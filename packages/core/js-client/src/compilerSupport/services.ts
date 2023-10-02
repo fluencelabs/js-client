@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SecurityTetraplet } from '@fluencelabs/avm';
-import { match } from 'ts-pattern';
 
-import { Particle } from '../particle/Particle.js';
-
-import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
+import { SecurityTetraplet } from "@fluencelabs/avm";
 import {
     CallParams,
     ArrowWithoutCallbacks,
@@ -26,9 +22,23 @@ import {
     FunctionCallDef,
     NonArrowType,
     IFluenceInternalApi,
-} from '@fluencelabs/interfaces';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
-import { fromUint8Array } from 'js-base64';
+} from "@fluencelabs/interfaces";
+import { fromUint8Array } from "js-base64";
+import { match } from "ts-pattern";
+
+import {
+    CallServiceData,
+    GenericCallServiceHandler,
+    ResultCodes,
+} from "../jsServiceHost/interfaces.js";
+import { Particle } from "../particle/Particle.js";
+
+import {
+    aquaArgs2Ts,
+    responseServiceValue2ts,
+    returnType2Aqua,
+    ts2aqua,
+} from "./conversions.js";
 
 export interface ServiceDescription {
     serviceId: string;
@@ -39,7 +49,10 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: IFluenceInternalApi) => {
+export const injectRelayService = (
+    def: FunctionCallDef,
+    peer: IFluenceInternalApi,
+) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
@@ -55,7 +68,12 @@ export const injectRelayService = (def: FunctionCallDef, peer: IFluenceInternalA
 /**
  * Creates a service which injects plain value into aqua space
  */
-export const injectValueService = (serviceId: string, fnName: string, valueType: NonArrowType, value: any) => {
+export const injectValueService = (
+    serviceId: string,
+    fnName: string,
+    valueType: NonArrowType,
+    value: any,
+) => {
     return {
         serviceId: serviceId,
         fnName: fnName,
@@ -71,7 +89,10 @@ export const injectValueService = (serviceId: string, fnName: string, valueType:
 /**
  *  Creates a service which is used to return value from aqua function into typescript space
  */
-export const responseService = (def: FunctionCallDef, resolveCallback: Function) => {
+export const responseService = (
+    def: FunctionCallDef,
+    resolveCallback: Function,
+) => {
     return {
         serviceId: def.names.responseSrv,
         fnName: def.names.responseFnName,
@@ -93,15 +114,20 @@ export const responseService = (def: FunctionCallDef, resolveCallback: Function)
 /**
  * Creates a service which is used to return errors from aqua function into typescript space
  */
-export const errorHandlingService = (def: FunctionCallDef, rejectCallback: Function) => {
+export const errorHandlingService = (
+    def: FunctionCallDef,
+    rejectCallback: Function,
+) => {
     return {
         serviceId: def.names.errorHandlingSrv,
         fnName: def.names.errorFnName,
         handler: (req: CallServiceData) => {
             const [err, _] = req.args;
+
             setTimeout(() => {
                 rejectCallback(err);
             }, 0);
+
             return {
                 retCode: ResultCodes.success,
                 result: {},
@@ -123,7 +149,11 @@ export const userHandlerService = (
         serviceId,
         fnName,
         handler: async (req: CallServiceData) => {
-            const args = [...aquaArgs2Ts(req, type), extractCallParams(req, type)];
+            const args = [
+                ...aquaArgs2Ts(req, type),
+                extractCallParams(req, type),
+            ];
+
             const rawResult = await userHandler.apply(null, args);
             const result = returnType2Aqua(rawResult, type);
 
@@ -146,7 +176,7 @@ export const argToServiceDef = (
     argType: NonArrowType | ArrowWithoutCallbacks,
     names: FunctionCallConstants,
 ): ServiceDescription => {
-    if (argType.tag === 'arrow') {
+    if (argType.tag === "arrow") {
         return userHandlerService(names.callbackSrv, [argName, argType], arg);
     } else {
         return injectValueService(names.getDataSrv, argName, arg, argType);
@@ -156,20 +186,26 @@ export const argToServiceDef = (
 /**
  * Extracts call params from from call service data according to aqua type definition
  */
-const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): CallParams<any> => {
+const extractCallParams = (
+    req: CallServiceData,
+    arrow: ArrowWithoutCallbacks,
+): CallParams<any> => {
     const names = match(arrow.domain)
-        .with({ tag: 'nil' }, () => {
+        .with({ tag: "nil" }, () => {
             return [] as string[];
         })
-        .with({ tag: 'labeledProduct' }, (x) => {
+        .with({ tag: "labeledProduct" }, (x) => {
             return Object.keys(x.fields);
         })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
-            return x.items.map((_, index) => 'arg' + index);
+        .with({ tag: "unlabeledProduct" }, (x) => {
+            return x.items.map((_, index) => {
+                return "arg" + index;
+            });
         })
         .exhaustive();
 
     const tetraplets: Record<string, SecurityTetraplet[]> = {};
+
     for (let i = 0; i < req.args.length; i++) {
         if (names[i]) {
             tetraplets[names[i]] = req.tetraplets[i];
@@ -190,9 +226,21 @@ export const registerParticleScopeService = (
     particle: Particle,
     service: ServiceDescription,
 ) => {
-    peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
+    peer.internals.regHandler.forParticle(
+        particle.id,
+        service.serviceId,
+        service.fnName,
+        service.handler,
+    );
 };
 
-export const registerGlobalService = (peer: IFluenceInternalApi, service: ServiceDescription) => {
-    peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
+export const registerGlobalService = (
+    peer: IFluenceInternalApi,
+    service: ServiceDescription,
+) => {
+    peer.internals.regHandler.common(
+        service.serviceId,
+        service.fnName,
+        service.handler,
+    );
 };

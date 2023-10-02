@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,71 +13,133 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { ClientConfig, IFluenceClient, RelayOptions, ConnectionState, CallAquaFunctionType, RegisterServiceType } from '@fluencelabs/interfaces';
-import { ClientPeer, makeClientPeerConfig } from './clientPeer/ClientPeer.js';
-import { callAquaFunction } from './compilerSupport/callFunction.js';
-import { registerService } from './compilerSupport/registerService.js';
-import { MarineBackgroundRunner } from './marine/worker/index.js';
+
+import module from "module";
+import path from "path";
+import process from "process";
+import url from "url";
+
+import type {
+    ClientConfig,
+    IFluenceClient,
+    RelayOptions,
+    ConnectionState,
+} from "@fluencelabs/interfaces";
+import { BlobWorker, Worker } from "threads";
+
+import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
+import { callAquaFunction } from "./compilerSupport/callFunction.js";
+import { registerService } from "./compilerSupport/registerService.js";
+import { fetchResource } from "./fetchers/index.js";
+import { MarineBackgroundRunner } from "./marine/worker/index.js";
 // @ts-ignore
-import { BlobWorker, Worker } from 'threads';
-import { doRegisterNodeUtils } from './services/NodeUtils.js';
-import { fetchResource } from './fetchers/index.js';
-import process from 'process';
-import path from 'path';
-import url from 'url';
-import module from 'module';
+import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 
-const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
+const isNode =
+    typeof process !== "undefined" && process?.release?.name === "node";
 
-const fetchWorkerCode = () => fetchResource('@fluencelabs/marine-worker', '/dist/browser/marine-worker.umd.cjs').then(res => res.text());
-const fetchMarineJsWasm = () => fetchResource('@fluencelabs/marine-js', '/dist/marine-js.wasm').then(res => res.arrayBuffer());
-const fetchAvmWasm = () => fetchResource('@fluencelabs/avm', '/dist/avm.wasm').then(res => res.arrayBuffer());
+const fetchWorkerCode = () => {
+    return fetchResource(
+        "@fluencelabs/marine-worker",
+        "/dist/browser/marine-worker.umd.cjs",
+    ).then((res) => {
+        return res.text();
+    });
+};
 
-const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<IFluenceClient> => {
+const fetchMarineJsWasm = () => {
+    return fetchResource("@fluencelabs/marine-js", "/dist/marine-js.wasm").then(
+        (res) => {
+            return res.arrayBuffer();
+        },
+    );
+};
+
+const fetchAvmWasm = () => {
+    return fetchResource("@fluencelabs/avm", "/dist/avm.wasm").then((res) => {
+        return res.arrayBuffer();
+    });
+};
+
+const createClient = async (
+    relay: RelayOptions,
+    config: ClientConfig,
+): Promise<IFluenceClient> => {
     const marineJsWasm = await fetchMarineJsWasm();
     const avmWasm = await fetchAvmWasm();
-    
-    const marine = new MarineBackgroundRunner({
-        async getValue() {
-            if (isNode) {
-                const require = module.createRequire(import.meta.url);
-                const pathToThisFile = path.dirname(url.fileURLToPath(import.meta.url));
-                const pathToWorker = require.resolve('@fluencelabs/marine-worker');
-                const relativePathToWorker = path.relative(pathToThisFile, pathToWorker);
-                return new Worker(relativePathToWorker);
-            } else {
-                const workerCode = await fetchWorkerCode();
-                return BlobWorker.fromText(workerCode)
-            }
+
+    const marine = new MarineBackgroundRunner(
+        {
+            async getValue() {
+                if (isNode) {
+                    const require = module.createRequire(import.meta.url);
+
+                    const pathToThisFile = path.dirname(
+                        url.fileURLToPath(import.meta.url),
+                    );
+
+                    const pathToWorker = require.resolve(
+                        "@fluencelabs/marine-worker",
+                    );
+
+                    const relativePathToWorker = path.relative(
+                        pathToThisFile,
+                        pathToWorker,
+                    );
+
+                    return new Worker(relativePathToWorker);
+                } else {
+                    const workerCode = await fetchWorkerCode();
+                    return BlobWorker.fromText(workerCode);
+                }
+            },
+            start() {
+                return Promise.resolve(undefined);
+            },
+            stop() {
+                return Promise.resolve(undefined);
+            },
         },
-        start() {
-            return Promise.resolve(undefined);
+        {
+            getValue() {
+                return marineJsWasm;
+            },
+            start(): Promise<void> {
+                return Promise.resolve(undefined);
+            },
+            stop(): Promise<void> {
+                return Promise.resolve(undefined);
+            },
         },
-        stop() {
-            return Promise.resolve(undefined);
+        {
+            getValue() {
+                return avmWasm;
+            },
+            start(): Promise<void> {
+                return Promise.resolve(undefined);
+            },
+            stop(): Promise<void> {
+                return Promise.resolve(undefined);
+            },
         },
-    }, {
-        getValue() {
-            return marineJsWasm;
-        }, start(): Promise<void> {
-            return Promise.resolve(undefined);
-        }, stop(): Promise<void> {
-            return Promise.resolve(undefined);
-        }
-    }, {
-        getValue() {
-            return avmWasm;
-        }, start(): Promise<void> {
-            return Promise.resolve(undefined);
-        }, stop(): Promise<void> {
-            return Promise.resolve(undefined);
-        }
-    });
-    const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(relay, config);
-    const client: IFluenceClient = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
+    );
+
+    const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(
+        relay,
+        config,
+    );
+
+    const client: IFluenceClient = new ClientPeer(
+        peerConfig,
+        relayConfig,
+        keyPair,
+        marine,
+    );
+
     if (isNode) {
         doRegisterNodeUtils(client);
     }
+
     await client.connect();
     return client;
 };
@@ -86,13 +148,16 @@ const createClient = async (relay: RelayOptions, config: ClientConfig): Promise<
  * Public interface to Fluence Network
  */
 export const Fluence = {
-    defaultClient: undefined as (IFluenceClient | undefined),
+    defaultClient: undefined as IFluenceClient | undefined,
     /**
      * Connect to the Fluence network
      * @param relay - relay node to connect to
      * @param config - client configuration
      */
-    connect: async function(relay: RelayOptions, config: ClientConfig): Promise<void> {
+    connect: async function (
+        relay: RelayOptions,
+        config: ClientConfig,
+    ): Promise<void> {
         const client = await createClient(relay, config);
         this.defaultClient = client;
     },
@@ -100,7 +165,7 @@ export const Fluence = {
     /**
      * Disconnect from the Fluence network
      */
-    disconnect: async function(): Promise<void> {
+    disconnect: async function (): Promise<void> {
         await this.defaultClient?.disconnect();
         this.defaultClient = undefined;
     },
@@ -108,23 +173,35 @@ export const Fluence = {
     /**
      * Handle connection state changes. Immediately returns the current connection state
      */
-    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
-        return this.defaultClient?.onConnectionStateChange(handler) || 'disconnected';
+    onConnectionStateChange(
+        handler: (state: ConnectionState) => void,
+    ): ConnectionState {
+        return (
+            this.defaultClient?.onConnectionStateChange(handler) ||
+            "disconnected"
+        );
     },
 
     /**
      * Low level API. Get the underlying client instance which holds the connection to the network
      * @returns IFluenceClient instance
      */
-    getClient: async function(): Promise<IFluenceClient> {
+    getClient: async function (): Promise<IFluenceClient> {
         if (!this.defaultClient) {
-            throw new Error('Fluence client is not initialized. Call Fluence.connect() first');
+            throw new Error(
+                "Fluence client is not initialized. Call Fluence.connect() first",
+            );
         }
+
         return this.defaultClient;
     },
 };
 
-export type { IFluenceClient, ClientConfig, CallParams } from '@fluencelabs/interfaces';
+export type {
+    IFluenceClient,
+    ClientConfig,
+    CallParams,
+} from "@fluencelabs/interfaces";
 
 export type {
     ArrayType,
@@ -151,9 +228,9 @@ export type {
     FnConfig,
     RegisterServiceType,
     RegisterServiceArgs,
-} from '@fluencelabs/interfaces';
+} from "@fluencelabs/interfaces";
 
-export { v5_callFunction, v5_registerService } from './api.js';
+export { v5_callFunction, v5_registerService } from "./api.js";
 
 // @ts-ignore
 globalThis.new_fluence = Fluence;
@@ -166,4 +243,7 @@ globalThis.fluence = {
 };
 
 export { createClient, callAquaFunction, registerService };
-export { getFluenceInterface, getFluenceInterfaceFromGlobalThis } from './util/loadClient.js';
+export {
+    getFluenceInterface,
+    getFluenceInterfaceFromGlobalThis,
+} from "./util/loadClient.js";

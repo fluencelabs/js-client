@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ClientConfig, ConnectionState, IFluenceClient, PeerIdB58, RelayOptions } from '@fluencelabs/interfaces';
-import { RelayConnection, RelayConnectionConfig } from '../connection/RelayConnection.js';
-import { fromOpts, KeyPair } from '../keypair/index.js';
-import { FluencePeer, PeerConfig } from '../jsPeer/FluencePeer.js';
-import { relayOptionToMultiaddr } from '../util/libp2pUtils.js';
-import { IAvmRunner, IMarineHost } from '../marine/interfaces.js';
-import { JsServiceHost } from '../jsServiceHost/JsServiceHost.js';
-import { logger } from '../util/logger.js';
 
-const log = logger('client');
+import {
+    ClientConfig,
+    ConnectionState,
+    IFluenceClient,
+    RelayOptions,
+} from "@fluencelabs/interfaces";
+
+import {
+    RelayConnection,
+    RelayConnectionConfig,
+} from "../connection/RelayConnection.js";
+import { FluencePeer, PeerConfig } from "../jsPeer/FluencePeer.js";
+import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
+import { fromOpts, KeyPair } from "../keypair/index.js";
+import { IMarineHost } from "../marine/interfaces.js";
+import { relayOptionToMultiaddr } from "../util/libp2pUtils.js";
+import { logger } from "../util/logger.js";
+
+const log = logger("client");
 
 const DEFAULT_TTL_MS = 7000;
 const MAX_OUTBOUND_STREAMS = 1024;
@@ -31,8 +41,12 @@ const MAX_INBOUND_STREAMS = 1024;
 export const makeClientPeerConfig = async (
     relay: RelayOptions,
     config: ClientConfig,
-): Promise<{ peerConfig: PeerConfig; relayConfig: RelayConnectionConfig; keyPair: KeyPair }> => {
-    const opts = config?.keyPair || { type: 'Ed25519', source: 'random' };
+): Promise<{
+    peerConfig: PeerConfig;
+    relayConfig: RelayConnectionConfig;
+    keyPair: KeyPair;
+}> => {
+    const opts = config?.keyPair || { type: "Ed25519", source: "random" };
     const keyPair = await fromOpts(opts);
     const relayAddress = relayOptionToMultiaddr(relay);
 
@@ -47,8 +61,12 @@ export const makeClientPeerConfig = async (
             peerId: keyPair.getLibp2pPeerId(),
             relayAddress: relayAddress,
             dialTimeoutMs: config?.connectionOptions?.dialTimeoutMs,
-            maxInboundStreams: config?.connectionOptions?.maxInboundStreams || MAX_OUTBOUND_STREAMS,
-            maxOutboundStreams: config?.connectionOptions?.maxOutboundStreams || MAX_INBOUND_STREAMS,
+            maxInboundStreams:
+                config?.connectionOptions?.maxInboundStreams ||
+                MAX_OUTBOUND_STREAMS,
+            maxOutboundStreams:
+                config?.connectionOptions?.maxOutboundStreams ||
+                MAX_INBOUND_STREAMS,
         },
         keyPair: keyPair,
     };
@@ -61,7 +79,13 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
         keyPair: KeyPair,
         marine: IMarineHost,
     ) {
-        super(peerConfig, keyPair, marine, new JsServiceHost(), new RelayConnection(relayConfig));
+        super(
+            peerConfig,
+            keyPair,
+            marine,
+            new JsServiceHost(),
+            new RelayConnection(relayConfig),
+        );
     }
 
     getPeerId(): string {
@@ -72,14 +96,16 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
         return this.keyPair.toEd25519PrivateKey();
     }
 
-    connectionState: ConnectionState = 'disconnected';
+    connectionState: ConnectionState = "disconnected";
     connectionStateChangeHandler: (state: ConnectionState) => void = () => {};
 
     getRelayPeerId(): string {
         return this.internals.getRelayPeerId();
     }
 
-    onConnectionStateChange(handler: (state: ConnectionState) => void): ConnectionState {
+    onConnectionStateChange(
+        handler: (state: ConnectionState) => void,
+    ): ConnectionState {
         this.connectionStateChangeHandler = handler;
 
         return this.connectionState;
@@ -105,19 +131,19 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     }
 
     async start(): Promise<void> {
-        log.trace('connecting to Fluence network');
-        this.changeConnectionState('connecting');
+        log.trace("connecting to Fluence network");
+        this.changeConnectionState("connecting");
         await super.start();
         // TODO: check connection (`checkConnection` function) here
-        this.changeConnectionState('connected');
-        log.trace('connected');
+        this.changeConnectionState("connected");
+        log.trace("connected");
     }
 
     async stop(): Promise<void> {
-        log.trace('disconnecting from Fluence network');
-        this.changeConnectionState('disconnecting');
+        log.trace("disconnecting from Fluence network");
+        this.changeConnectionState("disconnecting");
         await super.stop();
-        this.changeConnectionState('disconnected');
-        log.trace('disconnected');
+        this.changeConnectionState("disconnected");
+        log.trace("disconnected");
     }
 }

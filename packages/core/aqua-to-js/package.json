@@ -25,7 +25,6 @@
         "@fluencelabs/registry": "0.8.7",
         "@fluencelabs/spell": "0.5.20",
         "@fluencelabs/trust-graph": "0.4.7",
-        "typescript": "5.1.6",
         "vitest": "0.29.7"
     }
 }

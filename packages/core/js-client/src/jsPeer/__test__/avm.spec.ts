@@ -1,15 +1,33 @@
-import { it, describe, expect } from 'vitest';
-import { registerHandlersHelper, withPeer } from '../../util/testUtils.js';
-import { handleTimeout } from '../../particle/Particle.js';
+/**
+ * Copyright 2023 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-describe('Basic AVM functionality in Fluence Peer tests', () => {
-    it('Simple call', async () => {
+import { it, describe, expect } from "vitest";
+
+import { handleTimeout } from "../../particle/Particle.js";
+import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
+
+describe("Basic AVM functionality in Fluence Peer tests", () => {
+    it("Simple call", async () => {
         await withPeer(async (peer) => {
             const script = `
                 (call %init_peer_id% ("print" "print") ["1"])
             `;
+
             const particle = await peer.internals.createNewParticle(script);
-            
+
             const res = await new Promise<string>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -24,14 +42,17 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, handleTimeout(reject));
+                peer.internals.initiateParticle(
+                    particle,
+                    handleTimeout(reject),
+                );
             });
 
-            expect(res).toBe('1');
+            expect(res).toBe("1");
         });
     });
 
-    it('Par call', async () => {
+    it("Par call", async () => {
         await withPeer(async (peer) => {
             const script = `
                 (seq
@@ -42,8 +63,9 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     (call %init_peer_id% ("print" "print") ["2"])
                 )
             `;
+
             const particle = await peer.internals.createNewParticle(script);
-            
+
             const res = await new Promise<string[]>((resolve, reject) => {
                 const res: any[] = [];
 
@@ -55,6 +77,7 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     print: {
                         print: (args: any) => {
                             res.push(args[0]);
+
                             if (res.length == 2) {
                                 resolve(res);
                             }
@@ -62,14 +85,17 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, handleTimeout(reject));
+                peer.internals.initiateParticle(
+                    particle,
+                    handleTimeout(reject),
+                );
             });
 
-            expect(res).toStrictEqual(['1', '2']);
+            expect(res).toStrictEqual(["1", "2"]);
         });
     });
 
-    it('Timeout in par call: race', async () => {
+    it("Timeout in par call: race", async () => {
         await withPeer(async (peer) => {
             const script = `
                 (seq
@@ -86,8 +112,9 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     )
                 )
             `;
+
             const particle = await peer.internals.createNewParticle(script);
-            
+
             const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -101,14 +128,17 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, handleTimeout(reject));
+                peer.internals.initiateParticle(
+                    particle,
+                    handleTimeout(reject),
+                );
             });
 
-            expect(res).toBe('fast_result');
+            expect(res).toBe("fast_result");
         });
     });
 
-    it('Timeout in par call: wait', async () => {
+    it("Timeout in par call: wait", async () => {
         await withPeer(async (peer) => {
             const script = `
                 (seq
@@ -136,8 +166,9 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     )
                 )
             `;
+
             const particle = await peer.internals.createNewParticle(script);
-            
+
             const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -151,10 +182,13 @@ describe('Basic AVM functionality in Fluence Peer tests', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, handleTimeout(reject));
+                peer.internals.initiateParticle(
+                    particle,
+                    handleTimeout(reject),
+                );
             });
 
-            expect(res).toBe('failed_with_timeout');
+            expect(res).toBe("failed_with_timeout");
         });
     });
 });

@@ -1,5 +1,5 @@
-/*
- * Copyright 2021 Fluence Labs Limited
+/**
+ * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import * as bs58 from 'bs58';
+import { Buffer } from "buffer";
 
-import { sha256 } from 'multiformats/hashes/sha2';
-import { CallServiceResult } from '@fluencelabs/avm';
+import { CallServiceResult } from "@fluencelabs/avm";
+import * as bs58 from "bs58";
+import { sha256 } from "multiformats/hashes/sha2";
 
-import { isString, jsonify } from '../util/utils.js';
-import { Buffer } from 'buffer';
-import { GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
+import {
+    GenericCallServiceHandler,
+    ResultCodes,
+} from "../jsServiceHost/interfaces.js";
+import { isString, jsonify } from "../util/utils.js";
 
 //@ts-ignore
 const { encode, decode } = bs58.default;
@@ -41,18 +44,23 @@ const error = (error: string): CallServiceResult => {
 };
 
 const errorNotImpl = (methodName: string) => {
-    return error(`The JS implementation of Peer does not support "${methodName}"`);
+    return error(
+        `The JS implementation of Peer does not support "${methodName}"`,
+    );
 };
 
 const makeJsonImpl = (args: Array<any>) => {
     const [obj, ...kvs] = args;
 
     const toMerge: Record<string, any> = {};
+
     for (let i = 0; i < kvs.length / 2; i++) {
         const k = kvs[i * 2];
+
         if (!isString(k)) {
             return error(`Argument ${k} is expected to be string`);
         }
+
         const v = kvs[i * 2 + 1];
         toMerge[k] = v;
     }
@@ -61,14 +69,17 @@ const makeJsonImpl = (args: Array<any>) => {
     return success(res);
 };
 
-export const builtInServices: Record<string, Record<string, GenericCallServiceHandler>> = {
+export const builtInServices: Record<
+    string,
+    Record<string, GenericCallServiceHandler>
+> = {
     peer: {
         identify: () => {
             return success({
                 external_addresses: [],
                 // TODO: remove hardcoded values
-                node_version: 'js-0.23.0',
-                air_version: 'js-0.24.2',
+                node_version: "js-0.23.0",
+                air_version: "js-0.24.2",
             });
         },
 
@@ -81,21 +92,24 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
         },
 
         is_connected: () => {
-            return errorNotImpl('peer.is_connected');
+            return errorNotImpl("peer.is_connected");
         },
 
         connect: () => {
-            return errorNotImpl('peer.connect');
+            return errorNotImpl("peer.connect");
         },
 
         get_contact: () => {
-            return errorNotImpl('peer.get_contact');
+            return errorNotImpl("peer.get_contact");
         },
 
         timeout: (req) => {
             if (req.args.length !== 2) {
-                return error('timeout accepts exactly two arguments: timeout duration in ms and a message string');
+                return error(
+                    "timeout accepts exactly two arguments: timeout duration in ms and a message string",
+                );
             }
+
             const durationMs = req.args[0];
             const message = req.args[1];
 
@@ -110,97 +124,97 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
     kad: {
         neighborhood: () => {
-            return errorNotImpl('kad.neighborhood');
+            return errorNotImpl("kad.neighborhood");
         },
 
         merge: () => {
-            return errorNotImpl('kad.merge');
+            return errorNotImpl("kad.merge");
         },
     },
 
     srv: {
         list: () => {
-            return errorNotImpl('srv.list');
+            return errorNotImpl("srv.list");
         },
 
         create: () => {
-            return errorNotImpl('srv.create');
+            return errorNotImpl("srv.create");
         },
 
         get_interface: () => {
-            return errorNotImpl('srv.get_interface');
+            return errorNotImpl("srv.get_interface");
         },
 
         resolve_alias: () => {
-            return errorNotImpl('srv.resolve_alias');
+            return errorNotImpl("srv.resolve_alias");
         },
 
         add_alias: () => {
-            return errorNotImpl('srv.add_alias');
+            return errorNotImpl("srv.add_alias");
         },
 
         remove: () => {
-            return errorNotImpl('srv.remove');
+            return errorNotImpl("srv.remove");
         },
     },
 
     dist: {
         add_module_from_vault: () => {
-            return errorNotImpl('dist.add_module_from_vault');
+            return errorNotImpl("dist.add_module_from_vault");
         },
 
         add_module: () => {
-            return errorNotImpl('dist.add_module');
+            return errorNotImpl("dist.add_module");
         },
 
         add_blueprint: () => {
-            return errorNotImpl('dist.add_blueprint');
+            return errorNotImpl("dist.add_blueprint");
         },
 
         make_module_config: () => {
-            return errorNotImpl('dist.make_module_config');
+            return errorNotImpl("dist.make_module_config");
         },
 
         load_module_config: () => {
-            return errorNotImpl('dist.load_module_config');
+            return errorNotImpl("dist.load_module_config");
         },
 
         default_module_config: () => {
-            return errorNotImpl('dist.default_module_config');
+            return errorNotImpl("dist.default_module_config");
         },
 
         make_blueprint: () => {
-            return errorNotImpl('dist.make_blueprint');
+            return errorNotImpl("dist.make_blueprint");
         },
 
         load_blueprint: () => {
-            return errorNotImpl('dist.load_blueprint');
+            return errorNotImpl("dist.load_blueprint");
         },
 
         list_modules: () => {
-            return errorNotImpl('dist.list_modules');
+            return errorNotImpl("dist.list_modules");
         },
 
         get_module_interface: () => {
-            return errorNotImpl('dist.get_module_interface');
+            return errorNotImpl("dist.get_module_interface");
         },
 
         list_blueprints: () => {
-            return errorNotImpl('dist.list_blueprints');
+            return errorNotImpl("dist.list_blueprints");
         },
     },
 
     script: {
         add: () => {
-            return errorNotImpl('script.add');
+            return errorNotImpl("script.add");
         },
 
         remove: () => {
-            return errorNotImpl('script.remove');
+            return errorNotImpl("script.remove");
         },
 
         list: () => {
-            return errorNotImpl('script.list');
+            return errorNotImpl("script.list");
         },
     },
 
@@ -215,7 +229,10 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         array_length: (req) => {
             if (req.args.length !== 1) {
-                return error('array_length accepts exactly one argument, found: ' + req.args.length);
+                return error(
+                    "array_length accepts exactly one argument, found: " +
+                        req.args.length,
+                );
             } else {
                 return success(req.args[0].length);
             }
@@ -223,7 +240,9 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         identity: (req) => {
             if (req.args.length > 1) {
-                return error(`identity accepts up to 1 arguments, received ${req.args.length} arguments`);
+                return error(
+                    `identity accepts up to 1 arguments, received ${req.args.length} arguments`,
+                );
             } else {
                 return success(req.args.length === 0 ? {} : req.args[0]);
             }
@@ -231,13 +250,21 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         concat: (req) => {
             const incorrectArgIndices = req.args //
-                .map((x, i) => [Array.isArray(x), i])
-                .filter(([isArray, _]) => !isArray)
-                .map(([_, index]) => index);
+                .map((x, i) => {
+                    return [Array.isArray(x), i];
+                })
+                .filter(([isArray, _]) => {
+                    return !isArray;
+                })
+                .map(([_, index]) => {
+                    return index;
+                });
 
             if (incorrectArgIndices.length > 0) {
-                const str = incorrectArgIndices.join(', ');
-                return error(`All arguments of 'concat' must be arrays: arguments ${str} are not`);
+                const str = incorrectArgIndices.join(", ");
+                return error(
+                    `All arguments of 'concat' must be arrays: arguments ${str} are not`,
+                );
             } else {
                 return success([].concat.apply([], req.args));
             }
@@ -245,7 +272,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         string_to_b58: (req) => {
             if (req.args.length !== 1) {
-                return error('string_to_b58 accepts only one string argument');
+                return error("string_to_b58 accepts only one string argument");
             } else {
                 return success(encode(new TextEncoder().encode(req.args[0])));
             }
@@ -253,7 +280,9 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         string_from_b58: (req) => {
             if (req.args.length !== 1) {
-                return error('string_from_b58 accepts only one string argument');
+                return error(
+                    "string_from_b58 accepts only one string argument",
+                );
             } else {
                 return success(new TextDecoder().decode(decode(req.args[0])));
             }
@@ -261,7 +290,9 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         bytes_to_b58: (req) => {
             if (req.args.length !== 1 || !Array.isArray(req.args[0])) {
-                return error('bytes_to_b58 accepts only single argument: array of numbers');
+                return error(
+                    "bytes_to_b58 accepts only single argument: array of numbers",
+                );
             } else {
                 const argumentArray = req.args[0] as number[];
                 return success(encode(new Uint8Array(argumentArray)));
@@ -270,7 +301,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         bytes_from_b58: (req) => {
             if (req.args.length !== 1) {
-                return error('bytes_from_b58 accepts only one string argument');
+                return error("bytes_from_b58 accepts only one string argument");
             } else {
                 return success(Array.from(decode(req.args[0])));
             }
@@ -278,13 +309,18 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         sha256_string: async (req) => {
             if (req.args.length < 1 || req.args.length > 3) {
-                return error(`sha256_string accepts 1-3 arguments, found: ${req.args.length}`);
+                return error(
+                    `sha256_string accepts 1-3 arguments, found: ${req.args.length}`,
+                );
             } else {
                 const [input, digestOnly, asBytes] = req.args;
                 const inBuffer = Buffer.from(input);
                 const multihash = await sha256.digest(inBuffer);
 
-                const outBytes = digestOnly ? multihash.digest : multihash.bytes;
+                const outBytes = digestOnly
+                    ? multihash.digest
+                    : multihash.bytes;
+
                 const res = asBytes ? Array.from(outBytes) : encode(outBytes);
 
                 return success(res);
@@ -292,7 +328,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
         },
 
         concat_strings: (req) => {
-            const res = ''.concat(...req.args);
+            const res = "".concat(...req.args);
             return success(res);
         },
     },
@@ -302,7 +338,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
             let out;
 
             if (req.args.length === 0) {
-                out = '<empty argument list>';
+                out = "<empty argument list>";
             } else if (req.args.length === 1) {
                 out = req.args[0];
             } else {
@@ -316,72 +352,88 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
     math: {
         add: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x + y);
         },
 
         sub: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x - y);
         },
 
         mul: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x * y);
         },
 
         fmul: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(Math.floor(x * y));
         },
 
         div: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(Math.floor(x / y));
         },
 
         rem: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x % y);
         },
 
         pow: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(Math.pow(x, y));
         },
 
         log: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(Math.log(y) / Math.log(x));
         },
@@ -390,45 +442,55 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
     cmp: {
         gt: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x > y);
         },
 
         gte: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x >= y);
         },
 
         lt: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x < y);
         },
 
         lte: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x <= y);
         },
 
         cmp: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [x, y] = req.args;
             return success(x === y ? 0 : x > y ? 1 : -1);
         },
@@ -437,18 +499,26 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
     array: {
         sum: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 1))) {
                 return err;
             }
+
             const [xs] = req.args;
-            return success(xs.reduce((agg: any, cur: any) => agg + cur, 0));
+            return success(
+                xs.reduce((agg: any, cur: any) => {
+                    return agg + cur;
+                }, 0),
+            );
         },
 
         dedup: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 1))) {
                 return err;
             }
+
             const [xs] = req.args;
             const set = new Set(xs);
             return success(Array.from(set));
@@ -456,35 +526,55 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         intersect: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [xs, ys] = req.args;
-            const intersection = xs.filter((x: any) => ys.includes(x));
+
+            const intersection = xs.filter((x: any) => {
+                return ys.includes(x);
+            });
+
             return success(intersection);
         },
 
         diff: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [xs, ys] = req.args;
-            const diff = xs.filter((x: unknown) => !ys.includes(x));
+
+            const diff = xs.filter((x: unknown) => {
+                return !ys.includes(x);
+            });
+
             return success(diff);
         },
 
         sdiff: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 2))) {
                 return err;
             }
+
             const [xs, ys] = req.args;
+
             const sdiff = [
                 // force new line
-                ...xs.filter((y: unknown) => !ys.includes(y)),
-                ...ys.filter((x: unknown) => !xs.includes(x)),
+                ...xs.filter((y: unknown) => {
+                    return !ys.includes(y);
+                }),
+                ...ys.filter((x: unknown) => {
+                    return !xs.includes(x);
+                }),
             ];
+
             return success(sdiff);
         },
     },
@@ -492,6 +582,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
     json: {
         obj: (req) => {
             let err;
+
             if ((err = checkForArgumentsCountEven(req, 1))) {
                 return err;
             }
@@ -501,11 +592,12 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         put: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 3))) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, 'object'))) {
+            if ((err = checkForArgumentType(req, 0, "object"))) {
                 return err;
             }
 
@@ -514,6 +606,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         puts: (req) => {
             let err;
+
             if ((err = checkForArgumentsCountOdd(req, 1))) {
                 return err;
             }
@@ -522,7 +615,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, 'object'))) {
+            if ((err = checkForArgumentType(req, 0, "object"))) {
                 return err;
             }
 
@@ -531,11 +624,12 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         stringify: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 1))) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, 'object'))) {
+            if ((err = checkForArgumentType(req, 0, "object"))) {
                 return err;
             }
 
@@ -546,15 +640,17 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
 
         parse: (req) => {
             let err;
+
             if ((err = checkForArgumentsCount(req, 1))) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, 'string'))) {
+            if ((err = checkForArgumentType(req, 0, "string"))) {
                 return err;
             }
 
             const [raw] = req.args;
+
             try {
                 const json = JSON.parse(raw);
                 return success(json);
@@ -564,7 +660,7 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
         },
     },
 
-    'run-console': {
+    "run-console": {
         print: (req) => {
             console.log(...req.args);
             return success({});
@@ -572,33 +668,58 @@ export const builtInServices: Record<string, Record<string, GenericCallServiceHa
     },
 } as const;
 
-const checkForArgumentsCount = (req: { args: Array<unknown> }, count: number) => {
+const checkForArgumentsCount = (
+    req: { args: Array<unknown> },
+    count: number,
+) => {
     if (req.args.length !== count) {
         return error(`Expected ${count} argument(s). Got ${req.args.length}`);
     }
 };
 
-const checkForArgumentsCountMoreThan = (req: { args: Array<unknown> }, count: number) => {
+const checkForArgumentsCountMoreThan = (
+    req: { args: Array<unknown> },
+    count: number,
+) => {
     if (req.args.length < count) {
-        return error(`Expected more than ${count} argument(s). Got ${req.args.length}`);
+        return error(
+            `Expected more than ${count} argument(s). Got ${req.args.length}`,
+        );
     }
 };
 
-const checkForArgumentsCountEven = (req: { args: Array<unknown> }, count: number) => {
+const checkForArgumentsCountEven = (
+    req: { args: Array<unknown> },
+    count: number,
+) => {
     if (req.args.length % 2 === 1) {
-        return error(`Expected even number of argument(s). Got ${req.args.length}`);
+        return error(
+            `Expected even number of argument(s). Got ${req.args.length}`,
+        );
     }
 };
 
-const checkForArgumentsCountOdd = (req: { args: Array<unknown> }, count: number) => {
+const checkForArgumentsCountOdd = (
+    req: { args: Array<unknown> },
+    count: number,
+) => {
     if (req.args.length % 2 === 0) {
-        return error(`Expected odd number of argument(s). Got ${req.args.length}`);
+        return error(
+            `Expected odd number of argument(s). Got ${req.args.length}`,
+        );
     }
 };
 
-const checkForArgumentType = (req: { args: Array<unknown> }, index: number, type: string) => {
+const checkForArgumentType = (
+    req: { args: Array<unknown> },
+    index: number,
+    type: string,
+) => {
     const actual = typeof req.args[index];
+
     if (actual !== type) {
-        return error(`Argument ${index} expected to be of type ${type}, Got ${actual}`);
+        return error(
+            `Argument ${index} expected to be of type ${type}, Got ${actual}`,
+        );
     }
 };

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
-import { KeyPair } from '../keypair/index.js';
-import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { SigDef } from './_aqua/services.js';
-import { allowOnlyParticleOriginatedAt, allowServiceFn, and, or, SecurityGuard } from './securityGuard.js';
+import { CallParams, PeerIdB58 } from "@fluencelabs/interfaces";
+
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { KeyPair } from "../keypair/index.js";
+
+import { SigDef } from "./_aqua/services.js";
+import {
+    allowOnlyParticleOriginatedAt,
+    allowServiceFn,
+    and,
+    or,
+    SecurityGuard,
+} from "./securityGuard.js";
 
 export const defaultSigGuard = (peerId: PeerIdB58) => {
-    return and<'data'>(
+    return and<"data">(
         allowOnlyParticleOriginatedAt(peerId),
         or(
-            allowServiceFn('trust-graph', 'get_trust_bytes'),
-            allowServiceFn('trust-graph', 'get_revocation_bytes'),
-            allowServiceFn('registry', 'get_key_bytes'),
-            allowServiceFn('registry', 'get_record_bytes'),
-            allowServiceFn('registry', 'get_record_metadata_bytes'),
-            allowServiceFn('registry', 'get_tombstone_bytes'),
+            allowServiceFn("trust-graph", "get_trust_bytes"),
+            allowServiceFn("trust-graph", "get_revocation_bytes"),
+            allowServiceFn("registry", "get_key_bytes"),
+            allowServiceFn("registry", "get_record_bytes"),
+            allowServiceFn("registry", "get_record_metadata_bytes"),
+            allowServiceFn("registry", "get_tombstone_bytes"),
         ),
     );
 };
@@ -40,7 +48,7 @@ export class Sig implements SigDef {
     /**
      * Configurable security guard for sign method
      */
-    securityGuard: SecurityGuard<'data'> = (params) => {
+    securityGuard: SecurityGuard<"data"> = (params) => {
         return true;
     };
 
@@ -56,12 +64,16 @@ export class Sig implements SigDef {
      */
     async sign(
         data: number[],
-        callParams: CallParams<'data'>,
-    ): Promise<{ error: string | null; signature: number[] | null; success: boolean }> {
+        callParams: CallParams<"data">,
+    ): Promise<{
+        error: string | null;
+        signature: number[] | null;
+        success: boolean;
+    }> {
         if (!this.securityGuard(callParams)) {
             return {
                 success: false,
-                error: 'Security guard validation failed',
+                error: "Security guard validation failed",
                 signature: null,
             };
         }
@@ -79,7 +91,10 @@ export class Sig implements SigDef {
      * Verifies the signature. Required by aqua
      */
     verify(signature: number[], data: number[]): Promise<boolean> {
-        return this.keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature))
+        return this.keyPair.verify(
+            Uint8Array.from(data),
+            Uint8Array.from(signature),
+        );
     }
 }
 

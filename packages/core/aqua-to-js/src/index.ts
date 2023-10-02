@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    generateSources,
-    generateTypes,
-} from './generate/index.js';
-import { CompilationResult, OutputType } from './generate/interfaces.js';
-import { getPackageJsonContent } from './utils.js';
+import { generateSources, generateTypes } from "./generate/index.js";
+import { CompilationResult, OutputType } from "./generate/interfaces.js";
+import { getPackageJsonContent } from "./utils.js";
 
 interface JsOutput {
     sources: string;
@@ -31,17 +28,22 @@ interface TsOutput {
 }
 
 type LanguageOutput = {
-    "js": JsOutput,
-    "ts": TsOutput
+    js: JsOutput;
+    ts: TsOutput;
 };
 
-export default async function aquaToJs<T extends OutputType>(res: CompilationResult, outputType: T): Promise<LanguageOutput[T]> {
+export default async function aquaToJs<T extends OutputType>(
+    res: CompilationResult,
+    outputType: T,
+): Promise<LanguageOutput[T]> {
     const packageJson = await getPackageJsonContent();
-    
-    return outputType === 'js' ? {
-        sources: await generateSources(res, 'js', packageJson),
-        types: await generateTypes(res, packageJson)
-    } : {
-        sources: await generateSources(res, 'ts', packageJson),
-    } as LanguageOutput[T];
-};
+
+    return outputType === "js"
+        ? {
+              sources: await generateSources(res, "js", packageJson),
+              types: await generateTypes(res, packageJson),
+          }
+        : ({
+              sources: await generateSources(res, "ts", packageJson),
+          } as LanguageOutput[T]);
+}

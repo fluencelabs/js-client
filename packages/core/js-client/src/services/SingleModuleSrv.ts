@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { SrvDef } from './_aqua/single-module-srv.js';
-import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { CallParams } from '@fluencelabs/interfaces';
-import { Buffer } from 'buffer';
-import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
+import { Buffer } from "buffer";
+
+import { CallParams } from "@fluencelabs/interfaces";
+import { v4 as uuidv4 } from "uuid";
+
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+
+import { SrvDef } from "./_aqua/single-module-srv.js";
+import {
+    allowOnlyParticleOriginatedAt,
+    SecurityGuard,
+} from "./securityGuard.js";
 
 export const defaultGuard = (peer: FluencePeer) => {
     return allowOnlyParticleOriginatedAt<any>(peer.keyPair.getPeerId());
@@ -33,20 +39,23 @@ export class Srv implements SrvDef {
         this.securityGuard_remove = defaultGuard(this.peer);
     }
 
-    securityGuard_create: SecurityGuard<'wasm_b64_content'>;
+    securityGuard_create: SecurityGuard<"wasm_b64_content">;
 
-    async create(wasm_b64_content: string, callParams: CallParams<'wasm_b64_content'>) {
+    async create(
+        wasm_b64_content: string,
+        callParams: CallParams<"wasm_b64_content">,
+    ) {
         if (!this.securityGuard_create(callParams)) {
             return {
                 success: false,
-                error: 'Security guard validation failed',
+                error: "Security guard validation failed",
                 service_id: null,
             };
         }
 
         try {
             const newServiceId = uuidv4();
-            const buffer = Buffer.from(wasm_b64_content, 'base64');
+            const buffer = Buffer.from(wasm_b64_content, "base64");
             // TODO:: figure out why SharedArrayBuffer is not working here
             // const sab = new SharedArrayBuffer(buffer.length);
             // const tmp = new Uint8Array(sab);
@@ -68,13 +77,13 @@ export class Srv implements SrvDef {
         }
     }
 
-    securityGuard_remove: SecurityGuard<'service_id'>;
+    securityGuard_remove: SecurityGuard<"service_id">;
 
-    async remove(service_id: string, callParams: CallParams<'service_id'>) {
+    async remove(service_id: string, callParams: CallParams<"service_id">) {
         if (!this.securityGuard_remove(callParams)) {
             return {
                 success: false,
-                error: 'Security guard validation failed',
+                error: "Security guard validation failed",
                 service_id: null,
             };
         }

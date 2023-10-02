@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-import { CallParams, IFluenceInternalApi } from '@fluencelabs/interfaces';
-import { defaultGuard } from './SingleModuleSrv.js';
-import { NodeUtilsDef, registerNodeUtils } from './_aqua/node-utils.js';
-import { SecurityGuard } from './securityGuard.js';
-import * as fs from 'fs';
-import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
+import * as fs from "fs";
+
+import { CallParams } from "@fluencelabs/interfaces";
+
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+
+import { NodeUtilsDef, registerNodeUtils } from "./_aqua/node-utils.js";
+import { SecurityGuard } from "./securityGuard.js";
+import { defaultGuard } from "./SingleModuleSrv.js";
 
 export class NodeUtils implements NodeUtilsDef {
     constructor(private peer: FluencePeer) {
         this.securityGuard_readFile = defaultGuard(this.peer);
     }
 
-    securityGuard_readFile: SecurityGuard<'path'>;
+    securityGuard_readFile: SecurityGuard<"path">;
 
-    async read_file(path: string, callParams: CallParams<'path'>) {
+    async read_file(path: string, callParams: CallParams<"path">) {
         if (!this.securityGuard_readFile(callParams)) {
             return {
                 success: false,
-                error: 'Security guard validation failed',
+                error: "Security guard validation failed",
                 content: null,
             };
         }
@@ -46,9 +49,11 @@ export class NodeUtils implements NodeUtilsDef {
                         reject(err);
                         return;
                     }
+
                     resolve(data);
-                })
+                });
             });
+
             return {
                 success: true,
                 content: data as unknown as string,
@@ -66,5 +71,5 @@ export class NodeUtils implements NodeUtilsDef {
 
 // HACK:: security guard functions must be ported to user API
 export const doRegisterNodeUtils = (peer: any) => {
-    registerNodeUtils(peer, 'node_utils', new NodeUtils(peer));
+    registerNodeUtils(peer, "node_utils", new NodeUtils(peer));
 };

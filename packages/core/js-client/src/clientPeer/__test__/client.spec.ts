@@ -1,13 +1,31 @@
-import { it, describe, expect } from 'vitest';
-import { handleTimeout } from '../../particle/Particle.js';
-import { doNothing } from '../../jsServiceHost/serviceUtils.js';
-import { registerHandlersHelper, withClient } from '../../util/testUtils.js';
-import { checkConnection } from '../checkConnection.js';
-import { nodes, RELAY } from './connection.js';
-import { CallServiceData } from '../../jsServiceHost/interfaces.js';
+/**
+ * Copyright 2023 Fluence Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-describe('FluenceClient usage test suite', () => {
-    it('should make a call through network', async () => {
+import { it, describe, expect } from "vitest";
+
+import { CallServiceData } from "../../jsServiceHost/interfaces.js";
+import { doNothing } from "../../jsServiceHost/serviceUtils.js";
+import { handleTimeout } from "../../particle/Particle.js";
+import { registerHandlersHelper, withClient } from "../../util/testUtils.js";
+import { checkConnection } from "../checkConnection.js";
+
+import { nodes, RELAY } from "./connection.js";
+
+describe("FluenceClient usage test suite", () => {
+    it("should make a call through network", async () => {
         await withClient(RELAY, {}, async (peer) => {
             // arrange
 
@@ -27,7 +45,7 @@ describe('FluenceClient usage test suite', () => {
     )`;
 
             const particle = await peer.internals.createNewParticle(script);
-            
+
             const result = await new Promise<string>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -51,14 +69,17 @@ describe('FluenceClient usage test suite', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, handleTimeout(reject));
+                peer.internals.initiateParticle(
+                    particle,
+                    handleTimeout(reject),
+                );
             });
 
-            expect(result).toBe('hello world!');
+            expect(result).toBe("hello world!");
         });
     });
 
-    it('check connection should work', async function () {
+    it("check connection should work", async function () {
         await withClient(RELAY, {}, async (peer) => {
             const isConnected = await checkConnection(peer);
 
@@ -66,7 +87,7 @@ describe('FluenceClient usage test suite', () => {
         });
     });
 
-    it('check connection should work with ttl', async function () {
+    it("check connection should work with ttl", async function () {
         await withClient(RELAY, {}, async (peer) => {
             const isConnected = await checkConnection(peer, 10000);
 
@@ -74,17 +95,21 @@ describe('FluenceClient usage test suite', () => {
         });
     });
 
-    it('two clients should work inside the same time javascript process', async () => {
+    it("two clients should work inside the same time javascript process", async () => {
         await withClient(RELAY, {}, async (peer1) => {
             await withClient(RELAY, {}, async (peer2) => {
                 const res = new Promise((resolve) => {
-                    peer2.internals.regHandler.common('test', 'test', (req: CallServiceData) => {
-                        resolve(req.args[0]);
-                        return {
-                            result: {},
-                            retCode: 0,
-                        };
-                    });
+                    peer2.internals.regHandler.common(
+                        "test",
+                        "test",
+                        (req: CallServiceData) => {
+                            resolve(req.args[0]);
+                            return {
+                                result: {},
+                                retCode: 0,
+                            };
+                        },
+                    );
                 });
 
                 const script = `
@@ -93,7 +118,9 @@ describe('FluenceClient usage test suite', () => {
                 (call "${peer2.getPeerId()}" ("test" "test") ["test"])
             )
         `;
-                const particle = await peer1.internals.createNewParticle(script);
+
+                const particle =
+                    await peer1.internals.createNewParticle(script);
 
                 if (particle instanceof Error) {
                     throw particle;
@@ -101,13 +128,13 @@ describe('FluenceClient usage test suite', () => {
 
                 peer1.internals.initiateParticle(particle, doNothing);
 
-                expect(await res).toEqual('test');
+                expect(await res).toEqual("test");
             });
         });
     });
 
-    describe('should make connection to network', () => {
-        it('address as string', async () => {
+    describe("should make connection to network", () => {
+        it("address as string", async () => {
             await withClient(nodes[0].multiaddr, {}, async (peer) => {
                 const isConnected = await checkConnection(peer);
 
@@ -115,7 +142,7 @@ describe('FluenceClient usage test suite', () => {
             });
         });
 
-        it('address as node', async () => {
+        it("address as node", async () => {
             await withClient(nodes[0], {}, async (peer) => {
                 const isConnected = await checkConnection(peer);
 
@@ -123,23 +150,31 @@ describe('FluenceClient usage test suite', () => {
             });
         });
 
-        it('With connection options: dialTimeout', async () => {
-            await withClient(RELAY, { connectionOptions: { dialTimeoutMs: 100000 } }, async (peer) => {
-                const isConnected = await checkConnection(peer);
+        it("With connection options: dialTimeout", async () => {
+            await withClient(
+                RELAY,
+                { connectionOptions: { dialTimeoutMs: 100000 } },
+                async (peer) => {
+                    const isConnected = await checkConnection(peer);
 
-                expect(isConnected).toBeTruthy();
-            });
+                    expect(isConnected).toBeTruthy();
+                },
+            );
         });
 
-        it('With connection options: skipCheckConnection', async () => {
-            await withClient(RELAY, { connectionOptions: { skipCheckConnection: true } }, async (peer) => {
-                const isConnected = await checkConnection(peer);
+        it("With connection options: skipCheckConnection", async () => {
+            await withClient(
+                RELAY,
+                { connectionOptions: { skipCheckConnection: true } },
+                async (peer) => {
+                    const isConnected = await checkConnection(peer);
 
-                expect(isConnected).toBeTruthy();
-            });
+                    expect(isConnected).toBeTruthy();
+                },
+            );
         });
 
-        it('With connection options: defaultTTL', async () => {
+        it("With connection options: defaultTTL", async () => {
             await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
                 const isConnected = await checkConnection(peer);
 
@@ -148,14 +183,16 @@ describe('FluenceClient usage test suite', () => {
         });
     });
 
-    it.skip('Should throw correct error when the client tries to send a particle not to the relay', async () => {
+    it.skip("Should throw correct error when the client tries to send a particle not to the relay", async () => {
         await withClient(RELAY, {}, async (peer) => {
             const script = `
     (xor
         (call "incorrect_peer_id" ("any" "service") [])
         (call %init_peer_id% ("callback" "error") [%last_error%])
     )`;
+
             const particle = await peer.internals.createNewParticle(script);
+
             const promise = new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -171,7 +208,7 @@ describe('FluenceClient usage test suite', () => {
                 });
 
                 peer.internals.initiateParticle(particle, (stage) => {
-                    if (stage.stage === 'sendingError') {
+                    if (stage.stage === "sendingError") {
                         reject(stage.errorMessage);
                     }
                 });
@@ -180,7 +217,7 @@ describe('FluenceClient usage test suite', () => {
             await promise;
 
             await expect(promise).rejects.toMatch(
-                'Particle is expected to be sent to only the single peer (relay which client is connected to)',
+                "Particle is expected to be sent to only the single peer (relay which client is connected to)",
             );
         });
     });

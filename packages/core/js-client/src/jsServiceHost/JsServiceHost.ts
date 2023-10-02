@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, IJsServiceHost } from './interfaces.js';
+
+import {
+    CallServiceData,
+    CallServiceResult,
+    GenericCallServiceHandler,
+    IJsServiceHost,
+} from "./interfaces.js";
 
 export class JsServiceHost implements IJsServiceHost {
-    private particleScopeHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
+    private particleScopeHandlers = new Map<
+        string,
+        Map<string, GenericCallServiceHandler>
+    >();
     private commonHandlers = new Map<string, GenericCallServiceHandler>();
 
     /**
      * Returns true if any handler for the specified serviceId is registered
      */
     hasService(serviceId: string): boolean {
-        return this.commonHandlers.has(serviceId) || this.particleScopeHandlers.has(serviceId);
+        return (
+            this.commonHandlers.has(serviceId) ||
+            this.particleScopeHandlers.has(serviceId)
+        );
     }
 
     /**
@@ -40,7 +52,11 @@ export class JsServiceHost implements IJsServiceHost {
      * @param fnName Function name as specified in `call` air instruction
      * @param particleId Particle ID
      */
-    getHandler(serviceId: string, fnName: string, particleId: string): GenericCallServiceHandler | null {
+    getHandler(
+        serviceId: string,
+        fnName: string,
+        particleId: string,
+    ): GenericCallServiceHandler | null {
         const key = serviceFnKey(serviceId, fnName);
         const psh = this.particleScopeHandlers.get(particleId);
         let handler: GenericCallServiceHandler | undefined = undefined;
@@ -64,7 +80,11 @@ export class JsServiceHost implements IJsServiceHost {
      * Execute service call for specified call service data. Return null if no handler was found
      */
     async callService(req: CallServiceData): Promise<CallServiceResult | null> {
-        const handler = this.getHandler(req.serviceId, req.fnName, req.particleContext.particleId);
+        const handler = this.getHandler(
+            req.serviceId,
+            req.fnName,
+            req.particleContext.particleId,
+        );
 
         if (handler === null) {
             return null;
@@ -83,7 +103,11 @@ export class JsServiceHost implements IJsServiceHost {
     /**
      * Register handler for all particles
      */
-    registerGlobalHandler(serviceId: string, fnName: string, handler: GenericCallServiceHandler): void {
+    registerGlobalHandler(
+        serviceId: string,
+        fnName: string,
+        handler: GenericCallServiceHandler,
+    ): void {
         this.commonHandlers.set(serviceFnKey(serviceId, fnName), handler);
     }
 
@@ -97,6 +121,7 @@ export class JsServiceHost implements IJsServiceHost {
         handler: GenericCallServiceHandler,
     ): void {
         let psh = this.particleScopeHandlers.get(particleId);
+
         if (psh === undefined) {
             psh = new Map<string, GenericCallServiceHandler>();
             this.particleScopeHandlers.set(particleId, psh);

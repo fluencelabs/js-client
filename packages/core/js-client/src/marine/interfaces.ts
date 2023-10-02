@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CallResultsArray, InterpreterResult, RunParameters } from '@fluencelabs/avm';
-import { IStartable, JSONArray, JSONObject, CallParameters } from '../util/commonTypes.js';
+
+import {
+    CallResultsArray,
+    InterpreterResult,
+    RunParameters,
+} from "@fluencelabs/avm";
+import type { WorkerImplementation } from "threads/dist/types/master";
+
+import {
+    IStartable,
+    JSONArray,
+    JSONObject,
+    CallParameters,
+} from "../util/commonTypes.js";
 // @ts-ignore
-import type { WorkerImplementation } from 'threads/dist/types/master';
 
 /**
  * Contract for marine host implementations. Marine host is responsible for creating calling and removing marine services
@@ -25,7 +36,10 @@ export interface IMarineHost extends IStartable {
     /**
      * Creates marine service from the given module and service id
      */
-    createService(serviceModule: ArrayBuffer | SharedArrayBuffer, serviceId: string): Promise<void>;
+    createService(
+        serviceModule: ArrayBuffer | SharedArrayBuffer,
+        serviceId: string,
+    ): Promise<void>;
 
     /**
      * Removes marine service with the given service id
@@ -74,12 +88,16 @@ export interface IValueLoader<T> {
 /**
  * Interface for something which can load wasm files
  */
-export interface IWasmLoader extends IValueLoader<ArrayBuffer | SharedArrayBuffer>, IStartable {}
+export interface IWasmLoader
+    extends IValueLoader<ArrayBuffer | SharedArrayBuffer>,
+        IStartable {}
 
 /**
  * Interface for something which can thread.js based worker
  */
-export interface IWorkerLoader extends IValueLoader<WorkerImplementation>, IStartable {}
+export interface IWorkerLoader
+    extends IValueLoader<WorkerImplementation>,
+        IStartable {}
 
 /**
  * Lazy loader for some value. Value is loaded only when `start` method is called
@@ -91,7 +109,9 @@ export class LazyLoader<T> implements IStartable, IValueLoader<T> {
 
     getValue(): T {
         if (this.value == null) {
-            throw new Error('Value has not been loaded. Call `start` method to load the value.');
+            throw new Error(
+                "Value has not been loaded. Call `start` method to load the value.",
+            );
         }
 
         return this.value;

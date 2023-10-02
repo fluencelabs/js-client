@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { describe, expect, it } from 'vitest';
-import { registerHandlersHelper, withPeer } from '../../util/testUtils.js';
-import { handleTimeout } from '../../particle/Particle.js';
-import { CallServiceData, ResultCodes } from '../../jsServiceHost/interfaces.js';
 
-describe('FluencePeer flow tests', () => {
-    it('should execute par instruction in parallel', async function () {
+import { describe, expect, it } from "vitest";
+
+import {
+    CallServiceData,
+    ResultCodes,
+} from "../../jsServiceHost/interfaces.js";
+import { handleTimeout } from "../../particle/Particle.js";
+import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
+
+describe("FluencePeer flow tests", () => {
+    it("should execute par instruction in parallel", async function () {
         await withPeer(async (peer) => {
             const script = `
                 (par
@@ -35,26 +40,32 @@ describe('FluencePeer flow tests', () => {
                 `;
 
             const particle = await peer.internals.createNewParticle(script);
-            
+
             const res = await new Promise<any>((resolve, reject) => {
-                peer.internals.regHandler.forParticle(particle.id, 'flow', 'timeout', (req: CallServiceData) => {
-                    const [timeout, message] = req.args;
-                    
-                    return new Promise((resolve) => {
-                        setTimeout(() => {
-                            const res = {
-                                result: message,
-                                retCode: ResultCodes.success,
-                            };
-                            resolve(res);
-                        }, timeout);
-                    });
-                });
+                peer.internals.regHandler.forParticle(
+                    particle.id,
+                    "flow",
+                    "timeout",
+                    (req: CallServiceData) => {
+                        const [timeout, message] = req.args;
+
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                const res = {
+                                    result: message,
+                                    retCode: ResultCodes.success,
+                                };
+
+                                resolve(res);
+                            }, timeout);
+                        });
+                    },
+                );
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
-                
+
                 const values: any[] = [];
 
                 registerHandlersHelper(peer, particle, {
@@ -62,6 +73,7 @@ describe('FluencePeer flow tests', () => {
                         callback1: (args: any) => {
                             const [val] = args;
                             values.push(val);
+
                             if (values.length === 2) {
                                 resolve(values);
                             }
@@ -69,6 +81,7 @@ describe('FluencePeer flow tests', () => {
                         callback2: (args: any) => {
                             const [val] = args;
                             values.push(val);
+
                             if (values.length === 2) {
                                 resolve(values);
                             }
@@ -76,10 +89,15 @@ describe('FluencePeer flow tests', () => {
                     },
                 });
 
-                peer.internals.initiateParticle(particle, handleTimeout(reject));
+                peer.internals.initiateParticle(
+                    particle,
+                    handleTimeout(reject),
+                );
             });
 
-            await expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));
+            await expect(res).toEqual(
+                expect.arrayContaining(["test1", "test1"]),
+            );
         });
     }, 1500);
 });

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export const CLIENT = 'IFluenceClient$$';
+export const CLIENT = "IFluenceClient$$";

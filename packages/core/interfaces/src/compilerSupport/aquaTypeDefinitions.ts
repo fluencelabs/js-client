@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-type SimpleTypes = ScalarType | OptionType | ArrayType | StructType | TopType | BottomType | NilType;
+
+type SimpleTypes =
+    | ScalarType
+    | OptionType
+    | ArrayType
+    | StructType
+    | TopType
+    | BottomType
+    | NilType;
 
 export type NonArrowType = SimpleTypes | ProductType<SimpleTypes>;
 
@@ -21,21 +29,21 @@ export type TopType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'topType';
+    tag: "topType";
 };
 
 export type BottomType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'bottomType';
+    tag: "bottomType";
 };
 
 export type OptionType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'option';
+    tag: "option";
 
     /**
      * Underlying type of the option
@@ -47,14 +55,14 @@ export type NilType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'nil';
+    tag: "nil";
 };
 
 export type ArrayType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'array';
+    tag: "array";
 
     /**
      * Type of array elements
@@ -66,24 +74,24 @@ export type ArrayType = {
  * All possible scalar type names
  */
 export type ScalarNames =
-    | 'u8'
-    | 'u16'
-    | 'u32'
-    | 'u64'
-    | 'i8'
-    | 'i16'
-    | 'i32'
-    | 'i64'
-    | 'f32'
-    | 'f64'
-    | 'bool'
-    | 'string';
+    | "u8"
+    | "u16"
+    | "u32"
+    | "u64"
+    | "i8"
+    | "i16"
+    | "i32"
+    | "i64"
+    | "f32"
+    | "f64"
+    | "bool"
+    | "string";
 
 export type ScalarType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'scalar';
+    tag: "scalar";
 
     /**
      * Name of the scalar type
@@ -95,7 +103,7 @@ export type StructType = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'struct';
+    tag: "struct";
 
     /**
      * Struct name
@@ -112,7 +120,7 @@ export type LabeledProductType<T> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'labeledProduct';
+    tag: "labeledProduct";
 
     /**
      * Labelled product fields
@@ -124,7 +132,7 @@ export type UnlabeledProductType<T> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'unlabeledProduct';
+    tag: "unlabeledProduct";
 
     /**
      * Items in unlabelled product
@@ -132,7 +140,10 @@ export type UnlabeledProductType<T> = {
     items: Array<T>;
 };
 
-export type ProductType<T> = UnlabeledProductType<T> | LabeledProductType<T> | NilType;
+export type ProductType<T> =
+    | UnlabeledProductType<T>
+    | LabeledProductType<T>
+    | NilType;
 
 /**
  * ArrowType is a profunctor pointing its domain to codomain.
@@ -142,7 +153,7 @@ export type ArrowType<T> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
-    tag: 'arrow';
+    tag: "arrow";
 
     /**
      * Where this Arrow is defined
@@ -163,7 +174,9 @@ export type ArrowWithoutCallbacks = ArrowType<NonArrowType>;
 /**
  * Arrow which domain does can contain both non-arrow types and arrows (which themselves cannot contain arrows)
  */
-export type ArrowWithCallbacks = ArrowType<NonArrowType | ArrowWithoutCallbacks>;
+export type ArrowWithCallbacks = ArrowType<
+    NonArrowType | ArrowWithoutCallbacks
+>;
 
 export interface FunctionCallConstants {
     /**
@@ -253,15 +266,15 @@ export const getArgumentTypes = (
 ): {
     [key: string]: NonArrowType | ArrowWithoutCallbacks;
 } => {
-    if (def.arrow.domain.tag !== 'labeledProduct') {
-        throw new Error('Should be impossible');
+    if (def.arrow.domain.tag !== "labeledProduct") {
+        throw new Error("Should be impossible");
     }
 
     return def.arrow.domain.fields;
 };
 
 export const isReturnTypeVoid = (def: FunctionCallDef): boolean => {
-    if (def.arrow.codomain.tag === 'nil') {
+    if (def.arrow.codomain.tag === "nil") {
         return true;
     }
 

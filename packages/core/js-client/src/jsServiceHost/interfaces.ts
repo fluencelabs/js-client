@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { PeerIdB58 } from '@fluencelabs/interfaces';
-import type { SecurityTetraplet } from '@fluencelabs/avm';
-import { JSONValue } from '../util/commonTypes.js';
+
+import type { SecurityTetraplet } from "@fluencelabs/avm";
+import type { PeerIdB58 } from "@fluencelabs/interfaces";
+
+import { JSONValue } from "../util/commonTypes.js";
 
 /**
- * JS Service host a low level interface for managing pure javascript services. 
+ * JS Service host a low level interface for managing pure javascript services.
  * It operates on a notion of Call Service Handlers - functions which are called when a `call` air instruction is executed on the local peer.
  */
 export interface IJsServiceHost {
@@ -33,7 +35,11 @@ export interface IJsServiceHost {
      * @param fnName Function name as specified in `call` air instruction
      * @param particleId Particle ID
      */
-    getHandler(serviceId: string, fnName: string, particleId: string): GenericCallServiceHandler | null;
+    getHandler(
+        serviceId: string,
+        fnName: string,
+        particleId: string,
+    ): GenericCallServiceHandler | null;
 
     /**
      * Execute service call for specified call service data
@@ -43,7 +49,11 @@ export interface IJsServiceHost {
     /**
      * Register handler for all particles
      */
-    registerGlobalHandler(serviceId: string, fnName: string, handler: GenericCallServiceHandler): void;
+    registerGlobalHandler(
+        serviceId: string,
+        fnName: string,
+        handler: GenericCallServiceHandler,
+    ): void;
 
     /**
      * Register handler which will be called only for particle with the specific id
@@ -135,7 +145,9 @@ export type CallServiceResultType = JSONValue;
 /**
  * Generic call service handler
  */
-export type GenericCallServiceHandler = (req: CallServiceData) => CallServiceResult | Promise<CallServiceResult>;
+export type GenericCallServiceHandler = (
+    req: CallServiceData,
+) => CallServiceResult | Promise<CallServiceResult>;
 
 /**
  * Represents the result of the `call` air instruction to be returned into AVM

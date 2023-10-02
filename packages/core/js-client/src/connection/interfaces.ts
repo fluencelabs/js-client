@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { PeerIdB58 } from '@fluencelabs/interfaces';
-import type { Subscribable } from 'rxjs';
-import { IParticle } from '../particle/interfaces.js';
-import { IStartable } from '../util/commonTypes.js';
+
+import type { PeerIdB58 } from "@fluencelabs/interfaces";
+import type { Subscribable } from "rxjs";
+
+import { IParticle } from "../particle/interfaces.js";
+import { IStartable } from "../util/commonTypes.js";
 
 /**
  * Interface for connection used in Fluence Peer.
