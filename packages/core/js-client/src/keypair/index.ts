@@ -15,9 +15,9 @@
  */
 
 import type { PeerId } from '@libp2p/interface/peer-id';
-import { generateKeyPairFromSeed, generateKeyPair } from '@libp2p/crypto/keys';
-import { createFromPrivKey } from '@libp2p/peer-id-factory';
-import type { PrivateKey } from '@libp2p/interface/keys';
+import { generateKeyPairFromSeed, generateKeyPair, unmarshalPublicKey } from '@libp2p/crypto/keys';
+import { createFromPrivKey, createFromPubKey } from '@libp2p/peer-id-factory';
+import type { PrivateKey, PublicKey } from '@libp2p/interface/keys';
 import { toUint8Array } from 'js-base64';
 import * as bs58 from 'bs58';
 import { KeyPairOptions } from '@fluencelabs/interfaces';
@@ -33,7 +33,11 @@ export class KeyPair {
         return this.libp2pPeerId;
     }
 
-    constructor(private key: PrivateKey, private libp2pPeerId: PeerId) {}
+    constructor(
+        private privateKey: PrivateKey | undefined,
+        private publicKey: PublicKey,
+        private libp2pPeerId: PeerId
+    ) {}
 
     /**
      * Generates new KeyPair from ed25519 private key represented as a 32 byte array
@@ -43,7 +47,7 @@ export class KeyPair {
     static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
         const key = await generateKeyPairFromSeed('Ed25519', seed, 256);
         const lib2p2Pid = await createFromPrivKey(key);
-        return new KeyPair(key, lib2p2Pid);
+        return new KeyPair(key, key.public, lib2p2Pid);
     }
 
     /**
@@ -53,7 +57,7 @@ export class KeyPair {
     static async randomEd25519(): Promise<KeyPair> {
         const key = await generateKeyPair('Ed25519');
         const lib2p2Pid = await createFromPrivKey(key);
-        return new KeyPair(key, lib2p2Pid);
+        return new KeyPair(key, key.public, lib2p2Pid);
     }
 
     getPeerId(): string {
@@ -64,15 +68,21 @@ export class KeyPair {
      * @returns 32 byte private key
      */
     toEd25519PrivateKey(): Uint8Array {
-        return this.key.marshal().subarray(0, 32);
+        if (this.privateKey === undefined) {
+            throw new Error('Private key not supplied');
+        }
+        return this.privateKey.marshal().subarray(0, 32);
     }
 
     signBytes(data: Uint8Array): Promise<Uint8Array> {
-        return this.key.sign(data);
+        if (this.privateKey === undefined) {
+            throw new Error('Private key not supplied');
+        }
+        return this.privateKey.sign(data);
     }
 
     verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
-        return this.key.public.verify(data, signature);
+        return this.publicKey.verify(data, signature);
     }
 }
 

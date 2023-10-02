@@ -15,7 +15,7 @@
  */
 import { PeerIdB58 } from '@fluencelabs/interfaces';
 import { pipe } from 'it-pipe';
-import { encode, decode } from 'it-length-prefixed';
+import { decode, encode } from 'it-length-prefixed';
 import type { PeerId } from '@libp2p/interface/peer-id';
 import { createLibp2p, Libp2p } from 'libp2p';
 
@@ -23,8 +23,7 @@ import { noise } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
 import { webSockets } from '@libp2p/websockets';
 import { all } from '@libp2p/websockets/filters';
-import { multiaddr } from '@multiformats/multiaddr';
-import type { Multiaddr } from '@multiformats/multiaddr';
+import { multiaddr, type Multiaddr } from '@multiformats/multiaddr';
 
 import map from 'it-map';
 import { fromString } from 'uint8arrays/from-string';
@@ -35,9 +34,13 @@ import { Subject } from 'rxjs';
 import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
 import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
-import { Particle, serializeToString } from '../particle/Particle.js';
+import { Particle, serializeToString, verifySignature } from '../particle/Particle.js';
 import { identifyService } from 'libp2p/identify';
 import { pingService } from 'libp2p/ping';
+import { unmarshalPublicKey } from '@libp2p/crypto/keys';
+import { peerIdFromString } from '@libp2p/peer-id';
+import { Stream } from '@libp2p/interface/connection';
+import { KeyPair } from '../keypair/index.js';
 
 const log = logger('connection');
 
@@ -170,6 +173,31 @@ export class RelayConnection implements IConnection {
         );
         log.trace('data written to sink');
     }
+    
+    private async processIncomingMessage(msg: string, stream: Stream) {
+        let particle: Particle | undefined;
+        try {
+            particle = Particle.fromString(msg);
+            log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
+            const initPeerId = peerIdFromString(particle.initPeerId);
+
+            if (initPeerId.publicKey === undefined) {
+                log.error('cannot retrieve public key from init_peer_id. particle id: %s. init_peer_id: %s', particle.id, particle.initPeerId);
+                return;
+            }
+            
+            const isVerified = await verifySignature(particle, initPeerId.publicKey);
+            if (isVerified) {
+                this.particleSource.next(particle);
+            } else {
+                log.trace('particle signature is incorrect. rejecting particle with id: %s', particle.id);
+            }
+        } catch (e) {
+            const particleId = particle?.id;
+            const particleIdMessage = typeof particleId === 'string' ? `. particle id: ${particleId}` : '';
+            log.error(`error on handling an incoming message: %O%s`, e, particleIdMessage);
+        }
+    }
 
     private async connect() {
         if (this.lib2p2Peer === null) {
@@ -178,30 +206,20 @@ export class RelayConnection implements IConnection {
 
         await this.lib2p2Peer.handle(
             [PROTOCOL_NAME],
-            async ({ connection, stream }) => {
-                pipe(
-                    stream.source,
-                    // @ts-ignore
-                    decode(),
-                    // @ts-ignore
-                    (source) => map(source, (buf) => toString(buf.subarray())),
-                    async (source) => {
-                        try {
-                            for await (const msg of source) {
-                                try {
-                                    const particle = Particle.fromString(msg);
-                                    log.trace('got particle from stream with id %s and particle id %s', stream.id, particle.id);
-                                    this.particleSource.next(particle);
-                                } catch (e) {
-                                    log.error('error on handling a new incoming message: %j', e);
-                                }
-                            }
-                        } catch (e) {
-                            log.error('connection closed: %j', e);
+            async ({ connection, stream }) => pipe(
+                stream.source,
+                decode(),
+                (source) => map(source, (buf) => toString(buf.subarray())),
+                async (source) => {
+                    try {
+                        for await (const msg of source) {
+                            await this.processIncomingMessage(msg, stream);
                         }
-                    },
-                );
-            },
+                    } catch (e) {
+                        log.error('connection closed: %j', e);
+                    }
+                },
+            ),
             {
                 maxInboundStreams: this.config.maxInboundStreams,
                 maxOutboundStreams: this.config.maxOutboundStreams,

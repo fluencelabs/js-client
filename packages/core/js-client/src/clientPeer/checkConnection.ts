@@ -28,8 +28,7 @@ const log = logger('connection');
 export const checkConnection = async (peer: ClientPeer, ttl?: number): Promise<boolean> => {
     const msg = Math.random().toString(36).substring(7);
 
-    const promise = new Promise<string>((resolve, reject) => {
-        const script = `
+    const script = `
     (xor
         (seq
             (call %init_peer_id% ("load" "relay") [] init_relay)
@@ -46,8 +45,9 @@ export const checkConnection = async (peer: ClientPeer, ttl?: number): Promise<b
             (call %init_peer_id% ("callback" "error") [%last_error%])
         )
     )`;
-        const particle = peer.internals.createNewParticle(script, ttl);
+    const particle = await peer.internals.createNewParticle(script, ttl);
 
+    const promise = new Promise<string>((resolve, reject) => {
         if (particle instanceof Error) {
             return reject(particle.message);
         }

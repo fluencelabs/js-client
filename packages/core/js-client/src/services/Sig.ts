@@ -79,7 +79,7 @@ export class Sig implements SigDef {
      * Verifies the signature. Required by aqua
      */
     verify(signature: number[], data: number[]): Promise<boolean> {
-        return this.keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature));
+        return this.keyPair.verify(Uint8Array.from(data), Uint8Array.from(signature))
     }
 }
 

@@ -28,6 +28,7 @@ import {
     IFluenceInternalApi,
 } from '@fluencelabs/interfaces';
 import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
+import { fromUint8Array } from 'js-base64';
 
 export interface ServiceDescription {
     serviceId: string;
@@ -177,6 +178,7 @@ const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): 
 
     const callParams = {
         ...req.particleContext,
+        signature: fromUint8Array(req.particleContext.signature),
         tetraplets,
     };
 

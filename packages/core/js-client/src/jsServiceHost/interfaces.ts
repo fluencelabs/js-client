@@ -94,7 +94,7 @@ export interface ParticleContext {
     /**
      * Particle's signature
      */
-    signature?: string;
+    signature: Uint8Array;
 }
 
 /**

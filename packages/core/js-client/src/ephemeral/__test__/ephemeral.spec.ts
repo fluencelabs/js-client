@@ -59,7 +59,7 @@ describe.skip('Ephemeral networks tests', () => {
         )
         `;
 
-        const particle = client.internals.createNewParticle(script);
+        const particle = await client.internals.createNewParticle(script);
 
         const promise = new Promise<string>((resolve) => {
             client.internals.regHandler.forParticle(particle.id, 'test', 'test', (req: CallServiceData) => {

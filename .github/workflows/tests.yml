@@ -97,8 +97,6 @@ jobs:
               "@fluencelabs/marine-js": "${{ inputs.marine-js-version }}"
             }
 
-      - uses: browser-actions/setup-chrome@v1
-
       - run: pnpm -r --no-frozen-lockfile i
       - run: pnpm -r build
       - run: pnpm -r test
