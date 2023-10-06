@@ -12,7 +12,7 @@
       "lint-check": "pnpm run prettier --check && pnpm run eslint",
       "lint-fix": "pnpm run prettier --write && pnpm run eslint --fix",
       "prettier": "prettier \"**/src/**/*.{js,ts}\"",
-      "eslint": "eslint --ext .js,.ts --cache \"**/src/**\""
+      "eslint": "eslint --cache \"**/src/**/*.{js,ts}\""
   },
   "author": "Fluence Labs",
   "license": "Apache-2.0",

@@ -3,10 +3,9 @@
     "parserOptions": {
         "ecmaVersion": 2022,
         "project": [
-            "./tsconfig.json",
-            "./tsconfig.eslint.json",
-            "./test/tsconfig.json"
-        ]
+            "./tsconfig.eslint.json"
+        ],
+        "sourceType": "module"
     },
     "extends": [
         "eslint:recommended",
@@ -22,10 +21,17 @@
         "license-header",
         "unused-imports"
     ],
+    "ignorePatterns": [
+        "**/node_modules/**/*",
+        "**/dist/**/*"
+    ],
     "rules": {
         "eqeqeq": [
             "error",
-            "always"
+            "always",
+            {
+                "null": "ignore"
+            }
         ],
         "no-console": [
             "error"
@@ -39,11 +45,6 @@
             {
                 "allowEmptyCatch": true
             }
-        ],
-        "no-plusplus": "error",
-        "operator-assignment": [
-            "error",
-            "never"
         ],
         "curly": [
             "error",
@@ -109,7 +110,7 @@
         ],
         "import/extensions": [
             "error",
-            "always"
+            "ignorePackages"
         ],
         "import/no-unresolved": "off",
         "import/no-cycle": [

@@ -21,13 +21,16 @@ import type {
 } from "@fluencelabs/marine-js/dist/config";
 import { MarineService } from "@fluencelabs/marine-js/dist/MarineService";
 import type {
+    CallParameters,
     JSONArray,
     JSONObject,
     LogMessage,
 } from "@fluencelabs/marine-js/dist/types";
+import { JSONValue } from "@fluencelabs/marine-js/dist/types";
 import { Observable, Subject } from "observable-fns";
-// @ts-ignore no types provided for package
-import { expose } from "threads/worker";
+
+// "threads" package has broken type definitions in package.json. This is the workaround.
+import { expose } from "../node_modules/threads/worker.js";
 
 const createSimpleModuleDescriptor = (
     name: string,
@@ -61,7 +64,7 @@ let controlModule: WebAssembly.Module | undefined;
 const onLogMessage = new Subject<LogMessage>();
 
 const toExpose = {
-    init: async (controlModuleWasm: ArrayBuffer | SharedArrayBuffer) => {
+    init: (controlModuleWasm: ArrayBuffer | SharedArrayBuffer) => {
         controlModule = new WebAssembly.Module(
             new Uint8Array(controlModuleWasm),
         );
@@ -72,7 +75,7 @@ const toExpose = {
         serviceId: string,
         envs?: Env,
     ): Promise<void> => {
-        if (!controlModule) {
+        if (controlModule == null) {
             throw new Error(
                 "MarineJS is not initialized. To initialize call `init` function",
             );
@@ -100,11 +103,11 @@ const toExpose = {
         marineServices.set(serviceId, srv);
     },
 
-    hasService: async (serviceId: string) => {
+    hasService: (serviceId: string) => {
         return marineServices.has(serviceId);
     },
 
-    removeService: async (serviceId: string) => {
+    removeService: (serviceId: string) => {
         if (serviceId === "avm") {
             throw new Error("Cannot remove 'avm' service");
         }
@@ -113,8 +116,8 @@ const toExpose = {
         return marineServices.delete(serviceId);
     },
 
-    terminate: async () => {
-        marineServices.forEach((val, key) => {
+    terminate: () => {
+        marineServices.forEach((val) => {
             val.terminate();
         });
 
@@ -122,36 +125,28 @@ const toExpose = {
         onLogMessage.complete();
     },
 
-    callService: async (
+    callService: (
         serviceId: string,
         functionName: string,
         args: JSONArray | JSONObject,
-        callParams: any,
+        callParams: CallParameters,
     ) => {
         const srv = marineServices.get(serviceId);
 
-        if (!srv) {
+        if (srv == null) {
             throw new Error(`service with id=${serviceId} not found`);
         }
 
-        return srv.call(functionName, args, callParams);
+        // TODO: Make MarineService return JSONValue type
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        return srv.call(functionName, args, callParams) as JSONValue;
     },
 
-    onLogMessage(): Observable<LogMessage> {
+    onLogMessage() {
         return Observable.from(onLogMessage);
     },
 };
 
-type ExposedInterface<
-    T extends { [key: string]: (...args: any[]) => unknown },
-> = {
-    [P in keyof T]: ReturnType<T[P]> extends Observable<unknown>
-        ? T[P]
-        : ReturnType<T[P]> extends Promise<unknown>
-        ? T[P]
-        : (...args: Parameters<T[P]>) => Promise<ReturnType<T[P]>>;
-};
-
-export type MarineBackgroundInterface = ExposedInterface<typeof toExpose>;
+export type MarineBackgroundInterface = typeof toExpose;
 
 expose(toExpose);

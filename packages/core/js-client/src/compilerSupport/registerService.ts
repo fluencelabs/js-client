@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
-import type { RegisterServiceType } from "@fluencelabs/interfaces";
+import type { ServiceDef, ServiceImpl } from "@fluencelabs/interfaces";
 
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
 
 import { registerGlobalService, userHandlerService } from "./services.js";
 
 const log = logger("aqua");
 
-export const registerService: RegisterServiceType = ({
+interface RegisterServiceArgs {
+    peer: FluencePeer;
+    def: ServiceDef;
+    serviceId: string | undefined;
+    service: ServiceImpl;
+}
+
+export const registerService = ({
     peer,
     def,
     serviceId,
     service,
-}) => {
+}: RegisterServiceArgs) => {
+    // TODO: Need to refactor this. We can compute function types from service implementation, making func more type safe
     log.trace("registering aqua service %o", { def, serviceId, service });
 
     // Checking for missing keys
@@ -49,11 +58,11 @@ export const registerService: RegisterServiceType = ({
         );
     }
 
-    if (!serviceId) {
+    if (serviceId == null) {
         serviceId = def.defaultServiceId;
     }
 
-    if (!serviceId) {
+    if (serviceId == null) {
         throw new Error("Service ID must be specified");
     }
 
@@ -61,7 +70,7 @@ export const registerService: RegisterServiceType = ({
         def.functions.tag === "nil" ? [] : Object.entries(def.functions.fields);
 
     for (const singleFunction of singleFunctions) {
-        const [name, type] = singleFunction;
+        const [name] = singleFunction;
         // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
         // Account for the fact that user service might be defined as a class - .bind(...)
         const userDefinedHandler = service[name].bind(service);

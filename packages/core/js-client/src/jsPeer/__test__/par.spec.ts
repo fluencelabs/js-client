@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import assert from "assert";
+
+import { JSONValue } from "@fluencelabs/interfaces";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -41,13 +44,14 @@ describe("FluencePeer flow tests", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const res = await new Promise<any>((resolve, reject) => {
+            const res = await new Promise((resolve, reject) => {
                 peer.internals.regHandler.forParticle(
                     particle.id,
                     "flow",
                     "timeout",
                     (req: CallServiceData) => {
                         const [timeout, message] = req.args;
+                        assert(typeof timeout === "number");
 
                         return new Promise((resolve) => {
                             setTimeout(() => {
@@ -66,11 +70,11 @@ describe("FluencePeer flow tests", () => {
                     return reject(particle.message);
                 }
 
-                const values: any[] = [];
+                const values: JSONValue[] = [];
 
                 registerHandlersHelper(peer, particle, {
                     callback: {
-                        callback1: (args: any) => {
+                        callback1: (args) => {
                             const [val] = args;
                             values.push(val);
 
@@ -78,7 +82,7 @@ describe("FluencePeer flow tests", () => {
                                 resolve(values);
                             }
                         },
-                        callback2: (args: any) => {
+                        callback2: (args) => {
                             const [val] = args;
                             values.push(val);
 
@@ -95,9 +99,7 @@ describe("FluencePeer flow tests", () => {
                 );
             });
 
-            await expect(res).toEqual(
-                expect.arrayContaining(["test1", "test1"]),
-            );
+            expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));
         });
     }, 1500);
 });

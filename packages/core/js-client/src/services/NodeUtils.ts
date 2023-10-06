@@ -17,9 +17,10 @@
 import { Buffer } from "buffer";
 import * as fs from "fs";
 
-import { CallParams } from "@fluencelabs/interfaces";
+import { CallParams } from '@fluencelabs/interfaces';
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { getErrorMessage } from "../util/utils.js";
 
 import { NodeUtilsDef, registerNodeUtils } from "./_aqua/node-utils.js";
 import { SecurityGuard } from "./securityGuard.js";
@@ -45,7 +46,7 @@ export class NodeUtils implements NodeUtilsDef {
             // Strange enough, but Buffer type works here, while reading with encoding 'utf-8' doesn't
             const data = await new Promise<Buffer>((resolve, reject) => {
                 fs.readFile(path, (err, data) => {
-                    if (err) {
+                    if (err != null) {
                         reject(err);
                         return;
                     }
@@ -56,13 +57,15 @@ export class NodeUtils implements NodeUtilsDef {
 
             return {
                 success: true,
+                // TODO: this is strange bug.
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 content: data as unknown as string,
                 error: null,
             };
-        } catch (err: any) {
+        } catch (err: unknown) {
             return {
                 success: false,
-                error: err.message,
+                error: getErrorMessage(err),
                 content: null,
             };
         }
@@ -70,6 +73,6 @@ export class NodeUtils implements NodeUtilsDef {
 }
 
 // HACK:: security guard functions must be ported to user API
-export const doRegisterNodeUtils = (peer: any) => {
+export const doRegisterNodeUtils = (peer: FluencePeer) => {
     registerNodeUtils(peer, "node_utils", new NodeUtils(peer));
 };

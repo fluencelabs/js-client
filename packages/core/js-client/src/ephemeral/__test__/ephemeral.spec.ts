@@ -17,10 +17,7 @@
 import { it, describe, expect, beforeEach, afterEach } from "vitest";
 
 import { DEFAULT_CONFIG, FluencePeer } from "../../jsPeer/FluencePeer.js";
-import {
-    CallServiceData,
-    ResultCodes,
-} from "../../jsServiceHost/interfaces.js";
+import { ResultCodes } from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
 import { EphemeralNetworkClient } from "../client.js";
 import { EphemeralNetwork, defaultConfig } from "../network.js";
@@ -41,13 +38,8 @@ describe.skip("Ephemeral networks tests", () => {
     });
 
     afterEach(async () => {
-        if (client) {
-            await client.stop();
-        }
-
-        if (en) {
-            await en.down();
-        }
+        await client.stop();
+        await en.down();
     });
 
     it("smoke test", async function () {
@@ -88,7 +80,7 @@ describe.skip("Ephemeral networks tests", () => {
                 particle.id,
                 "test",
                 "test",
-                (req: CallServiceData) => {
+                () => {
                     resolve("success");
                     return {
                         result: "test",

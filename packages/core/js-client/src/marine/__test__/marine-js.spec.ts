@@ -20,9 +20,9 @@ import * as url from "url";
 
 import { it, describe, expect, beforeAll } from "vitest";
 
-import { compileAqua, withPeer } from "../../util/testUtils.js";
+import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 
-let aqua: any;
+let aqua: Record<string, CompiledFnCall>;
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 describe("Marine js tests", () => {
@@ -32,7 +32,7 @@ describe("Marine js tests", () => {
             "../../../aqua_test/marine-js.aqua",
         );
 
-        const { services, functions } = await compileAqua(pathToAquaFiles);
+        const { functions } = await compileAqua(pathToAquaFiles);
         aqua = functions;
     });
 
@@ -46,7 +46,7 @@ describe("Marine js tests", () => {
             await peer.registerMarineService(wasm, "greeting");
 
             // act
-            const res = await aqua.call(peer, { arg: "test" });
+            const res = await aqua["call"](peer, { arg: "test" });
 
             // assert
             expect(res).toBe("Hi, Hi, Hi, test");

@@ -27,11 +27,15 @@ const PRIMARY_CDN = "https://unpkg.com/";
 
 export async function fetchResource(pkg: string, assetPath: string) {
     const packageJsonContent =
-        parsedPackageJsonContent ||
-        (parsedPackageJsonContent = JSON.parse(packageJsonContentString));
+        parsedPackageJsonContent ??
+        // TODO: Should be validated
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        (parsedPackageJsonContent = JSON.parse(
+            packageJsonContentString,
+        ) as PackageJsonContent);
 
     const version =
-        packageJsonContent.dependencies[pkg] ||
+        packageJsonContent.dependencies[pkg] ??
         packageJsonContent.devDependencies[pkg];
 
     if (version === undefined) {

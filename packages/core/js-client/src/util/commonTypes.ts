@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-export { CallParameters } from "@fluencelabs/marine-js/dist/types";
+export type { CallParameters } from "@fluencelabs/marine-js/dist/types";
 
 export interface IStartable {
     start(): Promise<void>;
     stop(): Promise<void>;
 }
-
-export type JSONValue =
-    | string
-    | number
-    | boolean
-    | null
-    | { [x: string]: JSONValue }
-    | Array<JSONValue>;
-export type JSONArray = Array<JSONValue>;
-export type JSONObject = { [x: string]: JSONValue };

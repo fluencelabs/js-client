@@ -25,3 +25,11 @@ export const isString = (unknown: unknown): unknown is string => {
 export const isObject = (unknown: unknown): unknown is object => {
     return unknown !== null && typeof unknown === "object";
 };
+
+export const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return String(error);
+};

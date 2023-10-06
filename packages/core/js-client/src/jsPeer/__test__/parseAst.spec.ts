@@ -20,7 +20,7 @@ import { withPeer } from "../../util/testUtils.js";
 
 describe("Parse ast tests", () => {
     it("Correct ast should be parsed correctly", async () => {
-        withPeer(async (peer) => {
+        await withPeer(async (peer) => {
             const air = `(null)`;
             const res = await peer.internals.parseAst(air);
 
@@ -32,12 +32,13 @@ describe("Parse ast tests", () => {
     });
 
     it("Incorrect ast should result in corresponding error", async () => {
-        withPeer(async (peer) => {
+        await withPeer(async (peer) => {
             const air = `(null`;
             const res = await peer.internals.parseAst(air);
 
             expect(res).toStrictEqual({
                 success: false,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 data: expect.stringContaining("error"),
             });
         });

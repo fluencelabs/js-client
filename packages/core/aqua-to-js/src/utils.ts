@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
+import assert from "assert";
 import { readFile } from "fs/promises";
 import path from "path";
 
 import {
+    ArrowType,
     ArrowWithoutCallbacks,
-    NonArrowType,
-    ProductType,
+    JSONValue,
+    LabeledProductType,
+    NilType,
+    SimpleTypes,
+    UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 
 export interface PackageJson {
@@ -37,12 +42,17 @@ export async function getPackageJsonContent(): Promise<PackageJson> {
         "utf-8",
     );
 
-    return JSON.parse(content);
+    // TODO: Add validation here
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return JSON.parse(content) as PackageJson;
 }
 
 export function getFuncArgs(
-    domain: ProductType<NonArrowType | ArrowWithoutCallbacks>,
-): [string, NonArrowType | ArrowWithoutCallbacks][] {
+    domain:
+        | LabeledProductType<SimpleTypes | ArrowType<UnlabeledProductType>>
+        | UnlabeledProductType
+        | NilType,
+): [string, SimpleTypes | ArrowWithoutCallbacks][] {
     if (domain.tag === "labeledProduct") {
         return Object.entries(domain.fields).map(([label, type]) => {
             return [label, type];
@@ -56,7 +66,7 @@ export function getFuncArgs(
     }
 }
 
-export function recursiveRenameLaquaProps(obj: unknown): unknown {
+export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
     if (typeof obj !== "object" || obj === null) {
         return obj;
     }
@@ -79,11 +89,11 @@ export function recursiveRenameLaquaProps(obj: unknown): unknown {
             }
         }
 
+        assert(accessProp in obj);
+
         return {
             ...acc,
-            [accessProp]: recursiveRenameLaquaProps(
-                obj[accessProp as keyof typeof obj],
-            ),
+            [accessProp]: recursiveRenameLaquaProps(obj[accessProp]),
         };
     }, {});
 }

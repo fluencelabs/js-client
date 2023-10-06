@@ -20,6 +20,7 @@ import { CallParams } from "@fluencelabs/interfaces";
 import { v4 as uuidv4 } from "uuid";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { getErrorMessage } from "../util/utils.js";
 
 import { SrvDef } from "./_aqua/single-module-srv.js";
 import {
@@ -28,7 +29,7 @@ import {
 } from "./securityGuard.js";
 
 export const defaultGuard = (peer: FluencePeer) => {
-    return allowOnlyParticleOriginatedAt<any>(peer.keyPair.getPeerId());
+    return allowOnlyParticleOriginatedAt(peer.keyPair.getPeerId());
 };
 
 export class Srv implements SrvDef {
@@ -68,11 +69,11 @@ export class Srv implements SrvDef {
                 service_id: newServiceId,
                 error: null,
             };
-        } catch (err: any) {
+        } catch (err: unknown) {
             return {
                 success: true,
                 service_id: null,
-                error: err.message,
+                error: getErrorMessage(err),
             };
         }
     }

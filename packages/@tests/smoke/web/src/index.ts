@@ -66,11 +66,11 @@ const test = async () => {
     await browser.close();
     await stopServer(localServer);
 
-    if (!content) {
+    if (content == null) {
         throw new Error("smoke test failed!");
     }
 };
 
-test().then(() => {
+void test().then(() => {
     return console.log("smoke tests succeed!");
 });

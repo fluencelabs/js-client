@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
+// TODO: This file is a mess. Need to refactor it later
+/* eslint-disable */
+// @ts-nocheck
+
+import assert from "assert";
+
 import type {
     ArrowType,
     ArrowWithoutCallbacks,
+    JSONArray,
+    JSONValue,
     NonArrowType,
 } from "@fluencelabs/interfaces";
 import { match } from "ts-pattern";
@@ -30,19 +38,20 @@ import { jsonify } from "../util/utils.js";
  * @param type - definition of the aqua type
  * @returns value represented in typescript
  */
-export const aqua2ts = (value: any, type: NonArrowType): any => {
+export const aqua2ts = (value: JSONValue, type: NonArrowType): JSONValue => {
     const res = match(type)
         .with({ tag: "nil" }, () => {
             return null;
         })
         .with({ tag: "option" }, (opt) => {
+            assert(Array.isArray(value));
+
             if (value.length === 0) {
                 return null;
             } else {
                 return aqua2ts(value[0], opt.type);
             }
         })
-        // @ts-ignore
         .with(
             { tag: "scalar" },
             { tag: "bottomType" },
@@ -52,7 +61,8 @@ export const aqua2ts = (value: any, type: NonArrowType): any => {
             },
         )
         .with({ tag: "array" }, (arr) => {
-            return value.map((y: any) => {
+            assert(Array.isArray(value));
+            return value.map((y) => {
                 return aqua2ts(y, arr.type);
             });
         })
@@ -91,7 +101,7 @@ export const aqua2ts = (value: any, type: NonArrowType): any => {
 export const aquaArgs2Ts = (
     req: CallServiceData,
     arrow: ArrowWithoutCallbacks,
-) => {
+): JSONArray => {
     const argTypes = match(arrow.domain)
         .with({ tag: "labeledProduct" }, (x) => {
             return Object.values(x.fields);
@@ -125,7 +135,7 @@ export const aquaArgs2Ts = (
  * @param type - definition of the aqua type
  * @returns value represented in aqua
  */
-export const ts2aqua = (value: any, type: NonArrowType): any => {
+export const ts2aqua = (value: JSONValue, type: NonArrowType): JSONValue => {
     const res = match(type)
         .with({ tag: "nil" }, () => {
             return null;
@@ -137,7 +147,6 @@ export const ts2aqua = (value: any, type: NonArrowType): any => {
                 return [ts2aqua(value, opt.type)];
             }
         })
-        // @ts-ignore
         .with(
             { tag: "scalar" },
             { tag: "bottomType" },
@@ -147,7 +156,8 @@ export const ts2aqua = (value: any, type: NonArrowType): any => {
             },
         )
         .with({ tag: "array" }, (arr) => {
-            return value.map((y: any) => {
+            assert(Array.isArray(value));
+            return value.map((y) => {
                 return ts2aqua(y, arr.type);
             });
         })
@@ -216,11 +226,11 @@ export const responseServiceValue2ts = (
 ) => {
     return match(arrow.codomain)
         .with({ tag: "nil" }, () => {
-            return undefined;
+            return null;
         })
         .with({ tag: "unlabeledProduct" }, (x) => {
             if (x.items.length === 0) {
-                return undefined;
+                return null;
             }
 
             if (x.items.length === 1) {

@@ -16,7 +16,7 @@
 
 import { it, describe, expect } from "vitest";
 
-import { isFluencePeer } from "../../api.js";
+import { isClientPeer } from "../../api.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import {
     mkTestPeer,
@@ -34,10 +34,10 @@ describe("FluencePeer usage test suite", () => {
         const undefinedVal = undefined;
 
         // act
-        const isPeerPeer = isFluencePeer(peer);
-        const isNumberPeer = isFluencePeer(number);
-        const isObjectPeer = isFluencePeer(object);
-        const isUndefinedPeer = isFluencePeer(undefinedVal);
+        const isPeerPeer = isClientPeer(peer);
+        const isNumberPeer = isClientPeer(number);
+        const isObjectPeer = isClientPeer(object);
+        const isUndefinedPeer = isClientPeer(undefinedVal);
 
         // act
         expect(isPeerPeer).toBe(true);
@@ -57,14 +57,14 @@ describe("FluencePeer usage test suite", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const res = await new Promise<string>((resolve, reject) => {
+            const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
 
                 registerHandlersHelper(peer, particle, {
                     callback: {
-                        callback: async (args: any) => {
+                        callback: (args) => {
                             const [res] = args;
                             resolve(res);
                         },
@@ -86,6 +86,7 @@ describe("FluencePeer usage test suite", () => {
             const res = callIncorrectService(peer);
 
             await expect(res).rejects.toMatchObject({
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 message: expect.stringContaining(
                     `"No service found for service call: serviceId='incorrect', fnName='incorrect' args='[]'"`,
                 ),
@@ -108,7 +109,7 @@ describe("FluencePeer usage test suite", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const res = await new Promise<any>((resolve, reject) => {
+            const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
@@ -120,11 +121,11 @@ describe("FluencePeer usage test suite", () => {
                         },
                     },
                     callback: {
-                        callback: (args: any) => {
+                        callback: (args) => {
                             const [val] = args;
                             resolve(val);
                         },
-                        error: (args: any) => {
+                        error: (args) => {
                             const [error] = args;
                             reject(error);
                         },
@@ -151,7 +152,7 @@ describe("FluencePeer usage test suite", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const promise = new Promise<any>((_resolve, reject) => {
+            const promise = new Promise<never>((_resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
@@ -163,7 +164,7 @@ describe("FluencePeer usage test suite", () => {
                         },
                     },
                     callback: {
-                        error: (args: any) => {
+                        error: (args) => {
                             const [error] = args;
                             reject(error);
                         },
@@ -177,6 +178,7 @@ describe("FluencePeer usage test suite", () => {
             });
 
             await expect(promise).rejects.toMatchObject({
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 message: expect.stringContaining(
                     "my super custom error message",
                 ),
@@ -185,7 +187,7 @@ describe("FluencePeer usage test suite", () => {
     });
 });
 
-async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
+async function callIncorrectService(peer: FluencePeer) {
     const script = `
     (xor
         (call %init_peer_id% ("incorrect" "incorrect") [] res)
@@ -194,17 +196,17 @@ async function callIncorrectService(peer: FluencePeer): Promise<string[]> {
 
     const particle = await peer.internals.createNewParticle(script);
 
-    return new Promise<any[]>((resolve, reject) => {
+    return new Promise<unknown[]>((resolve, reject) => {
         if (particle instanceof Error) {
             return reject(particle.message);
         }
 
         registerHandlersHelper(peer, particle, {
             callback: {
-                callback: (args: any) => {
+                callback: (args) => {
                     resolve(args);
                 },
-                error: (args: any) => {
+                error: (args) => {
                     const [error] = args;
                     reject(error);
                 },

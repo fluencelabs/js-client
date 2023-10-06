@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import "@fluencelabs/js-client";
-import { runTest } from "@test/aqua_for_test";
+export type InterfaceToType<T extends object> = {
+    [K in keyof T]: T[K];
+};
 
-void runTest().then(() => {
-    return console.log("Smoke tests succeed!");
-});
+export type MaybePromise<T> = T | Promise<T>;

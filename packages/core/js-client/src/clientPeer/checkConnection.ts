@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { JSONValue } from "@fluencelabs/interfaces";
+
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { handleTimeout } from "../particle/Particle.js";
 import { logger } from "../util/logger.js";
@@ -52,7 +54,7 @@ export const checkConnection = async (
 
     const particle = await peer.internals.createNewParticle(script, ttl);
 
-    const promise = new Promise<string>((resolve, reject) => {
+    const promise = new Promise<JSONValue>((resolve, reject) => {
         if (particle instanceof Error) {
             return reject(particle.message);
         }
@@ -116,7 +118,7 @@ export const checkConnection = async (
     try {
         const result = await promise;
 
-        if (result != msg) {
+        if (result !== msg) {
             log.error(
                 "unexpected behavior. 'identity' must return the passed arguments.",
             );

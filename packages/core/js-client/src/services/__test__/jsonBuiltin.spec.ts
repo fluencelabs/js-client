@@ -24,7 +24,7 @@ let peer: FluencePeer;
 
 describe("Sig service test suite", () => {
     afterEach(async () => {
-        if (peer) {
+        if (peer != null) {
             await peer.stop();
         }
     });
@@ -63,7 +63,7 @@ describe("Sig service test suite", () => {
         )
     `;
 
-        const promise = new Promise<any>((resolve) => {
+        const promise = new Promise<unknown[]>((resolve) => {
             peer.internals.regHandler.common("res", "res", (req) => {
                 resolve(req.args);
                 return {
@@ -74,7 +74,7 @@ describe("Sig service test suite", () => {
         });
 
         const p = await peer.internals.createNewParticle(script);
-        await peer.internals.initiateParticle(p, doNothing);
+        peer.internals.initiateParticle(p, doNothing);
 
         const [
             nestedFirst,

@@ -16,6 +16,8 @@
 
 import type { SecurityTetraplet } from "@fluencelabs/avm";
 
+import { InterfaceToType, MaybePromise } from "./utils.js";
+
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
  */
@@ -33,7 +35,7 @@ export type Node = {
  * Additional information about a service call
  * @typeparam ArgName
  */
-export interface CallParams<ArgName extends string | null> {
+export type CallParams<ArgName extends string | null> = {
     /**
      * The identifier of particle which triggered the call
      */
@@ -63,6 +65,23 @@ export interface CallParams<ArgName extends string | null> {
      * Security tetraplets
      */
     tetraplets: ArgName extends string
-        ? Record<ArgName, SecurityTetraplet[]>
+        ? Record<ArgName, InterfaceToType<SecurityTetraplet>[]>
         : Record<string, never>;
-}
+};
+
+export type ServiceImpl = Record<
+    string,
+    (
+        ...args: [...JSONArray, CallParams<string>]
+    ) => MaybePromise<JSONValue | void>
+>;
+
+export type JSONValue =
+    | string
+    | number
+    | boolean
+    | null
+    | { [x: string]: JSONValue }
+    | Array<JSONValue>;
+export type JSONArray = Array<JSONValue>;
+export type JSONObject = { [x: string]: JSONValue };

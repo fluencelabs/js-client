@@ -16,7 +16,7 @@
 
 import debug from "debug";
 
-type Logger = (formatter: any, ...args: any[]) => void;
+type Logger = (formatter: unknown, ...args: unknown[]) => void;
 
 export interface CommonLogger {
     error: Logger;

@@ -16,8 +16,7 @@
 
 import type { SecurityTetraplet } from "@fluencelabs/avm";
 import type { PeerIdB58 } from "@fluencelabs/interfaces";
-
-import { JSONValue } from "../util/commonTypes.js";
+import { JSONArray, JSONValue } from "@fluencelabs/interfaces";
 
 /**
  * JS Service host a low level interface for managing pure javascript services.
@@ -124,7 +123,7 @@ export interface CallServiceData {
     /**
      * Arguments as specified in `call` air instruction
      */
-    args: any[];
+    args: JSONArray;
 
     /**
      * Security Tetraplets received from AVM

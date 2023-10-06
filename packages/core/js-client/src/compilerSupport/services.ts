@@ -18,14 +18,15 @@ import { SecurityTetraplet } from "@fluencelabs/avm";
 import {
     CallParams,
     ArrowWithoutCallbacks,
-    FunctionCallConstants,
     FunctionCallDef,
     NonArrowType,
-    IFluenceInternalApi,
-} from "@fluencelabs/interfaces";
+    ServiceImpl,
+    JSONValue
+} from '@fluencelabs/interfaces';
 import { fromUint8Array } from "js-base64";
 import { match } from "ts-pattern";
 
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import {
     CallServiceData,
     GenericCallServiceHandler,
@@ -49,10 +50,7 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (
-    def: FunctionCallDef,
-    peer: IFluenceInternalApi,
-) => {
+export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
     return {
         serviceId: def.names.getDataSrv,
         fnName: def.names.relay,
@@ -72,7 +70,7 @@ export const injectValueService = (
     serviceId: string,
     fnName: string,
     valueType: NonArrowType,
-    value: any,
+    value: JSONValue,
 ) => {
     return {
         serviceId: serviceId,
@@ -91,7 +89,7 @@ export const injectValueService = (
  */
 export const responseService = (
     def: FunctionCallDef,
-    resolveCallback: Function,
+    resolveCallback: (val: JSONValue) => void,
 ) => {
     return {
         serviceId: def.names.responseSrv,
@@ -116,13 +114,13 @@ export const responseService = (
  */
 export const errorHandlingService = (
     def: FunctionCallDef,
-    rejectCallback: Function,
+    rejectCallback: (err: JSONValue) => void,
 ) => {
     return {
         serviceId: def.names.errorHandlingSrv,
         fnName: def.names.errorFnName,
         handler: (req: CallServiceData) => {
-            const [err, _] = req.args;
+            const [err] = req.args;
 
             setTimeout(() => {
                 rejectCallback(err);
@@ -142,19 +140,19 @@ export const errorHandlingService = (
 export const userHandlerService = (
     serviceId: string,
     arrowType: [string, ArrowWithoutCallbacks],
-    userHandler: (...args: Array<unknown>) => Promise<unknown>,
+    userHandler: ServiceImpl[string],
 ) => {
     const [fnName, type] = arrowType;
     return {
         serviceId,
         fnName,
         handler: async (req: CallServiceData) => {
-            const args = [
+            const args: [...JSONValue[], CallParams<string>] = [
                 ...aquaArgs2Ts(req, type),
                 extractCallParams(req, type),
             ];
 
-            const rawResult = await userHandler.apply(null, args);
+            const rawResult = await userHandler.bind(null)(...args);
             const result = returnType2Aqua(rawResult, type);
 
             return {
@@ -166,48 +164,32 @@ export const userHandlerService = (
 };
 
 /**
- * Converts argument of aqua function to a corresponding service.
- * For arguments of non-arrow types the resulting service injects the argument into aqua space.
- * For arguments of arrow types the resulting service calls the corresponding function.
- */
-export const argToServiceDef = (
-    arg: any,
-    argName: string,
-    argType: NonArrowType | ArrowWithoutCallbacks,
-    names: FunctionCallConstants,
-): ServiceDescription => {
-    if (argType.tag === "arrow") {
-        return userHandlerService(names.callbackSrv, [argName, argType], arg);
-    } else {
-        return injectValueService(names.getDataSrv, argName, arg, argType);
-    }
-};
-
-/**
  * Extracts call params from from call service data according to aqua type definition
  */
 const extractCallParams = (
     req: CallServiceData,
     arrow: ArrowWithoutCallbacks,
-): CallParams<any> => {
+): CallParams<string> => {
     const names = match(arrow.domain)
         .with({ tag: "nil" }, () => {
-            return [] as string[];
-        })
-        .with({ tag: "labeledProduct" }, (x) => {
-            return Object.keys(x.fields);
+            return [];
         })
         .with({ tag: "unlabeledProduct" }, (x) => {
             return x.items.map((_, index) => {
                 return "arg" + index;
             });
         })
+        .with({ tag: "labeledProduct" }, (x) => {
+            return Object.keys(x.fields).map((label) => {
+                return label;
+            })
+        })
         .exhaustive();
 
     const tetraplets: Record<string, SecurityTetraplet[]> = {};
 
     for (let i = 0; i < req.args.length; i++) {
-        if (names[i]) {
+        if (names[i] != null) {
             tetraplets[names[i]] = req.tetraplets[i];
         }
     }
@@ -222,7 +204,7 @@ const extractCallParams = (
 };
 
 export const registerParticleScopeService = (
-    peer: IFluenceInternalApi,
+    peer: FluencePeer,
     particle: Particle,
     service: ServiceDescription,
 ) => {
@@ -235,7 +217,7 @@ export const registerParticleScopeService = (
 };
 
 export const registerGlobalService = (
-    peer: IFluenceInternalApi,
+    peer: FluencePeer,
     service: ServiceDescription,
 ) => {
     peer.internals.regHandler.common(

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { JSONArray } from "@fluencelabs/interfaces";
+
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { IParticle } from "../particle/interfaces.js";
 import { builtInServices } from "../services/builtins.js";
@@ -26,17 +28,17 @@ import {
     ResultCodes,
 } from "./interfaces.js";
 
-export const doNothing = (..._args: Array<unknown>) => {
+export const doNothing = () => {
     return undefined;
 };
 
 export const WrapFnIntoServiceCall = (
-    fn: (args: any[]) => CallServiceResultType,
+    fn: (args: JSONArray) => CallServiceResultType | void,
 ) => {
     return (req: CallServiceData): CallServiceResult => {
         return {
             retCode: ResultCodes.success,
-            result: fn(req.args),
+            result: fn(req.args) ?? null,
         };
     };
 };

@@ -19,15 +19,10 @@ import {
     InterpreterResult,
     RunParameters,
 } from "@fluencelabs/avm";
-import type { WorkerImplementation } from "threads/dist/types/master";
+import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
 
-import {
-    IStartable,
-    JSONArray,
-    JSONObject,
-    CallParameters,
-} from "../util/commonTypes.js";
-// @ts-ignore
+import type { WorkerImplementation } from "../../node_modules/threads/dist/types/master.js";
+import { IStartable, CallParameters } from "../util/commonTypes.js";
 
 /**
  * Contract for marine host implementations. Marine host is responsible for creating calling and removing marine services
@@ -59,7 +54,7 @@ export interface IMarineHost extends IStartable {
         functionName: string,
         args: JSONArray | JSONObject,
         callParams: CallParameters,
-    ): Promise<unknown>;
+    ): Promise<JSONValue>;
 }
 
 /**
@@ -96,7 +91,7 @@ export interface IWasmLoader
  * Interface for something which can thread.js based worker
  */
 export interface IWorkerLoader
-    extends IValueLoader<WorkerImplementation>,
+    extends IValueLoader<WorkerImplementation | Promise<WorkerImplementation>>,
         IStartable {}
 
 /**

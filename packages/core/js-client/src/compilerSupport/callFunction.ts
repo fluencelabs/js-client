@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+import assert from "assert";
+
 import {
-    CallAquaFunctionType,
+    FnConfig,
+    FunctionCallDef,
     getArgumentTypes,
     isReturnTypeVoid,
+    PassedArgs,
 } from "@fluencelabs/interfaces";
 
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
 
 import {
@@ -45,13 +50,22 @@ const log = logger("aqua");
  * @param args - args in the form of JSON where each key corresponds to the name of the argument
  * @returns
  */
-export const callAquaFunction: CallAquaFunctionType = async ({
+
+type CallAquaFunctionArgs = {
+    def: FunctionCallDef;
+    script: string;
+    config: FnConfig;
+    peer: FluencePeer;
+    args: PassedArgs;
+};
+
+export const callAquaFunction = async ({
     def,
     script,
     config,
     peer,
     args,
-}) => {
+}: CallAquaFunctionArgs) => {
     log.trace("calling aqua function %j", { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
@@ -70,12 +84,18 @@ export const callAquaFunction: CallAquaFunctionType = async ({
             let service: ServiceDescription;
 
             if (type.tag === "arrow") {
+                // TODO: Add validation here
+                assert(typeof argVal === "function");
+
                 service = userHandlerService(
                     def.names.callbackSrv,
                     [name, type],
                     argVal,
                 );
             } else {
+                // TODO: Add validation here
+                assert(typeof argVal !== "function");
+
                 service = injectValueService(
                     def.names.getDataSrv,
                     name,
@@ -105,7 +125,7 @@ export const callAquaFunction: CallAquaFunctionType = async ({
             errorHandlingService(def, reject),
         );
 
-        peer.internals.initiateParticle(particle, (stage: any) => {
+        peer.internals.initiateParticle(particle, (stage) => {
             // If function is void, then it's completed when one of the two conditions is met:
             //  1. The particle is sent to the network (state 'sent')
             //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')

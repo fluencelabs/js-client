@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { CallParams } from "@fluencelabs/interfaces";
+import assert from "assert";
+
+import { CallParams, JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
 import { it, describe, expect, test } from "vitest";
 
@@ -35,6 +37,14 @@ const oneTwoThreeFour = `[
     3,
     4
 ]`;
+
+interface ServiceCallType {
+    serviceId: string;
+    fnName: string;
+    args: JSONArray;
+    retCode: 0 | 1;
+    result: unknown;
+}
 
 describe("Tests for default handler", () => {
     test.each`
@@ -126,7 +136,13 @@ describe("Tests for default handler", () => {
     `(
         //
         "$fnName with $args expected retcode: $retCode and result: $result",
-        async ({ serviceId, fnName, args, retCode, result }) => {
+        async ({
+            serviceId,
+            fnName,
+            args,
+            retCode,
+            result,
+        }: ServiceCallType) => {
             // arrange
             const req: CallServiceData = {
                 serviceId: serviceId,
@@ -188,7 +204,10 @@ describe("Tests for default handler", () => {
             retCode: 0,
             result: {
                 external_addresses: [],
+                // stringContaining method returns any for some reason
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 node_version: expect.stringContaining("js"),
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 air_version: expect.stringContaining("js"),
             },
         });
@@ -228,22 +247,27 @@ const testDataWrongSig = [
     14,
 ];
 
-const makeTetraplet = (
+const makeTestTetraplet = (
     initPeerId: string,
-    serviceId?: string,
-    fnName?: string,
+    serviceId: string,
+    fnName: string,
 ): CallParams<"data"> => {
     return {
+        particleId: "",
+        timestamp: 0,
+        ttl: 0,
         initPeerId: initPeerId,
         tetraplets: {
             data: [
                 {
+                    peer_pk: initPeerId,
                     function_name: fnName,
                     service_id: serviceId,
+                    json_path: "",
                 },
             ],
         },
-    } as any;
+    };
 };
 
 describe("Sig service tests", () => {
@@ -251,7 +275,10 @@ describe("Sig service tests", () => {
         const ctx = await context;
         const sig = new Sig(ctx.peerKeyPair);
 
-        const res = await sig.sign(testData, makeTetraplet(ctx.peerId));
+        const res = await sig.sign(
+            testData,
+            makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+        );
 
         expect(res.success).toBe(true);
         expect(res.signature).toStrictEqual(testDataSig);
@@ -279,8 +306,14 @@ describe("Sig service tests", () => {
         const ctx = await context;
         const sig = new Sig(ctx.peerKeyPair);
 
-        const signature = await sig.sign(testData, makeTetraplet(ctx.peerId));
-        const res = await sig.verify(signature.signature as number[], testData);
+        const signature = await sig.sign(
+            testData,
+            makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+        );
+
+        expect(signature.success).toBe(true);
+        assert(signature.success);
+        const res = await sig.verify(signature.signature, testData);
 
         expect(res).toBe(true);
     });
@@ -292,10 +325,10 @@ describe("Sig service tests", () => {
 
         const signature = await sig.sign(
             testData,
-            makeTetraplet(ctx.peerId, "registry", "get_route_bytes"),
+            makeTestTetraplet(ctx.peerId, "registry", "get_route_bytes"),
         );
 
-        await expect(signature).toBeDefined();
+        expect(signature).toBeDefined();
     });
 
     it("sig.sign with defaultSigGuard should not allow particles initiated from incorrect service", async () => {
@@ -305,11 +338,11 @@ describe("Sig service tests", () => {
 
         const res = await sig.sign(
             testData,
-            makeTetraplet(ctx.peerId, "other_service", "other_fn"),
+            makeTestTetraplet(ctx.peerId, "other_service", "other_fn"),
         );
 
-        await expect(res.success).toBe(false);
-        await expect(res.error).toBe("Security guard validation failed");
+        expect(res.success).toBe(false);
+        expect(res.error).toBe("Security guard validation failed");
     });
 
     it("sig.sign with defaultSigGuard should not allow particles initiated from other peers", async () => {
@@ -319,15 +352,15 @@ describe("Sig service tests", () => {
 
         const res = await sig.sign(
             testData,
-            makeTetraplet(
+            makeTestTetraplet(
                 (await KeyPair.randomEd25519()).getPeerId(),
                 "registry",
                 "get_key_bytes",
             ),
         );
 
-        await expect(res.success).toBe(false);
-        await expect(res.error).toBe("Security guard validation failed");
+        expect(res.success).toBe(false);
+        expect(res.error).toBe("Security guard validation failed");
     });
 
     it("changing securityGuard should work", async () => {
@@ -337,24 +370,24 @@ describe("Sig service tests", () => {
 
         const successful1 = await sig.sign(
             testData,
-            makeTetraplet(ctx.peerId, "test", "test"),
+            makeTestTetraplet(ctx.peerId, "test", "test"),
         );
 
         const unSuccessful1 = await sig.sign(
             testData,
-            makeTetraplet(ctx.peerId, "wrong", "wrong"),
+            makeTestTetraplet(ctx.peerId, "wrong", "wrong"),
         );
 
         sig.securityGuard = allowServiceFn("wrong", "wrong");
 
         const successful2 = await sig.sign(
             testData,
-            makeTetraplet(ctx.peerId, "wrong", "wrong"),
+            makeTestTetraplet(ctx.peerId, "wrong", "wrong"),
         );
 
         const unSuccessful2 = await sig.sign(
             testData,
-            makeTetraplet(ctx.peerId, "test", "test"),
+            makeTestTetraplet(ctx.peerId, "test", "test"),
         );
 
         expect(successful1.success).toBe(true);

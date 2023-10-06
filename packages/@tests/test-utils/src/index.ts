@@ -37,7 +37,7 @@ export const startContentServer = (
     publicDir: string,
 ): Promise<Server> => {
     const server = createServer((request, response) => {
-        return handler(request, response, {
+        void handler(request, response, {
             public: publicDir,
             rewrites: [
                 {

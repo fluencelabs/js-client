@@ -20,7 +20,6 @@
         "@rollup/plugin-inject": "5.0.3",
         "@types/node": "20.4.5",
         "node-stdlib-browser": "1.2.0",
-        "typescript": "5.1.6",
         "vite": "4.0.4",
         "vitest": "0.29.7"
     },
@@ -28,6 +27,7 @@
         "@fluencelabs/avm": "0.48.0",
         "@fluencelabs/marine-js": "0.7.2",
         "observable-fns": "0.6.1",
-        "threads": "1.7.0"
+        "threads": "1.7.0",
+        "web-worker": "1.2.0"
     }
 }

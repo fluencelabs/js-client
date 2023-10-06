@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { JSONValue } from "../commonTypes.js";
 import { IFluenceInternalApi } from "../fluenceClient.js";
 
 import {
@@ -23,9 +24,16 @@ import {
 } from "./aquaTypeDefinitions.js";
 
 /**
+ * Type for callback passed as aqua function argument
+ */
+export type ArgCallbackFunction = (
+    ...args: JSONValue[]
+) => JSONValue | Promise<JSONValue>;
+
+/**
  * Arguments passed to Aqua function
  */
-export type PassedArgs = { [key: string]: any };
+export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
 
 /**
  * Arguments for callAquaFunction function
@@ -86,7 +94,7 @@ export interface RegisterServiceArgs {
     /**
      * Service implementation
      */
-    service: any;
+    service: unknown;
 }
 
 /**

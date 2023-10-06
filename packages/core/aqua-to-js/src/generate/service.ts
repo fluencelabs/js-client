@@ -69,11 +69,16 @@ function generateRegisterServiceOverload(
 function serviceToJson(service: ServiceDef): string {
     return JSON.stringify(
         {
-            ...((service.defaultServiceId as DefaultServiceId)?.s_Some__f_value
+            // This assertion is required because aqua-api gives bad types
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            ...((service.defaultServiceId as DefaultServiceId)
+                ?.s_Some__f_value != null
                 ? {
-                      defaultServiceId: (
-                          service.defaultServiceId as DefaultServiceId
-                      ).s_Some__f_value,
+                      defaultServiceId:
+                          // This assertion is required because aqua-api gives bad types
+                          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                          (service.defaultServiceId as DefaultServiceId)
+                              .s_Some__f_value,
                   }
                 : {}),
             functions: recursiveRenameLaquaProps(service.functions),

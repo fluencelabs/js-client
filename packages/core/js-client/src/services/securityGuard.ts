@@ -33,7 +33,7 @@ export const allowTetraplet = <T extends ArgName>(
     pred: (tetraplet: SecurityTetraplet) => boolean,
 ): SecurityGuard<T> => {
     return (params) => {
-        const t = params.tetraplets.data[0];
+        const t = params.tetraplets["data"][0];
         return pred(t);
     };
 };

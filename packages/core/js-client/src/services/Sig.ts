@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { CallParams, PeerIdB58 } from "@fluencelabs/interfaces";
+import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
 
-import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { KeyPair } from "../keypair/index.js";
 
 import { SigDef } from "./_aqua/services.js";
@@ -42,13 +41,25 @@ export const defaultSigGuard = (peerId: PeerIdB58) => {
     );
 };
 
+type SignReturnType =
+    | {
+          error: null;
+          signature: number[];
+          success: true;
+      }
+    | {
+          error: string;
+          signature: null;
+          success: false;
+      };
+
 export class Sig implements SigDef {
     constructor(private keyPair: KeyPair) {}
 
     /**
      * Configurable security guard for sign method
      */
-    securityGuard: SecurityGuard<"data"> = (params) => {
+    securityGuard: SecurityGuard<"data"> = () => {
         return true;
     };
 
@@ -65,11 +76,7 @@ export class Sig implements SigDef {
     async sign(
         data: number[],
         callParams: CallParams<"data">,
-    ): Promise<{
-        error: string | null;
-        signature: number[] | null;
-        success: boolean;
-    }> {
+    ): Promise<SignReturnType> {
         if (!this.securityGuard(callParams)) {
             return {
                 success: false,
@@ -97,7 +104,3 @@ export class Sig implements SigDef {
         );
     }
 }
-
-export const getDefaultSig = (peer: FluencePeer) => {
-    peer.registerMarineService;
-};

@@ -169,13 +169,10 @@ export class EphemeralConnection implements IEphemeralConnection {
     particleSource = new Subject<Particle>();
 
     receiveParticle(particle: Particle): void {
-        this.particleSource.next(Particle.fromString(particle.toString()));
+        this.particleSource.next(particle);
     }
 
-    async sendParticle(
-        nextPeerIds: string[],
-        particle: Particle,
-    ): Promise<void> {
+    sendParticle(nextPeerIds: string[], particle: Particle): Promise<void> {
         const from = this.selfPeerId;
 
         for (const to of nextPeerIds) {
@@ -189,16 +186,21 @@ export class EphemeralConnection implements IEphemeralConnection {
             // log.trace(`Sending particle from %s, to %j, particleId %s`, from, to, particle.id);
             destConnection.receiveParticle(particle);
         }
+
+        return Promise.resolve();
     }
 
     getRelayPeerId(): string {
-        if (this.connections.size === 1) {
-            return this.connections.keys().next().value;
+        const firstMapKey = this.connections.keys().next();
+
+        // Empty map
+        if (firstMapKey.done === true) {
+            throw new Error(
+                "relay is not supported in this Ephemeral network peer",
+            );
         }
 
-        throw new Error(
-            "relay is not supported in this Ephemeral network peer",
-        );
+        return firstMapKey.value;
     }
 
     supportsRelay(): boolean {
@@ -303,8 +305,8 @@ export class EphemeralNetwork {
         log.trace("shutting down ephemeral network...");
         const peers = Array.from(this.peers.entries());
 
-        const promises = peers.map(async ([k, p]) => {
-            await p.ephemeralConnection.disconnectFromAll();
+        const promises = peers.map(async ([, p]) => {
+            p.ephemeralConnection.disconnectFromAll();
             await p.stop();
         });
 

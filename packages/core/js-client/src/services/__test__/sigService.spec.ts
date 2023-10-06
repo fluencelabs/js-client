@@ -17,19 +17,20 @@
 import * as path from "path";
 import * as url from "url";
 
+import { ServiceDef, ServiceImpl } from '@fluencelabs/interfaces';
 import { it, describe, expect, beforeAll } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { KeyPair } from "../../keypair/index.js";
-import { compileAqua, withPeer } from "../../util/testUtils.js";
+import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 import { allowServiceFn } from "../securityGuard.js";
 import { Sig } from "../Sig.js";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
-let aqua: any;
-let sigDef: any;
-let dataProviderDef: any;
+let aqua: Record<string, CompiledFnCall>;
+let sigDef: ServiceDef;
+let dataProviderDef: ServiceDef;
 
 describe("Sig service test suite", () => {
     beforeAll(async () => {
@@ -41,8 +42,8 @@ describe("Sig service test suite", () => {
         const { services, functions } = await compileAqua(pathToAquaFiles);
 
         aqua = functions;
-        sigDef = services.Sig;
-        dataProviderDef = services.DataProvider;
+        sigDef = services["Sig"];
+        dataProviderDef = services["DataProvider"];
     });
 
     it("Use custom sig service, success path", async () => {
@@ -55,7 +56,9 @@ describe("Sig service test suite", () => {
                 peer,
                 def: sigDef,
                 serviceId: "CustomSig",
-                service: customSig,
+                // TODO: fix this after changing registerService signature
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                service: customSig as unknown as ServiceImpl,
             });
 
             registerService({
@@ -71,12 +74,14 @@ describe("Sig service test suite", () => {
 
             customSig.securityGuard = allowServiceFn("data", "provide_data");
 
-            const result = await aqua.callSig(peer, { sigId: "CustomSig" });
+            const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
 
-            expect(result.success).toBe(true);
+            expect(result).toHaveProperty("success", true);
 
             const isSigCorrect = await customSig.verify(
-                result.signature as number[],
+                // TODO: Use compiled ts wrappers
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                (result as { signature: number[] }).signature,
                 data,
             );
 
@@ -94,7 +99,9 @@ describe("Sig service test suite", () => {
                 peer,
                 def: sigDef,
                 serviceId: "CustomSig",
-                service: customSig,
+                // TODO: fix this after changing registerService signature
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                service: customSig as unknown as ServiceImpl,
             });
 
             registerService({
@@ -110,8 +117,8 @@ describe("Sig service test suite", () => {
 
             customSig.securityGuard = allowServiceFn("wrong", "wrong");
 
-            const result = await aqua.callSig(peer, { sigId: "CustomSig" });
-            expect(result.success).toBe(false);
+            const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
+            expect(result).toHaveProperty("success", false);
         });
     });
 
@@ -132,32 +139,45 @@ describe("Sig service test suite", () => {
                 },
             });
 
-            const callAsSigRes = await aqua.callSig(peer, { sigId: "sig" });
+            const callAsSigRes = await aqua["callSig"](peer, { sigId: "sig" });
 
-            const callAsPeerIdRes = await aqua.callSig(peer, {
+            const callAsPeerIdRes = await aqua["callSig"](peer, {
                 sigId: peer.keyPair.getPeerId(),
             });
 
-            expect(callAsSigRes.success).toBe(false);
-            expect(callAsPeerIdRes.success).toBe(false);
+            expect(callAsSigRes).toHaveProperty("success", false);
+            expect(callAsPeerIdRes).toHaveProperty("success", false);
 
             sig.securityGuard = () => {
                 return true;
             };
 
-            const callAsSigResAfterGuardChange = await aqua.callSig(peer, {
+            const callAsSigResAfterGuardChange = await aqua["callSig"](peer, {
                 sigId: "sig",
             });
 
-            const callAsPeerIdResAfterGuardChange = await aqua.callSig(peer, {
-                sigId: peer.keyPair.getPeerId(),
-            });
+            const callAsPeerIdResAfterGuardChange = await aqua["callSig"](
+                peer,
+                {
+                    sigId: peer.keyPair.getPeerId(),
+                },
+            );
 
-            expect(callAsSigResAfterGuardChange.success).toBe(true);
-            expect(callAsPeerIdResAfterGuardChange.success).toBe(true);
+            expect(callAsSigResAfterGuardChange).toHaveProperty(
+                "success",
+                true,
+            );
+
+            expect(callAsPeerIdResAfterGuardChange).toHaveProperty(
+                "success",
+                true,
+            );
 
             const isValid = await sig.verify(
-                callAsSigResAfterGuardChange.signature as number[],
+                // TODO: Use compiled ts wrappers
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                (callAsSigResAfterGuardChange as { signature: number[] })
+                    .signature,
                 data,
             );
 

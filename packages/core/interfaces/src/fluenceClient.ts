@@ -114,7 +114,7 @@ export interface IFluenceInternalApi {
     /**
      * Internal API
      */
-    internals: any;
+    internals: unknown;
 }
 
 /**

@@ -70,7 +70,7 @@ export const runTest = async (): Promise<TestResult> => {
         const relayPeerId = (await Fluence.getClient()).getRelayPeerId();
         console.log("relay:", relayPeerId);
 
-        await registerHelloWorld({
+        registerHelloWorld({
             hello(str) {
                 return "Hello, " + str + "!";
             },

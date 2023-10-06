@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { JSONValue } from "@fluencelabs/interfaces";
 import type {
     JSONArray,
     JSONObject,
@@ -21,14 +22,17 @@ import type {
 } from "@fluencelabs/marine-js/dist/types";
 import { LogFunction, logLevelToEnv } from "@fluencelabs/marine-js/dist/types";
 import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
-// @ts-ignore
-import { spawn, Thread } from "threads";
 
+import {
+    ModuleThread,
+    Thread,
+    spawn,
+} from "../../../node_modules/threads/dist/master/index.js";
 import { MarineLogger, marineLogger } from "../../util/logger.js";
 import { IMarineHost, IWasmLoader, IWorkerLoader } from "../interfaces.js";
 
 export class MarineBackgroundRunner implements IMarineHost {
-    private workerThread?: MarineBackgroundInterface;
+    private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
     private loggers = new Map<string, MarineLogger>();
 
@@ -39,7 +43,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     ) {}
 
     async hasService(serviceId: string) {
-        if (!this.workerThread) {
+        if (this.workerThread == null) {
             throw new Error("Worker is not initialized");
         }
 
@@ -47,7 +51,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     }
 
     async removeService(serviceId: string) {
-        if (!this.workerThread) {
+        if (this.workerThread == null) {
             throw new Error("Worker is not initialized");
         }
 
@@ -55,7 +59,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     }
 
     async start(): Promise<void> {
-        if (this.workerThread) {
+        if (this.workerThread != null) {
             throw new Error("Worker thread already initialized");
         }
 
@@ -67,18 +71,21 @@ export class MarineBackgroundRunner implements IMarineHost {
         await this.workerLoader.start();
         const worker = await this.workerLoader.getValue();
 
-        const workerThread = await spawn<MarineBackgroundInterface>(worker);
+        const workerThread: ModuleThread<MarineBackgroundInterface> =
+            await spawn<MarineBackgroundInterface>(worker);
 
         const logfn: LogFunction = (message) => {
             const serviceLogger = this.loggers.get(message.service);
 
-            if (!serviceLogger) {
+            if (serviceLogger == null) {
                 return;
             }
 
             serviceLogger[message.level](message.message);
         };
 
+        // @ts-expect-error This type is bugged
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         workerThread.onLogMessage().subscribe(logfn);
         await workerThread.init(wasm);
         this.workerThread = workerThread;
@@ -89,7 +96,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         serviceModule: ArrayBuffer | SharedArrayBuffer,
         serviceId: string,
     ): Promise<void> {
-        if (!this.workerThread) {
+        if (this.workerThread == null) {
             throw new Error("Worker is not initialized");
         }
 
@@ -105,8 +112,8 @@ export class MarineBackgroundRunner implements IMarineHost {
         functionName: string,
         args: JSONArray | JSONObject,
         callParams: CallParameters,
-    ): Promise<unknown> {
-        if (!this.workerThread) {
+    ): Promise<JSONValue> {
+        if (this.workerThread == null) {
             throw "Worker is not initialized";
         }
 
@@ -119,7 +126,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     }
 
     async stop(): Promise<void> {
-        if (!this.workerThread) {
+        if (this.workerThread == null) {
             return;
         }
 

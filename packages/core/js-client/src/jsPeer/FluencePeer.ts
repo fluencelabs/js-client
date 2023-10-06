@@ -65,9 +65,8 @@ import { registerTracing } from "../services/_aqua/tracing.js";
 import { defaultSigGuard, Sig } from "../services/Sig.js";
 import { Srv } from "../services/SingleModuleSrv.js";
 import { Tracing } from "../services/Tracing.js";
-import { JSONValue } from "../util/commonTypes.js";
 import { logger } from "../util/logger.js";
-import { jsonify, isString } from "../util/utils.js";
+import { jsonify, isString, getErrorMessage } from "../util/utils.js";
 
 const log_particle = logger("particle");
 const log_peer = logger("peer");
@@ -163,12 +162,6 @@ export abstract class FluencePeer {
         wasm: SharedArrayBuffer | Buffer,
         serviceId: string,
     ): Promise<void> {
-        if (!this.marineHost) {
-            throw new Error(
-                "Can't register marine service: peer is not initialized",
-            );
-        }
-
         if (this.jsServiceHost.hasService(serviceId)) {
             throw new Error(`Service with '${serviceId}' id already exists`);
         }
@@ -183,8 +176,6 @@ export abstract class FluencePeer {
     async removeMarineService(serviceId: string): Promise<void> {
         await this.marineHost.removeService(serviceId);
     }
-
-    // internal api
 
     /**
      * @private Is not intended to be used manually. Subject to change
@@ -207,7 +198,7 @@ export abstract class FluencePeer {
 
             parseAst: async (
                 air: string,
-            ): Promise<{ success: boolean; data: any }> => {
+            ): Promise<{ success: boolean; data: unknown }> => {
                 if (!this.isInitialized) {
                     new Error("Can't use avm: peer is not initialized");
                 }
@@ -221,7 +212,9 @@ export abstract class FluencePeer {
 
                 if (!isString(res)) {
                     throw new Error(
-                        `Call to avm:ast expected to return string. Actual return: ${res}`,
+                        `Call to avm:ast expected to return string. Actual return: ${JSON.stringify(
+                            res,
+                        )}`,
                     );
                 }
 
@@ -242,7 +235,7 @@ export abstract class FluencePeer {
                         "Failed to call avm. Result: " +
                             res +
                             ". Error: " +
-                            err,
+                            getErrorMessage(err),
                     );
                 }
             },
@@ -275,6 +268,8 @@ export abstract class FluencePeer {
                 }
 
                 if (this.printParticleId) {
+                    // This is intended console-log
+                    // eslint-disable-next-line no-console
                     console.log("Particle id: ", particle.id);
                 }
 
@@ -567,7 +562,7 @@ export abstract class FluencePeer {
 
                                         item.onStageChange({ stage: "sent" });
                                     })
-                                    .catch((e: any) => {
+                                    .catch((e: unknown) => {
                                         log_particle.error(
                                             "id %s. send failed %j",
                                             newParticle.id,
@@ -576,7 +571,7 @@ export abstract class FluencePeer {
 
                                         item.onStageChange({
                                             stage: "sendingError",
-                                            errorMessage: e.toString(),
+                                            errorMessage: getErrorMessage(e),
                                         });
                                     });
                             }
@@ -596,7 +591,7 @@ export abstract class FluencePeer {
                                         ),
                                     };
 
-                                    this._execSingleCallRequest(req)
+                                    void this._execSingleCallRequest(req)
                                         .catch((err): CallServiceResult => {
                                             if (err instanceof ServiceError) {
                                                 return {
@@ -611,7 +606,9 @@ export abstract class FluencePeer {
                                                     req.fnName
                                                 }" serviceId="${
                                                     req.serviceId
-                                                }" error: ${err.toString()}`,
+                                                }" error: ${getErrorMessage(
+                                                    err,
+                                                )}`,
                                             };
                                         })
                                         .then((res) => {
@@ -677,10 +674,7 @@ export abstract class FluencePeer {
             req,
         );
 
-        if (
-            this.marineHost &&
-            (await this.marineHost.hasService(req.serviceId))
-        ) {
+        if (await this.marineHost.hasService(req.serviceId)) {
             // TODO build correct CallParameters instead of default ones
             const result = await this.marineHost.callService(
                 req.serviceId,
@@ -691,7 +685,7 @@ export abstract class FluencePeer {
 
             return {
                 retCode: ResultCodes.success,
-                result: result as JSONValue,
+                result: result,
             };
         }
 

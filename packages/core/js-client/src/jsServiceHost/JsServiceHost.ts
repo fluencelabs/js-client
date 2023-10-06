@@ -73,7 +73,7 @@ export class JsServiceHost implements IJsServiceHost {
             handler = this.commonHandlers.get(key);
         }
 
-        return handler || null;
+        return handler ?? null;
     }
 
     /**

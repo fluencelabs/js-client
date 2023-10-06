@@ -19,12 +19,12 @@ import * as url from "url";
 
 import { it, describe, expect, beforeAll } from "vitest";
 
-import { compileAqua, withPeer } from "../../util/testUtils.js";
+import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 import { registerNodeUtils } from "../_aqua/node-utils.js";
 import { NodeUtils } from "../NodeUtils.js";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
-let aqua: any;
+let aqua: Record<string, CompiledFnCall>;
 
 describe("Srv service test suite", () => {
     beforeAll(async () => {
@@ -33,7 +33,7 @@ describe("Srv service test suite", () => {
             "../../../aqua_test/srv.aqua",
         );
 
-        const { services, functions } = await compileAqua(pathToAquaFiles);
+        const { functions } = await compileAqua(pathToAquaFiles);
         aqua = functions;
     });
 
@@ -48,7 +48,7 @@ describe("Srv service test suite", () => {
             );
 
             // act
-            const res = await aqua.happy_path(peer, { file_path: wasm });
+            const res = await aqua["happy_path"](peer, { file_path: wasm });
 
             // assert
             expect(res).toBe("Hi, test");
@@ -66,7 +66,7 @@ describe("Srv service test suite", () => {
             );
 
             // act
-            const res = await aqua.list_services(peer, { file_path: wasm });
+            const res = await aqua["list_services"](peer, { file_path: wasm });
 
             // assert
             expect(res).toHaveLength(3);
@@ -84,7 +84,9 @@ describe("Srv service test suite", () => {
             );
 
             // act
-            const res = await aqua.service_removed(peer, { file_path: wasm });
+            const res = await aqua["service_removed"](peer, {
+                file_path: wasm,
+            });
 
             // assert
             expect(res).toMatch("No service found for service call");
@@ -97,7 +99,7 @@ describe("Srv service test suite", () => {
             registerNodeUtils(peer, "node_utils", new NodeUtils(peer));
 
             // act
-            const res = await aqua.file_not_found(peer, {});
+            const res = await aqua["file_not_found"](peer, {});
 
             // assert
             expect(res).toMatch(
@@ -112,7 +114,7 @@ describe("Srv service test suite", () => {
             registerNodeUtils(peer, "node_utils", new NodeUtils(peer));
 
             // act
-            const res = await aqua.removing_non_exiting(peer, {});
+            const res = await aqua["removing_non_exiting"](peer, {});
 
             // assert
             expect(res).toMatch("Service with id random_id not found");

@@ -77,7 +77,7 @@ export class TSTypeGenerator implements TypeGenerator {
 
         return [
             argsDesc.join("\n"),
-            resTypeDesc || "",
+            resTypeDesc ?? "",
             functionOverloads
                 .flatMap((fo) => {
                     return [
@@ -139,11 +139,11 @@ export class JSTypeGenerator implements TypeGenerator {
         return field;
     }
 
-    generic(field: string, type: string): string {
+    generic(field: string): string {
         return field;
     }
 
-    type(field: string, type: string): string {
+    type(field: string): string {
         return field;
     }
 

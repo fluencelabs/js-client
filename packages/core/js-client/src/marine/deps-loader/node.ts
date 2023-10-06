@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-// @ts-ignore
-// @ts-ignore
 import { Buffer } from "buffer";
-import * as fs from "fs";
+import fs from "fs";
 import { createRequire } from "module";
-import * as path from "path";
+import path from "path";
 
-import { Worker } from "threads";
-import type { WorkerImplementation } from "threads/dist/types/master";
-
+import { Worker } from "../../../node_modules/threads/dist/index.js";
+import type { WorkerImplementation } from "../../../node_modules/threads/dist/types/master.js";
 import { LazyLoader } from "../interfaces.js";
 
 const require = createRequire(import.meta.url);

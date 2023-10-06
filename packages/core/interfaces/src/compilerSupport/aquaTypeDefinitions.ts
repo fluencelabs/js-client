@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-type SimpleTypes =
+export type SimpleTypes =
     | ScalarType
     | OptionType
     | ArrayType
@@ -23,7 +23,7 @@ type SimpleTypes =
     | BottomType
     | NilType;
 
-export type NonArrowType = SimpleTypes | ProductType<SimpleTypes>;
+export type NonArrowType = SimpleTypes | ProductType;
 
 export type TopType = {
     /**
@@ -48,7 +48,7 @@ export type OptionType = {
     /**
      * Underlying type of the option
      */
-    type: NonArrowType;
+    type: SimpleTypes;
 };
 
 export type NilType = {
@@ -67,7 +67,7 @@ export type ArrayType = {
     /**
      * Type of array elements
      */
-    type: NonArrowType;
+    type: SimpleTypes;
 };
 
 /**
@@ -113,10 +113,17 @@ export type StructType = {
     /**
      * Struct fields
      */
-    fields: { [key: string]: NonArrowType };
+    fields: { [key: string]: SimpleTypes };
 };
 
-export type LabeledProductType<T> = {
+export type LabeledProductType<
+    T extends
+        | SimpleTypes
+        | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType> =
+        | SimpleTypes
+        | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
+    K = { [key: string]: T },
+> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
@@ -125,31 +132,29 @@ export type LabeledProductType<T> = {
     /**
      * Labelled product fields
      */
-    fields: { [key: string]: T };
+    fields: K;
 };
 
-export type UnlabeledProductType<T> = {
-    /**
-     * Type descriptor. Used for pattern-matching
-     */
-    tag: "unlabeledProduct";
+export type UnlabeledProductType<T extends Array<SimpleTypes> = SimpleTypes[]> =
+    {
+        /**
+         * Type descriptor. Used for pattern-matching
+         */
+        tag: "unlabeledProduct";
 
-    /**
-     * Items in unlabelled product
-     */
-    items: Array<T>;
-};
+        /**
+         * Items in unlabelled product
+         */
+        items: T;
+    };
 
-export type ProductType<T> =
-    | UnlabeledProductType<T>
-    | LabeledProductType<T>
-    | NilType;
+export type ProductType = UnlabeledProductType | LabeledProductType;
 
 /**
  * ArrowType is a profunctor pointing its domain to codomain.
  * Profunctor means variance: Arrow is contravariant on domain, and variant on codomain.
  */
-export type ArrowType<T> = {
+export type ArrowType<T extends LabeledProductType | UnlabeledProductType> = {
     /**
      * Type descriptor. Used for pattern-matching
      */
@@ -158,25 +163,23 @@ export type ArrowType<T> = {
     /**
      * Where this Arrow is defined
      */
-    domain: ProductType<T>;
+    domain: T | NilType;
 
     /**
      * Where this Arrow points to
      */
-    codomain: UnlabeledProductType<NonArrowType> | NilType;
+    codomain: UnlabeledProductType | NilType;
 };
 
 /**
  * Arrow which domain contains only non-arrow types
  */
-export type ArrowWithoutCallbacks = ArrowType<NonArrowType>;
+export type ArrowWithoutCallbacks = ArrowType<UnlabeledProductType | LabeledProductType<SimpleTypes>>;
 
 /**
  * Arrow which domain does can contain both non-arrow types and arrows (which themselves cannot contain arrows)
  */
-export type ArrowWithCallbacks = ArrowType<
-    NonArrowType | ArrowWithoutCallbacks
->;
+export type ArrowWithCallbacks = ArrowType<LabeledProductType>;
 
 export interface FunctionCallConstants {
     /**
@@ -227,7 +230,9 @@ export interface FunctionCallDef {
     /**
      * Underlying arrow which represents function in aqua
      */
-    arrow: ArrowWithCallbacks;
+    arrow: ArrowType<
+        LabeledProductType<SimpleTypes | ArrowType<UnlabeledProductType>>
+    >;
 
     /**
      * Names of the different entities used in generated air script
@@ -247,7 +252,9 @@ export interface ServiceDef {
     /**
      * List of functions which the service consists of
      */
-    functions: LabeledProductType<ArrowWithoutCallbacks> | NilType;
+    functions:
+        | LabeledProductType<ArrowType<LabeledProductType<SimpleTypes>>>
+        | NilType;
 }
 
 /**
@@ -278,5 +285,5 @@ export const isReturnTypeVoid = (def: FunctionCallDef): boolean => {
         return true;
     }
 
-    return def.arrow.codomain.items.length == 0;
+    return def.arrow.codomain.items.length === 0;
 };

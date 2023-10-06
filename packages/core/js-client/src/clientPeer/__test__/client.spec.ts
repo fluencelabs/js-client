@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect } from "vitest";
 
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
@@ -46,7 +47,7 @@ describe("FluenceClient usage test suite", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const result = await new Promise<string>((resolve, reject) => {
+            const result = await new Promise<JSONValue>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
@@ -58,11 +59,11 @@ describe("FluenceClient usage test suite", () => {
                         },
                     },
                     callback: {
-                        callback: (args: any) => {
+                        callback: (args) => {
                             const [val] = args;
                             resolve(val);
                         },
-                        error: (args: any) => {
+                        error: (args) => {
                             const [error] = args;
                             reject(error);
                         },
@@ -193,14 +194,14 @@ describe("FluenceClient usage test suite", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const promise = new Promise((resolve, reject) => {
+            const promise = new Promise((_resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
 
                 registerHandlersHelper(peer, particle, {
                     callback: {
-                        error: (args: any) => {
+                        error: (args) => {
                             const [error] = args;
                             reject(error);
                         },

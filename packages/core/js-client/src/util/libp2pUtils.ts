@@ -31,7 +31,7 @@ export function relayOptionToMultiaddr(relay: RelayOptions): Multiaddr {
 export function throwIfHasNoPeerId(ma: Multiaddr): void {
     const peerId = ma.getPeerId();
 
-    if (!peerId) {
+    if (peerId == null) {
         throw new Error(
             "Specified multiaddr is invalid or missing peer id: " +
                 ma.toString(),

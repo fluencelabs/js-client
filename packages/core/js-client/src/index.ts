@@ -21,18 +21,19 @@ import url from "url";
 
 import type {
     ClientConfig,
+    ConnectionState,
     IFluenceClient,
     RelayOptions,
-    ConnectionState,
 } from "@fluencelabs/interfaces";
-import { BlobWorker, Worker } from "threads";
+
+// "threads" package has broken type definitions in package.json. This is the workaround.
+import { BlobWorker, Worker } from "../node_modules/threads/dist/index.js";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
 import { fetchResource } from "./fetchers/index.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
-// @ts-ignore
 import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 
 const isNode =
@@ -64,7 +65,7 @@ const fetchAvmWasm = () => {
 const createClient = async (
     relay: RelayOptions,
     config: ClientConfig,
-): Promise<IFluenceClient> => {
+): Promise<ClientPeer> => {
     const marineJsWasm = await fetchMarineJsWasm();
     const avmWasm = await fetchAvmWasm();
 
@@ -129,12 +130,7 @@ const createClient = async (
         config,
     );
 
-    const client: IFluenceClient = new ClientPeer(
-        peerConfig,
-        relayConfig,
-        keyPair,
-        marine,
-    );
+    const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
 
     if (isNode) {
         doRegisterNodeUtils(client);
@@ -147,19 +143,25 @@ const createClient = async (
 /**
  * Public interface to Fluence Network
  */
-export const Fluence = {
-    defaultClient: undefined as IFluenceClient | undefined,
+interface FluencePublicApi {
+    defaultClient: ClientPeer | undefined;
+    connect: (relay: RelayOptions, config: ClientConfig) => Promise<void>;
+    disconnect: () => Promise<void>;
+    onConnectionStateChange: (
+        handler: (state: ConnectionState) => void,
+    ) => ConnectionState;
+    getClient: () => IFluenceClient;
+}
+
+export const Fluence: FluencePublicApi = {
+    defaultClient: undefined,
     /**
      * Connect to the Fluence network
      * @param relay - relay node to connect to
      * @param config - client configuration
      */
-    connect: async function (
-        relay: RelayOptions,
-        config: ClientConfig,
-    ): Promise<void> {
-        const client = await createClient(relay, config);
-        this.defaultClient = client;
+    connect: async function (relay, config) {
+        this.defaultClient = await createClient(relay, config);
     },
 
     /**
@@ -173,11 +175,9 @@ export const Fluence = {
     /**
      * Handle connection state changes. Immediately returns the current connection state
      */
-    onConnectionStateChange(
-        handler: (state: ConnectionState) => void,
-    ): ConnectionState {
+    onConnectionStateChange(handler) {
         return (
-            this.defaultClient?.onConnectionStateChange(handler) ||
+            this.defaultClient?.onConnectionStateChange(handler) ??
             "disconnected"
         );
     },
@@ -186,8 +186,8 @@ export const Fluence = {
      * Low level API. Get the underlying client instance which holds the connection to the network
      * @returns IFluenceClient instance
      */
-    getClient: async function (): Promise<IFluenceClient> {
-        if (!this.defaultClient) {
+    getClient: function () {
+        if (this.defaultClient == null) {
             throw new Error(
                 "Fluence client is not initialized. Call Fluence.connect() first",
             );
@@ -232,10 +232,10 @@ export type {
 
 export { v5_callFunction, v5_registerService } from "./api.js";
 
-// @ts-ignore
+// @ts-expect-error Writing to global object like this prohibited by ts
 globalThis.new_fluence = Fluence;
 
-// @ts-ignore
+// @ts-expect-error Writing to global object like this prohibited by ts
 globalThis.fluence = {
     clientFactory: createClient,
     callAquaFunction,
@@ -243,7 +243,3 @@ globalThis.fluence = {
 };
 
 export { createClient, callAquaFunction, registerService };
-export {
-    getFluenceInterface,
-    getFluenceInterfaceFromGlobalThis,
-} from "./util/loadClient.js";

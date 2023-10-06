@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { JSONValue, NonArrowType } from "@fluencelabs/interfaces";
 import { it, describe, expect, test } from "vitest";
 
 import { aqua2ts, ts2aqua } from "../conversions.js";
@@ -168,6 +169,12 @@ const nestedStructs = [
     },
 ];
 
+interface ConversionTestArgs {
+    aqua: JSONValue;
+    ts: JSONValue;
+    type: NonArrowType;
+}
+
 describe("Conversion from aqua to typescript", () => {
     test.each`
         aqua                     | ts                     | type
@@ -189,7 +196,7 @@ describe("Conversion from aqua to typescript", () => {
     `(
         //
         "aqua: $aqua. ts: $ts. type: $type",
-        async ({ aqua, ts, type }) => {
+        ({ aqua, ts, type }: ConversionTestArgs) => {
             // arrange
 
             // act

@@ -24,6 +24,8 @@ export class Tracing implements TracingDef {
         event: string,
         callParams: CallParams<"arrowName" | "event">,
     ): void {
+        // This console log is intentional
+        // eslint-disable-next-line no-console
         console.log("[%s] (%s) %s", callParams.particleId, arrowName, event);
     }
 }

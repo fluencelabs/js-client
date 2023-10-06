@@ -700,6 +700,123 @@ export function helloTest(...args: any) {
     );
 }
 
+export const callHappy_script = `
+                    (seq
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                         (call %init_peer_id% ("getDataSrv" "a") [] a)
+                        )
+                        (call %init_peer_id% ("getDataSrv" "b") [] b)
+                       )
+                       (call %init_peer_id% ("getDataSrv" "c") [] c)
+                      )
+                      (xor
+                       (xor
+                        (call %init_peer_id% ("callbackSrv" "d") ["abc"] init_call_res0)
+                        (fail %last_error%)
+                       )
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 0])
+                      )
+                     )
+                     (call %init_peer_id% ("callbackSrv" "response") [init_call_res0])
+                    )
+    `;
+
+export function callHappy(
+    a: string,
+    b: number,
+    c: number,
+    d: (
+        arg0: string,
+        callParams: CallParams$$<"arg0">,
+    ) => number | Promise<number>,
+    config?: { ttl?: number },
+): Promise<number>;
+
+export function callHappy(
+    peer: IFluenceClient$$,
+    a: string,
+    b: number,
+    c: number,
+    d: (
+        arg0: string,
+        callParams: CallParams$$<"arg0">,
+    ) => number | Promise<number>,
+    config?: { ttl?: number },
+): Promise<number>;
+
+export function callHappy(...args: any) {
+    return callFunction$$(
+        args,
+        {
+            functionName: "callHappy",
+            arrow: {
+                tag: "arrow",
+                domain: {
+                    tag: "labeledProduct",
+                    fields: {
+                        a: {
+                            tag: "scalar",
+                            name: "string",
+                        },
+                        b: {
+                            tag: "scalar",
+                            name: "f64",
+                        },
+                        c: {
+                            tag: "scalar",
+                            name: "f64",
+                        },
+                        d: {
+                            tag: "arrow",
+                            domain: {
+                                tag: "unlabeledProduct",
+                                items: [
+                                    {
+                                        tag: "scalar",
+                                        name: "string",
+                                    },
+                                ],
+                            },
+                            codomain: {
+                                tag: "unlabeledProduct",
+                                items: [
+                                    {
+                                        tag: "scalar",
+                                        name: "f64",
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+                codomain: {
+                    tag: "unlabeledProduct",
+                    items: [
+                        {
+                            tag: "scalar",
+                            name: "f64",
+                        },
+                    ],
+                },
+            },
+            names: {
+                relay: "-relay-",
+                getDataSrv: "getDataSrv",
+                callbackSrv: "callbackSrv",
+                responseSrv: "callbackSrv",
+                responseFnName: "response",
+                errorHandlingSrv: "errorHandlingSrv",
+                errorFnName: "error",
+            },
+        },
+        callHappy_script,
+    );
+}
+
 export const demo_calculation_script = `
                     (seq
                      (seq

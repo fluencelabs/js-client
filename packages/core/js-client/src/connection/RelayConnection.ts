@@ -119,7 +119,11 @@ export class RelayConnection implements IConnection {
             streamMuxers: [yamux()],
             connectionEncryption: [noise()],
             connectionManager: {
-                dialTimeout: this.config.dialTimeoutMs,
+                ...(this.config.dialTimeoutMs != null
+                    ? {
+                          dialTimeout: this.config.dialTimeoutMs,
+                      }
+                    : {}),
             },
             connectionGater: {
                 // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
@@ -212,10 +216,10 @@ export class RelayConnection implements IConnection {
                 return;
             }
 
-            const isVerified = await verifySignature(
-                particle,
-                initPeerId.publicKey,
-            );
+            const isVerified = await verifySignature();
+            // TODO: Uncomment this when nox rolls out particle signatures
+            // particle,
+            // initPeerId.publicKey,
 
             if (isVerified) {
                 this.particleSource.next(particle);
@@ -248,8 +252,8 @@ export class RelayConnection implements IConnection {
 
         await this.lib2p2Peer.handle(
             [PROTOCOL_NAME],
-            async ({ connection, stream }) => {
-                return pipe(
+            ({ stream }) => {
+                void pipe(
                     stream.source,
                     decode(),
                     (source) => {
@@ -279,17 +283,6 @@ export class RelayConnection implements IConnection {
             this.lib2p2Peer.peerId.toString(),
         );
 
-        try {
-            await this.lib2p2Peer.dial(this.relayAddress);
-        } catch (e: any) {
-            if (e.name === "AggregateError" && e._errors?.length === 1) {
-                const error = e._errors[0];
-                throw new Error(
-                    `Error dialing node ${this.relayAddress}:\n${error.code}\n${error.message}`,
-                );
-            } else {
-                throw e;
-            }
-        }
+        await this.lib2p2Peer.dial(this.relayAddress);
     }
 }

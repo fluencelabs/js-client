@@ -40,13 +40,13 @@ describe("Aqua to js/ts compiler", () => {
             },
         };
 
-        const jsResult = await generateSources(res, "js", pkg);
-        const jsTypes = await generateTypes(res, pkg);
+        const jsResult = generateSources(res, "js", pkg);
+        const jsTypes = generateTypes(res, pkg);
 
         expect(jsResult).toMatchSnapshot();
         expect(jsTypes).toMatchSnapshot();
 
-        const tsResult = await generateSources(res, "ts", pkg);
+        const tsResult = generateSources(res, "ts", pkg);
 
         expect(tsResult).toMatchSnapshot();
     });

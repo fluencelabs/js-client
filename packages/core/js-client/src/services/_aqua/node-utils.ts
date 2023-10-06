@@ -17,9 +17,11 @@
 /**
  * This compiled aqua file was modified to make it work in monorepo
  */
-import { CallParams, IFluenceInternalApi } from "@fluencelabs/interfaces";
+import { CallParams, ServiceImpl } from "@fluencelabs/interfaces";
 
 import { registerService } from "../../compilerSupport/registerService.js";
+import { FluencePeer } from "../../jsPeer/FluencePeer.js";
+import { NodeUtils } from '../NodeUtils.js';
 
 // Services
 
@@ -37,13 +39,15 @@ export interface NodeUtilsDef {
 }
 
 export function registerNodeUtils(
-    peer: IFluenceInternalApi,
+    peer: FluencePeer,
     serviceId: string,
-    service: any,
+    service: NodeUtils,
 ) {
     registerService({
         peer,
-        service,
+        // TODO: fix this after changing registerService signature
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        service: { ...service } as unknown as ServiceImpl,
         serviceId,
         def: {
             defaultServiceId: "node_utils",

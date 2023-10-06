@@ -20,11 +20,22 @@ import { CallResultsArray } from "@fluencelabs/avm";
 import { fromUint8Array, toUint8Array } from "js-base64";
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 
 import { KeyPair } from "../keypair/index.js";
 import { numberToLittleEndianBytes } from "../util/bytes.js";
 
 import { IParticle } from "./interfaces.js";
+
+const particleSchema = z.object({
+    id: z.string(),
+    timestamp: z.number().positive(),
+    script: z.string(),
+    data: z.string(),
+    ttl: z.number().positive(),
+    init_peer_id: z.string(),
+    signature: z.array(z.number()),
+});
 
 export class Particle implements IParticle {
     constructor(
@@ -61,17 +72,23 @@ export class Particle implements IParticle {
     static fromString(str: string): Particle {
         const json = JSON.parse(str);
 
-        const res = new Particle(
-            json.id,
-            json.timestamp,
-            json.script,
-            toUint8Array(json.data),
-            json.ttl,
-            json.init_peer_id,
-            new Uint8Array(json.signature),
-        );
+        const res = particleSchema.safeParse(json);
 
-        return res;
+        if (!res.success) {
+            throw new Error(`Particle format invalid. Given: ${str}`);
+        }
+
+        const data = res.data;
+
+        return new Particle(
+            data.id,
+            data.timestamp,
+            data.script,
+            toUint8Array(data.data),
+            data.ttl,
+            data.init_peer_id,
+            new Uint8Array(data.signature),
+        );
     }
 }
 
@@ -111,11 +128,11 @@ export const hasExpired = (particle: IParticle): boolean => {
 /**
  * Validates that particle signature is correct
  */
-export const verifySignature = async (
-    particle: IParticle,
-    publicKey: Uint8Array,
-): Promise<boolean> => {
-    // TODO: Uncomment this when nox roll out particle signatures
+export const verifySignature = async () // particle: IParticle,
+// publicKey: Uint8Array,
+// eslint-disable-next-line @typescript-eslint/require-await
+: Promise<boolean> => {
+    // TODO: Uncomment this when nox rolls out particle signatures
     return true;
     // const message = buildParticleMessage(particle);
     // return unmarshalPublicKey(publicKey).verify(message, particle.signature);
@@ -140,13 +157,6 @@ export const cloneWithNewData = (
 };
 
 /**
- * Creates a deep copy of a particle
- */
-export const fullClone = (particle: IParticle): IParticle => {
-    return JSON.parse(JSON.stringify(particle));
-};
-
-/**
  * Serializes particle into string suitable for sending through network
  */
 export const serializeToString = (particle: IParticle): string => {
@@ -158,7 +168,7 @@ export const serializeToString = (particle: IParticle): string => {
         ttl: particle.ttl,
         script: particle.script,
         signature: Array.from(particle.signature),
-        data: particle.data && fromUint8Array(particle.data),
+        data: fromUint8Array(particle.data),
     });
 };
 

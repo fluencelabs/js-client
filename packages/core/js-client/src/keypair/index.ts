@@ -19,11 +19,8 @@ import { generateKeyPairFromSeed, generateKeyPair } from "@libp2p/crypto/keys";
 import type { PrivateKey, PublicKey } from "@libp2p/interface/keys";
 import type { PeerId } from "@libp2p/interface/peer-id";
 import { createFromPrivKey } from "@libp2p/peer-id-factory";
-import * as bs58 from "bs58";
+import { decode } from "bs58";
 import { toUint8Array } from "js-base64";
-
-// @ts-ignore
-const { decode } = bs58.default;
 
 export class KeyPair {
     /**

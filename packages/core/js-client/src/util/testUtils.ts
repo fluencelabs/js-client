@@ -18,17 +18,19 @@ import { promises as fs } from "fs";
 
 import * as api from "@fluencelabs/aqua-api/aqua-api.js";
 import {
-    ClientConfig,
-    IFluenceClient,
+    ClientConfig, FunctionCallDef,
+    JSONArray,
+    PassedArgs,
     RelayOptions,
     ServiceDef,
-} from "@fluencelabs/interfaces";
+} from '@fluencelabs/interfaces';
 import { Subject, Subscribable } from "rxjs";
 
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
 import { callAquaFunction } from "../compilerSupport/callFunction.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
+import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
@@ -40,7 +42,10 @@ import { Particle } from "../particle/Particle.js";
 export const registerHandlersHelper = (
     peer: FluencePeer,
     particle: Particle,
-    handlers: Record<string, Record<string, any>>,
+    handlers: Record<
+        string,
+        Record<string, (args: JSONArray) => CallServiceResultType | void>
+    >,
 ) => {
     Object.entries(handlers).forEach(([serviceId, service]) => {
         Object.entries(service).forEach(([fnName, fn]) => {
@@ -55,8 +60,8 @@ export const registerHandlersHelper = (
 };
 
 export type CompiledFnCall = (
-    peer: IFluenceClient,
-    args: { [key: string]: any },
+    peer: FluencePeer,
+    args: PassedArgs,
 ) => Promise<unknown>;
 export type CompiledFile = {
     functions: { [key: string]: CompiledFnCall };
@@ -81,12 +86,11 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
 
     const functions = Object.entries(compilationResult.functions)
         .map(([name, fnInfo]) => {
-            const callFn = (
-                peer: IFluenceClient,
-                args: { [key: string]: any },
-            ) => {
+            const callFn = (peer: FluencePeer, args: PassedArgs) => {
                 return callAquaFunction({
-                    def: fnInfo.funcDef,
+                    // TODO: Set our compiler here and fix this
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                    def: fnInfo.funcDef as FunctionCallDef,
                     script: fnInfo.script,
                     config: {},
                     peer: peer,
@@ -100,7 +104,9 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
             return { ...agg, ...obj };
         }, {});
 
-    return { functions, services: compilationResult.services };
+    // TODO: set our compiler here and fix this
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return { functions, services: compilationResult.services as Record<string, ServiceDef> };
 };
 
 class NoopConnection implements IConnection {
@@ -120,7 +126,7 @@ class NoopConnection implements IConnection {
     }
     particleSource: Subscribable<Particle> = new Subject<Particle>();
 
-    sendParticle(nextPeerIds: string[], particle: Particle): Promise<void> {
+    sendParticle(): Promise<void> {
         return Promise.resolve();
     }
 }

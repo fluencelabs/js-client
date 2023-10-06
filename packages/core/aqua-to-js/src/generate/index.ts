@@ -32,7 +32,7 @@ const typeGenerators: Record<OutputType, TypeGenerator> = {
     ts: new TSTypeGenerator(),
 };
 
-export async function generateSources(
+export function generateSources(
     { services, functions }: CompilationResult,
     outputType: OutputType,
     packageJson: PackageJson,
@@ -56,7 +56,7 @@ ${generateFunctions(typeGenerator, functions)}
 }`;
 }
 
-export async function generateTypes(
+export function generateTypes(
     { services, functions }: CompilationResult,
     packageJson: PackageJson,
 ) {
@@ -69,7 +69,7 @@ export async function generateTypes(
         .join("\n");
 
     const generatedFunctions = Object.entries(functions)
-        .map(([funcName, funcDef]) => {
+        .map(([, funcDef]) => {
             return typeGenerator.funcType(funcDef);
         })
         .join("\n");

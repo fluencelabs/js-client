@@ -40,10 +40,12 @@ export default async function aquaToJs<T extends OutputType>(
 
     return outputType === "js"
         ? {
-              sources: await generateSources(res, "js", packageJson),
-              types: await generateTypes(res, packageJson),
+              sources: generateSources(res, "js", packageJson),
+              types: generateTypes(res, packageJson),
           }
-        : ({
-              sources: await generateSources(res, "ts", packageJson),
+        : // TODO: probably there is a way to remove this type assert
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          ({
+              sources: generateSources(res, "ts", packageJson),
           } as LanguageOutput[T]);
 }

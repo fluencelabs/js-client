@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect } from "vitest";
 
 import { handleTimeout } from "../../particle/Particle.js";
@@ -28,14 +29,14 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const res = await new Promise<string>((resolve, reject) => {
+            const res = await new Promise<JSONValue>((resolve, reject) => {
                 if (particle instanceof Error) {
                     return reject(particle.message);
                 }
 
                 registerHandlersHelper(peer, particle, {
                     print: {
-                        print: (args: Array<string>) => {
+                        print: (args) => {
                             const [res] = args;
                             resolve(res);
                         },
@@ -66,8 +67,8 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
             const particle = await peer.internals.createNewParticle(script);
 
-            const res = await new Promise<string[]>((resolve, reject) => {
-                const res: any[] = [];
+            const res = await new Promise<JSONValue[]>((resolve, reject) => {
+                const res: JSONValue[] = [];
 
                 if (particle instanceof Error) {
                     return reject(particle.message);
@@ -75,10 +76,10 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
                 registerHandlersHelper(peer, particle, {
                     print: {
-                        print: (args: any) => {
+                        print: (args) => {
                             res.push(args[0]);
 
-                            if (res.length == 2) {
+                            if (res.length === 2) {
                                 resolve(res);
                             }
                         },
@@ -122,7 +123,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
                 registerHandlersHelper(peer, particle, {
                     return: {
-                        return: (args: any) => {
+                        return: (args) => {
                             resolve(args[0]);
                         },
                     },
@@ -176,7 +177,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
                 registerHandlersHelper(peer, particle, {
                     return: {
-                        return: (args: any) => {
+                        return: (args) => {
                             resolve(args[0]);
                         },
                     },

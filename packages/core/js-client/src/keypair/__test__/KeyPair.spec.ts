@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import * as bs58 from "bs58";
+import { decode } from "bs58";
 import { toUint8Array } from "js-base64";
 import { it, describe, expect } from "vitest";
 
 import { KeyPair } from "../index.js";
-
-// @ts-ignore
-const { decode } = bs58.default;
 
 const key = "+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=";
 const keyBytes = toUint8Array(key);

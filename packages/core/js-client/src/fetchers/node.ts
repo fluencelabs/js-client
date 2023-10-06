@@ -29,7 +29,7 @@ export async function fetchResource(pkg: string, assetPath: string) {
 
     const packagePath = matches?.[0];
 
-    if (!packagePath) {
+    if (packagePath == null) {
         throw new Error(`Cannot find dependency ${pkg} in path ${posixPath}`);
     }
 
@@ -38,7 +38,7 @@ export async function fetchResource(pkg: string, assetPath: string) {
     const file = await new Promise<ArrayBuffer>((resolve, reject) => {
         // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
         fs.readFile(pathToResource, (err, data) => {
-            if (err) {
+            if (err != null) {
                 reject(err);
                 return;
             }

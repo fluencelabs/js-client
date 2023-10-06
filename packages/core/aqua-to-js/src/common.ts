@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    ArrowWithoutCallbacks,
-    NonArrowType,
-    ProductType,
-} from "@fluencelabs/interfaces";
+import { ArrowWithoutCallbacks, NonArrowType } from "@fluencelabs/interfaces";
 import { match, P } from "ts-pattern";
 
 import { getFuncArgs } from "./utils.js";
 
 export function genTypeName(
-    t: NonArrowType | ProductType<NonArrowType> | ArrowWithoutCallbacks,
+    t: NonArrowType | ArrowWithoutCallbacks,
     name: string,
 ): readonly [string | undefined, string] {
     const genType = typeToTs(t);
@@ -55,9 +51,7 @@ export function genTypeName(
         });
 }
 
-export function typeToTs(
-    t: NonArrowType | ArrowWithoutCallbacks | ProductType<NonArrowType>,
-): string {
+export function typeToTs(t: NonArrowType | ArrowWithoutCallbacks): string {
     return match(t)
         .with({ tag: "nil" }, () => {
             return "null";
@@ -119,7 +113,7 @@ export function typeToTs(
                 })
                 .join(", ")}]`;
         })
-        .with({ tag: "arrow" }, ({ tag, domain, codomain }) => {
+        .with({ tag: "arrow" }, ({ domain, codomain }) => {
             const retType =
                 codomain.tag === "nil"
                     ? "void"

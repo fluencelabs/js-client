@@ -14,31 +14,43 @@
  * limitations under the License.
  */
 
+import assert from "assert";
 import { Buffer } from "buffer";
 
-import { CallServiceResult } from "@fluencelabs/avm";
-import * as bs58 from "bs58";
+import { JSONValue } from "@fluencelabs/interfaces";
+import { encode, decode } from "bs58";
 import { sha256 } from "multiformats/hashes/sha2";
 
 import {
+    CallServiceResult,
+    CallServiceResultType,
     GenericCallServiceHandler,
     ResultCodes,
 } from "../jsServiceHost/interfaces.js";
-import { isString, jsonify } from "../util/utils.js";
+import { getErrorMessage, isString, jsonify } from "../util/utils.js";
 
-//@ts-ignore
-const { encode, decode } = bs58.default;
-
-const success = (result: any): CallServiceResult => {
+const success = (
+    // TODO: Remove unknown after adding validation to builtin inputs
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    result: CallServiceResultType | unknown,
+): CallServiceResult => {
     return {
-        result: result,
+        // TODO: Remove type assertion after adding validation to builtin inputs
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        result: result as CallServiceResultType,
         retCode: ResultCodes.success,
     };
 };
 
-const error = (error: string): CallServiceResult => {
+const error = (
+    // TODO: Remove unknown after adding validation to builtin inputs
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    error: CallServiceResultType | unknown,
+): CallServiceResult => {
     return {
-        result: error,
+        // TODO: Remove type assertion after adding validation to builtin inputs
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        result: error as CallServiceResultType,
         retCode: ResultCodes.error,
     };
 };
@@ -49,16 +61,16 @@ const errorNotImpl = (methodName: string) => {
     );
 };
 
-const makeJsonImpl = (args: Array<any>) => {
+const makeJsonImpl = (args: [Record<string, JSONValue>, ...JSONValue[]]) => {
     const [obj, ...kvs] = args;
 
-    const toMerge: Record<string, any> = {};
+    const toMerge: Record<string, JSONValue> = {};
 
     for (let i = 0; i < kvs.length / 2; i++) {
         const k = kvs[i * 2];
 
         if (!isString(k)) {
-            return error(`Argument ${k} is expected to be string`);
+            return error(`Argument ${i * 2 + 1} is expected to be string`);
         }
 
         const v = kvs[i * 2 + 1];
@@ -69,6 +81,7 @@ const makeJsonImpl = (args: Array<any>) => {
     return success(res);
 };
 
+// TODO: These assert made for silencing more stricter ts rules. Will be fixed in DXJ-493
 export const builtInServices: Record<
     string,
     Record<string, GenericCallServiceHandler>
@@ -112,6 +125,10 @@ export const builtInServices: Record<
 
             const durationMs = req.args[0];
             const message = req.args[1];
+
+            assert(
+                typeof durationMs === "number" && typeof message === "string",
+            );
 
             return new Promise((resolve) => {
                 setTimeout(() => {
@@ -234,6 +251,7 @@ export const builtInServices: Record<
                         req.args.length,
                 );
             } else {
+                assert(Array.isArray(req.args[0]));
                 return success(req.args[0].length);
             }
         },
@@ -250,13 +268,13 @@ export const builtInServices: Record<
 
         concat: (req) => {
             const incorrectArgIndices = req.args //
-                .map((x, i) => {
+                .map((x, i): [boolean, number] => {
                     return [Array.isArray(x), i];
                 })
-                .filter(([isArray, _]) => {
+                .filter(([isArray]) => {
                     return !isArray;
                 })
-                .map(([_, index]) => {
+                .map(([index]) => {
                     return index;
                 });
 
@@ -266,7 +284,9 @@ export const builtInServices: Record<
                     `All arguments of 'concat' must be arrays: arguments ${str} are not`,
                 );
             } else {
-                return success([].concat.apply([], req.args));
+                // TODO: remove after adding validation
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                return success([].concat(...(req.args as never[][])));
             }
         },
 
@@ -274,7 +294,10 @@ export const builtInServices: Record<
             if (req.args.length !== 1) {
                 return error("string_to_b58 accepts only one string argument");
             } else {
-                return success(encode(new TextEncoder().encode(req.args[0])));
+                const [input] = req.args;
+                // TODO: remove after adding validation
+                assert(typeof input === "string");
+                return success(encode(new TextEncoder().encode(input)));
             }
         },
 
@@ -284,7 +307,10 @@ export const builtInServices: Record<
                     "string_from_b58 accepts only one string argument",
                 );
             } else {
-                return success(new TextDecoder().decode(decode(req.args[0])));
+                const [input] = req.args;
+                // TODO: remove after adding validation
+                assert(typeof input === "string");
+                return success(new TextDecoder().decode(decode(input)));
             }
         },
 
@@ -294,6 +320,8 @@ export const builtInServices: Record<
                     "bytes_to_b58 accepts only single argument: array of numbers",
                 );
             } else {
+                // TODO: remove after adding validation
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 const argumentArray = req.args[0] as number[];
                 return success(encode(new Uint8Array(argumentArray)));
             }
@@ -303,32 +331,33 @@ export const builtInServices: Record<
             if (req.args.length !== 1) {
                 return error("bytes_from_b58 accepts only one string argument");
             } else {
-                return success(Array.from(decode(req.args[0])));
+                const [input] = req.args;
+                // TODO: remove after adding validation
+                assert(typeof input === "string");
+                return success(Array.from(decode(input)));
             }
         },
 
         sha256_string: async (req) => {
-            if (req.args.length < 1 || req.args.length > 3) {
+            if (req.args.length !== 1) {
                 return error(
-                    `sha256_string accepts 1-3 arguments, found: ${req.args.length}`,
+                    `sha256_string accepts 1 argument, found: ${req.args.length}`,
                 );
             } else {
-                const [input, digestOnly, asBytes] = req.args;
+                const [input] = req.args;
+                // TODO: remove after adding validation
+                assert(typeof input === "string");
                 const inBuffer = Buffer.from(input);
                 const multihash = await sha256.digest(inBuffer);
 
-                const outBytes = digestOnly
-                    ? multihash.digest
-                    : multihash.bytes;
-
-                const res = asBytes ? Array.from(outBytes) : encode(outBytes);
-
-                return success(res);
+                return success(encode(multihash.bytes));
             }
         },
 
         concat_strings: (req) => {
-            const res = "".concat(...req.args);
+            // TODO: remove after adding validation
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            const res = "".concat(...(req.args as string[]));
             return success(res);
         },
     },
@@ -353,88 +382,104 @@ export const builtInServices: Record<
         add: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x + y);
         },
 
         sub: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x - y);
         },
 
         mul: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x * y);
         },
 
         fmul: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(Math.floor(x * y));
         },
 
         div: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(Math.floor(x / y));
         },
 
         rem: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x % y);
         },
 
         pow: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(Math.pow(x, y));
         },
 
         log: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(Math.log(y) / Math.log(x));
         },
     },
@@ -443,55 +488,65 @@ export const builtInServices: Record<
         gt: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x > y);
         },
 
         gte: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x >= y);
         },
 
         lt: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x < y);
         },
 
         lte: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x <= y);
         },
 
         cmp: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [x, y] = req.args;
+            // TODO: Remove after adding validation
+            assert(typeof x === "number" && typeof y === "number");
             return success(x === y ? 0 : x > y ? 1 : -1);
         },
     },
@@ -500,13 +555,15 @@ export const builtInServices: Record<
         sum: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 1))) {
+            if ((err = checkForArgumentsCount(req, 1)) != null) {
                 return err;
             }
 
-            const [xs] = req.args;
+            // TODO: Remove after adding validation
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            const [xs] = req.args as [number[]];
             return success(
-                xs.reduce((agg: any, cur: any) => {
+                xs.reduce((agg, cur) => {
                     return agg + cur;
                 }, 0),
             );
@@ -515,11 +572,13 @@ export const builtInServices: Record<
         dedup: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 1))) {
+            if ((err = checkForArgumentsCount(req, 1)) != null) {
                 return err;
             }
 
             const [xs] = req.args;
+            // TODO: Remove after adding validation
+            assert(Array.isArray(xs));
             const set = new Set(xs);
             return success(Array.from(set));
         },
@@ -527,13 +586,15 @@ export const builtInServices: Record<
         intersect: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [xs, ys] = req.args;
+            // TODO: Remove after adding validation
+            assert(Array.isArray(xs) && Array.isArray(ys));
 
-            const intersection = xs.filter((x: any) => {
+            const intersection = xs.filter((x) => {
                 return ys.includes(x);
             });
 
@@ -543,13 +604,15 @@ export const builtInServices: Record<
         diff: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [xs, ys] = req.args;
+            // TODO: Remove after adding validation
+            assert(Array.isArray(xs) && Array.isArray(ys));
 
-            const diff = xs.filter((x: unknown) => {
+            const diff = xs.filter((x) => {
                 return !ys.includes(x);
             });
 
@@ -559,18 +622,20 @@ export const builtInServices: Record<
         sdiff: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 2))) {
+            if ((err = checkForArgumentsCount(req, 2)) != null) {
                 return err;
             }
 
             const [xs, ys] = req.args;
+            // TODO: Remove after adding validation
+            assert(Array.isArray(xs) && Array.isArray(ys));
 
             const sdiff = [
                 // force new line
-                ...xs.filter((y: unknown) => {
+                ...xs.filter((y) => {
                     return !ys.includes(y);
                 }),
-                ...ys.filter((x: unknown) => {
+                ...ys.filter((x) => {
                     return !xs.includes(x);
                 }),
             ];
@@ -583,53 +648,66 @@ export const builtInServices: Record<
         obj: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCountEven(req, 1))) {
+            if ((err = checkForArgumentsCountEven(req)) != null) {
                 return err;
             }
 
-            return makeJsonImpl([{}, ...req.args]);
+            // TODO: remove after adding validation
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            return makeJsonImpl([{}, ...req.args] as [
+                Record<string, JSONValue>,
+                ...JSONValue[],
+            ]);
         },
 
         put: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 3))) {
+            if ((err = checkForArgumentsCount(req, 3)) != null) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, "object"))) {
+            if ((err = checkForArgumentType(req, 0, "object")) != null) {
                 return err;
             }
 
-            return makeJsonImpl(req.args);
+            return makeJsonImpl(
+                // TODO: remove after adding validation
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                req.args as [Record<string, JSONValue>, ...JSONValue[]],
+            );
         },
 
         puts: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCountOdd(req, 1))) {
+            if ((err = checkForArgumentsCountOdd(req)) != null) {
                 return err;
             }
 
-            if ((err = checkForArgumentsCountMoreThan(req, 3))) {
+            if ((err = checkForArgumentsCountMoreThan(req, 3)) != null) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, "object"))) {
+            if ((err = checkForArgumentType(req, 0, "object")) != null) {
                 return err;
             }
 
-            return makeJsonImpl(req.args);
+            return makeJsonImpl(
+                // TODO: remove after adding validation
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                req.args as [Record<string, JSONValue>, ...JSONValue[]],
+            );
         },
 
         stringify: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 1))) {
+            if ((err = checkForArgumentsCount(req, 1)) != null) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, "object"))) {
+            if ((err = checkForArgumentType(req, 0, "object")) != null) {
                 return err;
             }
 
@@ -641,27 +719,31 @@ export const builtInServices: Record<
         parse: (req) => {
             let err;
 
-            if ((err = checkForArgumentsCount(req, 1))) {
+            if ((err = checkForArgumentsCount(req, 1)) != null) {
                 return err;
             }
 
-            if ((err = checkForArgumentType(req, 0, "string"))) {
+            if ((err = checkForArgumentType(req, 0, "string")) != null) {
                 return err;
             }
 
             const [raw] = req.args;
 
             try {
+                // TODO: Remove after adding validation
+                assert(typeof raw === "string");
                 const json = JSON.parse(raw);
                 return success(json);
-            } catch (err: any) {
-                return error(err.message);
+            } catch (err: unknown) {
+                return error(getErrorMessage(err));
             }
         },
     },
 
     "run-console": {
         print: (req) => {
+            // This log is intentional
+            // eslint-disable-next-line no-console
             console.log(...req.args);
             return success({});
         },
@@ -675,6 +757,8 @@ const checkForArgumentsCount = (
     if (req.args.length !== count) {
         return error(`Expected ${count} argument(s). Got ${req.args.length}`);
     }
+
+    return null;
 };
 
 const checkForArgumentsCountMoreThan = (
@@ -686,28 +770,28 @@ const checkForArgumentsCountMoreThan = (
             `Expected more than ${count} argument(s). Got ${req.args.length}`,
         );
     }
+
+    return null;
 };
 
-const checkForArgumentsCountEven = (
-    req: { args: Array<unknown> },
-    count: number,
-) => {
+const checkForArgumentsCountEven = (req: { args: Array<unknown> }) => {
     if (req.args.length % 2 === 1) {
         return error(
             `Expected even number of argument(s). Got ${req.args.length}`,
         );
     }
+
+    return null;
 };
 
-const checkForArgumentsCountOdd = (
-    req: { args: Array<unknown> },
-    count: number,
-) => {
+const checkForArgumentsCountOdd = (req: { args: Array<unknown> }) => {
     if (req.args.length % 2 === 0) {
         return error(
             `Expected odd number of argument(s). Got ${req.args.length}`,
         );
     }
+
+    return null;
 };
 
 const checkForArgumentType = (
@@ -722,4 +806,6 @@ const checkForArgumentType = (
             `Argument ${index} expected to be of type ${type}, Got ${actual}`,
         );
     }
+
+    return null;
 };

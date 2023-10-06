@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-// @ts-ignore
-import { Worker } from "threads";
-import type { WorkerImplementation } from "threads/dist/types/master";
+import { Worker } from "../../../node_modules/threads/dist/index.js";
+// eslint-disable-next-line import/order
+import type { WorkerImplementation } from "../../../node_modules/threads/dist/types/master.js";
 
-// @ts-ignore
 import { LazyLoader } from "../interfaces.js";
 
 export class WorkerLoader extends LazyLoader<WorkerImplementation> {
