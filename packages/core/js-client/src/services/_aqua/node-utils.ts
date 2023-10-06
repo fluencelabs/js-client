@@ -47,7 +47,7 @@ export function registerNodeUtils(
         peer,
         // TODO: fix this after changing registerService signature
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: { ...service } as unknown as ServiceImpl,
+        service: service as unknown as ServiceImpl,
         serviceId,
         def: {
             defaultServiceId: "node_utils",

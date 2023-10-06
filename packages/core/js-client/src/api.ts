@@ -23,15 +23,14 @@ import type {
 } from "@fluencelabs/interfaces";
 import { getArgumentTypes } from "@fluencelabs/interfaces";
 
-import { ClientPeer } from "./clientPeer/ClientPeer.js";
 import { FluencePeer } from "./jsPeer/FluencePeer.js";
 
 import { callAquaFunction, Fluence, registerService } from "./index.js";
 
-export const isClientPeer = (
+export const isFluencePeer = (
     fluencePeerCandidate: unknown,
-): fluencePeerCandidate is ClientPeer => {
-    return fluencePeerCandidate instanceof ClientPeer;
+): fluencePeerCandidate is FluencePeer => {
+    return fluencePeerCandidate instanceof FluencePeer;
 };
 
 /**
@@ -106,10 +105,10 @@ function extractFunctionArgs(
     const argumentNames = Object.keys(argumentTypes);
     const numberOfExpectedArgs = argumentNames.length;
 
-    let peer: ClientPeer;
+    let peer: FluencePeer;
     let config: FnConfig;
 
-    if (isClientPeer(args[0])) {
+    if (isFluencePeer(args[0])) {
         peer = args[0];
         args = args.slice(1);
     } else {
@@ -171,7 +170,7 @@ const extractServiceArgs = (
     let peer: FluencePeer;
     let serviceId: string | undefined;
 
-    if (isClientPeer(args[0])) {
+    if (isFluencePeer(args[0])) {
         peer = args[0];
         args = args.slice(1);
     } else {

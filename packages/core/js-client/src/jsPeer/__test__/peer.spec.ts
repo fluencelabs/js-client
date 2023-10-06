@@ -16,7 +16,7 @@
 
 import { it, describe, expect } from "vitest";
 
-import { isClientPeer } from "../../api.js";
+import { isFluencePeer } from "../../api.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import {
     mkTestPeer,
@@ -34,10 +34,10 @@ describe("FluencePeer usage test suite", () => {
         const undefinedVal = undefined;
 
         // act
-        const isPeerPeer = isClientPeer(peer);
-        const isNumberPeer = isClientPeer(number);
-        const isObjectPeer = isClientPeer(object);
-        const isUndefinedPeer = isClientPeer(undefinedVal);
+        const isPeerPeer = isFluencePeer(peer);
+        const isNumberPeer = isFluencePeer(number);
+        const isObjectPeer = isFluencePeer(object);
+        const isUndefinedPeer = isFluencePeer(undefinedVal);
 
         // act
         expect(isPeerPeer).toBe(true);

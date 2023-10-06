@@ -69,12 +69,12 @@ describe("Tests for default handler", () => {
         ${"op"}    | ${"bytes_from_b58"}  | ${["3yZe7d"]}                              | ${0}    | ${[116, 101, 115, 116]}
         ${"op"}    | ${"bytes_from_b58"}  | ${["3yZe7d", 1]}                           | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
         ${"op"}    | ${"sha256_string"}   | ${["hello, world!"]}                       | ${0}    | ${"QmVQ8pg6L1tpoWYeq6dpoWqnzZoSLCh7E96fCFXKvfKD3u"}
-        ${"op"}    | ${"sha256_string"}   | ${["hello, world!", true]}                 | ${0}    | ${"84V7ZxLW7qKsx1Qvbd63BdGaHxUc3TfT2MBPqAXM7Wyu"}
-        ${"op"}    | ${"sha256_string"}   | ${[]}                                      | ${1}    | ${"sha256_string accepts 1-3 arguments, found: 0"}
+        ${"op"}    | ${"sha256_string"}   | ${["hello, world!", true]}                 | ${1}    | ${"sha256_string accepts 1 argument, found: 2"}
+        ${"op"}    | ${"sha256_string"}   | ${[]}                                      | ${1}    | ${"sha256_string accepts 1 argument, found: 0"}
         ${"op"}    | ${"concat_strings"}  | ${[]}                                      | ${0}    | ${""}
         ${"op"}    | ${"concat_strings"}  | ${["a", "b", "c"]}                         | ${0}    | ${"abc"}
-        ${"peer"}  | ${"timeout"}         | ${[200, []]}                               | ${0}    | ${[]}
-        ${"peer"}  | ${"timeout"}         | ${[200, ["test"]]}                         | ${0}    | ${["test"]}
+        ${"peer"}  | ${"timeout"}         | ${[200, []]}                               | ${1}    | ${"timeout accepts exactly two arguments: timeout duration in ms and a message string"}
+        ${"peer"}  | ${"timeout"}         | ${[200, "test"]}                           | ${0}    | ${"test"}
         ${"peer"}  | ${"timeout"}         | ${[]}                                      | ${1}    | ${"timeout accepts exactly two arguments: timeout duration in ms and a message string"}
         ${"peer"}  | ${"timeout"}         | ${[200, "test", 1]}                        | ${1}    | ${"timeout accepts exactly two arguments: timeout duration in ms and a message string"}
         ${"debug"} | ${"stringify"}       | ${[]}                                      | ${0}    | ${'"<empty argument list>"'}

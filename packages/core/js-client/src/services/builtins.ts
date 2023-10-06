@@ -126,9 +126,11 @@ export const builtInServices: Record<
             const durationMs = req.args[0];
             const message = req.args[1];
 
-            assert(
-                typeof durationMs === "number" && typeof message === "string",
-            );
+            if (typeof durationMs !== 'number' || typeof message !== 'string') {
+                return error(
+                    "timeout accepts exactly two arguments: timeout duration in ms and a message string",
+                );
+            }
 
             return new Promise((resolve) => {
                 setTimeout(() => {
@@ -274,7 +276,7 @@ export const builtInServices: Record<
                 .filter(([isArray]) => {
                     return !isArray;
                 })
-                .map(([index]) => {
+                .map(([,index]) => {
                     return index;
                 });
 
