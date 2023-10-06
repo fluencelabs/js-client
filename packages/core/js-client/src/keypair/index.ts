@@ -15,7 +15,11 @@
  */
 
 import { KeyPairOptions } from "@fluencelabs/interfaces";
-import { generateKeyPairFromSeed, generateKeyPair } from "@libp2p/crypto/keys";
+import {
+    generateKeyPairFromSeed,
+    generateKeyPair,
+    unmarshalPublicKey,
+} from "@libp2p/crypto/keys";
 import type { PrivateKey, PublicKey } from "@libp2p/interface/keys";
 import type { PeerId } from "@libp2p/interface/peer-id";
 import { createFromPrivKey } from "@libp2p/peer-id-factory";
@@ -23,18 +27,21 @@ import { decode } from "bs58";
 import { toUint8Array } from "js-base64";
 
 export class KeyPair {
+    private publicKey: PublicKey;
+
+    private constructor(
+        private privateKey: PrivateKey,
+        private libp2pPeerId: PeerId,
+    ) {
+        this.publicKey = privateKey.public;
+    }
+
     /**
      * Key pair in libp2p format. Used for backward compatibility with the current FluencePeer implementation
      */
     getLibp2pPeerId() {
         return this.libp2pPeerId;
     }
-
-    constructor(
-        private privateKey: PrivateKey | undefined,
-        private publicKey: PublicKey,
-        private libp2pPeerId: PeerId,
-    ) {}
 
     /**
      * Generates new KeyPair from ed25519 private key represented as a 32 byte array
@@ -44,7 +51,7 @@ export class KeyPair {
     static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
         const key = await generateKeyPairFromSeed("Ed25519", seed, 256);
         const lib2p2Pid = await createFromPrivKey(key);
-        return new KeyPair(key, key.public, lib2p2Pid);
+        return new KeyPair(key, lib2p2Pid);
     }
 
     /**
@@ -54,7 +61,15 @@ export class KeyPair {
     static async randomEd25519(): Promise<KeyPair> {
         const key = await generateKeyPair("Ed25519");
         const lib2p2Pid = await createFromPrivKey(key);
-        return new KeyPair(key, key.public, lib2p2Pid);
+        return new KeyPair(key, lib2p2Pid);
+    }
+
+    static verifyWithPublicKey(
+        publicKey: Uint8Array,
+        message: Uint8Array,
+        signature: Uint8Array,
+    ) {
+        return unmarshalPublicKey(publicKey).verify(message, signature);
     }
 
     getPeerId(): string {

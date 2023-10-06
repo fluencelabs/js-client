@@ -21,7 +21,7 @@ import { CallParams, ServiceImpl } from "@fluencelabs/interfaces";
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
-import { Sig } from '../Sig.js';
+import { Sig } from "../Sig.js";
 
 // Services
 

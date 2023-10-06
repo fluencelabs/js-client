@@ -99,6 +99,7 @@ jobs:
 
       - run: pnpm -r --no-frozen-lockfile i
       - run: pnpm -r build
+      - run: pnpm lint-check
       - run: pnpm -r test
 
       - name: Dump rust-peer logs

@@ -32,10 +32,19 @@ type LanguageOutput = {
     ts: TsOutput;
 };
 
+type NothingToGenerate = null;
+
 export default async function aquaToJs<T extends OutputType>(
     res: CompilationResult,
     outputType: T,
-): Promise<LanguageOutput[T]> {
+): Promise<LanguageOutput[T] | NothingToGenerate> {
+    if (
+        Object.keys(res.services).length === 0 &&
+        Object.keys(res.functions).length === 0
+    ) {
+        return null;
+    }
+
     const packageJson = await getPackageJsonContent();
 
     return outputType === "js"

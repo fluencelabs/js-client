@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CallParams, PeerIdB58 } from '@fluencelabs/interfaces';
+import { CallParams, PeerIdB58 } from "@fluencelabs/interfaces";
 
 import { KeyPair } from "../keypair/index.js";
 

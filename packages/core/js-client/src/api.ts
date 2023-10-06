@@ -18,8 +18,9 @@ import type {
     FnConfig,
     FunctionCallDef,
     ServiceDef,
-    PassedArgs, ServiceImpl,
-} from '@fluencelabs/interfaces';
+    PassedArgs,
+    ServiceImpl,
+} from "@fluencelabs/interfaces";
 import { getArgumentTypes } from "@fluencelabs/interfaces";
 
 import { ClientPeer } from "./clientPeer/ClientPeer.js";
@@ -68,11 +69,8 @@ export const v5_registerService = (args: unknown[], def: ServiceDef): void => {
     // TODO: Support this in aqua-to-js package
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const service: ServiceImpl = args.pop() as ServiceImpl;
-    
-    const { peer, serviceId } = extractServiceArgs(
-        args,
-        def.defaultServiceId,
-    );
+
+    const { peer, serviceId } = extractServiceArgs(args, def.defaultServiceId);
 
     registerService({
         def,

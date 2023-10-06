@@ -17,7 +17,7 @@
 import * as path from "path";
 import * as url from "url";
 
-import { ServiceDef, ServiceImpl } from '@fluencelabs/interfaces';
+import { ServiceDef, ServiceImpl } from "@fluencelabs/interfaces";
 import { it, describe, expect, beforeAll } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";

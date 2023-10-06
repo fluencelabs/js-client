@@ -34,11 +34,7 @@ import { fromString } from "uint8arrays/from-string";
 import { toString } from "uint8arrays/to-string";
 
 import { IParticle } from "../particle/interfaces.js";
-import {
-    Particle,
-    serializeToString,
-    verifySignature,
-} from "../particle/Particle.js";
+import { Particle, serializeToString } from "../particle/Particle.js";
 import { throwIfHasNoPeerId } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
 
@@ -192,6 +188,8 @@ export class RelayConnection implements IConnection {
         log.trace("data written to sink");
     }
 
+    // Await will appear after uncommenting lines in func body
+    // eslint-disable-next-line @typescript-eslint/require-await
     private async processIncomingMessage(msg: string, stream: Stream) {
         let particle: Particle | undefined;
 
@@ -216,10 +214,10 @@ export class RelayConnection implements IConnection {
                 return;
             }
 
-            const isVerified = await verifySignature();
             // TODO: Uncomment this when nox rolls out particle signatures
-            // particle,
-            // initPeerId.publicKey,
+            // const message = buildParticleMessage(particle);
+            // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, message, particle.signature);
+            const isVerified = true;
 
             if (isVerified) {
                 this.particleSource.next(particle);

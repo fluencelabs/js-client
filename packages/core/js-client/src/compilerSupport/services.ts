@@ -21,8 +21,8 @@ import {
     FunctionCallDef,
     NonArrowType,
     ServiceImpl,
-    JSONValue
-} from '@fluencelabs/interfaces';
+    JSONValue,
+} from "@fluencelabs/interfaces";
 import { fromUint8Array } from "js-base64";
 import { match } from "ts-pattern";
 
@@ -182,7 +182,7 @@ const extractCallParams = (
         .with({ tag: "labeledProduct" }, (x) => {
             return Object.keys(x.fields).map((label) => {
                 return label;
-            })
+            });
         })
         .exhaustive();
 

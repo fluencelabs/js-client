@@ -126,19 +126,6 @@ export const hasExpired = (particle: IParticle): boolean => {
 };
 
 /**
- * Validates that particle signature is correct
- */
-export const verifySignature = async () // particle: IParticle,
-// publicKey: Uint8Array,
-// eslint-disable-next-line @typescript-eslint/require-await
-: Promise<boolean> => {
-    // TODO: Uncomment this when nox rolls out particle signatures
-    return true;
-    // const message = buildParticleMessage(particle);
-    // return unmarshalPublicKey(publicKey).verify(message, particle.signature);
-};
-
-/**
  * Creates a particle clone with new data
  */
 export const cloneWithNewData = (

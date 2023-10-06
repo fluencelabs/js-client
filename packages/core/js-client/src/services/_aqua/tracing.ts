@@ -17,11 +17,11 @@
 /**
  * This compiled aqua file was modified to make it work in monorepo
  */
-import { CallParams, ServiceImpl } from '@fluencelabs/interfaces';
+import { CallParams, ServiceImpl } from "@fluencelabs/interfaces";
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
-import { Tracing } from '../Tracing.js';
+import { Tracing } from "../Tracing.js";
 
 // Services
 

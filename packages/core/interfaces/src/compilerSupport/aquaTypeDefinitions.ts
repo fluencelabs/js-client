@@ -174,7 +174,9 @@ export type ArrowType<T extends LabeledProductType | UnlabeledProductType> = {
 /**
  * Arrow which domain contains only non-arrow types
  */
-export type ArrowWithoutCallbacks = ArrowType<UnlabeledProductType | LabeledProductType<SimpleTypes>>;
+export type ArrowWithoutCallbacks = ArrowType<
+    UnlabeledProductType | LabeledProductType<SimpleTypes>
+>;
 
 /**
  * Arrow which domain does can contain both non-arrow types and arrows (which themselves cannot contain arrows)

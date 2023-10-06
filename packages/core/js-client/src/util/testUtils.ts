@@ -18,12 +18,13 @@ import { promises as fs } from "fs";
 
 import * as api from "@fluencelabs/aqua-api/aqua-api.js";
 import {
-    ClientConfig, FunctionCallDef,
+    ClientConfig,
+    FunctionCallDef,
     JSONArray,
     PassedArgs,
     RelayOptions,
     ServiceDef,
-} from '@fluencelabs/interfaces';
+} from "@fluencelabs/interfaces";
 import { Subject, Subscribable } from "rxjs";
 
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
@@ -104,9 +105,12 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
             return { ...agg, ...obj };
         }, {});
 
-    // TODO: set our compiler here and fix this
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return { functions, services: compilationResult.services as Record<string, ServiceDef> };
+    return {
+        functions,
+        // TODO: set our compiler here and fix this
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        services: compilationResult.services as Record<string, ServiceDef>,
+    };
 };
 
 class NoopConnection implements IConnection {

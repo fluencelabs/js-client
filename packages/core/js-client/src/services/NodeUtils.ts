@@ -17,7 +17,7 @@
 import { Buffer } from "buffer";
 import * as fs from "fs";
 
-import { CallParams } from '@fluencelabs/interfaces';
+import { CallParams } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { getErrorMessage } from "../util/utils.js";

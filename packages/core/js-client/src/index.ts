@@ -243,3 +243,9 @@ globalThis.fluence = {
 };
 
 export { createClient, callAquaFunction, registerService };
+export {
+    KeyPair,
+    fromBase64Sk,
+    fromBase58Sk,
+    fromOpts,
+} from "./keypair/index.js";
