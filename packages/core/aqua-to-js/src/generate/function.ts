@@ -29,7 +29,10 @@ export function generateFunctions(
         .join("\n\n");
 }
 
+type DeepToType<T> = { [K in keyof T]: DeepToType<T[K]> }
+
 function generateFunction(typeGenerator: TypeGenerator, func: AquaFunction) {
+    const funcDef: DeepToType<typeof func.funcDef> = func.funcDef;
     const scriptConstName = func.funcDef.functionName + "_script";
     return `export const ${scriptConstName} = \`
 ${func.script}\`;
@@ -41,7 +44,7 @@ export function ${func.funcDef.functionName}(${typeGenerator.type(
     )}) {
     return callFunction$$(
         args,
-        ${JSON.stringify(recursiveRenameLaquaProps(func.funcDef), null, 4)},
+        ${JSON.stringify(recursiveRenameLaquaProps(funcDef), null, 4)},
         ${scriptConstName}
     );
 }`;

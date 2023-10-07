@@ -62,9 +62,6 @@ importers:
 
   packages/@tests/aqua:
     dependencies:
-      '@fluencelabs/js-client':
-        specifier: workspace:^
-        version: link:../../core/js-client
       base64-js:
         specifier: 1.5.1
         version: 1.5.1
@@ -75,6 +72,9 @@ importers:
       '@fluencelabs/cli':
         specifier: 0.7.2
         version: 0.7.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@nomicfoundation/hardhat-chai-matchers@1.0.6)(@nomicfoundation/hardhat-network-helpers@1.0.8)(@nomiclabs/hardhat-ethers@2.2.3)(@nomiclabs/hardhat-etherscan@3.1.7)(@typechain/ethers-v5@10.2.1)(@typechain/hardhat@6.1.6)(@types/chai@4.3.5)(@types/mocha@9.1.1)(@types/node@20.7.0)(chai@4.3.7)(hardhat-gas-reporter@1.0.9)(hardhat@2.15.0)(solidity-coverage@0.7.22)(ts-node@10.9.1)(typechain@8.2.0)(typescript@5.1.6)
+      '@fluencelabs/js-client':
+        specifier: workspace:^
+        version: link:../../core/js-client
       '@fluencelabs/registry':
         specifier: 0.8.2
         version: 0.8.2
@@ -4566,6 +4566,8 @@ packages:
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
 
   /@libp2p/interface-connection@4.0.0:
     resolution: {integrity: sha512-6xx/NmEc84HX7QmsjSC3hHredQYjHv4Dkf4G27adAPf+qN+vnPxmQ7gaTnk243a0++DOFTbZ2gKX/15G2B6SRg==}
@@ -4735,6 +4737,8 @@ packages:
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
 
   /@libp2p/peer-id@2.0.1:
     resolution: {integrity: sha512-uGIR4rS+j+IzzIu0kih4MonZEfRmjGNfXaSPMIFOeMxZItZT6TIpxoVNYxHl4YtneSFKzlLnf9yx9EhRcyfy8Q==}

@@ -75,10 +75,6 @@ export const callAquaFunction = async ({
     );
 
     return new Promise((resolve, reject) => {
-        if (particle instanceof Error) {
-            return reject(particle.message);
-        }
-
         for (const [name, argVal] of Object.entries(args)) {
             const type = argumentTypes[name];
             let service: ServiceDescription;

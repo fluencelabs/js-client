@@ -122,7 +122,7 @@ export type LabeledProductType<
         | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType> =
         | SimpleTypes
         | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
-    K = { [key: string]: T },
+    K extends { [key: string]: T } = { [key: string]: T }
 > = {
     /**
      * Type descriptor. Used for pattern-matching

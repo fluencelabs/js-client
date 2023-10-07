@@ -17,13 +17,13 @@
     "author": "Fluence Labs",
     "license": "Apache-2.0",
     "dependencies": {
-        "@fluencelabs/js-client": "workspace:^",
         "base64-js": "1.5.1"
     },
     "devDependencies": {
-        "@fluencelabs/cli": "0.7.2",
-        "@fluencelabs/registry": "0.8.2",
         "@fluencelabs/aqua-lib": "0.6.0",
+        "@fluencelabs/cli": "0.7.2",
+        "@fluencelabs/js-client": "workspace:^",
+        "@fluencelabs/registry": "0.8.2",
         "@fluencelabs/trust-graph": "3.1.2"
     }
 }
