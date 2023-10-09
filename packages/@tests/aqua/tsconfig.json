@@ -4,5 +4,6 @@
         "outDir": "./dist",
         "module": "NodeNext"
     },
+    "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]
 }

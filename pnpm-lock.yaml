@@ -107,7 +107,7 @@ importers:
   packages/@tests/smoke/web-cra-ts:
     dependencies:
       '@test/aqua_for_test':
-        specifier: workspace:../../aqua
+        specifier: workspace:*
         version: link:../../aqua
       '@testing-library/jest-dom':
         specifier: 5.16.5

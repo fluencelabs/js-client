@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "dependencies": {
-        "@test/aqua_for_test": "workspace:../../aqua",
+        "@test/aqua_for_test": "workspace:*",
         "@testing-library/jest-dom": "5.16.5",
         "@testing-library/react": "13.4.0",
         "@testing-library/user-event": "13.5.0",
