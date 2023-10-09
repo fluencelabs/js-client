@@ -80,7 +80,7 @@ type __GetTsType<T> = [T] extends [SimpleTypes]
               : []
       ) => [T["codomain"]] extends [UnlabeledProductType]
           ? UnpackIfSingle<MapTuple<T["codomain"]["items"]>>
-          : void
+          : undefined
     : never;
 
 type DeepMutable<T> = {

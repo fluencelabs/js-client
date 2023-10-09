@@ -24,9 +24,7 @@ let peer: FluencePeer;
 
 describe("Sig service test suite", () => {
     afterEach(async () => {
-        if (peer != null) {
-            await peer.stop();
-        }
+        await peer.stop();
     });
 
     beforeEach(async () => {

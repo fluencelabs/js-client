@@ -93,6 +93,7 @@ export class JsServiceHost implements IJsServiceHost {
         const result = await handler(req);
 
         // Otherwise AVM might break
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (result.result === undefined) {
             result.result = null;
         }

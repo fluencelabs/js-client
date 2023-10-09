@@ -69,10 +69,7 @@ export const callAquaFunction = async ({
     log.trace("calling aqua function %j", { def, script, config, args });
     const argumentTypes = getArgumentTypes(def);
 
-    const particle = await peer.internals.createNewParticle(
-        script,
-        config?.ttl,
-    );
+    const particle = await peer.internals.createNewParticle(script, config.ttl);
 
     return new Promise((resolve, reject) => {
         for (const [name, argVal] of Object.entries(args)) {

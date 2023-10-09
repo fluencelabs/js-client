@@ -80,18 +80,10 @@ export class KeyPair {
      * @returns 32 byte private key
      */
     toEd25519PrivateKey(): Uint8Array {
-        if (this.privateKey === undefined) {
-            throw new Error("Private key not supplied");
-        }
-
         return this.privateKey.marshal().subarray(0, 32);
     }
 
     signBytes(data: Uint8Array): Promise<Uint8Array> {
-        if (this.privateKey === undefined) {
-            throw new Error("Private key not supplied");
-        }
-
         return this.privateKey.sign(data);
     }
 

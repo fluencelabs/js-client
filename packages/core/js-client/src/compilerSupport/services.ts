@@ -170,7 +170,7 @@ const extractCallParams = (
     req: CallServiceData,
     arrow: ArrowWithoutCallbacks,
 ): CallParams<string> => {
-    const names = match(arrow.domain)
+    const names: (string | undefined)[] = match(arrow.domain)
         .with({ tag: "nil" }, () => {
             return [];
         })
@@ -189,8 +189,10 @@ const extractCallParams = (
     const tetraplets: Record<string, SecurityTetraplet[]> = {};
 
     for (let i = 0; i < req.args.length; i++) {
-        if (names[i] != null) {
-            tetraplets[names[i]] = req.tetraplets[i];
+        const name = names[i];
+
+        if (name != null) {
+            tetraplets[name] = req.tetraplets[i];
         }
     }
 

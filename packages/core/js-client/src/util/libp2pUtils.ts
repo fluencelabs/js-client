@@ -23,18 +23,17 @@ export function relayOptionToMultiaddr(relay: RelayOptions): Multiaddr {
     const multiaddrString = isString(relay) ? relay : relay.multiaddr;
     const ma = multiaddr(multiaddrString);
 
-    throwIfHasNoPeerId(ma);
+    const peerId = ma.getPeerId();
+
+    if (peerId == null) {
+        throwHasNoPeerId(ma);
+    }
 
     return ma;
 }
 
-export function throwIfHasNoPeerId(ma: Multiaddr): void {
-    const peerId = ma.getPeerId();
-
-    if (peerId == null) {
-        throw new Error(
-            "Specified multiaddr is invalid or missing peer id: " +
-                ma.toString(),
-        );
-    }
+export function throwHasNoPeerId(ma: Multiaddr): never {
+    throw new Error(
+        "Specified multiaddr is invalid or missing peer id: " + ma.toString(),
+    );
 }

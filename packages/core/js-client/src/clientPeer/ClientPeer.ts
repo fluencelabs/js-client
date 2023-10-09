@@ -46,30 +46,30 @@ export const makeClientPeerConfig = async (
     relayConfig: RelayConnectionConfig;
     keyPair: KeyPair;
 }> => {
-    const opts = config?.keyPair ?? { type: "Ed25519", source: "random" };
+    const opts = config.keyPair ?? { type: "Ed25519", source: "random" };
     const keyPair = await fromOpts(opts);
     const relayAddress = relayOptionToMultiaddr(relay);
 
     return {
         peerConfig: {
             debug: {
-                printParticleId: config?.debug?.printParticleId ?? false,
+                printParticleId: config.debug?.printParticleId ?? false,
             },
-            defaultTtlMs: config?.defaultTtlMs ?? DEFAULT_TTL_MS,
+            defaultTtlMs: config.defaultTtlMs ?? DEFAULT_TTL_MS,
         },
         relayConfig: {
             peerId: keyPair.getLibp2pPeerId(),
             relayAddress: relayAddress,
             ...(config.connectionOptions?.dialTimeoutMs != null
                 ? {
-                      dialTimeout: config.connectionOptions?.dialTimeoutMs,
+                      dialTimeout: config.connectionOptions.dialTimeoutMs,
                   }
                 : {}),
             maxInboundStreams:
-                config?.connectionOptions?.maxInboundStreams ??
+                config.connectionOptions?.maxInboundStreams ??
                 MAX_OUTBOUND_STREAMS,
             maxOutboundStreams:
-                config?.connectionOptions?.maxOutboundStreams ??
+                config.connectionOptions?.maxOutboundStreams ??
                 MAX_INBOUND_STREAMS,
         },
         keyPair: keyPair,

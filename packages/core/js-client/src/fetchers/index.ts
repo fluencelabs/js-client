@@ -20,7 +20,7 @@ import { fetchResource as fetchResourceBrowser } from "./browser.js";
 import { fetchResource as fetchResourceNode } from "./node.js";
 
 const isNode =
-    typeof process !== "undefined" && process?.release?.name === "node";
+    typeof process !== "undefined" && process.release.name === "node";
 
 export async function fetchResource(pkg: string, path: string) {
     switch (true) {

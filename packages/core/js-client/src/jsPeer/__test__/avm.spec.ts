@@ -31,7 +31,8 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
             const res = await new Promise<JSONValue>((resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -71,7 +72,8 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
                 const res: JSONValue[] = [];
 
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -118,7 +120,8 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
             const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -172,7 +175,8 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
             const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {

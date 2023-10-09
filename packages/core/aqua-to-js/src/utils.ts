@@ -82,7 +82,11 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
 
         if (prop.includes("Laqua_js")) {
             // Last part of the property separated by "_" is a correct name
-            const refinedProperty = prop.split("_").pop()!;
+            const refinedProperty = prop.split("_").pop();
+
+            if (refinedProperty == null) {
+                throw new Error(`Bad property name: ${prop}.`);
+            }
 
             if (refinedProperty in obj) {
                 accessProp = refinedProperty;

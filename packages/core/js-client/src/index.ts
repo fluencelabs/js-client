@@ -37,7 +37,7 @@ import { MarineBackgroundRunner } from "./marine/worker/index.js";
 import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 
 const isNode =
-    typeof process !== "undefined" && process?.release?.name === "node";
+    typeof process !== "undefined" && process.release.name === "node";
 
 const fetchWorkerCode = () => {
     return fetchResource(

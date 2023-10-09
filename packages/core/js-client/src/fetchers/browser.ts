@@ -21,7 +21,7 @@ interface PackageJsonContent {
 
 // This will be substituted in build phase
 const packageJsonContentString = `__PACKAGE_JSON_CONTENT__`;
-let parsedPackageJsonContent: PackageJsonContent;
+let parsedPackageJsonContent: PackageJsonContent | undefined;
 
 const PRIMARY_CDN = "https://unpkg.com/";
 

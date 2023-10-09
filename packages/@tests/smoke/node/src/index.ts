@@ -17,6 +17,6 @@
 import "@fluencelabs/js-client";
 import { runTest } from "@test/aqua_for_test";
 
-void runTest().then(() => {
-    return console.log("Smoke tests succeed!");
+await runTest().then(() => {
+    console.log("Smoke tests succeed!");
 });

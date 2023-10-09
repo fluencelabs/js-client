@@ -1,8 +1,6 @@
 {
-  "ignorePatterns": [
-    "**/*.css"
-  ],
-  "rules": {
-    "no-console": "off"
-  }
+    "ignorePatterns": ["**/*.css"],
+    "rules": {
+        "no-console": "off"
+    }
 }

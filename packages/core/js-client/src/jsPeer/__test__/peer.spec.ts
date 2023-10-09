@@ -59,7 +59,8 @@ describe("FluencePeer usage test suite", () => {
 
             const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -111,7 +112,8 @@ describe("FluencePeer usage test suite", () => {
 
             const res = await new Promise((resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -154,7 +156,8 @@ describe("FluencePeer usage test suite", () => {
 
             const promise = new Promise<never>((_resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -198,7 +201,8 @@ async function callIncorrectService(peer: FluencePeer) {
 
     return new Promise<unknown[]>((resolve, reject) => {
         if (particle instanceof Error) {
-            return reject(particle.message);
+            reject(particle.message);
+            return;
         }
 
         registerHandlersHelper(peer, particle, {

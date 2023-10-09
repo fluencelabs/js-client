@@ -5,7 +5,7 @@ const path = require("path");
 
 function printUsage() {
     console.log(
-        `Usage: "ci check-consistency" or "ci bump-version %postfix%" or "ci get-version"`
+        `Usage: "ci check-consistency" or "ci bump-version %postfix%" or "ci get-version"`,
     );
 }
 
@@ -43,18 +43,19 @@ async function getPackageJsonsRecursive(currentPath) {
             (await fs.readdir(currentPath, { withFileTypes: true }))
                 .filter(
                     (file) =>
-                        file.name !== "node_modules" && file.name !== "@tests" &&
-                        (file.isDirectory() || file.name === "package.json")
+                        file.name !== "node_modules" &&
+                        file.name !== "@tests" &&
+                        (file.isDirectory() || file.name === "package.json"),
                 )
                 .map((file) =>
                     file.isDirectory()
                         ? getPackageJsonsRecursive(
-                              path.join(currentPath, file.name)
+                              path.join(currentPath, file.name),
                           )
                         : Promise.resolve([
                               path.join(process.cwd(), currentPath, file.name),
-                          ])
-                )
+                          ]),
+                ),
         )
     ).flat();
 }
@@ -103,7 +104,7 @@ async function checkConsistency(file, versionsMap) {
             if (versionInDep !== version) {
                 console.log(
                     `Error, versions don't match: ${name}:${version} !== ${versionInDep}`,
-                    file
+                    file,
                 );
                 process.exit(1);
             }

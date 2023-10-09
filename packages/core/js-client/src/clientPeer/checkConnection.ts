@@ -56,7 +56,8 @@ export const checkConnection = async (
 
     const promise = new Promise<JSONValue>((resolve, reject) => {
         if (particle instanceof Error) {
-            return reject(particle.message);
+            reject(particle.message);
+            return;
         }
 
         peer.internals.regHandler.forParticle(

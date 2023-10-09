@@ -67,7 +67,8 @@ describe("FluencePeer flow tests", () => {
                 );
 
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 const values: JSONValue[] = [];

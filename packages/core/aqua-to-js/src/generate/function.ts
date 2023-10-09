@@ -29,7 +29,7 @@ export function generateFunctions(
         .join("\n\n");
 }
 
-type DeepToType<T> = { [K in keyof T]: DeepToType<T[K]> }
+type DeepToType<T> = { [K in keyof T]: DeepToType<T[K]> };
 
 function generateFunction(typeGenerator: TypeGenerator, func: AquaFunction) {
     const funcDef: DeepToType<typeof func.funcDef> = func.funcDef;

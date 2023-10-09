@@ -73,7 +73,7 @@ export type ServiceImpl = Record<
     string,
     (
         ...args: [...JSONArray, CallParams<string>]
-    ) => MaybePromise<JSONValue | void>
+    ) => MaybePromise<JSONValue | undefined>
 >;
 
 export type JSONValue =

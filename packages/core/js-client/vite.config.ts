@@ -14,46 +14,47 @@
  * limitations under the License.
  */
 
-import inject from '@rollup/plugin-inject';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import { createRequire } from 'module';
-import { readFileSync } from 'fs';
+import inject from "@rollup/plugin-inject";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { createRequire } from "module";
+import { readFileSync } from "fs";
 
 const require = createRequire(import.meta.url);
-const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
+const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
 export default {
     build: {
-        target: 'modules',
-        minify: 'esbuild',
+        target: "modules",
+        minify: "esbuild",
         lib: {
-            entry: './src/index.ts',
-            name: 'js-client',
-            fileName: 'index',
+            entry: "./src/index.ts",
+            name: "js-client",
+            fileName: "index",
         },
-        outDir: './dist/browser',
+        outDir: "./dist/browser",
         rollupOptions: {
             plugins: [
                 {
                     // @ts-ignore
                     ...inject({
-                        global: [esbuildShim, 'global'],
-                        process: [esbuildShim, 'process'],
-                        Buffer: [esbuildShim, 'Buffer']
-                    }), enforce: 'post'
-                }
+                        global: [esbuildShim, "global"],
+                        process: [esbuildShim, "process"],
+                        Buffer: [esbuildShim, "Buffer"],
+                    }),
+                    enforce: "post",
+                },
             ],
-        }
+        },
     },
     plugins: [tsconfigPaths()],
     optimizeDeps: {
         esbuildOptions: {
             define: {
-                global: 'globalThis',
+                global: "globalThis",
             },
         },
     },
     define: {
-        __PACKAGE_JSON_CONTENT__: readFileSync('./package.json', 'utf-8')
+        __PACKAGE_JSON_CONTENT__: readFileSync("./package.json", "utf-8"),
     },
-}
+};

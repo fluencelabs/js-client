@@ -33,7 +33,7 @@ export const doNothing = () => {
 };
 
 export const WrapFnIntoServiceCall = (
-    fn: (args: JSONArray) => CallServiceResultType | void,
+    fn: (args: JSONArray) => CallServiceResultType | undefined,
 ) => {
     return (req: CallServiceData): CallServiceResult => {
         return {

@@ -72,7 +72,7 @@ function serviceToJson(service: ServiceDef): string {
             // This assertion is required because aqua-api gives bad types
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ...((service.defaultServiceId as DefaultServiceId)
-                ?.s_Some__f_value != null
+                .s_Some__f_value != null
                 ? {
                       defaultServiceId:
                           // This assertion is required because aqua-api gives bad types

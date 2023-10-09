@@ -72,5 +72,5 @@ const test = async () => {
 };
 
 void test().then(() => {
-    return console.log("smoke tests succeed!");
+    console.log("smoke tests succeed!");
 });

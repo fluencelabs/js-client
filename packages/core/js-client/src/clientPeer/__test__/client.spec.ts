@@ -49,7 +49,8 @@ describe("FluenceClient usage test suite", () => {
 
             const result = await new Promise<JSONValue>((resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {
@@ -196,7 +197,8 @@ describe("FluenceClient usage test suite", () => {
 
             const promise = new Promise((_resolve, reject) => {
                 if (particle instanceof Error) {
-                    return reject(particle.message);
+                    reject(particle.message);
+                    return;
                 }
 
                 registerHandlersHelper(peer, particle, {

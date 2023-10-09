@@ -45,7 +45,7 @@ export const registerHandlersHelper = (
     particle: Particle,
     handlers: Record<
         string,
-        Record<string, (args: JSONArray) => CallServiceResultType | void>
+        Record<string, (args: JSONArray) => CallServiceResultType | undefined>
     >,
 ) => {
     Object.entries(handlers).forEach(([serviceId, service]) => {

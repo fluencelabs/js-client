@@ -2,15 +2,12 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 2022,
-        "project": [
-            "./tsconfig.eslint.json"
-        ],
+        "project": ["./tsconfig.eslint.json"],
         "sourceType": "module"
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict-type-checked",
         "plugin:import/recommended",
         "plugin:import/typescript",
         "prettier"
@@ -21,10 +18,7 @@
         "license-header",
         "unused-imports"
     ],
-    "ignorePatterns": [
-        "**/node_modules/**/*",
-        "**/dist/**/*"
-    ],
+    "ignorePatterns": ["**/node_modules/**/*", "**/dist/**/*"],
     "rules": {
         "eqeqeq": [
             "error",
@@ -33,33 +27,18 @@
                 "null": "ignore"
             }
         ],
-        "no-console": [
-            "error"
-        ],
-        "arrow-body-style": [
-            "error",
-            "always"
-        ],
+        "no-console": ["error"],
+        "arrow-body-style": ["error", "always"],
         "no-empty": [
             "error",
             {
                 "allowEmptyCatch": true
             }
         ],
-        "curly": [
-            "error",
-            "all"
-        ],
-        "no-unused-expressions": [
-            "error"
-        ],
-        "dot-notation": [
-            "off"
-        ],
-        "object-curly-spacing": [
-            "error",
-            "always"
-        ],
+        "curly": ["error", "all"],
+        "no-unused-expressions": ["error"],
+        "dot-notation": ["off"],
+        "object-curly-spacing": ["error", "always"],
         "padding-line-between-statements": [
             "error",
             {
@@ -108,14 +87,9 @@
                 "next": "case"
             }
         ],
-        "import/extensions": [
-            "error",
-            "ignorePackages"
-        ],
+        "import/extensions": ["error", "ignorePackages"],
         "import/no-unresolved": "off",
-        "import/no-cycle": [
-            "error"
-        ],
+        "import/no-cycle": ["error"],
         "import/order": [
             "error",
             {
@@ -154,9 +128,6 @@
             }
         ],
         "unused-imports/no-unused-imports": "error",
-        "license-header/header": [
-            "error",
-            "./resources/license-header.js"
-        ]
+        "license-header/header": ["error", "./resources/license-header.js"]
     }
 }

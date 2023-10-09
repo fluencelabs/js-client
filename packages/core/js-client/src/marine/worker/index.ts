@@ -114,7 +114,7 @@ export class MarineBackgroundRunner implements IMarineHost {
         callParams: CallParameters,
     ): Promise<JSONValue> {
         if (this.workerThread == null) {
-            throw "Worker is not initialized";
+            throw new Error("Worker is not initialized");
         }
 
         return this.workerThread.callService(

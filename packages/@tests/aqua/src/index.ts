@@ -58,7 +58,7 @@ export type TestResult =
 export const runTest = async (): Promise<TestResult> => {
     try {
         Fluence.onConnectionStateChange((state) => {
-            return console.info("connection state changed: ", state);
+            console.info("connection state changed: ", state);
         });
 
         console.log("connecting to Fluence Network...");
@@ -67,7 +67,7 @@ export const runTest = async (): Promise<TestResult> => {
 
         console.log("connected");
 
-        const relayPeerId = (await Fluence.getClient()).getRelayPeerId();
+        const relayPeerId = Fluence.getClient().getRelayPeerId();
         console.log("relay:", relayPeerId);
 
         registerHelloWorld({
@@ -76,7 +76,7 @@ export const runTest = async (): Promise<TestResult> => {
             },
         });
 
-        const client = await Fluence.getClient();
+        const client = Fluence.getClient();
 
         console.log("my peer id: ", client.getPeerId());
         console.log("my sk id: ", fromByteArray(client.getPeerSecretKey()));
@@ -109,9 +109,9 @@ export const runTest = async (): Promise<TestResult> => {
 export const runMain = () => {
     runTest()
         .then(() => {
-            return console.log("done!");
+            console.log("done!");
         })
         .catch((err) => {
-            return console.error("error: ", err);
+            console.error("error: ", err);
         });
 };

@@ -35,7 +35,7 @@ import { toString } from "uint8arrays/to-string";
 
 import { IParticle } from "../particle/interfaces.js";
 import { Particle, serializeToString } from "../particle/Particle.js";
-import { throwIfHasNoPeerId } from "../util/libp2pUtils.js";
+import { throwHasNoPeerId } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
 
 import { IConnection } from "./interfaces.js";
@@ -82,15 +82,21 @@ export interface RelayConnectionConfig {
 export class RelayConnection implements IConnection {
     private relayAddress: Multiaddr;
     private lib2p2Peer: Libp2p | null = null;
+    private relayPeerId: string;
 
     constructor(private config: RelayConnectionConfig) {
         this.relayAddress = multiaddr(this.config.relayAddress);
-        throwIfHasNoPeerId(this.relayAddress);
+        const peerId = this.relayAddress.getPeerId();
+
+        if (peerId == null) {
+            throwHasNoPeerId(this.relayAddress);
+        }
+
+        this.relayPeerId = peerId;
     }
 
     getRelayPeerId(): string {
-        // since we check for peer id in constructor, we can safely use ! here
-        return this.relayAddress.getPeerId()!;
+        return this.relayPeerId;
     }
 
     supportsRelay(): boolean {
@@ -219,6 +225,7 @@ export class RelayConnection implements IConnection {
             // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, message, particle.signature);
             const isVerified = true;
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (isVerified) {
                 this.particleSource.next(particle);
             } else {

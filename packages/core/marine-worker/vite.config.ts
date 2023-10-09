@@ -14,29 +14,35 @@
  * limitations under the License.
  */
 
-import { PluginOption } from 'vite'
-import { dirname, resolve } from 'path';
-import { createRequire } from 'module';
-import inject from '@rollup/plugin-inject';
-import { fileURLToPath } from 'url';
+import { PluginOption } from "vite";
+import { dirname, resolve } from "path";
+import { createRequire } from "module";
+import inject from "@rollup/plugin-inject";
+import { fileURLToPath } from "url";
 
 const require = createRequire(import.meta.url);
-const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
+const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
 export default {
     build: {
         lib: {
-            entry: resolve(dirname(fileURLToPath(import.meta.url)), 'src/index.ts'),
-            name: 'MarineWorker'
+            entry: resolve(
+                dirname(fileURLToPath(import.meta.url)),
+                "src/index.ts",
+            ),
+            name: "MarineWorker",
         },
-        outDir: 'dist/browser',
+        outDir: "dist/browser",
     },
-    plugins: [{
-        // @ts-ignore
-        ...inject({
-            global: [esbuildShim, 'global'],
-            process: [esbuildShim, 'process'],
-            Buffer: [esbuildShim, 'Buffer']
-        }), enforce: 'post'
-    } as PluginOption],
+    plugins: [
+        {
+            // @ts-ignore
+            ...inject({
+                global: [esbuildShim, "global"],
+                process: [esbuildShim, "process"],
+                Buffer: [esbuildShim, "Buffer"],
+            }),
+            enforce: "post",
+        } as PluginOption,
+    ],
 };

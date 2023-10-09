@@ -116,7 +116,7 @@ export abstract class FluencePeer {
     async start(): Promise<void> {
         log_peer.trace("starting Fluence peer");
 
-        if (this.config?.debug?.printParticleId) {
+        if (this.config.debug.printParticleId) {
             this.printParticleId = true;
         }
 
@@ -393,10 +393,7 @@ export abstract class FluencePeer {
                                 firstRun = false;
                             }
 
-                            if (
-                                !this.isInitialized ||
-                                this.marineHost === undefined
-                            ) {
+                            if (!this.isInitialized) {
                                 // If `.stop()` was called return null to stop particle processing immediately
                                 return null;
                             }
@@ -538,11 +535,6 @@ export abstract class FluencePeer {
                                     Buffer.from(item.result.data),
                                 );
 
-                                // Do not send particle after the peer has been stopped
-                                if (!this.isInitialized) {
-                                    return;
-                                }
-
                                 log_particle.debug(
                                     "id %s. sending particle into network. Next peer ids: %s",
                                     newParticle.id,
@@ -550,7 +542,7 @@ export abstract class FluencePeer {
                                 );
 
                                 connectionPromise = this.connection
-                                    ?.sendParticle(
+                                    .sendParticle(
                                         item.result.nextPeerPks,
                                         newParticle,
                                     )
