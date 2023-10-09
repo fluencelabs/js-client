@@ -65,7 +65,7 @@ describe("FluencePeer usage test suite", () => {
 
         registerHandlersHelper(peer, particle, {
           callback: {
-            callback: (args) => {
+            callback: (args): undefined => {
               const [res] = args;
               resolve(res);
             },
@@ -119,11 +119,11 @@ describe("FluencePeer usage test suite", () => {
             },
           },
           callback: {
-            callback: (args) => {
+            callback: (args): undefined => {
               const [val] = args;
               resolve(val);
             },
-            error: (args) => {
+            error: (args): undefined => {
               const [error] = args;
               reject(error);
             },
@@ -160,7 +160,7 @@ describe("FluencePeer usage test suite", () => {
             },
           },
           callback: {
-            error: (args) => {
+            error: (args): undefined => {
               const [error] = args;
               reject(error);
             },
@@ -195,10 +195,10 @@ async function callIncorrectService(peer: FluencePeer) {
 
     registerHandlersHelper(peer, particle, {
       callback: {
-        callback: (args) => {
+        callback: (args): undefined => {
           resolve(args);
         },
-        error: (args) => {
+        error: (args): undefined => {
           const [error] = args;
           reject(error);
         },

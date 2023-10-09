@@ -60,11 +60,11 @@ describe("FluenceClient usage test suite", () => {
             },
           },
           callback: {
-            callback: (args) => {
+            callback: (args): undefined => {
               const [val] = args;
               resolve(val);
             },
-            error: (args) => {
+            error: (args): undefined => {
               const [error] = args;
               reject(error);
             },
@@ -199,7 +199,7 @@ describe("FluenceClient usage test suite", () => {
 
         registerHandlersHelper(peer, particle, {
           callback: {
-            error: (args) => {
+            error: (args): undefined => {
               const [error] = args;
               reject(error);
             },

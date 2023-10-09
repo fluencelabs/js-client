@@ -75,7 +75,7 @@ describe("FluencePeer flow tests", () => {
 
         registerHandlersHelper(peer, particle, {
           callback: {
-            callback1: (args) => {
+            callback1: (args): undefined => {
               const [val] = args;
               values.push(val);
 
@@ -83,7 +83,7 @@ describe("FluencePeer flow tests", () => {
                 resolve(values);
               }
             },
-            callback2: (args) => {
+            callback2: (args): undefined => {
               const [val] = args;
               values.push(val);
 

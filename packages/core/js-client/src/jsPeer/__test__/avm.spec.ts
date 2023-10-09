@@ -37,7 +37,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
         registerHandlersHelper(peer, particle, {
           print: {
-            print: (args) => {
+            print: (args): undefined => {
               const [res] = args;
               resolve(res);
             },
@@ -75,7 +75,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
         registerHandlersHelper(peer, particle, {
           print: {
-            print: (args) => {
+            print: (args): undefined => {
               res.push(args[0]);
 
               if (res.length === 2) {
@@ -120,7 +120,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
         registerHandlersHelper(peer, particle, {
           return: {
-            return: (args) => {
+            return: (args): undefined => {
               resolve(args[0]);
             },
           },
@@ -172,7 +172,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
 
         registerHandlersHelper(peer, particle, {
           return: {
-            return: (args) => {
+            return: (args): undefined => {
               resolve(args[0]);
             },
           },
