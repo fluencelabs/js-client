@@ -18,7 +18,7 @@
         "web-vitals": "2.1.4"
     },
     "devDependencies": {
-        "@test/test-utils": "workspace:^",
+        "@test/test-utils": "workspace:*",
         "puppeteer": "19.7.2"
     },
     "scripts": {
