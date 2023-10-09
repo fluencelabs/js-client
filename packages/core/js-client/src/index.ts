@@ -20,10 +20,10 @@ import process from "process";
 import url from "url";
 
 import type {
-    ClientConfig,
-    ConnectionState,
-    IFluenceClient,
-    RelayOptions,
+  ClientConfig,
+  ConnectionState,
+  IFluenceClient,
+  RelayOptions,
 } from "@fluencelabs/interfaces";
 
 // "threads" package has broken type definitions in package.json. This is the workaround.
@@ -37,197 +37,194 @@ import { MarineBackgroundRunner } from "./marine/worker/index.js";
 import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 
 const isNode =
-    typeof process !== "undefined" && process.release.name === "node";
+  typeof process !== "undefined" && process.release.name === "node";
 
 const fetchWorkerCode = () => {
-    return fetchResource(
-        "@fluencelabs/marine-worker",
-        "/dist/browser/marine-worker.umd.cjs",
-    ).then((res) => {
-        return res.text();
-    });
+  return fetchResource(
+    "@fluencelabs/marine-worker",
+    "/dist/browser/marine-worker.umd.cjs",
+  ).then((res) => {
+    return res.text();
+  });
 };
 
 const fetchMarineJsWasm = () => {
-    return fetchResource("@fluencelabs/marine-js", "/dist/marine-js.wasm").then(
-        (res) => {
-            return res.arrayBuffer();
-        },
-    );
+  return fetchResource("@fluencelabs/marine-js", "/dist/marine-js.wasm").then(
+    (res) => {
+      return res.arrayBuffer();
+    },
+  );
 };
 
 const fetchAvmWasm = () => {
-    return fetchResource("@fluencelabs/avm", "/dist/avm.wasm").then((res) => {
-        return res.arrayBuffer();
-    });
+  return fetchResource("@fluencelabs/avm", "/dist/avm.wasm").then((res) => {
+    return res.arrayBuffer();
+  });
 };
 
 const createClient = async (
-    relay: RelayOptions,
-    config: ClientConfig,
+  relay: RelayOptions,
+  config: ClientConfig,
 ): Promise<ClientPeer> => {
-    const marineJsWasm = await fetchMarineJsWasm();
-    const avmWasm = await fetchAvmWasm();
+  const marineJsWasm = await fetchMarineJsWasm();
+  const avmWasm = await fetchAvmWasm();
 
-    const marine = new MarineBackgroundRunner(
-        {
-            async getValue() {
-                if (isNode) {
-                    const require = module.createRequire(import.meta.url);
+  const marine = new MarineBackgroundRunner(
+    {
+      async getValue() {
+        if (isNode) {
+          const require = module.createRequire(import.meta.url);
 
-                    const pathToThisFile = path.dirname(
-                        url.fileURLToPath(import.meta.url),
-                    );
+          const pathToThisFile = path.dirname(
+            url.fileURLToPath(import.meta.url),
+          );
 
-                    const pathToWorker = require.resolve(
-                        "@fluencelabs/marine-worker",
-                    );
+          const pathToWorker = require.resolve("@fluencelabs/marine-worker");
 
-                    const relativePathToWorker = path.relative(
-                        pathToThisFile,
-                        pathToWorker,
-                    );
+          const relativePathToWorker = path.relative(
+            pathToThisFile,
+            pathToWorker,
+          );
 
-                    return new Worker(relativePathToWorker);
-                } else {
-                    const workerCode = await fetchWorkerCode();
-                    return BlobWorker.fromText(workerCode);
-                }
-            },
-            start() {
-                return Promise.resolve(undefined);
-            },
-            stop() {
-                return Promise.resolve(undefined);
-            },
-        },
-        {
-            getValue() {
-                return marineJsWasm;
-            },
-            start(): Promise<void> {
-                return Promise.resolve(undefined);
-            },
-            stop(): Promise<void> {
-                return Promise.resolve(undefined);
-            },
-        },
-        {
-            getValue() {
-                return avmWasm;
-            },
-            start(): Promise<void> {
-                return Promise.resolve(undefined);
-            },
-            stop(): Promise<void> {
-                return Promise.resolve(undefined);
-            },
-        },
-    );
+          return new Worker(relativePathToWorker);
+        } else {
+          const workerCode = await fetchWorkerCode();
+          return BlobWorker.fromText(workerCode);
+        }
+      },
+      start() {
+        return Promise.resolve(undefined);
+      },
+      stop() {
+        return Promise.resolve(undefined);
+      },
+    },
+    {
+      getValue() {
+        return marineJsWasm;
+      },
+      start(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+      stop(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+    },
+    {
+      getValue() {
+        return avmWasm;
+      },
+      start(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+      stop(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+    },
+  );
 
-    const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(
-        relay,
-        config,
-    );
+  const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(
+    relay,
+    config,
+  );
 
-    const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
+  const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
 
-    if (isNode) {
-        doRegisterNodeUtils(client);
-    }
+  if (isNode) {
+    doRegisterNodeUtils(client);
+  }
 
-    await client.connect();
-    return client;
+  await client.connect();
+  return client;
 };
 
 /**
  * Public interface to Fluence Network
  */
 interface FluencePublicApi {
-    defaultClient: ClientPeer | undefined;
-    connect: (relay: RelayOptions, config: ClientConfig) => Promise<void>;
-    disconnect: () => Promise<void>;
-    onConnectionStateChange: (
-        handler: (state: ConnectionState) => void,
-    ) => ConnectionState;
-    getClient: () => IFluenceClient;
+  defaultClient: ClientPeer | undefined;
+  connect: (relay: RelayOptions, config: ClientConfig) => Promise<void>;
+  disconnect: () => Promise<void>;
+  onConnectionStateChange: (
+    handler: (state: ConnectionState) => void,
+  ) => ConnectionState;
+  getClient: () => IFluenceClient;
 }
 
 export const Fluence: FluencePublicApi = {
-    defaultClient: undefined,
-    /**
-     * Connect to the Fluence network
-     * @param relay - relay node to connect to
-     * @param config - client configuration
-     */
-    connect: async function (relay, config) {
-        this.defaultClient = await createClient(relay, config);
-    },
+  defaultClient: undefined,
+  /**
+   * Connect to the Fluence network
+   * @param relay - relay node to connect to
+   * @param config - client configuration
+   */
+  connect: async function (relay, config) {
+    this.defaultClient = await createClient(relay, config);
+  },
 
-    /**
-     * Disconnect from the Fluence network
-     */
-    disconnect: async function (): Promise<void> {
-        await this.defaultClient?.disconnect();
-        this.defaultClient = undefined;
-    },
+  /**
+   * Disconnect from the Fluence network
+   */
+  disconnect: async function (): Promise<void> {
+    await this.defaultClient?.disconnect();
+    this.defaultClient = undefined;
+  },
 
-    /**
-     * Handle connection state changes. Immediately returns the current connection state
-     */
-    onConnectionStateChange(handler) {
-        return (
-            this.defaultClient?.onConnectionStateChange(handler) ??
-            "disconnected"
-        );
-    },
+  /**
+   * Handle connection state changes. Immediately returns the current connection state
+   */
+  onConnectionStateChange(handler) {
+    return (
+      this.defaultClient?.onConnectionStateChange(handler) ?? "disconnected"
+    );
+  },
 
-    /**
-     * Low level API. Get the underlying client instance which holds the connection to the network
-     * @returns IFluenceClient instance
-     */
-    getClient: function () {
-        if (this.defaultClient == null) {
-            throw new Error(
-                "Fluence client is not initialized. Call Fluence.connect() first",
-            );
-        }
+  /**
+   * Low level API. Get the underlying client instance which holds the connection to the network
+   * @returns IFluenceClient instance
+   */
+  getClient: function () {
+    if (this.defaultClient == null) {
+      throw new Error(
+        "Fluence client is not initialized. Call Fluence.connect() first",
+      );
+    }
 
-        return this.defaultClient;
-    },
+    return this.defaultClient;
+  },
 };
 
 export type {
-    IFluenceClient,
-    ClientConfig,
-    CallParams,
+  IFluenceClient,
+  ClientConfig,
+  CallParams,
 } from "@fluencelabs/interfaces";
 
 export type {
-    ArrayType,
-    ArrowType,
-    ArrowWithCallbacks,
-    ArrowWithoutCallbacks,
-    BottomType,
-    FunctionCallConstants,
-    FunctionCallDef,
-    LabeledProductType,
-    NilType,
-    NonArrowType,
-    OptionType,
-    ProductType,
-    ScalarNames,
-    ScalarType,
-    ServiceDef,
-    StructType,
-    TopType,
-    UnlabeledProductType,
-    CallAquaFunctionType,
-    CallAquaFunctionArgs,
-    PassedArgs,
-    FnConfig,
-    RegisterServiceType,
-    RegisterServiceArgs,
+  ArrayType,
+  ArrowType,
+  ArrowWithCallbacks,
+  ArrowWithoutCallbacks,
+  BottomType,
+  FunctionCallConstants,
+  FunctionCallDef,
+  LabeledProductType,
+  NilType,
+  NonArrowType,
+  OptionType,
+  ProductType,
+  ScalarNames,
+  ScalarType,
+  ServiceDef,
+  StructType,
+  TopType,
+  UnlabeledProductType,
+  CallAquaFunctionType,
+  CallAquaFunctionArgs,
+  PassedArgs,
+  FnConfig,
+  RegisterServiceType,
+  RegisterServiceArgs,
 } from "@fluencelabs/interfaces";
 
 export { v5_callFunction, v5_registerService } from "./api.js";
@@ -237,15 +234,15 @@ globalThis.new_fluence = Fluence;
 
 // @ts-expect-error Writing to global object like this prohibited by ts
 globalThis.fluence = {
-    clientFactory: createClient,
-    callAquaFunction,
-    registerService,
+  clientFactory: createClient,
+  callAquaFunction,
+  registerService,
 };
 
 export { createClient, callAquaFunction, registerService };
 export {
-    KeyPair,
-    fromBase64Sk,
-    fromBase58Sk,
-    fromOpts,
+  KeyPair,
+  fromBase64Sk,
+  fromBase58Sk,
+  fromOpts,
 } from "./keypair/index.js";

@@ -26,52 +26,52 @@ import { Tracing } from "../Tracing.js";
 // Services
 
 export interface TracingDef {
-    tracingEvent: (
-        arrowName: string,
-        event: string,
-        callParams: CallParams<"arrowName" | "event">,
-    ) => void | Promise<void>;
+  tracingEvent: (
+    arrowName: string,
+    event: string,
+    callParams: CallParams<"arrowName" | "event">,
+  ) => void | Promise<void>;
 }
 
 export function registerTracing(
-    peer: FluencePeer,
-    serviceId: string,
-    service: Tracing,
+  peer: FluencePeer,
+  serviceId: string,
+  service: Tracing,
 ) {
-    registerService({
-        peer,
-        serviceId,
-        // TODO: fix this after changing registerService signature
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: service as unknown as ServiceImpl,
-        def: {
-            defaultServiceId: "tracingSrv",
-            functions: {
-                tag: "labeledProduct",
-                fields: {
-                    tracingEvent: {
-                        tag: "arrow",
-                        domain: {
-                            tag: "labeledProduct",
-                            fields: {
-                                arrowName: {
-                                    tag: "scalar",
-                                    name: "string",
-                                },
-                                event: {
-                                    tag: "scalar",
-                                    name: "string",
-                                },
-                            },
-                        },
-                        codomain: {
-                            tag: "nil",
-                        },
-                    },
+  registerService({
+    peer,
+    serviceId,
+    // TODO: fix this after changing registerService signature
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    service: service as unknown as ServiceImpl,
+    def: {
+      defaultServiceId: "tracingSrv",
+      functions: {
+        tag: "labeledProduct",
+        fields: {
+          tracingEvent: {
+            tag: "arrow",
+            domain: {
+              tag: "labeledProduct",
+              fields: {
+                arrowName: {
+                  tag: "scalar",
+                  name: "string",
                 },
+                event: {
+                  tag: "scalar",
+                  name: "string",
+                },
+              },
             },
+            codomain: {
+              tag: "nil",
+            },
+          },
         },
-    });
+      },
+    },
+  });
 }
 
 // Functions

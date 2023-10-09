@@ -20,20 +20,20 @@ import { multiaddr, Multiaddr } from "@multiformats/multiaddr";
 import { isString } from "./utils.js";
 
 export function relayOptionToMultiaddr(relay: RelayOptions): Multiaddr {
-    const multiaddrString = isString(relay) ? relay : relay.multiaddr;
-    const ma = multiaddr(multiaddrString);
+  const multiaddrString = isString(relay) ? relay : relay.multiaddr;
+  const ma = multiaddr(multiaddrString);
 
-    const peerId = ma.getPeerId();
+  const peerId = ma.getPeerId();
 
-    if (peerId == null) {
-        throwHasNoPeerId(ma);
-    }
+  if (peerId == null) {
+    throwHasNoPeerId(ma);
+  }
 
-    return ma;
+  return ma;
 }
 
 export function throwHasNoPeerId(ma: Multiaddr): never {
-    throw new Error(
-        "Specified multiaddr is invalid or missing peer id: " + ma.toString(),
-    );
+  throw new Error(
+    "Specified multiaddr is invalid or missing peer id: " + ma.toString(),
+  );
 }

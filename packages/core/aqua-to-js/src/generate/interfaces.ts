@@ -21,153 +21,153 @@ import { CLIENT } from "../constants.js";
 import { capitalize, getFuncArgs } from "../utils.js";
 
 export interface TypeGenerator {
-    type(field: string, type: string): string;
-    generic(field: string, type: string): string;
-    bang(field: string): string;
-    funcType(funcDef: AquaFunction): string;
-    serviceType(srvName: string, srvDef: ServiceDef): string;
+  type(field: string, type: string): string;
+  generic(field: string, type: string): string;
+  bang(field: string): string;
+  funcType(funcDef: AquaFunction): string;
+  serviceType(srvName: string, srvDef: ServiceDef): string;
 }
 
 export class TSTypeGenerator implements TypeGenerator {
-    bang(field: string): string {
-        return `${field}!`;
-    }
+  bang(field: string): string {
+    return `${field}!`;
+  }
 
-    generic(field: string, type: string): string {
-        return `${field}<${type}>`;
-    }
+  generic(field: string, type: string): string {
+    return `${field}<${type}>`;
+  }
 
-    type(field: string, type: string): string {
-        return `${field}: ${type}`;
-    }
+  type(field: string, type: string): string {
+    return `${field}: ${type}`;
+  }
 
-    funcType({ funcDef }: AquaFunction): string {
-        const args = getFuncArgs(funcDef.arrow.domain).map(([name, type]) => {
-            const [typeDesc, t] = genTypeName(
-                type,
-                capitalize(funcDef.functionName) + "Arg" + capitalize(name),
-            );
+  funcType({ funcDef }: AquaFunction): string {
+    const args = getFuncArgs(funcDef.arrow.domain).map(([name, type]) => {
+      const [typeDesc, t] = genTypeName(
+        type,
+        capitalize(funcDef.functionName) + "Arg" + capitalize(name),
+      );
 
-            return [typeDesc, `${name}: ${t}`] as const;
-        });
+      return [typeDesc, `${name}: ${t}`] as const;
+    });
 
-        args.push([undefined, `config?: {ttl?: number}`]);
+    args.push([undefined, `config?: {ttl?: number}`]);
 
-        const argsDefs = args.map(([, def]) => {
-            return "    " + def;
-        });
+    const argsDefs = args.map(([, def]) => {
+      return "    " + def;
+    });
 
-        const argsDesc = args
-            .filter(([desc]) => {
-                return desc !== undefined;
-            })
-            .map(([desc]) => {
-                return desc;
-            });
+    const argsDesc = args
+      .filter(([desc]) => {
+        return desc !== undefined;
+      })
+      .map(([desc]) => {
+        return desc;
+      });
 
-        const functionOverloads = [
-            argsDefs.join(",\n"),
-            [`    peer: ${CLIENT}`, ...argsDefs].join(",\n"),
-        ];
+    const functionOverloads = [
+      argsDefs.join(",\n"),
+      [`    peer: ${CLIENT}`, ...argsDefs].join(",\n"),
+    ];
 
-        const [resTypeDesc, resType] = genTypeName(
-            funcDef.arrow.codomain,
-            capitalize(funcDef.functionName) + "Result",
-        );
+    const [resTypeDesc, resType] = genTypeName(
+      funcDef.arrow.codomain,
+      capitalize(funcDef.functionName) + "Result",
+    );
 
-        return [
-            argsDesc.join("\n"),
-            resTypeDesc ?? "",
-            functionOverloads
-                .flatMap((fo) => {
-                    return [
-                        `export function ${funcDef.functionName}(`,
-                        fo,
-                        `): Promise<${resType}>;`,
-                        "",
-                    ];
-                })
-                .join("\n"),
-        ]
-            .filter((s) => {
-                return s !== "";
-            })
-            .join("\n\n");
-    }
+    return [
+      argsDesc.join("\n"),
+      resTypeDesc ?? "",
+      functionOverloads
+        .flatMap((fo) => {
+          return [
+            `export function ${funcDef.functionName}(`,
+            fo,
+            `): Promise<${resType}>;`,
+            "",
+          ];
+        })
+        .join("\n"),
+    ]
+      .filter((s) => {
+        return s !== "";
+      })
+      .join("\n\n");
+  }
 
-    serviceType(srvName: string, srvDef: ServiceDef): string {
-        const members =
-            srvDef.functions.tag === "nil"
-                ? []
-                : Object.entries(srvDef.functions.fields);
+  serviceType(srvName: string, srvDef: ServiceDef): string {
+    const members =
+      srvDef.functions.tag === "nil"
+        ? []
+        : Object.entries(srvDef.functions.fields);
 
-        const interfaceDefs = members
-            .map(([name, arrow]) => {
-                return `    ${name}: ${typeToTs(arrow)};`;
-            })
-            .join("\n");
+    const interfaceDefs = members
+      .map(([name, arrow]) => {
+        return `    ${name}: ${typeToTs(arrow)};`;
+      })
+      .join("\n");
 
-        const interfaces = [
-            `export interface ${srvName}Def {`,
-            interfaceDefs,
-            "}",
-        ].join("\n");
+    const interfaces = [
+      `export interface ${srvName}Def {`,
+      interfaceDefs,
+      "}",
+    ].join("\n");
 
-        const peerDecl = `peer: ${CLIENT}`;
-        const serviceDecl = `service: ${srvName}Def`;
-        const serviceIdDecl = `serviceId: string`;
+    const peerDecl = `peer: ${CLIENT}`;
+    const serviceDecl = `service: ${srvName}Def`;
+    const serviceIdDecl = `serviceId: string`;
 
-        const registerServiceArgs = [
-            [serviceDecl],
-            [serviceIdDecl, serviceDecl],
-            [peerDecl, serviceDecl],
-            [peerDecl, serviceIdDecl, serviceDecl],
-        ];
+    const registerServiceArgs = [
+      [serviceDecl],
+      [serviceIdDecl, serviceDecl],
+      [peerDecl, serviceDecl],
+      [peerDecl, serviceIdDecl, serviceDecl],
+    ];
 
-        return [
-            interfaces,
-            ...registerServiceArgs.map((registerServiceArg) => {
-                const args = registerServiceArg.join(", ");
-                return `export function register${srvName}(${args}): void;`;
-            }),
-        ].join("\n");
-    }
+    return [
+      interfaces,
+      ...registerServiceArgs.map((registerServiceArg) => {
+        const args = registerServiceArg.join(", ");
+        return `export function register${srvName}(${args}): void;`;
+      }),
+    ].join("\n");
+  }
 }
 
 export class JSTypeGenerator implements TypeGenerator {
-    bang(field: string): string {
-        return field;
-    }
+  bang(field: string): string {
+    return field;
+  }
 
-    generic(field: string): string {
-        return field;
-    }
+  generic(field: string): string {
+    return field;
+  }
 
-    type(field: string): string {
-        return field;
-    }
+  type(field: string): string {
+    return field;
+  }
 
-    funcType(): string {
-        return "";
-    }
+  funcType(): string {
+    return "";
+  }
 
-    serviceType(): string {
-        return "";
-    }
+  serviceType(): string {
+    return "";
+  }
 }
 
 export interface AquaFunction {
-    funcDef: FunctionCallDef;
-    script: string;
+  funcDef: FunctionCallDef;
+  script: string;
 }
 
 export interface CompilationResult {
-    services: Record<string, ServiceDef>;
-    functions: Record<string, AquaFunction>;
+  services: Record<string, ServiceDef>;
+  functions: Record<string, AquaFunction>;
 }
 
 export interface EntityGenerator {
-    generate(compilationResult: CompilationResult): string;
+  generate(compilationResult: CompilationResult): string;
 }
 
 export type OutputType = "js" | "ts";

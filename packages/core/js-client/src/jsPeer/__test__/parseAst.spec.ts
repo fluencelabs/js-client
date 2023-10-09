@@ -19,28 +19,28 @@ import { it, describe, expect } from "vitest";
 import { withPeer } from "../../util/testUtils.js";
 
 describe("Parse ast tests", () => {
-    it("Correct ast should be parsed correctly", async () => {
-        await withPeer(async (peer) => {
-            const air = `(null)`;
-            const res = await peer.internals.parseAst(air);
+  it("Correct ast should be parsed correctly", async () => {
+    await withPeer(async (peer) => {
+      const air = `(null)`;
+      const res = await peer.internals.parseAst(air);
 
-            expect(res).toStrictEqual({
-                success: true,
-                data: { Null: null },
-            });
-        });
+      expect(res).toStrictEqual({
+        success: true,
+        data: { Null: null },
+      });
     });
+  });
 
-    it("Incorrect ast should result in corresponding error", async () => {
-        await withPeer(async (peer) => {
-            const air = `(null`;
-            const res = await peer.internals.parseAst(air);
+  it("Incorrect ast should result in corresponding error", async () => {
+    await withPeer(async (peer) => {
+      const air = `(null`;
+      const res = await peer.internals.parseAst(air);
 
-            expect(res).toStrictEqual({
-                success: false,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                data: expect.stringContaining("error"),
-            });
-        });
+      expect(res).toStrictEqual({
+        success: false,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: expect.stringContaining("error"),
+      });
     });
+  });
 });

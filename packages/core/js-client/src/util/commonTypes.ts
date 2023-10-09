@@ -17,6 +17,6 @@
 export type { CallParameters } from "@fluencelabs/marine-js/dist/types";
 
 export interface IStartable {
-    start(): Promise<void>;
-    stop(): Promise<void>;
+  start(): Promise<void>;
+  stop(): Promise<void>;
 }

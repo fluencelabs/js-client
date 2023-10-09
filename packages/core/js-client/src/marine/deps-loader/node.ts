@@ -26,10 +26,10 @@ import { LazyLoader } from "../interfaces.js";
 const require = createRequire(import.meta.url);
 
 const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
-    const sab = new SharedArrayBuffer(buffer.length);
-    const tmp = new Uint8Array(sab);
-    tmp.set(buffer, 0);
-    return sab;
+  const sab = new SharedArrayBuffer(buffer.length);
+  const tmp = new Uint8Array(sab);
+  tmp.set(buffer, 0);
+  return sab;
 };
 
 /**
@@ -39,12 +39,12 @@ const bufferToSharedArrayBuffer = (buffer: Buffer): SharedArrayBuffer => {
  * @returns SharedArrayBuffer with the wasm file
  */
 export const loadWasmFromNpmPackage = async (source: {
-    package: string;
-    file: string;
+  package: string;
+  file: string;
 }): Promise<SharedArrayBuffer> => {
-    const packagePath = require.resolve(source.package);
-    const filePath = path.join(path.dirname(packagePath), source.file);
-    return loadWasmFromFileSystem(filePath);
+  const packagePath = require.resolve(source.package);
+  const filePath = path.join(path.dirname(packagePath), source.file);
+  return loadWasmFromFileSystem(filePath);
 };
 
 /**
@@ -54,42 +54,42 @@ export const loadWasmFromNpmPackage = async (source: {
  * @returns SharedArrayBuffer with the wasm fileWorker
  */
 export const loadWasmFromFileSystem = async (
-    filePath: string,
+  filePath: string,
 ): Promise<SharedArrayBuffer> => {
-    const buffer = await fs.promises.readFile(filePath);
-    return bufferToSharedArrayBuffer(buffer);
+  const buffer = await fs.promises.readFile(filePath);
+  return bufferToSharedArrayBuffer(buffer);
 };
 
 export class WasmLoaderFromFs extends LazyLoader<SharedArrayBuffer> {
-    constructor(filePath: string) {
-        super(() => {
-            return loadWasmFromFileSystem(filePath);
-        });
-    }
+  constructor(filePath: string) {
+    super(() => {
+      return loadWasmFromFileSystem(filePath);
+    });
+  }
 }
 
 export class WasmLoaderFromNpm extends LazyLoader<SharedArrayBuffer> {
-    constructor(pkg: string, file: string) {
-        super(() => {
-            return loadWasmFromNpmPackage({ package: pkg, file: file });
-        });
-    }
+  constructor(pkg: string, file: string) {
+    super(() => {
+      return loadWasmFromNpmPackage({ package: pkg, file: file });
+    });
+  }
 }
 
 export class WorkerLoaderFromFs extends LazyLoader<WorkerImplementation> {
-    constructor(scriptPath: string) {
-        super(() => {
-            return new Worker(scriptPath);
-        });
-    }
+  constructor(scriptPath: string) {
+    super(() => {
+      return new Worker(scriptPath);
+    });
+  }
 }
 
 export class WorkerLoaderFromNpm extends LazyLoader<WorkerImplementation> {
-    constructor(pkg: string, file: string) {
-        super(() => {
-            const packagePath = require.resolve(pkg);
-            const scriptPath = path.join(path.dirname(packagePath), file);
-            return new Worker(scriptPath);
-        });
-    }
+  constructor(pkg: string, file: string) {
+    super(() => {
+      const packagePath = require.resolve(pkg);
+      const scriptPath = path.join(path.dirname(packagePath), file);
+      return new Worker(scriptPath);
+    });
+  }
 }

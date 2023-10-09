@@ -23,38 +23,38 @@ const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
 export default {
-    build: {
-        target: "modules",
-        minify: "esbuild",
-        lib: {
-            entry: "./src/index.ts",
-            name: "js-client",
-            fileName: "index",
-        },
-        outDir: "./dist/browser",
-        rollupOptions: {
-            plugins: [
-                {
-                    // @ts-ignore
-                    ...inject({
-                        global: [esbuildShim, "global"],
-                        process: [esbuildShim, "process"],
-                        Buffer: [esbuildShim, "Buffer"],
-                    }),
-                    enforce: "post",
-                },
-            ],
-        },
+  build: {
+    target: "modules",
+    minify: "esbuild",
+    lib: {
+      entry: "./src/index.ts",
+      name: "js-client",
+      fileName: "index",
     },
-    plugins: [tsconfigPaths()],
-    optimizeDeps: {
-        esbuildOptions: {
-            define: {
-                global: "globalThis",
-            },
+    outDir: "./dist/browser",
+    rollupOptions: {
+      plugins: [
+        {
+          // @ts-ignore
+          ...inject({
+            global: [esbuildShim, "global"],
+            process: [esbuildShim, "process"],
+            Buffer: [esbuildShim, "Buffer"],
+          }),
+          enforce: "post",
         },
+      ],
     },
-    define: {
-        __PACKAGE_JSON_CONTENT__: readFileSync("./package.json", "utf-8"),
+  },
+  plugins: [tsconfigPaths()],
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "globalThis",
+      },
     },
+  },
+  define: {
+    __PACKAGE_JSON_CONTENT__: readFileSync("./package.json", "utf-8"),
+  },
 };

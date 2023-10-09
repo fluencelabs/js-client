@@ -19,42 +19,42 @@ import { CompilationResult, OutputType } from "./generate/interfaces.js";
 import { getPackageJsonContent } from "./utils.js";
 
 interface JsOutput {
-    sources: string;
-    types: string;
+  sources: string;
+  types: string;
 }
 
 interface TsOutput {
-    sources: string;
+  sources: string;
 }
 
 type LanguageOutput = {
-    js: JsOutput;
-    ts: TsOutput;
+  js: JsOutput;
+  ts: TsOutput;
 };
 
 type NothingToGenerate = null;
 
 export default async function aquaToJs<T extends OutputType>(
-    res: CompilationResult,
-    outputType: T,
+  res: CompilationResult,
+  outputType: T,
 ): Promise<LanguageOutput[T] | NothingToGenerate> {
-    if (
-        Object.keys(res.services).length === 0 &&
-        Object.keys(res.functions).length === 0
-    ) {
-        return null;
-    }
+  if (
+    Object.keys(res.services).length === 0 &&
+    Object.keys(res.functions).length === 0
+  ) {
+    return null;
+  }
 
-    const packageJson = await getPackageJsonContent();
+  const packageJson = await getPackageJsonContent();
 
-    return outputType === "js"
-        ? {
-              sources: generateSources(res, "js", packageJson),
-              types: generateTypes(res, packageJson),
-          }
-        : // TODO: probably there is a way to remove this type assert
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          ({
-              sources: generateSources(res, "ts", packageJson),
-          } as LanguageOutput[T]);
+  return outputType === "js"
+    ? {
+        sources: generateSources(res, "js", packageJson),
+        types: generateTypes(res, packageJson),
+      }
+    : // TODO: probably there is a way to remove this type assert
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      ({
+        sources: generateSources(res, "ts", packageJson),
+      } as LanguageOutput[T]);
 }

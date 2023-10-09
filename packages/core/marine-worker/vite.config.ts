@@ -24,25 +24,22 @@ const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
 export default {
-    build: {
-        lib: {
-            entry: resolve(
-                dirname(fileURLToPath(import.meta.url)),
-                "src/index.ts",
-            ),
-            name: "MarineWorker",
-        },
-        outDir: "dist/browser",
+  build: {
+    lib: {
+      entry: resolve(dirname(fileURLToPath(import.meta.url)), "src/index.ts"),
+      name: "MarineWorker",
     },
-    plugins: [
-        {
-            // @ts-ignore
-            ...inject({
-                global: [esbuildShim, "global"],
-                process: [esbuildShim, "process"],
-                Buffer: [esbuildShim, "Buffer"],
-            }),
-            enforce: "post",
-        } as PluginOption,
-    ],
+    outDir: "dist/browser",
+  },
+  plugins: [
+    {
+      // @ts-ignore
+      ...inject({
+        global: [esbuildShim, "global"],
+        process: [esbuildShim, "process"],
+        Buffer: [esbuildShim, "Buffer"],
+      }),
+      enforce: "post",
+    } as PluginOption,
+  ],
 };

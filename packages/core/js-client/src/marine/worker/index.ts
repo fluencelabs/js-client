@@ -16,121 +16,121 @@
 
 import { JSONValue } from "@fluencelabs/interfaces";
 import type {
-    JSONArray,
-    JSONObject,
-    CallParameters,
+  JSONArray,
+  JSONObject,
+  CallParameters,
 } from "@fluencelabs/marine-js/dist/types";
 import { LogFunction, logLevelToEnv } from "@fluencelabs/marine-js/dist/types";
 import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
 import {
-    ModuleThread,
-    Thread,
-    spawn,
+  ModuleThread,
+  Thread,
+  spawn,
 } from "../../../node_modules/threads/dist/master/index.js";
 import { MarineLogger, marineLogger } from "../../util/logger.js";
 import { IMarineHost, IWasmLoader, IWorkerLoader } from "../interfaces.js";
 
 export class MarineBackgroundRunner implements IMarineHost {
-    private workerThread?: ModuleThread<MarineBackgroundInterface>;
+  private workerThread?: ModuleThread<MarineBackgroundInterface>;
 
-    private loggers = new Map<string, MarineLogger>();
+  private loggers = new Map<string, MarineLogger>();
 
-    constructor(
-        private workerLoader: IWorkerLoader,
-        private controlModuleLoader: IWasmLoader,
-        private avmWasmLoader: IWasmLoader,
-    ) {}
+  constructor(
+    private workerLoader: IWorkerLoader,
+    private controlModuleLoader: IWasmLoader,
+    private avmWasmLoader: IWasmLoader,
+  ) {}
 
-    async hasService(serviceId: string) {
-        if (this.workerThread == null) {
-            throw new Error("Worker is not initialized");
-        }
-
-        return this.workerThread.hasService(serviceId);
+  async hasService(serviceId: string) {
+    if (this.workerThread == null) {
+      throw new Error("Worker is not initialized");
     }
 
-    async removeService(serviceId: string) {
-        if (this.workerThread == null) {
-            throw new Error("Worker is not initialized");
-        }
+    return this.workerThread.hasService(serviceId);
+  }
 
-        await this.workerThread.removeService(serviceId);
+  async removeService(serviceId: string) {
+    if (this.workerThread == null) {
+      throw new Error("Worker is not initialized");
     }
 
-    async start(): Promise<void> {
-        if (this.workerThread != null) {
-            throw new Error("Worker thread already initialized");
-        }
+    await this.workerThread.removeService(serviceId);
+  }
 
-        await this.controlModuleLoader.start();
-        const wasm = this.controlModuleLoader.getValue();
-
-        await this.avmWasmLoader.start();
-
-        await this.workerLoader.start();
-        const worker = await this.workerLoader.getValue();
-
-        const workerThread: ModuleThread<MarineBackgroundInterface> =
-            await spawn<MarineBackgroundInterface>(worker);
-
-        const logfn: LogFunction = (message) => {
-            const serviceLogger = this.loggers.get(message.service);
-
-            if (serviceLogger == null) {
-                return;
-            }
-
-            serviceLogger[message.level](message.message);
-        };
-
-        // @ts-expect-error This type is bugged
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        workerThread.onLogMessage().subscribe(logfn);
-        await workerThread.init(wasm);
-        this.workerThread = workerThread;
-        await this.createService(this.avmWasmLoader.getValue(), "avm");
+  async start(): Promise<void> {
+    if (this.workerThread != null) {
+      throw new Error("Worker thread already initialized");
     }
 
-    async createService(
-        serviceModule: ArrayBuffer | SharedArrayBuffer,
-        serviceId: string,
-    ): Promise<void> {
-        if (this.workerThread == null) {
-            throw new Error("Worker is not initialized");
-        }
+    await this.controlModuleLoader.start();
+    const wasm = this.controlModuleLoader.getValue();
 
-        // The logging level is controlled by the environment variable passed to enable debug logs.
-        // We enable all possible log levels passing the control for exact printouts to the logger
-        const env = logLevelToEnv("info");
-        this.loggers.set(serviceId, marineLogger(serviceId));
-        await this.workerThread.createService(serviceModule, serviceId, env);
+    await this.avmWasmLoader.start();
+
+    await this.workerLoader.start();
+    const worker = await this.workerLoader.getValue();
+
+    const workerThread: ModuleThread<MarineBackgroundInterface> =
+      await spawn<MarineBackgroundInterface>(worker);
+
+    const logfn: LogFunction = (message) => {
+      const serviceLogger = this.loggers.get(message.service);
+
+      if (serviceLogger == null) {
+        return;
+      }
+
+      serviceLogger[message.level](message.message);
+    };
+
+    // @ts-expect-error This type is bugged
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    workerThread.onLogMessage().subscribe(logfn);
+    await workerThread.init(wasm);
+    this.workerThread = workerThread;
+    await this.createService(this.avmWasmLoader.getValue(), "avm");
+  }
+
+  async createService(
+    serviceModule: ArrayBuffer | SharedArrayBuffer,
+    serviceId: string,
+  ): Promise<void> {
+    if (this.workerThread == null) {
+      throw new Error("Worker is not initialized");
     }
 
-    async callService(
-        serviceId: string,
-        functionName: string,
-        args: JSONArray | JSONObject,
-        callParams: CallParameters,
-    ): Promise<JSONValue> {
-        if (this.workerThread == null) {
-            throw new Error("Worker is not initialized");
-        }
+    // The logging level is controlled by the environment variable passed to enable debug logs.
+    // We enable all possible log levels passing the control for exact printouts to the logger
+    const env = logLevelToEnv("info");
+    this.loggers.set(serviceId, marineLogger(serviceId));
+    await this.workerThread.createService(serviceModule, serviceId, env);
+  }
 
-        return this.workerThread.callService(
-            serviceId,
-            functionName,
-            args,
-            callParams,
-        );
+  async callService(
+    serviceId: string,
+    functionName: string,
+    args: JSONArray | JSONObject,
+    callParams: CallParameters,
+  ): Promise<JSONValue> {
+    if (this.workerThread == null) {
+      throw new Error("Worker is not initialized");
     }
 
-    async stop(): Promise<void> {
-        if (this.workerThread == null) {
-            return;
-        }
+    return this.workerThread.callService(
+      serviceId,
+      functionName,
+      args,
+      callParams,
+    );
+  }
 
-        await this.workerThread.terminate();
-        await Thread.terminate(this.workerThread);
+  async stop(): Promise<void> {
+    if (this.workerThread == null) {
+      return;
     }
+
+    await this.workerThread.terminate();
+    await Thread.terminate(this.workerThread);
+  }
 }

@@ -20,16 +20,16 @@ import { JSONValue } from "@fluencelabs/interfaces";
 import { describe, expect, it } from "vitest";
 
 import {
-    CallServiceData,
-    ResultCodes,
+  CallServiceData,
+  ResultCodes,
 } from "../../jsServiceHost/interfaces.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
 
 describe("FluencePeer flow tests", () => {
-    it("should execute par instruction in parallel", async function () {
-        await withPeer(async (peer) => {
-            const script = `
+  it("should execute par instruction in parallel", async function () {
+    await withPeer(async (peer) => {
+      const script = `
                 (par
                     (seq
                         (call %init_peer_id% ("flow" "timeout") [1000 "test1"] res1)
@@ -42,65 +42,62 @@ describe("FluencePeer flow tests", () => {
                 )
                 `;
 
-            const particle = await peer.internals.createNewParticle(script);
+      const particle = await peer.internals.createNewParticle(script);
 
-            const res = await new Promise((resolve, reject) => {
-                peer.internals.regHandler.forParticle(
-                    particle.id,
-                    "flow",
-                    "timeout",
-                    (req: CallServiceData) => {
-                        const [timeout, message] = req.args;
-                        assert(typeof timeout === "number");
+      const res = await new Promise((resolve, reject) => {
+        peer.internals.regHandler.forParticle(
+          particle.id,
+          "flow",
+          "timeout",
+          (req: CallServiceData) => {
+            const [timeout, message] = req.args;
+            assert(typeof timeout === "number");
 
-                        return new Promise((resolve) => {
-                            setTimeout(() => {
-                                const res = {
-                                    result: message,
-                                    retCode: ResultCodes.success,
-                                };
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                const res = {
+                  result: message,
+                  retCode: ResultCodes.success,
+                };
 
-                                resolve(res);
-                            }, timeout);
-                        });
-                    },
-                );
-
-                if (particle instanceof Error) {
-                    reject(particle.message);
-                    return;
-                }
-
-                const values: JSONValue[] = [];
-
-                registerHandlersHelper(peer, particle, {
-                    callback: {
-                        callback1: (args) => {
-                            const [val] = args;
-                            values.push(val);
-
-                            if (values.length === 2) {
-                                resolve(values);
-                            }
-                        },
-                        callback2: (args) => {
-                            const [val] = args;
-                            values.push(val);
-
-                            if (values.length === 2) {
-                                resolve(values);
-                            }
-                        },
-                    },
-                });
-
-                peer.internals.initiateParticle(
-                    particle,
-                    handleTimeout(reject),
-                );
+                resolve(res);
+              }, timeout);
             });
+          },
+        );
 
-            expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));
+        if (particle instanceof Error) {
+          reject(particle.message);
+          return;
+        }
+
+        const values: JSONValue[] = [];
+
+        registerHandlersHelper(peer, particle, {
+          callback: {
+            callback1: (args) => {
+              const [val] = args;
+              values.push(val);
+
+              if (values.length === 2) {
+                resolve(values);
+              }
+            },
+            callback2: (args) => {
+              const [val] = args;
+              values.push(val);
+
+              if (values.length === 2) {
+                resolve(values);
+              }
+            },
+          },
         });
-    }, 1500);
+
+        peer.internals.initiateParticle(particle, handleTimeout(reject));
+      });
+
+      expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));
+    });
+  }, 1500);
 });

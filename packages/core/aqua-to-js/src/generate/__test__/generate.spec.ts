@@ -23,31 +23,31 @@ import { getPackageJsonContent, PackageJson } from "../../utils.js";
 import { generateTypes, generateSources } from "../index.js";
 
 describe("Aqua to js/ts compiler", () => {
-    it("compiles smoke tests successfully", async () => {
-        const res = await compileFromPath({
-            filePath: url.fileURLToPath(
-                new URL("./sources/smoke_test.aqua", import.meta.url),
-            ),
-            imports: ["./node_modules"],
-            targetType: "air",
-        });
-
-        const pkg: PackageJson = {
-            ...(await getPackageJsonContent()),
-            version: "0.0.0",
-            devDependencies: {
-                "@fluencelabs/aqua-api": "0.0.0",
-            },
-        };
-
-        const jsResult = generateSources(res, "js", pkg);
-        const jsTypes = generateTypes(res, pkg);
-
-        expect(jsResult).toMatchSnapshot();
-        expect(jsTypes).toMatchSnapshot();
-
-        const tsResult = generateSources(res, "ts", pkg);
-
-        expect(tsResult).toMatchSnapshot();
+  it("compiles smoke tests successfully", async () => {
+    const res = await compileFromPath({
+      filePath: url.fileURLToPath(
+        new URL("./sources/smoke_test.aqua", import.meta.url),
+      ),
+      imports: ["./node_modules"],
+      targetType: "air",
     });
+
+    const pkg: PackageJson = {
+      ...(await getPackageJsonContent()),
+      version: "0.0.0",
+      devDependencies: {
+        "@fluencelabs/aqua-api": "0.0.0",
+      },
+    };
+
+    const jsResult = generateSources(res, "js", pkg);
+    const jsTypes = generateTypes(res, pkg);
+
+    expect(jsResult).toMatchSnapshot();
+    expect(jsTypes).toMatchSnapshot();
+
+    const tsResult = generateSources(res, "ts", pkg);
+
+    expect(tsResult).toMatchSnapshot();
+  });
 });

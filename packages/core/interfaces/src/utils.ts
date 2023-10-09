@@ -15,7 +15,7 @@
  */
 
 export type InterfaceToType<T extends object> = {
-    [K in keyof T]: T[K];
+  [K in keyof T]: T[K];
 };
 
 export type MaybePromise<T> = T | Promise<T>;

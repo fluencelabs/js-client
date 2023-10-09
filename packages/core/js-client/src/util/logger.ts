@@ -19,46 +19,46 @@ import debug from "debug";
 type Logger = (formatter: unknown, ...args: unknown[]) => void;
 
 export interface CommonLogger {
-    error: Logger;
-    trace: Logger;
-    debug: Logger;
+  error: Logger;
+  trace: Logger;
+  debug: Logger;
 }
 
 export interface MarineLogger {
-    warn: Logger;
-    error: Logger;
-    debug: Logger;
-    trace: Logger;
-    info: Logger;
+  warn: Logger;
+  error: Logger;
+  debug: Logger;
+  trace: Logger;
+  info: Logger;
 }
 
 export function logger(name: string): CommonLogger {
-    return {
-        error: debug(`fluence:${name}:error`),
-        trace: debug(`fluence:${name}:trace`),
-        debug: debug(`fluence:${name}:debug`),
-    };
+  return {
+    error: debug(`fluence:${name}:error`),
+    trace: debug(`fluence:${name}:trace`),
+    debug: debug(`fluence:${name}:debug`),
+  };
 }
 
 export function marineLogger(serviceId: string): MarineLogger {
-    const name = `fluence:marine:${serviceId}`;
-    return {
-        warn: debug(`${name}:warn`),
-        error: debug(`${name}:error`),
-        debug: debug(`${name}:debug`),
-        trace: debug(`${name}:trace`),
-        info: debug(`${name}:info`),
-    };
+  const name = `fluence:marine:${serviceId}`;
+  return {
+    warn: debug(`${name}:warn`),
+    error: debug(`${name}:error`),
+    debug: debug(`${name}:debug`),
+    trace: debug(`${name}:trace`),
+    info: debug(`${name}:info`),
+  };
 }
 
 export function disable() {
-    debug.disable();
+  debug.disable();
 }
 
 export function enable(namespaces: string) {
-    debug.enable(namespaces);
+  debug.enable(namespaces);
 }
 
 export function enabled(namespaces: string) {
-    return debug.enabled(namespaces);
+  return debug.enabled(namespaces);
 }

@@ -1,14 +1,14 @@
 {
-    "extends": "@tsconfig/strictest/tsconfig.json",
-    "compilerOptions": {
-        "lib": ["es2023", "dom"],
-        "outDir": "./dist/",
-        "target": "ESNext",
-        "module": "ESNext",
-        "esModuleInterop": true,
-        "declaration": true,
-        "moduleResolution": "nodenext",
-        "noUncheckedIndexedAccess": false
-    },
-    "files": ["reset.d.ts"]
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2023", "dom"],
+    "outDir": "./dist/",
+    "target": "ESNext",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "declaration": true,
+    "moduleResolution": "nodenext",
+    "noUncheckedIndexedAccess": false
+  },
+  "files": ["reset.d.ts"]
 }

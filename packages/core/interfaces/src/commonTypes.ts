@@ -27,8 +27,8 @@ export type PeerIdB58 = string;
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
  */
 export type Node = {
-    peerId: PeerIdB58;
-    multiaddr: string;
+  peerId: PeerIdB58;
+  multiaddr: string;
 };
 
 /**
@@ -36,52 +36,52 @@ export type Node = {
  * @typeparam ArgName
  */
 export type CallParams<ArgName extends string | null> = {
-    /**
-     * The identifier of particle which triggered the call
-     */
-    particleId: string;
+  /**
+   * The identifier of particle which triggered the call
+   */
+  particleId: string;
 
-    /**
-     * The peer id which created the particle
-     */
-    initPeerId: PeerIdB58;
+  /**
+   * The peer id which created the particle
+   */
+  initPeerId: PeerIdB58;
 
-    /**
-     * Particle's timestamp when it was created
-     */
-    timestamp: number;
+  /**
+   * Particle's timestamp when it was created
+   */
+  timestamp: number;
 
-    /**
-     * Time to live in milliseconds. The time after the particle should be expired
-     */
-    ttl: number;
+  /**
+   * Time to live in milliseconds. The time after the particle should be expired
+   */
+  ttl: number;
 
-    /**
-     * Particle's signature
-     */
-    signature?: string;
+  /**
+   * Particle's signature
+   */
+  signature?: string;
 
-    /**
-     * Security tetraplets
-     */
-    tetraplets: ArgName extends string
-        ? Record<ArgName, InterfaceToType<SecurityTetraplet>[]>
-        : Record<string, never>;
+  /**
+   * Security tetraplets
+   */
+  tetraplets: ArgName extends string
+    ? Record<ArgName, InterfaceToType<SecurityTetraplet>[]>
+    : Record<string, never>;
 };
 
 export type ServiceImpl = Record<
-    string,
-    (
-        ...args: [...JSONArray, CallParams<string>]
-    ) => MaybePromise<JSONValue | undefined>
+  string,
+  (
+    ...args: [...JSONArray, CallParams<string>]
+  ) => MaybePromise<JSONValue | undefined>
 >;
 
 export type JSONValue =
-    | string
-    | number
-    | boolean
-    | null
-    | { [x: string]: JSONValue }
-    | Array<JSONValue>;
+  | string
+  | number
+  | boolean
+  | null
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
 export type JSONArray = Array<JSONValue>;
 export type JSONObject = { [x: string]: JSONValue };

@@ -23,17 +23,17 @@ import { mkTestPeer } from "../../util/testUtils.js";
 let peer: FluencePeer;
 
 describe("Sig service test suite", () => {
-    afterEach(async () => {
-        await peer.stop();
-    });
+  afterEach(async () => {
+    await peer.stop();
+  });
 
-    beforeEach(async () => {
-        peer = await mkTestPeer();
-        await peer.start();
-    });
+  beforeEach(async () => {
+    peer = await mkTestPeer();
+    await peer.start();
+  });
 
-    it("JSON builtin spec", async () => {
-        const script = `
+  it("JSON builtin spec", async () => {
+    const script = `
         (seq
             (seq
                 (seq
@@ -61,40 +61,40 @@ describe("Sig service test suite", () => {
         )
     `;
 
-        const promise = new Promise<unknown[]>((resolve) => {
-            peer.internals.regHandler.common("res", "res", (req) => {
-                resolve(req.args);
-                return {
-                    result: {},
-                    retCode: 0,
-                };
-            });
-        });
-
-        const p = await peer.internals.createNewParticle(script);
-        peer.internals.initiateParticle(p, doNothing);
-
-        const [
-            nestedFirst,
-            nestedSecond,
-            outerFirst,
-            outerSecond,
-            outerFirstString,
-            outerFirstParsed,
-        ] = await promise;
-
-        const nfExpected = { name: "nested_first", num: 1 };
-        const nsExpected = { name: "nested_second", num: 2 };
-
-        const ofExpected = { name: "outer_first", nested: nfExpected, num: 0 };
-        const ofString = JSON.stringify(ofExpected);
-        const osExpected = { name: "outer_second", num: 3, nested: nsExpected };
-
-        expect(nestedFirst).toMatchObject(nfExpected);
-        expect(nestedSecond).toMatchObject(nsExpected);
-        expect(outerFirst).toMatchObject(ofExpected);
-        expect(outerSecond).toMatchObject(osExpected);
-        expect(outerFirstParsed).toMatchObject(ofExpected);
-        expect(outerFirstString).toBe(ofString);
+    const promise = new Promise<unknown[]>((resolve) => {
+      peer.internals.regHandler.common("res", "res", (req) => {
+        resolve(req.args);
+        return {
+          result: {},
+          retCode: 0,
+        };
+      });
     });
+
+    const p = await peer.internals.createNewParticle(script);
+    peer.internals.initiateParticle(p, doNothing);
+
+    const [
+      nestedFirst,
+      nestedSecond,
+      outerFirst,
+      outerSecond,
+      outerFirstString,
+      outerFirstParsed,
+    ] = await promise;
+
+    const nfExpected = { name: "nested_first", num: 1 };
+    const nsExpected = { name: "nested_second", num: 2 };
+
+    const ofExpected = { name: "outer_first", nested: nfExpected, num: 0 };
+    const ofString = JSON.stringify(ofExpected);
+    const osExpected = { name: "outer_second", num: 3, nested: nsExpected };
+
+    expect(nestedFirst).toMatchObject(nfExpected);
+    expect(nestedSecond).toMatchObject(nsExpected);
+    expect(outerFirst).toMatchObject(ofExpected);
+    expect(outerSecond).toMatchObject(osExpected);
+    expect(outerFirstParsed).toMatchObject(ofExpected);
+    expect(outerFirstString).toBe(ofString);
+  });
 });

@@ -1,11 +1,11 @@
 {
-    "extends": "../../../tsconfig.json",
-    "compilerOptions": {
-        "types": ["vite/client", "node"],
-        "outDir": "./dist",
-        "esModuleInterop": true,
-        "resolveJsonModule": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["vite/client", "node"],
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

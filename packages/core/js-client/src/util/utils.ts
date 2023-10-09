@@ -15,21 +15,21 @@
  */
 
 export function jsonify(obj: unknown) {
-    return JSON.stringify(obj, null, 4);
+  return JSON.stringify(obj, null, 4);
 }
 
 export const isString = (unknown: unknown): unknown is string => {
-    return unknown !== null && typeof unknown === "string";
+  return unknown !== null && typeof unknown === "string";
 };
 
 export const isObject = (unknown: unknown): unknown is object => {
-    return unknown !== null && typeof unknown === "object";
+  return unknown !== null && typeof unknown === "object";
 };
 
 export const getErrorMessage = (error: unknown) => {
-    if (error instanceof Error) {
-        return error.message;
-    }
+  if (error instanceof Error) {
+    return error.message;
+  }
 
-    return String(error);
+  return String(error);
 };

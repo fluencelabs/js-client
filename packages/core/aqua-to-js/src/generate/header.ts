@@ -19,10 +19,10 @@ import { PackageJson } from "../utils.js";
 import { OutputType } from "./interfaces.js";
 
 export default function generateHeader(
-    { version, devDependencies }: PackageJson,
-    outputType: OutputType,
+  { version, devDependencies }: PackageJson,
+  outputType: OutputType,
 ) {
-    return `/* eslint-disable */
+  return `/* eslint-disable */
 // @ts-nocheck
 /**
  *
@@ -34,9 +34,9 @@ export default function generateHeader(
  *
  */
 ${
-    outputType === "ts"
-        ? "import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';"
-        : ""
+  outputType === "ts"
+    ? "import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';"
+    : ""
 }
 
 import {

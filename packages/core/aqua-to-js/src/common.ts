@@ -20,135 +20,130 @@ import { match, P } from "ts-pattern";
 import { getFuncArgs } from "./utils.js";
 
 export function genTypeName(
-    t: NonArrowType | ArrowWithoutCallbacks,
-    name: string,
+  t: NonArrowType | ArrowWithoutCallbacks,
+  name: string,
 ): readonly [string | undefined, string] {
-    const genType = typeToTs(t);
-    return match(t)
-        .with({ tag: "nil" }, () => {
-            return [undefined, "void"] as const;
-        })
-        .with({ tag: "struct" }, () => {
-            return [`export type ${name} = ${genType}`, name] as const;
-        })
-        .with(
-            { tag: P.union("labeledProduct", "unlabeledProduct") },
-            (item) => {
-                const args =
-                    item.tag === "labeledProduct"
-                        ? Object.values(item.fields)
-                        : item.items;
+  const genType = typeToTs(t);
+  return match(t)
+    .with({ tag: "nil" }, () => {
+      return [undefined, "void"] as const;
+    })
+    .with({ tag: "struct" }, () => {
+      return [`export type ${name} = ${genType}`, name] as const;
+    })
+    .with({ tag: P.union("labeledProduct", "unlabeledProduct") }, (item) => {
+      const args =
+        item.tag === "labeledProduct" ? Object.values(item.fields) : item.items;
 
-                if (args.length === 1) {
-                    return genTypeName(args[0], name);
-                }
+      if (args.length === 1) {
+        return genTypeName(args[0], name);
+      }
 
-                return [`export type ${name} = ${genType}`, name] as const;
-            },
-        )
-        .otherwise(() => {
-            return [undefined, genType] as const;
-        });
+      return [`export type ${name} = ${genType}`, name] as const;
+    })
+    .otherwise(() => {
+      return [undefined, genType] as const;
+    });
 }
 
 export function typeToTs(t: NonArrowType | ArrowWithoutCallbacks): string {
-    return match(t)
-        .with({ tag: "nil" }, () => {
-            return "null";
+  return match(t)
+    .with({ tag: "nil" }, () => {
+      return "null";
+    })
+    .with({ tag: "option" }, ({ type }) => {
+      return typeToTs(type) + " | null";
+    })
+    .with({ tag: "scalar" }, ({ name }) => {
+      return match(name)
+        .with(
+          P.union(
+            "u8",
+            "u16",
+            "u32",
+            "u64",
+            "i8",
+            "i16",
+            "i32",
+            "i64",
+            "f32",
+            "f64",
+          ),
+          () => {
+            return "number";
+          },
+        )
+        .with("bool", () => {
+          return "boolean";
         })
-        .with({ tag: "option" }, ({ type }) => {
-            return typeToTs(type) + " | null";
+        .with("string", () => {
+          return "string";
         })
-        .with({ tag: "scalar" }, ({ name }) => {
-            return match(name)
-                .with(
-                    P.union(
-                        "u8",
-                        "u16",
-                        "u32",
-                        "u64",
-                        "i8",
-                        "i16",
-                        "i32",
-                        "i64",
-                        "f32",
-                        "f64",
-                    ),
-                    () => {
-                        return "number";
-                    },
-                )
-                .with("bool", () => {
-                    return "boolean";
-                })
-                .with("string", () => {
-                    return "string";
-                })
-                .with(P._, () => {
-                    return "any";
-                })
-                .exhaustive();
-        })
-        .with({ tag: "array" }, ({ type }) => {
-            return typeToTs(type) + "[]";
-        })
-        .with({ tag: "struct" }, ({ fields }) => {
-            return `{ ${Object.entries(fields)
-                .map(([field, type]) => {
-                    return `${field}: ${typeToTs(type)};`;
-                })
-                .join(" ")} }`;
-        })
-        .with({ tag: "labeledProduct" }, ({ fields }) => {
-            return `{ ${Object.entries(fields)
-                .map(([field, type]) => {
-                    return `${field}: ${typeToTs(type)};`;
-                })
-                .join(" ")} }`;
-        })
-        .with({ tag: "unlabeledProduct" }, ({ items }) => {
-            return `[${items
-                .map((item) => {
-                    return typeToTs(item);
-                })
-                .join(", ")}]`;
-        })
-        .with({ tag: "arrow" }, ({ domain, codomain }) => {
-            const retType =
-                codomain.tag === "nil"
-                    ? "void"
-                    : codomain.items.length === 1
-                    ? typeToTs(codomain.items[0])
-                    : typeToTs(codomain);
-
-            const args = getFuncArgs(domain).map(([name, type]) => {
-                return [name, typeToTs(type)];
-            });
-
-            const generic =
-                args.length === 0
-                    ? "null"
-                    : args
-                          .map(([name]) => {
-                              return `'${name}'`;
-                          })
-                          .join(" | ");
-
-            args.push(["callParams", `CallParams$$<${generic}>`]);
-
-            const funcArgs = args
-                .map(([name, type]) => {
-                    return `${name}: ${type}`;
-                })
-                .join(", ");
-
-            return `(${funcArgs}) => ${retType} | Promise<${retType}>`;
-        })
-        .with({ tag: "topType" }, () => {
-            return "unknown";
-        })
-        .with({ tag: "bottomType" }, () => {
-            return "never";
+        .with(P._, () => {
+          return "any";
         })
         .exhaustive();
+    })
+    .with({ tag: "array" }, ({ type }) => {
+      return typeToTs(type) + "[]";
+    })
+    .with({ tag: "struct" }, ({ fields }) => {
+      return `{ ${Object.entries(fields)
+        .map(([field, type]) => {
+          return `${field}: ${typeToTs(type)};`;
+        })
+        .join(" ")} }`;
+    })
+    .with({ tag: "labeledProduct" }, ({ fields }) => {
+      return `{ ${Object.entries(fields)
+        .map(([field, type]) => {
+          return `${field}: ${typeToTs(type)};`;
+        })
+        .join(" ")} }`;
+    })
+    .with({ tag: "unlabeledProduct" }, ({ items }) => {
+      return `[${items
+        .map((item) => {
+          return typeToTs(item);
+        })
+        .join(", ")}]`;
+    })
+    .with({ tag: "arrow" }, ({ domain, codomain }) => {
+      const retType =
+        codomain.tag === "nil"
+          ? "void"
+          : codomain.items.length === 1
+          ? typeToTs(codomain.items[0])
+          : typeToTs(codomain);
+
+      const args = getFuncArgs(domain).map(([name, type]) => {
+        return [name, typeToTs(type)];
+      });
+
+      const generic =
+        args.length === 0
+          ? "null"
+          : args
+              .map(([name]) => {
+                return `'${name}'`;
+              })
+              .join(" | ");
+
+      args.push(["callParams", `CallParams$$<${generic}>`]);
+
+      const funcArgs = args
+        .map(([name, type]) => {
+          return `${name}: ${type}`;
+        })
+        .join(", ");
+
+      return `(${funcArgs}) => ${retType} | Promise<${retType}>`;
+    })
+    .with({ tag: "topType" }, () => {
+      return "unknown";
+    })
+    .with({ tag: "bottomType" }, () => {
+      return "never";
+    })
+    .exhaustive();
 }

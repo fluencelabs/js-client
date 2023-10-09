@@ -19,41 +19,41 @@ import module from "module";
 import path from "path";
 
 export async function fetchResource(pkg: string, assetPath: string) {
-    const require = module.createRequire(import.meta.url);
-    const packagePathIndex = require.resolve(pkg);
+  const require = module.createRequire(import.meta.url);
+  const packagePathIndex = require.resolve(pkg);
 
-    // Ensure that windows path is converted to posix path. So we can find a package
-    const posixPath = packagePathIndex.split(path.sep).join(path.posix.sep);
+  // Ensure that windows path is converted to posix path. So we can find a package
+  const posixPath = packagePathIndex.split(path.sep).join(path.posix.sep);
 
-    const matches = new RegExp(`(.+${pkg})`).exec(posixPath);
+  const matches = new RegExp(`(.+${pkg})`).exec(posixPath);
 
-    const packagePath = matches?.[0];
+  const packagePath = matches?.[0];
 
-    if (packagePath == null) {
-        throw new Error(`Cannot find dependency ${pkg} in path ${posixPath}`);
-    }
+  if (packagePath == null) {
+    throw new Error(`Cannot find dependency ${pkg} in path ${posixPath}`);
+  }
 
-    const pathToResource = path.join(packagePath, assetPath);
+  const pathToResource = path.join(packagePath, assetPath);
 
-    const file = await new Promise<ArrayBuffer>((resolve, reject) => {
-        // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
-        fs.readFile(pathToResource, (err, data) => {
-            if (err != null) {
-                reject(err);
-                return;
-            }
+  const file = await new Promise<ArrayBuffer>((resolve, reject) => {
+    // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
+    fs.readFile(pathToResource, (err, data) => {
+      if (err != null) {
+        reject(err);
+        return;
+      }
 
-            resolve(data);
-        });
+      resolve(data);
     });
+  });
 
-    return new Response(file, {
-        headers: {
-            "Content-type": assetPath.endsWith(".wasm")
-                ? "application/wasm"
-                : assetPath.endsWith(".js")
-                ? "application/javascript"
-                : "application/text",
-        },
-    });
+  return new Response(file, {
+    headers: {
+      "Content-type": assetPath.endsWith(".wasm")
+        ? "application/wasm"
+        : assetPath.endsWith(".js")
+        ? "application/javascript"
+        : "application/text",
+    },
+  });
 }

@@ -22,8 +22,8 @@ import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { fromBase64Sk, KeyPair } from "../keypair/index.js";
 import {
-    WorkerLoaderFromFs,
-    WasmLoaderFromNpm,
+  WorkerLoaderFromFs,
+  WasmLoaderFromNpm,
 } from "../marine/deps-loader/node.js";
 import { IMarineHost } from "../marine/interfaces.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
@@ -33,190 +33,188 @@ import { logger } from "../util/logger.js";
 const log = logger("ephemeral");
 
 interface EphemeralConfig {
-    peers: Array<{
-        peerId: PeerIdB58;
-        sk: string;
-    }>;
+  peers: Array<{
+    peerId: PeerIdB58;
+    sk: string;
+  }>;
 }
 
 export const defaultConfig = {
-    peers: [
-        {
-            peerId: "12D3KooWJankP2PcEDYCZDdJ26JsU8BMRfdGWyGqbtFiWyoKVtmx",
-            sk: "dWNAHhDVuFj9bEieILMu6TcCFRxBJdOPIvAWmf4sZQI=",
-        },
-        {
-            peerId: "12D3KooWSBTB5sYxdwayUyTnqopBwABsnGFY3p4dTx5hABYDtJjV",
-            sk: "dOmaxAeu4Th+MJ22vRDLMFTNbiDgKNXar9fW9ofAMgQ=",
-        },
-        {
-            peerId: "12D3KooWQjwf781DJ41moW5RrZXypLdnTbo6aMsoA8QLctGGX8RB",
-            sk: "TgzaLlxXuOMDNuuuTKEHUKsW0jM4AmX0gahFvkB1KgE=",
-        },
-        {
-            peerId: "12D3KooWCXWTLFyY1mqKnNAhLQTsjW1zqDzCMbUs8M4a8zdz28HK",
-            sk: "hiO2Ta8g2ibMQ7iu5yj9CfN+qQCwE8oRShjr7ortKww=",
-        },
-        {
-            peerId: "12D3KooWPmZpf4ng6GMS39HLagxsXbjiTPLH5CFJpFAHyN6amw6V",
-            sk: "LzJtOHTqxfrlHDW40BKiLfjai8JU4yW6/s2zrXLCcQE=",
-        },
-        {
-            peerId: "12D3KooWKrx8PZxM1R9A8tp2jmrFf6c6q1ZQiWfD4QkNgh7fWSoF",
-            sk: "XMhlk/xr1FPcp7sKQhS18doXlq1x16EMhBC2NGW2LQ4=",
-        },
-        {
-            peerId: "12D3KooWCbJHvnzSZEXjR1UJmtSUozuJK13iRiCYHLN1gjvm4TZZ",
-            sk: "KXPAIqxrSHr7v0ngv3qagcqivFvnQ0xd3s1/rKmi8QU=",
-        },
-        {
-            peerId: "12D3KooWEvKe7WQHp42W4xhHRgTAWQjtDWyH38uJbLHAsMuTtYvD",
-            sk: "GCYMAshGnsrNtrHhuT7ayzh5uCzX99J03PmAXoOcCgw=",
-        },
-        {
-            peerId: "12D3KooWSznSHN3BGrSykBXkLkFsqo9SYB73wVauVdqeuRt562cC",
-            sk: "UP+SEuznS0h259VbFquzyOJAQ4W5iIwhP+hd1PmUQQ0=",
-        },
-        {
-            peerId: "12D3KooWF57jwbShfnT3c4dNfRDdGjr6SQ3B71m87UVpEpSWHFwi",
-            sk: "8dl+Crm5RSh0eh+LqLKwX8/Eo4QLpvIjfD8L0wzX4A4=",
-        },
-        {
-            peerId: "12D3KooWBWrzpSg9nwMLBCa2cJubUjTv63Mfy6PYg9rHGbetaV5C",
-            sk: "qolc1FcpJ+vHDon0HeXdUYnstjV1wiVx2p0mjblrfAg=",
-        },
-        {
-            peerId: "12D3KooWNkLVU6juM8oyN2SVq5nBd2kp7Rf4uzJH1hET6vj6G5j6",
-            sk: "vN6QzWILTM7hSHp+iGkKxiXcqs8bzlnH3FPaRaDGSQY=",
-        },
-        {
-            peerId: "12D3KooWKo1YwGL5vivPiKJMJS7wjtB6B2nJNdSXPkSABT4NKBUU",
-            sk: "YbDQ++bsor2kei7rYAsu2SbyoiOYPRzFRZWnNRUpBgQ=",
-        },
-        {
-            peerId: "12D3KooWLUyBKmmNCyxaPkXoWcUFPcy5qrZsUo2E1tyM6CJmGJvC",
-            sk: "ptB9eSFMKudAtHaFgDrRK/1oIMrhBujxbMw2Pzwx/wA=",
-        },
-        {
-            peerId: "12D3KooWAEZXME4KMu9FvLezsJWDbYFe2zyujyMnDT1AgcAxgcCk",
-            sk: "xtwTOKgAbDIgkuPf7RKiR7gYyZ1HY4mOgFMv3sOUcAQ=",
-        },
-        {
-            peerId: "12D3KooWEhXetsFVAD9h2dRz9XgFpfidho1TCZVhFrczX8h8qgzY",
-            sk: "1I2MGuiKG1F4FDMiRihVOcOP2mxzOLWJ99MeexK27A4=",
-        },
-        {
-            peerId: "12D3KooWDBfVNdMyV3hPEF4WLBmx9DwD2t2SYuqZ2mztYmDzZWM1",
-            sk: "eqJ4Bp7iN4aBXgPH0ezwSg+nVsatkYtfrXv9obI0YQ0=",
-        },
-        {
-            peerId: "12D3KooWSyY7wiSiR4vbXa1WtZawi3ackMTqcQhEPrvqtagoWPny",
-            sk: "UVM3SBJhPYIY/gafpnd9/q/Fn9V4BE9zkgrvF1T7Pgc=",
-        },
-        {
-            peerId: "12D3KooWFZmBMGG9PxTs9s6ASzkLGKJWMyPheA5ruaYc2FDkDTmv",
-            sk: "8RbZfEVpQhPVuhv64uqxENDuSoyJrslQoSQJznxsTQ0=",
-        },
-        {
-            peerId: "12D3KooWBbhUaqqur6KHPunnKxXjY1daCtqJdy4wRji89LmAkVB4",
-            sk: "RbgKmG6soWW9uOi7yRedm+0Qck3f3rw6MSnDP7AcBQs=",
-        },
-    ],
+  peers: [
+    {
+      peerId: "12D3KooWJankP2PcEDYCZDdJ26JsU8BMRfdGWyGqbtFiWyoKVtmx",
+      sk: "dWNAHhDVuFj9bEieILMu6TcCFRxBJdOPIvAWmf4sZQI=",
+    },
+    {
+      peerId: "12D3KooWSBTB5sYxdwayUyTnqopBwABsnGFY3p4dTx5hABYDtJjV",
+      sk: "dOmaxAeu4Th+MJ22vRDLMFTNbiDgKNXar9fW9ofAMgQ=",
+    },
+    {
+      peerId: "12D3KooWQjwf781DJ41moW5RrZXypLdnTbo6aMsoA8QLctGGX8RB",
+      sk: "TgzaLlxXuOMDNuuuTKEHUKsW0jM4AmX0gahFvkB1KgE=",
+    },
+    {
+      peerId: "12D3KooWCXWTLFyY1mqKnNAhLQTsjW1zqDzCMbUs8M4a8zdz28HK",
+      sk: "hiO2Ta8g2ibMQ7iu5yj9CfN+qQCwE8oRShjr7ortKww=",
+    },
+    {
+      peerId: "12D3KooWPmZpf4ng6GMS39HLagxsXbjiTPLH5CFJpFAHyN6amw6V",
+      sk: "LzJtOHTqxfrlHDW40BKiLfjai8JU4yW6/s2zrXLCcQE=",
+    },
+    {
+      peerId: "12D3KooWKrx8PZxM1R9A8tp2jmrFf6c6q1ZQiWfD4QkNgh7fWSoF",
+      sk: "XMhlk/xr1FPcp7sKQhS18doXlq1x16EMhBC2NGW2LQ4=",
+    },
+    {
+      peerId: "12D3KooWCbJHvnzSZEXjR1UJmtSUozuJK13iRiCYHLN1gjvm4TZZ",
+      sk: "KXPAIqxrSHr7v0ngv3qagcqivFvnQ0xd3s1/rKmi8QU=",
+    },
+    {
+      peerId: "12D3KooWEvKe7WQHp42W4xhHRgTAWQjtDWyH38uJbLHAsMuTtYvD",
+      sk: "GCYMAshGnsrNtrHhuT7ayzh5uCzX99J03PmAXoOcCgw=",
+    },
+    {
+      peerId: "12D3KooWSznSHN3BGrSykBXkLkFsqo9SYB73wVauVdqeuRt562cC",
+      sk: "UP+SEuznS0h259VbFquzyOJAQ4W5iIwhP+hd1PmUQQ0=",
+    },
+    {
+      peerId: "12D3KooWF57jwbShfnT3c4dNfRDdGjr6SQ3B71m87UVpEpSWHFwi",
+      sk: "8dl+Crm5RSh0eh+LqLKwX8/Eo4QLpvIjfD8L0wzX4A4=",
+    },
+    {
+      peerId: "12D3KooWBWrzpSg9nwMLBCa2cJubUjTv63Mfy6PYg9rHGbetaV5C",
+      sk: "qolc1FcpJ+vHDon0HeXdUYnstjV1wiVx2p0mjblrfAg=",
+    },
+    {
+      peerId: "12D3KooWNkLVU6juM8oyN2SVq5nBd2kp7Rf4uzJH1hET6vj6G5j6",
+      sk: "vN6QzWILTM7hSHp+iGkKxiXcqs8bzlnH3FPaRaDGSQY=",
+    },
+    {
+      peerId: "12D3KooWKo1YwGL5vivPiKJMJS7wjtB6B2nJNdSXPkSABT4NKBUU",
+      sk: "YbDQ++bsor2kei7rYAsu2SbyoiOYPRzFRZWnNRUpBgQ=",
+    },
+    {
+      peerId: "12D3KooWLUyBKmmNCyxaPkXoWcUFPcy5qrZsUo2E1tyM6CJmGJvC",
+      sk: "ptB9eSFMKudAtHaFgDrRK/1oIMrhBujxbMw2Pzwx/wA=",
+    },
+    {
+      peerId: "12D3KooWAEZXME4KMu9FvLezsJWDbYFe2zyujyMnDT1AgcAxgcCk",
+      sk: "xtwTOKgAbDIgkuPf7RKiR7gYyZ1HY4mOgFMv3sOUcAQ=",
+    },
+    {
+      peerId: "12D3KooWEhXetsFVAD9h2dRz9XgFpfidho1TCZVhFrczX8h8qgzY",
+      sk: "1I2MGuiKG1F4FDMiRihVOcOP2mxzOLWJ99MeexK27A4=",
+    },
+    {
+      peerId: "12D3KooWDBfVNdMyV3hPEF4WLBmx9DwD2t2SYuqZ2mztYmDzZWM1",
+      sk: "eqJ4Bp7iN4aBXgPH0ezwSg+nVsatkYtfrXv9obI0YQ0=",
+    },
+    {
+      peerId: "12D3KooWSyY7wiSiR4vbXa1WtZawi3ackMTqcQhEPrvqtagoWPny",
+      sk: "UVM3SBJhPYIY/gafpnd9/q/Fn9V4BE9zkgrvF1T7Pgc=",
+    },
+    {
+      peerId: "12D3KooWFZmBMGG9PxTs9s6ASzkLGKJWMyPheA5ruaYc2FDkDTmv",
+      sk: "8RbZfEVpQhPVuhv64uqxENDuSoyJrslQoSQJznxsTQ0=",
+    },
+    {
+      peerId: "12D3KooWBbhUaqqur6KHPunnKxXjY1daCtqJdy4wRji89LmAkVB4",
+      sk: "RbgKmG6soWW9uOi7yRedm+0Qck3f3rw6MSnDP7AcBQs=",
+    },
+  ],
 };
 
 export interface IEphemeralConnection extends IConnection {
-    readonly selfPeerId: PeerIdB58;
-    readonly connections: Map<PeerIdB58, IEphemeralConnection>;
-    receiveParticle(particle: Particle): void;
+  readonly selfPeerId: PeerIdB58;
+  readonly connections: Map<PeerIdB58, IEphemeralConnection>;
+  receiveParticle(particle: Particle): void;
 }
 
 export class EphemeralConnection implements IEphemeralConnection {
-    readonly selfPeerId: PeerIdB58;
-    readonly connections: Map<PeerIdB58, IEphemeralConnection> = new Map();
+  readonly selfPeerId: PeerIdB58;
+  readonly connections: Map<PeerIdB58, IEphemeralConnection> = new Map();
 
-    constructor(selfPeerId: PeerIdB58) {
-        this.selfPeerId = selfPeerId;
+  constructor(selfPeerId: PeerIdB58) {
+    this.selfPeerId = selfPeerId;
+  }
+
+  start(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  stop(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  connectToOther(other: IEphemeralConnection) {
+    if (other.selfPeerId === this.selfPeerId) {
+      return;
     }
 
-    start(): Promise<void> {
-        return Promise.resolve();
+    this.connections.set(other.selfPeerId, other);
+    other.connections.set(this.selfPeerId, this);
+  }
+
+  disconnectFromOther(other: IEphemeralConnection) {
+    this.connections.delete(other.selfPeerId);
+    other.connections.delete(this.selfPeerId);
+  }
+
+  disconnectFromAll() {
+    for (const other of this.connections.values()) {
+      this.disconnectFromOther(other);
+    }
+  }
+
+  particleSource = new Subject<Particle>();
+
+  receiveParticle(particle: Particle): void {
+    this.particleSource.next(particle);
+  }
+
+  sendParticle(nextPeerIds: string[], particle: Particle): Promise<void> {
+    const from = this.selfPeerId;
+
+    for (const to of nextPeerIds) {
+      const destConnection = this.connections.get(to);
+
+      if (destConnection === undefined) {
+        log.error("peer %s has no connection with %s", from, to);
+        continue;
+      }
+
+      // log.trace(`Sending particle from %s, to %j, particleId %s`, from, to, particle.id);
+      destConnection.receiveParticle(particle);
     }
 
-    stop(): Promise<void> {
-        return Promise.resolve();
+    return Promise.resolve();
+  }
+
+  getRelayPeerId(): string {
+    const firstMapKey = this.connections.keys().next();
+
+    // Empty map
+    if (firstMapKey.done === true) {
+      throw new Error("relay is not supported in this Ephemeral network peer");
     }
 
-    connectToOther(other: IEphemeralConnection) {
-        if (other.selfPeerId === this.selfPeerId) {
-            return;
-        }
+    return firstMapKey.value;
+  }
 
-        this.connections.set(other.selfPeerId, other);
-        other.connections.set(this.selfPeerId, this);
-    }
-
-    disconnectFromOther(other: IEphemeralConnection) {
-        this.connections.delete(other.selfPeerId);
-        other.connections.delete(this.selfPeerId);
-    }
-
-    disconnectFromAll() {
-        for (const other of this.connections.values()) {
-            this.disconnectFromOther(other);
-        }
-    }
-
-    particleSource = new Subject<Particle>();
-
-    receiveParticle(particle: Particle): void {
-        this.particleSource.next(particle);
-    }
-
-    sendParticle(nextPeerIds: string[], particle: Particle): Promise<void> {
-        const from = this.selfPeerId;
-
-        for (const to of nextPeerIds) {
-            const destConnection = this.connections.get(to);
-
-            if (destConnection === undefined) {
-                log.error("peer %s has no connection with %s", from, to);
-                continue;
-            }
-
-            // log.trace(`Sending particle from %s, to %j, particleId %s`, from, to, particle.id);
-            destConnection.receiveParticle(particle);
-        }
-
-        return Promise.resolve();
-    }
-
-    getRelayPeerId(): string {
-        const firstMapKey = this.connections.keys().next();
-
-        // Empty map
-        if (firstMapKey.done === true) {
-            throw new Error(
-                "relay is not supported in this Ephemeral network peer",
-            );
-        }
-
-        return firstMapKey.value;
-    }
-
-    supportsRelay(): boolean {
-        return this.connections.size === 1;
-    }
+  supportsRelay(): boolean {
+    return this.connections.size === 1;
+  }
 }
 
 class EphemeralPeer extends FluencePeer {
-    ephemeralConnection: EphemeralConnection;
+  ephemeralConnection: EphemeralConnection;
 
-    constructor(keyPair: KeyPair, marine: IMarineHost) {
-        const conn = new EphemeralConnection(keyPair.getPeerId());
-        super(DEFAULT_CONFIG, keyPair, marine, new JsServiceHost(), conn);
+  constructor(keyPair: KeyPair, marine: IMarineHost) {
+    const conn = new EphemeralConnection(keyPair.getPeerId());
+    super(DEFAULT_CONFIG, keyPair, marine, new JsServiceHost(), conn);
 
-        this.ephemeralConnection = conn;
-    }
+    this.ephemeralConnection = conn;
+  }
 }
 
 /**
@@ -224,109 +222,107 @@ class EphemeralPeer extends FluencePeer {
  * Ephemeral network is a virtual network which runs locally and focuses on p2p interaction by removing connectivity layer out of the equation.
  */
 export class EphemeralNetwork {
-    private peers: Map<PeerIdB58, EphemeralPeer> = new Map();
+  private peers: Map<PeerIdB58, EphemeralPeer> = new Map();
 
-    workerLoader: WorkerLoaderFromFs;
-    controlModuleLoader: WasmLoaderFromNpm;
-    avmModuleLoader: WasmLoaderFromNpm;
+  workerLoader: WorkerLoaderFromFs;
+  controlModuleLoader: WasmLoaderFromNpm;
+  avmModuleLoader: WasmLoaderFromNpm;
 
-    constructor(readonly config: EphemeralConfig) {
-        // shared worker for all the peers
-        this.workerLoader = new WorkerLoaderFromFs(
-            "../../marine/worker-script",
+  constructor(readonly config: EphemeralConfig) {
+    // shared worker for all the peers
+    this.workerLoader = new WorkerLoaderFromFs("../../marine/worker-script");
+
+    this.controlModuleLoader = new WasmLoaderFromNpm(
+      "@fluencelabs/marine-js",
+      "marine-js.wasm",
+    );
+
+    this.avmModuleLoader = new WasmLoaderFromNpm(
+      "@fluencelabs/avm",
+      "avm.wasm",
+    );
+  }
+
+  /**
+   * Starts the Ephemeral network up
+   */
+  async up(): Promise<void> {
+    log.trace("starting ephemeral network up...");
+
+    const promises = this.config.peers.map(async (x) => {
+      const kp = await fromBase64Sk(x.sk);
+
+      const marine = new MarineBackgroundRunner(
+        this.workerLoader,
+        this.controlModuleLoader,
+        this.avmModuleLoader,
+      );
+
+      const peerId = kp.getPeerId();
+
+      if (peerId !== x.peerId) {
+        throw new Error(
+          `Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`,
         );
+      }
 
-        this.controlModuleLoader = new WasmLoaderFromNpm(
-            "@fluencelabs/marine-js",
-            "marine-js.wasm",
-        );
+      return new EphemeralPeer(kp, marine);
+    });
 
-        this.avmModuleLoader = new WasmLoaderFromNpm(
-            "@fluencelabs/avm",
-            "avm.wasm",
-        );
-    }
+    const peers = await Promise.all(promises);
 
-    /**
-     * Starts the Ephemeral network up
-     */
-    async up(): Promise<void> {
-        log.trace("starting ephemeral network up...");
-
-        const promises = this.config.peers.map(async (x) => {
-            const kp = await fromBase64Sk(x.sk);
-
-            const marine = new MarineBackgroundRunner(
-                this.workerLoader,
-                this.controlModuleLoader,
-                this.avmModuleLoader,
-            );
-
-            const peerId = kp.getPeerId();
-
-            if (peerId !== x.peerId) {
-                throw new Error(
-                    `Invalid config: peer id ${x.peerId} does not match the secret key ${x.sk}`,
-                );
-            }
-
-            return new EphemeralPeer(kp, marine);
-        });
-
-        const peers = await Promise.all(promises);
-
-        for (let i = 0; i < peers.length; i++) {
-            for (let j = 0; j < i; j++) {
-                if (i === j) {
-                    continue;
-                }
-
-                peers[i].ephemeralConnection.connectToOther(
-                    peers[j].ephemeralConnection,
-                );
-            }
+    for (let i = 0; i < peers.length; i++) {
+      for (let j = 0; j < i; j++) {
+        if (i === j) {
+          continue;
         }
 
-        const startPromises = peers.map((x) => {
-            return x.start();
-        });
-
-        await Promise.all(startPromises);
-
-        for (const p of peers) {
-            this.peers.set(p.keyPair.getPeerId(), p);
-        }
+        peers[i].ephemeralConnection.connectToOther(
+          peers[j].ephemeralConnection,
+        );
+      }
     }
 
-    /**
-     * Shuts the ephemeral network down. Will disconnect all connected peers.
-     */
-    async down(): Promise<void> {
-        log.trace("shutting down ephemeral network...");
-        const peers = Array.from(this.peers.entries());
+    const startPromises = peers.map((x) => {
+      return x.start();
+    });
 
-        const promises = peers.map(async ([, p]) => {
-            p.ephemeralConnection.disconnectFromAll();
-            await p.stop();
-        });
+    await Promise.all(startPromises);
 
-        await Promise.all(promises);
-        this.peers.clear();
-        log.trace("ephemeral network shut down");
+    for (const p of peers) {
+      this.peers.set(p.keyPair.getPeerId(), p);
+    }
+  }
+
+  /**
+   * Shuts the ephemeral network down. Will disconnect all connected peers.
+   */
+  async down(): Promise<void> {
+    log.trace("shutting down ephemeral network...");
+    const peers = Array.from(this.peers.entries());
+
+    const promises = peers.map(async ([, p]) => {
+      p.ephemeralConnection.disconnectFromAll();
+      await p.stop();
+    });
+
+    await Promise.all(promises);
+    this.peers.clear();
+    log.trace("ephemeral network shut down");
+  }
+
+  /**
+   * Gets a relay connection to the specified peer.
+   */
+  getRelayConnection(peerId: PeerIdB58, relayPeerId: PeerIdB58): IConnection {
+    const relay = this.peers.get(relayPeerId);
+
+    if (relay === undefined) {
+      throw new Error(`Peer ${relayPeerId} is not found`);
     }
 
-    /**
-     * Gets a relay connection to the specified peer.
-     */
-    getRelayConnection(peerId: PeerIdB58, relayPeerId: PeerIdB58): IConnection {
-        const relay = this.peers.get(relayPeerId);
-
-        if (relay === undefined) {
-            throw new Error(`Peer ${relayPeerId} is not found`);
-        }
-
-        const res = new EphemeralConnection(peerId);
-        res.connectToOther(relay.ephemeralConnection);
-        return res;
-    }
+    const res = new EphemeralConnection(peerId);
+    res.connectToOther(relay.ephemeralConnection);
+    return res;
+  }
 }

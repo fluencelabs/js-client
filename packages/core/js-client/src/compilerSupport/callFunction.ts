@@ -17,24 +17,24 @@
 import assert from "assert";
 
 import {
-    FnConfig,
-    FunctionCallDef,
-    getArgumentTypes,
-    isReturnTypeVoid,
-    PassedArgs,
+  FnConfig,
+  FunctionCallDef,
+  getArgumentTypes,
+  isReturnTypeVoid,
+  PassedArgs,
 } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
 
 import {
-    errorHandlingService,
-    injectRelayService,
-    injectValueService,
-    registerParticleScopeService,
-    responseService,
-    ServiceDescription,
-    userHandlerService,
+  errorHandlingService,
+  injectRelayService,
+  injectValueService,
+  registerParticleScopeService,
+  responseService,
+  ServiceDescription,
+  userHandlerService,
 } from "./services.js";
 
 const log = logger("aqua");
@@ -52,100 +52,87 @@ const log = logger("aqua");
  */
 
 type CallAquaFunctionArgs = {
-    def: FunctionCallDef;
-    script: string;
-    config: FnConfig;
-    peer: FluencePeer;
-    args: PassedArgs;
+  def: FunctionCallDef;
+  script: string;
+  config: FnConfig;
+  peer: FluencePeer;
+  args: PassedArgs;
 };
 
 export const callAquaFunction = async ({
-    def,
-    script,
-    config,
-    peer,
-    args,
+  def,
+  script,
+  config,
+  peer,
+  args,
 }: CallAquaFunctionArgs) => {
-    log.trace("calling aqua function %j", { def, script, config, args });
-    const argumentTypes = getArgumentTypes(def);
+  log.trace("calling aqua function %j", { def, script, config, args });
+  const argumentTypes = getArgumentTypes(def);
 
-    const particle = await peer.internals.createNewParticle(script, config.ttl);
+  const particle = await peer.internals.createNewParticle(script, config.ttl);
 
-    return new Promise((resolve, reject) => {
-        for (const [name, argVal] of Object.entries(args)) {
-            const type = argumentTypes[name];
-            let service: ServiceDescription;
+  return new Promise((resolve, reject) => {
+    for (const [name, argVal] of Object.entries(args)) {
+      const type = argumentTypes[name];
+      let service: ServiceDescription;
 
-            if (type.tag === "arrow") {
-                // TODO: Add validation here
-                assert(typeof argVal === "function");
+      if (type.tag === "arrow") {
+        // TODO: Add validation here
+        assert(typeof argVal === "function");
 
-                service = userHandlerService(
-                    def.names.callbackSrv,
-                    [name, type],
-                    argVal,
-                );
-            } else {
-                // TODO: Add validation here
-                assert(typeof argVal !== "function");
-
-                service = injectValueService(
-                    def.names.getDataSrv,
-                    name,
-                    type,
-                    argVal,
-                );
-            }
-
-            registerParticleScopeService(peer, particle, service);
-        }
-
-        registerParticleScopeService(
-            peer,
-            particle,
-            responseService(def, resolve),
+        service = userHandlerService(
+          def.names.callbackSrv,
+          [name, type],
+          argVal,
         );
+      } else {
+        // TODO: Add validation here
+        assert(typeof argVal !== "function");
 
-        registerParticleScopeService(
-            peer,
-            particle,
-            injectRelayService(def, peer),
+        service = injectValueService(def.names.getDataSrv, name, type, argVal);
+      }
+
+      registerParticleScopeService(peer, particle, service);
+    }
+
+    registerParticleScopeService(peer, particle, responseService(def, resolve));
+
+    registerParticleScopeService(peer, particle, injectRelayService(def, peer));
+
+    registerParticleScopeService(
+      peer,
+      particle,
+      errorHandlingService(def, reject),
+    );
+
+    peer.internals.initiateParticle(particle, (stage) => {
+      // If function is void, then it's completed when one of the two conditions is met:
+      //  1. The particle is sent to the network (state 'sent')
+      //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
+      if (
+        isReturnTypeVoid(def) &&
+        (stage.stage === "sent" || stage.stage === "localWorkDone")
+      ) {
+        resolve(undefined);
+      }
+
+      if (stage.stage === "sendingError") {
+        reject(
+          `Could not send particle for ${def.functionName}: not connected  (particle id: ${particle.id})`,
         );
+      }
 
-        registerParticleScopeService(
-            peer,
-            particle,
-            errorHandlingService(def, reject),
+      if (stage.stage === "expired") {
+        reject(
+          `Particle expired after ttl of ${particle.ttl}ms for function ${def.functionName} (particle id: ${particle.id})`,
         );
+      }
 
-        peer.internals.initiateParticle(particle, (stage) => {
-            // If function is void, then it's completed when one of the two conditions is met:
-            //  1. The particle is sent to the network (state 'sent')
-            //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
-            if (
-                isReturnTypeVoid(def) &&
-                (stage.stage === "sent" || stage.stage === "localWorkDone")
-            ) {
-                resolve(undefined);
-            }
-
-            if (stage.stage === "sendingError") {
-                reject(
-                    `Could not send particle for ${def.functionName}: not connected  (particle id: ${particle.id})`,
-                );
-            }
-
-            if (stage.stage === "expired") {
-                reject(
-                    `Particle expired after ttl of ${particle.ttl}ms for function ${def.functionName} (particle id: ${particle.id})`,
-                );
-            }
-
-            if (stage.stage === "interpreterError") {
-                reject(
-                    `Script interpretation failed for ${def.functionName}: ${stage.errorMessage}  (particle id: ${particle.id})`,
-                );
-            }
-        });
+      if (stage.stage === "interpreterError") {
+        reject(
+          `Script interpretation failed for ${def.functionName}: ${stage.errorMessage}  (particle id: ${particle.id})`,
+        );
+      }
     });
+  });
 };

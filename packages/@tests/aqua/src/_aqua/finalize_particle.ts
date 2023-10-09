@@ -9,12 +9,12 @@
  *
  */
 import type {
-    IFluenceClient as IFluenceClient$$,
-    CallParams as CallParams$$,
+  IFluenceClient as IFluenceClient$$,
+  CallParams as CallParams$$,
 } from "@fluencelabs/js-client";
 import {
-    v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
+  v5_callFunction as callFunction$$,
+  v5_registerService as registerService$$,
 } from "@fluencelabs/js-client";
 
 // Services
@@ -36,37 +36,37 @@ export const test_script = `
 export function test(config?: { ttl?: number }): Promise<void>;
 
 export function test(
-    peer: IFluenceClient$$,
-    config?: { ttl?: number },
+  peer: IFluenceClient$$,
+  config?: { ttl?: number },
 ): Promise<void>;
 
 export function test(...args: any) {
-    return callFunction$$(
-        args,
-        {
-            functionName: "test",
-            arrow: {
-                tag: "arrow",
-                domain: {
-                    tag: "labeledProduct",
-                    fields: {},
-                },
-                codomain: {
-                    tag: "nil",
-                },
-            },
-            names: {
-                relay: "-relay-",
-                getDataSrv: "getDataSrv",
-                callbackSrv: "callbackSrv",
-                responseSrv: "callbackSrv",
-                responseFnName: "response",
-                errorHandlingSrv: "errorHandlingSrv",
-                errorFnName: "error",
-            },
+  return callFunction$$(
+    args,
+    {
+      functionName: "test",
+      arrow: {
+        tag: "arrow",
+        domain: {
+          tag: "labeledProduct",
+          fields: {},
         },
-        test_script,
-    );
+        codomain: {
+          tag: "nil",
+        },
+      },
+      names: {
+        relay: "-relay-",
+        getDataSrv: "getDataSrv",
+        callbackSrv: "callbackSrv",
+        responseSrv: "callbackSrv",
+        responseFnName: "response",
+        errorHandlingSrv: "errorHandlingSrv",
+        errorFnName: "error",
+      },
+    },
+    test_script,
+  );
 }
 
 /* eslint-enable */

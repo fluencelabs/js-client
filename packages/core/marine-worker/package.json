@@ -1,33 +1,33 @@
 {
-    "type": "module",
-    "name": "@fluencelabs/marine-worker",
-    "version": "0.3.3",
-    "description": "Marine worker",
-    "files": [
-        "dist"
-    ],
-    "main": "./dist/index.js",
-    "unpkg": "./dist/browser/marine-worker.umd.cjs",
-    "types": "./dist/index.d.ts",
-    "scripts": {
-        "build": "tsc && vite build"
-    },
-    "repository": "https://github.com/fluencelabs/fluence-js",
-    "author": "Fluence Labs",
-    "license": "Apache-2.0",
-    "keywords": [],
-    "devDependencies": {
-        "@rollup/plugin-inject": "5.0.3",
-        "@types/node": "20.4.5",
-        "node-stdlib-browser": "1.2.0",
-        "vite": "4.0.4",
-        "vitest": "0.29.7"
-    },
-    "dependencies": {
-        "@fluencelabs/avm": "0.48.0",
-        "@fluencelabs/marine-js": "0.7.2",
-        "observable-fns": "0.6.1",
-        "threads": "1.7.0",
-        "web-worker": "1.2.0"
-    }
+  "type": "module",
+  "name": "@fluencelabs/marine-worker",
+  "version": "0.3.3",
+  "description": "Marine worker",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "unpkg": "./dist/browser/marine-worker.umd.cjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && vite build"
+  },
+  "repository": "https://github.com/fluencelabs/fluence-js",
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "keywords": [],
+  "devDependencies": {
+    "@rollup/plugin-inject": "5.0.3",
+    "@types/node": "20.4.5",
+    "node-stdlib-browser": "1.2.0",
+    "vite": "4.0.4",
+    "vitest": "0.29.7"
+  },
+  "dependencies": {
+    "@fluencelabs/avm": "0.48.0",
+    "@fluencelabs/marine-js": "0.7.2",
+    "observable-fns": "0.6.1",
+    "threads": "1.7.0",
+    "web-worker": "1.2.0"
+  }
 }

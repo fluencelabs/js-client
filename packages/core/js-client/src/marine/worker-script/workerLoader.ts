@@ -21,11 +21,11 @@ import type { WorkerImplementation } from "../../../node_modules/threads/dist/ty
 import { LazyLoader } from "../interfaces.js";
 
 export class WorkerLoader extends LazyLoader<WorkerImplementation> {
-    constructor() {
-        super(() => {
-            return new Worker(
-                "../../../node_modules/@fluencelabs/marine-worker/dist/index.js",
-            );
-        });
-    }
+  constructor() {
+    super(() => {
+      return new Worker(
+        "../../../node_modules/@fluencelabs/marine-worker/dist/index.js",
+      );
+    });
+  }
 }

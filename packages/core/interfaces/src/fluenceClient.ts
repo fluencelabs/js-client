@@ -33,76 +33,76 @@ export type KeyTypes = "RSA" | "Ed25519" | "secp256k1";
  * Options to specify key pair used in Fluence Peer
  */
 export type KeyPairOptions = {
-    type: "Ed25519";
-    source: "random" | Uint8Array;
+  type: "Ed25519";
+  source: "random" | Uint8Array;
 };
 
 /**
  * Configuration used when initiating Fluence Client
  */
 export interface ClientConfig {
+  /**
+   * Specify the KeyPair to be used to identify the Fluence Peer.
+   * Will be generated randomly if not specified
+   */
+  keyPair?: KeyPairOptions;
+
+  /**
+   * Options to configure the connection to the Fluence network
+   */
+  connectionOptions?: {
     /**
-     * Specify the KeyPair to be used to identify the Fluence Peer.
-     * Will be generated randomly if not specified
+     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+     * The options allows to specify the timeout for that message in milliseconds.
+     * If not specified the default timeout will be used
      */
-    keyPair?: KeyPairOptions;
-
-    /**
-     * Options to configure the connection to the Fluence network
-     */
-    connectionOptions?: {
-        /**
-         * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-         * The options allows to specify the timeout for that message in milliseconds.
-         * If not specified the default timeout will be used
-         */
-        skipCheckConnection?: boolean;
-
-        /**
-         * The dialing timeout in milliseconds
-         */
-        dialTimeoutMs?: number;
-
-        /**
-         * The maximum number of inbound streams for the libp2p node.
-         * Default: 1024
-         */
-        maxInboundStreams?: number;
-
-        /**
-         * The maximum number of outbound streams for the libp2p node.
-         * Default: 1024
-         */
-        maxOutboundStreams?: number;
-    };
+    skipCheckConnection?: boolean;
 
     /**
-     * Sets the default TTL for all particles originating from the peer with no TTL specified.
-     * If the originating particle's TTL is defined then that value will be used
-     * If the option is not set default TTL will be 7000
+     * The dialing timeout in milliseconds
      */
-    defaultTtlMs?: number;
+    dialTimeoutMs?: number;
 
     /**
-     * Enables\disabled various debugging features
+     * The maximum number of inbound streams for the libp2p node.
+     * Default: 1024
      */
-    debug?: {
-        /**
-         * If set to true, newly initiated particle ids will be printed to console.
-         * Useful to see what particle id is responsible for aqua function
-         */
-        printParticleId?: boolean;
-    };
+    maxInboundStreams?: number;
+
+    /**
+     * The maximum number of outbound streams for the libp2p node.
+     * Default: 1024
+     */
+    maxOutboundStreams?: number;
+  };
+
+  /**
+   * Sets the default TTL for all particles originating from the peer with no TTL specified.
+   * If the originating particle's TTL is defined then that value will be used
+   * If the option is not set default TTL will be 7000
+   */
+  defaultTtlMs?: number;
+
+  /**
+   * Enables\disabled various debugging features
+   */
+  debug?: {
+    /**
+     * If set to true, newly initiated particle ids will be printed to console.
+     * Useful to see what particle id is responsible for aqua function
+     */
+    printParticleId?: boolean;
+  };
 }
 
 /**
  * Fluence JS Client connection states as string literals
  */
 export const ConnectionStates = [
-    "disconnected",
-    "connecting",
-    "connected",
-    "disconnecting",
+  "disconnected",
+  "connecting",
+  "connected",
+  "disconnecting",
 ] as const;
 
 /**
@@ -111,45 +111,45 @@ export const ConnectionStates = [
 export type ConnectionState = (typeof ConnectionStates)[number];
 
 export interface IFluenceInternalApi {
-    /**
-     * Internal API
-     */
-    internals: unknown;
+  /**
+   * Internal API
+   */
+  internals: unknown;
 }
 
 /**
  * Public API of Fluence JS Client
  */
 export interface IFluenceClient extends IFluenceInternalApi {
-    /**
-     * Connect to the Fluence network
-     */
-    connect: () => Promise<void>;
+  /**
+   * Connect to the Fluence network
+   */
+  connect: () => Promise<void>;
 
-    /**
-     * Disconnect from the Fluence network
-     */
-    disconnect(): Promise<void>;
+  /**
+   * Disconnect from the Fluence network
+   */
+  disconnect(): Promise<void>;
 
-    /**
-     * Handle connection state changes. Immediately returns current connection state
-     */
-    onConnectionStateChange(
-        handler: (state: ConnectionState) => void,
-    ): ConnectionState;
+  /**
+   * Handle connection state changes. Immediately returns current connection state
+   */
+  onConnectionStateChange(
+    handler: (state: ConnectionState) => void,
+  ): ConnectionState;
 
-    /**
-     * Return peer's secret key as byte array.
-     */
-    getPeerSecretKey(): Uint8Array;
+  /**
+   * Return peer's secret key as byte array.
+   */
+  getPeerSecretKey(): Uint8Array;
 
-    /**
-     * Return peer's public key as a base58 string (multihash/CIDv0).
-     */
-    getPeerId(): string;
+  /**
+   * Return peer's public key as a base58 string (multihash/CIDv0).
+   */
+  getPeerId(): string;
 
-    /**
-     * Return relay's public key as a base58 string (multihash/CIDv0).
-     */
-    getRelayPeerId(): string;
+  /**
+   * Return relay's public key as a base58 string (multihash/CIDv0).
+   */
+  getRelayPeerId(): string;
 }

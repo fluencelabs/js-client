@@ -15,16 +15,16 @@
  */
 
 import {
-    ArrayType,
-    ArrowType,
-    LabeledProductType,
-    NilType,
-    OptionType,
-    ScalarType,
-    SimpleTypes,
-    StructType,
-    TopType,
-    UnlabeledProductType,
+  ArrayType,
+  ArrowType,
+  LabeledProductType,
+  NilType,
+  OptionType,
+  ScalarType,
+  SimpleTypes,
+  StructType,
+  TopType,
+  UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 import { Call, Pipe, Objects, Tuples, Unions, Fn } from "hotscript";
 
@@ -32,59 +32,59 @@ import { Call, Pipe, Objects, Tuples, Unions, Fn } from "hotscript";
 // In the future we may remove string type declaration and move to type inference.
 
 type GetTsTypeFromScalar<T extends ScalarType> = [T["name"]] extends [
-    "u8" | "u16" | "u32" | "u64" | "i8" | "i16" | "i32" | "i64" | "f32" | "f64",
+  "u8" | "u16" | "u32" | "u64" | "i8" | "i16" | "i32" | "i64" | "f32" | "f64",
 ]
-    ? number
-    : [T["name"]] extends ["bool"]
-    ? boolean
-    : [T["name"]] extends ["string"]
-    ? string
-    : never;
+  ? number
+  : [T["name"]] extends ["bool"]
+  ? boolean
+  : [T["name"]] extends ["string"]
+  ? string
+  : never;
 
 type MapTuple<T> = {
-    [K in keyof T]: [T[K]] extends [SimpleTypes] ? GetSimpleType<T[K]> : never;
+  [K in keyof T]: [T[K]] extends [SimpleTypes] ? GetSimpleType<T[K]> : never;
 };
 
 type UnpackIfSingle<T> = [T] extends [[infer R]] ? R : T;
 
 type GetSimpleType<T> = [T] extends [NilType]
-    ? null
-    : [T] extends [ArrayType]
-    ? GetSimpleType<T["type"]>[]
-    : [T] extends [StructType]
-    ? { [K in keyof T["fields"]]: GetSimpleType<T["fields"][K]> }
-    : [T] extends [OptionType]
-    ? GetSimpleType<T["type"]> | null
-    : [T] extends [ScalarType]
-    ? GetTsTypeFromScalar<T>
-    : [T] extends [TopType]
-    ? unknown
-    : never;
+  ? null
+  : [T] extends [ArrayType]
+  ? GetSimpleType<T["type"]>[]
+  : [T] extends [StructType]
+  ? { [K in keyof T["fields"]]: GetSimpleType<T["fields"][K]> }
+  : [T] extends [OptionType]
+  ? GetSimpleType<T["type"]> | null
+  : [T] extends [ScalarType]
+  ? GetTsTypeFromScalar<T>
+  : [T] extends [TopType]
+  ? unknown
+  : never;
 
 interface Access<T> extends Fn {
-    return: __GetTsType<Call<Objects.Get<this["arg0"]>, T>>;
+  return: __GetTsType<Call<Objects.Get<this["arg0"]>, T>>;
 }
 
 type __GetTsType<T> = [T] extends [SimpleTypes]
-    ? GetSimpleType<T>
-    : [T] extends [UnlabeledProductType]
-    ? MapTuple<T["items"]>
-    : [T] extends [LabeledProductType]
-    ? { [K in keyof T["fields"]]: __GetTsType<T["fields"][K]> }
-    : [T] extends [ArrowType<infer H>]
-    ? (
-          ...t: [H] extends [UnlabeledProductType<infer K>]
-              ? MapTuple<K>
-              : [H] extends [LabeledProductType<infer _V, infer K>]
-              ? Pipe<K, [Objects.Keys, Unions.ToTuple, Tuples.Map<Access<K>>]>
-              : []
-      ) => [T["codomain"]] extends [UnlabeledProductType]
-          ? UnpackIfSingle<MapTuple<T["codomain"]["items"]>>
-          : undefined
-    : never;
+  ? GetSimpleType<T>
+  : [T] extends [UnlabeledProductType]
+  ? MapTuple<T["items"]>
+  : [T] extends [LabeledProductType]
+  ? { [K in keyof T["fields"]]: __GetTsType<T["fields"][K]> }
+  : [T] extends [ArrowType<infer H>]
+  ? (
+      ...t: [H] extends [UnlabeledProductType<infer K>]
+        ? MapTuple<K>
+        : [H] extends [LabeledProductType<infer _V, infer K>]
+        ? Pipe<K, [Objects.Keys, Unions.ToTuple, Tuples.Map<Access<K>>]>
+        : []
+    ) => [T["codomain"]] extends [UnlabeledProductType]
+      ? UnpackIfSingle<MapTuple<T["codomain"]["items"]>>
+      : undefined
+  : never;
 
 type DeepMutable<T> = {
-    -readonly [K in keyof T]: DeepMutable<T[K]>;
+  -readonly [K in keyof T]: DeepMutable<T[K]>;
 };
 
 export type GetTsType<T> = __GetTsType<DeepMutable<T>>;

@@ -1,29 +1,29 @@
 {
-    "name": "@test/aqua_for_test",
-    "version": "0.1.0",
-    "description": "Shared aqua code for tests",
-    "main": "./dist/index.js",
-    "typings": "./dist/index.d.ts",
-    "engines": {
-        "node": ">=10",
-        "pnpm": ">=3"
-    },
-    "type": "module",
-    "scripts": {
-        "build": "tsc",
-        "compile-aqua": "fluence aqua -i ./_aqua -o ./src/_aqua"
-    },
-    "repository": "https://github.com/fluencelabs/fluence-js",
-    "author": "Fluence Labs",
-    "license": "Apache-2.0",
-    "dependencies": {
-        "base64-js": "1.5.1"
-    },
-    "devDependencies": {
-        "@fluencelabs/aqua-lib": "0.6.0",
-        "@fluencelabs/cli": "0.7.2",
-        "@fluencelabs/js-client": "workspace:^",
-        "@fluencelabs/registry": "0.8.2",
-        "@fluencelabs/trust-graph": "3.1.2"
-    }
+  "name": "@test/aqua_for_test",
+  "version": "0.1.0",
+  "description": "Shared aqua code for tests",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=10",
+    "pnpm": ">=3"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "compile-aqua": "fluence aqua -i ./_aqua -o ./src/_aqua"
+  },
+  "repository": "https://github.com/fluencelabs/fluence-js",
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "base64-js": "1.5.1"
+  },
+  "devDependencies": {
+    "@fluencelabs/aqua-lib": "0.6.0",
+    "@fluencelabs/cli": "0.7.2",
+    "@fluencelabs/js-client": "workspace:^",
+    "@fluencelabs/registry": "0.8.2",
+    "@fluencelabs/trust-graph": "3.1.2"
+  }
 }

@@ -26,137 +26,137 @@ import { Sig } from "../Sig.js";
 // Services
 
 export interface SigDef {
-    get_peer_id: (callParams: CallParams<null>) => string | Promise<string>;
-    sign: (
-        data: number[],
-        callParams: CallParams<"data">,
-    ) =>
-        | { error: string | null; signature: number[] | null; success: boolean }
-        | Promise<{
-              error: string | null;
-              signature: number[] | null;
-              success: boolean;
-          }>;
-    verify: (
-        signature: number[],
-        data: number[],
-        callParams: CallParams<"signature" | "data">,
-    ) => boolean | Promise<boolean>;
+  get_peer_id: (callParams: CallParams<null>) => string | Promise<string>;
+  sign: (
+    data: number[],
+    callParams: CallParams<"data">,
+  ) =>
+    | { error: string | null; signature: number[] | null; success: boolean }
+    | Promise<{
+        error: string | null;
+        signature: number[] | null;
+        success: boolean;
+      }>;
+  verify: (
+    signature: number[],
+    data: number[],
+    callParams: CallParams<"signature" | "data">,
+  ) => boolean | Promise<boolean>;
 }
 
 export function registerSig(
-    peer: FluencePeer,
-    serviceId: string,
-    service: Sig,
+  peer: FluencePeer,
+  serviceId: string,
+  service: Sig,
 ) {
-    registerService({
-        peer,
-        // TODO: fix this after changing registerService signature
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: service as unknown as ServiceImpl,
-        serviceId,
-        def: {
-            defaultServiceId: "sig",
-            functions: {
-                tag: "labeledProduct",
-                fields: {
-                    get_peer_id: {
-                        tag: "arrow",
-                        domain: {
-                            tag: "nil",
-                        },
-                        codomain: {
-                            tag: "unlabeledProduct",
-                            items: [
-                                {
-                                    tag: "scalar",
-                                    name: "string",
-                                },
-                            ],
-                        },
-                    },
-                    sign: {
-                        tag: "arrow",
-                        domain: {
-                            tag: "labeledProduct",
-                            fields: {
-                                data: {
-                                    tag: "array",
-                                    type: {
-                                        tag: "scalar",
-                                        name: "u8",
-                                    },
-                                },
-                            },
-                        },
-                        codomain: {
-                            tag: "unlabeledProduct",
-                            items: [
-                                {
-                                    tag: "struct",
-                                    name: "SignResult",
-                                    fields: {
-                                        error: {
-                                            tag: "option",
-                                            type: {
-                                                tag: "scalar",
-                                                name: "string",
-                                            },
-                                        },
-                                        signature: {
-                                            tag: "option",
-                                            type: {
-                                                tag: "array",
-                                                type: {
-                                                    tag: "scalar",
-                                                    name: "u8",
-                                                },
-                                            },
-                                        },
-                                        success: {
-                                            tag: "scalar",
-                                            name: "bool",
-                                        },
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                    verify: {
-                        tag: "arrow",
-                        domain: {
-                            tag: "labeledProduct",
-                            fields: {
-                                signature: {
-                                    tag: "array",
-                                    type: {
-                                        tag: "scalar",
-                                        name: "u8",
-                                    },
-                                },
-                                data: {
-                                    tag: "array",
-                                    type: {
-                                        tag: "scalar",
-                                        name: "u8",
-                                    },
-                                },
-                            },
-                        },
-                        codomain: {
-                            tag: "unlabeledProduct",
-                            items: [
-                                {
-                                    tag: "scalar",
-                                    name: "bool",
-                                },
-                            ],
-                        },
-                    },
-                },
+  registerService({
+    peer,
+    // TODO: fix this after changing registerService signature
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    service: service as unknown as ServiceImpl,
+    serviceId,
+    def: {
+      defaultServiceId: "sig",
+      functions: {
+        tag: "labeledProduct",
+        fields: {
+          get_peer_id: {
+            tag: "arrow",
+            domain: {
+              tag: "nil",
             },
+            codomain: {
+              tag: "unlabeledProduct",
+              items: [
+                {
+                  tag: "scalar",
+                  name: "string",
+                },
+              ],
+            },
+          },
+          sign: {
+            tag: "arrow",
+            domain: {
+              tag: "labeledProduct",
+              fields: {
+                data: {
+                  tag: "array",
+                  type: {
+                    tag: "scalar",
+                    name: "u8",
+                  },
+                },
+              },
+            },
+            codomain: {
+              tag: "unlabeledProduct",
+              items: [
+                {
+                  tag: "struct",
+                  name: "SignResult",
+                  fields: {
+                    error: {
+                      tag: "option",
+                      type: {
+                        tag: "scalar",
+                        name: "string",
+                      },
+                    },
+                    signature: {
+                      tag: "option",
+                      type: {
+                        tag: "array",
+                        type: {
+                          tag: "scalar",
+                          name: "u8",
+                        },
+                      },
+                    },
+                    success: {
+                      tag: "scalar",
+                      name: "bool",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          verify: {
+            tag: "arrow",
+            domain: {
+              tag: "labeledProduct",
+              fields: {
+                signature: {
+                  tag: "array",
+                  type: {
+                    tag: "scalar",
+                    name: "u8",
+                  },
+                },
+                data: {
+                  tag: "array",
+                  type: {
+                    tag: "scalar",
+                    name: "u8",
+                  },
+                },
+              },
+            },
+            codomain: {
+              tag: "unlabeledProduct",
+              items: [
+                {
+                  tag: "scalar",
+                  name: "bool",
+                },
+              ],
+            },
+          },
         },
-    });
+      },
+    },
+  });
 }
 
 // Functions

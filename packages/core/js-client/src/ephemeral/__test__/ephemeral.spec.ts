@@ -28,27 +28,27 @@ const relay = defaultConfig.peers[0].peerId;
 
 // TODO: race condition here. Needs to be fixed
 describe.skip("Ephemeral networks tests", () => {
-    beforeEach(async () => {
-        en = new EphemeralNetwork(defaultConfig);
-        await en.up();
+  beforeEach(async () => {
+    en = new EphemeralNetwork(defaultConfig);
+    await en.up();
 
-        const kp = await KeyPair.randomEd25519();
-        client = new EphemeralNetworkClient(DEFAULT_CONFIG, kp, en, relay);
-        await client.start();
+    const kp = await KeyPair.randomEd25519();
+    client = new EphemeralNetworkClient(DEFAULT_CONFIG, kp, en, relay);
+    await client.start();
+  });
+
+  afterEach(async () => {
+    await client.stop();
+    await en.down();
+  });
+
+  it("smoke test", async function () {
+    // arrange
+    const peers = defaultConfig.peers.map((x) => {
+      return x.peerId;
     });
 
-    afterEach(async () => {
-        await client.stop();
-        await en.down();
-    });
-
-    it("smoke test", async function () {
-        // arrange
-        const peers = defaultConfig.peers.map((x) => {
-            return x.peerId;
-        });
-
-        const script = `
+    const script = `
         (seq
             (call "${relay}" ("op" "noop") [])
             (seq
@@ -73,27 +73,27 @@ describe.skip("Ephemeral networks tests", () => {
         )
         `;
 
-        const particle = await client.internals.createNewParticle(script);
+    const particle = await client.internals.createNewParticle(script);
 
-        const promise = new Promise<string>((resolve) => {
-            client.internals.regHandler.forParticle(
-                particle.id,
-                "test",
-                "test",
-                () => {
-                    resolve("success");
-                    return {
-                        result: "test",
-                        retCode: ResultCodes.success,
-                    };
-                },
-            );
-        });
-
-        // act
-        client.internals.initiateParticle(particle, () => {});
-
-        // assert
-        await expect(promise).resolves.toBe("success");
+    const promise = new Promise<string>((resolve) => {
+      client.internals.regHandler.forParticle(
+        particle.id,
+        "test",
+        "test",
+        () => {
+          resolve("success");
+          return {
+            result: "test",
+            retCode: ResultCodes.success,
+          };
+        },
+      );
     });
+
+    // act
+    client.internals.initiateParticle(particle, () => {});
+
+    // assert
+    await expect(promise).resolves.toBe("success");
+  });
 });

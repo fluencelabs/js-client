@@ -18,16 +18,16 @@ import { JSONValue } from "../commonTypes.js";
 import { IFluenceInternalApi } from "../fluenceClient.js";
 
 import {
-    FnConfig,
-    FunctionCallDef,
-    ServiceDef,
+  FnConfig,
+  FunctionCallDef,
+  ServiceDef,
 } from "./aquaTypeDefinitions.js";
 
 /**
  * Type for callback passed as aqua function argument
  */
 export type ArgCallbackFunction = (
-    ...args: JSONValue[]
+  ...args: JSONValue[]
 ) => JSONValue | Promise<JSONValue>;
 
 /**
@@ -39,62 +39,62 @@ export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
  * Arguments for callAquaFunction function
  */
 export interface CallAquaFunctionArgs {
-    /**
-     * Peer to call the function on
-     */
-    peer: IFluenceInternalApi;
+  /**
+   * Peer to call the function on
+   */
+  peer: IFluenceInternalApi;
 
-    /**
-     * Function definition
-     */
-    def: FunctionCallDef;
+  /**
+   * Function definition
+   */
+  def: FunctionCallDef;
 
-    /**
-     * Air script used by the aqua function
-     */
-    script: string;
+  /**
+   * Air script used by the aqua function
+   */
+  script: string;
 
-    /**
-     * Function configuration
-     */
-    config: FnConfig;
+  /**
+   * Function configuration
+   */
+  config: FnConfig;
 
-    /**
-     * Arguments to pass to the function
-     */
-    args: PassedArgs;
+  /**
+   * Arguments to pass to the function
+   */
+  args: PassedArgs;
 }
 
 /**
  * Call a function from Aqua script
  */
 export type CallAquaFunctionType = (
-    args: CallAquaFunctionArgs,
+  args: CallAquaFunctionArgs,
 ) => Promise<unknown>;
 
 /**
  * Arguments for registerService function
  */
 export interface RegisterServiceArgs {
-    /**
-     * Peer to register the service on
-     */
-    peer: IFluenceInternalApi;
+  /**
+   * Peer to register the service on
+   */
+  peer: IFluenceInternalApi;
 
-    /**
-     * Service definition
-     */
-    def: ServiceDef;
+  /**
+   * Service definition
+   */
+  def: ServiceDef;
 
-    /**
-     * Service id
-     */
-    serviceId: string | undefined;
+  /**
+   * Service id
+   */
+  serviceId: string | undefined;
 
-    /**
-     * Service implementation
-     */
-    service: unknown;
+  /**
+   * Service implementation
+   */
+  service: unknown;
 }
 
 /**

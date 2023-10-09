@@ -29,31 +29,31 @@ import { EphemeralNetwork } from "./network.js";
  * Ephemeral network client is a FluencePeer that connects to a relay peer in an ephemeral network.
  */
 export class EphemeralNetworkClient extends FluencePeer {
-    constructor(
-        config: PeerConfig,
-        keyPair: KeyPair,
-        network: EphemeralNetwork,
-        relay: PeerIdB58,
-    ) {
-        const workerLoader = new WorkerLoader();
+  constructor(
+    config: PeerConfig,
+    keyPair: KeyPair,
+    network: EphemeralNetwork,
+    relay: PeerIdB58,
+  ) {
+    const workerLoader = new WorkerLoader();
 
-        const controlModuleLoader = new WasmLoaderFromNpm(
-            "@fluencelabs/marine-js",
-            "marine-js.wasm",
-        );
+    const controlModuleLoader = new WasmLoaderFromNpm(
+      "@fluencelabs/marine-js",
+      "marine-js.wasm",
+    );
 
-        const avmModuleLoader = new WasmLoaderFromNpm(
-            "@fluencelabs/avm",
-            "avm.wasm",
-        );
+    const avmModuleLoader = new WasmLoaderFromNpm(
+      "@fluencelabs/avm",
+      "avm.wasm",
+    );
 
-        const marine = new MarineBackgroundRunner(
-            workerLoader,
-            controlModuleLoader,
-            avmModuleLoader,
-        );
+    const marine = new MarineBackgroundRunner(
+      workerLoader,
+      controlModuleLoader,
+      avmModuleLoader,
+    );
 
-        const conn = network.getRelayConnection(keyPair.getPeerId(), relay);
-        super(config, keyPair, marine, new JsServiceHost(), conn);
-    }
+    const conn = network.getRelayConnection(keyPair.getPeerId(), relay);
+    super(config, keyPair, marine, new JsServiceHost(), conn);
+  }
 }

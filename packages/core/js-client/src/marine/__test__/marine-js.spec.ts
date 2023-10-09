@@ -26,30 +26,30 @@ let aqua: Record<string, CompiledFnCall>;
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 describe("Marine js tests", () => {
-    beforeAll(async () => {
-        const pathToAquaFiles = path.join(
-            __dirname,
-            "../../../aqua_test/marine-js.aqua",
-        );
+  beforeAll(async () => {
+    const pathToAquaFiles = path.join(
+      __dirname,
+      "../../../aqua_test/marine-js.aqua",
+    );
 
-        const { functions } = await compileAqua(pathToAquaFiles);
-        aqua = functions;
+    const { functions } = await compileAqua(pathToAquaFiles);
+    aqua = functions;
+  });
+
+  it("should call marine service correctly", async () => {
+    await withPeer(async (peer) => {
+      // arrange
+      const wasm = await fs.promises.readFile(
+        path.join(__dirname, "../../../data_for_test/greeting.wasm"),
+      );
+
+      await peer.registerMarineService(wasm, "greeting");
+
+      // act
+      const res = await aqua["call"](peer, { arg: "test" });
+
+      // assert
+      expect(res).toBe("Hi, Hi, Hi, test");
     });
-
-    it("should call marine service correctly", async () => {
-        await withPeer(async (peer) => {
-            // arrange
-            const wasm = await fs.promises.readFile(
-                path.join(__dirname, "../../../data_for_test/greeting.wasm"),
-            );
-
-            await peer.registerMarineService(wasm, "greeting");
-
-            // act
-            const res = await aqua["call"](peer, { arg: "test" });
-
-            // assert
-            expect(res).toBe("Hi, Hi, Hi, test");
-        });
-    });
+  });
 });
