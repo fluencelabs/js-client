@@ -97,7 +97,7 @@ jobs:
               "@fluencelabs/marine-js": "${{ inputs.marine-js-version }}"
             }
 
-      - run: pnpm -r --no-frozen-lockfile i
+      - run: pnpm -r i
       - run: pnpm -r build
       - run: pnpm lint-check
       - run: pnpm -r test
