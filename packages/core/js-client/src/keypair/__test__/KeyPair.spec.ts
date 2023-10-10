@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { decode, encode } from "bs58";
+import bs58 from "bs58";
 import { fromUint8Array, toUint8Array } from 'js-base64';
 import { it, describe, expect } from "vitest";
 import { fromBase64Sk, KeyPair } from '../index.js';
@@ -51,7 +51,7 @@ describe("KeyPair tests", () => {
   it("create keypair from ed25519 private key", async function () {
     // arrange
     const rustSK = "jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH";
-    const sk = decode(rustSK);
+    const sk = bs58.decode(rustSK);
 
     // act
     const keyPair = await KeyPair.fromEd25519SK(sk);
@@ -113,7 +113,7 @@ describe("KeyPair tests", () => {
 
   it.only("validates particle signature checks", async function () {
     const keyPair = await fromBase64Sk("7h48PQ/f1rS9TxacmgODxbD42Il9B3KC117jvOPppPE=");
-    expect(encode(keyPair.getLibp2pPeerId().toBytes())).toBe("12D3KooWANqfCDrV79MZdMnMqTvDdqSAPSxdgFY1L6DCq2DVGB4D");
+    expect(bs58.encode(keyPair.getLibp2pPeerId().toBytes())).toBe("12D3KooWANqfCDrV79MZdMnMqTvDdqSAPSxdgFY1L6DCq2DVGB4D");
     const message = toUint8Array(btoa("message"));
     const signature = await keyPair.signBytes(message);
 
