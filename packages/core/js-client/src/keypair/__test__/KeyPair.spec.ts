@@ -121,12 +121,15 @@ describe("KeyPair tests", () => {
     expect(verified).toBe(true);
     expect(fromUint8Array(signature)).toBe("sBW7H6/1fwAwF86ldwVm9BDu0YH3w30oFQjTWX0Tiu9yTVZHmxkV2OX4GL5jn0Iz0CrasGcOfozzkZwtJBPMBg==");
 
-    const particle = await Particle.createNew("\n    (xor\n        (seq\n            (call %init_peer_id% (\"load\" \"relay\") [] init_relay)\n            (seq\n                (call init_relay (\"op\" \"identity\") [\"hello world!\"] result)\n                (call %init_peer_id% (\"callback\" \"callback\") [result])\n            )\n        )\n        (seq\n            (call init_relay (\"op\" \"identity\") [])\n            (call %init_peer_id% (\"callback\" \"error\") [%last_error%])\n        )\n    )", keyPair.getPeerId(), 7000, keyPair, "2883f959-e9e7-4843-8c37-205d393ca372", 1696934545662);
+    const particle = await Particle.createNew("abc", keyPair.getPeerId(), 7000, keyPair, "2883f959-e9e7-4843-8c37-205d393ca372", 1696934545662);
 
-    const isParticleVerified = await KeyPair.verifyWithPublicKey(keyPair.getPublicKey(), buildParticleMessage(particle), particle.signature);
+    const particle_bytes = buildParticleMessage(particle);
+    expect(fromUint8Array(particle_bytes)).toBe("Mjg4M2Y5NTktZTllNy00ODQzLThjMzctMjA1ZDM5M2NhMzcy/kguGYsBAABYGwAAYWJj");
+
+    const isParticleVerified = await KeyPair.verifyWithPublicKey(keyPair.getPublicKey(), particle_bytes, particle.signature);
 
     expect(isParticleVerified).toBe(true);
 
-    expect(fromUint8Array(particle.signature)).toBe("gp1iz4EBdrBZIwQWGn3y8DIKtkC37O29oPvz5/+e+qBHY2E75XVc2U/toBEs2+oVuMrJJBuBZ9cOsr+eA+fIBQ==");
+    expect(fromUint8Array(particle.signature)).toBe("KceXDnOfqe0dOnAxiDsyWBIvUq6WHoT0ge+VMHXOZsjZvCNH7/10oufdlYfcPomfv28On6E87ZhDcHGBZcb7Bw==");
   });
 });
