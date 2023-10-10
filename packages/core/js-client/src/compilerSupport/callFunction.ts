@@ -66,6 +66,7 @@ export const callAquaFunction = async ({
   peer,
   args,
 }: CallAquaFunctionArgs) => {
+  // TODO: this function should be rewritten. We can remove asserts if we wont check definition there
   log.trace("calling aqua function %j", { def, script, config, args });
   const argumentTypes = getArgumentTypes(def);
 
@@ -78,7 +79,7 @@ export const callAquaFunction = async ({
 
       if (type.tag === "arrow") {
         // TODO: Add validation here
-        assert(typeof argVal === "function");
+        assert(typeof argVal !== "function", "Should not be possible, bad types");
 
         service = userHandlerService(
           def.names.callbackSrv,
@@ -87,7 +88,7 @@ export const callAquaFunction = async ({
         );
       } else {
         // TODO: Add validation here
-        assert(typeof argVal !== "function");
+        assert(typeof argVal !== "function", "Should not be possible, bad types");
 
         service = injectValueService(def.names.getDataSrv, name, type, argVal);
       }

@@ -180,9 +180,7 @@ const extractCallParams = (
       });
     })
     .with({ tag: "labeledProduct" }, (x) => {
-      return Object.keys(x.fields).map((label) => {
-        return label;
-      });
+      return Object.keys(x.fields);
     })
     .exhaustive();
 

@@ -33,7 +33,7 @@ interface RegisterServiceArgs {
 export const registerService = ({
   peer,
   def,
-  serviceId,
+  serviceId = def.defaultServiceId,
   service,
 }: RegisterServiceArgs) => {
   // TODO: Need to refactor this. We can compute function types from service implementation, making func more type safe
@@ -47,6 +47,10 @@ export const registerService = ({
     return !(f in service);
   });
 
+  if (serviceId == null) {
+    throw new Error("Service ID must be specified");
+  }
+
   if (incorrectServiceDefinitions.length > 0) {
     throw new Error(
       `Error registering service ${serviceId}: missing functions: ` +
@@ -56,14 +60,6 @@ export const registerService = ({
           })
           .join(", "),
     );
-  }
-
-  if (serviceId == null) {
-    serviceId = def.defaultServiceId;
-  }
-
-  if (serviceId == null) {
-    throw new Error("Service ID must be specified");
   }
 
   const singleFunctions =

@@ -44,7 +44,7 @@ export const aqua2ts = (value: JSONValue, type: NonArrowType): JSONValue => {
       return null;
     })
     .with({ tag: "option" }, (opt) => {
-      assert(Array.isArray(value));
+      assert(Array.isArray(value), "Should not be possible, bad types");
 
       if (value.length === 0) {
         return null;
@@ -56,7 +56,7 @@ export const aqua2ts = (value: JSONValue, type: NonArrowType): JSONValue => {
       return value;
     })
     .with({ tag: "array" }, (arr) => {
-      assert(Array.isArray(value));
+      assert(Array.isArray(value), "Should not be possible, bad types");
       return value.map((y) => {
         return aqua2ts(y, arr.type);
       });
@@ -146,7 +146,7 @@ export const ts2aqua = (value: JSONValue, type: NonArrowType): JSONValue => {
       return value;
     })
     .with({ tag: "array" }, (arr) => {
-      assert(Array.isArray(value));
+      assert(Array.isArray(value), "Should not be possible, bad types");
       return value.map((y) => {
         return ts2aqua(y, arr.type);
       });
