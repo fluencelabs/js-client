@@ -186,6 +186,7 @@ export class RelayConnection implements IConnection {
                 return;
             }
             
+            // TODO: uncomment this after nox rolls out signature verification
             // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, buildParticleMessage(particle), particle.signature);
             const isVerified = true;
             if (isVerified) {
