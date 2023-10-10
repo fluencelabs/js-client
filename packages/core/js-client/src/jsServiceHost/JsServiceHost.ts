@@ -58,22 +58,7 @@ export class JsServiceHost implements IJsServiceHost {
     particleId: string,
   ): GenericCallServiceHandler | null {
     const key = serviceFnKey(serviceId, fnName);
-    const psh = this.particleScopeHandlers.get(particleId);
-    let handler: GenericCallServiceHandler | undefined = undefined;
-
-    // we should prioritize handler for this particle if there is one
-    // if particle-scoped handler exist for this particle try getting handler there
-    if (psh !== undefined) {
-      handler = psh.get(key);
-    }
-
-    // then try to find a common handler for all particles with this service-fn key
-    // if there is no particle-specific handler, get one from common map
-    if (handler === undefined) {
-      handler = this.commonHandlers.get(key);
-    }
-
-    return handler ?? null;
+    return this.particleScopeHandlers.get(particleId)?.get(key) ?? this.commonHandlers.get(key) ?? null;
   }
 
   /**

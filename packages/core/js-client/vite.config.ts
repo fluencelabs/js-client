@@ -18,11 +18,12 @@ import inject from "@rollup/plugin-inject";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { createRequire } from "module";
 import { readFileSync } from "fs";
+import { UserConfig } from "vite";
 
 const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
-export default {
+const config: UserConfig = {
   build: {
     target: "modules",
     minify: "esbuild",
@@ -58,3 +59,5 @@ export default {
     __PACKAGE_JSON_CONTENT__: readFileSync("./package.json", "utf-8"),
   },
 };
+
+export default config;
