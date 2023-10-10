@@ -17,8 +17,6 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@fluencelabs/aqua": "0.9.1-374",
-    "@fluencelabs/aqua-lib": "0.6.0",
     "@total-typescript/ts-reset": "0.5.1",
     "@tsconfig/strictest": "2.0.2",
     "@types/node": "18.13.0",
