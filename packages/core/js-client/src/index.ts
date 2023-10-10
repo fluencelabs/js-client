@@ -39,27 +39,27 @@ import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 const isNode =
   typeof process !== "undefined" && process.release.name === "node";
 
-const fetchWorkerCode = () => {
-  return fetchResource(
+const fetchWorkerCode = async () => {
+  const resource = await fetchResource(
     "@fluencelabs/marine-worker",
     "/dist/browser/marine-worker.umd.cjs",
-  ).then((res) => {
-    return res.text();
-  });
-};
-
-const fetchMarineJsWasm = () => {
-  return fetchResource("@fluencelabs/marine-js", "/dist/marine-js.wasm").then(
-    (res) => {
-      return res.arrayBuffer();
-    },
   );
+
+  return resource.text();
 };
 
-const fetchAvmWasm = () => {
-  return fetchResource("@fluencelabs/avm", "/dist/avm.wasm").then((res) => {
-    return res.arrayBuffer();
-  });
+const fetchMarineJsWasm = async () => {
+  const resource = await fetchResource(
+    "@fluencelabs/marine-js",
+    "/dist/marine-js.wasm",
+  );
+
+  return resource.arrayBuffer();
+};
+
+const fetchAvmWasm = async () => {
+  const resource = await fetchResource("@fluencelabs/avm", "/dist/avm.wasm");
+  return resource.arrayBuffer();
 };
 
 const createClient = async (
