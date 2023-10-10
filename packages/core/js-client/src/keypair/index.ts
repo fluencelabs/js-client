@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Fluence Labs Limited
+/**
+ * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,92 +14,105 @@
  * limitations under the License.
  */
 
-import type { PeerId } from '@libp2p/interface/peer-id';
-import { generateKeyPairFromSeed, generateKeyPair, unmarshalPublicKey } from '@libp2p/crypto/keys';
-import { createFromPrivKey, createFromPubKey } from '@libp2p/peer-id-factory';
-import type { PrivateKey, PublicKey } from '@libp2p/interface/keys';
-import { toUint8Array } from 'js-base64';
-import * as bs58 from 'bs58';
-import { KeyPairOptions } from '@fluencelabs/interfaces';
-
-// @ts-ignore
-const { decode } = bs58.default;
+import { KeyPairOptions } from "@fluencelabs/interfaces";
+import {
+  generateKeyPairFromSeed,
+  generateKeyPair,
+  unmarshalPublicKey,
+} from "@libp2p/crypto/keys";
+import type { PrivateKey, PublicKey } from "@libp2p/interface/keys";
+import type { PeerId } from "@libp2p/interface/peer-id";
+import { createFromPrivKey } from "@libp2p/peer-id-factory";
+import { decode } from "bs58";
+import { toUint8Array } from "js-base64";
 
 export class KeyPair {
-    /**
-     * Key pair in libp2p format. Used for backward compatibility with the current FluencePeer implementation
-     */
-    getLibp2pPeerId() {
-        return this.libp2pPeerId;
-    }
+  private publicKey: PublicKey;
 
-    constructor(
-        private privateKey: PrivateKey | undefined,
-        private publicKey: PublicKey,
-        private libp2pPeerId: PeerId
-    ) {}
+  private constructor(
+    private privateKey: PrivateKey,
+    private libp2pPeerId: PeerId,
+  ) {
+    this.publicKey = privateKey.public;
+  }
 
-    /**
-     * Generates new KeyPair from ed25519 private key represented as a 32 byte array
-     * @param seed - Any sequence of 32 bytes
-     * @returns - Promise with the created KeyPair
-     */
-    static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
-        const key = await generateKeyPairFromSeed('Ed25519', seed, 256);
-        const lib2p2Pid = await createFromPrivKey(key);
-        return new KeyPair(key, key.public, lib2p2Pid);
-    }
+  /**
+   * Key pair in libp2p format. Used for backward compatibility with the current FluencePeer implementation
+   */
+  getLibp2pPeerId() {
+    return this.libp2pPeerId;
+  }
 
-    /**
-     * Generates new KeyPair with a random secret key
-     * @returns - Promise with the created KeyPair
-     */
-    static async randomEd25519(): Promise<KeyPair> {
-        const key = await generateKeyPair('Ed25519');
-        const lib2p2Pid = await createFromPrivKey(key);
-        return new KeyPair(key, key.public, lib2p2Pid);
-    }
+  /**
+   * Return public key inferred from private key
+   */
+  getPublicKey() {
+    return this.publicKey.bytes;
+  }
 
-    getPeerId(): string {
-        return this.libp2pPeerId.toString();
-    }
+  /**
+   * Generates new KeyPair from ed25519 private key represented as a 32 byte array
+   * @param seed - Any sequence of 32 bytes
+   * @returns - Promise with the created KeyPair
+   */
+  static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
+    const key = await generateKeyPairFromSeed("Ed25519", seed, 256);
+    const lib2p2Pid = await createFromPrivKey(key);
+    return new KeyPair(key, lib2p2Pid);
+  }
 
-    /**
-     * @returns 32 byte private key
-     */
-    toEd25519PrivateKey(): Uint8Array {
-        if (this.privateKey === undefined) {
-            throw new Error('Private key not supplied');
-        }
-        return this.privateKey.marshal().subarray(0, 32);
-    }
+  /**
+   * Generates new KeyPair with a random secret key
+   * @returns - Promise with the created KeyPair
+   */
+  static async randomEd25519(): Promise<KeyPair> {
+    const key = await generateKeyPair("Ed25519");
+    const lib2p2Pid = await createFromPrivKey(key);
+    return new KeyPair(key, lib2p2Pid);
+  }
 
-    signBytes(data: Uint8Array): Promise<Uint8Array> {
-        if (this.privateKey === undefined) {
-            throw new Error('Private key not supplied');
-        }
-        return this.privateKey.sign(data);
-    }
+  static verifyWithPublicKey(
+    publicKey: Uint8Array,
+    message: Uint8Array,
+    signature: Uint8Array,
+  ) {
+    return unmarshalPublicKey(publicKey).verify(message, signature);
+  }
 
-    verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
-        return this.publicKey.verify(data, signature);
-    }
+  getPeerId(): string {
+    return this.libp2pPeerId.toString();
+  }
+
+  /**
+   * @returns 32 byte private key
+   */
+  toEd25519PrivateKey(): Uint8Array {
+    return this.privateKey.marshal().subarray(0, 32);
+  }
+
+  signBytes(data: Uint8Array): Promise<Uint8Array> {
+    return this.privateKey.sign(data);
+  }
+
+  verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
+    return this.publicKey.verify(data, signature);
+  }
 }
 
 export const fromBase64Sk = (sk: string): Promise<KeyPair> => {
-    const skArr = toUint8Array(sk);
-    return KeyPair.fromEd25519SK(skArr);
+  const skArr = toUint8Array(sk);
+  return KeyPair.fromEd25519SK(skArr);
 };
 
 export const fromBase58Sk = (sk: string): Promise<KeyPair> => {
-    const skArr = decode(sk);
-    return KeyPair.fromEd25519SK(skArr);
+  const skArr = decode(sk);
+  return KeyPair.fromEd25519SK(skArr);
 };
 
 export const fromOpts = (opts: KeyPairOptions): Promise<KeyPair> => {
-    if (opts.source === 'random') {
-        return KeyPair.randomEd25519();
-    }
+  if (opts.source === "random") {
+    return KeyPair.randomEd25519();
+  }
 
-    return KeyPair.fromEd25519SK(opts.source);
+  return KeyPair.fromEd25519SK(opts.source);
 };
