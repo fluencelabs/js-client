@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.7...js-client-v0.2.0) (2023-10-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Particle signatures [fixes DXJ-466] ([#353](https://github.com/fluencelabs/js-client/issues/353))
+
+### Features
+
+* **js-client:** Particle signatures [fixes DXJ-466] ([#353](https://github.com/fluencelabs/js-client/issues/353)) ([c0b73fe](https://github.com/fluencelabs/js-client/commit/c0b73fec4a32172dfee58ef762dee07c42a9b957))
+
+
+### Bug Fixes
+
+* **chore:** Additional test for particle signature ([#356](https://github.com/fluencelabs/js-client/issues/356)) ([230f47d](https://github.com/fluencelabs/js-client/commit/230f47d27eba7c4b48a076a89dde1b8042fa2723))
+
 ## [0.1.7](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.6...js-client-v0.1.7) (2023-09-22)
 
 
