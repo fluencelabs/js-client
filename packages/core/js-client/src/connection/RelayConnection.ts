@@ -34,7 +34,7 @@ import { Subject } from 'rxjs';
 import { throwIfHasNoPeerId } from '../util/libp2pUtils.js';
 import { IConnection } from './interfaces.js';
 import { IParticle } from '../particle/interfaces.js';
-import { Particle, serializeToString, verifySignature } from '../particle/Particle.js';
+import { buildParticleMessage, Particle, serializeToString, verifySignature } from '../particle/Particle.js';
 import { identifyService } from 'libp2p/identify';
 import { pingService } from 'libp2p/ping';
 import { unmarshalPublicKey } from '@libp2p/crypto/keys';
@@ -186,7 +186,9 @@ export class RelayConnection implements IConnection {
                 return;
             }
             
-            const isVerified = await verifySignature(particle, initPeerId.publicKey);
+            // TODO: uncomment this after nox rolls out signature verification
+            // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, buildParticleMessage(particle), particle.signature);
+            const isVerified = true;
             if (isVerified) {
                 this.particleSource.next(particle);
             } else {

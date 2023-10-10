@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { atob, fromUint8Array, toUint8Array } from 'js-base64';
-import { CallResultsArray } from '@fluencelabs/avm';
-import { v4 as uuidv4 } from 'uuid';
-import { Buffer } from 'buffer';
-import { IParticle } from './interfaces.js';
-import { concat } from 'uint8arrays/concat';
-import { numberToLittleEndianBytes } from '../util/bytes.js';
-import { KeyPair } from '../keypair/index.js';
-import { unmarshalPublicKey } from '@libp2p/crypto/keys';
+import { CallResultsArray } from "@fluencelabs/avm";
+import { fromUint8Array, toUint8Array } from "js-base64";
+import { concat } from "uint8arrays/concat";
+import { v4 as uuidv4 } from "uuid";
+
+import { KeyPair } from "../keypair/index.js";
+import { numberToLittleEndianBytes } from "../util/bytes.js";
+
+import { IParticle } from "./interfaces.js";
 
 export class Particle implements IParticle {
     constructor(
@@ -34,14 +34,31 @@ export class Particle implements IParticle {
         public readonly initPeerId: string,
         public readonly signature: Uint8Array
     ) {}
-
-    static async createNew(script: string, initPeerId: string, ttl: number, keyPair: KeyPair): Promise<Particle> {
-        const id = uuidv4();
-        const timestamp = Date.now();
-        const message = buildParticleMessage({ id, timestamp, ttl, script });
-        const signature = await keyPair.signBytes(message);
-        return new Particle(id, Date.now(), script, Buffer.from([]), ttl, initPeerId, signature);
-    }
+    
+  static async createNew(
+    script: string,
+    initPeerId: string,
+    ttl: number,
+    keyPair: KeyPair,
+    _id?: string,
+    _timestamp?: number,
+    _data?: Uint8Array,
+  ): Promise<Particle> {
+    const id = _id ?? uuidv4();
+    const timestamp = _timestamp ?? Date.now();
+    const data = _data ?? new Uint8Array([]);
+    const message = buildParticleMessage({ id, timestamp, ttl, script });
+    const signature = await keyPair.signBytes(message);
+    return new Particle(
+      id,
+      timestamp,
+      script,
+      data,
+      ttl,
+      initPeerId,
+      signature,
+    );
+  }
 
     static fromString(str: string): Particle {
         const json = JSON.parse(str);
@@ -64,27 +81,32 @@ const en = new TextEncoder();
 /**
  * Builds particle message for signing
  */
-export const buildParticleMessage = ({ id, timestamp, ttl, script }: Omit<IParticle, 'initPeerId' | 'signature' | 'data'>): Uint8Array => {
-    return concat([
-        en.encode(id),
-        numberToLittleEndianBytes(timestamp, 'u64'),
-        numberToLittleEndianBytes(ttl, 'u32'),
-        en.encode(script),
-    ]);
-}
+export const buildParticleMessage = ({
+  id,
+  timestamp,
+  ttl,
+  script,
+}: Omit<IParticle, "initPeerId" | "signature" | "data">): Uint8Array => {
+  return concat([
+    en.encode(id),
+    numberToLittleEndianBytes(timestamp, "u64"),
+    numberToLittleEndianBytes(ttl, "u32"),
+    en.encode(script),
+  ]);
+};
 
 /**
  * Returns actual ttl of a particle, i.e. ttl - time passed since particle creation
  */
 export const getActualTTL = (particle: IParticle): number => {
-    return particle.timestamp + particle.ttl - Date.now();
+  return particle.timestamp + particle.ttl - Date.now();
 };
 
 /**
  * Returns true if particle has expired
  */
 export const hasExpired = (particle: IParticle): boolean => {
-    return getActualTTL(particle) <= 0;
+  return getActualTTL(particle) <= 0;
 };
 
 /**
@@ -100,59 +122,65 @@ export const verifySignature = async (particle: IParticle, publicKey: Uint8Array
 /**
  * Creates a particle clone with new data
  */
-export const cloneWithNewData = (particle: IParticle, newData: Uint8Array): IParticle => {
-    return new Particle(particle.id, particle.timestamp, particle.script, newData, particle.ttl, particle.initPeerId, particle.signature);
-};
-
-/**
- * Creates a deep copy of a particle
- */
-export const fullClone = (particle: IParticle): IParticle => {
-    return JSON.parse(JSON.stringify(particle));
+export const cloneWithNewData = (
+  particle: IParticle,
+  newData: Uint8Array,
+): IParticle => {
+  return new Particle(
+    particle.id,
+    particle.timestamp,
+    particle.script,
+    newData,
+    particle.ttl,
+    particle.initPeerId,
+    particle.signature,
+  );
 };
 
 /**
  * Serializes particle into string suitable for sending through network
  */
 export const serializeToString = (particle: IParticle): string => {
-    return JSON.stringify({
-        action: 'Particle',
-        id: particle.id,
-        init_peer_id: particle.initPeerId,
-        timestamp: particle.timestamp,
-        ttl: particle.ttl,
-        script: particle.script,
-        signature: Array.from(particle.signature),
-        data: particle.data && fromUint8Array(particle.data),
-    });
+  return JSON.stringify({
+    action: "Particle",
+    id: particle.id,
+    init_peer_id: particle.initPeerId,
+    timestamp: particle.timestamp,
+    ttl: particle.ttl,
+    script: particle.script,
+    signature: Array.from(particle.signature),
+    data: fromUint8Array(particle.data),
+  });
 };
 
 /**
  * When particle is executed, it goes through different stages. The type describes all possible stages and their parameters
  */
 export type ParticleExecutionStage =
-    | { stage: 'received' }
-    | { stage: 'interpreted' }
-    | { stage: 'interpreterError'; errorMessage: string }
-    | { stage: 'localWorkDone' }
-    | { stage: 'sent' }
-    | { stage: 'sendingError'; errorMessage: string }
-    | { stage: 'expired' };
+  | { stage: "received" }
+  | { stage: "interpreted" }
+  | { stage: "interpreterError"; errorMessage: string }
+  | { stage: "localWorkDone" }
+  | { stage: "sent" }
+  | { stage: "sendingError"; errorMessage: string }
+  | { stage: "expired" };
 
 /**
  * Particle queue item is a wrapper around particle, which contains additional information about particle execution
  */
 export interface ParticleQueueItem {
-    particle: IParticle;
-    callResults: CallResultsArray;
-    onStageChange: (state: ParticleExecutionStage) => void;
+  particle: IParticle;
+  callResults: CallResultsArray;
+  onStageChange: (state: ParticleExecutionStage) => void;
 }
 
 /**
  * Helper function to handle particle at expired stage
  */
-export const handleTimeout = (fn: () => void) => (stage: ParticleExecutionStage) => {
-    if (stage.stage === 'expired') {
-        fn();
-    }
-};
+export const handleTimeout = (fn: () => void) => {
+  return (stage: ParticleExecutionStage) => {
+      if (stage.stage === "expired") {
+          fn();
+      }
+  }
+}
