@@ -111,7 +111,7 @@ describe("KeyPair tests", () => {
     expect(res).toBe(true);
   });
 
-  it.only("validates particle signature checks", async function () {
+  it("validates particle signature checks", async function () {
     const keyPair = await fromBase64Sk("7h48PQ/f1rS9TxacmgODxbD42Il9B3KC117jvOPppPE=");
     expect(bs58.encode(keyPair.getLibp2pPeerId().toBytes())).toBe("12D3KooWANqfCDrV79MZdMnMqTvDdqSAPSxdgFY1L6DCq2DVGB4D");
     const message = toUint8Array(btoa("message"));
