@@ -23,7 +23,7 @@ import {
 import type { PrivateKey, PublicKey } from "@libp2p/interface/keys";
 import type { PeerId } from "@libp2p/interface/peer-id";
 import { createFromPrivKey } from "@libp2p/peer-id-factory";
-import { decode } from "bs58";
+import bs58 from "bs58";
 import { toUint8Array } from "js-base64";
 
 export class KeyPair {
@@ -105,7 +105,7 @@ export const fromBase64Sk = (sk: string): Promise<KeyPair> => {
 };
 
 export const fromBase58Sk = (sk: string): Promise<KeyPair> => {
-  const skArr = decode(sk);
+  const skArr = bs58.decode(sk);
   return KeyPair.fromEd25519SK(skArr);
 };
 
