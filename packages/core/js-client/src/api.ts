@@ -52,8 +52,8 @@ export const v5_callFunction = async (
     args,
     def,
     script,
-    config: config,
-    peer: peer,
+    config,
+    peer,
   });
 };
 
@@ -190,7 +190,7 @@ const extractServiceArgs = (
   }
 
   return {
-    peer: peer,
-    serviceId: serviceId,
+    peer,
+    serviceId,
   };
 };
