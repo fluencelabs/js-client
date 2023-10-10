@@ -15,7 +15,6 @@
  */
 
 import { Worker } from "../../../node_modules/threads/dist/index.js";
-// eslint-disable-next-line import/order
 import type { WorkerImplementation } from "../../../node_modules/threads/dist/types/master.js";
 
 import { LazyLoader } from "../interfaces.js";
