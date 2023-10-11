@@ -17,5 +17,5 @@
 import "@fluencelabs/js-client";
 import { runTest } from "@test/aqua_for_test";
 
-await runTest()
+await runTest();
 console.log("Smoke tests succeed!");

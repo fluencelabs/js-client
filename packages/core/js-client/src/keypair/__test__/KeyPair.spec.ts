@@ -15,11 +15,11 @@
  */
 
 import bs58 from "bs58";
-import { fromUint8Array, toUint8Array } from 'js-base64';
+import { fromUint8Array, toUint8Array } from "js-base64";
 import { it, describe, expect } from "vitest";
-import { fromBase64Sk, KeyPair } from '../index.js';
 
-import { Particle, serializeToString, buildParticleMessage } from '../../particle/Particle.js';
+import { Particle, buildParticleMessage } from "../../particle/Particle.js";
+import { fromBase64Sk, KeyPair } from "../index.js";
 
 const key = "+cmeYlZKj+MfSa9dpHV+BmLPm6wq4inGlsPlQ1GvtPk=";
 const keyBytes = toUint8Array(key);
@@ -113,24 +113,49 @@ describe("KeyPair tests", () => {
   });
 
   it("validates particle signature checks", async function () {
-    const keyPair = await fromBase64Sk("7h48PQ/f1rS9TxacmgODxbD42Il9B3KC117jvOPppPE=");
-    expect(bs58.encode(keyPair.getLibp2pPeerId().toBytes())).toBe("12D3KooWANqfCDrV79MZdMnMqTvDdqSAPSxdgFY1L6DCq2DVGB4D");
+    const keyPair = await fromBase64Sk(
+      "7h48PQ/f1rS9TxacmgODxbD42Il9B3KC117jvOPppPE=",
+    );
+
+    expect(bs58.encode(keyPair.getLibp2pPeerId().toBytes())).toBe(
+      "12D3KooWANqfCDrV79MZdMnMqTvDdqSAPSxdgFY1L6DCq2DVGB4D",
+    );
+
     const message = toUint8Array(btoa("message"));
     const signature = await keyPair.signBytes(message);
 
     const verified = await keyPair.verify(message, signature);
     expect(verified).toBe(true);
-    expect(fromUint8Array(signature)).toBe("sBW7H6/1fwAwF86ldwVm9BDu0YH3w30oFQjTWX0Tiu9yTVZHmxkV2OX4GL5jn0Iz0CrasGcOfozzkZwtJBPMBg==");
 
-    const particle = await Particle.createNew("abc", keyPair.getPeerId(), 7000, keyPair, "2883f959-e9e7-4843-8c37-205d393ca372", 1696934545662);
+    expect(fromUint8Array(signature)).toBe(
+      "sBW7H6/1fwAwF86ldwVm9BDu0YH3w30oFQjTWX0Tiu9yTVZHmxkV2OX4GL5jn0Iz0CrasGcOfozzkZwtJBPMBg==",
+    );
+
+    const particle = await Particle.createNew(
+      "abc",
+      keyPair.getPeerId(),
+      7000,
+      keyPair,
+      "2883f959-e9e7-4843-8c37-205d393ca372",
+      1696934545662,
+    );
 
     const particle_bytes = buildParticleMessage(particle);
-    expect(fromUint8Array(particle_bytes)).toBe("Mjg4M2Y5NTktZTllNy00ODQzLThjMzctMjA1ZDM5M2NhMzcy/kguGYsBAABYGwAAYWJj");
 
-    const isParticleVerified = await KeyPair.verifyWithPublicKey(keyPair.getPublicKey(), particle_bytes, particle.signature);
+    expect(fromUint8Array(particle_bytes)).toBe(
+      "Mjg4M2Y5NTktZTllNy00ODQzLThjMzctMjA1ZDM5M2NhMzcy/kguGYsBAABYGwAAYWJj",
+    );
+
+    const isParticleVerified = await KeyPair.verifyWithPublicKey(
+      keyPair.getPublicKey(),
+      particle_bytes,
+      particle.signature,
+    );
 
     expect(isParticleVerified).toBe(true);
 
-    expect(fromUint8Array(particle.signature)).toBe("KceXDnOfqe0dOnAxiDsyWBIvUq6WHoT0ge+VMHXOZsjZvCNH7/10oufdlYfcPomfv28On6E87ZhDcHGBZcb7Bw==");
+    expect(fromUint8Array(particle.signature)).toBe(
+      "KceXDnOfqe0dOnAxiDsyWBIvUq6WHoT0ge+VMHXOZsjZvCNH7/10oufdlYfcPomfv28On6E87ZhDcHGBZcb7Bw==",
+    );
   });
 });

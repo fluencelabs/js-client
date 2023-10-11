@@ -36,15 +36,15 @@ const particleSchema = z.object({
 });
 
 export class Particle implements IParticle {
-    constructor(
-        public readonly id: string,
-        public readonly timestamp: number,
-        public readonly script: string,
-        public readonly data: Uint8Array,
-        public readonly ttl: number,
-        public readonly initPeerId: string,
-        public readonly signature: Uint8Array
-    ) {}
+  constructor(
+    readonly id: string,
+    readonly timestamp: number,
+    readonly script: string,
+    readonly data: Uint8Array,
+    readonly ttl: number,
+    readonly initPeerId: string,
+    readonly signature: Uint8Array,
+  ) {}
 
   static async createNew(
     script: string,

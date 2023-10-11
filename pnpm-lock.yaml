@@ -68,7 +68,7 @@ importers:
         version: 0.7.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@nomicfoundation/hardhat-chai-matchers@1.0.6)(@nomicfoundation/hardhat-network-helpers@1.0.8)(@nomiclabs/hardhat-ethers@2.2.3)(@nomiclabs/hardhat-etherscan@3.1.7)(@typechain/ethers-v5@10.2.1)(@typechain/hardhat@6.1.6)(@types/chai@4.3.5)(@types/mocha@9.1.1)(@types/node@20.7.0)(chai@4.3.7)(hardhat-gas-reporter@1.0.9)(hardhat@2.15.0)(solidity-coverage@0.7.22)(ts-node@10.9.1)(typechain@8.2.0)(typescript@5.1.6)
       '@fluencelabs/js-client':
         specifier: workspace:^
-        version: link:../../core/js-client/dist
+        version: link:../../core/js-client
       '@fluencelabs/registry':
         specifier: 0.8.2
         version: 0.8.2
@@ -80,7 +80,7 @@ importers:
     dependencies:
       '@fluencelabs/js-client':
         specifier: workspace:*
-        version: link:../../../core/js-client/dist
+        version: link:../../../core/js-client
       '@test/aqua_for_test':
         specifier: workspace:*
         version: link:../../aqua
@@ -89,7 +89,7 @@ importers:
     dependencies:
       '@fluencelabs/js-client':
         specifier: workspace:*
-        version: link:../../../core/js-client/dist
+        version: link:../../../core/js-client
       '@test/test-utils':
         specifier: workspace:*
         version: link:../../test-utils
@@ -171,7 +171,7 @@ importers:
         version: link:../interfaces
       '@fluencelabs/js-client':
         specifier: workspace:*
-        version: link:../js-client/dist
+        version: link:../js-client
       '@fluencelabs/registry':
         specifier: 0.8.7
         version: 0.8.7
@@ -211,124 +211,6 @@ importers:
       '@fluencelabs/marine-worker':
         specifier: 0.3.3
         version: link:../marine-worker
-      '@libp2p/crypto':
-        specifier: 2.0.3
-        version: 2.0.3
-      '@libp2p/interface':
-        specifier: 0.1.2
-        version: 0.1.2
-      '@libp2p/peer-id':
-        specifier: 3.0.2
-        version: 3.0.2
-      '@libp2p/peer-id-factory':
-        specifier: 3.0.3
-        version: 3.0.3
-      '@libp2p/websockets':
-        specifier: 7.0.4
-        version: 7.0.4
-      '@multiformats/multiaddr':
-        specifier: 11.3.0
-        version: 11.3.0
-      async:
-        specifier: 3.2.4
-        version: 3.2.4
-      bs58:
-        specifier: 5.0.0
-        version: 5.0.0
-      buffer:
-        specifier: 6.0.3
-        version: 6.0.3
-      debug:
-        specifier: 4.3.4
-        version: 4.3.4(supports-color@8.1.1)
-      it-length-prefixed:
-        specifier: 8.0.4
-        version: 8.0.4
-      it-map:
-        specifier: 2.0.0
-        version: 2.0.0
-      it-pipe:
-        specifier: 2.0.5
-        version: 2.0.5
-      js-base64:
-        specifier: 3.7.5
-        version: 3.7.5
-      libp2p:
-        specifier: 0.46.6
-        version: 0.46.6
-      multiformats:
-        specifier: 11.0.1
-        version: 11.0.1
-      rxjs:
-        specifier: 7.5.5
-        version: 7.5.5
-      threads:
-        specifier: 1.7.0
-        version: 1.7.0
-      ts-pattern:
-        specifier: 3.3.3
-        version: 3.3.3
-      uint8arrays:
-        specifier: 4.0.3
-        version: 4.0.3
-      uuid:
-        specifier: 8.3.2
-        version: 8.3.2
-      zod:
-        specifier: 3.22.4
-        version: 3.22.4
-    devDependencies:
-      '@fluencelabs/aqua-api':
-        specifier: 0.9.3
-        version: 0.9.3
-      '@fluencelabs/avm':
-        specifier: 0.48.0
-        version: 0.48.0
-      '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
-      '@rollup/plugin-inject':
-        specifier: 5.0.3
-        version: 5.0.3
-      '@types/bs58':
-        specifier: 4.0.1
-        version: 4.0.1
-      '@types/debug':
-        specifier: 4.1.7
-        version: 4.1.7
-      '@types/node':
-        specifier: 20.7.0
-        version: 20.7.0
-      '@types/uuid':
-        specifier: 8.3.2
-        version: 8.3.2
-      hotscript:
-        specifier: 1.0.13
-        version: 1.0.13
-      vite:
-        specifier: 4.0.4
-        version: 4.0.4(@types/node@20.7.0)
-      vite-tsconfig-paths:
-        specifier: 4.0.3
-        version: 4.0.3(typescript@5.1.6)(vite@4.0.4)
-      vitest:
-        specifier: 0.29.7
-        version: 0.29.7
-
-  packages/core/js-client/dist:
-    dependencies:
-      '@chainsafe/libp2p-noise':
-        specifier: 13.0.0
-        version: 13.0.0
-      '@chainsafe/libp2p-yamux':
-        specifier: 5.0.0
-        version: 5.0.0
-      '@fluencelabs/interfaces':
-        specifier: workspace:*
-        version: link:../../interfaces
-      '@fluencelabs/marine-worker':
-        specifier: 0.3.3
-        version: link:../../marine-worker
       '@libp2p/crypto':
         specifier: 2.0.3
         version: 2.0.3
