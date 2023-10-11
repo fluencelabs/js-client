@@ -75,7 +75,11 @@ export class Particle implements IParticle {
     const res = particleSchema.safeParse(json);
 
     if (!res.success) {
-      throw new Error(`Particle format invalid. Errors: ${JSON.stringify(res.error.flatten())}`);
+      throw new Error(
+        `Particle format invalid. Errors: ${JSON.stringify(
+          res.error.flatten(),
+        )}`,
+      );
     }
 
     const data = res.data;

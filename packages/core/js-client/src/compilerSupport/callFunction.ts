@@ -79,7 +79,10 @@ export const callAquaFunction = async ({
 
       if (type.tag === "arrow") {
         // TODO: Add validation here
-        assert(typeof argVal === "function", "Should not be possible, bad types");
+        assert(
+          typeof argVal === "function",
+          "Should not be possible, bad types",
+        );
 
         service = userHandlerService(
           def.names.callbackSrv,
@@ -88,7 +91,10 @@ export const callAquaFunction = async ({
         );
       } else {
         // TODO: Add validation here
-        assert(typeof argVal !== "function", "Should not be possible, bad types");
+        assert(
+          typeof argVal !== "function",
+          "Should not be possible, bad types",
+        );
 
         service = injectValueService(def.names.getDataSrv, name, type, argVal);
       }

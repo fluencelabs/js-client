@@ -58,7 +58,11 @@ export class JsServiceHost implements IJsServiceHost {
     particleId: string,
   ): GenericCallServiceHandler | null {
     const key = serviceFnKey(serviceId, fnName);
-    return this.particleScopeHandlers.get(particleId)?.get(key) ?? this.commonHandlers.get(key) ?? null;
+    return (
+      this.particleScopeHandlers.get(particleId)?.get(key) ??
+      this.commonHandlers.get(key) ??
+      null
+    );
   }
 
   /**

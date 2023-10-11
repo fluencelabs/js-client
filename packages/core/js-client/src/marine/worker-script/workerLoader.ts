@@ -16,7 +16,6 @@
 
 import { Worker } from "../../../node_modules/threads/dist/index.js";
 import type { WorkerImplementation } from "../../../node_modules/threads/dist/types/master.js";
-
 import { LazyLoader } from "../interfaces.js";
 
 export class WorkerLoader extends LazyLoader<WorkerImplementation> {
