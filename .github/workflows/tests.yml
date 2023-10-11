@@ -88,6 +88,12 @@ jobs:
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
+      - name: install workspace root deps
+        run: pnpm i --filter ./
+
+      - name: lint all packages
+        run: pnpm lint-check
+
       - name: Override dependencies
         uses: fluencelabs/github-actions/pnpm-set-dependency@main
         with:
@@ -99,9 +105,7 @@ jobs:
 
       - run: pnpm -r i
       - run: pnpm -r build
-      - run: pnpm lint-check
       - run: pnpm -r test
-
       - name: Dump rust-peer logs
         if: always()
         uses: jwalton/gh-docker-logs@v2
