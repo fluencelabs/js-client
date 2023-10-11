@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { decode } from "bs58";
+import bs58 from "bs58";
 import { toUint8Array } from "js-base64";
 import { it, describe, expect } from "vitest";
 
@@ -51,7 +51,7 @@ describe("KeyPair tests", () => {
   it("create keypair from ed25519 private key", async function () {
     // arrange
     const rustSK = "jDaxLJzYtzgwTMrELJCAqavtmx85ktQNfB2rLcK7MhH";
-    const sk = decode(rustSK);
+    const sk = bs58.decode(rustSK);
 
     // act
     const keyPair = await KeyPair.fromEd25519SK(sk);

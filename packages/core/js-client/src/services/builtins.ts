@@ -18,7 +18,7 @@ import assert from "assert";
 import { Buffer } from "buffer";
 
 import { JSONValue } from "@fluencelabs/interfaces";
-import { encode, decode } from "bs58";
+import bs58 from "bs58";
 import { sha256 } from "multiformats/hashes/sha2";
 
 import {
@@ -299,7 +299,7 @@ export const builtInServices: Record<
         const [input] = req.args;
         // TODO: remove after adding validation
         assert(typeof input === "string");
-        return success(encode(new TextEncoder().encode(input)));
+        return success(bs58.encode(new TextEncoder().encode(input)));
       }
     },
 
@@ -310,7 +310,7 @@ export const builtInServices: Record<
         const [input] = req.args;
         // TODO: remove after adding validation
         assert(typeof input === "string");
-        return success(new TextDecoder().decode(decode(input)));
+        return success(new TextDecoder().decode(bs58.decode(input)));
       }
     },
 
@@ -323,7 +323,7 @@ export const builtInServices: Record<
         // TODO: remove after adding validation
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const argumentArray = req.args[0] as number[];
-        return success(encode(new Uint8Array(argumentArray)));
+        return success(bs58.encode(new Uint8Array(argumentArray)));
       }
     },
 
@@ -334,7 +334,7 @@ export const builtInServices: Record<
         const [input] = req.args;
         // TODO: remove after adding validation
         assert(typeof input === "string");
-        return success(Array.from(decode(input)));
+        return success(Array.from(bs58.decode(input)));
       }
     },
 
@@ -350,7 +350,7 @@ export const builtInServices: Record<
         const inBuffer = Buffer.from(input);
         const multihash = await sha256.digest(inBuffer);
 
-        return success(encode(multihash.bytes));
+        return success(bs58.encode(multihash.bytes));
       }
     },
 
