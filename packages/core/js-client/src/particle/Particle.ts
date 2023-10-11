@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Buffer } from "buffer";
-
 import { CallResultsArray } from "@fluencelabs/avm";
 import { fromUint8Array, toUint8Array } from "js-base64";
 import { concat } from "uint8arrays/concat";
@@ -38,31 +36,35 @@ const particleSchema = z.object({
 });
 
 export class Particle implements IParticle {
-  constructor(
-    readonly id: string,
-    readonly timestamp: number,
-    readonly script: string,
-    readonly data: Uint8Array,
-    readonly ttl: number,
-    readonly initPeerId: string,
-    readonly signature: Uint8Array,
-  ) {}
+    constructor(
+        public readonly id: string,
+        public readonly timestamp: number,
+        public readonly script: string,
+        public readonly data: Uint8Array,
+        public readonly ttl: number,
+        public readonly initPeerId: string,
+        public readonly signature: Uint8Array
+    ) {}
 
   static async createNew(
     script: string,
     initPeerId: string,
     ttl: number,
     keyPair: KeyPair,
+    _id?: string,
+    _timestamp?: number,
+    _data?: Uint8Array,
   ): Promise<Particle> {
-    const id = uuidv4();
-    const timestamp = Date.now();
+    const id = _id ?? uuidv4();
+    const timestamp = _timestamp ?? Date.now();
+    const data = _data ?? new Uint8Array([]);
     const message = buildParticleMessage({ id, timestamp, ttl, script });
     const signature = await keyPair.signBytes(message);
     return new Particle(
       id,
-      Date.now(),
+      timestamp,
       script,
-      Buffer.from([]),
+      data,
       ttl,
       initPeerId,
       signature,

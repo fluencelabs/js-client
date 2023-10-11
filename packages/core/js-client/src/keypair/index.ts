@@ -43,16 +43,23 @@ export class KeyPair {
     return this.libp2pPeerId;
   }
 
-  /**
-   * Generates new KeyPair from ed25519 private key represented as a 32 byte array
-   * @param seed - Any sequence of 32 bytes
-   * @returns - Promise with the created KeyPair
-   */
-  static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
-    const key = await generateKeyPairFromSeed("Ed25519", seed, 256);
-    const lib2p2Pid = await createFromPrivKey(key);
-    return new KeyPair(key, lib2p2Pid);
-  }
+    /**
+     * Return public key inferred from private key
+     */
+    getPublicKey() {
+        return this.publicKey.bytes;
+    }
+
+    /**
+     * Generates new KeyPair from ed25519 private key represented as a 32 byte array
+     * @param seed - Any sequence of 32 bytes
+     * @returns - Promise with the created KeyPair
+     */
+    static async fromEd25519SK(seed: Uint8Array): Promise<KeyPair> {
+        const key = await generateKeyPairFromSeed('Ed25519', seed, 256);
+        const lib2p2Pid = await createFromPrivKey(key);
+        return new KeyPair(key, lib2p2Pid);
+    }
 
   /**
    * Generates new KeyPair with a random secret key

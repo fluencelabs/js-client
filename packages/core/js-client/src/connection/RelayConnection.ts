@@ -218,8 +218,7 @@ export class RelayConnection implements IConnection {
       }
 
       // TODO: Uncomment this when nox rolls out particle signatures
-      // const message = buildParticleMessage(particle);
-      // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, message, particle.signature);
+      // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, buildParticleMessage(particle), particle.signature);
       const isVerified = true;
 
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

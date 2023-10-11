@@ -23,10 +23,10 @@ const sizeMap = {
 
 function numberToBytes(n: number, s: Size, littleEndian: boolean) {
   const size = sizeMap[s];
-  const buffer = new ArrayBuffer(size);
+  const buffer = new ArrayBuffer(8);
   const dv = new DataView(buffer);
-  dv.setUint32(0, n, littleEndian);
-  return new Uint8Array(buffer);
+  dv.setBigUint64(0, BigInt(n), littleEndian);
+  return new Uint8Array(buffer.slice(0, size));
 }
 
 export function numberToLittleEndianBytes(n: number, s: Size) {
