@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@fluencelabs/aqua':
-        specifier: 0.9.1-374
-        version: 0.9.1-374(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2)
+        specifier: 0.10.3
+        version: 0.10.3(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2)
       '@fluencelabs/aqua-lib':
         specifier: 0.6.0
         version: 0.6.0
@@ -1126,16 +1126,6 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
     dev: false
 
-  /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.10):
-    resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.22.10
-      '@babel/helper-plugin-utils': 7.22.5
-    dev: false
-
   /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.5):
     resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
     engines: {node: '>=6.9.0'}
@@ -1217,16 +1207,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.22.5
-      '@babel/helper-plugin-utils': 7.22.5
-    dev: false
-
-  /@babel/plugin-syntax-jsx@7.22.5(@babel/core@7.22.10):
-    resolution: {integrity: sha512-gvyP4hZrgrs/wWMaocvxZ44Hw0b3W8Pe+cMxc8V1ULQ07oh8VNbIRaoD1LRZVTvD+0nieDKjfgKg89sD7rrKrg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.22.10
       '@babel/helper-plugin-utils': 7.22.5
     dev: false
 
@@ -2343,20 +2323,6 @@ packages:
     dependencies:
       '@babel/core': 7.22.5
       '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
-    dev: false
-
-  /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.22.10):
-    resolution: {integrity: sha512-rog5gZaVbUip5iWDMTYbVM15XQq+RkUKhET/IHR6oizR+JEoN6CAfTTuHcK4vwUyzca30qqHqEpzBOnaRMWYMA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.22.10
-      '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-module-imports': 7.22.5
-      '@babel/helper-plugin-utils': 7.22.5
-      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.22.10)
-      '@babel/types': 7.22.5
     dev: false
 
   /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.22.5):
@@ -3810,8 +3776,8 @@ packages:
     resolution: {integrity: sha512-ieM2e7qMXgm9BPSSd2fxVbqLlYkR/a/aVTAQXO8gdx2rKKFqnTgFX4gpSOTxrrCMshi8OnXfd2OZi1hsJHTnKA==}
     dev: true
 
-  /@fluencelabs/aqua-ipfs@0.5.8:
-    resolution: {integrity: sha512-jKlyGBm8oJAIQ3Ags58oJ8QVTlCYSvZQVTnX2SnugGXWVwt4+9qtqtvNT5MvWKK3M9lCFDbJJy/qVTjzPJlaiw==}
+  /@fluencelabs/aqua-ipfs@0.5.9:
+    resolution: {integrity: sha512-Vg7pYv4gEreOKfvzKEL5FchGqSKwat7JyKpqJO6h+FC5S1bl76UkI507+ExhijmUbQGznop8G33XFxyUi6q5SQ==}
     dependencies:
       '@fluencelabs/aqua-lib': 0.5.2
     dev: true
@@ -3832,13 +3798,14 @@ packages:
     resolution: {integrity: sha512-+JVbWmHeGB+X/BSqmk6/B0gwWJ4bEAxkepVTN8l0mVrJ5zRRmYaCKVplWy6Z3W012m3VVK3A1o3rm/fgfVrQkw==}
     dev: true
 
-  /@fluencelabs/aqua@0.9.1-374(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2):
-    resolution: {integrity: sha512-jF6oVE4h7bP/dQArKEfsy4UxbQbzACfVIBY/TFUL5D3np4ssjxrh15Y3gl1PwSWjlaPcDeFvAuStmcqfYQmLqQ==}
+  /@fluencelabs/aqua@0.10.3(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2):
+    resolution: {integrity: sha512-v7Jy+KzZkUm7NuUgrp7UQ8gxuhykxuTU3JigCdxiZMcG3/zD+OtHzsSggVLxVjDP7CKuTcjEKZSCxObwHp/Tpw==}
+    deprecated: Use Fluence CLI instead (https://github.com/fluencelabs/cli)
     hasBin: true
     dependencies:
-      '@fluencelabs/aqua-ipfs': 0.5.8
+      '@fluencelabs/aqua-ipfs': 0.5.9
       '@fluencelabs/aqua-lib': 0.6.0
-      '@fluencelabs/fluence': 0.27.5(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2)
+      '@fluencelabs/fluence': 0.28.0(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2)
       '@fluencelabs/fluence-network-environment': 1.0.13
       ipfs-http-client: 50.1.2(node-fetch@3.3.2)
     transitivePeerDependencies:
@@ -3855,8 +3822,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@fluencelabs/avm@0.31.10:
-    resolution: {integrity: sha512-tkpjdHyRmsTwAEZCJt15//jXEgC2Nw2qFiD1NenvK127SlgKeuzQU9IMReUYY3dowb2IGeC578/uGMu96jHYKw==}
+  /@fluencelabs/avm@0.35.3:
+    resolution: {integrity: sha512-Y5mPPCmAUUKc5CDO12IL8mGEreWa7maVdX0MWCAH4+GvfLPFN1FxOMSKRYEtvkyVEL88pc9pd8cm5IRCBkFthg==}
     dev: true
 
   /@fluencelabs/avm@0.48.0:
@@ -3993,13 +3960,13 @@ packages:
     resolution: {integrity: sha512-1Bp2gBy3oMEILMynFpOIFK/q2Pj792xpnb3AJs5QcTQAaHz9V2nrEI8OOPwBAFTmjmLBirXBqQQX63O+ePH7yg==}
     dev: true
 
-  /@fluencelabs/fluence@0.27.5(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2):
-    resolution: {integrity: sha512-nMCzd/oHHk5/yWdg/+rPB+sc8X+fQ5YgwPhGVDoxFs8/CmIr1G5Na8Y6l8rrigasgQd+LV5GtAyh50Oq7/IXkg==}
+  /@fluencelabs/fluence@0.28.0(jest@27.5.1)(node-fetch@3.3.2)(typescript@4.7.2):
+    resolution: {integrity: sha512-SXb2vjTj8m/nw4jEILV0tu9VIFprGo8mNb2nOB5btxdsOI8GzQZkpGzTLrSd/+UagIo2GdxAu0GhBP8dxZXaqg==}
     engines: {node: '>=10', pnpm: '>=3'}
     deprecated: fluencelabs/fluence is deprecated in favor of a thinner CDN-distributed .js bundle, please see the following link for installation instructions https://github.com/fluencelabs/js-client#installation
     hasBin: true
     dependencies:
-      '@fluencelabs/avm': 0.31.10
+      '@fluencelabs/avm': 0.35.3
       '@fluencelabs/connection': 0.2.0(node-fetch@3.3.2)
       '@fluencelabs/interfaces': 0.1.0
       '@fluencelabs/keypair': 0.2.0
@@ -10318,8 +10285,8 @@ packages:
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
     dependencies:
-      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.10)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.10)
+      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.5)
+      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
       eslint: 8.43.0
       lodash: 4.17.21
       string-natural-compare: 3.0.1
