@@ -26,7 +26,7 @@ import type {
 } from "@fluencelabs/interfaces";
 
 // "threads" package has broken type definitions in package.json. This is the workaround.
-import { BlobWorker, Worker } from "../node_modules/threads/dist/index.js";
+import { BlobWorker, Worker } from "threads/master";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";

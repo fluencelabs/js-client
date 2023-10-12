@@ -19,8 +19,7 @@ import fs from "fs";
 import { createRequire } from "module";
 import path from "path";
 
-import { Worker } from "../../../node_modules/threads/dist/index.js";
-import type { WorkerImplementation } from "../../../node_modules/threads/dist/types/master.js";
+import { Worker, type Worker as WorkerImplementation } from "threads/master";
 import { LazyLoader } from "../interfaces.js";
 
 const require = createRequire(import.meta.url);

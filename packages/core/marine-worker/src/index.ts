@@ -29,8 +29,7 @@ import type {
 import { JSONValue } from "@fluencelabs/marine-js/dist/types";
 import { Observable, Subject } from "observable-fns";
 
-// "threads" package has broken type definitions in package.json. This is the workaround.
-import { expose } from "../node_modules/threads/worker.js";
+import { expose } from "threads/worker";
 
 const createSimpleModuleDescriptor = (
   name: string,

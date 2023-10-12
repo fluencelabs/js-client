@@ -23,11 +23,7 @@ import type {
 import { LogFunction, logLevelToEnv } from "@fluencelabs/marine-js/dist/types";
 import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
-import {
-  ModuleThread,
-  Thread,
-  spawn,
-} from "../../../node_modules/threads/dist/master/index.js";
+import { ModuleThread, Thread, spawn } from "threads/master";
 import { MarineLogger, marineLogger } from "../../util/logger.js";
 import { IMarineHost, IWasmLoader, IWorkerLoader } from "../interfaces.js";
 

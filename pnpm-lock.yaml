@@ -263,8 +263,8 @@ importers:
         specifier: 7.5.5
         version: 7.5.5
       threads:
-        specifier: 1.7.0
-        version: 1.7.0
+        specifier: git://github.com/akim-bow/threads.js.git#457fabf2393852980c35ca70ed73a2c0e96dc18a
+        version: github.com/akim-bow/threads.js/457fabf2393852980c35ca70ed73a2c0e96dc18a
       ts-pattern:
         specifier: 3.3.3
         version: 3.3.3
@@ -324,8 +324,8 @@ importers:
         specifier: 0.6.1
         version: 0.6.1
       threads:
-        specifier: 1.7.0
-        version: 1.7.0
+        specifier: git://github.com/akim-bow/threads.js.git#457fabf2393852980c35ca70ed73a2c0e96dc18a
+        version: github.com/akim-bow/threads.js/457fabf2393852980c35ca70ed73a2c0e96dc18a
     devDependencies:
       '@rollup/plugin-inject':
         specifier: 5.0.3
@@ -18730,6 +18730,7 @@ packages:
       tiny-worker: 2.3.0
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /throat@6.0.2:
     resolution: {integrity: sha512-WKexMoJj3vEuK0yFEapj8y64V0A6xcuPuK9Gt1d0R+dzCSJc0lHqQytAbSB4cDAK0dWh4T0E2ETkoLE2WZ41OQ==}
@@ -20991,4 +20992,21 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: false
+
+  github.com/akim-bow/threads.js/457fabf2393852980c35ca70ed73a2c0e96dc18a:
+    resolution: {tarball: https://codeload.github.com/akim-bow/threads.js/tar.gz/457fabf2393852980c35ca70ed73a2c0e96dc18a}
+    name: threads
+    version: 1.7.0
+    prepare: true
+    requiresBuild: true
+    dependencies:
+      callsites: 3.1.0
+      debug: 4.3.4(supports-color@8.1.1)
+      is-observable: 2.1.0
+      observable-fns: 0.6.1
+    optionalDependencies:
+      tiny-worker: 2.3.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false

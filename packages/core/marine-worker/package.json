@@ -26,6 +26,6 @@
   "dependencies": {
     "@fluencelabs/marine-js": "0.7.2",
     "observable-fns": "0.6.1",
-    "threads": "1.7.0"
+    "threads": "git://github.com/akim-bow/threads.js.git#457fabf2393852980c35ca70ed73a2c0e96dc18a"
   }
 }

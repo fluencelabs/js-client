@@ -21,7 +21,7 @@ import {
 } from "@fluencelabs/avm";
 import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
 
-import type { WorkerImplementation } from "../../node_modules/threads/dist/types/master.js";
+import type { Worker as WorkerImplementation } from "threads/master";
 import { IStartable, CallParameters } from "../util/commonTypes.js";
 
 /**
