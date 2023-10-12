@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.2.0...js-client-v0.2.1) (2023-10-12)
+
+
+### Bug Fixes
+
+* **signatures:** Add signature checks [fixes DXJ-488] ([#357](https://github.com/fluencelabs/js-client/issues/357)) ([a8e5eb6](https://github.com/fluencelabs/js-client/commit/a8e5eb6c1e1d5e93c78da8f5f735c46932a20c93))
+
 ## [0.2.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.1.7...js-client-v0.2.0) (2023-10-10)
 
 

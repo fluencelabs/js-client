@@ -12,6 +12,12 @@
   * devDependencies
     * @fluencelabs/js-client bumped to 0.2.0
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/js-client bumped to 0.2.1
+
 ## 0.0.1 (2023-09-22)
 
 
