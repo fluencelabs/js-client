@@ -121,19 +121,19 @@ export class RelayConnection implements IConnection {
             },
             connectionGater: {
                 // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
-                denyDialMultiaddr: () => Promise.resolve(false)
+                denyDialMultiaddr: () => Promise.resolve(false),
             },
             services: {
                 identify: identifyService(),
-                ping: pingService()
-            }
+                ping: pingService(),
+            },
         });
 
         const supportedProtocols = (await this.lib2p2Peer.peerStore.get(this.lib2p2Peer.peerId)).protocols;
         await this.lib2p2Peer.peerStore.patch(this.lib2p2Peer.peerId, {
-            protocols: [...supportedProtocols, PROTOCOL_NAME]
+            protocols: [...supportedProtocols, PROTOCOL_NAME],
         });
-        
+
         await this.connect();
     }
 
@@ -166,14 +166,10 @@ export class RelayConnection implements IConnection {
         log.trace('created stream with id ', stream.id);
         const sink = stream.sink;
 
-        await pipe(
-            [fromString(serializeToString(particle))],
-            encode(),
-            sink,
-        );
+        await pipe([fromString(serializeToString(particle))], encode(), sink);
         log.trace('data written to sink');
     }
-    
+
     private async processIncomingMessage(msg: string, stream: Stream) {
         let particle: Particle | undefined;
         try {
@@ -182,13 +178,19 @@ export class RelayConnection implements IConnection {
             const initPeerId = peerIdFromString(particle.initPeerId);
 
             if (initPeerId.publicKey === undefined) {
-                log.error('cannot retrieve public key from init_peer_id. particle id: %s. init_peer_id: %s', particle.id, particle.initPeerId);
+                log.error(
+                    'cannot retrieve public key from init_peer_id. particle id: %s. init_peer_id: %s',
+                    particle.id,
+                    particle.initPeerId,
+                );
                 return;
             }
-            
-            // TODO: uncomment this after nox rolls out signature verification
-            // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, buildParticleMessage(particle), particle.signature);
-            const isVerified = true;
+
+            const isVerified = await KeyPair.verifyWithPublicKey(
+                initPeerId.publicKey,
+                buildParticleMessage(particle),
+                particle.signature,
+            );
             if (isVerified) {
                 this.particleSource.next(particle);
             } else {
@@ -208,20 +210,21 @@ export class RelayConnection implements IConnection {
 
         await this.lib2p2Peer.handle(
             [PROTOCOL_NAME],
-            async ({ connection, stream }) => pipe(
-                stream.source,
-                decode(),
-                (source) => map(source, (buf) => toString(buf.subarray())),
-                async (source) => {
-                    try {
-                        for await (const msg of source) {
-                            await this.processIncomingMessage(msg, stream);
+            async ({ connection, stream }) =>
+                pipe(
+                    stream.source,
+                    decode(),
+                    (source) => map(source, (buf) => toString(buf.subarray())),
+                    async (source) => {
+                        try {
+                            for await (const msg of source) {
+                                await this.processIncomingMessage(msg, stream);
+                            }
+                        } catch (e) {
+                            log.error('connection closed: %j', e);
                         }
-                    } catch (e) {
-                        log.error('connection closed: %j', e);
-                    }
-                },
-            ),
+                    },
+                ),
             {
                 maxInboundStreams: this.config.maxInboundStreams,
                 maxOutboundStreams: this.config.maxOutboundStreams,
