@@ -22,7 +22,6 @@ import url from "url";
 import type {
   ClientConfig,
   ConnectionState,
-  IFluenceClient,
   RelayOptions,
 } from "@fluencelabs/interfaces";
 
@@ -148,7 +147,7 @@ interface FluencePublicApi {
   onConnectionStateChange: (
     handler: (state: ConnectionState) => void,
   ) => ConnectionState;
-  getClient: () => IFluenceClient;
+  getClient: () => ClientPeer;
 }
 
 export const Fluence: FluencePublicApi = {
