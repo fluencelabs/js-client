@@ -24,7 +24,6 @@ import type {
   ConnectionState,
   RelayOptions,
 } from "@fluencelabs/interfaces";
-
 // "threads" package has broken type definitions in package.json. This is the workaround.
 import { BlobWorker, Worker } from "threads/master";
 

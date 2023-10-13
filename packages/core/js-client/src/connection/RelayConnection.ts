@@ -33,8 +33,13 @@ import { Subject } from "rxjs";
 import { fromString } from "uint8arrays/from-string";
 import { toString } from "uint8arrays/to-string";
 
+import { KeyPair } from "../keypair/index.js";
 import { IParticle } from "../particle/interfaces.js";
-import { Particle, serializeToString } from "../particle/Particle.js";
+import {
+  buildParticleMessage,
+  Particle,
+  serializeToString,
+} from "../particle/Particle.js";
 import { throwHasNoPeerId } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
 
@@ -217,11 +222,12 @@ export class RelayConnection implements IConnection {
         return;
       }
 
-      // TODO: Uncomment this when nox rolls out particle signatures
-      // const isVerified = await KeyPair.verifyWithPublicKey(initPeerId.publicKey, buildParticleMessage(particle), particle.signature);
-      const isVerified = true;
+      const isVerified = await KeyPair.verifyWithPublicKey(
+        initPeerId.publicKey,
+        buildParticleMessage(particle),
+        particle.signature,
+      );
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (isVerified) {
         this.particleSource.next(particle);
       } else {

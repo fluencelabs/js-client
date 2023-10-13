@@ -28,7 +28,6 @@ import type {
 } from "@fluencelabs/marine-js/dist/types";
 import { JSONValue } from "@fluencelabs/marine-js/dist/types";
 import { Observable, Subject } from "observable-fns";
-
 import { expose } from "threads/worker";
 
 const createSimpleModuleDescriptor = (

@@ -20,6 +20,7 @@ import { createRequire } from "module";
 import path from "path";
 
 import { Worker, type Worker as WorkerImplementation } from "threads/master";
+
 import { LazyLoader } from "../interfaces.js";
 
 const require = createRequire(import.meta.url);
