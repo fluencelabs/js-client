@@ -47,7 +47,7 @@
     "libp2p": "0.46.6",
     "multiformats": "11.0.1",
     "rxjs": "7.5.5",
-    "threads": "git://github.com/akim-bow/threads.js.git#457fabf2393852980c35ca70ed73a2c0e96dc18a",
+    "threads": "fluencelabs/threads.js#5e61449d5e9ab290ae5b2220b561f7b5ac27816c",
     "ts-pattern": "3.3.3",
     "uint8arrays": "4.0.3",
     "uuid": "8.3.2",

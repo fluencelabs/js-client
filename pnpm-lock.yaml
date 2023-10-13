@@ -263,8 +263,8 @@ importers:
         specifier: 7.5.5
         version: 7.5.5
       threads:
-        specifier: git://github.com/akim-bow/threads.js.git#457fabf2393852980c35ca70ed73a2c0e96dc18a
-        version: github.com/akim-bow/threads.js/457fabf2393852980c35ca70ed73a2c0e96dc18a
+        specifier: fluencelabs/threads.js#5e61449d5e9ab290ae5b2220b561f7b5ac27816c
+        version: github.com/fluencelabs/threads.js/5e61449d5e9ab290ae5b2220b561f7b5ac27816c
       ts-pattern:
         specifier: 3.3.3
         version: 3.3.3
@@ -324,8 +324,8 @@ importers:
         specifier: 0.6.1
         version: 0.6.1
       threads:
-        specifier: git://github.com/akim-bow/threads.js.git#457fabf2393852980c35ca70ed73a2c0e96dc18a
-        version: github.com/akim-bow/threads.js/457fabf2393852980c35ca70ed73a2c0e96dc18a
+        specifier: fluencelabs/threads.js#5e61449d5e9ab290ae5b2220b561f7b5ac27816c
+        version: github.com/fluencelabs/threads.js/5e61449d5e9ab290ae5b2220b561f7b5ac27816c
     devDependencies:
       '@rollup/plugin-inject':
         specifier: 5.0.3
@@ -20994,8 +20994,8 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
-  github.com/akim-bow/threads.js/457fabf2393852980c35ca70ed73a2c0e96dc18a:
-    resolution: {tarball: https://codeload.github.com/akim-bow/threads.js/tar.gz/457fabf2393852980c35ca70ed73a2c0e96dc18a}
+  github.com/fluencelabs/threads.js/5e61449d5e9ab290ae5b2220b561f7b5ac27816c:
+    resolution: {tarball: https://codeload.github.com/fluencelabs/threads.js/tar.gz/5e61449d5e9ab290ae5b2220b561f7b5ac27816c}
     name: threads
     version: 1.7.0
     prepare: true
