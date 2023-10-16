@@ -20,6 +20,8 @@ import { fetchResource as fetchResourceBrowser } from "./browser.js";
 import { fetchResource as fetchResourceNode } from "./node.js";
 
 const isNode =
+  // process.release is undefined in browser env
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   typeof process !== "undefined" && process.release?.name === "node";
 
 export async function fetchResource(pkg: string, path: string) {
