@@ -80,8 +80,6 @@ export class MarineBackgroundRunner implements IMarineHost {
       serviceLogger[message.level](message.message);
     };
 
-    // @ts-expect-error This type is bugged
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     workerThread.onLogMessage().subscribe(logfn);
     await workerThread.init(wasm);
     this.workerThread = workerThread;

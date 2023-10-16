@@ -47,7 +47,7 @@
     "libp2p": "0.46.6",
     "multiformats": "11.0.1",
     "rxjs": "7.5.5",
-    "threads": "fluencelabs/threads.js#5e61449d5e9ab290ae5b2220b561f7b5ac27816c",
+    "threads": "fluencelabs/threads.js#d7149e1e455c3dddd8be812cb234a4af172674a1",
     "ts-pattern": "3.3.3",
     "uint8arrays": "4.0.3",
     "uuid": "8.3.2",
