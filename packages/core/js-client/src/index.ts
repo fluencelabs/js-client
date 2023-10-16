@@ -34,7 +34,9 @@ import { MarineBackgroundRunner } from "./marine/worker/index.js";
 import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 
 const isNode =
-  typeof process !== "undefined" && process.release.name === "node";
+  // process.release is undefined in browser env
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  typeof process !== "undefined" && process.release?.name === "node";
 
 const fetchWorkerCode = async () => {
   const resource = await fetchResource(

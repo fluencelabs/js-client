@@ -36,6 +36,7 @@
     "@libp2p/peer-id-factory": "3.0.3",
     "@libp2p/websockets": "7.0.4",
     "@multiformats/multiaddr": "11.3.0",
+    "assert": "2.1.0",
     "async": "3.2.4",
     "bs58": "5.0.0",
     "buffer": "6.0.3",
