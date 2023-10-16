@@ -16,8 +16,7 @@
 
 import process from "process";
 
-import { fetchResource as fetchResourceBrowser } from "./browser.js";
-import { fetchResource as fetchResourceNode } from "./node.js";
+import { fetchResource as fetchResourceIsomorphic } from "#fetcher";
 
 const isNode =
   // process.release is undefined in browser env
@@ -27,8 +26,8 @@ const isNode =
 export async function fetchResource(pkg: string, path: string) {
   switch (true) {
     case isNode:
-      return fetchResourceNode(pkg, path);
+      return fetchResourceIsomorphic(pkg, path);
     default:
-      return fetchResourceBrowser(pkg, path);
+      return fetchResourceIsomorphic(pkg, path);
   }
 }

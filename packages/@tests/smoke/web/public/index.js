@@ -1,12 +1,13 @@
 const fluence = globalThis.fluence;
 
 const relay = {
-    multiaddr: '/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR',
-    peerId: '12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR',
+  multiaddr:
+    "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
+  peerId: "12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
 };
 
 const getRelayTime = () => {
-    const script = `
+  const script = `
                     (xor
                      (seq
                       (seq
@@ -36,75 +37,75 @@ const getRelayTime = () => {
                      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
                     )`;
 
-    const def = {
-        functionName: 'getRelayTime',
-        arrow: {
-            tag: 'arrow',
-            domain: {
-                tag: 'labeledProduct',
-                fields: {
-                    relayPeerId: {
-                        tag: 'scalar',
-                        name: 'string',
-                    },
-                },
-            },
-            codomain: {
-                tag: 'unlabeledProduct',
-                items: [
-                    {
-                        tag: 'scalar',
-                        name: 'u64',
-                    },
-                ],
-            },
+  const def = {
+    functionName: "getRelayTime",
+    arrow: {
+      tag: "arrow",
+      domain: {
+        tag: "labeledProduct",
+        fields: {
+          relayPeerId: {
+            tag: "scalar",
+            name: "string",
+          },
         },
-        names: {
-            relay: '-relay-',
-            getDataSrv: 'getDataSrv',
-            callbackSrv: 'callbackSrv',
-            responseSrv: 'callbackSrv',
-            responseFnName: 'response',
-            errorHandlingSrv: 'errorHandlingSrv',
-            errorFnName: 'error',
-        },
-    };
+      },
+      codomain: {
+        tag: "unlabeledProduct",
+        items: [
+          {
+            tag: "scalar",
+            name: "u64",
+          },
+        ],
+      },
+    },
+    names: {
+      relay: "-relay-",
+      getDataSrv: "getDataSrv",
+      callbackSrv: "callbackSrv",
+      responseSrv: "callbackSrv",
+      responseFnName: "response",
+      errorHandlingSrv: "errorHandlingSrv",
+      errorFnName: "error",
+    },
+  };
 
-    const config = {};
+  const config = {};
 
-    const args = { relayPeerId: relay.peerId };
-    return fluence.callAquaFunction({
-        args,
-        def,
-        script,
-        config,
-        peer: fluence.defaultClient,
-    });
+  const args = { relayPeerId: relay.peerId };
+  return fluence.callAquaFunction({
+    args,
+    def,
+    script,
+    config,
+    peer: fluence.defaultClient,
+  });
 };
 
 const main = async () => {
-    console.log('starting fluence...');
-    fluence.defaultClient = await fluence.clientFactory(relay);
-    console.log('started fluence');
+  console.log("starting fluence...");
+  fluence.defaultClient = await fluence.clientFactory(relay, {});
+  console.log("started fluence");
 
-    console.log('getting relay time...');
-    const relayTime = await getRelayTime();
-    console.log('got relay time, ', relayTime);
+  console.log("getting relay time...");
+  const relayTime = await getRelayTime();
+  console.log("got relay time, ", relayTime);
 
-    console.log('stopping fluence...');
-    await fluence.defaultClient.stop();
-    console.log('stopped fluence...');
+  console.log("stopping fluence...");
+  await fluence.defaultClient.stop();
+  console.log("stopped fluence...");
 
-    return relayTime;
+  return relayTime;
 };
 
-const btn = document.getElementById('btn');
+const btn = document.getElementById("btn");
 
-btn.addEventListener('click', () => {
-    main().then((res) => {
-        const inner = document.createElement('div');
-        inner.id = 'res';
-        inner.innerText = res;
-        document.getElementById('res-placeholder').appendChild(inner);
-    });
+btn.addEventListener("click", () => {
+  main().then((res) => {
+    const inner = document.createElement("div");
+    inner.id = "res";
+    inner.innerText = res;
+    document.getElementById("res-placeholder").appendChild(inner);
+  });
 });
