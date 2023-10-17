@@ -20,6 +20,7 @@ import { fileURLToPath } from "url";
 
 import {
   CDN_PUBLIC_PATH,
+  JS_CLIENT_DEPS_PATH,
   startContentServer,
   stopServer,
 } from "@test/test-utils";
@@ -39,8 +40,14 @@ const test = async () => {
     await symlink(CDN_PUBLIC_PATH, join(publicPath, "source"));
   }
 
+  try {
+    await access(join(publicPath, "deps"));
+  } catch {
+    await symlink(JS_CLIENT_DEPS_PATH, join(publicPath, "deps"));
+  }
+
   console.log("starting puppeteer...");
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = (await browser.pages())[0];
 
   // uncomment to debug what's happening inside the browser

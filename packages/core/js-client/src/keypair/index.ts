@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { KeyPairOptions } from "@fluencelabs/interfaces";
 import {
   generateKeyPairFromSeed,
   generateKeyPair,
@@ -25,6 +24,8 @@ import type { PeerId } from "@libp2p/interface/peer-id";
 import { createFromPrivKey } from "@libp2p/peer-id-factory";
 import bs58 from "bs58";
 import { toUint8Array } from "js-base64";
+
+import { KeyPairOptions } from "../clientPeer/types.js";
 
 export class KeyPair {
   private publicKey: PublicKey;

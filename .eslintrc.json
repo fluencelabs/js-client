@@ -18,7 +18,7 @@
     "license-header",
     "unused-imports"
   ],
-  "ignorePatterns": ["**/node_modules/**/*", "**/dist/**/*"],
+  "ignorePatterns": ["**/node_modules/", "**/dist/", "**/build/", "**/public/"],
   "rules": {
     "eqeqeq": [
       "error",

@@ -15,13 +15,6 @@
  */
 
 import {
-  ClientConfig,
-  ConnectionState,
-  IFluenceClient,
-  RelayOptions,
-} from "@fluencelabs/interfaces";
-
-import {
   RelayConnection,
   RelayConnectionConfig,
 } from "../connection/RelayConnection.js";
@@ -31,6 +24,13 @@ import { fromOpts, KeyPair } from "../keypair/index.js";
 import { IMarineHost } from "../marine/interfaces.js";
 import { relayOptionToMultiaddr } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
+
+import {
+  ClientConfig,
+  IFluenceClient,
+  ConnectionState,
+  RelayOptions,
+} from "./types.js";
 
 const log = logger("client");
 
