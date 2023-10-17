@@ -62,7 +62,8 @@ export async function fetchResource(
     ? assetPath.slice(1)
     : assetPath;
 
-  return fetch(
-    new globalThis.URL(`${pkg}@${version}/` + refinedAssetPath, root),
-  );
+  const url = new globalThis.URL(`${pkg}@${version}/` + refinedAssetPath, root);
+  return fetch(url).catch(() => {
+    throw new Error(`Cannot fetch from ${url.toString()}`);
+  });
 }
