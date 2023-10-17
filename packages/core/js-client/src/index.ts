@@ -29,9 +29,10 @@ import { BlobWorker, Worker } from "threads/master";
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
-import { fetchResource } from "./fetchers/index.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
 import { doRegisterNodeUtils } from "./services/NodeUtils.js";
+
+import { fetchResource } from "#fetcher";
 
 const isNode =
   // process.release is undefined in browser env

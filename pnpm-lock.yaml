@@ -188,8 +188,8 @@ importers:
   packages/core/interfaces:
     devDependencies:
       '@fluencelabs/avm':
-        specifier: 0.48.0
-        version: 0.48.0
+        specifier: 0.52.0
+        version: 0.52.0
       '@multiformats/multiaddr':
         specifier: 11.3.0
         version: 11.3.0
@@ -206,8 +206,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0
       '@fluencelabs/avm':
-        specifier: 0.48.0
-        version: 0.48.0
+        specifier: 0.52.0
+        version: 0.52.0
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
@@ -3859,8 +3859,8 @@ packages:
     resolution: {integrity: sha512-+JVbWmHeGB+X/BSqmk6/B0gwWJ4bEAxkepVTN8l0mVrJ5zRRmYaCKVplWy6Z3W012m3VVK3A1o3rm/fgfVrQkw==}
     dev: true
 
-  /@fluencelabs/avm@0.48.0:
-    resolution: {integrity: sha512-9sXyKx2jp8JvmGUIddb7iILq9KN6d1PoCNSvrzIej4yP+pCxpiY9elgeaSoGY5yHcPClNnvHBKcenL23mdUckg==}
+  /@fluencelabs/avm@0.52.0:
+    resolution: {integrity: sha512-T+/Hv/ZPfwWZAC4tH6wEDIRmtN6cTBebqbCaHfaq2PDLSMG0BgssdFF2BAaEXrvOvJbI5Bu/9bQhHv4ga7bYlA==}
 
   /@fluencelabs/cli@0.7.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@nomicfoundation/hardhat-chai-matchers@1.0.6)(@nomicfoundation/hardhat-network-helpers@1.0.8)(@nomiclabs/hardhat-ethers@2.2.3)(@nomiclabs/hardhat-etherscan@3.1.7)(@typechain/ethers-v5@10.2.1)(@typechain/hardhat@6.1.6)(@types/chai@4.3.5)(@types/mocha@9.1.1)(@types/node@20.7.0)(chai@4.3.10)(hardhat-gas-reporter@1.0.9)(hardhat@2.15.0)(solidity-coverage@0.7.22)(ts-node@10.9.1)(typechain@8.2.0)(typescript@5.1.6):
     resolution: {integrity: sha512-cXhlXBxNh1i66Twb3Nhpm1mXHpa+8zzoQ5wKJ6zJjOtrw6GWB6WrfIAb+aaLGWJMBnWHcZEkXs5vx9vwvVplcQ==}
@@ -4452,6 +4452,8 @@ packages:
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
 
   /@libp2p/interface-connection@4.0.0:
     resolution: {integrity: sha512-6xx/NmEc84HX7QmsjSC3hHredQYjHv4Dkf4G27adAPf+qN+vnPxmQ7gaTnk243a0++DOFTbZ2gKX/15G2B6SRg==}
@@ -4621,6 +4623,8 @@ packages:
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
 
   /@libp2p/peer-id@2.0.1:
     resolution: {integrity: sha512-uGIR4rS+j+IzzIu0kih4MonZEfRmjGNfXaSPMIFOeMxZItZT6TIpxoVNYxHl4YtneSFKzlLnf9yx9EhRcyfy8Q==}
