@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-import type { Node } from "@fluencelabs/interfaces";
+/**
+ * Peer ID's id as a base58 string (multihash/CIDv0).
+ */
+export type PeerIdB58 = string;
+
+/**
+ * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
+ */
+export type Node = {
+  peerId: PeerIdB58;
+  multiaddr: string;
+};
 
 /**
  * A node in Fluence network a client can connect to.

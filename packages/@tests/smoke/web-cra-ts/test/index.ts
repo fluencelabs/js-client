@@ -4,11 +4,11 @@ import { fileURLToPath } from "url";
 
 import {
   CDN_PUBLIC_PATH,
+  createSymlinkIfNotExists,
   JS_CLIENT_DEPS_PATH,
   startContentServer,
   stopServer,
 } from "@test/test-utils";
-import { access, symlink } from "fs/promises";
 
 const port = 3001;
 const uri = `http://localhost:${port}/`;
@@ -17,17 +17,11 @@ const publicPath = join(__dirname, "../build/");
 
 const test = async () => {
   const localServer = await startContentServer(port, publicPath);
-  try {
-    await access(join(publicPath, "source"));
-  } catch {
-    await symlink(CDN_PUBLIC_PATH, join(publicPath, "source"));
-  }
-
-  try {
-    await access(join(publicPath, "deps"));
-  } catch {
-    await symlink(JS_CLIENT_DEPS_PATH, join(publicPath, "deps"));
-  }
+  await createSymlinkIfNotExists(CDN_PUBLIC_PATH, join(publicPath, "source"));
+  await createSymlinkIfNotExists(
+    JS_CLIENT_DEPS_PATH,
+    join(publicPath, "node_modules"),
+  );
 
   console.log("starting puppeteer...");
   const browser = await puppeteer.launch();

@@ -23,6 +23,11 @@ interface PackageJsonContent {
 const packageJsonContentString = `__PACKAGE_JSON_CONTENT__`;
 let parsedPackageJsonContent: PackageJsonContent | undefined;
 
+/**
+ * @param pkg name of package
+ * @param assetPath path of required asset in given package
+ * @param root CDN domain in browser or file system root in node
+ */
 export async function fetchResource(
   pkg: string,
   assetPath: string,

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { access, symlink } from "fs/promises";
 import { createServer } from "http";
 import type { Server } from "http";
 import { dirname, join } from "path";
@@ -37,6 +38,17 @@ export const startCdn = (port: number) => {
   return startContentServer(port, CDN_PUBLIC_PATH);
 };
 
+export const createSymlinkIfNotExists = async (
+  target: string,
+  path: string,
+) => {
+  try {
+    await access(path);
+  } catch {
+    await symlink(target, path);
+  }
+};
+
 export const startContentServer = (
   port: number,
   publicDir: string,
@@ -58,12 +70,12 @@ export const startContentServer = (
         // not supported for some reason. Need to manually iterate over all possible paths
         {
           source: "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:asset",
-          destination: "/deps/@fluencelabs/:name/dist/:asset",
+          destination: "/node_modules/@fluencelabs/:name/dist/:asset",
         },
         {
           source:
             "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:prefix/:asset",
-          destination: "/deps/@fluencelabs/:name/dist/:prefix/:asset",
+          destination: "/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
         },
       ],
       headers: [

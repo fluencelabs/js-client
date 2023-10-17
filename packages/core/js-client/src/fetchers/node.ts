@@ -18,12 +18,17 @@ import fs from "fs";
 import module from "module";
 import path from "path";
 
+/**
+ * @param pkg name of package
+ * @param assetPath path of required asset in given package
+ * @param root CDN domain in browser or file system root in node
+ */
 export async function fetchResource(
   pkg: string,
   assetPath: string,
   root: string,
 ) {
-  // `root` will be handled somehow in the future. For now, we use filesystem root where js-client is running;
+  // TODO: `root` will be handled somehow in the future. For now, we use filesystem root where js-client is running;
   root = "/";
   const require = module.createRequire(import.meta.url);
   const packagePathIndex = require.resolve(pkg);

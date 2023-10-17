@@ -37,6 +37,7 @@ export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
 /**
  * Arguments for callAquaFunction function
  */
+// TODO: move to js-client side
 export interface CallAquaFunctionArgs {
   /**
    * Peer to call the function on
