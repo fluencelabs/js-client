@@ -50,7 +50,7 @@
   "dependencies": {},
   "devDependencies": {
     "@multiformats/multiaddr": "11.3.0",
-    "@fluencelabs/avm": "0.48.0",
+    "@fluencelabs/avm": "0.52.0",
     "hotscript": "1.0.13"
   }
 }
