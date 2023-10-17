@@ -18,6 +18,24 @@
   * devDependencies
     * @fluencelabs/js-client bumped to 0.2.1
 
+## [0.1.0](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.0.4...aqua-to-js-v0.1.0) (2023-10-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Adding strictes eslint and ts config to all packages [fixes DXJ-464] ([#355](https://github.com/fluencelabs/js-client/issues/355))
+
+### Features
+
+* **js-client:** Adding strictes eslint and ts config to all packages [fixes DXJ-464] ([#355](https://github.com/fluencelabs/js-client/issues/355)) ([919c7d6](https://github.com/fluencelabs/js-client/commit/919c7d6ea1e9c153ff7a367873c85fb36624125d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/js-client bumped to 0.3.0
+
 ## 0.0.1 (2023-09-22)
 
 ### Features
