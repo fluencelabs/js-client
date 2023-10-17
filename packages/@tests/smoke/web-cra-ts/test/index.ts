@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 
 import {
   CDN_PUBLIC_PATH,
+  JS_CLIENT_DEPS_PATH,
   startContentServer,
   stopServer,
 } from "@test/test-utils";
@@ -20,6 +21,12 @@ const test = async () => {
     await access(join(publicPath, "source"));
   } catch {
     await symlink(CDN_PUBLIC_PATH, join(publicPath, "source"));
+  }
+
+  try {
+    await access(join(publicPath, "deps"));
+  } catch {
+    await symlink(JS_CLIENT_DEPS_PATH, join(publicPath, "deps"));
   }
 
   console.log("starting puppeteer...");
