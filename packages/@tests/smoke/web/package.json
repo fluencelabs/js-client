@@ -1,28 +1,28 @@
 {
-    "name": "@tests/smoke_web",
-    "version": "0.1.0",
-    "description": "Smoke test web",
-    "main": "./dist/index.js",
-    "typings": "./dist/index.d.ts",
-    "engines": {
-        "node": ">=10",
-        "pnpm": ">=3"
-    },
-    "type": "module",
-    "scripts": {
-        "build": "tsc",
-        "simulate-cdn": "http-server -p 8765 ../../../client/js-client.web.standalone/dist",
-        "test": "node --loader ts-node/esm ./src/index.ts",
-        "serve": "http-server public"
-    },
-    "repository": "https://github.com/fluencelabs/fluence-js",
-    "author": "Fluence Labs",
-    "license": "Apache-2.0",
-    "dependencies": {
-        "@fluencelabs/js-client": "workspace:^",
-        "@test/test-utils": "workspace:../../test-utils"
-    },
-    "devDependencies": {
-        "puppeteer": "19.7.2"
-    }
+  "name": "@tests/smoke_web",
+  "version": "0.1.0",
+  "description": "Smoke test web",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=10",
+    "pnpm": ">=3"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "simulate-cdn": "http-server -p 8765 ../../../client/js-client.web.standalone/dist",
+    "test": "node --loader ts-node/esm ./src/index.ts",
+    "serve": "http-server public"
+  },
+  "repository": "https://github.com/fluencelabs/fluence-js",
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@fluencelabs/js-client": "workspace:*",
+    "@test/test-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "puppeteer": "19.7.2"
+  }
 }

@@ -14,46 +14,50 @@
  * limitations under the License.
  */
 
-import inject from '@rollup/plugin-inject';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import { createRequire } from 'module';
-import { readFileSync } from 'fs';
+import inject from "@rollup/plugin-inject";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { createRequire } from "module";
+import { readFileSync } from "fs";
+import { UserConfig } from "vite";
 
 const require = createRequire(import.meta.url);
-const esbuildShim = require.resolve('node-stdlib-browser/helpers/esbuild/shim');
+const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
-export default {
-    build: {
-        target: 'modules',
-        minify: 'esbuild',
-        lib: {
-            entry: './src/index.ts',
-            name: 'js-client',
-            fileName: 'index',
+const config: UserConfig = {
+  build: {
+    target: "modules",
+    minify: "esbuild",
+    lib: {
+      entry: "./src/index.ts",
+      name: "js-client",
+      fileName: "index",
+    },
+    outDir: "./dist/browser",
+    rollupOptions: {
+      plugins: [
+        {
+          // @ts-ignore
+          ...inject({
+            global: [esbuildShim, "global"],
+            process: [esbuildShim, "process"],
+            Buffer: [esbuildShim, "Buffer"],
+          }),
+          enforce: "post",
         },
-        outDir: './dist/browser',
-        rollupOptions: {
-            plugins: [
-                {
-                    // @ts-ignore
-                    ...inject({
-                        global: [esbuildShim, 'global'],
-                        process: [esbuildShim, 'process'],
-                        Buffer: [esbuildShim, 'Buffer']
-                    }), enforce: 'post'
-                }
-            ],
-        }
+      ],
     },
-    plugins: [tsconfigPaths()],
-    optimizeDeps: {
-        esbuildOptions: {
-            define: {
-                global: 'globalThis',
-            },
-        },
+  },
+  plugins: [tsconfigPaths()],
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "globalThis",
+      },
     },
-    define: {
-        __PACKAGE_JSON_CONTENT__: readFileSync('./package.json', 'utf-8')
-    },
-}
+  },
+  define: {
+    __PACKAGE_JSON_CONTENT__: readFileSync("./package.json", "utf-8"),
+  },
+};
+
+export default config;

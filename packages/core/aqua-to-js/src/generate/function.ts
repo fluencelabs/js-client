@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,24 +14,38 @@
  * limitations under the License.
  */
 
-import { recursiveRenameLaquaProps } from '../utils.js';
-import { AquaFunction, TypeGenerator } from './interfaces.js';
+import { recursiveRenameLaquaProps } from "../utils.js";
 
-export function generateFunctions(typeGenerator: TypeGenerator, functions: Record<string, AquaFunction>) {
-    return Object.values(functions).map(func => generateFunction(typeGenerator, func)).join('\n\n');
+import { AquaFunction, TypeGenerator } from "./interfaces.js";
+
+export function generateFunctions(
+  typeGenerator: TypeGenerator,
+  functions: Record<string, AquaFunction>,
+) {
+  return Object.values(functions)
+    .map((func) => {
+      return generateFunction(typeGenerator, func);
+    })
+    .join("\n\n");
 }
 
+type DeepToType<T> = { [K in keyof T]: DeepToType<T[K]> };
+
 function generateFunction(typeGenerator: TypeGenerator, func: AquaFunction) {
-    const scriptConstName = func.funcDef.functionName + '_script';
-    return `export const ${scriptConstName} = \`
+  const funcDef: DeepToType<typeof func.funcDef> = func.funcDef;
+  const scriptConstName = func.funcDef.functionName + "_script";
+  return `export const ${scriptConstName} = \`
 ${func.script}\`;
 
 ${typeGenerator.funcType(func)}
-export function ${func.funcDef.functionName}(${typeGenerator.type('...args', 'any[]')}) {
+export function ${func.funcDef.functionName}(${typeGenerator.type(
+    "...args",
+    "any[]",
+  )}) {
     return callFunction$$(
         args,
-        ${JSON.stringify(recursiveRenameLaquaProps(func.funcDef), null, 4)},
+        ${JSON.stringify(recursiveRenameLaquaProps(funcDef), null, 4)},
         ${scriptConstName}
     );
-}`
+}`;
 }

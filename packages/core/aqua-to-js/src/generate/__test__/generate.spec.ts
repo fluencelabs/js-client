@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,36 +14,40 @@
  * limitations under the License.
  */
 
-import { describe, expect, it } from 'vitest';
-import { generateTypes, generateSources } from '../index.js';
-import { compileFromPath } from '@fluencelabs/aqua-api';
-import url from 'url';
-import { getPackageJsonContent, PackageJson } from '../../utils.js';
+import url from "url";
 
-describe('Aqua to js/ts compiler', () => {
-    it('compiles smoke tests successfully', async () => {
-        const res = await compileFromPath({
-            filePath: url.fileURLToPath(new URL('./sources/smoke_test.aqua', import.meta.url)),
-            imports: ['./node_modules'],
-            targetType: 'air'
-        });
-        
-        const pkg: PackageJson = {
-            ...(await getPackageJsonContent()),
-            version: '0.0.0',
-            devDependencies: {
-                '@fluencelabs/aqua-api': '0.0.0'
-            },
-        };
-        
-        const jsResult = await generateSources(res, 'js', pkg);
-        const jsTypes = await generateTypes(res, pkg);
-        
-        expect(jsResult).toMatchSnapshot();
-        expect(jsTypes).toMatchSnapshot();
+import { compileFromPath } from "@fluencelabs/aqua-api";
+import { describe, expect, it } from "vitest";
 
-        const tsResult = await generateSources(res, 'ts', pkg);
+import { getPackageJsonContent, PackageJson } from "../../utils.js";
+import { generateTypes, generateSources } from "../index.js";
 
-        expect(tsResult).toMatchSnapshot();
+describe("Aqua to js/ts compiler", () => {
+  it("compiles smoke tests successfully", async () => {
+    const res = await compileFromPath({
+      filePath: url.fileURLToPath(
+        new URL("./sources/smoke_test.aqua", import.meta.url),
+      ),
+      imports: ["./node_modules"],
+      targetType: "air",
     });
+
+    const pkg: PackageJson = {
+      ...(await getPackageJsonContent()),
+      version: "0.0.0",
+      devDependencies: {
+        "@fluencelabs/aqua-api": "0.0.0",
+      },
+    };
+
+    const jsResult = generateSources(res, "js", pkg);
+    const jsTypes = generateTypes(res, pkg);
+
+    expect(jsResult).toMatchSnapshot();
+    expect(jsTypes).toMatchSnapshot();
+
+    const tsResult = generateSources(res, "ts", pkg);
+
+    expect(tsResult).toMatchSnapshot();
+  });
 });

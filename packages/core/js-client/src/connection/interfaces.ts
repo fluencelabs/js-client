@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,34 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { PeerIdB58 } from '@fluencelabs/interfaces';
-import type { Subscribable } from 'rxjs';
-import { IParticle } from '../particle/interfaces.js';
-import { IStartable } from '../util/commonTypes.js';
+
+import type { PeerIdB58 } from "@fluencelabs/interfaces";
+import type { Subscribable } from "rxjs";
+
+import { IParticle } from "../particle/interfaces.js";
+import { IStartable } from "../util/commonTypes.js";
 
 /**
  * Interface for connection used in Fluence Peer.
  */
 export interface IConnection extends IStartable {
-    /**
-     * Observable that emits particles received from the connection.
-     */
-    particleSource: Subscribable<IParticle>;
+  /**
+   * Observable that emits particles received from the connection.
+   */
+  particleSource: Subscribable<IParticle>;
 
-    /**
-     * Send particle to the network using the connection.
-     * @param nextPeerIds - list of peer ids to send the particle to
-     * @param particle - particle to send
-     */
-    sendParticle(nextPeerIds: PeerIdB58[], particle: IParticle): Promise<void>;
+  /**
+   * Send particle to the network using the connection.
+   * @param nextPeerIds - list of peer ids to send the particle to
+   * @param particle - particle to send
+   */
+  sendParticle(nextPeerIds: PeerIdB58[], particle: IParticle): Promise<void>;
 
-    /**
-     * Get peer id of the relay peer. Throws an error if the connection doesn't support relay.
-     */
-    getRelayPeerId(): PeerIdB58;
+  /**
+   * Get peer id of the relay peer. Throws an error if the connection doesn't support relay.
+   */
+  getRelayPeerId(): PeerIdB58;
 
-    /**
-     * Check if the connection supports relay.
-     */
-    supportsRelay(): boolean;
+  /**
+   * Check if the connection supports relay.
+   */
+  supportsRelay(): boolean;
 }

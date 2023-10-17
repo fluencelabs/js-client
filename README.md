@@ -13,34 +13,34 @@ Adding the Fluence JS client for your web application is very easy.
 
 1. Add a script tag with the JS Client bundle to your `index.html`. The easiest way to do this is using a CDN (like [JSDELIVR](https://www.jsdelivr.com/) or [UNPKG](https://unpkg.com/)). The script is large, thus we highly recommend to use the `async` attribute.
 
-    Here is an example using the JSDELIVR CDN:
+   Here is an example using the JSDELIVR CDN:
 
-    ```html
-    <head>
-        <title>Cool App</title>
-        <script
-            src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client.web.standalone@0.13.3/dist/js-client.min.js"
-            async
-        ></script>
-    </head>
-    ```
+   ```html
+   <head>
+     <title>Cool App</title>
+     <script
+       src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client.web.standalone@0.13.3/dist/js-client.min.js"
+       async
+     ></script>
+   </head>
+   ```
 
-    If you cannot or don't want to use a CDN, feel free to get the script directly from the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone) and host it yourself. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
+   If you cannot or don't want to use a CDN, feel free to get the script directly from the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone) and host it yourself. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
 
 2. Install the following packages:
 
-    ```
-    npm i @fluencelabs/js-client.api @fluencelabs/fluence-network-environment
-    ```
+   ```
+   npm i @fluencelabs/js-client.api @fluencelabs/fluence-network-environment
+   ```
 
 3. Add the following lines at the beginning of your code:
 
-    ```
-    import { Fluence } from "@fluencelabs/js-client.api";
-    import { randomKras } from '@fluencelabs/fluence-network-environment';
+   ```
+   import { Fluence } from "@fluencelabs/js-client.api";
+   import { randomKras } from '@fluencelabs/fluence-network-environment';
 
-    Fluence.connect(randomKras());
-    ```
+   Fluence.connect(randomKras());
+   ```
 
 ### Node.js Apps
 
@@ -48,37 +48,37 @@ Adding the Fluence JS client for your web application is very easy.
 
 The Fluence JS Client only supports the ESM format. This implies that a few preliminary steps are required if your project is not already using ESM:
 
--   Add `"type": "module"` to your package.json.
--   Replace `"main": "index.js"` with `"exports": "./index.js"` in your package.json.
--   Remove `'use strict';` from all JavaScript files.
--   Replace all `require()`/`module.export` with `import`/`export`.
--   Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
+- Add `"type": "module"` to your package.json.
+- Replace `"main": "index.js"` with `"exports": "./index.js"` in your package.json.
+- Remove `'use strict';` from all JavaScript files.
+- Replace all `require()`/`module.export` with `import`/`export`.
+- Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
 
 If you are using TypeScript:
 
--   Make sure you are using TypeScript 4.7 or later.
--   Add [`"module": "ESNext", "target": "ESNext", "moduleResolution": "nodenext"`](https://www.typescriptlang.org/tsconfig#module) to your tsconfig.json.
--   Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
--   Remove `namespace` usage and use `export` instead.
--   You must use a `.js` extension in relative imports even though you're importing `.ts` files.
+- Make sure you are using TypeScript 4.7 or later.
+- Add [`"module": "ESNext", "target": "ESNext", "moduleResolution": "nodenext"`](https://www.typescriptlang.org/tsconfig#module) to your tsconfig.json.
+- Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
+- Remove `namespace` usage and use `export` instead.
+- You must use a `.js` extension in relative imports even though you're importing `.ts` files.
 
 **Installation:**
 
 1. Install the following packages:
 
-    ```
-    npm i @fluencelabs/js-client.api"@fluencelabs/js-client.node @fluencelabs/fluence-network-environment
-    ```
+   ```
+   npm i @fluencelabs/js-client.api"@fluencelabs/js-client.node @fluencelabs/fluence-network-environment
+   ```
 
 2. Add the following lines at the beginning of your code:
 
-    ```
-    import '@fluencelabs/js-client.node';
-    import { Fluence } from "@fluencelabs/js-client.api";
-    import { randomKras } from '@fluencelabs/fluence-network-environment';
+   ```
+   import '@fluencelabs/js-client.node';
+   import { Fluence } from "@fluencelabs/js-client.api";
+   import { randomKras } from '@fluencelabs/fluence-network-environment';
 
-    Fluence.connect(randomKras());
-    ```
+   Fluence.connect(randomKras());
+   ```
 
 ## Usage in an Application
 
@@ -86,9 +86,9 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 
 1. Install the package:
 
-    ```
-    npm i -D @fluencelabs/cli
-    ```
+   ```
+   npm i -D @fluencelabs/cli
+   ```
 
 2. Add a directory in your project for Aqua code, e.g., `_aqua`.
 
@@ -98,46 +98,46 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 
 5. To compile Aqua code once, run `npx fluence aqua -i ./_aqua -o ./src/_aqua/`. To watch the changes and to recompile on the fly, add the `-w` flag: `npx fluence aqua -w -i ./_aqua -o ./src/_aqua/`.
 
-    **Hint**: it might be a good idea to add these scripts to your `package.json` file.
-    For example, you project structure could look like this:
+   **Hint**: it might be a good idea to add these scripts to your `package.json` file.
+   For example, you project structure could look like this:
 
-    ```
-     ┣ _aqua
-     ┃ ┗ demo.aqua
-     ┣ src
-     ┃ ┣ _aqua
-     ┃ ┃ ┗ demo.ts
-     ┃ ┗ index.ts
-     ┣ package-lock.json
-     ┣ package.json
-     ┗ tsconfig.json
-    ```
+   ```
+    ┣ _aqua
+    ┃ ┗ demo.aqua
+    ┣ src
+    ┃ ┣ _aqua
+    ┃ ┃ ┗ demo.ts
+    ┃ ┗ index.ts
+    ┣ package-lock.json
+    ┣ package.json
+    ┗ tsconfig.json
+   ```
 
-    Then, your `package.json` file should include the following lines:
+   Then, your `package.json` file should include the following lines:
 
-    ```
-    {
-      ...
-      "scripts": {
-        ...
-        "aqua:compile": "fluence aqua -i ./aqua/ -o ./src/_aqua",
-        "aqua:watch": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
-      },
-      ...
-    }
-    ```
+   ```
+   {
+     ...
+     "scripts": {
+       ...
+       "aqua:compile": "fluence aqua -i ./aqua/ -o ./src/_aqua",
+       "aqua:watch": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
+     },
+     ...
+   }
+   ```
 
 6. Now you can import and call Aqua code from your application like
    this:
 
-    ```
-    import { getRelayTime } from "./_aqua/demo";
+   ```
+   import { getRelayTime } from "./_aqua/demo";
 
-    async function buttonClick() {
-      const time = await getRelayTime();
-      alert("relay time: " + time);
-    }
-    ```
+   async function buttonClick() {
+     const time = await getRelayTime();
+     alert("relay time: " + time);
+   }
+   ```
 
 ## Debug
 
@@ -165,10 +165,10 @@ Star (`*`) character can be used as a wildcard to enable logs for multiple compo
 
 ### Index of components:
 
--   `particle`: everything related to particle processing queue
--   `aqua`: infrastructure of aqua compiler support
--   `connection`: connection layer
--   `marine`: Marine JS logs
+- `particle`: everything related to particle processing queue
+- `aqua`: infrastructure of aqua compiler support
+- `connection`: connection layer
+- `marine`: Marine JS logs
 
 ### Enabling logs in Node.js
 

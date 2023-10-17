@@ -1,5 +1,5 @@
-/*
- * Copyright 2020 Fluence Labs Limited
+/**
+ * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,34 @@ import { CallResultsArray } from "@fluencelabs/avm";
 import { fromUint8Array, toUint8Array } from "js-base64";
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 
 import { KeyPair } from "../keypair/index.js";
 import { numberToLittleEndianBytes } from "../util/bytes.js";
 
 import { IParticle } from "./interfaces.js";
 
+const particleSchema = z.object({
+  id: z.string(),
+  timestamp: z.number().positive(),
+  script: z.string(),
+  data: z.string(),
+  ttl: z.number().positive(),
+  init_peer_id: z.string(),
+  signature: z.array(z.number()),
+});
+
 export class Particle implements IParticle {
-    constructor(
-        public readonly id: string,
-        public readonly timestamp: number,
-        public readonly script: string,
-        public readonly data: Uint8Array,
-        public readonly ttl: number,
-        public readonly initPeerId: string,
-        public readonly signature: Uint8Array
-    ) {}
-    
+  constructor(
+    readonly id: string,
+    readonly timestamp: number,
+    readonly script: string,
+    readonly data: Uint8Array,
+    readonly ttl: number,
+    readonly initPeerId: string,
+    readonly signature: Uint8Array,
+  ) {}
+
   static async createNew(
     script: string,
     initPeerId: string,
@@ -60,20 +71,31 @@ export class Particle implements IParticle {
     );
   }
 
-    static fromString(str: string): Particle {
-        const json = JSON.parse(str);
-        const res = new Particle(
-            json.id,
-            json.timestamp,
-            json.script,
-            toUint8Array(json.data),
-            json.ttl,
-            json.init_peer_id,
-            new Uint8Array(json.signature)
-        );
+  static fromString(str: string): Particle {
+    const json = JSON.parse(str);
 
-        return res;
+    const res = particleSchema.safeParse(json);
+
+    if (!res.success) {
+      throw new Error(
+        `Particle format invalid. Errors: ${JSON.stringify(
+          res.error.flatten(),
+        )}`,
+      );
     }
+
+    const data = res.data;
+
+    return new Particle(
+      data.id,
+      data.timestamp,
+      data.script,
+      toUint8Array(data.data),
+      data.ttl,
+      data.init_peer_id,
+      new Uint8Array(data.signature),
+    );
+  }
 }
 
 const en = new TextEncoder();
@@ -108,16 +130,6 @@ export const getActualTTL = (particle: IParticle): number => {
 export const hasExpired = (particle: IParticle): boolean => {
   return getActualTTL(particle) <= 0;
 };
-
-/**
- * Validates that particle signature is correct
- */
-export const verifySignature = async (particle: IParticle, publicKey: Uint8Array): Promise<boolean> => {
-    // TODO: Uncomment this when nox roll out particle signatures
-    return true;
-    // const message = buildParticleMessage(particle);
-    // return unmarshalPublicKey(publicKey).verify(message, particle.signature);
-}
 
 /**
  * Creates a particle clone with new data
@@ -179,8 +191,8 @@ export interface ParticleQueueItem {
  */
 export const handleTimeout = (fn: () => void) => {
   return (stage: ParticleExecutionStage) => {
-      if (stage.stage === "expired") {
-          fn();
-      }
-  }
-}
+    if (stage.stage === "expired") {
+      fn();
+    }
+  };
+};

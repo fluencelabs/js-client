@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-import { fetchResource as fetchResourceBrowser } from './browser.js';
-import { fetchResource as fetchResourceNode } from './node.js';
-import process from 'process';
+import process from "process";
 
-const isNode = typeof process !== 'undefined' && process?.release?.name === 'node';
+import { fetchResource as fetchResourceIsomorphic } from "#fetcher";
+
+const isNode =
+  // process.release is undefined in browser env
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  typeof process !== "undefined" && process.release?.name === "node";
 
 export async function fetchResource(pkg: string, path: string) {
-    switch (true) {
-        case isNode:
-            return fetchResourceNode(pkg, path);
-        default:
-            return fetchResourceBrowser(pkg, path);
-    }
+  switch (true) {
+    case isNode:
+      return fetchResourceIsomorphic(pkg, path);
+    default:
+      return fetchResourceIsomorphic(pkg, path);
+  }
 }

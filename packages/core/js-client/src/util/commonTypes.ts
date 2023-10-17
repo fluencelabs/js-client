@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-export { CallParameters} from "@fluencelabs/marine-js/dist/types";
+export type { CallParameters } from "@fluencelabs/marine-js/dist/types";
 
 export interface IStartable {
-    start(): Promise<void>;
-    stop(): Promise<void>;
+  start(): Promise<void>;
+  stop(): Promise<void>;
 }
-
-export type JSONValue = string | number | boolean | null | { [x: string]: JSONValue } | Array<JSONValue>;
-export type JSONArray = Array<JSONValue>;
-export type JSONObject = { [x: string]: JSONValue };

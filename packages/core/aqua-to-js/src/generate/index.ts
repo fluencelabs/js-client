@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,46 +14,80 @@
  * limitations under the License.
  */
 
-import { CompilationResult, JSTypeGenerator, OutputType, TSTypeGenerator, TypeGenerator } from './interfaces.js';
-import { PackageJson } from '../utils.js';
-import { generateServices } from './service.js';
-import { generateFunctions } from './function.js';
-import header from './header.js';
+import { PackageJson } from "../utils.js";
 
-const typeGenerators: Record<OutputType, TypeGenerator> = { 
-    'js': new JSTypeGenerator(),
-    'ts': new TSTypeGenerator()
+import { generateFunctions } from "./function.js";
+import header from "./header.js";
+import {
+  CompilationResult,
+  JSTypeGenerator,
+  OutputType,
+  TSTypeGenerator,
+  TypeGenerator,
+} from "./interfaces.js";
+import { generateServices } from "./service.js";
+
+const typeGenerators: Record<OutputType, TypeGenerator> = {
+  js: new JSTypeGenerator(),
+  ts: new TSTypeGenerator(),
 };
 
-export async function generateSources({ services, functions }: CompilationResult, outputType: OutputType, packageJson: PackageJson) {
-    const typeGenerator = typeGenerators[outputType];
-    return `${header(packageJson, outputType)}
+export function generateSources(
+  { services, functions }: CompilationResult,
+  outputType: OutputType,
+  packageJson: PackageJson,
+) {
+  const typeGenerator = typeGenerators[outputType];
+  return `${header(packageJson, outputType)}
 
-${Object.entries(services).length > 0 ? `// Services
+${
+  Object.entries(services).length > 0
+    ? `// Services
 ${generateServices(typeGenerator, services)}
-` : ''}
-${Object.entries(functions).length > 0 ? `// Functions
+`
+    : ""
+}
+${
+  Object.entries(functions).length > 0
+    ? `// Functions
 ${generateFunctions(typeGenerator, functions)}
-`: ''}`
+`
+    : ""
+}`;
 }
 
-export async function generateTypes({ services, functions }: CompilationResult, packageJson: PackageJson) {
-    const typeGenerator = typeGenerators['ts'];
-    
-    const generatedServices = Object.entries(services)
-        .map(([srvName, srvDef]) => typeGenerator.serviceType(srvName, srvDef))
-        .join('\n');
-    
-    const generatedFunctions = Object.entries(functions)
-        .map(([funcName, funcDef]) => typeGenerator.funcType(funcDef))
-        .join('\n');
-    
-    return `${header(packageJson, 'ts')}
+export function generateTypes(
+  { services, functions }: CompilationResult,
+  packageJson: PackageJson,
+) {
+  const typeGenerator = typeGenerators["ts"];
 
-${Object.entries(services).length > 0 ? `// Services
+  const generatedServices = Object.entries(services)
+    .map(([srvName, srvDef]) => {
+      return typeGenerator.serviceType(srvName, srvDef);
+    })
+    .join("\n");
+
+  const generatedFunctions = Object.entries(functions)
+    .map(([, funcDef]) => {
+      return typeGenerator.funcType(funcDef);
+    })
+    .join("\n");
+
+  return `${header(packageJson, "ts")}
+
+${
+  Object.entries(services).length > 0
+    ? `// Services
 ${generatedServices}
-` : ''}
-${Object.entries(functions).length > 0 ? `// Functions
+`
+    : ""
+}
+${
+  Object.entries(functions).length > 0
+    ? `// Functions
 ${generatedFunctions}
-`: ''}`
+`
+    : ""
+}`;
 }

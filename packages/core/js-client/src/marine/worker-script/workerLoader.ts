@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// @ts-ignore
-import type { WorkerImplementation } from 'threads/dist/types/master';
-// @ts-ignore
-import { Worker } from 'threads';
-import { LazyLoader } from '../interfaces.js';
+
+import { Worker, type Worker as WorkerImplementation } from "threads/master";
+
+import { LazyLoader } from "../interfaces.js";
 
 export class WorkerLoader extends LazyLoader<WorkerImplementation> {
-    constructor() {
-        super(() => new Worker('../../../node_modules/@fluencelabs/marine-worker/dist/index.js'));
-    }
+  constructor() {
+    super(() => {
+      return new Worker(
+        "../../../node_modules/@fluencelabs/marine-worker/dist/index.js",
+      );
+    });
+  }
 }

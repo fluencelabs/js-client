@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-import { CallParams } from '@fluencelabs/interfaces';
-import { TracingDef } from './_aqua/tracing.js';
+import { CallParams } from "@fluencelabs/interfaces";
+
+import { TracingDef } from "./_aqua/tracing.js";
 
 export class Tracing implements TracingDef {
-    tracingEvent(arrowName: string, event: string, callParams: CallParams<'arrowName' | 'event'>): void {
-        console.log('[%s] (%s) %s', callParams.particleId, arrowName, event);
-    }
+  tracingEvent(
+    arrowName: string,
+    event: string,
+    callParams: CallParams<"arrowName" | "event">,
+  ): void {
+    // This console log is intentional
+    // eslint-disable-next-line no-console
+    console.log("[%s] (%s) %s", callParams.particleId, arrowName, event);
+  }
 }

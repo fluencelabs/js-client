@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,99 +13,114 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CallServiceData, CallServiceResult, GenericCallServiceHandler, IJsServiceHost } from './interfaces.js';
+
+import {
+  CallServiceData,
+  CallServiceResult,
+  GenericCallServiceHandler,
+  IJsServiceHost,
+} from "./interfaces.js";
 
 export class JsServiceHost implements IJsServiceHost {
-    private particleScopeHandlers = new Map<string, Map<string, GenericCallServiceHandler>>();
-    private commonHandlers = new Map<string, GenericCallServiceHandler>();
+  private particleScopeHandlers = new Map<
+    string,
+    Map<string, GenericCallServiceHandler>
+  >();
+  private commonHandlers = new Map<string, GenericCallServiceHandler>();
 
-    /**
-     * Returns true if any handler for the specified serviceId is registered
-     */
-    hasService(serviceId: string): boolean {
-        return this.commonHandlers.has(serviceId) || this.particleScopeHandlers.has(serviceId);
+  /**
+   * Returns true if any handler for the specified serviceId is registered
+   */
+  hasService(serviceId: string): boolean {
+    return (
+      this.commonHandlers.has(serviceId) ||
+      this.particleScopeHandlers.has(serviceId)
+    );
+  }
+
+  /**
+   * Removes all handlers associated with the specified particle scope
+   * @param particleId Particle ID to remove handlers for
+   */
+  removeParticleScopeHandlers(particleId: string): void {
+    this.particleScopeHandlers.delete(particleId);
+  }
+
+  /**
+   * Find call service handler for specified particle
+   * @param serviceId Service ID as specified in `call` air instruction
+   * @param fnName Function name as specified in `call` air instruction
+   * @param particleId Particle ID
+   */
+  getHandler(
+    serviceId: string,
+    fnName: string,
+    particleId: string,
+  ): GenericCallServiceHandler | null {
+    const key = serviceFnKey(serviceId, fnName);
+    return (
+      this.particleScopeHandlers.get(particleId)?.get(key) ??
+      this.commonHandlers.get(key) ??
+      null
+    );
+  }
+
+  /**
+   * Execute service call for specified call service data. Return null if no handler was found
+   */
+  async callService(req: CallServiceData): Promise<CallServiceResult | null> {
+    const handler = this.getHandler(
+      req.serviceId,
+      req.fnName,
+      req.particleContext.particleId,
+    );
+
+    if (handler === null) {
+      return null;
     }
 
-    /**
-     * Removes all handlers associated with the specified particle scope
-     * @param particleId Particle ID to remove handlers for
-     */
-    removeParticleScopeHandlers(particleId: string): void {
-        this.particleScopeHandlers.delete(particleId);
+    const result = await handler(req);
+
+    // Otherwise AVM might break
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (result.result === undefined) {
+      result.result = null;
     }
 
-    /**
-     * Find call service handler for specified particle
-     * @param serviceId Service ID as specified in `call` air instruction
-     * @param fnName Function name as specified in `call` air instruction
-     * @param particleId Particle ID
-     */
-    getHandler(serviceId: string, fnName: string, particleId: string): GenericCallServiceHandler | null {
-        const key = serviceFnKey(serviceId, fnName);
-        const psh = this.particleScopeHandlers.get(particleId);
-        let handler: GenericCallServiceHandler | undefined = undefined;
+    return result;
+  }
 
-        // we should prioritize handler for this particle if there is one
-        // if particle-scoped handler exist for this particle try getting handler there
-        if (psh !== undefined) {
-            handler = psh.get(key);
-        }
+  /**
+   * Register handler for all particles
+   */
+  registerGlobalHandler(
+    serviceId: string,
+    fnName: string,
+    handler: GenericCallServiceHandler,
+  ): void {
+    this.commonHandlers.set(serviceFnKey(serviceId, fnName), handler);
+  }
 
-        // then try to find a common handler for all particles with this service-fn key
-        // if there is no particle-specific handler, get one from common map
-        if (handler === undefined) {
-            handler = this.commonHandlers.get(key);
-        }
+  /**
+   * Register handler which will be called only for particle with the specific id
+   */
+  registerParticleScopeHandler(
+    particleId: string,
+    serviceId: string,
+    fnName: string,
+    handler: GenericCallServiceHandler,
+  ): void {
+    let psh = this.particleScopeHandlers.get(particleId);
 
-        return handler || null;
+    if (psh === undefined) {
+      psh = new Map<string, GenericCallServiceHandler>();
+      this.particleScopeHandlers.set(particleId, psh);
     }
 
-    /**
-     * Execute service call for specified call service data. Return null if no handler was found
-     */
-    async callService(req: CallServiceData): Promise<CallServiceResult | null> {
-        const handler = this.getHandler(req.serviceId, req.fnName, req.particleContext.particleId);
-
-        if (handler === null) {
-            return null;
-        }
-
-        const result = await handler(req);
-
-        // Otherwise AVM might break
-        if (result.result === undefined) {
-            result.result = null;
-        }
-
-        return result;
-    }
-
-    /**
-     * Register handler for all particles
-     */
-    registerGlobalHandler(serviceId: string, fnName: string, handler: GenericCallServiceHandler): void {
-        this.commonHandlers.set(serviceFnKey(serviceId, fnName), handler);
-    }
-
-    /**
-     * Register handler which will be called only for particle with the specific id
-     */
-    registerParticleScopeHandler(
-        particleId: string,
-        serviceId: string,
-        fnName: string,
-        handler: GenericCallServiceHandler,
-    ): void {
-        let psh = this.particleScopeHandlers.get(particleId);
-        if (psh === undefined) {
-            psh = new Map<string, GenericCallServiceHandler>();
-            this.particleScopeHandlers.set(particleId, psh);
-        }
-
-        psh.set(serviceFnKey(serviceId, fnName), handler);
-    }
+    psh.set(serviceFnKey(serviceId, fnName), handler);
+  }
 }
 
 function serviceFnKey(serviceId: string, fnName: string) {
-    return `${serviceId}/${fnName}`;
+  return `${serviceId}/${fnName}`;
 }

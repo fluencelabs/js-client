@@ -88,6 +88,11 @@ jobs:
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
+      - run: pnpm -r i
+      - run: pnpm -r build
+      - run: pnpm lint-check
+
+
       - name: Override dependencies
         uses: fluencelabs/github-actions/pnpm-set-dependency@main
         with:
@@ -97,10 +102,8 @@ jobs:
               "@fluencelabs/marine-js": "${{ inputs.marine-js-version }}"
             }
 
-      - run: pnpm -r --no-frozen-lockfile i
-      - run: pnpm -r build
+      - run: pnpm -r i
       - run: pnpm -r test
-
       - name: Dump rust-peer logs
         if: always()
         uses: jwalton/gh-docker-logs@v2

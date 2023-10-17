@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,43 +13,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { RegisterServiceType } from '@fluencelabs/interfaces';
-import { registerGlobalService, userHandlerService } from './services.js';
 
-import { logger } from '../util/logger.js';
+import type { ServiceDef, ServiceImpl } from "@fluencelabs/interfaces";
 
-const log = logger('aqua');
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { logger } from "../util/logger.js";
 
-export const registerService: RegisterServiceType = ({ peer, def, serviceId, service }) => {
-    log.trace('registering aqua service %o', { def, serviceId, service });
+import { registerGlobalService, userHandlerService } from "./services.js";
 
-    // Checking for missing keys
-    const requiredKeys = def.functions.tag === 'nil' ? [] : Object.keys(def.functions.fields);
-    const incorrectServiceDefinitions = requiredKeys.filter((f) => !(f in service));
-    if (!!incorrectServiceDefinitions.length) {
-        throw new Error(
-            `Error registering service ${serviceId}: missing functions: ` +
-                incorrectServiceDefinitions.map((d) => "'" + d + "'").join(', '),
-        );
-    }
+const log = logger("aqua");
 
-    if (!serviceId) {
-        serviceId = def.defaultServiceId;
-    }
+interface RegisterServiceArgs {
+  peer: FluencePeer;
+  def: ServiceDef;
+  serviceId: string | undefined;
+  service: ServiceImpl;
+}
 
-    if (!serviceId) {
-        throw new Error('Service ID must be specified');
-    }
+export const registerService = ({
+  peer,
+  def,
+  serviceId = def.defaultServiceId,
+  service,
+}: RegisterServiceArgs) => {
+  // TODO: Need to refactor this. We can compute function types from service implementation, making func more type safe
+  log.trace("registering aqua service %o", { def, serviceId, service });
 
-    const singleFunctions = def.functions.tag === 'nil' ? [] : Object.entries(def.functions.fields);
-    for (let singleFunction of singleFunctions) {
-        let [name, type] = singleFunction;
-        // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
-        // Account for the fact that user service might be defined as a class - .bind(...)
-        const userDefinedHandler = service[name].bind(service);
+  // Checking for missing keys
+  const requiredKeys =
+    def.functions.tag === "nil" ? [] : Object.keys(def.functions.fields);
 
-        const serviceDescription = userHandlerService(serviceId, singleFunction, userDefinedHandler);
-        registerGlobalService(peer, serviceDescription);
-    }
-    log.trace('aqua service registered %s', serviceId);
+  const incorrectServiceDefinitions = requiredKeys.filter((f) => {
+    return !(f in service);
+  });
+
+  if (serviceId == null) {
+    throw new Error("Service ID must be specified");
+  }
+
+  if (incorrectServiceDefinitions.length > 0) {
+    throw new Error(
+      `Error registering service ${serviceId}: missing functions: ` +
+        incorrectServiceDefinitions
+          .map((d) => {
+            return "'" + d + "'";
+          })
+          .join(", "),
+    );
+  }
+
+  const singleFunctions =
+    def.functions.tag === "nil" ? [] : Object.entries(def.functions.fields);
+
+  for (const singleFunction of singleFunctions) {
+    const [name] = singleFunction;
+    // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
+    // Account for the fact that user service might be defined as a class - .bind(...)
+    const userDefinedHandler = service[name].bind(service);
+
+    const serviceDescription = userHandlerService(
+      serviceId,
+      singleFunction,
+      userDefinedHandler,
+    );
+
+    registerGlobalService(peer, serviceDescription);
+  }
+
+  log.trace("aqua service registered %s", serviceId);
 };

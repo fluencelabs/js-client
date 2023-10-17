@@ -1,8 +1,9 @@
 {
-    "extends": "../../../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "./dist",
-        "module": "NodeNext"
-    },
-    "exclude": ["node_modules", "dist"]
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "NodeNext"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

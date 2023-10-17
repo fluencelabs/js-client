@@ -1,0 +1,133 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "project": ["./tsconfig.eslint.json"],
+    "sourceType": "module"
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "prettier"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "license-header",
+    "unused-imports"
+  ],
+  "ignorePatterns": ["**/node_modules/**/*", "**/dist/**/*"],
+  "rules": {
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "no-console": ["error"],
+    "arrow-body-style": ["error", "always"],
+    "no-empty": [
+      "error",
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    "curly": ["error", "all"],
+    "no-unused-expressions": ["error"],
+    "dot-notation": ["off"],
+    "object-curly-spacing": ["error", "always"],
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "multiline-expression",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-expression"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-block-like",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-block-like"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-const",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-const"
+      },
+      {
+        "blankLine": "always",
+        "prev": "multiline-let",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "multiline-let"
+      },
+      {
+        "blankLine": "any",
+        "prev": "case",
+        "next": "case"
+      }
+    ],
+    "import/extensions": ["error", "ignorePackages"],
+    "import/no-unresolved": "off",
+    "import/no-cycle": ["error"],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "node/no-unsupported-features/es-syntax": "off",
+    "node/no-unpublished-import": "off",
+    "node/no-missing-import": "off",
+    "@typescript-eslint/explicit-member-accessibility": [
+      "error",
+      {
+        "accessibility": "no-public"
+      }
+    ],
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error",
+      {
+        "allowString": false,
+        "allowNumber": false,
+        "allowNullableObject": false,
+        "allowNullableBoolean": false,
+        "allowNullableString": false,
+        "allowNullableNumber": false,
+        "allowAny": false
+      }
+    ],
+    "@typescript-eslint/consistent-type-assertions": [
+      "error",
+      {
+        "assertionStyle": "never"
+      }
+    ],
+    "unused-imports/no-unused-imports": "error",
+    "license-header/header": ["error", "./resources/license-header.js"]
+  }
+}

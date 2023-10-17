@@ -1,1 +1,10 @@
 .github
+.eslintcache
+pnpm-lock.yaml
+
+**/node_modules
+**/dist
+**/build
+**/public
+
+**/CHANGELOG.md

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,88 +14,98 @@
  * limitations under the License.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { SrvDef } from './_aqua/single-module-srv.js';
-import { FluencePeer } from '../jsPeer/FluencePeer.js';
-import { CallParams } from '@fluencelabs/interfaces';
-import { Buffer } from 'buffer';
-import { allowOnlyParticleOriginatedAt, SecurityGuard } from './securityGuard.js';
+import { Buffer } from "buffer";
+
+import { CallParams } from "@fluencelabs/interfaces";
+import { v4 as uuidv4 } from "uuid";
+
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { getErrorMessage } from "../util/utils.js";
+
+import { SrvDef } from "./_aqua/single-module-srv.js";
+import {
+  allowOnlyParticleOriginatedAt,
+  SecurityGuard,
+} from "./securityGuard.js";
 
 export const defaultGuard = (peer: FluencePeer) => {
-    return allowOnlyParticleOriginatedAt<any>(peer.keyPair.getPeerId());
+  return allowOnlyParticleOriginatedAt(peer.keyPair.getPeerId());
 };
 
 export class Srv implements SrvDef {
-    private services: Set<string> = new Set();
+  private services: Set<string> = new Set();
 
-    constructor(private peer: FluencePeer) {
-        this.securityGuard_create = defaultGuard(this.peer);
-        this.securityGuard_remove = defaultGuard(this.peer);
+  constructor(private peer: FluencePeer) {
+    this.securityGuard_create = defaultGuard(this.peer);
+    this.securityGuard_remove = defaultGuard(this.peer);
+  }
+
+  securityGuard_create: SecurityGuard<"wasm_b64_content">;
+
+  async create(
+    wasm_b64_content: string,
+    callParams: CallParams<"wasm_b64_content">,
+  ) {
+    if (!this.securityGuard_create(callParams)) {
+      return {
+        success: false,
+        error: "Security guard validation failed",
+        service_id: null,
+      };
     }
 
-    securityGuard_create: SecurityGuard<'wasm_b64_content'>;
+    try {
+      const newServiceId = uuidv4();
+      const buffer = Buffer.from(wasm_b64_content, "base64");
+      // TODO:: figure out why SharedArrayBuffer is not working here
+      // const sab = new SharedArrayBuffer(buffer.length);
+      // const tmp = new Uint8Array(sab);
+      // tmp.set(buffer, 0);
+      await this.peer.registerMarineService(buffer, newServiceId);
+      this.services.add(newServiceId);
 
-    async create(wasm_b64_content: string, callParams: CallParams<'wasm_b64_content'>) {
-        if (!this.securityGuard_create(callParams)) {
-            return {
-                success: false,
-                error: 'Security guard validation failed',
-                service_id: null,
-            };
-        }
+      return {
+        success: true,
+        service_id: newServiceId,
+        error: null,
+      };
+    } catch (err: unknown) {
+      return {
+        success: true,
+        service_id: null,
+        error: getErrorMessage(err),
+      };
+    }
+  }
 
-        try {
-            const newServiceId = uuidv4();
-            const buffer = Buffer.from(wasm_b64_content, 'base64');
-            // TODO:: figure out why SharedArrayBuffer is not working here
-            // const sab = new SharedArrayBuffer(buffer.length);
-            // const tmp = new Uint8Array(sab);
-            // tmp.set(buffer, 0);
-            await this.peer.registerMarineService(buffer, newServiceId);
-            this.services.add(newServiceId);
+  securityGuard_remove: SecurityGuard<"service_id">;
 
-            return {
-                success: true,
-                service_id: newServiceId,
-                error: null,
-            };
-        } catch (err: any) {
-            return {
-                success: true,
-                service_id: null,
-                error: err.message,
-            };
-        }
+  async remove(service_id: string, callParams: CallParams<"service_id">) {
+    if (!this.securityGuard_remove(callParams)) {
+      return {
+        success: false,
+        error: "Security guard validation failed",
+        service_id: null,
+      };
     }
 
-    securityGuard_remove: SecurityGuard<'service_id'>;
-
-    async remove(service_id: string, callParams: CallParams<'service_id'>) {
-        if (!this.securityGuard_remove(callParams)) {
-            return {
-                success: false,
-                error: 'Security guard validation failed',
-                service_id: null,
-            };
-        }
-
-        if (!this.services.has(service_id)) {
-            return {
-                success: false,
-                error: `Service with id ${service_id} not found`,
-            };
-        }
-
-        await this.peer.removeMarineService(service_id);
-        this.services.delete(service_id);
-
-        return {
-            success: true,
-            error: null,
-        };
+    if (!this.services.has(service_id)) {
+      return {
+        success: false,
+        error: `Service with id ${service_id} not found`,
+      };
     }
 
-    list() {
-        return Array.from(this.services.values());
-    }
+    await this.peer.removeMarineService(service_id);
+    this.services.delete(service_id);
+
+    return {
+      success: true,
+      error: null,
+    };
+  }
+
+  list() {
+    return Array.from(this.services.values());
+  }
 }

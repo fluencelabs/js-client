@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-type Size = 'u32' | 'u64';
+type Size = "u32" | "u64";
 
 const sizeMap = {
-    'u32': 4,
-    'u64': 8
+  u32: 4,
+  u64: 8,
 } as const;
 
 function numberToBytes(n: number, s: Size, littleEndian: boolean) {
-    const size = sizeMap[s];
-    const buffer = new ArrayBuffer(8);
-    const dv = new DataView(buffer);
-    dv.setBigUint64(0, BigInt(n), littleEndian);
-    return new Uint8Array(buffer.slice(0, size));
+  const size = sizeMap[s];
+  const buffer = new ArrayBuffer(8);
+  const dv = new DataView(buffer);
+  dv.setBigUint64(0, BigInt(n), littleEndian);
+  return new Uint8Array(buffer.slice(0, size));
 }
 
 export function numberToLittleEndianBytes(n: number, s: Size) {
-    return numberToBytes(n, s, true);
+  return numberToBytes(n, s, true);
 }

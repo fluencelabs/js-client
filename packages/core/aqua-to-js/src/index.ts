@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,34 +14,47 @@
  * limitations under the License.
  */
 
-import {
-    generateSources,
-    generateTypes,
-} from './generate/index.js';
-import { CompilationResult, OutputType } from './generate/interfaces.js';
-import { getPackageJsonContent } from './utils.js';
+import { generateSources, generateTypes } from "./generate/index.js";
+import { CompilationResult, OutputType } from "./generate/interfaces.js";
+import { getPackageJsonContent } from "./utils.js";
 
 interface JsOutput {
-    sources: string;
-    types: string;
+  sources: string;
+  types: string;
 }
 
 interface TsOutput {
-    sources: string;
+  sources: string;
 }
 
 type LanguageOutput = {
-    "js": JsOutput,
-    "ts": TsOutput
+  js: JsOutput;
+  ts: TsOutput;
 };
 
-export default async function aquaToJs<T extends OutputType>(res: CompilationResult, outputType: T): Promise<LanguageOutput[T]> {
-    const packageJson = await getPackageJsonContent();
-    
-    return outputType === 'js' ? {
-        sources: await generateSources(res, 'js', packageJson),
-        types: await generateTypes(res, packageJson)
-    } : {
-        sources: await generateSources(res, 'ts', packageJson),
-    } as LanguageOutput[T];
-};
+type NothingToGenerate = null;
+
+export default async function aquaToJs<T extends OutputType>(
+  res: CompilationResult,
+  outputType: T,
+): Promise<LanguageOutput[T] | NothingToGenerate> {
+  if (
+    Object.keys(res.services).length === 0 &&
+    Object.keys(res.functions).length === 0
+  ) {
+    return null;
+  }
+
+  const packageJson = await getPackageJsonContent();
+
+  return outputType === "js"
+    ? {
+        sources: generateSources(res, "js", packageJson),
+        types: generateTypes(res, packageJson),
+      }
+    : // TODO: probably there is a way to remove this type assert
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      ({
+        sources: generateSources(res, "ts", packageJson),
+      } as LanguageOutput[T]);
+}

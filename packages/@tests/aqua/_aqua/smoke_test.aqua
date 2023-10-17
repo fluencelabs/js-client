@@ -53,3 +53,6 @@ func marineTest(wasm64: string) -> f64:
     <- res
 
 
+func callHappy(a: string, b: f64, c: f64, d: string -> f64) -> f64:
+    res <- d("abc")
+    <- res

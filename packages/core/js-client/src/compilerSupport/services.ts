@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,186 +13,216 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SecurityTetraplet } from '@fluencelabs/avm';
-import { match } from 'ts-pattern';
 
-import { Particle } from '../particle/Particle.js';
-
-import { aquaArgs2Ts, responseServiceValue2ts, returnType2Aqua, ts2aqua } from './conversions.js';
+import { SecurityTetraplet } from "@fluencelabs/avm";
 import {
-    CallParams,
-    ArrowWithoutCallbacks,
-    FunctionCallConstants,
-    FunctionCallDef,
-    NonArrowType,
-    IFluenceInternalApi,
-} from '@fluencelabs/interfaces';
-import { CallServiceData, GenericCallServiceHandler, ResultCodes } from '../jsServiceHost/interfaces.js';
-import { fromUint8Array } from 'js-base64';
+  CallParams,
+  ArrowWithoutCallbacks,
+  FunctionCallDef,
+  NonArrowType,
+  ServiceImpl,
+  JSONValue,
+} from "@fluencelabs/interfaces";
+import { fromUint8Array } from "js-base64";
+import { match } from "ts-pattern";
+
+import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import {
+  CallServiceData,
+  GenericCallServiceHandler,
+  ResultCodes,
+} from "../jsServiceHost/interfaces.js";
+import { Particle } from "../particle/Particle.js";
+
+import {
+  aquaArgs2Ts,
+  responseServiceValue2ts,
+  returnType2Aqua,
+  ts2aqua,
+} from "./conversions.js";
 
 export interface ServiceDescription {
-    serviceId: string;
-    fnName: string;
-    handler: GenericCallServiceHandler;
+  serviceId: string;
+  fnName: string;
+  handler: GenericCallServiceHandler;
 }
 
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: IFluenceInternalApi) => {
-    return {
-        serviceId: def.names.getDataSrv,
-        fnName: def.names.relay,
-        handler: () => {
-            return {
-                retCode: ResultCodes.success,
-                result: peer.internals.getRelayPeerId(),
-            };
-        },
-    };
+export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
+  return {
+    serviceId: def.names.getDataSrv,
+    fnName: def.names.relay,
+    handler: () => {
+      return {
+        retCode: ResultCodes.success,
+        result: peer.internals.getRelayPeerId(),
+      };
+    },
+  };
 };
 
 /**
  * Creates a service which injects plain value into aqua space
  */
-export const injectValueService = (serviceId: string, fnName: string, valueType: NonArrowType, value: any) => {
-    return {
-        serviceId: serviceId,
-        fnName: fnName,
-        handler: () => {
-            return {
-                retCode: ResultCodes.success,
-                result: ts2aqua(value, valueType),
-            };
-        },
-    };
+export const injectValueService = (
+  serviceId: string,
+  fnName: string,
+  valueType: NonArrowType,
+  value: JSONValue,
+) => {
+  return {
+    serviceId: serviceId,
+    fnName: fnName,
+    handler: () => {
+      return {
+        retCode: ResultCodes.success,
+        result: ts2aqua(value, valueType),
+      };
+    },
+  };
 };
 
 /**
  *  Creates a service which is used to return value from aqua function into typescript space
  */
-export const responseService = (def: FunctionCallDef, resolveCallback: Function) => {
-    return {
-        serviceId: def.names.responseSrv,
-        fnName: def.names.responseFnName,
-        handler: (req: CallServiceData) => {
-            const userFunctionReturn = responseServiceValue2ts(req, def.arrow);
+export const responseService = (
+  def: FunctionCallDef,
+  resolveCallback: (val: JSONValue) => void,
+) => {
+  return {
+    serviceId: def.names.responseSrv,
+    fnName: def.names.responseFnName,
+    handler: (req: CallServiceData) => {
+      const userFunctionReturn = responseServiceValue2ts(req, def.arrow);
 
-            setTimeout(() => {
-                resolveCallback(userFunctionReturn);
-            }, 0);
+      setTimeout(() => {
+        resolveCallback(userFunctionReturn);
+      }, 0);
 
-            return {
-                retCode: ResultCodes.success,
-                result: {},
-            };
-        },
-    };
+      return {
+        retCode: ResultCodes.success,
+        result: {},
+      };
+    },
+  };
 };
 
 /**
  * Creates a service which is used to return errors from aqua function into typescript space
  */
-export const errorHandlingService = (def: FunctionCallDef, rejectCallback: Function) => {
-    return {
-        serviceId: def.names.errorHandlingSrv,
-        fnName: def.names.errorFnName,
-        handler: (req: CallServiceData) => {
-            const [err, _] = req.args;
-            setTimeout(() => {
-                rejectCallback(err);
-            }, 0);
-            return {
-                retCode: ResultCodes.success,
-                result: {},
-            };
-        },
-    };
+export const errorHandlingService = (
+  def: FunctionCallDef,
+  rejectCallback: (err: JSONValue) => void,
+) => {
+  return {
+    serviceId: def.names.errorHandlingSrv,
+    fnName: def.names.errorFnName,
+    handler: (req: CallServiceData) => {
+      const [err] = req.args;
+
+      setTimeout(() => {
+        rejectCallback(err);
+      }, 0);
+
+      return {
+        retCode: ResultCodes.success,
+        result: {},
+      };
+    },
+  };
 };
 
 /**
  * Creates a service for user-defined service function handler
  */
 export const userHandlerService = (
-    serviceId: string,
-    arrowType: [string, ArrowWithoutCallbacks],
-    userHandler: (...args: Array<unknown>) => Promise<unknown>,
+  serviceId: string,
+  arrowType: [string, ArrowWithoutCallbacks],
+  userHandler: ServiceImpl[string],
 ) => {
-    const [fnName, type] = arrowType;
-    return {
-        serviceId,
-        fnName,
-        handler: async (req: CallServiceData) => {
-            const args = [...aquaArgs2Ts(req, type), extractCallParams(req, type)];
-            const rawResult = await userHandler.apply(null, args);
-            const result = returnType2Aqua(rawResult, type);
+  const [fnName, type] = arrowType;
+  return {
+    serviceId,
+    fnName,
+    handler: async (req: CallServiceData) => {
+      const args: [...JSONValue[], CallParams<string>] = [
+        ...aquaArgs2Ts(req, type),
+        extractCallParams(req, type),
+      ];
 
-            return {
-                retCode: ResultCodes.success,
-                result: result,
-            };
-        },
-    };
-};
+      const rawResult = await userHandler.bind(null)(...args);
+      const result = returnType2Aqua(rawResult, type);
 
-/**
- * Converts argument of aqua function to a corresponding service.
- * For arguments of non-arrow types the resulting service injects the argument into aqua space.
- * For arguments of arrow types the resulting service calls the corresponding function.
- */
-export const argToServiceDef = (
-    arg: any,
-    argName: string,
-    argType: NonArrowType | ArrowWithoutCallbacks,
-    names: FunctionCallConstants,
-): ServiceDescription => {
-    if (argType.tag === 'arrow') {
-        return userHandlerService(names.callbackSrv, [argName, argType], arg);
-    } else {
-        return injectValueService(names.getDataSrv, argName, arg, argType);
-    }
+      return {
+        retCode: ResultCodes.success,
+        result: result,
+      };
+    },
+  };
 };
 
 /**
  * Extracts call params from from call service data according to aqua type definition
  */
-const extractCallParams = (req: CallServiceData, arrow: ArrowWithoutCallbacks): CallParams<any> => {
-    const names = match(arrow.domain)
-        .with({ tag: 'nil' }, () => {
-            return [] as string[];
-        })
-        .with({ tag: 'labeledProduct' }, (x) => {
-            return Object.keys(x.fields);
-        })
-        .with({ tag: 'unlabeledProduct' }, (x) => {
-            return x.items.map((_, index) => 'arg' + index);
-        })
-        .exhaustive();
+const extractCallParams = (
+  req: CallServiceData,
+  arrow: ArrowWithoutCallbacks,
+): CallParams<string> => {
+  const names: (string | undefined)[] = match(arrow.domain)
+    .with({ tag: "nil" }, () => {
+      return [];
+    })
+    .with({ tag: "unlabeledProduct" }, (x) => {
+      return x.items.map((_, index) => {
+        return "arg" + index;
+      });
+    })
+    .with({ tag: "labeledProduct" }, (x) => {
+      return Object.keys(x.fields);
+    })
+    .exhaustive();
 
-    const tetraplets: Record<string, SecurityTetraplet[]> = {};
-    for (let i = 0; i < req.args.length; i++) {
-        if (names[i]) {
-            tetraplets[names[i]] = req.tetraplets[i];
-        }
+  const tetraplets: Record<string, SecurityTetraplet[]> = {};
+
+  for (let i = 0; i < req.args.length; i++) {
+    const name = names[i];
+
+    if (name != null) {
+      tetraplets[name] = req.tetraplets[i];
     }
+  }
 
-    const callParams = {
-        ...req.particleContext,
-        signature: fromUint8Array(req.particleContext.signature),
-        tetraplets,
-    };
+  const callParams = {
+    ...req.particleContext,
+    signature: fromUint8Array(req.particleContext.signature),
+    tetraplets,
+  };
 
-    return callParams;
+  return callParams;
 };
 
 export const registerParticleScopeService = (
-    peer: IFluenceInternalApi,
-    particle: Particle,
-    service: ServiceDescription,
+  peer: FluencePeer,
+  particle: Particle,
+  service: ServiceDescription,
 ) => {
-    peer.internals.regHandler.forParticle(particle.id, service.serviceId, service.fnName, service.handler);
+  peer.internals.regHandler.forParticle(
+    particle.id,
+    service.serviceId,
+    service.fnName,
+    service.handler,
+  );
 };
 
-export const registerGlobalService = (peer: IFluenceInternalApi, service: ServiceDescription) => {
-    peer.internals.regHandler.common(service.serviceId, service.fnName, service.handler);
+export const registerGlobalService = (
+  peer: FluencePeer,
+  service: ServiceDescription,
+) => {
+  peer.internals.regHandler.common(
+    service.serviceId,
+    service.fnName,
+    service.handler,
+  );
 };
