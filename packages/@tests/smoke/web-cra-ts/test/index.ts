@@ -30,8 +30,9 @@ const test = async () => {
     console.log(`${message.type().toUpperCase()}: ${message.text()}`),
   );
 
-  // uncomment to debug what's happening inside the browser
-  // page.on('console', (msg) => console.log('// from console: ', msg.text()));
+  page.on("requestfailed", (request) => {
+    console.log(`ERROR: ${request.url()} ${request.failure()?.errorText}`);
+  });
 
   console.log("going to the page in browser...");
   await page.goto(uri);
