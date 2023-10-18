@@ -44,6 +44,7 @@ const test = async () => {
   console.log("starting puppeteer...");
   const browser = await puppeteer.launch();
   const page = (await browser.pages())[0];
+
   page.on("console", (message) => {
     console.log(`${message.type().toUpperCase()}: ${message.text()}`);
   });
