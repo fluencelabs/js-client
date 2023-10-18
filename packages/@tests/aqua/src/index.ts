@@ -63,7 +63,11 @@ export const runTest = async (): Promise<TestResult> => {
 
     console.log("connecting to Fluence Network...");
     console.log("multiaddr: ", relay.multiaddr);
-    await Fluence.connect(relay, optsWithRandomKeyPair());
+
+    await Fluence.connect(relay, {
+      ...optsWithRandomKeyPair(),
+      CDNUrl: "http://localhost:3001",
+    });
 
     console.log("connected");
 
