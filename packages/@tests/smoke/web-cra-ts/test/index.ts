@@ -30,6 +30,10 @@ const test = async () => {
     console.log(`${message.type().toUpperCase()}: ${message.text()}`),
   );
 
+  page.on("request", (request) => {
+    console.log(`INFO: ${request.url()} ${request.method()}`);
+  });
+
   page.on("requestfailed", (request) => {
     console.log(`ERROR: ${request.url()} ${request.failure()?.errorText}`);
   });
