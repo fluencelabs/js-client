@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { symlink, access } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 import {
   CDN_PUBLIC_PATH,
+  createSymlinkIfNotExists,
+  JS_CLIENT_DEPS_PATH,
   startContentServer,
   stopServer,
 } from "@test/test-utils";
@@ -33,11 +34,12 @@ const publicPath = join(__dirname, "../public/");
 const test = async () => {
   const localServer = await startContentServer(port, publicPath);
 
-  try {
-    await access(join(publicPath, "source"));
-  } catch {
-    await symlink(CDN_PUBLIC_PATH, join(publicPath, "source"));
-  }
+  await createSymlinkIfNotExists(CDN_PUBLIC_PATH, join(publicPath, "source"));
+
+  await createSymlinkIfNotExists(
+    JS_CLIENT_DEPS_PATH,
+    join(publicPath, "node_modules"),
+  );
 
   console.log("starting puppeteer...");
   const browser = await puppeteer.launch();

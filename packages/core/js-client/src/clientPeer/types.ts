@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-import type { Node } from "./commonTypes.js";
+/**
+ * Peer ID's id as a base58 string (multihash/CIDv0).
+ */
+export type PeerIdB58 = string;
+
+/**
+ * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
+ */
+export type Node = {
+  peerId: PeerIdB58;
+  multiaddr: string;
+};
 
 /**
  * A node in Fluence network a client can connect to.
@@ -36,64 +47,6 @@ export type KeyPairOptions = {
   type: "Ed25519";
   source: "random" | Uint8Array;
 };
-
-/**
- * Configuration used when initiating Fluence Client
- */
-export interface ClientConfig {
-  /**
-   * Specify the KeyPair to be used to identify the Fluence Peer.
-   * Will be generated randomly if not specified
-   */
-  keyPair?: KeyPairOptions;
-
-  /**
-   * Options to configure the connection to the Fluence network
-   */
-  connectionOptions?: {
-    /**
-     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-     * The options allows to specify the timeout for that message in milliseconds.
-     * If not specified the default timeout will be used
-     */
-    skipCheckConnection?: boolean;
-
-    /**
-     * The dialing timeout in milliseconds
-     */
-    dialTimeoutMs?: number;
-
-    /**
-     * The maximum number of inbound streams for the libp2p node.
-     * Default: 1024
-     */
-    maxInboundStreams?: number;
-
-    /**
-     * The maximum number of outbound streams for the libp2p node.
-     * Default: 1024
-     */
-    maxOutboundStreams?: number;
-  };
-
-  /**
-   * Sets the default TTL for all particles originating from the peer with no TTL specified.
-   * If the originating particle's TTL is defined then that value will be used
-   * If the option is not set default TTL will be 7000
-   */
-  defaultTtlMs?: number;
-
-  /**
-   * Enables\disabled various debugging features
-   */
-  debug?: {
-    /**
-     * If set to true, newly initiated particle ids will be printed to console.
-     * Useful to see what particle id is responsible for aqua function
-     */
-    printParticleId?: boolean;
-  };
-}
 
 /**
  * Fluence JS Client connection states as string literals
@@ -152,4 +105,67 @@ export interface IFluenceClient extends IFluenceInternalApi {
    * Return relay's public key as a base58 string (multihash/CIDv0).
    */
   getRelayPeerId(): string;
+}
+
+/**
+ * Configuration used when initiating Fluence Client
+ */
+export interface ClientConfig {
+  /**
+   * Specify the KeyPair to be used to identify the Fluence Peer.
+   * Will be generated randomly if not specified
+   */
+  keyPair?: KeyPairOptions;
+
+  /**
+   * Options to configure the connection to the Fluence network
+   */
+  connectionOptions?: {
+    /**
+     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+     * The options allows to specify the timeout for that message in milliseconds.
+     * If not specified the default timeout will be used
+     */
+    skipCheckConnection?: boolean;
+
+    /**
+     * The dialing timeout in milliseconds
+     */
+    dialTimeoutMs?: number;
+
+    /**
+     * The maximum number of inbound streams for the libp2p node.
+     * Default: 1024
+     */
+    maxInboundStreams?: number;
+
+    /**
+     * The maximum number of outbound streams for the libp2p node.
+     * Default: 1024
+     */
+    maxOutboundStreams?: number;
+  };
+
+  /**
+   * Sets the default TTL for all particles originating from the peer with no TTL specified.
+   * If the originating particle's TTL is defined then that value will be used
+   * If the option is not set default TTL will be 7000
+   */
+  defaultTtlMs?: number;
+
+  /**
+   * Property for passing custom CDN Url to load dependencies from browser. https://unpkg.com used by default
+   */
+  CDNUrl?: string;
+
+  /**
+   * Enables\disabled various debugging features
+   */
+  debug?: {
+    /**
+     * If set to true, newly initiated particle ids will be printed to console.
+     * Useful to see what particle id is responsible for aqua function
+     */
+    printParticleId?: boolean;
+  };
 }

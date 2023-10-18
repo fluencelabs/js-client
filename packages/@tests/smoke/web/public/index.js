@@ -85,7 +85,9 @@ const getRelayTime = () => {
 
 const main = async () => {
   console.log("starting fluence...");
-  fluence.defaultClient = await fluence.clientFactory(relay, {});
+  fluence.defaultClient = await fluence.clientFactory(relay, {
+    CDNUrl: "http://localhost:3000",
+  });
   console.log("started fluence");
 
   console.log("getting relay time...");

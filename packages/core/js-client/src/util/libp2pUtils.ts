@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { RelayOptions } from "@fluencelabs/interfaces";
 import { multiaddr, Multiaddr } from "@multiformats/multiaddr";
+
+import { RelayOptions } from "../clientPeer/types.js";
 
 import { isString } from "./utils.js";
 

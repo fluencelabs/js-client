@@ -15,7 +15,6 @@
  */
 
 import { JSONValue } from "../commonTypes.js";
-import { IFluenceInternalApi } from "../fluenceClient.js";
 
 import {
   FnConfig,
@@ -38,11 +37,12 @@ export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
 /**
  * Arguments for callAquaFunction function
  */
+// TODO: move to js-client side
 export interface CallAquaFunctionArgs {
   /**
    * Peer to call the function on
    */
-  peer: IFluenceInternalApi;
+  peer: unknown;
 
   /**
    * Function definition
@@ -79,7 +79,7 @@ export interface RegisterServiceArgs {
   /**
    * Peer to register the service on
    */
-  peer: IFluenceInternalApi;
+  peer: unknown;
 
   /**
    * Service definition

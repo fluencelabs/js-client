@@ -18,16 +18,15 @@ import { promises as fs } from "fs";
 
 import * as api from "@fluencelabs/aqua-api/aqua-api.js";
 import {
-  ClientConfig,
   FunctionCallDef,
   JSONArray,
   PassedArgs,
-  RelayOptions,
   ServiceDef,
 } from "@fluencelabs/interfaces";
 import { Subject, Subscribable } from "rxjs";
 
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
+import { ClientConfig, RelayOptions } from "../clientPeer/types.js";
 import { callAquaFunction } from "../compilerSupport/callFunction.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";

@@ -19,14 +19,14 @@ import path from "path";
 import process from "process";
 import url from "url";
 
-import type {
-  ClientConfig,
-  ConnectionState,
-  RelayOptions,
-} from "@fluencelabs/interfaces";
 import { BlobWorker, Worker } from "threads/master";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
+import {
+  ClientConfig,
+  ConnectionState,
+  RelayOptions,
+} from "./clientPeer/types.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
@@ -34,38 +34,49 @@ import { doRegisterNodeUtils } from "./services/NodeUtils.js";
 
 import { fetchResource } from "#fetcher";
 
+const DEFAULT_CDN_URL = "https://unpkg.com";
+
 const isNode =
   // process.release is undefined in browser env
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   typeof process !== "undefined" && process.release?.name === "node";
 
-const fetchWorkerCode = async () => {
-  const resource = await fetchResource(
-    "@fluencelabs/marine-worker",
-    "/dist/browser/marine-worker.umd.cjs",
-  );
-
-  return resource.text();
-};
-
-const fetchMarineJsWasm = async () => {
-  const resource = await fetchResource(
-    "@fluencelabs/marine-js",
-    "/dist/marine-js.wasm",
-  );
-
-  return resource.arrayBuffer();
-};
-
-const fetchAvmWasm = async () => {
-  const resource = await fetchResource("@fluencelabs/avm", "/dist/avm.wasm");
-  return resource.arrayBuffer();
-};
-
 const createClient = async (
   relay: RelayOptions,
   config: ClientConfig,
 ): Promise<ClientPeer> => {
+  const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
+
+  const fetchWorkerCode = async () => {
+    const resource = await fetchResource(
+      "@fluencelabs/marine-worker",
+      "/dist/browser/marine-worker.umd.cjs",
+      CDNUrl,
+    );
+
+    return resource.text();
+  };
+
+  const fetchMarineJsWasm = async () => {
+    const resource = await fetchResource(
+      "@fluencelabs/marine-js",
+      "/dist/marine-js.wasm",
+      CDNUrl,
+    );
+
+    return resource.arrayBuffer();
+  };
+
+  const fetchAvmWasm = async () => {
+    const resource = await fetchResource(
+      "@fluencelabs/avm",
+      "/dist/avm.wasm",
+      CDNUrl,
+    );
+
+    return resource.arrayBuffer();
+  };
+
   const marineJsWasm = await fetchMarineJsWasm();
   const avmWasm = await fetchAvmWasm();
 
@@ -194,11 +205,9 @@ export const Fluence: FluencePublicApi = {
   },
 };
 
-export type {
-  IFluenceClient,
-  ClientConfig,
-  CallParams,
-} from "@fluencelabs/interfaces";
+export type { CallParams } from "@fluencelabs/interfaces";
+
+export type { ClientConfig, IFluenceClient } from "./clientPeer/types.js";
 
 export type {
   ArrayType,

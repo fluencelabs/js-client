@@ -23,9 +23,16 @@ interface PackageJsonContent {
 const packageJsonContentString = `__PACKAGE_JSON_CONTENT__`;
 let parsedPackageJsonContent: PackageJsonContent | undefined;
 
-const PRIMARY_CDN = "https://unpkg.com/";
-
-export async function fetchResource(pkg: string, assetPath: string) {
+/**
+ * @param pkg name of package
+ * @param assetPath path of required asset in given package
+ * @param root CDN domain in browser or file system root in node
+ */
+export async function fetchResource(
+  pkg: string,
+  assetPath: string,
+  root: string,
+) {
   const packageJsonContent =
     parsedPackageJsonContent ??
     // TODO: Should be validated
@@ -55,7 +62,8 @@ export async function fetchResource(pkg: string, assetPath: string) {
     ? assetPath.slice(1)
     : assetPath;
 
-  return fetch(
-    new globalThis.URL(`${pkg}@${version}/` + refinedAssetPath, PRIMARY_CDN),
-  );
+  const url = new globalThis.URL(`${pkg}@${version}/` + refinedAssetPath, root);
+  return fetch(url).catch(() => {
+    throw new Error(`Cannot fetch from ${url.toString()}`);
+  });
 }

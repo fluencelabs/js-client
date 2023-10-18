@@ -24,14 +24,6 @@ import { InterfaceToType, MaybePromise } from "./utils.js";
 export type PeerIdB58 = string;
 
 /**
- * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
- */
-export type Node = {
-  peerId: PeerIdB58;
-  multiaddr: string;
-};
-
-/**
  * Additional information about a service call
  * @typeparam ArgName
  */

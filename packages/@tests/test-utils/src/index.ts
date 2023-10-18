@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { access, symlink } from "fs/promises";
 import { createServer } from "http";
 import type { Server } from "http";
 import { dirname, join } from "path";
@@ -28,8 +29,24 @@ export const CDN_PUBLIC_PATH = join(
   "../../../core/js-client/dist/browser",
 );
 
+export const JS_CLIENT_DEPS_PATH = join(
+  __dirname,
+  "../../../core/js-client/node_modules",
+);
+
 export const startCdn = (port: number) => {
   return startContentServer(port, CDN_PUBLIC_PATH);
+};
+
+export const createSymlinkIfNotExists = async (
+  target: string,
+  path: string,
+) => {
+  try {
+    await access(path);
+  } catch {
+    await symlink(target, path);
+  }
 };
 
 export const startContentServer = (
@@ -43,6 +60,22 @@ export const startContentServer = (
         {
           source: "/js-client.min.js",
           destination: "/source/index.umd.cjs",
+        },
+        // TODO:
+        // something like this
+        // {
+        //   source: "/@fluencelabs/:name(\\w+)@:version([\\d.]+)/:path*",
+        //   destination: "/deps/@fluencelabs/:name/:path",
+        // }
+        // not supported for some reason. Need to manually iterate over all possible paths
+        {
+          source: "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:asset",
+          destination: "/node_modules/@fluencelabs/:name/dist/:asset",
+        },
+        {
+          source:
+            "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:prefix/:asset",
+          destination: "/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
         },
       ],
       headers: [

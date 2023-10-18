@@ -18,7 +18,18 @@ import fs from "fs";
 import module from "module";
 import path from "path";
 
-export async function fetchResource(pkg: string, assetPath: string) {
+/**
+ * @param pkg name of package
+ * @param assetPath path of required asset in given package
+ * @param root CDN domain in browser or file system root in node
+ */
+export async function fetchResource(
+  pkg: string,
+  assetPath: string,
+  root: string,
+) {
+  // TODO: `root` will be handled somehow in the future. For now, we use filesystem root where js-client is running;
+  root = "/";
   const require = module.createRequire(import.meta.url);
   const packagePathIndex = require.resolve(pkg);
 
@@ -33,7 +44,7 @@ export async function fetchResource(pkg: string, assetPath: string) {
     throw new Error(`Cannot find dependency ${pkg} in path ${posixPath}`);
   }
 
-  const pathToResource = path.join(packagePath, assetPath);
+  const pathToResource = path.join(root, packagePath, assetPath);
 
   const file = await new Promise<ArrayBuffer>((resolve, reject) => {
     // Cannot use 'fs/promises' with current vite config. This module is not polyfilled by default.
