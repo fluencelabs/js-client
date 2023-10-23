@@ -1,84 +1,65 @@
 # Fluence JS Client
 
-[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.api?label=@fluencelabs/js-client.api)](https://www.npmjs.com/package/@fluencelabs/js-client.api)
-[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client.web.standalone?label=@fluencelabs/js-client.web.standalone)](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone)
+[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client?label=@fluencelabs/js-client)](https://www.npmjs.com/package/@fluencelabs/js-client)
 
 This is the Javascript client for the [Fluence](https://fluence.network) network. The main role of the JS client is to connect to the Fluence Network and allow you to integrate Aqua code into your application.
 
 ## Installation
 
-Adding the Fluence JS client for your web application is very easy.
+> JS Client only supports the ESM format that means not every Node.js project can install it.
+> You can read more [here](https://nodejs.org/api/esm.html)
 
-### Browser-based Apps
+1. Install the client:
 
-1. Add a script tag with the JS Client bundle to your `index.html`. The easiest way to do this is using a CDN (like [JSDELIVR](https://www.jsdelivr.com/) or [UNPKG](https://unpkg.com/)). The script is large, thus we highly recommend to use the `async` attribute.
+   ```bash
+   npm i @fluencelabs/js-client
+   ```
 
-   Here is an example using the JSDELIVR CDN:
+2. Add the following lines at the beginning of your code:
+
+   ```javascript
+   import { Fluence, randomKras } from "@fluencelabs/js-client";
+
+   Fluence.connect(randomKras());
+   ```
+
+### HTML page
+
+Add a script tag with the JS Client bundle to your `index.html`. The easiest way to do this is using a CDN (
+like [JSDELIVR](https://www.jsdelivr.com/) or [UNPKG](https://unpkg.com/)).
+
+Here is an example using the JSDELIVR CDN:
 
    ```html
    <head>
      <title>Cool App</title>
      <script
-       src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client.web.standalone@0.13.3/dist/js-client.min.js"
-       async
+       src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client/dist/browser/index.js"
      ></script>
    </head>
    ```
 
-   If you cannot or don't want to use a CDN, feel free to get the script directly from the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client.web.standalone) and host it yourself. You can find the script in the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know how to serve this file from their own web server.)
+If you cannot or don't want to use a CDN, feel free to get the script directly from
+the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client) and host it yourself. You can find the script in
+the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know
+how to serve this file from their own web server.)
 
-2. Install the following packages:
+After importing JS-client to HTML page the client is available as ```window.Fluence``` variable.
+To get a specific network you can peek at
 
-   ```
-   npm i @fluencelabs/js-client.api @fluencelabs/fluence-network-environment
-   ```
+```
+https://cdn.jsdelivr.net/npm/@fluencelabs/js-client/dist/network.js
+```
 
-3. Add the following lines at the beginning of your code:
+and hardcode selected network. So initialization would look like this
 
-   ```
-   import { Fluence } from "@fluencelabs/js-client.api";
-   import { randomKras } from '@fluencelabs/fluence-network-environment';
-
-   Fluence.connect(randomKras());
-   ```
-
-### Node.js Apps
-
-**Prerequisites:**
-
-The Fluence JS Client only supports the ESM format. This implies that a few preliminary steps are required if your project is not already using ESM:
-
-- Add `"type": "module"` to your package.json.
-- Replace `"main": "index.js"` with `"exports": "./index.js"` in your package.json.
-- Remove `'use strict';` from all JavaScript files.
-- Replace all `require()`/`module.export` with `import`/`export`.
-- Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
-
-If you are using TypeScript:
-
-- Make sure you are using TypeScript 4.7 or later.
-- Add [`"module": "ESNext", "target": "ESNext", "moduleResolution": "nodenext"`](https://www.typescriptlang.org/tsconfig#module) to your tsconfig.json.
-- Use only full relative file paths for imports: `import x from '.';` → `import x from './index.js';`.
-- Remove `namespace` usage and use `export` instead.
-- You must use a `.js` extension in relative imports even though you're importing `.ts` files.
-
-**Installation:**
-
-1. Install the following packages:
-
-   ```
-   npm i @fluencelabs/js-client.api"@fluencelabs/js-client.node @fluencelabs/fluence-network-environment
-   ```
-
-2. Add the following lines at the beginning of your code:
-
-   ```
-   import '@fluencelabs/js-client.node';
-   import { Fluence } from "@fluencelabs/js-client.api";
-   import { randomKras } from '@fluencelabs/fluence-network-environment';
-
-   Fluence.connect(randomKras());
-   ```
+```javascript
+    // Passing 1 kras network config from ./dist/network.js above
+    window.Fluence.connect({
+        multiaddr: "/dns4/0-kras.fluence.dev/tcp/9000/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
+        peerId: "12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
+    });
+```
 
 ## Usage in an Application
 
@@ -86,7 +67,7 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 
 1. Install the package:
 
-   ```
+   ```bash
    npm i -D @fluencelabs/cli
    ```
 
@@ -130,7 +111,7 @@ Once you've added the client, you can compile [Aqua](https://github.com/fluencel
 6. Now you can import and call Aqua code from your application like
    this:
 
-   ```
+   ```javascript
    import { getRelayTime } from "./_aqua/demo";
 
    async function buttonClick() {
@@ -172,7 +153,7 @@ Star (`*`) character can be used as a wildcard to enable logs for multiple compo
 
 ### Enabling logs in Node.js
 
-enable logs, pass the environment variable `DEBUG` with the corresponding log level. For example:
+Enable logs by passing the environment variable `DEBUG` with the corresponding log level. For example:
 
 ```sh
 DEBUG=fluence:* node --loader ts-node/esm ./src/index.ts
@@ -182,13 +163,14 @@ DEBUG=fluence:* node --loader ts-node/esm ./src/index.ts
 
 To enable logs, set the `localStorage.debug` variable. For example:
 
-```
+```javascript
 localStorage.debug = 'fluence:*'
 ```
 
 **NOTE**
 
-In Chromium-based web browsers (e.g. Brave, Chrome, and Electron), the JavaScript console will—by default—only show messages logged by debug if the "Verbose" log level is enabled.
+In Chromium-based web browsers (e.g. Brave, Chrome, and Electron), the JavaScript console will be default—only to show
+messages logged by debug if the "Verbose" log level is enabled.
 
 ## Development
 

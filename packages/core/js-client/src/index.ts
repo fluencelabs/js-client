@@ -205,36 +205,7 @@ export const Fluence: FluencePublicApi = {
   },
 };
 
-export type { CallParams } from "@fluencelabs/interfaces";
-
 export type { ClientConfig, IFluenceClient } from "./clientPeer/types.js";
-
-export type {
-  ArrayType,
-  ArrowType,
-  ArrowWithCallbacks,
-  ArrowWithoutCallbacks,
-  BottomType,
-  FunctionCallConstants,
-  FunctionCallDef,
-  LabeledProductType,
-  NilType,
-  NonArrowType,
-  OptionType,
-  ProductType,
-  ScalarNames,
-  ScalarType,
-  ServiceDef,
-  StructType,
-  TopType,
-  UnlabeledProductType,
-  CallAquaFunctionType,
-  CallAquaFunctionArgs,
-  PassedArgs,
-  FnConfig,
-  RegisterServiceType,
-  RegisterServiceArgs,
-} from "@fluencelabs/interfaces";
 
 export { v5_callFunction, v5_registerService } from "./api.js";
 
@@ -249,9 +220,13 @@ globalThis.fluence = {
 };
 
 export { createClient, callAquaFunction, registerService };
+
+// Deprecated exports. Later they will be exposed only under js-client/keypair path
 export {
   KeyPair,
   fromBase64Sk,
   fromBase58Sk,
   fromOpts,
 } from "./keypair/index.js";
+
+export * from "./network.js";

@@ -13,9 +13,14 @@
   "unpkg": "./dist/browser/index.umd.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    "types": "./dist/index.d.ts",
-    "node": "./dist/index.js",
-    "default": "./dist/browser/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./keypair": {
+      "types": "./dist/keypair/index.d.ts",
+      "import": "./dist/keypair/index.js"
+    }
   },
   "imports": {
     "#fetcher": {
