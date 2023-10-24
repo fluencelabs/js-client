@@ -34,5 +34,6 @@ const output = { ...pkg.dependencies, ...pkg.devDependencies }.pick([
 
 await writeFile(
   join(fileURLToPath(import.meta.url), "../src/versions.ts"),
-  `export default ${JSON.stringify(output, null, 2)} as const`,
+    `/* eslint-disable */
+export default ${JSON.stringify(output, null, 2)} as const`,
 );

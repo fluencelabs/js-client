@@ -8,3 +8,5 @@ pnpm-lock.yaml
 **/public
 
 **/CHANGELOG.md
+
+packages/core/js-client/src/versions.ts
