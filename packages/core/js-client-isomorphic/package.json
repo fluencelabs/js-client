@@ -1,0 +1,26 @@
+{
+  "name": "@fluencelabs/js-client-isomorphic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "exports": {
+    "./fetcher": {
+      "node": "./dist/fetchers/node.js",
+      "default": "./dist/fetchers/browser.js"
+    },
+    "./worker-resolver": {
+      "node": "./dist/worker-resolvers/node.js",
+      "default": "./dist/worker-resolvers/browser.js"
+    }
+  },
+  "dependencies": {
+    "threads": "fluencelabs/threads.js#b00a5342380b0278d3ae56dcfb170effb3cad7cd"
+  },
+  "keywords": [],
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "private": true
+}

@@ -30,21 +30,19 @@ like [JSDELIVR](https://www.jsdelivr.com/) or [UNPKG](https://unpkg.com/)).
 
 Here is an example using the JSDELIVR CDN:
 
-   ```html
-   <head>
-     <title>Cool App</title>
-     <script
-       src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client/dist/browser/index.js"
-     ></script>
-   </head>
-   ```
+```html
+<head>
+  <title>Cool App</title>
+  <script src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client/dist/browser/index.min.js"></script>
+</head>
+```
 
 If you cannot or don't want to use a CDN, feel free to get the script directly from
 the [npm package](https://www.npmjs.com/package/@fluencelabs/js-client) and host it yourself. You can find the script in
 the `/dist` directory of the package. (Note: this option means that developers understand what they are doing and know
 how to serve this file from their own web server.)
 
-After importing JS-client to HTML page the client is available as ```window.Fluence``` variable.
+After importing JS-client to HTML page the client is available as `window.Fluence` variable.
 To get a specific network you can peek at
 
 ```
@@ -54,11 +52,12 @@ https://cdn.jsdelivr.net/npm/@fluencelabs/js-client/dist/network.js
 and hardcode selected network. So initialization would look like this
 
 ```javascript
-    // Passing 1 kras network config from ./dist/network.js above
-    window.Fluence.connect({
-        multiaddr: "/dns4/0-kras.fluence.dev/tcp/9000/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
-        peerId: "12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
-    });
+// Passing 1 kras network config from ./dist/network.js above
+window.Fluence.connect({
+  multiaddr:
+    "/dns4/0-kras.fluence.dev/tcp/9000/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
+  peerId: "12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
+});
 ```
 
 ## Usage in an Application
@@ -164,7 +163,7 @@ DEBUG=fluence:* node --loader ts-node/esm ./src/index.ts
 To enable logs, set the `localStorage.debug` variable. For example:
 
 ```javascript
-localStorage.debug = 'fluence:*'
+localStorage.debug = "fluence:*";
 ```
 
 **NOTE**

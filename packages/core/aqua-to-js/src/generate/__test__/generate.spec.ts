@@ -40,12 +40,15 @@ describe("Aqua to js/ts compiler", () => {
       },
     };
 
+    // @ts-expect-error don't use compileFromPath directly here
     const jsResult = generateSources(res, "js", pkg);
+    // @ts-expect-error don't use compileFromPath directly here
     const jsTypes = generateTypes(res, pkg);
 
     expect(jsResult).toMatchSnapshot();
     expect(jsTypes).toMatchSnapshot();
 
+    // @ts-expect-error don't use compileFromPath directly here
     const tsResult = generateSources(res, "ts", pkg);
 
     expect(tsResult).toMatchSnapshot();

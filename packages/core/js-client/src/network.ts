@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-export type Node = { peerId: string; multiaddr: string };
+export type Relay = { peerId: string; multiaddr: string };
 
-export const stage: Node[] = [
+export const stage: Relay[] = [
   {
     multiaddr:
       "/dns4/0-stage.fluence.dev/tcp/9000/wss/p2p/12D3KooWDcpWuyrMTDinqNgmXAuRdfd2mTdY9VoXZSAet2pDzh6r",
@@ -49,7 +49,7 @@ export const stage: Node[] = [
   },
 ];
 
-export const testNet: Node[] = [
+export const testNet: Relay[] = [
   {
     multiaddr:
       "/dns4/0-testnet.fluence.dev/tcp/9000/wss/p2p/12D3KooWMhVpgfQxBLkQkJed8VFNvgN4iE6MD7xCybb1ZYWW2Gtz",
@@ -107,7 +107,7 @@ export const testNet: Node[] = [
   },
 ];
 
-export const kras: Node[] = [
+export const kras: Relay[] = [
   {
     multiaddr:
       "/dns4/0-kras.fluence.dev/tcp/9000/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e",
@@ -165,9 +165,6 @@ export const kras: Node[] = [
   },
 ];
 
-// for backward compatibility
-export const krasnodar = kras;
-
 export const randomKras = () => {
   return randomItem(kras);
 };
@@ -180,7 +177,7 @@ export const randomStage = () => {
   return randomItem(stage);
 };
 
-function randomItem(arr: Node[]) {
+function randomItem(arr: Relay[]) {
   const index = randomInt(0, arr.length);
   return arr[index];
 }

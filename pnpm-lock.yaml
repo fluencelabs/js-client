@@ -169,9 +169,6 @@ importers:
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
-      '@fluencelabs/js-client':
-        specifier: workspace:*
-        version: link:../js-client
       '@fluencelabs/registry':
         specifier: 0.8.7
         version: 0.8.7
@@ -211,6 +208,9 @@ importers:
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
+      '@fluencelabs/js-client-isomorphic':
+        specifier: workspace:*
+        version: link:../js-client-isomorphic
       '@fluencelabs/marine-worker':
         specifier: 0.3.3
         version: link:../marine-worker
@@ -317,6 +317,12 @@ importers:
       vitest:
         specifier: 0.34.6
         version: 0.34.6
+
+  packages/core/js-client-isomorphic:
+    dependencies:
+      threads:
+        specifier: fluencelabs/threads.js#b00a5342380b0278d3ae56dcfb170effb3cad7cd
+        version: github.com/fluencelabs/threads.js/b00a5342380b0278d3ae56dcfb170effb3cad7cd
 
   packages/core/marine-worker:
     dependencies:
