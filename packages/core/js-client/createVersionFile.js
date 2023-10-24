@@ -27,8 +27,10 @@ const names = [
   "@fluencelabs/marine-worker",
 ];
 
-const entries = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
-    .filter(([name]) => names.includes(name));
+const entries = Object.entries({
+  ...pkg.dependencies,
+  ...pkg.devDependencies,
+}).filter(([name]) => names.includes(name));
 
 const output = Object.fromEntries(entries);
 
