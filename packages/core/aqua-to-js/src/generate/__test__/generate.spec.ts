@@ -40,14 +40,17 @@ describe("Aqua to js/ts compiler", () => {
       },
     };
 
+    // TODO: see https://github.com/fluencelabs/js-client/pull/366#discussion_r1370567711
     // @ts-expect-error don't use compileFromPath directly here
     const jsResult = generateSources(res, "js", pkg);
+    // TODO: see https://github.com/fluencelabs/js-client/pull/366#discussion_r1370567711
     // @ts-expect-error don't use compileFromPath directly here
     const jsTypes = generateTypes(res, pkg);
 
     expect(jsResult).toMatchSnapshot();
     expect(jsTypes).toMatchSnapshot();
 
+    // TODO: see https://github.com/fluencelabs/js-client/pull/366#discussion_r1370567711
     // @ts-expect-error don't use compileFromPath directly here
     const tsResult = generateSources(res, "ts", pkg);
 
