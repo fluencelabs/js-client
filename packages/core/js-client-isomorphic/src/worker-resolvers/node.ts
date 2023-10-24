@@ -21,7 +21,7 @@ import url from "url";
 
 import { Worker } from "threads/master";
 
-export async function getWorker(pkg: string, CDNUrl: string): Promise<Worker> {
+export function getWorker(pkg: string, CDNUrl: string): Promise<Worker> {
   assert(typeof CDNUrl === "string");
   const pkgWithoutVersion = pkg.split("@").slice(0, -1).join("@");
   const require = module.createRequire(import.meta.url);
