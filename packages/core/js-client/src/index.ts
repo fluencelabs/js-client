@@ -42,7 +42,7 @@ const createClient = async (
 
   const fetchMarineJsWasm = async () => {
     const resource = await fetchResource(
-        getVersionedPackage'@fluencelabs/marine-js'"),
+      getVersionedPackage("@fluencelabs/marine-js"),
       "/dist/marine-js.wasm",
       CDNUrl,
     );
@@ -67,7 +67,7 @@ const createClient = async (
     {
       async getValue() {
         return getWorker(
-            getVersionedPackage('@fluencelabs/marine-worker'),
+            getVersionedPackage("@'@fluencelabs/marine-worker'
           CDNUrl,
         );
       },
