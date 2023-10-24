@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.3.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.2.1...js-client-v0.3.0) (2023-10-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Bump avm ([#361](https://github.com/fluencelabs/js-client/issues/361))
+* **js-client:** Adding strictes eslint and ts config to all packages [fixes DXJ-464] ([#355](https://github.com/fluencelabs/js-client/issues/355))
+
+### Features
+
+* **js-client:** Adding strictes eslint and ts config to all packages [fixes DXJ-464] ([#355](https://github.com/fluencelabs/js-client/issues/355)) ([919c7d6](https://github.com/fluencelabs/js-client/commit/919c7d6ea1e9c153ff7a367873c85fb36624125d))
+
+
+### Bug Fixes
+
+* **tests:** Repair integration tests [fixes DXJ-506] ([#364](https://github.com/fluencelabs/js-client/issues/364)) ([36c7619](https://github.com/fluencelabs/js-client/commit/36c7619b4a1e8e2426aaf5592a14e96dafefb273))
+
+
+### Miscellaneous Chores
+
+* Bump avm ([#361](https://github.com/fluencelabs/js-client/issues/361)) ([29ec812](https://github.com/fluencelabs/js-client/commit/29ec812fc1c5ee812cceb4034776b344e5cadfe5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/marine-worker bumped from 0.3.3 to 0.4.0
+
 ## [0.2.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.2.0...js-client-v0.2.1) (2023-10-12)
 
 
