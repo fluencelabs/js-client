@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "@fluencelabs/js-client-isomorphic",
   "version": "1.0.0",
   "description": "",
