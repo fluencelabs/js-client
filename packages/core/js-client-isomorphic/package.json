@@ -7,6 +7,7 @@
     "build": "tsc"
   },
   "exports": {
+    ".": "./dist/types.js",
     "./fetcher": {
       "node": "./dist/fetchers/node.js",
       "default": "./dist/fetchers/browser.js"

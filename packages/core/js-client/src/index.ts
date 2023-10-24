@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type { VersionedPackage } from "@fluencelabs/js-client-isomorphic";
 import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
 import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 
@@ -30,8 +31,11 @@ import versions from "./versions.js";
 
 const DEFAULT_CDN_URL = "https://unpkg.com";
 
-const getVersionedPackage = (pkg: keyof typeof versions) => {
-  return `${pkg}@${versions[pkg]}`;
+const getVersionedPackage = (pkg: keyof typeof versions): VersionedPackage => {
+  return {
+    name: pkg,
+    version: versions[pkg],
+  };
 };
 
 const createClient = async (

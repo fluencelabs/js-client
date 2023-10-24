@@ -18,33 +18,32 @@ import fs from "fs";
 import module from "module";
 import path from "path";
 
+import type { VersionedPackage } from "../types";
+
 /**
  * @param pkg name of package with version
  * @param assetPath path of required asset in given package
  * @param root CDN domain in browser or file system root in node
  */
 export async function fetchResource(
-  pkg: string,
+  pkg: VersionedPackage,
   assetPath: string,
   root: string,
 ) {
   // TODO: `root` will be handled somehow in the future. For now, we use filesystem root where js-client is running;
   root = "/";
-  const pkgWithoutVersion = pkg.split("@").slice(0, -1).join("@");
   const require = module.createRequire(import.meta.url);
-  const packagePathIndex = require.resolve(pkgWithoutVersion);
+  const packagePathIndex = require.resolve(pkg.name);
 
   // Ensure that windows path is converted to posix path. So we can find a package
   const posixPath = packagePathIndex.split(path.sep).join(path.posix.sep);
 
-  const matches = new RegExp(`(.+${pkgWithoutVersion})`).exec(posixPath);
+  const matches = new RegExp(`(.+${pkg.name})`).exec(posixPath);
 
   const packagePath = matches?.[0];
 
   if (packagePath == null) {
-    throw new Error(
-      `Cannot find dependency ${pkgWithoutVersion} in path ${posixPath}`,
-    );
+    throw new Error(`Cannot find dependency ${pkg.name} in path ${posixPath}`);
   }
 
   const pathToResource = path.join(root, packagePath, assetPath);

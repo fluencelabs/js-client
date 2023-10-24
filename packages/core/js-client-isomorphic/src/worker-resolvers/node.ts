@@ -21,14 +21,18 @@ import url from "url";
 
 import { Worker } from "threads/master";
 
-export function getWorker(pkg: string, CDNUrl: string): Promise<Worker> {
+import type { VersionedPackage } from "../types.js";
+
+export function getWorker(
+  pkg: VersionedPackage,
+  CDNUrl: string,
+): Promise<Worker> {
   assert(typeof CDNUrl === "string");
-  const pkgWithoutVersion = pkg.split("@").slice(0, -1).join("@");
   const require = module.createRequire(import.meta.url);
 
   const pathToThisFile = path.dirname(url.fileURLToPath(import.meta.url));
 
-  const pathToWorker = require.resolve(pkgWithoutVersion);
+  const pathToWorker = require.resolve(pkg.name);
 
   const relativePathToWorker = path.relative(pathToThisFile, pathToWorker);
 

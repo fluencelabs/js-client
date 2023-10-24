@@ -14,25 +14,4 @@
  * limitations under the License.
  */
 
-import { BlobWorker, Worker } from "threads/master";
-
-import { fetchResource } from "../fetchers/browser.js";
-import type { VersionedPackage } from "../types.js";
-
-export async function getWorker(
-  pkg: VersionedPackage,
-  CDNUrl: string,
-): Promise<Worker> {
-  const fetchWorkerCode = async () => {
-    const resource = await fetchResource(
-      pkg,
-      "/dist/browser/marine-worker.umd.cjs",
-      CDNUrl,
-    );
-
-    return resource.text();
-  };
-
-  const workerCode = await fetchWorkerCode();
-  return Promise.resolve(BlobWorker.fromText(workerCode));
-}
+export type VersionedPackage = { name: string; version: string };
