@@ -67,7 +67,7 @@ const createClient = async (
     {
       async getValue() {
         return getWorker(
-            getVersionedPackage("@'@fluencelabs/marine-worker'
+          getVersionedPackage("@fluencelabs/marine-worker"),
           CDNUrl,
         );
       },
