@@ -59,7 +59,7 @@ export const startContentServer = (
       rewrites: [
         {
           source: "/js-client.min.js",
-          destination: "/source/index.umd.cjs",
+          destination: "/source/index.min.js",
         },
         // TODO:
         // something like this
