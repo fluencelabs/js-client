@@ -24,7 +24,7 @@ import type { VersionedPackage } from "../types.js";
 
 export function getWorker(
   pkg: VersionedPackage,
-  // Not used, but still required to match a signature
+  // Not used, but still required to match a function signature
   // eslint-disable-next-line
   _CDNUrl: string,
 ): Promise<Worker> {
