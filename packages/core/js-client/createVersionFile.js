@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
+// @ts-check
+
 import pkg from "./package.json" assert { type: "json" };
 import { writeFile } from "fs/promises";
 import { join } from "path";
 import { fileURLToPath } from "url";
 
-Object.prototype.pick = function (names) {
-  return names.reduce((acc, name) => {
-    acc[name] = this[name];
-    return acc;
-  }, {});
-};
-
-const output = { ...pkg.dependencies, ...pkg.devDependencies }.pick([
+const names = [
   "@fluencelabs/avm",
   "@fluencelabs/marine-js",
   "@fluencelabs/marine-worker",
-]);
+];
+
+const entries = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies })
+    .filter(([name]) => names.includes(name));
+
+const output = Object.fromEntries(entries);
 
 await writeFile(
   join(fileURLToPath(import.meta.url), "..", "src", "versions.ts"),
