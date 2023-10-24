@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import assert from "assert";
 import module from "module";
 import path from "path";
 import url from "url";
@@ -25,9 +24,10 @@ import type { VersionedPackage } from "../types.js";
 
 export function getWorker(
   pkg: VersionedPackage,
-  CDNUrl: string,
+  // Not used, but still required to match a signature
+  // eslint-disable-next-line
+  _CDNUrl: string,
 ): Promise<Worker> {
-  assert(typeof CDNUrl === "string");
   const require = module.createRequire(import.meta.url);
 
   const pathToThisFile = path.dirname(url.fileURLToPath(import.meta.url));
