@@ -214,6 +214,9 @@ importers:
       '@fluencelabs/marine-worker':
         specifier: 0.4.0
         version: link:../marine-worker
+      '@fluencelabs/threads':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@libp2p/crypto':
         specifier: 2.0.3
         version: 2.0.3
@@ -268,9 +271,6 @@ importers:
       rxjs:
         specifier: 7.5.5
         version: 7.5.5
-      threads:
-        specifier: fluencelabs/threads.js#b00a5342380b0278d3ae56dcfb170effb3cad7cd
-        version: github.com/fluencelabs/threads.js/b00a5342380b0278d3ae56dcfb170effb3cad7cd
       ts-pattern:
         specifier: 3.3.3
         version: 3.3.3
@@ -329,21 +329,21 @@ importers:
       '@fluencelabs/marine-worker':
         specifier: workspace:*
         version: link:../marine-worker
-      threads:
-        specifier: fluencelabs/threads.js#b00a5342380b0278d3ae56dcfb170effb3cad7cd
-        version: github.com/fluencelabs/threads.js/b00a5342380b0278d3ae56dcfb170effb3cad7cd
+      '@fluencelabs/threads':
+        specifier: ^2.0.0
+        version: 2.0.0
 
   packages/core/marine-worker:
     dependencies:
       '@fluencelabs/marine-js':
         specifier: 0.7.2
         version: 0.7.2
+      '@fluencelabs/threads':
+        specifier: ^2.0.0
+        version: 2.0.0
       observable-fns:
         specifier: 0.6.1
         version: 0.6.1
-      threads:
-        specifier: fluencelabs/threads.js#b00a5342380b0278d3ae56dcfb170effb3cad7cd
-        version: github.com/fluencelabs/threads.js/b00a5342380b0278d3ae56dcfb170effb3cad7cd
     devDependencies:
       '@rollup/plugin-inject':
         specifier: 5.0.3
@@ -4042,6 +4042,19 @@ packages:
   /@fluencelabs/spell@0.5.20:
     resolution: {integrity: sha512-QFbknWwALLUWMzpWkFt34McuwTz9xwQuiPP1zXqhPqVZ1J6g8F3gwHHtzgHFW5Z7WrRmwsL+IQtFJy8YZubhDw==}
     dev: true
+
+  /@fluencelabs/threads@2.0.0:
+    resolution: {integrity: sha512-dgYpZg55OcEmop1U3G2bFKEJXg2avjXWYfWsdPlkSbHOHguaRifvr5bgwIYTg1wxoPGcn0jegcjKKwrY0qrV+g==}
+    dependencies:
+      callsites: 3.1.0
+      debug: 4.3.4(supports-color@8.1.1)
+      is-observable: 2.1.0
+      observable-fns: 0.6.1
+    optionalDependencies:
+      tiny-worker: 2.3.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /@fluencelabs/trust-graph@0.4.1:
     resolution: {integrity: sha512-V/6ts4q/Y0uKMS6orVpPyxfdd99YFMkm9wN9U2IFtlBUWNsQZG369FK9qEizwsSRCqTchMHYs8Vh4wgZ2uRfuQ==}
@@ -21017,20 +21030,4 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
-    dev: false
-
-  github.com/fluencelabs/threads.js/b00a5342380b0278d3ae56dcfb170effb3cad7cd:
-    resolution: {tarball: https://codeload.github.com/fluencelabs/threads.js/tar.gz/b00a5342380b0278d3ae56dcfb170effb3cad7cd}
-    name: threads
-    version: 1.7.0
-    requiresBuild: true
-    dependencies:
-      callsites: 3.1.0
-      debug: 4.3.4(supports-color@8.1.1)
-      is-observable: 2.1.0
-      observable-fns: 0.6.1
-    optionalDependencies:
-      tiny-worker: 2.3.0
-    transitivePeerDependencies:
-      - supports-color
     dev: false

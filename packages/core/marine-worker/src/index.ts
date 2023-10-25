@@ -27,8 +27,8 @@ import type {
   LogMessage,
 } from "@fluencelabs/marine-js/dist/types";
 import { JSONValue } from "@fluencelabs/marine-js/dist/types";
+import { expose } from "@fluencelabs/threads/worker";
 import { Observable, Subject } from "observable-fns";
-import { expose } from "threads/worker";
 
 const createSimpleModuleDescriptor = (
   name: string,

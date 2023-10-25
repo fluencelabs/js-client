@@ -20,7 +20,7 @@ import {
   RunParameters,
 } from "@fluencelabs/avm";
 import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
-import type { Worker as WorkerImplementation } from "threads/master";
+import type { Worker as WorkerImplementation } from "@fluencelabs/threads/master";
 
 import { IStartable, CallParameters } from "../util/commonTypes.js";
 
