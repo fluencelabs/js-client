@@ -18,6 +18,17 @@
   * devDependencies
     * @fluencelabs/js-client bumped to 0.2.1
 
+## [0.2.0](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.1.0...aqua-to-js-v0.2.0) (2023-10-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Simplify/optimize js-client and update README [fixes DXJ-490] ([#366](https://github.com/fluencelabs/js-client/issues/366))
+
+### Miscellaneous Chores
+
+* **js-client:** Simplify/optimize js-client and update README [fixes DXJ-490] ([#366](https://github.com/fluencelabs/js-client/issues/366)) ([f9abc64](https://github.com/fluencelabs/js-client/commit/f9abc6419c9b32aacec4b05a625d08ec7ff407ba))
+
 ## [0.1.0](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.0.4...aqua-to-js-v0.1.0) (2023-10-18)
 
 
