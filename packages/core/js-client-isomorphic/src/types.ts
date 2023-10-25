@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Worker } from "threads/master";
+import { Worker } from "@fluencelabs/threads/master";
 
 export type VersionedPackage = { name: string; version: string };
 export type GetWorker = (

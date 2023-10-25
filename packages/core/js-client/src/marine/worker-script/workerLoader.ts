@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Worker, type Worker as WorkerImplementation } from "threads/master";
+import {
+  Worker,
+  type Worker as WorkerImplementation,
+} from "@fluencelabs/threads/master";
 
 import { LazyLoader } from "../interfaces.js";
 

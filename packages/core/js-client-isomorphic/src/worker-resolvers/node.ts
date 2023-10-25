@@ -18,7 +18,7 @@ import { createRequire } from "module";
 import { dirname, relative } from "path";
 import { fileURLToPath } from "url";
 
-import { Worker } from "threads/master";
+import { Worker } from "@fluencelabs/threads/master";
 
 import type { GetWorker, VersionedPackage } from "../types.js";
 

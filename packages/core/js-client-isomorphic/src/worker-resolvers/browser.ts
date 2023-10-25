@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { BlobWorker } from "threads/master";
+import { BlobWorker } from "@fluencelabs/threads/master";
 
 import { fetchResource } from "../fetchers/browser.js";
 import type { GetWorker, VersionedPackage } from "../types.js";
