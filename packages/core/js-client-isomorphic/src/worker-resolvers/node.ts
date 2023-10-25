@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import module from "module";
-import path from "path";
-import url from "url";
+import { createRequire } from "module";
+import { dirname, relative } from "path";
+import { fileURLToPath } from "url";
 
 import { Worker } from "threads/master";
 
@@ -28,13 +28,13 @@ export function getWorker(
   // eslint-disable-next-line
   _CDNUrl: string,
 ): Promise<Worker> {
-  const require = module.createRequire(import.meta.url);
+  const require = createRequire(import.meta.url);
 
-  const pathToThisFile = path.dirname(url.fileURLToPath(import.meta.url));
+  const pathToThisFile = dirname(fileURLToPath(import.meta.url));
 
   const pathToWorker = require.resolve(pkg.name);
 
-  const relativePathToWorker = path.relative(pathToThisFile, pathToWorker);
+  const relativePathToWorker = relative(pathToThisFile, pathToWorker);
 
   return Promise.resolve(new Worker(relativePathToWorker));
 }
