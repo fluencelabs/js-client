@@ -22,3 +22,5 @@ jspm_packages/
 
 # workaround to make integration tests work
 src/marine/worker-script/index.js
+
+src/versions.ts

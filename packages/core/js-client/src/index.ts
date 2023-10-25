@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import module from "module";
-import path from "path";
-import process from "process";
-import url from "url";
-
-import { BlobWorker, Worker } from "threads/master";
+import type { VersionedPackage } from "@fluencelabs/js-client-isomorphic";
+import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
+import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import {
@@ -30,36 +27,26 @@ import {
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
-import { doRegisterNodeUtils } from "./services/NodeUtils.js";
-
-import { fetchResource } from "#fetcher";
+import versions from "./versions.js";
 
 const DEFAULT_CDN_URL = "https://unpkg.com";
 
-const isNode =
-  // process.release is undefined in browser env
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  typeof process !== "undefined" && process.release?.name === "node";
+const getVersionedPackage = (pkg: keyof typeof versions): VersionedPackage => {
+  return {
+    name: pkg,
+    version: versions[pkg],
+  };
+};
 
 const createClient = async (
   relay: RelayOptions,
-  config: ClientConfig,
+  config: ClientConfig = {},
 ): Promise<ClientPeer> => {
   const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
 
-  const fetchWorkerCode = async () => {
-    const resource = await fetchResource(
-      "@fluencelabs/marine-worker",
-      "/dist/browser/marine-worker.umd.cjs",
-      CDNUrl,
-    );
-
-    return resource.text();
-  };
-
   const fetchMarineJsWasm = async () => {
     const resource = await fetchResource(
-      "@fluencelabs/marine-js",
+      getVersionedPackage("@fluencelabs/marine-js"),
       "/dist/marine-js.wasm",
       CDNUrl,
     );
@@ -69,7 +56,7 @@ const createClient = async (
 
   const fetchAvmWasm = async () => {
     const resource = await fetchResource(
-      "@fluencelabs/avm",
+      getVersionedPackage("@fluencelabs/avm"),
       "/dist/avm.wasm",
       CDNUrl,
     );
@@ -83,25 +70,10 @@ const createClient = async (
   const marine = new MarineBackgroundRunner(
     {
       async getValue() {
-        if (isNode) {
-          const require = module.createRequire(import.meta.url);
-
-          const pathToThisFile = path.dirname(
-            url.fileURLToPath(import.meta.url),
-          );
-
-          const pathToWorker = require.resolve("@fluencelabs/marine-worker");
-
-          const relativePathToWorker = path.relative(
-            pathToThisFile,
-            pathToWorker,
-          );
-
-          return new Worker(relativePathToWorker);
-        } else {
-          const workerCode = await fetchWorkerCode();
-          return BlobWorker.fromText(workerCode);
-        }
+        return getWorker(
+          getVersionedPackage("@fluencelabs/marine-worker"),
+          CDNUrl,
+        );
       },
       start() {
         return Promise.resolve(undefined);
@@ -141,9 +113,10 @@ const createClient = async (
 
   const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);
 
-  if (isNode) {
-    doRegisterNodeUtils(client);
-  }
+  // TODO: Support node specific utils
+  // if (isNode) {
+  //   doRegisterNodeUtils(client);
+  // }
 
   await client.connect();
   return client;
@@ -154,7 +127,7 @@ const createClient = async (
  */
 interface FluencePublicApi {
   defaultClient: ClientPeer | undefined;
-  connect: (relay: RelayOptions, config: ClientConfig) => Promise<void>;
+  connect: (relay: RelayOptions, config?: ClientConfig) => Promise<void>;
   disconnect: () => Promise<void>;
   onConnectionStateChange: (
     handler: (state: ConnectionState) => void,
@@ -205,36 +178,7 @@ export const Fluence: FluencePublicApi = {
   },
 };
 
-export type { CallParams } from "@fluencelabs/interfaces";
-
 export type { ClientConfig, IFluenceClient } from "./clientPeer/types.js";
-
-export type {
-  ArrayType,
-  ArrowType,
-  ArrowWithCallbacks,
-  ArrowWithoutCallbacks,
-  BottomType,
-  FunctionCallConstants,
-  FunctionCallDef,
-  LabeledProductType,
-  NilType,
-  NonArrowType,
-  OptionType,
-  ProductType,
-  ScalarNames,
-  ScalarType,
-  ServiceDef,
-  StructType,
-  TopType,
-  UnlabeledProductType,
-  CallAquaFunctionType,
-  CallAquaFunctionArgs,
-  PassedArgs,
-  FnConfig,
-  RegisterServiceType,
-  RegisterServiceArgs,
-} from "@fluencelabs/interfaces";
 
 export { v5_callFunction, v5_registerService } from "./api.js";
 
@@ -249,9 +193,13 @@ globalThis.fluence = {
 };
 
 export { createClient, callAquaFunction, registerService };
+
+// Deprecated exports. Later they will be exposed only under js-client/keypair path
 export {
   KeyPair,
   fromBase64Sk,
   fromBase58Sk,
   fromOpts,
 } from "./keypair/index.js";
+
+export * from "./network.js";

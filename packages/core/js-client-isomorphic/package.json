@@ -1,0 +1,33 @@
+{
+  "type": "module",
+  "name": "@fluencelabs/js-client-isomorphic",
+  "version": "1.0.0",
+  "description": "Isomorphic entities for js-client",
+  "files": [
+    "dist"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "exports": {
+    ".": "./dist/types.js",
+    "./fetcher": {
+      "node": "./dist/fetchers/node.js",
+      "default": "./dist/fetchers/browser.js"
+    },
+    "./worker-resolver": {
+      "node": "./dist/worker-resolvers/node.js",
+      "default": "./dist/worker-resolvers/browser.js"
+    }
+  },
+  "dependencies": {
+    "@fluencelabs/avm": "0.52.0",
+    "@fluencelabs/marine-js": "0.7.2",
+    "@fluencelabs/marine-worker": "workspace:*",
+    "threads": "fluencelabs/threads.js#b00a5342380b0278d3ae56dcfb170effb3cad7cd"
+  },
+  "keywords": [],
+  "author": "Fluence Labs",
+  "license": "Apache-2.0"
+}

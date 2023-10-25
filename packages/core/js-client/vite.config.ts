@@ -17,7 +17,6 @@
 import inject from "@rollup/plugin-inject";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { createRequire } from "module";
-import { readFileSync } from "fs";
 import { UserConfig } from "vite";
 
 const require = createRequire(import.meta.url);
@@ -30,7 +29,8 @@ const config: UserConfig = {
     lib: {
       entry: "./src/index.ts",
       name: "js-client",
-      fileName: "index",
+      fileName: () => "index.min.js",
+      formats: ["umd"],
     },
     outDir: "./dist/browser",
     rollupOptions: {
@@ -54,9 +54,6 @@ const config: UserConfig = {
         global: "globalThis",
       },
     },
-  },
-  define: {
-    __PACKAGE_JSON_CONTENT__: readFileSync("./package.json", "utf-8"),
   },
 };
 
