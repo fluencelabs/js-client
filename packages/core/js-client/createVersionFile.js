@@ -18,7 +18,7 @@
 
 import pkg from "./package.json" assert { type: "json" };
 import { writeFile } from "fs/promises";
-import { join } from "path";
+import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const names = [
@@ -35,7 +35,7 @@ const entries = Object.entries({
 const output = Object.fromEntries(entries);
 
 await writeFile(
-  join(fileURLToPath(import.meta.url), "..", "src", "versions.ts"),
+  join(dirname(fileURLToPath(import.meta.url)), "src", "versions.ts"),
   `/* eslint-disable */
 export default ${JSON.stringify(output, null, 2)} as const`,
 );

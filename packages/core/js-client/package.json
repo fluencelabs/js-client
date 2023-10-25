@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc && vite build",
     "test": "vitest --threads false run",
-    "postinstall": "node createVersionFile.js"
+    "prepare": "node createVersionFile.js"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
   "author": "Fluence Labs",
