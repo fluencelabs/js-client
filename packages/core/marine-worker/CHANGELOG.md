@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.4.0...marine-worker-v0.4.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* **deps:** Use published threads package ([#369](https://github.com/fluencelabs/js-client/issues/369)) ([a605d75](https://github.com/fluencelabs/js-client/commit/a605d757f9ddf0cb9cb98ef30a88d1c696de3c89))
+
 ## [0.4.0](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.3.3...marine-worker-v0.4.0) (2023-10-18)
 
 

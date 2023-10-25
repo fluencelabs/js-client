@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.4.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.3.0...js-client-v0.4.0) (2023-10-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Simplify/optimize js-client and update README [fixes DXJ-490] ([#366](https://github.com/fluencelabs/js-client/issues/366))
+
+### Bug Fixes
+
+* **deps:** Use published threads package ([#369](https://github.com/fluencelabs/js-client/issues/369)) ([a605d75](https://github.com/fluencelabs/js-client/commit/a605d757f9ddf0cb9cb98ef30a88d1c696de3c89))
+
+
+### Miscellaneous Chores
+
+* **js-client:** Simplify/optimize js-client and update README [fixes DXJ-490] ([#366](https://github.com/fluencelabs/js-client/issues/366)) ([f9abc64](https://github.com/fluencelabs/js-client/commit/f9abc6419c9b32aacec4b05a625d08ec7ff407ba))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/marine-worker bumped from 0.4.0 to 0.4.1
+
 ## [0.3.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.2.1...js-client-v0.3.0) (2023-10-18)
 
 
