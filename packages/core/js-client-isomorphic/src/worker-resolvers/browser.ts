@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { BlobWorker, Worker } from "threads/master";
+import { BlobWorker } from "threads/master";
 
 import { fetchResource } from "../fetchers/browser.js";
-import type { VersionedPackage } from "../types.js";
+import type { GetWorker, VersionedPackage } from "../types.js";
 
-export async function getWorker(
+export const getWorker: GetWorker = async (
   pkg: VersionedPackage,
   CDNUrl: string,
-): Promise<Worker> {
+) => {
   const fetchWorkerCode = async () => {
     const resource = await fetchResource(
       pkg,
@@ -34,5 +34,5 @@ export async function getWorker(
   };
 
   const workerCode = await fetchWorkerCode();
-  return Promise.resolve(BlobWorker.fromText(workerCode));
-}
+  return BlobWorker.fromText(workerCode);
+};

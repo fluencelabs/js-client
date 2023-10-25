@@ -20,14 +20,9 @@ import { fileURLToPath } from "url";
 
 import { Worker } from "threads/master";
 
-import type { VersionedPackage } from "../types.js";
+import type { GetWorker, VersionedPackage } from "../types.js";
 
-export function getWorker(
-  pkg: VersionedPackage,
-  // Not used, but still required to match a function signature
-  // eslint-disable-next-line
-  _CDNUrl: string,
-): Promise<Worker> {
+export const getWorker: GetWorker = (pkg: VersionedPackage) => {
   const require = createRequire(import.meta.url);
 
   const pathToThisFile = dirname(fileURLToPath(import.meta.url));
@@ -37,4 +32,4 @@ export function getWorker(
   const relativePathToWorker = relative(pathToThisFile, pathToWorker);
 
   return Promise.resolve(new Worker(relativePathToWorker));
-}
+};
