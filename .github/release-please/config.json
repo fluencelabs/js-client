@@ -9,6 +9,9 @@
   ],
   "packages": {
     "packages/core/js-client": {},
+    "packages/core/js-client-isomorphic": {
+      "release-as": "0.1.0"
+    },
     "packages/core/marine-worker": {},
     "packages/core/aqua-to-js": {}
   }
