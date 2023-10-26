@@ -9,6 +9,7 @@
   ],
   "packages": {
     "packages/core/js-client": {},
+    "packages/core/js-client-isomorphic": {},
     "packages/core/marine-worker": {},
     "packages/core/aqua-to-js": {}
   }
