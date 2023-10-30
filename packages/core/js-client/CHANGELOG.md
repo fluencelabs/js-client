@@ -6,6 +6,20 @@
   * dependencies
     * @fluencelabs/js-client-isomorphic bumped to 0.2.0
 
+## [0.4.2](https://github.com/fluencelabs/js-client/compare/js-client-v0.4.1...js-client-v0.4.2) (2023-10-30)
+
+
+### Bug Fixes
+
+* **deps:** Bump avm to 0.54 ([14e91b6](https://github.com/fluencelabs/js-client/commit/14e91b6e00e625792051aee2c82651e5679e3575))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-client-isomorphic bumped to 0.2.1
+
 ## [0.4.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.3.0...js-client-v0.4.0) (2023-10-25)
 
 
