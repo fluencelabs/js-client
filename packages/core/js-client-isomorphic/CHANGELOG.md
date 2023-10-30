@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.2.0...js-client-isomorphic-v0.2.1) (2023-10-30)
+
+
+### Bug Fixes
+
+* **deps:** Bump avm to 0.54 ([14e91b6](https://github.com/fluencelabs/js-client/commit/14e91b6e00e625792051aee2c82651e5679e3575))
+
 ## [0.2.0](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.1.0...js-client-isomorphic-v0.2.0) (2023-10-26)
 
 
