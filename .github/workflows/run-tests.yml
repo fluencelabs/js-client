@@ -28,4 +28,4 @@ jobs:
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
-      nox-image: "docker.fluence.dev/nox:minimal_renovate-avm_3534_1"
+      nox-image: "fluencelabs/nox:unstable_minimal"
