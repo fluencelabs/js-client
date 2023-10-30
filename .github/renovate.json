@@ -8,6 +8,7 @@
   "enabledManagers": ["npm", "github-actions"],
   "rangeStrategy": "pin",
   "schedule": "every weekend",
+  "respectLatest": false,
   "packageRules": [
     {
       "matchManagers": ["npm"],
