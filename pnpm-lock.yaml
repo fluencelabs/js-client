@@ -185,8 +185,8 @@ importers:
   packages/core/interfaces:
     devDependencies:
       '@fluencelabs/avm':
-        specifier: 0.52.0
-        version: 0.52.0
+        specifier: 0.54.0
+        version: 0.54.0
       '@multiformats/multiaddr':
         specifier: 11.3.0
         version: 11.3.0
@@ -203,8 +203,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0
       '@fluencelabs/avm':
-        specifier: 0.52.0
-        version: 0.52.0
+        specifier: 0.54.0
+        version: 0.54.0
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
@@ -321,8 +321,8 @@ importers:
   packages/core/js-client-isomorphic:
     dependencies:
       '@fluencelabs/avm':
-        specifier: 0.52.0
-        version: 0.52.0
+        specifier: 0.54.0
+        version: 0.54.0
       '@fluencelabs/marine-js':
         specifier: 0.7.2
         version: 0.7.2
@@ -1181,6 +1181,16 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
     dev: false
 
+  /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.10):
+    resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.22.10
+      '@babel/helper-plugin-utils': 7.22.5
+    dev: false
+
   /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.5):
     resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
     engines: {node: '>=6.9.0'}
@@ -1264,6 +1274,16 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.22.5
+      '@babel/helper-plugin-utils': 7.22.5
+    dev: false
+
+  /@babel/plugin-syntax-jsx@7.22.5(@babel/core@7.22.10):
+    resolution: {integrity: sha512-gvyP4hZrgrs/wWMaocvxZ44Hw0b3W8Pe+cMxc8V1ULQ07oh8VNbIRaoD1LRZVTvD+0nieDKjfgKg89sD7rrKrg==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.22.10
       '@babel/helper-plugin-utils': 7.22.5
     dev: false
 
@@ -2388,6 +2408,20 @@ packages:
     dependencies:
       '@babel/core': 7.22.5
       '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
+    dev: false
+
+  /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.22.10):
+    resolution: {integrity: sha512-rog5gZaVbUip5iWDMTYbVM15XQq+RkUKhET/IHR6oizR+JEoN6CAfTTuHcK4vwUyzca30qqHqEpzBOnaRMWYMA==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.22.10
+      '@babel/helper-annotate-as-pure': 7.22.5
+      '@babel/helper-module-imports': 7.22.5
+      '@babel/helper-plugin-utils': 7.22.5
+      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.22.10)
+      '@babel/types': 7.22.5
     dev: false
 
   /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.22.5):
@@ -3840,8 +3874,8 @@ packages:
     resolution: {integrity: sha512-+JVbWmHeGB+X/BSqmk6/B0gwWJ4bEAxkepVTN8l0mVrJ5zRRmYaCKVplWy6Z3W012m3VVK3A1o3rm/fgfVrQkw==}
     dev: true
 
-  /@fluencelabs/avm@0.52.0:
-    resolution: {integrity: sha512-T+/Hv/ZPfwWZAC4tH6wEDIRmtN6cTBebqbCaHfaq2PDLSMG0BgssdFF2BAaEXrvOvJbI5Bu/9bQhHv4ga7bYlA==}
+  /@fluencelabs/avm@0.54.0:
+    resolution: {integrity: sha512-5GgROVly/vC7gasltr6/3TIY8vfV6b+SPfWUAGWnyXdbWt4jJANLO2YtXdaUsdNk9PiwOep7TMjLnypljdyMjQ==}
 
   /@fluencelabs/cli@0.7.2(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@nomicfoundation/hardhat-chai-matchers@1.0.6)(@nomicfoundation/hardhat-network-helpers@1.0.8)(@nomiclabs/hardhat-ethers@2.2.3)(@nomiclabs/hardhat-etherscan@3.1.7)(@typechain/ethers-v5@10.2.1)(@typechain/hardhat@6.1.6)(@types/chai@4.3.5)(@types/mocha@9.1.1)(@types/node@20.7.0)(chai@4.3.10)(hardhat-gas-reporter@1.0.9)(hardhat@2.15.0)(solidity-coverage@0.7.22)(ts-node@10.9.1)(typechain@8.2.0)(typescript@5.1.6):
     resolution: {integrity: sha512-cXhlXBxNh1i66Twb3Nhpm1mXHpa+8zzoQ5wKJ6zJjOtrw6GWB6WrfIAb+aaLGWJMBnWHcZEkXs5vx9vwvVplcQ==}
@@ -10401,8 +10435,8 @@ packages:
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
     dependencies:
-      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
+      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.10)
+      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.10)
       eslint: 8.50.0
       lodash: 4.17.21
       string-natural-compare: 3.0.1
