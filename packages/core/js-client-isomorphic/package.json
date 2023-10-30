@@ -22,7 +22,7 @@
     }
   },
   "dependencies": {
-    "@fluencelabs/avm": "0.52.0",
+    "@fluencelabs/avm": "0.54.0",
     "@fluencelabs/marine-js": "0.7.2",
     "@fluencelabs/marine-worker": "workspace:*",
     "@fluencelabs/threads": "^2.0.0"
