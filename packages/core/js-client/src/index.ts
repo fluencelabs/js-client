@@ -166,7 +166,13 @@ export const Fluence: FluencePublicApi = {
   },
 };
 
-export type { ClientConfig, IFluenceClient } from "./clientPeer/types.js";
+export type {
+  ClientConfig,
+  IFluenceClient,
+  ConnectionState,
+  RelayOptions,
+  KeyPairOptions,
+} from "./clientPeer/types.js";
 
 export { v5_callFunction, v5_registerService } from "./api.js";
 
