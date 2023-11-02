@@ -20,14 +20,16 @@ import { fileURLToPath } from "url";
 
 import { Worker } from "@fluencelabs/threads/master";
 
-import type { GetWorker, VersionedPackage } from "../types.js";
+import type { FetchedPackages, GetWorker } from "../types.js";
+import { getVersionedPackage } from "../types.js";
 
-export const getWorker: GetWorker = (pkg: VersionedPackage) => {
+export const getWorker: GetWorker = (pkg: FetchedPackages) => {
   const require = createRequire(import.meta.url);
 
   const pathToThisFile = dirname(fileURLToPath(import.meta.url));
 
-  const pathToWorker = require.resolve(pkg.name);
+  const { name } = getVersionedPackage(pkg);
+  const pathToWorker = require.resolve(name);
 
   const relativePathToWorker = relative(pathToThisFile, pathToWorker);
 

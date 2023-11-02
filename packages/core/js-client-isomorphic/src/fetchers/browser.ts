@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { VersionedPackage } from "../types.js";
+import { FetchedPackages, getVersionedPackage } from "../types.js";
 
 /**
  * @param pkg name of package with version
@@ -22,7 +22,7 @@ import type { VersionedPackage } from "../types.js";
  * @param root CDN domain in browser or file system root in node
  */
 export async function fetchResource(
-  pkg: VersionedPackage,
+  pkg: FetchedPackages,
   assetPath: string,
   root: string,
 ) {
@@ -30,7 +30,8 @@ export async function fetchResource(
     ? assetPath.slice(1)
     : assetPath;
 
-  const url = new URL(`${pkg.name}@${pkg.version}/` + refinedAssetPath, root);
+  const { name, version } = getVersionedPackage(pkg);
+  const url = new URL(`${name}@${version}/` + refinedAssetPath, root);
 
   return fetch(url).catch(() => {
     throw new Error(`Cannot fetch from ${url.toString()}`);

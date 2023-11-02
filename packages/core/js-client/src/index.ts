@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import type { VersionedPackage } from "@fluencelabs/js-client-isomorphic";
 import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
 import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 
@@ -27,16 +26,8 @@ import {
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
-import versions from "./versions.js";
 
 const DEFAULT_CDN_URL = "https://unpkg.com";
-
-const getVersionedPackage = (pkg: keyof typeof versions): VersionedPackage => {
-  return {
-    name: pkg,
-    version: versions[pkg],
-  };
-};
 
 const createClient = async (
   relay: RelayOptions,
@@ -46,7 +37,7 @@ const createClient = async (
 
   const fetchMarineJsWasm = async () => {
     const resource = await fetchResource(
-      getVersionedPackage("@fluencelabs/marine-js"),
+      "@fluencelabs/marine-js",
       "/dist/marine-js.wasm",
       CDNUrl,
     );
@@ -56,7 +47,7 @@ const createClient = async (
 
   const fetchAvmWasm = async () => {
     const resource = await fetchResource(
-      getVersionedPackage("@fluencelabs/avm"),
+      "@fluencelabs/avm",
       "/dist/avm.wasm",
       CDNUrl,
     );
@@ -70,10 +61,7 @@ const createClient = async (
   const marine = new MarineBackgroundRunner(
     {
       async getValue() {
-        return getWorker(
-          getVersionedPackage("@fluencelabs/marine-worker"),
-          CDNUrl,
-        );
+        return getWorker("@fluencelabs/marine-worker", CDNUrl);
       },
       start() {
         return Promise.resolve(undefined);

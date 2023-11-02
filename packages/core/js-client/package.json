@@ -24,8 +24,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "test": "vitest --threads false run",
-    "prepare": "node createVersionFile.js"
+    "test": "vitest --threads false run"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
   "author": "Fluence Labs",
