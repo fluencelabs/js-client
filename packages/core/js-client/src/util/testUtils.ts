@@ -87,8 +87,6 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     .map(([name, fnInfo]) => {
       const callFn = (peer: FluencePeer, args: PassedArgs) => {
         return callAquaFunction({
-          // TODO: Set our compiler here and fix this
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           def: fnInfo.funcDef as FunctionCallDef,
           script: fnInfo.script,
           config: {},
@@ -105,9 +103,7 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
 
   return {
     functions,
-    // TODO: set our compiler here and fix this
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    services: compilationResult.services as Record<string, ServiceDef>,
+    services: compilationResult.services,
   };
 };
 
