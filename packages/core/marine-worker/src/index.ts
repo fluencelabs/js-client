@@ -90,6 +90,7 @@ const toExpose = {
       ...logLevelToEnv("info"),
       ...envs,
     });
+
     const modules = { [serviceId]: new Uint8Array(wasm) };
 
     const srv = new MarineService(

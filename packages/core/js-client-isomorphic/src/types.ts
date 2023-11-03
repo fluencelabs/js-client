@@ -15,6 +15,7 @@
  */
 
 import { Worker } from "@fluencelabs/threads/master";
+
 import versions from "./versions.js";
 
 export type FetchedPackages = keyof typeof versions;

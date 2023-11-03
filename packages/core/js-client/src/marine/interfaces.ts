@@ -20,10 +20,10 @@ import {
   RunParameters,
 } from "@fluencelabs/avm";
 import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
+import { CallParameters } from "@fluencelabs/marine-worker";
 import type { Worker as WorkerImplementation } from "@fluencelabs/threads/master";
 
 import { IStartable } from "../util/commonTypes.js";
-import { CallParameters } from "@fluencelabs/marine-worker";
 
 /**
  * Contract for marine host implementations. Marine host is responsible for creating calling and removing marine services

@@ -16,7 +16,7 @@
 
 import { promises as fs } from "fs";
 
-import * as api from "@fluencelabs/aqua-api/aqua-api.js";
+import { Path, Aqua } from "@fluencelabs/aqua-api/aqua-api.js";
 import {
   FunctionCallDef,
   JSONArray,
@@ -68,11 +68,16 @@ export type CompiledFile = {
   services: { [key: string]: ServiceDef };
 };
 
+interface FunctionInfo {
+  script: string;
+  funcDef: FunctionCallDef;
+}
+
 export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
   await fs.access(aquaFile);
 
-  const compilationResult = await api.Aqua.compile(
-    new api.Path(aquaFile),
+  const compilationResult = await Aqua.compile(
+    new Path(aquaFile),
     [],
     undefined,
   );
@@ -84,10 +89,10 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
   }
 
   const functions = Object.entries(compilationResult.functions)
-    .map(([name, fnInfo]) => {
+    .map(([name, fnInfo]: [string, FunctionInfo]) => {
       const callFn = (peer: FluencePeer, args: PassedArgs) => {
         return callAquaFunction({
-          def: fnInfo.funcDef as FunctionCallDef,
+          def: fnInfo.funcDef,
           script: fnInfo.script,
           config: {},
           peer: peer,
