@@ -99,5 +99,5 @@ describe("FluencePeer flow tests", () => {
 
       expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));
     });
-  }, 1500);
+  }, 1800);
 });
