@@ -16,12 +16,11 @@
 
 import { JSONValue } from "@fluencelabs/interfaces";
 import type {
-  JSONArray,
-  JSONObject,
+  MarineBackgroundInterface,
+  LogFunction,
+  JSONValueNonNullable,
   CallParameters,
-} from "@fluencelabs/marine-js/dist/types";
-import { LogFunction, logLevelToEnv } from "@fluencelabs/marine-js/dist/types";
-import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
+} from "@fluencelabs/marine-worker";
 import { ModuleThread, Thread, spawn } from "@fluencelabs/threads/master";
 
 import { MarineLogger, marineLogger } from "../../util/logger.js";
@@ -94,18 +93,15 @@ export class MarineBackgroundRunner implements IMarineHost {
       throw new Error("Worker is not initialized");
     }
 
-    // The logging level is controlled by the environment variable passed to enable debug logs.
-    // We enable all possible log levels passing the control for exact printouts to the logger
-    const env = logLevelToEnv("info");
     this.loggers.set(serviceId, marineLogger(serviceId));
-    await this.workerThread.createService(serviceModule, serviceId, env);
+    await this.workerThread.createService(serviceModule, serviceId);
   }
 
   async callService(
     serviceId: string,
     functionName: string,
-    args: JSONArray | JSONObject,
-    callParams: CallParameters,
+    args: Array<JSONValueNonNullable> | Record<string, JSONValueNonNullable>,
+    callParams?: CallParameters,
   ): Promise<JSONValue> {
     if (this.workerThread == null) {
       throw new Error("Worker is not initialized");

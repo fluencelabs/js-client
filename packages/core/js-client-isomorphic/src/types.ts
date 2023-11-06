@@ -16,8 +16,18 @@
 
 import { Worker } from "@fluencelabs/threads/master";
 
-export type VersionedPackage = { name: string; version: string };
+import versions from "./versions.js";
+
+export type FetchedPackages = keyof typeof versions;
+type VersionedPackage = { name: string; version: string };
 export type GetWorker = (
-  pkg: VersionedPackage,
+  pkg: FetchedPackages,
   CDNUrl: string,
 ) => Promise<Worker>;
+
+export const getVersionedPackage = (pkg: FetchedPackages): VersionedPackage => {
+  return {
+    name: pkg,
+    version: versions[pkg],
+  };
+};

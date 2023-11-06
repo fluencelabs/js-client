@@ -22,7 +22,6 @@ import {
   KeyPairFormat,
   serializeAvmArgs,
 } from "@fluencelabs/avm";
-import { defaultCallParameters } from "@fluencelabs/marine-js/dist/types";
 import { fromUint8Array } from "js-base64";
 import {
   concatMap,
@@ -201,12 +200,7 @@ export abstract class FluencePeer {
           new Error("Can't use avm: peer is not initialized");
         }
 
-        const res = await this.marineHost.callService(
-          "avm",
-          "ast",
-          [air],
-          defaultCallParameters,
-        );
+        const res = await this.marineHost.callService("avm", "ast", [air]);
 
         if (!isString(res)) {
           throw new Error(
@@ -435,7 +429,6 @@ export abstract class FluencePeer {
                   "avm",
                   "invoke",
                   args,
-                  defaultCallParameters,
                 );
 
                 avmCallResult = deserializeAvmResult(res);
@@ -654,7 +647,6 @@ export abstract class FluencePeer {
         req.serviceId,
         req.fnName,
         req.args,
-        defaultCallParameters,
       );
 
       return {

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Fluence } from "@fluencelabs/js-client";
-import type { ClientConfig } from "@fluencelabs/js-client";
+import { Fluence, type ClientConfig } from "@fluencelabs/js-client";
 import { fromByteArray } from "base64-js";
 
 import { test as particleTest } from "./_aqua/finalize_particle.js";

@@ -26,7 +26,11 @@ import type {
   JSONObject,
   LogMessage,
 } from "@fluencelabs/marine-js/dist/types";
-import { JSONValue } from "@fluencelabs/marine-js/dist/types";
+import {
+  defaultCallParameters,
+  JSONValue,
+  logLevelToEnv,
+} from "@fluencelabs/marine-js/dist/types";
 import { expose } from "@fluencelabs/threads/worker";
 import { Observable, Subject } from "observable-fns";
 
@@ -81,7 +85,12 @@ const toExpose = {
       throw new Error(`Service with name ${serviceId} already registered`);
     }
 
-    const marineConfig = createSimpleMarineService(serviceId, envs);
+    const marineConfig = createSimpleMarineService(serviceId, {
+      // We enable all possible log levels passing the control for exact printouts to the logger
+      ...logLevelToEnv("info"),
+      ...envs,
+    });
+
     const modules = { [serviceId]: new Uint8Array(wasm) };
 
     const srv = new MarineService(
@@ -123,7 +132,7 @@ const toExpose = {
     serviceId: string,
     functionName: string,
     args: JSONArray | JSONObject,
-    callParams: CallParameters,
+    callParams: CallParameters = defaultCallParameters,
   ) => {
     const srv = marineServices.get(serviceId);
 
@@ -142,5 +151,11 @@ const toExpose = {
 };
 
 export type MarineBackgroundInterface = typeof toExpose;
+export type {
+  LogFunction,
+  LogMessage,
+  JSONValue as JSONValueNonNullable,
+  CallParameters,
+} from "@fluencelabs/marine-js/dist/types";
 
 expose(toExpose);

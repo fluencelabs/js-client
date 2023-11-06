@@ -18,7 +18,7 @@ import { readFile } from "fs/promises";
 import { createRequire } from "module";
 import { sep, posix, join } from "path";
 
-import type { VersionedPackage } from "../types.js";
+import { FetchedPackages, getVersionedPackage } from "../types.js";
 
 /**
  * @param pkg name of package with version
@@ -26,24 +26,25 @@ import type { VersionedPackage } from "../types.js";
  * @param root CDN domain in browser or js-client itself in node
  */
 export async function fetchResource(
-  pkg: VersionedPackage,
+  pkg: FetchedPackages,
   assetPath: string,
   root: string,
 ) {
+  const { name } = getVersionedPackage(pkg);
   // TODO: `root` will be handled somehow in the future. For now, we use filesystem root where js-client is running;
   root = "/";
   const require = createRequire(import.meta.url);
-  const packagePathIndex = require.resolve(pkg.name);
+  const packagePathIndex = require.resolve(name);
 
   // Ensure that windows path is converted to posix path. So we can find a package
   const posixPath = packagePathIndex.split(sep).join(posix.sep);
 
-  const matches = new RegExp(`(.+${pkg.name})`).exec(posixPath);
+  const matches = new RegExp(`(.+${name})`).exec(posixPath);
 
   const packagePath = matches?.[0];
 
   if (packagePath == null) {
-    throw new Error(`Cannot find dependency ${pkg.name} in path ${posixPath}`);
+    throw new Error(`Cannot find dependency ${name} in path ${posixPath}`);
   }
 
   const pathToResource = join(root, packagePath, assetPath);
