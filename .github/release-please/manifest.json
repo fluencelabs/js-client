@@ -1,6 +1,6 @@
 {
-  "packages/core/js-client": "0.4.2",
-  "packages/core/marine-worker": "0.4.1",
+  "packages/core/js-client": "0.4.3",
+  "packages/core/marine-worker": "0.4.2",
   "packages/core/aqua-to-js": "0.2.0",
-  "packages/core/js-client-isomorphic": "0.2.1"
+  "packages/core/js-client-isomorphic": "0.2.2"
 }

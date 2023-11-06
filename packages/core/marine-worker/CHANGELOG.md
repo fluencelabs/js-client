@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.4.1...marine-worker-v0.4.2) (2023-11-06)
+
+
+### Bug Fixes
+
+* JS-client bugs and tech debt [fixes DXJ-520] ([#374](https://github.com/fluencelabs/js-client/issues/374)) ([b460491](https://github.com/fluencelabs/js-client/commit/b460491fbd0d07e3507a6c70f162014580c6d6da))
+
 ## [0.4.1](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.4.0...marine-worker-v0.4.1) (2023-10-25)
 
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.2](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.2.1...js-client-isomorphic-v0.2.2) (2023-11-06)
+
+
+### Bug Fixes
+
+* JS-client bugs and tech debt [fixes DXJ-520] ([#374](https://github.com/fluencelabs/js-client/issues/374)) ([b460491](https://github.com/fluencelabs/js-client/commit/b460491fbd0d07e3507a6c70f162014580c6d6da))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/marine-worker bumped from 0.4.1 to 0.4.2
+
 ## [0.2.1](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.2.0...js-client-isomorphic-v0.2.1) (2023-10-30)
 
 
