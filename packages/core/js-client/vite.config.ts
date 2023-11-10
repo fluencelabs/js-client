@@ -30,7 +30,7 @@ const config: UserConfig = {
       entry: "./src/index.ts",
       name: "js-client",
       fileName: () => "index.min.js",
-      formats: ["umd"],
+      formats: ["es"],
     },
     outDir: "./dist/browser",
     rollupOptions: {

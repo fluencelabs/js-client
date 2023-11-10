@@ -1,10 +1,6 @@
-const fluence = globalThis.fluence;
+import { Fluence, callAquaFunction, randomStage } from "./js-client.min.js";
 
-const relay = {
-  multiaddr:
-    "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
-  peerId: "12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
-};
+const relay = randomStage();
 
 const getRelayTime = () => {
   const script = `
@@ -74,18 +70,19 @@ const getRelayTime = () => {
   const config = {};
 
   const args = { relayPeerId: relay.peerId };
-  return fluence.callAquaFunction({
+
+  return callAquaFunction({
     args,
     def,
     script,
     config,
-    peer: fluence.defaultClient,
+    peer: Fluence.defaultClient,
   });
 };
 
 const main = async () => {
   console.log("starting fluence...");
-  fluence.defaultClient = await fluence.clientFactory(relay, {
+  await Fluence.connect(relay, {
     CDNUrl: "http://localhost:3000",
   });
   console.log("started fluence");
@@ -95,7 +92,7 @@ const main = async () => {
   console.log("got relay time, ", relayTime);
 
   console.log("stopping fluence...");
-  await fluence.defaultClient.stop();
+  await Fluence.disconnect();
   console.log("stopped fluence...");
 
   return relayTime;
