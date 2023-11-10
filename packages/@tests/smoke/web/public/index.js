@@ -1,6 +1,10 @@
 import { Fluence, callAquaFunction, randomStage } from "./js-client.min.js";
 
-const relay = randomStage();
+const relay = {
+  multiaddr:
+      "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
+  peerId: "12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
+};
 
 const getRelayTime = () => {
   const script = `
