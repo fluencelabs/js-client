@@ -38,7 +38,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ${{ fromJSON(env.MATRIX_LIST) }}
+        node-version: ${{ fromJSON($MATRIX_LIST) }}
 
     steps:
       - name: Import secrets
@@ -93,12 +93,12 @@ jobs:
 
       - name: Lint code and fix all fixable errors
         # Lint once
-        if: ${{ matrix.node_version == fromJSON(env.MATRIX_LIST)[0] }}
+        if: ${{ matrix.node-version == fromJSON($MATRIX_LIST)[0] }}
         run: pnpm lint-fix
 
       - name: Auto-commit
         # Autocommit once
-        if: ${{ matrix.node_version == fromJSON(env.MATRIX_LIST)[0] }}
+        if: ${{ matrix.node-version == fromJSON($MATRIX_LIST)[0] }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_user_name: fluencebot
