@@ -29,16 +29,19 @@ jobs:
   js-client:
     name: "Run tests"
     runs-on: ubuntu-latest
-    env:
-      MATRIX_LIST: "['18.x', '20.x']"
 
     permissions:
       contents: read
       id-token: write
 
+    env:
+      LATEST_NODE_VERSION: 20.x
+
     strategy:
       matrix:
-        node-version: ${{ fromJSON("$MATRIX_LIST") }}
+        node-version:
+          - 18.x
+          - 20.x
 
     steps:
       - name: Import secrets
@@ -93,12 +96,12 @@ jobs:
 
       - name: Lint code and fix all fixable errors
         # Lint once
-        if: ${{ matrix.node-version == fromJSON(env.MATRIX_LIST)[0] }}
+        if: ${{ matrix.node-version == env.LATEST_NODE_VERSION }}
         run: pnpm lint-fix
 
       - name: Auto-commit
         # Autocommit once
-        if: ${{ matrix.node-version == fromJSON(env.MATRIX_LIST)[0] }}
+        if: ${{ matrix.node-version == env.LATEST_NODE_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_user_name: fluencebot
