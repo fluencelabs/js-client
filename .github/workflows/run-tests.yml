@@ -28,4 +28,4 @@ jobs:
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
-      nox-image: "fluencelabs/nox:unstable_minimal"
+      nox-image: "fluencelabs/nox:unstable"

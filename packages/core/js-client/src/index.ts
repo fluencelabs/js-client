@@ -176,16 +176,6 @@ export type {
 
 export { v5_callFunction, v5_registerService } from "./api.js";
 
-// @ts-expect-error Writing to global object like this prohibited by ts
-globalThis.new_fluence = Fluence;
-
-// @ts-expect-error Writing to global object like this prohibited by ts
-globalThis.fluence = {
-  clientFactory: createClient,
-  callAquaFunction,
-  registerService,
-};
-
 export { createClient, callAquaFunction, registerService };
 
 // Deprecated exports. Later they will be exposed only under js-client/keypair path

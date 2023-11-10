@@ -6,7 +6,7 @@ on:
       nox-image:
         description: "nox image tag"
         type: string
-        default: "fluencelabs/nox:minimal_0.2.9"
+        default: "fluencelabs/nox:0.4.0"
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
@@ -33,6 +33,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+
+    env:
+      LATEST_NODE_VERSION: 20.x
 
     strategy:
       matrix:
@@ -91,11 +94,8 @@ jobs:
       - run: pnpm -r i
       - run: pnpm -r build
 
-      - name: Lint code and fix all fixable errors
-        run: pnpm lint-fix
-
-      - name: Auto-commit
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Lint code
+        run: pnpm lint-check
 
       - name: Override dependencies
         uses: fluencelabs/github-actions/pnpm-set-dependency@main

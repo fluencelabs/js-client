@@ -17,7 +17,7 @@ const publicPath = join(__dirname, "../build/");
 
 const test = async () => {
   const localServer = await startContentServer(port, publicPath);
-  await createSymlinkIfNotExists(CDN_PUBLIC_PATH, join(publicPath, "source"));
+
   await createSymlinkIfNotExists(
     JS_CLIENT_DEPS_PATH,
     join(publicPath, "node_modules"),
