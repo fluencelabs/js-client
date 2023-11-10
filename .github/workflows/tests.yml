@@ -94,19 +94,8 @@ jobs:
       - run: pnpm -r i
       - run: pnpm -r build
 
-      - name: Lint code and fix all fixable errors
-        # Lint once
-        if: ${{ matrix.node-version == env.LATEST_NODE_VERSION }}
-        run: pnpm lint-fix
-
-      - name: Auto-commit
-        # Autocommit once
-        if: ${{ matrix.node-version == env.LATEST_NODE_VERSION }}
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_user_name: fluencebot
-          commit_user_email: devops@fluence.one
-          commit_author: fluencebot <devops@fluence.one>
+      - name: Lint code
+        run: pnpm lint-check
 
       - name: Override dependencies
         uses: fluencelabs/github-actions/pnpm-set-dependency@main
