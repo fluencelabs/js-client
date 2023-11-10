@@ -17,10 +17,29 @@
 import inject from "@rollup/plugin-inject";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { createRequire } from "module";
-import { UserConfig } from "vite";
+import { PluginOption, UserConfig } from "vite";
+import { transform } from "esbuild";
 
 const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
+
+function minifyEs(): PluginOption {
+  return {
+    name: "minifyEs",
+    renderChunk: {
+      order: "post",
+      async handler(code, chunk, outputOptions) {
+        if (
+          outputOptions.format === "es" &&
+          chunk.fileName.endsWith(".min.js")
+        ) {
+          return await transform(code, { minify: true });
+        }
+        return code;
+      },
+    },
+  };
+}
 
 const config: UserConfig = {
   build: {
@@ -47,7 +66,7 @@ const config: UserConfig = {
       ],
     },
   },
-  plugins: [tsconfigPaths()],
+  plugins: [tsconfigPaths(), minifyEs()],
   optimizeDeps: {
     esbuildOptions: {
       define: {
