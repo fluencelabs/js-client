@@ -96,6 +96,10 @@ jobs:
 
       - name: Auto-commit
         uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: fluencebot
+          commit_user_email: devops@fluence.one
+          commit_author: fluencebot <devops@fluence.one>
 
       - name: Override dependencies
         uses: fluencelabs/github-actions/pnpm-set-dependency@main
