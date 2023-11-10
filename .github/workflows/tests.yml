@@ -38,7 +38,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ${{ fromJSON(env.MATRIX_LIST) }}
+        node-version: ${{ fromJSON("$MATRIX_LIST") }}
 
     steps:
       - name: Import secrets
