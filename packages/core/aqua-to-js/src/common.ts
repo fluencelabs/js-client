@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ArrowWithoutCallbacks, NonArrowType } from "@fluencelabs/interfaces";
+import { ArrowType, NonArrowType } from "@fluencelabs/interfaces";
 import { match, P } from "ts-pattern";
 
 import { getFuncArgs } from "./utils.js";
 
 export function genTypeName(
-  t: NonArrowType | ArrowWithoutCallbacks,
+  t: NonArrowType | ArrowType,
   name: string,
 ): readonly [string | undefined, string] {
   const genType = typeToTs(t);
@@ -46,7 +46,7 @@ export function genTypeName(
     });
 }
 
-export function typeToTs(t: NonArrowType | ArrowWithoutCallbacks): string {
+export function typeToTs(t: NonArrowType | ArrowType): string {
   return match(t)
     .with({ tag: "nil" }, () => {
       return "null";
@@ -120,16 +120,19 @@ export function typeToTs(t: NonArrowType | ArrowWithoutCallbacks): string {
         return [name, typeToTs(type)];
       });
 
-      const generic =
-        args.length === 0
-          ? "null"
-          : args
-              .map(([name]) => {
-                return `'${name}'`;
-              })
-              .join(" | ");
+      // JS-client argument
+      if (domain.tag !== "unlabeledProduct") {
+        const generic =
+          args.length === 0
+            ? "null"
+            : args
+                .map(([name]) => {
+                  return `'${name}'`;
+                })
+                .join(" | ");
 
-      args.push(["callParams", `CallParams$$<${generic}>`]);
+        args.push(["callParams", `CallParams$$<${generic}>`]);
+      }
 
       const funcArgs = args
         .map(([name, type]) => {

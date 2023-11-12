@@ -20,6 +20,8 @@ import { genTypeName, typeToTs } from "../common.js";
 import { CLIENT } from "../constants.js";
 import { capitalize, getFuncArgs } from "../utils.js";
 
+import { DefaultServiceId } from "./service.js";
+
 export interface TypeGenerator {
   type(field: string, type: string): string;
   generic(field: string, type: string): string;
@@ -117,12 +119,19 @@ export class TSTypeGenerator implements TypeGenerator {
     const serviceDecl = `service: ${srvName}Def`;
     const serviceIdDecl = `serviceId: string`;
 
-    const registerServiceArgs = [
-      [serviceDecl],
-      [serviceIdDecl, serviceDecl],
-      [peerDecl, serviceDecl],
-      [peerDecl, serviceIdDecl, serviceDecl],
-    ];
+    const registerServiceArgs =
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (srvDef.defaultServiceId as DefaultServiceId).s_Some__f_value != null
+        ? [
+            [serviceDecl],
+            [serviceIdDecl, serviceDecl],
+            [peerDecl, serviceDecl],
+            [peerDecl, serviceIdDecl, serviceDecl],
+          ]
+        : [
+            [serviceIdDecl, serviceDecl],
+            [peerDecl, serviceIdDecl, serviceDecl],
+          ];
 
     return [
       interfaces,

@@ -25,7 +25,9 @@ import type {
   ArrowWithoutCallbacks,
   JSONArray,
   JSONValue,
+  LabeledProductType,
   NonArrowType,
+  SimpleTypes,
 } from "@fluencelabs/interfaces";
 import { match } from "ts-pattern";
 
@@ -95,7 +97,7 @@ export const aqua2ts = (value: JSONValue, type: NonArrowType): JSONValue => {
  */
 export const aquaArgs2Ts = (
   req: CallServiceData,
-  arrow: ArrowWithoutCallbacks,
+  arrow: ArrowType<LabeledProductType<SimpleTypes>>,
 ): JSONArray => {
   const argTypes = match(arrow.domain)
     .with({ tag: "labeledProduct" }, (x) => {
@@ -187,6 +189,7 @@ export const returnType2Aqua = (
   returnValue: any,
   arrowType: ArrowType<NonArrowType>,
 ) => {
+  // TODO: cover with tests
   if (arrowType.codomain.tag === "nil") {
     return {};
   }

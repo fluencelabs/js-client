@@ -20,7 +20,7 @@ import { recursiveRenameLaquaProps } from "../utils.js";
 
 import { TypeGenerator } from "./interfaces.js";
 
-interface DefaultServiceId {
+export interface DefaultServiceId {
   s_Some__f_value?: string;
 }
 
