@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import assert from "assert";
-
-import { FnConfig, JSONValue } from "@fluencelabs/interfaces";
+import { JSONValue } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
@@ -46,16 +44,20 @@ const log = logger("aqua");
  * @returns
  */
 
-type CallAquaFunctionArgs = {
+export type CallAquaFunctionArgs = {
   script: string;
-  config: FnConfig;
+  config?: CallAquaFunctionConfig;
   peer: FluencePeer;
   args: { [key: string]: JSONValue | ServiceImpl[string] };
 };
 
+export type CallAquaFunctionConfig = {
+  ttl?: number;
+};
+
 export const callAquaFunction = async ({
   script,
-  config,
+  config = {},
   peer,
   args,
 }: CallAquaFunctionArgs) => {
@@ -69,21 +71,8 @@ export const callAquaFunction = async ({
       let service: ServiceDescription;
 
       if (typeof argVal === "function") {
-        // TODO: Add validation here
-        assert(
-          typeof argVal === "function",
-          "Should not be possible, bad types",
-        );
-
         service = userHandlerService("callbackSrv", name, argVal);
       } else {
-        // TODO: Add validation here
-        assert(
-          typeof argVal !== "function",
-          "Should not be possible, bad types",
-        );
-
-        console.log("inject service", name, argVal);
         service = injectValueService("getDataSrv", name, argVal);
       }
 

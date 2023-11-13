@@ -54,7 +54,6 @@ export const registerService = ({
   serviceId,
   service,
 }: RegisterServiceArgs) => {
-  // TODO: Need to refactor this. We can compute function types from service implementation, making func more type safe
   log.trace("registering aqua service %o", { serviceId, service });
 
   if (serviceId == null) {

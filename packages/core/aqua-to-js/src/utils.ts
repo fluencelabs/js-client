@@ -16,7 +16,8 @@
 
 import assert from "assert";
 import { readFile } from "fs/promises";
-import path from "path";
+import { join } from "path";
+import { fileURLToPath } from "url";
 
 import {
   ArrowType,
@@ -38,7 +39,7 @@ export interface PackageJson {
 
 export async function getPackageJsonContent(): Promise<PackageJson> {
   const content = await readFile(
-    new URL(path.join("..", "package.json"), import.meta.url),
+    new URL(join("..", "package.json"), import.meta.url),
     "utf-8",
   );
 
@@ -104,4 +105,9 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
 
 export function capitalize(str: string) {
   return str.slice(0, 1).toUpperCase() + str.slice(1);
+}
+
+export async function includeRelative(url: string, file: string) {
+  const pathToFile = join(fileURLToPath(url), "..", file);
+  return await readFile(pathToFile, "utf-8");
 }

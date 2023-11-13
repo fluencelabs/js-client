@@ -139,8 +139,6 @@ export const userHandlerService = (
 
       const result = await userHandler.bind(null)(...args);
 
-      console.log(result, "userHandlerService result", serviceId, fnName);
-
       return {
         retCode: ResultCodes.success,
         result: result,

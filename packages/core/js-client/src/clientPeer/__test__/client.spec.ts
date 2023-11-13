@@ -17,7 +17,7 @@
 import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect } from "vitest";
 
-import { SendError } from "../../jsPeer/errors.js";
+import { ExpirationError, SendError } from "../../jsPeer/errors.js";
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withClient } from "../../util/testUtils.js";
@@ -26,6 +26,35 @@ import { checkConnection } from "../checkConnection.js";
 import { nodes, RELAY } from "./connection.js";
 
 describe("FluenceClient usage test suite", () => {
+  it("Should resolve at TTL when fire and forget behavior is used", async () => {
+    await withClient(RELAY, { defaultTtlMs: 600 }, async (peer) => {
+      const script = `
+    (seq
+        (call %init_peer_id% ("load" "relay") [] init_relay)
+        (call init_relay ("peer" "timeout") [60000 "Do you really want to wait for so long?"])
+    )`;
+
+      const particle = await peer.internals.createNewParticle(script);
+
+      const now = Date.now();
+
+      const promise = new Promise<JSONValue>((resolve, reject) => {
+        registerHandlersHelper(peer, particle, {
+          load: {
+            relay: () => {
+              return peer.getRelayPeerId();
+            },
+          },
+        });
+
+        peer.internals.initiateParticle(particle, resolve, reject);
+      });
+
+      await expect(promise).rejects.toThrow(ExpirationError);
+      expect(Date.now() - 500).toBeGreaterThanOrEqual(now);
+    });
+  });
+
   it("should make a call through network", async () => {
     await withClient(RELAY, {}, async (peer) => {
       // arrange
@@ -180,7 +209,7 @@ describe("FluenceClient usage test suite", () => {
       );
     });
 
-    it.only("With connection options: defaultTTL", async () => {
+    it("With connection options: defaultTTL", async () => {
       await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
         const isConnected = await checkConnection(peer);
 

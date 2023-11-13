@@ -162,9 +162,9 @@ importers:
 
   packages/core/aqua-to-js:
     dependencies:
-      ts-pattern:
-        specifier: 5.0.5
-        version: 5.0.5
+      '@fluencelabs/js-client':
+        specifier: workspace:^
+        version: link:../js-client
     devDependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.12.0
@@ -184,6 +184,9 @@ importers:
       '@fluencelabs/trust-graph':
         specifier: 0.4.7
         version: 0.4.7
+      ts-pattern:
+        specifier: 5.0.5
+        version: 5.0.5
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -14063,7 +14066,7 @@ packages:
 
   /ts-pattern@5.0.5:
     resolution: {integrity: sha512-tL0w8U/pgaacOmkb9fRlYzWEUDCfVjjv9dD4wHTgZ61MjhuMt46VNWTG747NqW6vRzoWIKABVhFSOJ82FvXrfA==}
-    dev: false
+    dev: true
 
   /tsconfck@2.1.1(typescript@5.1.6):
     resolution: {integrity: sha512-ZPCkJBKASZBmBUNqGHmRhdhM8pJYDdOXp4nRgj/O0JwUwsMq50lCDRQP/M5GBNAA0elPrq4gAeu4dkaVCuKWww==}

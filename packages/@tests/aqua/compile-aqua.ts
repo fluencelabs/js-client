@@ -21,28 +21,27 @@ import { fileURLToPath } from "url";
 import { compileFromPath } from "@fluencelabs/aqua-api";
 import aquaToJs from "@fluencelabs/aqua-to-js";
 
-const cr = await compileFromPath({
-  filePath: join(
-    dirname(fileURLToPath(import.meta.url)),
-    "_aqua",
-    "smoke_test.aqua",
-  ),
-  targetType: "air",
-  imports: [join(dirname(fileURLToPath(import.meta.url)), "node_modules")],
-});
+const files = ["smoke_test", "finalize_particle"];
 
-const res = await aquaToJs(cr, "ts");
+for (const file of files) {
+  const cr = await compileFromPath({
+    filePath: join(
+      dirname(fileURLToPath(import.meta.url)),
+      "_aqua",
+      file + ".aqua",
+    ),
+    targetType: "air",
+    imports: [fileURLToPath(new URL("./node_modules", import.meta.url))],
+  });
 
-if (res == null) {
-  throw new Error(cr.errors.join("\n"));
+  const res = await aquaToJs(cr, "ts");
+
+  if (res == null) {
+    throw new Error(cr.errors.join("\n"));
+  }
+
+  await writeFile(
+    fileURLToPath(new URL(join("src", "_aqua", file + ".ts"), import.meta.url)),
+    res.sources,
+  );
 }
-
-await writeFile(
-  join(
-    dirname(fileURLToPath(import.meta.url)),
-    "src",
-    "_aqua",
-    "smoke_test.ts",
-  ),
-  res.sources,
-);

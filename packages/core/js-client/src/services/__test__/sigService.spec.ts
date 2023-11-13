@@ -42,7 +42,7 @@ describe("Sig service test suite", () => {
     aqua = functions;
   });
 
-  it.only("Use custom sig service, success path", async () => {
+  it("Use custom sig service, success path", async () => {
     await withPeer(async (peer) => {
       const customKeyPair = await KeyPair.randomEd25519();
       const customSig = new Sig(customKeyPair);
@@ -114,7 +114,7 @@ describe("Sig service test suite", () => {
     });
   });
 
-  it.only("Default sig service should be resolvable by peer id", async () => {
+  it("Default sig service should be resolvable by peer id", async () => {
     await withPeer(async (peer) => {
       const sig = peer.internals.getServices().sig;
 

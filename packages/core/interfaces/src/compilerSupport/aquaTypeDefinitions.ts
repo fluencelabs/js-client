@@ -25,6 +25,11 @@ export type SimpleTypes =
 
 export type NonArrowType = SimpleTypes | ProductType;
 
+export type NonArrowSimpleType =
+  | SimpleTypes
+  | UnlabeledProductType
+  | LabeledProductType<SimpleTypes>;
+
 export type TopType = {
   /**
    * Type descriptor. Used for pattern-matching
@@ -262,34 +267,3 @@ export interface ServiceDef {
     | LabeledProductType<ArrowType<LabeledProductType<SimpleTypes>>>
     | NilType;
 }
-
-/**
- * Options to configure Aqua function execution
- */
-export interface FnConfig {
-  /**
-   * Sets the TTL (time to live) for particle responsible for the function execution
-   * If the option is not set the default TTL from FluencePeer config is used
-   */
-  ttl?: number;
-}
-
-export const getArgumentTypes = (
-  def: FunctionCallDef,
-): {
-  [key: string]: NonArrowType | ArrowWithoutCallbacks;
-} => {
-  if (def.arrow.domain.tag !== "labeledProduct") {
-    throw new Error("Should be impossible");
-  }
-
-  return def.arrow.domain.fields;
-};
-
-export const isReturnTypeVoid = (def: FunctionCallDef): boolean => {
-  if (def.arrow.codomain.tag === "nil") {
-    return true;
-  }
-
-  return def.arrow.codomain.items.length === 0;
-};

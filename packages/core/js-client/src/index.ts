@@ -174,9 +174,13 @@ export type {
   KeyPairOptions,
 } from "./clientPeer/types.js";
 
+export type { ParticleContext } from "./jsServiceHost/interfaces.js";
+
 export { v5_callFunction, v5_registerService } from "./api.js";
 
 export { createClient, callAquaFunction, registerService };
+
+export { ClientPeer } from "./clientPeer/ClientPeer.js";
 
 // Deprecated exports. Later they will be exposed only under js-client/keypair path
 export {
@@ -185,5 +189,9 @@ export {
   fromBase58Sk,
   fromOpts,
 } from "./keypair/index.js";
+
+export { FluencePeer } from "./jsPeer/FluencePeer.js";
+
+export type { JSONValue, NonArrowSimpleType } from "@fluencelabs/interfaces";
 
 export * from "./network.js";

@@ -16,8 +16,6 @@
 
 import { ServiceDef } from "@fluencelabs/interfaces";
 
-import { recursiveRenameLaquaProps } from "../utils.js";
-
 import { TypeGenerator } from "./interfaces.js";
 
 export interface DefaultServiceId {
@@ -42,46 +40,45 @@ function generateService(
   srvName: string,
   srvDef: ServiceDef,
 ) {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const defaultServiceId = (srvDef.defaultServiceId as DefaultServiceId)
+    .s_Some__f_value;
+
   return [
     typeGenerator.serviceType(srvName, srvDef),
-    generateRegisterServiceOverload(typeGenerator, srvName, srvDef),
+    generateRegisterServiceOverload(typeGenerator, srvName, defaultServiceId),
   ].join("\n");
 }
 
 function generateRegisterServiceOverload(
   typeGenerator: TypeGenerator,
   srvName: string,
-  srvDef: ServiceDef,
+  srvDefaultId?: string,
 ) {
-  return [
-    `export function register${srvName}(${typeGenerator.type(
-      "...args",
-      "any[]",
-    )}) {`,
-    "    registerService$$(",
-    "        args,",
-    `        ${serviceToJson(srvDef)}`,
-    "    );",
-    "}",
-  ].join("\n");
-}
-
-function serviceToJson(service: ServiceDef): string {
-  return JSON.stringify(
-    {
-      // This assertion is required because aqua-api gives bad types
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ...((service.defaultServiceId as DefaultServiceId).s_Some__f_value != null
-        ? {
-            defaultServiceId:
-              // This assertion is required because aqua-api gives bad types
-              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              (service.defaultServiceId as DefaultServiceId).s_Some__f_value,
-          }
-        : {}),
-      functions: recursiveRenameLaquaProps(service.functions),
-    },
-    null,
-    4,
-  );
+  return `export function register${srvName}(${typeGenerator.type(
+    "...args",
+    "any[]",
+  )}) {
+    const service = args.pop();
+    const defaultServiceId = ${
+      srvDefaultId != null ? `"${srvDefaultId}"` : "undefined"
+    };
+            
+    const params = args[0] instanceof FluencePeer$$ ? ({
+        peer: args[0],
+        serviceId: args[1] ?? defaultServiceId
+    }) : ({
+        peer: undefined,
+        serviceId: args[0] ?? defaultServiceId
+    });
+    
+    if (params.serviceId == null) {
+        throw new Error("Service ID is not provided");
+    }
+        
+    registerService$$({
+        service,
+        ...params
+    });
+}`;
 }

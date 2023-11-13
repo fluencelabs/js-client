@@ -103,8 +103,6 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     );
   }
 
-  console.log(compilationResult);
-
   const functions = Object.entries(compilationResult.functions)
     .map(([name, fnInfo]: [string, FunctionInfo]) => {
       const callFn = (peer: FluencePeer, args: PassedArgs) => {

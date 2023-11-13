@@ -531,8 +531,6 @@ export abstract class FluencePeer {
                   item.result.nextPeerPks.toString(),
                 );
 
-                const interpreterResult = item.result;
-
                 connectionPromise = this.connection
                   .sendParticle(item.result.nextPeerPks, newParticle)
                   .then(() => {
@@ -540,11 +538,6 @@ export abstract class FluencePeer {
                       "id %s. send successful",
                       newParticle.id,
                     );
-
-                    if (interpreterResult.callRequests.length === 0) {
-                      // Nothing to call, just fire-and-forget behavior
-                      item.onSuccess(null);
-                    }
                   })
                   .catch((e: unknown) => {
                     log_particle.error(
@@ -622,9 +615,6 @@ export abstract class FluencePeer {
                       });
                     });
                 }
-              } else {
-                // Every air instruction executed or particle will go to relay
-                item.onSuccess(null);
               }
 
               return connectionPromise;
@@ -637,7 +627,6 @@ export abstract class FluencePeer {
   }
 
   private _expireParticle(item: ParticleQueueItem) {
-    console.log(item);
     const particleId = item.particle.id;
 
     log_particle.debug(

@@ -91,7 +91,11 @@ describe.skip("Ephemeral networks tests", () => {
     });
 
     // act
-    client.internals.initiateParticle(particle, () => {});
+    client.internals.initiateParticle(
+      particle,
+      () => {},
+      () => {},
+    );
 
     // assert
     await expect(promise).resolves.toBe("success");

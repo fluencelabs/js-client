@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { PackageJson } from "../utils.js";
+import { includeRelative, PackageJson } from "../utils.js";
 
 import { OutputType } from "./interfaces.js";
+
+const converters = await includeRelative(import.meta.url, "./converters.js");
 
 export default function generateHeader(
   { version, devDependencies }: PackageJson,
@@ -35,12 +37,15 @@ export default function generateHeader(
  */
 ${
   outputType === "ts"
-    ? "import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';"
+    ? "import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';"
     : ""
 }
 
 import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,
-} from '@fluencelabs/js-client';`;
+    FluencePeer as FluencePeer$$
+} from '@fluencelabs/js-client';
+
+${converters}`;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CallParams } from "@fluencelabs/interfaces";
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
 import { TracingDef } from "./_aqua/tracing.js";
 
@@ -22,7 +22,7 @@ export class Tracing implements TracingDef {
   tracingEvent(
     arrowName: string,
     event: string,
-    callParams: CallParams<"arrowName" | "event">,
+    callParams: ParticleContext,
   ): void {
     // This console log is intentional
     // eslint-disable-next-line no-console
