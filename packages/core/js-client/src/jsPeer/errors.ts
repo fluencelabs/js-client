@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-import { registerService } from "../../compilerSupport/registerService.js";
-import { ServiceImpl } from "../../compilerSupport/types.js";
-import { FluencePeer } from "../../jsPeer/FluencePeer.js";
-import { Srv } from "../SingleModuleSrv.js";
+export class ExpirationError extends Error {}
 
-export function registerSrv(
-  peer: FluencePeer,
-  serviceId: string,
-  service: Srv,
-) {
-  registerService({
-    peer,
-    serviceId,
-    // TODO: fix this after changing registerService signature
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    service: service as unknown as ServiceImpl,
-  });
-}
+export class InterpreterError extends Error {}
 
-// Functions
+export class SendError extends Error {}

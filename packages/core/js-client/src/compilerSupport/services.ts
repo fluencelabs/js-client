@@ -14,32 +14,18 @@
  * limitations under the License.
  */
 
-import { SecurityTetraplet } from "@fluencelabs/avm";
-import {
-  CallParams,
-  ArrowWithoutCallbacks,
-  FunctionCallDef,
-  NonArrowType,
-  ServiceImpl,
-  JSONValue,
-} from "@fluencelabs/interfaces";
-import { fromUint8Array } from "js-base64";
-import { match } from "ts-pattern";
+import { JSONValue } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import {
   CallServiceData,
   GenericCallServiceHandler,
+  ParticleContext,
   ResultCodes,
 } from "../jsServiceHost/interfaces.js";
 import { Particle } from "../particle/Particle.js";
 
-import {
-  aquaArgs2Ts,
-  responseServiceValue2ts,
-  returnType2Aqua,
-  ts2aqua,
-} from "./conversions.js";
+import { ServiceImpl } from "./types.js";
 
 export interface ServiceDescription {
   serviceId: string;
@@ -50,10 +36,10 @@ export interface ServiceDescription {
 /**
  * Creates a service which injects relay's peer id into aqua space
  */
-export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
+export const injectRelayService = (peer: FluencePeer) => {
   return {
-    serviceId: def.names.getDataSrv,
-    fnName: def.names.relay,
+    serviceId: "getDataSrv",
+    fnName: "-relay-",
     handler: () => {
       return {
         retCode: ResultCodes.success,
@@ -69,7 +55,6 @@ export const injectRelayService = (def: FunctionCallDef, peer: FluencePeer) => {
 export const injectValueService = (
   serviceId: string,
   fnName: string,
-  valueType: NonArrowType,
   value: JSONValue,
 ) => {
   return {
@@ -78,7 +63,7 @@ export const injectValueService = (
     handler: () => {
       return {
         retCode: ResultCodes.success,
-        result: ts2aqua(value, valueType),
+        result: value,
       };
     },
   };
@@ -87,15 +72,17 @@ export const injectValueService = (
 /**
  *  Creates a service which is used to return value from aqua function into typescript space
  */
-export const responseService = (
-  def: FunctionCallDef,
-  resolveCallback: (val: JSONValue) => void,
-) => {
+export const responseService = (resolveCallback: (val: JSONValue) => void) => {
   return {
-    serviceId: def.names.responseSrv,
-    fnName: def.names.responseFnName,
+    serviceId: "callbackSrv",
+    fnName: "response",
     handler: (req: CallServiceData) => {
-      const userFunctionReturn = responseServiceValue2ts(req, def.arrow);
+      const userFunctionReturn =
+        req.args.length === 0
+          ? null
+          : req.args.length === 1
+          ? req.args[0]
+          : req.args;
 
       setTimeout(() => {
         resolveCallback(userFunctionReturn);
@@ -113,12 +100,11 @@ export const responseService = (
  * Creates a service which is used to return errors from aqua function into typescript space
  */
 export const errorHandlingService = (
-  def: FunctionCallDef,
   rejectCallback: (err: JSONValue) => void,
 ) => {
   return {
-    serviceId: def.names.errorHandlingSrv,
-    fnName: def.names.errorFnName,
+    serviceId: "errorHandlingSrv",
+    fnName: "error",
     handler: (req: CallServiceData) => {
       const [err] = req.args;
 
@@ -139,21 +125,21 @@ export const errorHandlingService = (
  */
 export const userHandlerService = (
   serviceId: string,
-  arrowType: [string, ArrowWithoutCallbacks],
+  fnName: string,
   userHandler: ServiceImpl[string],
 ) => {
-  const [fnName, type] = arrowType;
   return {
     serviceId,
     fnName,
     handler: async (req: CallServiceData) => {
-      const args: [...JSONValue[], CallParams<string>] = [
-        ...aquaArgs2Ts(req, type),
-        extractCallParams(req, type),
+      const args: [...JSONValue[], ParticleContext] = [
+        ...req.args,
+        req.particleContext,
       ];
 
-      const rawResult = await userHandler.bind(null)(...args);
-      const result = returnType2Aqua(rawResult, type);
+      const result = await userHandler.bind(null)(...args);
+
+      console.log(result, "userHandlerService result", serviceId, fnName);
 
       return {
         retCode: ResultCodes.success,
@@ -161,46 +147,6 @@ export const userHandlerService = (
       };
     },
   };
-};
-
-/**
- * Extracts call params from from call service data according to aqua type definition
- */
-const extractCallParams = (
-  req: CallServiceData,
-  arrow: ArrowWithoutCallbacks,
-): CallParams<string> => {
-  const names: (string | undefined)[] = match(arrow.domain)
-    .with({ tag: "nil" }, () => {
-      return [];
-    })
-    .with({ tag: "unlabeledProduct" }, (x) => {
-      return x.items.map((_, index) => {
-        return "arg" + index;
-      });
-    })
-    .with({ tag: "labeledProduct" }, (x) => {
-      return Object.keys(x.fields);
-    })
-    .exhaustive();
-
-  const tetraplets: Record<string, SecurityTetraplet[]> = {};
-
-  for (let i = 0; i < req.args.length; i++) {
-    const name = names[i];
-
-    if (name != null) {
-      tetraplets[name] = req.tetraplets[i];
-    }
-  }
-
-  const callParams = {
-    ...req.particleContext,
-    signature: fromUint8Array(req.particleContext.signature),
-    tetraplets,
-  };
-
-  return callParams;
 };
 
 export const registerParticleScopeService = (

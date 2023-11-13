@@ -14,59 +14,10 @@
  * limitations under the License.
  */
 
-import type { SecurityTetraplet } from "@fluencelabs/avm";
-
-import { InterfaceToType, MaybePromise } from "./utils.js";
-
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
  */
 export type PeerIdB58 = string;
-
-/**
- * Additional information about a service call
- * @typeparam ArgName
- */
-export type CallParams<ArgName extends string | null> = {
-  /**
-   * The identifier of particle which triggered the call
-   */
-  particleId: string;
-
-  /**
-   * The peer id which created the particle
-   */
-  initPeerId: PeerIdB58;
-
-  /**
-   * Particle's timestamp when it was created
-   */
-  timestamp: number;
-
-  /**
-   * Time to live in milliseconds. The time after the particle should be expired
-   */
-  ttl: number;
-
-  /**
-   * Particle's signature
-   */
-  signature?: string;
-
-  /**
-   * Security tetraplets
-   */
-  tetraplets: ArgName extends string
-    ? Record<ArgName, InterfaceToType<SecurityTetraplet>[]>
-    : Record<string, never>;
-};
-
-export type ServiceImpl = Record<
-  string,
-  (
-    ...args: [...JSONArray, CallParams<string>]
-  ) => MaybePromise<JSONValue | undefined>
->;
 
 export type JSONValue =
   | string

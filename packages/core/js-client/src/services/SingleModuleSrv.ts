@@ -16,13 +16,12 @@
 
 import { Buffer } from "buffer";
 
-import { CallParams } from "@fluencelabs/interfaces";
 import { v4 as uuidv4 } from "uuid";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { getErrorMessage } from "../util/utils.js";
 
-import { SrvDef } from "./_aqua/single-module-srv.js";
 import {
   allowOnlyParticleOriginatedAt,
   SecurityGuard,
@@ -32,7 +31,7 @@ export const defaultGuard = (peer: FluencePeer) => {
   return allowOnlyParticleOriginatedAt(peer.keyPair.getPeerId());
 };
 
-export class Srv implements SrvDef {
+export class Srv {
   private services: Set<string> = new Set();
 
   constructor(private peer: FluencePeer) {
@@ -40,16 +39,13 @@ export class Srv implements SrvDef {
     this.securityGuard_remove = defaultGuard(this.peer);
   }
 
-  securityGuard_create: SecurityGuard<"wasm_b64_content">;
+  securityGuard_create: SecurityGuard;
 
-  async create(
-    wasm_b64_content: string,
-    callParams: CallParams<"wasm_b64_content">,
-  ) {
+  async create(wasm_b64_content: string, callParams: ParticleContext) {
     if (!this.securityGuard_create(callParams)) {
       return {
         success: false,
-        error: "Security guard validation failed",
+        error: ["Security guard validation failed"],
         service_id: null,
       };
     }
@@ -66,25 +62,25 @@ export class Srv implements SrvDef {
 
       return {
         success: true,
-        service_id: newServiceId,
+        service_id: [newServiceId],
         error: null,
       };
     } catch (err: unknown) {
       return {
         success: true,
         service_id: null,
-        error: getErrorMessage(err),
+        error: [getErrorMessage(err)],
       };
     }
   }
 
-  securityGuard_remove: SecurityGuard<"service_id">;
+  securityGuard_remove: SecurityGuard;
 
-  async remove(service_id: string, callParams: CallParams<"service_id">) {
+  async remove(service_id: string, callParams: ParticleContext) {
     if (!this.securityGuard_remove(callParams)) {
       return {
         success: false,
-        error: "Security guard validation failed",
+        error: ["Security guard validation failed"],
         service_id: null,
       };
     }
@@ -92,7 +88,7 @@ export class Srv implements SrvDef {
     if (!this.services.has(service_id)) {
       return {
         success: false,
-        error: `Service with id ${service_id} not found`,
+        error: [`Service with id ${service_id} not found`],
       };
     }
 

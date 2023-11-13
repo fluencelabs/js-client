@@ -15,25 +15,23 @@
  */
 
 import { SecurityTetraplet } from "@fluencelabs/avm";
-import { CallParams, PeerIdB58 } from "@fluencelabs/interfaces";
+import { PeerIdB58 } from "@fluencelabs/interfaces";
 
-type ArgName = string | null;
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
 /**
  * A predicate of call params for sig service's sign method which determines whether signing operation is allowed or not
  */
-export type SecurityGuard<T extends ArgName> = (
-  params: CallParams<T>,
-) => boolean;
+export type SecurityGuard = (params: ParticleContext) => boolean;
 
 /**
  * Only allow calls when tetraplet for 'data' argument satisfies the predicate
  */
-export const allowTetraplet = <T extends ArgName>(
+export const allowTetraplet = (
   pred: (tetraplet: SecurityTetraplet) => boolean,
-): SecurityGuard<T> => {
+): SecurityGuard => {
   return (params) => {
-    const t = params.tetraplets["data"][0];
+    const t = params.tetraplets[0][0];
     return pred(t);
   };
 };
@@ -41,10 +39,10 @@ export const allowTetraplet = <T extends ArgName>(
 /**
  * Only allow data which comes from the specified serviceId and fnName
  */
-export const allowServiceFn = <T extends ArgName>(
+export const allowServiceFn = (
   serviceId: string,
   fnName: string,
-): SecurityGuard<T> => {
+): SecurityGuard => {
   return allowTetraplet((t) => {
     return t.service_id === serviceId && t.function_name === fnName;
   });
@@ -53,9 +51,7 @@ export const allowServiceFn = <T extends ArgName>(
 /**
  * Only allow data originated from the specified json_path
  */
-export const allowExactJsonPath = <T extends ArgName>(
-  jsonPath: string,
-): SecurityGuard<T> => {
+export const allowExactJsonPath = (jsonPath: string): SecurityGuard => {
   return allowTetraplet((t) => {
     return t.json_path === jsonPath;
   });
@@ -64,9 +60,9 @@ export const allowExactJsonPath = <T extends ArgName>(
 /**
  * Only allow signing when particle is initiated at the specified peer
  */
-export const allowOnlyParticleOriginatedAt = <T extends ArgName>(
+export const allowOnlyParticleOriginatedAt = (
   peerId: PeerIdB58,
-): SecurityGuard<T> => {
+): SecurityGuard => {
   return (params) => {
     return params.initPeerId === peerId;
   };
@@ -76,9 +72,7 @@ export const allowOnlyParticleOriginatedAt = <T extends ArgName>(
  * Only allow signing when all of the predicates are satisfied.
  * Useful for predicates reuse
  */
-export const and = <T extends ArgName>(
-  ...predicates: SecurityGuard<T>[]
-): SecurityGuard<T> => {
+export const and = (...predicates: SecurityGuard[]): SecurityGuard => {
   return (params) => {
     return predicates.every((x) => {
       return x(params);
@@ -90,9 +84,7 @@ export const and = <T extends ArgName>(
  * Only allow signing when any of the predicates are satisfied.
  * Useful for predicates reuse
  */
-export const or = <T extends ArgName>(
-  ...predicates: SecurityGuard<T>[]
-): SecurityGuard<T> => {
+export const or = (...predicates: SecurityGuard[]): SecurityGuard => {
   return (params) => {
     return predicates.some((x) => {
       return x(params);

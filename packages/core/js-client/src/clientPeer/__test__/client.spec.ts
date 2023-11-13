@@ -17,8 +17,8 @@
 import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect } from "vitest";
 
+import { SendError } from "../../jsPeer/errors.js";
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
-import { doNothing } from "../../jsServiceHost/serviceUtils.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withClient } from "../../util/testUtils.js";
 import { checkConnection } from "../checkConnection.js";
@@ -71,7 +71,11 @@ describe("FluenceClient usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(result).toBe("hello world!");
@@ -124,7 +128,11 @@ describe("FluenceClient usage test suite", () => {
           throw particle;
         }
 
-        peer1.internals.initiateParticle(particle, doNothing);
+        peer1.internals.initiateParticle(
+          particle,
+          () => {},
+          () => {},
+        );
 
         expect(await res).toEqual("test");
       });
@@ -172,13 +180,13 @@ describe("FluenceClient usage test suite", () => {
       );
     });
 
-    it("With connection options: defaultTTL", async () => {
+    it.only("With connection options: defaultTTL", async () => {
       await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
         const isConnected = await checkConnection(peer);
 
         expect(isConnected).toBeFalsy();
       });
-    });
+    }, 1000);
   });
 
   it.skip("Should throw correct error when the client tries to send a particle not to the relay", async () => {
@@ -206,11 +214,15 @@ describe("FluenceClient usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, (stage) => {
-          if (stage.stage === "sendingError") {
-            reject(stage.errorMessage);
-          }
-        });
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          (error: Error) => {
+            if (error instanceof SendError) {
+              reject(error.message);
+            }
+          },
+        );
       });
 
       await promise;

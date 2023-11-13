@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SecurityTetraplet } from "@fluencelabs/avm";
 import { JSONArray } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
@@ -27,10 +28,6 @@ import {
   ParticleContext,
   ResultCodes,
 } from "./interfaces.js";
-
-export const doNothing = () => {
-  return undefined;
-};
 
 export const WrapFnIntoServiceCall = (
   fn: (args: JSONArray) => CallServiceResultType | undefined,
@@ -51,13 +48,17 @@ export class ServiceError extends Error {
   }
 }
 
-export const getParticleContext = (particle: IParticle): ParticleContext => {
+export const getParticleContext = (
+  particle: IParticle,
+  tetraplets: SecurityTetraplet[][],
+): ParticleContext => {
   return {
     particleId: particle.id,
     initPeerId: particle.initPeerId,
     timestamp: particle.timestamp,
     ttl: particle.ttl,
     signature: particle.signature,
+    tetraplets,
   };
 };
 

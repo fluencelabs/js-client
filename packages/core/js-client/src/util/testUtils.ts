@@ -20,7 +20,7 @@ import { Path, Aqua } from "@fluencelabs/aqua-api/aqua-api.js";
 import {
   FunctionCallDef,
   JSONArray,
-  PassedArgs,
+  JSONValue,
   ServiceDef,
 } from "@fluencelabs/interfaces";
 import { Subject, Subscribable } from "rxjs";
@@ -30,7 +30,10 @@ import { ClientConfig, RelayOptions } from "../clientPeer/types.js";
 import { callAquaFunction } from "../compilerSupport/callFunction.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
-import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
+import {
+  CallServiceResultType,
+  ParticleContext,
+} from "../jsServiceHost/interfaces.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
@@ -73,6 +76,18 @@ interface FunctionInfo {
   funcDef: FunctionCallDef;
 }
 
+/**
+ * Type for callback passed as aqua function argument
+ */
+export type ArgCallbackFunction = (
+  ...args: [...JSONValue[], ParticleContext]
+) => JSONValue | Promise<JSONValue>;
+
+/**
+ * Arguments passed to Aqua function
+ */
+export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
+
 export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
   await fs.access(aquaFile);
 
@@ -88,11 +103,12 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     );
   }
 
+  console.log(compilationResult);
+
   const functions = Object.entries(compilationResult.functions)
     .map(([name, fnInfo]: [string, FunctionInfo]) => {
       const callFn = (peer: FluencePeer, args: PassedArgs) => {
         return callAquaFunction({
-          def: fnInfo.funcDef,
           script: fnInfo.script,
           config: {},
           peer: peer,

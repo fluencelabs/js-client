@@ -22,7 +22,5 @@ export type MaybePromise<T> = T | Promise<T>;
 
 export type ServiceImpl = Record<
   string,
-  (
-    ...args: [...JSONArray, ParticleContext]
-  ) => MaybePromise<JSONValue | undefined>
+  (...args: [...JSONArray, ParticleContext]) => MaybePromise<JSONValue>
 >;

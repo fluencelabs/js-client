@@ -94,7 +94,11 @@ describe("FluencePeer flow tests", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toEqual(expect.arrayContaining(["test1", "test1"]));

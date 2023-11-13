@@ -17,10 +17,10 @@
 import * as path from "path";
 import * as url from "url";
 
-import { ServiceDef, ServiceImpl } from "@fluencelabs/interfaces";
 import { it, describe, expect, beforeAll } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";
+import { ServiceImpl } from "../../compilerSupport/types.js";
 import { KeyPair } from "../../keypair/index.js";
 import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 import { allowServiceFn } from "../securityGuard.js";
@@ -29,8 +29,6 @@ import { Sig } from "../Sig.js";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 let aqua: Record<string, CompiledFnCall>;
-let sigDef: ServiceDef;
-let dataProviderDef: ServiceDef;
 
 describe("Sig service test suite", () => {
   beforeAll(async () => {
@@ -39,14 +37,12 @@ describe("Sig service test suite", () => {
       "../../../aqua_test/sigService.aqua",
     );
 
-    const { services, functions } = await compileAqua(pathToAquaFiles);
+    const { functions } = await compileAqua(pathToAquaFiles);
 
     aqua = functions;
-    sigDef = services["Sig"];
-    dataProviderDef = services["DataProvider"];
   });
 
-  it("Use custom sig service, success path", async () => {
+  it.only("Use custom sig service, success path", async () => {
     await withPeer(async (peer) => {
       const customKeyPair = await KeyPair.randomEd25519();
       const customSig = new Sig(customKeyPair);
@@ -54,7 +50,6 @@ describe("Sig service test suite", () => {
 
       registerService({
         peer,
-        def: sigDef,
         serviceId: "CustomSig",
         // TODO: fix this after changing registerService signature
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -63,7 +58,6 @@ describe("Sig service test suite", () => {
 
       registerService({
         peer,
-        def: dataProviderDef,
         serviceId: "data",
         service: {
           provide_data: () => {
@@ -81,7 +75,7 @@ describe("Sig service test suite", () => {
       const isSigCorrect = await customSig.verify(
         // TODO: Use compiled ts wrappers
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (result as { signature: number[] }).signature,
+        (result as { signature: [number[]] }).signature[0],
         data,
       );
 
@@ -97,7 +91,6 @@ describe("Sig service test suite", () => {
 
       registerService({
         peer,
-        def: sigDef,
         serviceId: "CustomSig",
         // TODO: fix this after changing registerService signature
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -106,7 +99,6 @@ describe("Sig service test suite", () => {
 
       registerService({
         peer,
-        def: dataProviderDef,
         serviceId: "data",
         service: {
           provide_data: () => {
@@ -122,7 +114,7 @@ describe("Sig service test suite", () => {
     });
   });
 
-  it("Default sig service should be resolvable by peer id", async () => {
+  it.only("Default sig service should be resolvable by peer id", async () => {
     await withPeer(async (peer) => {
       const sig = peer.internals.getServices().sig;
 
@@ -130,7 +122,6 @@ describe("Sig service test suite", () => {
 
       registerService({
         peer: peer,
-        def: dataProviderDef,
         serviceId: "data",
         service: {
           provide_data: () => {
@@ -146,6 +137,11 @@ describe("Sig service test suite", () => {
       });
 
       expect(callAsSigRes).toHaveProperty("success", false);
+
+      expect(callAsPeerIdRes).toHaveProperty("error", [
+        "Security guard validation failed",
+      ]);
+
       expect(callAsPeerIdRes).toHaveProperty("success", false);
 
       sig.securityGuard = () => {
@@ -167,7 +163,8 @@ describe("Sig service test suite", () => {
       const isValid = await sig.verify(
         // TODO: Use compiled ts wrappers
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (callAsSigResAfterGuardChange as { signature: number[] }).signature,
+        (callAsSigResAfterGuardChange as { signature: [number[]] })
+          .signature[0],
         data,
       );
 

@@ -72,7 +72,11 @@ describe("FluencePeer usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe("test");
@@ -130,7 +134,11 @@ describe("FluencePeer usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe(null);
@@ -167,7 +175,11 @@ describe("FluencePeer usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       await expect(promise).rejects.toMatchObject({
@@ -205,6 +217,6 @@ async function callIncorrectService(peer: FluencePeer) {
       },
     });
 
-    peer.internals.initiateParticle(particle, handleTimeout(reject));
+    peer.internals.initiateParticle(particle, () => {}, handleTimeout(reject));
   });
 }

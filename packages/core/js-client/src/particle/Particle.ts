@@ -24,6 +24,8 @@ import { KeyPair } from "../keypair/index.js";
 import { numberToLittleEndianBytes } from "../util/bytes.js";
 
 import { IParticle } from "./interfaces.js";
+import { JSONValue } from "@fluencelabs/interfaces";
+import { ExpirationError } from "../jsPeer/errors.js";
 
 const particleSchema = z.object({
   id: z.string(),
@@ -183,15 +185,16 @@ export type ParticleExecutionStage =
 export interface ParticleQueueItem {
   particle: IParticle;
   callResults: CallResultsArray;
-  onStageChange: (state: ParticleExecutionStage) => void;
+  onSuccess: (result: JSONValue) => void;
+  onError: (error: Error) => void;
 }
 
 /**
  * Helper function to handle particle at expired stage
  */
 export const handleTimeout = (fn: () => void) => {
-  return (stage: ParticleExecutionStage) => {
-    if (stage.stage === "expired") {
+  return (error: Error) => {
+    if (error instanceof ExpirationError) {
       fn();
     }
   };

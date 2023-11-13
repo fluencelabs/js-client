@@ -14,58 +14,45 @@
  * limitations under the License.
  */
 
-import { Buffer } from "buffer";
-import * as fs from "fs";
-
-import { CallParams } from "@fluencelabs/interfaces";
+import { readFile } from "fs/promises";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { getErrorMessage } from "../util/utils.js";
 
-import { NodeUtilsDef, registerNodeUtils } from "./_aqua/node-utils.js";
+import { registerNodeUtils } from "./_aqua/node-utils.js";
 import { SecurityGuard } from "./securityGuard.js";
 import { defaultGuard } from "./SingleModuleSrv.js";
 
-export class NodeUtils implements NodeUtilsDef {
+export class NodeUtils {
   constructor(private peer: FluencePeer) {
     this.securityGuard_readFile = defaultGuard(this.peer);
   }
 
-  securityGuard_readFile: SecurityGuard<"path">;
+  securityGuard_readFile: SecurityGuard;
 
-  async read_file(path: string, callParams: CallParams<"path">) {
+  async read_file(path: string, callParams: ParticleContext) {
     if (!this.securityGuard_readFile(callParams)) {
       return {
         success: false,
-        error: "Security guard validation failed",
+        error: ["Security guard validation failed"],
         content: null,
       };
     }
 
     try {
       // Strange enough, but Buffer type works here, while reading with encoding 'utf-8' doesn't
-      const data = await new Promise<Buffer>((resolve, reject) => {
-        fs.readFile(path, (err, data) => {
-          if (err != null) {
-            reject(err);
-            return;
-          }
-
-          resolve(data);
-        });
-      });
+      const data = await readFile(path, "base64");
 
       return {
         success: true,
-        // TODO: this is strange bug.
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        content: data as unknown as string,
+        content: [data],
         error: null,
       };
     } catch (err: unknown) {
       return {
         success: false,
-        error: getErrorMessage(err),
+        error: [getErrorMessage(err)],
         content: null,
       };
     }

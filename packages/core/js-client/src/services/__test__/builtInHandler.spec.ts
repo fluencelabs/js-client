@@ -16,11 +16,14 @@
 
 import assert from "assert";
 
-import { CallParams, JSONArray } from "@fluencelabs/interfaces";
+import { JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
 import { it, describe, expect, test } from "vitest";
 
-import { CallServiceData } from "../../jsServiceHost/interfaces.js";
+import {
+  CallServiceData,
+  ParticleContext,
+} from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
 import { builtInServices } from "../builtins.js";
 import { allowServiceFn } from "../securityGuard.js";
@@ -149,6 +152,7 @@ describe("Tests for default handler", () => {
           timestamp: 595951200,
           ttl: 595961200,
           signature: new Uint8Array([]),
+          tetraplets: [],
         },
       };
 
@@ -185,6 +189,7 @@ describe("Tests for default handler", () => {
         timestamp: 595951200,
         ttl: 595961200,
         signature: new Uint8Array([]),
+        tetraplets: [],
       },
     };
 
@@ -243,14 +248,15 @@ const makeTestTetraplet = (
   initPeerId: string,
   serviceId: string,
   fnName: string,
-): CallParams<"data"> => {
+): ParticleContext => {
   return {
     particleId: "",
     timestamp: 0,
     ttl: 0,
     initPeerId: initPeerId,
-    tetraplets: {
-      data: [
+    signature: new Uint8Array([]),
+    tetraplets: [
+      [
         {
           peer_pk: initPeerId,
           function_name: fnName,
@@ -258,7 +264,7 @@ const makeTestTetraplet = (
           json_path: "",
         },
       ],
-    },
+    ],
   };
 };
 
@@ -273,7 +279,7 @@ describe("Sig service tests", () => {
     );
 
     expect(res.success).toBe(true);
-    expect(res.signature).toStrictEqual(testDataSig);
+    expect(res.signature).toStrictEqual([testDataSig]);
   });
 
   it("sig.verify should return true for the correct signature", async () => {
@@ -305,7 +311,7 @@ describe("Sig service tests", () => {
 
     expect(signature.success).toBe(true);
     assert(signature.success);
-    const res = await sig.verify(signature.signature, testData);
+    const res = await sig.verify(signature.signature[0], testData);
 
     expect(res).toBe(true);
   });
@@ -334,7 +340,7 @@ describe("Sig service tests", () => {
     );
 
     expect(res.success).toBe(false);
-    expect(res.error).toBe("Security guard validation failed");
+    expect(res.error).toStrictEqual(["Security guard validation failed"]);
   });
 
   it("sig.sign with defaultSigGuard should not allow particles initiated from other peers", async () => {
@@ -352,7 +358,7 @@ describe("Sig service tests", () => {
     );
 
     expect(res.success).toBe(false);
-    expect(res.error).toBe("Security guard validation failed");
+    expect(res.error).toStrictEqual(["Security guard validation failed"]);
   });
 
   it("changing securityGuard should work", async () => {

@@ -14,33 +14,30 @@
  * limitations under the License.
  */
 
-/**
- * This compiled aqua file was modified to make it work in monorepo
- */
-import { CallParams, ServiceImpl } from "@fluencelabs/interfaces";
-
 import { registerService } from "../../compilerSupport/registerService.js";
+import { ServiceImpl } from "../../compilerSupport/types.js";
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
+import { ParticleContext } from "../../jsServiceHost/interfaces.js";
 import { Sig } from "../Sig.js";
 
 // Services
 
 export interface SigDef {
-  get_peer_id: (callParams: CallParams<null>) => string | Promise<string>;
+  get_peer_id: (callParams: ParticleContext) => string | Promise<string>;
   sign: (
     data: number[],
-    callParams: CallParams<"data">,
+    callParams: ParticleContext,
   ) =>
-    | { error: string | null; signature: number[] | null; success: boolean }
+    | { error: [string?]; signature: [number[]?]; success: boolean }
     | Promise<{
-        error: string | null;
-        signature: number[] | null;
+        error: [string?];
+        signature: [number[]?];
         success: boolean;
       }>;
   verify: (
     signature: number[],
     data: number[],
-    callParams: CallParams<"signature" | "data">,
+    callParams: ParticleContext,
   ) => boolean | Promise<boolean>;
 }
 
@@ -55,107 +52,6 @@ export function registerSig(
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     service: service as unknown as ServiceImpl,
     serviceId,
-    def: {
-      defaultServiceId: "sig",
-      functions: {
-        tag: "labeledProduct",
-        fields: {
-          get_peer_id: {
-            tag: "arrow",
-            domain: {
-              tag: "nil",
-            },
-            codomain: {
-              tag: "unlabeledProduct",
-              items: [
-                {
-                  tag: "scalar",
-                  name: "string",
-                },
-              ],
-            },
-          },
-          sign: {
-            tag: "arrow",
-            domain: {
-              tag: "labeledProduct",
-              fields: {
-                data: {
-                  tag: "array",
-                  type: {
-                    tag: "scalar",
-                    name: "u8",
-                  },
-                },
-              },
-            },
-            codomain: {
-              tag: "unlabeledProduct",
-              items: [
-                {
-                  tag: "struct",
-                  name: "SignResult",
-                  fields: {
-                    error: {
-                      tag: "option",
-                      type: {
-                        tag: "scalar",
-                        name: "string",
-                      },
-                    },
-                    signature: {
-                      tag: "option",
-                      type: {
-                        tag: "array",
-                        type: {
-                          tag: "scalar",
-                          name: "u8",
-                        },
-                      },
-                    },
-                    success: {
-                      tag: "scalar",
-                      name: "bool",
-                    },
-                  },
-                },
-              ],
-            },
-          },
-          verify: {
-            tag: "arrow",
-            domain: {
-              tag: "labeledProduct",
-              fields: {
-                signature: {
-                  tag: "array",
-                  type: {
-                    tag: "scalar",
-                    name: "u8",
-                  },
-                },
-                data: {
-                  tag: "array",
-                  type: {
-                    tag: "scalar",
-                    name: "u8",
-                  },
-                },
-              },
-            },
-            codomain: {
-              tag: "unlabeledProduct",
-              items: [
-                {
-                  tag: "scalar",
-                  name: "bool",
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
   });
 }
 

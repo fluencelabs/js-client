@@ -44,7 +44,11 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe("1");
@@ -85,7 +89,11 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toStrictEqual(["1", "2"]);
@@ -126,7 +134,11 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe("fast_result");
@@ -178,7 +190,11 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe("failed_with_timeout");
