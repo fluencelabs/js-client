@@ -71,6 +71,7 @@ describe("Sig service test suite", () => {
     });
 
     const p = await peer.internals.createNewParticle(script);
+
     peer.internals.initiateParticle(
       p,
       () => {},

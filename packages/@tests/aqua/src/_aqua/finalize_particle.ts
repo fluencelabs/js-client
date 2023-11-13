@@ -9,13 +9,16 @@
  * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
  *
  */
-import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';
+import type {
+  IFluenceClient as IFluenceClient$$,
+  ParticleContext as ParticleContext$$,
+} from "@fluencelabs/js-client";
 
 import {
-    v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
-    FluencePeer as FluencePeer$$
-} from '@fluencelabs/js-client';
+  v5_callFunction as callFunction$$,
+  v5_registerService as registerService$$,
+  FluencePeer as FluencePeer$$,
+} from "@fluencelabs/js-client";
 
 /**
  * @typedef {import("@fluencelabs/js-client").NonArrowSimpleType} NonArrowSimpleType
@@ -28,53 +31,48 @@ import {
  * @returns {JSONValue} value represented in typescript
  */
 export function aqua2ts(value, schema) {
-    if (schema.tag === "nil") {
-        return null;
+  if (schema.tag === "nil") {
+    return null;
+  } else if (schema.tag === "option") {
+    if (!Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "option") {
-        if (!Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        if (value.length === 0) {
-            return null;
-        }
-        else {
-            return aqua2ts(value[0], schema.type);
-        }
+    if (value.length === 0) {
+      return null;
+    } else {
+      return aqua2ts(value[0], schema.type);
     }
-    else if (schema.tag === "scalar" ||
-        schema.tag === "bottomType" ||
-        schema.tag === "topType") {
-        return value;
+  } else if (
+    schema.tag === "scalar" ||
+    schema.tag === "bottomType" ||
+    schema.tag === "topType"
+  ) {
+    return value;
+  } else if (schema.tag === "array") {
+    if (!Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "array") {
-        if (!Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return value.map((y) => {
-            return aqua2ts(y, schema.type);
-        });
+    return value.map((y) => {
+      return aqua2ts(y, schema.type);
+    });
+  } else if (schema.tag === "unlabeledProduct") {
+    if (!Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "unlabeledProduct") {
-        if (!Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return value.map((y, i) => {
-            return aqua2ts(y, schema.items[i]);
-        });
+    return value.map((y, i) => {
+      return aqua2ts(y, schema.items[i]);
+    });
+  } else if (schema.tag === "struct" || schema.tag === "labeledProduct") {
+    if (typeof value !== "object" || value == null || Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "struct" || schema.tag === "labeledProduct") {
-        if (typeof value !== "object" || value == null || Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return Object.entries(schema.fields).reduce((agg, [key, type]) => {
-            const val = aqua2ts(value[key], type);
-            return { ...agg, [key]: val };
-        }, {});
-    }
-    else {
-        throw new Error("Unexpected tag: " + JSON.stringify(schema));
-    }
+    return Object.entries(schema.fields).reduce((agg, [key, type]) => {
+      const val = aqua2ts(value[key], type);
+      return { ...agg, [key]: val };
+    }, {});
+  } else {
+    throw new Error("Unexpected tag: " + JSON.stringify(schema));
+  }
 }
 /**
  * Convert value from its typescript representation to representation in aqua
@@ -83,51 +81,45 @@ export function aqua2ts(value, schema) {
  * @returns {JSONValue} represented in aqua
  */
 export function ts2aqua(value, schema) {
-    if (schema.tag === "nil") {
-        return null;
+  if (schema.tag === "nil") {
+    return null;
+  } else if (schema.tag === "option") {
+    if (!Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "option") {
-        if (!Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return value === null ? [] : [ts2aqua(value, schema.type)];
+    return value === null ? [] : [ts2aqua(value, schema.type)];
+  } else if (
+    schema.tag === "scalar" ||
+    schema.tag === "bottomType" ||
+    schema.tag === "topType"
+  ) {
+    return value;
+  } else if (schema.tag === "array") {
+    if (!Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "scalar" ||
-        schema.tag === "bottomType" ||
-        schema.tag === "topType") {
-        return value;
+    return value.map((y) => {
+      return ts2aqua(y, schema.type);
+    });
+  } else if (schema.tag === "unlabeledProduct") {
+    if (!Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "array") {
-        if (!Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return value.map((y) => {
-            return ts2aqua(y, schema.type);
-        });
+    return value.map((y, i) => {
+      return ts2aqua(y, schema.items[i]);
+    });
+  } else if (schema.tag === "struct" || schema.tag === "labeledProduct") {
+    if (typeof value !== "object" || value == null || Array.isArray(value)) {
+      throw new Error("Bad schema");
     }
-    else if (schema.tag === "unlabeledProduct") {
-        if (!Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return value.map((y, i) => {
-            return ts2aqua(y, schema.items[i]);
-        });
-    }
-    else if (schema.tag === "struct" || schema.tag === "labeledProduct") {
-        if (typeof value !== "object" || value == null || Array.isArray(value)) {
-            throw new Error("Bad schema");
-        }
-        return Object.entries(schema.fields).reduce((agg, [key, type]) => {
-            const val = ts2aqua(value[key], type);
-            return { ...agg, [key]: val };
-        }, {});
-    }
-    else {
-        throw new Error("Unexpected tag: " + JSON.stringify(schema));
-    }
+    return Object.entries(schema.fields).reduce((agg, [key, type]) => {
+      const val = ts2aqua(value[key], type);
+      return { ...agg, [key]: val };
+    }, {});
+  } else {
+    throw new Error("Unexpected tag: " + JSON.stringify(schema));
+  }
 }
-
-
 
 // Functions
 export const test_script = `
@@ -143,41 +135,38 @@ export const test_script = `
 )
 `;
 
-export function test(
-    config?: {ttl?: number}
-): Promise<void>;
+export function test(config?: { ttl?: number }): Promise<void>;
 
 export function test(
-    peer: IFluenceClient$$,
-    config?: {ttl?: number}
+  peer: IFluenceClient$$,
+  config?: { ttl?: number },
 ): Promise<void>;
 
 export async function test(...args: any[]) {
-    const argNames = [];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
-    }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: test_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "tag": "nil"
-}
-    ); 
+  const argNames = [];
+  const argCount = argNames.length;
+  let peer = undefined;
+  if (args[0] instanceof FluencePeer$$) {
+    peer = args[0];
+    args = args.slice(1);
+  }
+
+  const callArgs = Object.fromEntries(
+    args.slice(0, argCount).map((arg, i) => [argNames[i], arg]),
+  );
+
+  const params = {
+    peer,
+    args: callArgs,
+    config: args[argCount],
+  };
+
+  const result = await callFunction$$({
+    script: test_script,
+    ...params,
+  });
+
+  return aqua2ts(result, {
+    tag: "nil",
+  });
 }

@@ -68,11 +68,7 @@ export function ts2aqua(value, schema) {
   if (schema.tag === "nil") {
     return null;
   } else if (schema.tag === "option") {
-    if (!Array.isArray(value)) {
-      throw new Error("Bad schema");
-    }
-
-    return value === null ? [] : [ts2aqua(value, schema.type)];
+    return value == null ? [] : [ts2aqua(value, schema.type)];
   } else if (
     schema.tag === "scalar" ||
     schema.tag === "bottomType" ||

@@ -15,17 +15,17 @@
  */
 
 import { CallResultsArray } from "@fluencelabs/avm";
+import { JSONValue } from "@fluencelabs/interfaces";
 import { fromUint8Array, toUint8Array } from "js-base64";
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
+import { ExpirationError } from "../jsPeer/errors.js";
 import { KeyPair } from "../keypair/index.js";
 import { numberToLittleEndianBytes } from "../util/bytes.js";
 
 import { IParticle } from "./interfaces.js";
-import { JSONValue } from "@fluencelabs/interfaces";
-import { ExpirationError } from "../jsPeer/errors.js";
 
 const particleSchema = z.object({
   id: z.string(),

@@ -280,9 +280,6 @@ importers:
       rxjs:
         specifier: 7.5.5
         version: 7.5.5
-      ts-pattern:
-        specifier: 3.3.3
-        version: 3.3.3
       uint8arrays:
         specifier: 4.0.3
         version: 4.0.3
@@ -14059,10 +14056,6 @@ packages:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
-
-  /ts-pattern@3.3.3:
-    resolution: {integrity: sha512-Z5EFi6g6wyX3uDFHqxF5W5c5h663oZg9O6aOiAT7fqNu0HPSfCxtHzrQ7SblTy738Mrg2Ezorky8H5aUOm8Pvg==}
-    dev: false
 
   /ts-pattern@5.0.5:
     resolution: {integrity: sha512-tL0w8U/pgaacOmkb9fRlYzWEUDCfVjjv9dD4wHTgZ61MjhuMt46VNWTG747NqW6vRzoWIKABVhFSOJ82FvXrfA==}

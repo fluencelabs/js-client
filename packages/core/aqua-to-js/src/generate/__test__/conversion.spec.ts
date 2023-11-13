@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { JSONValue, NonArrowType } from "@fluencelabs/interfaces";
+import { JSONValue, NonArrowSimpleType } from "@fluencelabs/interfaces";
 import { it, describe, expect, test } from "vitest";
 
-import { aqua2ts, ts2aqua } from "../conversions.js";
+import { aqua2ts, ts2aqua } from "../converters.js";
 
 const i32 = { tag: "scalar", name: "i32" } as const;
 
@@ -172,7 +172,7 @@ const nestedStructs = [
 interface ConversionTestArgs {
   aqua: JSONValue;
   ts: JSONValue;
-  type: NonArrowType;
+  type: NonArrowSimpleType;
 }
 
 describe("Conversion from aqua to typescript", () => {
