@@ -28,14 +28,17 @@ import {
   SimpleTypes,
   UnlabeledProductType,
 } from "@fluencelabs/interfaces";
+import { z } from "zod";
 
-export interface PackageJson {
-  name: string;
-  version: string;
-  devDependencies: {
-    ["@fluencelabs/aqua-api"]: string;
-  };
-}
+const packageJsonSchema = z.object({
+  name: z.string(),
+  version: z.string(),
+  devDependencies: z.object({
+    ["@fluencelabs/aqua-api"]: z.string(),
+  }),
+});
+
+export type PackageJson = z.infer<typeof packageJsonSchema>;
 
 export async function getPackageJsonContent(): Promise<PackageJson> {
   const content = await readFile(
@@ -43,9 +46,7 @@ export async function getPackageJsonContent(): Promise<PackageJson> {
     "utf-8",
   );
 
-  // TODO: Add validation here
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return JSON.parse(content) as PackageJson;
+  return packageJsonSchema.parse(JSON.parse(content));
 }
 
 export function getFuncArgs(

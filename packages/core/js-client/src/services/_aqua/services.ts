@@ -15,7 +15,6 @@
  */
 
 import { registerService } from "../../compilerSupport/registerService.js";
-import { ServiceImpl } from "../../compilerSupport/types.js";
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
 import { ParticleContext } from "../../jsServiceHost/interfaces.js";
 import { Sig } from "../Sig.js";
@@ -46,11 +45,11 @@ export function registerSig(
   serviceId: string,
   service: Sig,
 ) {
+  const anyService: Record<never, unknown> = service;
+
   registerService({
     peer,
-    // TODO: fix this after changing registerService signature
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    service: service as unknown as ServiceImpl,
+    service: anyService,
     serviceId,
   });
 }

@@ -61,7 +61,6 @@ export const callAquaFunction = async ({
   peer,
   args,
 }: CallAquaFunctionArgs) => {
-  // TODO: this function should be rewritten. We can remove asserts if we wont check definition there
   log.trace("calling aqua function %j", { script, config, args });
 
   const particle = await peer.internals.createNewParticle(script, config.ttl);
@@ -87,15 +86,6 @@ export const callAquaFunction = async ({
     // If function is void, then it's completed when one of the two conditions is met:
     //  1. The particle is sent to the network (state 'sent')
     //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
-
-    // TODO: make test
-    // if (
-    //   isReturnTypeVoid(def) &&
-    //   (stage.stage === "sent" || stage.stage === "localWorkDone")
-    // ) {
-    //   resolve(undefined);
-    // }
-    // },
 
     peer.internals.initiateParticle(particle, resolve, reject);
   });

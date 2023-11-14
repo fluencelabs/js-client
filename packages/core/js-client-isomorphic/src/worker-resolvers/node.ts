@@ -20,10 +20,10 @@ import { fileURLToPath } from "url";
 
 import { Worker } from "@fluencelabs/threads/master";
 
-import type { FetchedPackages, GetWorker } from "../types.js";
+import type { FetchedPackages, GetWorkerFn } from "../types.js";
 import { getVersionedPackage } from "../types.js";
 
-export const getWorker: GetWorker = (pkg: FetchedPackages) => {
+export const getWorker: GetWorkerFn = (pkg: FetchedPackages) => {
   const require = createRequire(import.meta.url);
 
   const pathToThisFile = dirname(fileURLToPath(import.meta.url));

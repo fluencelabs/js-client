@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import { FetchedPackages, getVersionedPackage } from "../types.js";
+import { FetchResourceFn, getVersionedPackage } from "../types.js";
 
 /**
  * @param pkg name of package with version
  * @param assetPath path of required asset in given package
  * @param root CDN domain in browser or file system root in node
  */
-export async function fetchResource(
-  pkg: FetchedPackages,
-  assetPath: string,
-  root: string,
-) {
+export const fetchResource: FetchResourceFn = async (pkg, assetPath, root) => {
   const refinedAssetPath = assetPath.startsWith("/")
     ? assetPath.slice(1)
     : assetPath;
@@ -36,4 +32,4 @@ export async function fetchResource(
   return fetch(url).catch(() => {
     throw new Error(`Cannot fetch from ${url.toString()}`);
   });
-}
+};

@@ -28,7 +28,6 @@ import type {
 } from "@fluencelabs/marine-js/dist/types";
 import {
   defaultCallParameters,
-  JSONValue,
   logLevelToEnv,
 } from "@fluencelabs/marine-js/dist/types";
 import { expose } from "@fluencelabs/threads/worker";
@@ -140,9 +139,7 @@ const toExpose = {
       throw new Error(`service with id=${serviceId} not found`);
     }
 
-    // TODO: Make MarineService return JSONValue type
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return srv.call(functionName, args, callParams) as JSONValue;
+    return srv.call(functionName, args, callParams);
   },
 
   onLogMessage() {

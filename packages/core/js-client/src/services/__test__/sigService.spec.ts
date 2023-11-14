@@ -20,7 +20,6 @@ import * as url from "url";
 import { it, describe, expect, beforeAll } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";
-import { ServiceImpl } from "../../compilerSupport/types.js";
 import { KeyPair } from "../../keypair/index.js";
 import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 import { allowServiceFn } from "../securityGuard.js";
@@ -48,12 +47,12 @@ describe("Sig service test suite", () => {
       const customSig = new Sig(customKeyPair);
       const data = [1, 2, 3, 4, 5];
 
+      const anyService: Record<never, unknown> = customSig;
+
       registerService({
         peer,
         serviceId: "CustomSig",
-        // TODO: fix this after changing registerService signature
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: customSig as unknown as ServiceImpl,
+        service: anyService,
       });
 
       registerService({
@@ -89,12 +88,12 @@ describe("Sig service test suite", () => {
       const customSig = new Sig(customKeyPair);
       const data = [1, 2, 3, 4, 5];
 
+      const anyService: Record<never, unknown> = customSig;
+
       registerService({
         peer,
         serviceId: "CustomSig",
-        // TODO: fix this after changing registerService signature
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: customSig as unknown as ServiceImpl,
+        service: anyService,
       });
 
       registerService({

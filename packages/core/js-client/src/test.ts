@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-import { Worker } from "@fluencelabs/threads/master";
+import { classToPlain } from "class-transformer";
 
-import versions from "./versions.js";
+import { NodeUtils } from "./services/NodeUtils.js";
 
-export type FetchedPackages = keyof typeof versions;
-type VersionedPackage = { name: string; version: string };
-export type GetWorkerFn = (
-  pkg: FetchedPackages,
-  CDNUrl: string,
-) => Promise<Worker>;
+import { Fluence } from "./index.js";
 
-export const getVersionedPackage = (pkg: FetchedPackages): VersionedPackage => {
-  return {
-    name: pkg,
-    version: versions[pkg],
-  };
-};
-
-export type FetchResourceFn = (
-  pkg: FetchedPackages,
-  assetPath: string,
-  root: string,
-) => Promise<Response>;
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+console.log(classToPlain(new NodeUtils(Fluence.defaultClient!)));
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+console.log(
+  Object.getPrototypeOf(classToPlain(new NodeUtils(Fluence.defaultClient!))),
+);

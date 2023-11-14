@@ -190,6 +190,9 @@ importers:
       vitest:
         specifier: 0.34.6
         version: 0.34.6
+      zod:
+        specifier: 3.22.4
+        version: 3.22.4
 
   packages/core/interfaces:
     devDependencies:
@@ -244,9 +247,6 @@ importers:
       '@multiformats/multiaddr':
         specifier: 11.3.0
         version: 11.3.0
-      assert:
-        specifier: 2.1.0
-        version: 2.1.0
       async:
         specifier: 3.2.4
         version: 3.2.4
@@ -256,6 +256,9 @@ importers:
       buffer:
         specifier: 6.0.3
         version: 6.0.3
+      class-transformer:
+        specifier: 0.5.1
+        version: 0.5.1
       debug:
         specifier: 4.3.4
         version: 4.3.4
@@ -289,13 +292,16 @@ importers:
       zod:
         specifier: 3.22.4
         version: 3.22.4
+      zod-validation-error:
+        specifier: 2.1.0
+        version: 2.1.0(zod@3.22.4)
     devDependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.9.3
         version: 0.9.3
       '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
+        specifier: 0.8.0
+        version: 0.8.0
       '@rollup/plugin-inject':
         specifier: 5.0.3
         version: 5.0.3
@@ -333,8 +339,8 @@ importers:
         specifier: 0.54.0
         version: 0.54.0
       '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
+        specifier: 0.8.0
+        version: 0.8.0
       '@fluencelabs/marine-worker':
         specifier: 0.4.2
         version: link:../marine-worker
@@ -345,8 +351,8 @@ importers:
   packages/core/marine-worker:
     dependencies:
       '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
+        specifier: 0.8.0
+        version: 0.8.0
       '@fluencelabs/threads':
         specifier: ^2.0.0
         version: 2.0.0
@@ -3714,8 +3720,8 @@ packages:
   /@fluencelabs/avm@0.54.0:
     resolution: {integrity: sha512-5GgROVly/vC7gasltr6/3TIY8vfV6b+SPfWUAGWnyXdbWt4jJANLO2YtXdaUsdNk9PiwOep7TMjLnypljdyMjQ==}
 
-  /@fluencelabs/marine-js@0.7.2:
-    resolution: {integrity: sha512-etjbXDgzyZkK82UZvtuIU3bfy5f52siDUy1m+T5Y5r70k82xYdZZ8vgWVgB6ivi2f3aDyQjgNTfzWQjKFpAReQ==}
+  /@fluencelabs/marine-js@0.8.0:
+    resolution: {integrity: sha512-exxp0T0Dk69dxnbpAiVc/qp66s8Jq/P71TRB9aeQZLZy3EQtVAMCBJvwQY8LzVVlYEyVjmqQkFG/N0rAeYU1vg==}
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
@@ -5910,16 +5916,6 @@ packages:
       util: 0.12.5
     dev: true
 
-  /assert@2.1.0:
-    resolution: {integrity: sha512-eLHpSK/Y4nhMJ07gDaAzoX/XAKS8PSaojml3M0DM4JpV1LAi5JOJ/p6H/XWrl8L+DzVEvVCW1z3vWAaB9oTsQw==}
-    dependencies:
-      call-bind: 1.0.2
-      is-nan: 1.3.2
-      object-is: 1.1.5
-      object.assign: 4.1.4
-      util: 0.12.5
-    dev: false
-
   /assertion-error@1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
     dev: true
@@ -6673,6 +6669,10 @@ packages:
 
   /cjs-module-lexer@1.2.3:
     resolution: {integrity: sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==}
+    dev: false
+
+  /class-transformer@0.5.1:
+    resolution: {integrity: sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==}
     dev: false
 
   /clean-css@5.3.2:
@@ -9351,6 +9351,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       has-tostringtag: 1.0.0
+    dev: true
 
   /is-glob@4.0.3:
     resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
@@ -9376,6 +9377,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
+    dev: true
 
   /is-negative-zero@2.0.2:
     resolution: {integrity: sha512-dqJvarLawXsFbNDeJW7zAz8ItJ9cd28YufuuFzh0G8pNHjJMnY08Dv7sYX2uF5UpQOwieAeOExEYAWWfu7ZZUA==}
@@ -14375,6 +14377,7 @@ packages:
       is-generator-function: 1.0.10
       is-typed-array: 1.1.12
       which-typed-array: 1.1.11
+    dev: true
 
   /utila@0.4.0:
     resolution: {integrity: sha512-Z0DbgELS9/L/75wZbro8xAnT50pBVFQZ+hUEueGDU5FN51YSCYM+jdxsfCiHjwNP/4LCDD0i/graKpeBnOXKRA==}
@@ -15218,6 +15221,14 @@ packages:
     engines: {node: '>=12.20'}
     dev: true
 
+  /zod-validation-error@2.1.0(zod@3.22.4):
+    resolution: {integrity: sha512-VJh93e2wb4c3tWtGgTa0OF/dTt/zoPCPzXq4V11ZjxmEAFaPi/Zss1xIZdEB5RD8GD00U0/iVXgqkF77RV7pdQ==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      zod: ^3.18.0
+    dependencies:
+      zod: 3.22.4
+    dev: false
+
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
-    dev: false

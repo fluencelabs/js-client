@@ -18,21 +18,14 @@ import { readFile } from "fs/promises";
 import { createRequire } from "module";
 import { sep, posix, join } from "path";
 
-import { FetchedPackages, getVersionedPackage } from "../types.js";
+import { FetchResourceFn, getVersionedPackage } from "../types.js";
 
 /**
  * @param pkg name of package with version
  * @param assetPath path of required asset in given package
- * @param root CDN domain in browser or js-client itself in node
  */
-export async function fetchResource(
-  pkg: FetchedPackages,
-  assetPath: string,
-  root: string,
-) {
+export const fetchResource: FetchResourceFn = async (pkg, assetPath) => {
   const { name } = getVersionedPackage(pkg);
-  // TODO: `root` will be handled somehow in the future. For now, we use filesystem root where js-client is running;
-  root = "/";
   const require = createRequire(import.meta.url);
   const packagePathIndex = require.resolve(name);
 
@@ -47,7 +40,7 @@ export async function fetchResource(
     throw new Error(`Cannot find dependency ${name} in path ${posixPath}`);
   }
 
-  const pathToResource = join(root, packagePath, assetPath);
+  const pathToResource = join(packagePath, assetPath);
 
   const file = await readFile(pathToResource);
 
@@ -60,4 +53,4 @@ export async function fetchResource(
         : "application/text",
     },
   });
-}
+};

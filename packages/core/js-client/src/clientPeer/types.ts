@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { z } from "zod";
+
 /**
  * Peer ID's id as a base58 string (multihash/CIDv0).
  */
@@ -33,20 +35,30 @@ export type Node = {
  * - string: multiaddr in string format
  * - Node: node structure, @see Node
  */
-export type RelayOptions = string | Node;
+export const relaySchema = z.union([
+  z.string(),
+  z.object({
+    peerId: z.string(),
+    multiaddr: z.string(),
+  }),
+]);
+
+export type RelayOptions = z.infer<typeof relaySchema>;
 
 /**
  * Fluence Peer's key pair types
  */
 export type KeyTypes = "RSA" | "Ed25519" | "secp256k1";
 
+const keyPairOptionsSchema = z.object({
+  type: z.literal("Ed25519"),
+  source: z.union([z.literal("random"), z.instanceof(Uint8Array)]),
+});
+
 /**
  * Options to specify key pair used in Fluence Peer
  */
-export type KeyPairOptions = {
-  type: "Ed25519";
-  source: "random" | Uint8Array;
-};
+export type KeyPairOptions = z.infer<typeof keyPairOptionsSchema>;
 
 /**
  * Fluence JS Client connection states as string literals
@@ -63,17 +75,10 @@ export const ConnectionStates = [
  */
 export type ConnectionState = (typeof ConnectionStates)[number];
 
-export interface IFluenceInternalApi {
-  /**
-   * Internal API
-   */
-  internals: unknown;
-}
-
 /**
  * Public API of Fluence JS Client
  */
-export interface IFluenceClient extends IFluenceInternalApi {
+export interface IFluenceClient {
   /**
    * Connect to the Fluence network
    */
@@ -107,65 +112,66 @@ export interface IFluenceClient extends IFluenceInternalApi {
   getRelayPeerId(): string;
 }
 
+export const configSchema = z
+  .object({
+    /**
+     * Specify the KeyPair to be used to identify the Fluence Peer.
+     * Will be generated randomly if not specified
+     */
+    keyPair: keyPairOptionsSchema,
+    /**
+     * Options to configure the connection to the Fluence network
+     */
+    connectionOptions: z
+      .object({
+        /**
+         * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
+         * The options allows to specify the timeout for that message in milliseconds.
+         * If not specified the default timeout will be used
+         */
+        skipCheckConnection: z.boolean(),
+        /**
+         * The dialing timeout in milliseconds
+         */
+        dialTimeoutMs: z.number(),
+        /**
+         * The maximum number of inbound streams for the libp2p node.
+         * Default: 1024
+         */
+        maxInboundStreams: z.number(),
+        /**
+         * The maximum number of outbound streams for the libp2p node.
+         * Default: 1024
+         */
+        maxOutboundStreams: z.number(),
+      })
+      .partial(),
+    /**
+     * Sets the default TTL for all particles originating from the peer with no TTL specified.
+     * If the originating particle's TTL is defined then that value will be used
+     * If the option is not set default TTL will be 7000
+     */
+    defaultTtlMs: z.number(),
+    /**
+     * Property for passing custom CDN Url to load dependencies from browser. https://unpkg.com used by default
+     */
+    CDNUrl: z.string(),
+    /**
+     * Enables\disabled various debugging features
+     */
+    debug: z
+      .object({
+        /**
+         * If set to true, newly initiated particle ids will be printed to console.
+         * Useful to see what particle id is responsible for aqua function
+         */
+        printParticleId: z.boolean(),
+      })
+      .partial(),
+  })
+  .partial();
+
 /**
  * Configuration used when initiating Fluence Client
  */
-export interface ClientConfig {
-  /**
-   * Specify the KeyPair to be used to identify the Fluence Peer.
-   * Will be generated randomly if not specified
-   */
-  keyPair?: KeyPairOptions;
-
-  /**
-   * Options to configure the connection to the Fluence network
-   */
-  connectionOptions?: {
-    /**
-     * When the peer established the connection to the network it sends a ping-like message to check if it works correctly.
-     * The options allows to specify the timeout for that message in milliseconds.
-     * If not specified the default timeout will be used
-     */
-    skipCheckConnection?: boolean;
-
-    /**
-     * The dialing timeout in milliseconds
-     */
-    dialTimeoutMs?: number;
-
-    /**
-     * The maximum number of inbound streams for the libp2p node.
-     * Default: 1024
-     */
-    maxInboundStreams?: number;
-
-    /**
-     * The maximum number of outbound streams for the libp2p node.
-     * Default: 1024
-     */
-    maxOutboundStreams?: number;
-  };
-
-  /**
-   * Sets the default TTL for all particles originating from the peer with no TTL specified.
-   * If the originating particle's TTL is defined then that value will be used
-   * If the option is not set default TTL will be 7000
-   */
-  defaultTtlMs?: number;
-
-  /**
-   * Property for passing custom CDN Url to load dependencies from browser. https://unpkg.com used by default
-   */
-  CDNUrl?: string;
-
-  /**
-   * Enables\disabled various debugging features
-   */
-  debug?: {
-    /**
-     * If set to true, newly initiated particle ids will be printed to console.
-     * Useful to see what particle id is responsible for aqua function
-     */
-    printParticleId?: boolean;
-  };
-}
+export type ClientConfig = z.infer<typeof configSchema>;

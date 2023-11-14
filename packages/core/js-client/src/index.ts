@@ -16,12 +16,15 @@
 
 import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
 import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
+import { ZodError } from "zod";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import {
   ClientConfig,
+  configSchema,
   ConnectionState,
   RelayOptions,
+  relaySchema,
 } from "./clientPeer/types.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
@@ -33,6 +36,15 @@ const createClient = async (
   relay: RelayOptions,
   config: ClientConfig = {},
 ): Promise<ClientPeer> => {
+  try {
+    relay = relaySchema.parse(relay);
+    config = configSchema.parse(config);
+  } catch (e) {
+    if (e instanceof ZodError) {
+      throw new Error(JSON.stringify(e.format()));
+    }
+  }
+
   const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
 
   const fetchMarineJsWasm = async () => {
