@@ -2,11 +2,13 @@
 .eslintcache
 pnpm-lock.yaml
 
-**/node_modules
-**/dist
-**/build
-**/public
+node_modules
+dist
+build
+public
 
 **/CHANGELOG.md
 
 packages/core/js-client-isomorphic/src/versions.ts
+__snapshots__
+packages/@tests/aqua/src/_aqua/**

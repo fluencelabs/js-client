@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import assert from "assert";
+
 import { JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
 import { it, describe, expect, test } from "vitest";
@@ -26,7 +28,6 @@ import { KeyPair } from "../../keypair/index.js";
 import { builtInServices } from "../builtins.js";
 import { allowServiceFn } from "../securityGuard.js";
 import { Sig, defaultSigGuard } from "../Sig.js";
-import assert from "assert";
 
 const a10b20 = `{
     "a": 10,
