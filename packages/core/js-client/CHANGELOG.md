@@ -6,6 +6,13 @@
   * dependencies
     * @fluencelabs/js-client-isomorphic bumped to 0.2.0
 
+## [0.4.4](https://github.com/fluencelabs/js-client/compare/js-client-v0.4.3...js-client-v0.4.4) (2023-11-10)
+
+
+### Bug Fixes
+
+* **js-client:** Fix CDN flow and move it in modules [fixes DXJ-527] ([#376](https://github.com/fluencelabs/js-client/issues/376)) ([f5e9923](https://github.com/fluencelabs/js-client/commit/f5e99239741bc8907c3b4febdc53e46d7a43e46e))
+
 ## [0.4.3](https://github.com/fluencelabs/js-client/compare/js-client-v0.4.2...js-client-v0.4.3) (2023-11-06)
 
 
