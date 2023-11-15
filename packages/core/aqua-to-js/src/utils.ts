@@ -107,8 +107,3 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
 export function capitalize(str: string) {
   return str.slice(0, 1).toUpperCase() + str.slice(1);
 }
-
-export async function includeRelative(url: string, file: string) {
-  const pathToFile = join(fileURLToPath(url), "..", file);
-  return await readFile(pathToFile, "utf-8");
-}

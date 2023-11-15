@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { includeRelative, PackageJson } from "../utils.js";
+import { PackageJson } from "../utils.js";
 
 import { OutputType } from "./interfaces.js";
-
-const converters = await includeRelative(import.meta.url, "./converters.js");
 
 export default function generateHeader(
   { version, devDependencies }: PackageJson,
@@ -45,7 +43,5 @@ import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,
     FluencePeer as FluencePeer$$
-} from '@fluencelabs/js-client';
-
-${converters}`;
+} from '@fluencelabs/js-client';`;
 }
