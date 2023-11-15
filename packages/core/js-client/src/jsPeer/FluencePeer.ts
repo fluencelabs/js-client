@@ -615,6 +615,20 @@ export abstract class FluencePeer {
                       });
                     });
                 }
+              } else {
+                // TODO: remove after LNG-286 is done
+                // eslint-disable-next-line eqeqeq
+                if (
+                  this.jsServiceHost.getHandler(
+                    "callbackSrv",
+                    "response",
+                    item.particle.id,
+                  ) == null &&
+                  item.result.nextPeerPks.length == 0
+                ) {
+                  // try to finish script
+                  item.onSuccess({});
+                }
               }
 
               return connectionPromise;
