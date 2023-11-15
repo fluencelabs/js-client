@@ -202,6 +202,4 @@ export {
   fromOpts,
 } from "./keypair/index.js";
 
-export { FluencePeer } from "./jsPeer/FluencePeer.js";
-
 export * from "./network.js";
