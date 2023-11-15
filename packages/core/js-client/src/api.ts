@@ -99,6 +99,9 @@ export const v5_callFunction = async (
     }),
   );
 
+  const returnTypeVoid =
+    def.arrow.codomain.tag === "nil" || def.arrow.codomain.items.length === 0;
+
   const params = {
     peer,
     args: callArgs,
@@ -108,6 +111,7 @@ export const v5_callFunction = async (
   const result = await callAquaFunction({
     script,
     ...params,
+    fireAndForget: returnTypeVoid,
   });
 
   const valueSchema =

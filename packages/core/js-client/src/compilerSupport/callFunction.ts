@@ -50,7 +50,7 @@ export type CallAquaFunctionArgs = {
   config: CallAquaFunctionConfig | undefined;
   peer: FluencePeer;
   args: { [key: string]: JSONValue | ArgCallbackFunction };
-  fireAndForget?: boolean;
+  fireAndForget: boolean | undefined;
 };
 
 export type CallAquaFunctionConfig = {
