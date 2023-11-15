@@ -288,8 +288,8 @@ importers:
         specifier: 0.9.3
         version: 0.9.3
       '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
+        specifier: 0.8.0
+        version: 0.8.0
       '@rollup/plugin-inject':
         specifier: 5.0.3
         version: 5.0.3
@@ -327,8 +327,8 @@ importers:
         specifier: 0.54.0
         version: 0.54.0
       '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
+        specifier: 0.8.0
+        version: 0.8.0
       '@fluencelabs/marine-worker':
         specifier: 0.4.2
         version: link:../marine-worker
@@ -339,8 +339,8 @@ importers:
   packages/core/marine-worker:
     dependencies:
       '@fluencelabs/marine-js':
-        specifier: 0.7.2
-        version: 0.7.2
+        specifier: 0.8.0
+        version: 0.8.0
       '@fluencelabs/threads':
         specifier: ^2.0.0
         version: 2.0.0
@@ -1184,16 +1184,6 @@ packages:
       '@babel/helper-plugin-utils': 7.22.5
     dev: false
 
-  /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.10):
-    resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.22.10
-      '@babel/helper-plugin-utils': 7.22.5
-    dev: false
-
   /@babel/plugin-syntax-flow@7.22.5(@babel/core@7.22.5):
     resolution: {integrity: sha512-9RdCl0i+q0QExayk2nOS7853w08yLucnnPML6EN9S8fgMPVtdLDCdx/cOQ/i44Lb9UeQX9A35yaqBBOMMZxPxQ==}
     engines: {node: '>=6.9.0'}
@@ -1277,16 +1267,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.22.5
-      '@babel/helper-plugin-utils': 7.22.5
-    dev: false
-
-  /@babel/plugin-syntax-jsx@7.22.5(@babel/core@7.22.10):
-    resolution: {integrity: sha512-gvyP4hZrgrs/wWMaocvxZ44Hw0b3W8Pe+cMxc8V1ULQ07oh8VNbIRaoD1LRZVTvD+0nieDKjfgKg89sD7rrKrg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.22.10
       '@babel/helper-plugin-utils': 7.22.5
     dev: false
 
@@ -2411,20 +2391,6 @@ packages:
     dependencies:
       '@babel/core': 7.22.5
       '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
-    dev: false
-
-  /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.22.10):
-    resolution: {integrity: sha512-rog5gZaVbUip5iWDMTYbVM15XQq+RkUKhET/IHR6oizR+JEoN6CAfTTuHcK4vwUyzca30qqHqEpzBOnaRMWYMA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/core': 7.22.10
-      '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-module-imports': 7.22.5
-      '@babel/helper-plugin-utils': 7.22.5
-      '@babel/plugin-syntax-jsx': 7.22.5(@babel/core@7.22.10)
-      '@babel/types': 7.22.5
     dev: false
 
   /@babel/plugin-transform-react-jsx@7.22.5(@babel/core@7.22.5):
@@ -4219,8 +4185,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@fluencelabs/marine-js@0.7.2:
-    resolution: {integrity: sha512-etjbXDgzyZkK82UZvtuIU3bfy5f52siDUy1m+T5Y5r70k82xYdZZ8vgWVgB6ivi2f3aDyQjgNTfzWQjKFpAReQ==}
+  /@fluencelabs/marine-js@0.8.0:
+    resolution: {integrity: sha512-exxp0T0Dk69dxnbpAiVc/qp66s8Jq/P71TRB9aeQZLZy3EQtVAMCBJvwQY8LzVVlYEyVjmqQkFG/N0rAeYU1vg==}
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
@@ -10666,8 +10632,8 @@ packages:
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
     dependencies:
-      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.10)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.10)
+      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.5)
+      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
       eslint: 8.50.0
       lodash: 4.17.21
       string-natural-compare: 3.0.1
