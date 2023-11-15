@@ -91,7 +91,7 @@ export const callAquaFunction = async ({
       registerParticleScopeService(peer, particle, service);
     }
 
-    if (fireAndForget) {
+    if (!fireAndForget) {
       registerParticleScopeService(peer, particle, responseService(resolve));
     }
 
