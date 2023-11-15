@@ -136,25 +136,110 @@ export function registerSrv(serviceId: string, service: SrvDef): void;
 export function registerSrv(peer: IFluenceClient$$, service: SrvDef): void;
 export function registerSrv(peer: IFluenceClient$$, serviceId: string, service: SrvDef): void;
 export function registerSrv(...args: any[]) {
-    const service = args.pop();
-    const defaultServiceId = "single_module_srv";
-            
-    const params = args[0] instanceof FluencePeer$$ ? ({
-        peer: args[0],
-        serviceId: args[1] ?? defaultServiceId
-    }) : ({
-        peer: undefined,
-        serviceId: args[0] ?? defaultServiceId
-    });
-    
-    if (params.serviceId == null) {
-        throw new Error("Service ID is not provided");
+    registerService$$(
+        args,
+        {
+    "defaultServiceId": "single_module_srv",
+    "functions": {
+        "fields": {
+            "create": {
+                "domain": {
+                    "fields": {
+                        "wasm_b64_content": {
+                            "name": "string",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "ServiceCreationResult",
+                            "fields": {
+                                "error": {
+                                    "type": {
+                                        "name": "string",
+                                        "tag": "scalar"
+                                    },
+                                    "tag": "option"
+                                },
+                                "service_id": {
+                                    "type": {
+                                        "name": "string",
+                                        "tag": "scalar"
+                                    },
+                                    "tag": "option"
+                                },
+                                "success": {
+                                    "name": "bool",
+                                    "tag": "scalar"
+                                }
+                            },
+                            "tag": "struct"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            },
+            "list": {
+                "domain": {
+                    "tag": "nil"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "type": {
+                                "name": "string",
+                                "tag": "scalar"
+                            },
+                            "tag": "array"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            },
+            "remove": {
+                "domain": {
+                    "fields": {
+                        "service_id": {
+                            "name": "string",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "RemoveResult",
+                            "fields": {
+                                "error": {
+                                    "type": {
+                                        "name": "string",
+                                        "tag": "scalar"
+                                    },
+                                    "tag": "option"
+                                },
+                                "success": {
+                                    "name": "bool",
+                                    "tag": "scalar"
+                                }
+                            },
+                            "tag": "struct"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            }
+        },
+        "tag": "labeledProduct"
     }
-        
-    registerService$$({
-        service,
-        ...params
-    });
+}
+    );
 }
 
 export interface CalcServiceDef {
@@ -169,25 +254,133 @@ export interface CalcServiceDef {
 export function registerCalcService(serviceId: string, service: CalcServiceDef): void;
 export function registerCalcService(peer: IFluenceClient$$, serviceId: string, service: CalcServiceDef): void;
 export function registerCalcService(...args: any[]) {
-    const service = args.pop();
-    const defaultServiceId = undefined;
-            
-    const params = args[0] instanceof FluencePeer$$ ? ({
-        peer: args[0],
-        serviceId: args[1] ?? defaultServiceId
-    }) : ({
-        peer: undefined,
-        serviceId: args[0] ?? defaultServiceId
-    });
-    
-    if (params.serviceId == null) {
-        throw new Error("Service ID is not provided");
+    registerService$$(
+        args,
+        {
+    "functions": {
+        "fields": {
+            "divide": {
+                "domain": {
+                    "fields": {
+                        "num": {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            },
+            "clear_state": {
+                "domain": {
+                    "tag": "nil"
+                },
+                "codomain": {
+                    "tag": "nil"
+                },
+                "tag": "arrow"
+            },
+            "test_logs": {
+                "domain": {
+                    "tag": "nil"
+                },
+                "codomain": {
+                    "tag": "nil"
+                },
+                "tag": "arrow"
+            },
+            "multiply": {
+                "domain": {
+                    "fields": {
+                        "num": {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            },
+            "add": {
+                "domain": {
+                    "fields": {
+                        "num": {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            },
+            "state": {
+                "domain": {
+                    "tag": "nil"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            },
+            "subtract": {
+                "domain": {
+                    "fields": {
+                        "num": {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "f64",
+                            "tag": "scalar"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            }
+        },
+        "tag": "labeledProduct"
     }
-        
-    registerService$$({
-        service,
-        ...params
-    });
+}
+    );
 }
 
 export interface HelloWorldDef {
@@ -198,25 +391,38 @@ export function registerHelloWorld(serviceId: string, service: HelloWorldDef): v
 export function registerHelloWorld(peer: IFluenceClient$$, service: HelloWorldDef): void;
 export function registerHelloWorld(peer: IFluenceClient$$, serviceId: string, service: HelloWorldDef): void;
 export function registerHelloWorld(...args: any[]) {
-    const service = args.pop();
-    const defaultServiceId = "hello-world";
-            
-    const params = args[0] instanceof FluencePeer$$ ? ({
-        peer: args[0],
-        serviceId: args[1] ?? defaultServiceId
-    }) : ({
-        peer: undefined,
-        serviceId: args[0] ?? defaultServiceId
-    });
-    
-    if (params.serviceId == null) {
-        throw new Error("Service ID is not provided");
+    registerService$$(
+        args,
+        {
+    "defaultServiceId": "hello-world",
+    "functions": {
+        "fields": {
+            "hello": {
+                "domain": {
+                    "fields": {
+                        "str": {
+                            "name": "string",
+                            "tag": "scalar"
+                        }
+                    },
+                    "tag": "labeledProduct"
+                },
+                "codomain": {
+                    "items": [
+                        {
+                            "name": "string",
+                            "tag": "scalar"
+                        }
+                    ],
+                    "tag": "unlabeledProduct"
+                },
+                "tag": "arrow"
+            }
+        },
+        "tag": "labeledProduct"
     }
-        
-    registerService$$({
-        service,
-        ...params
-    });
+}
+    );
 }
 
 
@@ -457,50 +663,54 @@ export function resourceTest(
     config?: {ttl?: number}
 ): Promise<ResourceTestResult>;
 
-export async function resourceTest(...args: any[]) {
-    const argNames = ["label"];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
-    }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: resourceTest_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "items": [
+export function resourceTest(...args: any[]) {
+    return callFunction$$(
+        args,
         {
-            "type": {
-                "name": "string",
-                "tag": "scalar"
+    "functionName": "resourceTest",
+    "arrow": {
+        "domain": {
+            "fields": {
+                "label": {
+                    "name": "string",
+                    "tag": "scalar"
+                }
             },
-            "tag": "option"
+            "tag": "labeledProduct"
         },
-        {
-            "type": {
-                "name": "string",
-                "tag": "scalar"
-            },
-            "tag": "array"
-        }
-    ],
-    "tag": "unlabeledProduct"
-}
-    ); 
+        "codomain": {
+            "items": [
+                {
+                    "type": {
+                        "name": "string",
+                        "tag": "scalar"
+                    },
+                    "tag": "option"
+                },
+                {
+                    "type": {
+                        "name": "string",
+                        "tag": "scalar"
+                    },
+                    "tag": "array"
+                }
+            ],
+            "tag": "unlabeledProduct"
+        },
+        "tag": "arrow"
+    },
+    "names": {
+        "relay": "-relay-",
+        "getDataSrv": "getDataSrv",
+        "callbackSrv": "callbackSrv",
+        "responseSrv": "callbackSrv",
+        "responseFnName": "response",
+        "errorHandlingSrv": "errorHandlingSrv",
+        "errorFnName": "error"
+    }
+},
+        resourceTest_script
+    );
 }
 
 export const helloTest_script = `
@@ -525,35 +735,39 @@ export function helloTest(
     config?: {ttl?: number}
 ): Promise<string>;
 
-export async function helloTest(...args: any[]) {
-    const argNames = [];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
+export function helloTest(...args: any[]) {
+    return callFunction$$(
+        args,
+        {
+    "functionName": "helloTest",
+    "arrow": {
+        "domain": {
+            "fields": {},
+            "tag": "labeledProduct"
+        },
+        "codomain": {
+            "items": [
+                {
+                    "name": "string",
+                    "tag": "scalar"
+                }
+            ],
+            "tag": "unlabeledProduct"
+        },
+        "tag": "arrow"
+    },
+    "names": {
+        "relay": "-relay-",
+        "getDataSrv": "getDataSrv",
+        "callbackSrv": "callbackSrv",
+        "responseSrv": "callbackSrv",
+        "responseFnName": "response",
+        "errorHandlingSrv": "errorHandlingSrv",
+        "errorFnName": "error"
     }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: helloTest_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "name": "string",
-    "tag": "scalar"
-}
-    ); 
+},
+        helloTest_script
+    );
 }
 
 export const callHappy_script = `
@@ -598,35 +812,73 @@ export function callHappy(
     config?: {ttl?: number}
 ): Promise<number>;
 
-export async function callHappy(...args: any[]) {
-    const argNames = ["a", "b", "c", "d"];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
+export function callHappy(...args: any[]) {
+    return callFunction$$(
+        args,
+        {
+    "functionName": "callHappy",
+    "arrow": {
+        "domain": {
+            "fields": {
+                "a": {
+                    "name": "string",
+                    "tag": "scalar"
+                },
+                "b": {
+                    "name": "f64",
+                    "tag": "scalar"
+                },
+                "c": {
+                    "name": "f64",
+                    "tag": "scalar"
+                },
+                "d": {
+                    "domain": {
+                        "items": [
+                            {
+                                "name": "string",
+                                "tag": "scalar"
+                            }
+                        ],
+                        "tag": "unlabeledProduct"
+                    },
+                    "codomain": {
+                        "items": [
+                            {
+                                "name": "f64",
+                                "tag": "scalar"
+                            }
+                        ],
+                        "tag": "unlabeledProduct"
+                    },
+                    "tag": "arrow"
+                }
+            },
+            "tag": "labeledProduct"
+        },
+        "codomain": {
+            "items": [
+                {
+                    "name": "f64",
+                    "tag": "scalar"
+                }
+            ],
+            "tag": "unlabeledProduct"
+        },
+        "tag": "arrow"
+    },
+    "names": {
+        "relay": "-relay-",
+        "getDataSrv": "getDataSrv",
+        "callbackSrv": "callbackSrv",
+        "responseSrv": "callbackSrv",
+        "responseFnName": "response",
+        "errorHandlingSrv": "errorHandlingSrv",
+        "errorFnName": "error"
     }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: callHappy_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "name": "f64",
-    "tag": "scalar"
-}
-    ); 
+},
+        callHappy_script
+    );
 }
 
 export const demo_calculation_script = `
@@ -671,35 +923,44 @@ export function demo_calculation(
     config?: {ttl?: number}
 ): Promise<number>;
 
-export async function demo_calculation(...args: any[]) {
-    const argNames = ["service_id"];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
+export function demo_calculation(...args: any[]) {
+    return callFunction$$(
+        args,
+        {
+    "functionName": "demo_calculation",
+    "arrow": {
+        "domain": {
+            "fields": {
+                "service_id": {
+                    "name": "string",
+                    "tag": "scalar"
+                }
+            },
+            "tag": "labeledProduct"
+        },
+        "codomain": {
+            "items": [
+                {
+                    "name": "f64",
+                    "tag": "scalar"
+                }
+            ],
+            "tag": "unlabeledProduct"
+        },
+        "tag": "arrow"
+    },
+    "names": {
+        "relay": "-relay-",
+        "getDataSrv": "getDataSrv",
+        "callbackSrv": "callbackSrv",
+        "responseSrv": "callbackSrv",
+        "responseFnName": "response",
+        "errorHandlingSrv": "errorHandlingSrv",
+        "errorFnName": "error"
     }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: demo_calculation_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "name": "f64",
-    "tag": "scalar"
-}
-    ); 
+},
+        demo_calculation_script
+    );
 }
 
 export const marineTest_script = `
@@ -747,33 +1008,42 @@ export function marineTest(
     config?: {ttl?: number}
 ): Promise<number>;
 
-export async function marineTest(...args: any[]) {
-    const argNames = ["wasm64"];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
+export function marineTest(...args: any[]) {
+    return callFunction$$(
+        args,
+        {
+    "functionName": "marineTest",
+    "arrow": {
+        "domain": {
+            "fields": {
+                "wasm64": {
+                    "name": "string",
+                    "tag": "scalar"
+                }
+            },
+            "tag": "labeledProduct"
+        },
+        "codomain": {
+            "items": [
+                {
+                    "name": "f64",
+                    "tag": "scalar"
+                }
+            ],
+            "tag": "unlabeledProduct"
+        },
+        "tag": "arrow"
+    },
+    "names": {
+        "relay": "-relay-",
+        "getDataSrv": "getDataSrv",
+        "callbackSrv": "callbackSrv",
+        "responseSrv": "callbackSrv",
+        "responseFnName": "response",
+        "errorHandlingSrv": "errorHandlingSrv",
+        "errorFnName": "error"
     }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: marineTest_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "name": "f64",
-    "tag": "scalar"
-}
-    ); 
+},
+        marineTest_script
+    );
 }

@@ -149,32 +149,31 @@ export function test(
     config?: {ttl?: number}
 ): Promise<void>;
 
-export async function test(...args: any[]) {
-    const argNames = [];
-    const argCount = argNames.length;
-    let peer = undefined;
-    if (args[0] instanceof FluencePeer$$) {
-        peer = args[0];
-        args = args.slice(1);
+export function test(...args: any[]) {
+    return callFunction$$(
+        args,
+        {
+    "functionName": "test",
+    "arrow": {
+        "domain": {
+            "fields": {},
+            "tag": "labeledProduct"
+        },
+        "codomain": {
+            "tag": "nil"
+        },
+        "tag": "arrow"
+    },
+    "names": {
+        "relay": "-relay-",
+        "getDataSrv": "getDataSrv",
+        "callbackSrv": "callbackSrv",
+        "responseSrv": "callbackSrv",
+        "responseFnName": "response",
+        "errorHandlingSrv": "errorHandlingSrv",
+        "errorFnName": "error"
     }
-    
-    
-    const callArgs = Object.fromEntries(args.slice(0, argCount).map((arg, i) => [argNames[i], arg]));
-    
-    const params = ({
-        peer,
-        args: callArgs,
-        config: args[argCount]
-    });
-    
-    const result = await callFunction$$({
-        script: test_script,
-        ...params,
-    });
-    
-    return aqua2ts(result, 
-    {
-    "tag": "nil"
-}
-    ); 
+},
+        test_script
+    );
 }
