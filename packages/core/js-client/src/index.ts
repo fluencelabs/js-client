@@ -47,32 +47,23 @@ const createClient = async (
 
   const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
 
-  const fetchMarineJsWasm = async () => {
-    const resource = await fetchResource(
+  const [marineJsWasm, avmWasm] = await Promise.all([
+    fetchResource(
       "@fluencelabs/marine-js",
       "/dist/marine-js.wasm",
       CDNUrl,
-    );
-
-    return resource.arrayBuffer();
-  };
-
-  const fetchAvmWasm = async () => {
-    const resource = await fetchResource(
-      "@fluencelabs/avm",
-      "/dist/avm.wasm",
-      CDNUrl,
-    );
-
-    return resource.arrayBuffer();
-  };
-
-  const marineJsWasm = await fetchMarineJsWasm();
-  const avmWasm = await fetchAvmWasm();
+    ).then((res) => {
+      return res.arrayBuffer();
+    }),
+    fetchResource("@fluencelabs/avm", "/dist/avm.wasm", CDNUrl).then((res) => {
+      return res.arrayBuffer();
+    }),
+  ]);
 
   const marine = new MarineBackgroundRunner(
     {
       async getValue() {
+        // TODO: load worker with avm and marine, test that it works
         return getWorker("@fluencelabs/marine-worker", CDNUrl);
       },
       start() {
