@@ -17,7 +17,7 @@
 import { JSONValue, NonArrowSimpleType } from "@fluencelabs/interfaces";
 import { it, describe, expect, test } from "vitest";
 
-import { aqua2ts, ts2aqua } from "../converters.js";
+import { aqua2ts, ts2aqua } from "../conversions.js";
 
 const i32 = { tag: "scalar", name: "i32" } as const;
 

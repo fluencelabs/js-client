@@ -34,10 +34,18 @@ for (const file of files) {
     imports: [fileURLToPath(new URL("./node_modules", import.meta.url))],
   });
 
+  if (cr.warnings.length > 0) {
+    console.log(cr.warnings);
+  }
+
+  if (cr.errors.length > 0) {
+    throw new Error(cr.errors.join("\n"));
+  }
+
   const res = await aquaToJs(cr, "ts");
 
   if (res == null) {
-    throw new Error(cr.errors.join("\n"));
+    throw new Error("AquaToJs gave null value after compilation");
   }
 
   await writeFile(

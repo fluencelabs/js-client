@@ -161,6 +161,10 @@ importers:
         version: 6.1.1
 
   packages/core/aqua-to-js:
+    dependencies:
+      ts-pattern:
+        specifier: 5.0.5
+        version: 5.0.5
     devDependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.12.0
@@ -172,7 +176,7 @@ importers:
         specifier: workspace:*
         version: link:../interfaces
       '@fluencelabs/js-client':
-        specifier: workspace:^
+        specifier: 0.4.3
         version: link:../js-client
       '@fluencelabs/registry':
         specifier: 0.8.7
@@ -183,9 +187,6 @@ importers:
       '@fluencelabs/trust-graph':
         specifier: 0.4.7
         version: 0.4.7
-      ts-pattern:
-        specifier: 5.0.5
-        version: 5.0.5
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -291,9 +292,6 @@ importers:
       zod:
         specifier: 3.22.4
         version: 3.22.4
-      zod-validation-error:
-        specifier: 2.1.0
-        version: 2.1.0(zod@3.22.4)
     devDependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.9.3
@@ -14060,7 +14058,7 @@ packages:
 
   /ts-pattern@5.0.5:
     resolution: {integrity: sha512-tL0w8U/pgaacOmkb9fRlYzWEUDCfVjjv9dD4wHTgZ61MjhuMt46VNWTG747NqW6vRzoWIKABVhFSOJ82FvXrfA==}
-    dev: true
+    dev: false
 
   /tsconfck@2.1.1(typescript@5.1.6):
     resolution: {integrity: sha512-ZPCkJBKASZBmBUNqGHmRhdhM8pJYDdOXp4nRgj/O0JwUwsMq50lCDRQP/M5GBNAA0elPrq4gAeu4dkaVCuKWww==}
@@ -15219,15 +15217,6 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
-
-  /zod-validation-error@2.1.0(zod@3.22.4):
-    resolution: {integrity: sha512-VJh93e2wb4c3tWtGgTa0OF/dTt/zoPCPzXq4V11ZjxmEAFaPi/Zss1xIZdEB5RD8GD00U0/iVXgqkF77RV7pdQ==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      zod: ^3.18.0
-    dependencies:
-      zod: 3.22.4
-    dev: false
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}

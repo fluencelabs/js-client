@@ -57,8 +57,7 @@
     "rxjs": "7.5.5",
     "uint8arrays": "4.0.3",
     "uuid": "8.3.2",
-    "zod": "3.22.4",
-    "zod-validation-error": "2.1.0"
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@fluencelabs/aqua-api": "0.9.3",

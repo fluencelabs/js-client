@@ -204,6 +204,4 @@ export {
 
 export { FluencePeer } from "./jsPeer/FluencePeer.js";
 
-export type { JSONValue, NonArrowSimpleType } from "@fluencelabs/interfaces";
-
 export * from "./network.js";

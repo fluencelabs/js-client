@@ -17,7 +17,9 @@
 import { JSONValue } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { logger } from "../util/logger.js";
+import { ArgCallbackFunction } from "../util/testUtils.js";
 
 import {
   errorHandlingService,
@@ -28,7 +30,6 @@ import {
   ServiceDescription,
   userHandlerService,
 } from "./services.js";
-import { ServiceImpl } from "./types.js";
 
 const log = logger("aqua");
 
@@ -46,9 +47,9 @@ const log = logger("aqua");
 
 export type CallAquaFunctionArgs = {
   script: string;
-  config?: CallAquaFunctionConfig;
+  config: CallAquaFunctionConfig | undefined;
   peer: FluencePeer;
-  args: { [key: string]: JSONValue | ServiceImpl[string] };
+  args: { [key: string]: JSONValue | ArgCallbackFunction };
 };
 
 export type CallAquaFunctionConfig = {
@@ -65,12 +66,21 @@ export const callAquaFunction = async ({
 
   const particle = await peer.internals.createNewParticle(script, config.ttl);
 
-  return new Promise((resolve, reject) => {
+  return new Promise<JSONValue>((resolve, reject) => {
     for (const [name, argVal] of Object.entries(args)) {
       let service: ServiceDescription;
 
       if (typeof argVal === "function") {
-        service = userHandlerService("callbackSrv", name, argVal);
+        service = userHandlerService(
+          "callbackSrv",
+          name,
+          (...args: [...JSONValue[], ParticleContext]) => {
+            // Impossible to extract all element except the last one and coerce type
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            const jsonArgs = args.slice(0, args.length - 1) as JSONValue[];
+            return argVal(jsonArgs);
+          },
+        );
       } else {
         service = injectValueService("getDataSrv", name, argVal);
       }

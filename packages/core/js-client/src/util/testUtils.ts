@@ -30,10 +30,7 @@ import { ClientConfig, RelayOptions } from "../clientPeer/types.js";
 import { callAquaFunction } from "../compilerSupport/callFunction.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
-import {
-  CallServiceResultType,
-  ParticleContext,
-} from "../jsServiceHost/interfaces.js";
+import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
@@ -80,7 +77,7 @@ interface FunctionInfo {
  * Type for callback passed as aqua function argument
  */
 export type ArgCallbackFunction = (
-  ...args: [...JSONValue[], ParticleContext]
+  ...args: JSONValue[]
 ) => JSONValue | Promise<JSONValue>;
 
 /**
