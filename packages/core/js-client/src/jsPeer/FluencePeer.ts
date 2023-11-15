@@ -624,7 +624,7 @@ export abstract class FluencePeer {
                     "response",
                     item.particle.id,
                   ) == null &&
-                  item.result.nextPeerPks.length == 0
+                  item.result.nextPeerPks.length === 0
                 ) {
                   // try to finish script
                   item.onSuccess({});

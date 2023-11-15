@@ -17,7 +17,6 @@
 import assert from "assert";
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { fileURLToPath } from "url";
 
 import {
   ArrowType,
