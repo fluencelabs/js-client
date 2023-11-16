@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@fluencelabs/aqua-lib": "0.6.0",
-    "@fluencelabs/cli": "0.7.2",
+    "@fluencelabs/cli": "0.13.0",
     "@fluencelabs/js-client": "workspace:^",
     "@fluencelabs/registry": "0.8.2",
     "@fluencelabs/trust-graph": "3.1.2"
