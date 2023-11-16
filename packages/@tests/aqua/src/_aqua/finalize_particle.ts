@@ -11,6 +11,7 @@
  */
 import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';
 
+// Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,
@@ -32,16 +33,11 @@ export const test_script = `
 )
 `;
 
-export function test(
-    config?: {ttl?: number}
-): Promise<void>;
+export type testParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
-export function test(
-    peer: IFluenceClient$$,
-    config?: {ttl?: number}
-): Promise<void>;
+export type TestResult = Promise<void>;
 
-export function test(...args: any[]) {
+export function test(...args: testParams): TestResult {
     return callFunction$$(
         args,
         {
