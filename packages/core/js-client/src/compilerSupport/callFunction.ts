@@ -17,7 +17,6 @@
 import { JSONValue } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { logger } from "../util/logger.js";
 import { ArgCallbackFunction } from "../util/testUtils.js";
 
@@ -74,16 +73,7 @@ export const callAquaFunction = async ({
       let service: ServiceDescription;
 
       if (typeof argVal === "function") {
-        service = userHandlerService(
-          "callbackSrv",
-          name,
-          (...args: [...JSONValue[], ParticleContext]) => {
-            // Impossible to extract all element except the last one and coerce type
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            const jsonArgs = args.slice(0, args.length - 1) as JSONValue[];
-            return argVal(jsonArgs);
-          },
-        );
+        service = userHandlerService("callbackSrv", name, argVal);
       } else {
         service = injectValueService("getDataSrv", name, argVal);
       }

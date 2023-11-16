@@ -28,6 +28,7 @@ import { Subject, Subscribable } from "rxjs";
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
 import { ClientConfig, RelayOptions } from "../clientPeer/types.js";
 import { callAquaFunction } from "../compilerSupport/callFunction.js";
+import { ServiceImpl } from "../compilerSupport/types.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
 import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
@@ -76,9 +77,7 @@ interface FunctionInfo {
 /**
  * Type for callback passed as aqua function argument
  */
-export type ArgCallbackFunction = (
-  ...args: JSONValue[]
-) => JSONValue | Promise<JSONValue>;
+export type ArgCallbackFunction = ServiceImpl[string];
 
 /**
  * Arguments passed to Aqua function

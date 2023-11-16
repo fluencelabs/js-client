@@ -120,10 +120,7 @@ export function typeToTs(t: NonArrowType | ArrowType): string {
         return [name, typeToTs(type)];
       });
 
-      // JS-client argument
-      if (domain.tag !== "unlabeledProduct") {
-        args.push(["callParams", `ParticleContext$$`]);
-      }
+      args.push(["callParams", `ParticleContext$$`]);
 
       const funcArgs = args
         .map(([name, type]) => {

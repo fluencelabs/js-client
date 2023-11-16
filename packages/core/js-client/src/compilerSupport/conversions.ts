@@ -15,15 +15,17 @@
  */
 
 import {
-  ArrowWithCallbacks,
+  ArrowType,
   ArrowWithoutCallbacks,
   JSONValue,
+  LabeledProductType,
   NonArrowSimpleType,
+  SimpleTypes,
 } from "@fluencelabs/interfaces";
 
 import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
-import { MaybePromise } from "./types.js";
+import { ServiceImpl } from "./types.js";
 
 export function aqua2ts(
   value: JSONValue,
@@ -123,30 +125,9 @@ export function ts2aqua(
 }
 
 export const wrapFunction = (
-  value: (...args: JSONValue[]) => JSONValue,
-  schema: ArrowWithoutCallbacks,
-): ((...args: JSONValue[]) => JSONValue) => {
-  return (...args) => {
-    const schemaArgs =
-      schema.codomain.tag === "nil" ? [] : schema.codomain.items;
-
-    const tsArgs = args.map((arg, i) => {
-      return aqua2ts(arg, schemaArgs[i]);
-    });
-
-    const result = value(...tsArgs);
-    return ts2aqua(result, schema.codomain);
-  };
-};
-
-export const wrapServiceFunction = (
-  value: (
-    ...args: [...JSONValue[], ParticleContext]
-  ) => MaybePromise<JSONValue>,
-  schema: ArrowWithCallbacks,
-): ((
-  ...args: [...JSONValue[], ParticleContext]
-) => MaybePromise<JSONValue>) => {
+  value: ServiceImpl[string],
+  schema: ArrowWithoutCallbacks | ArrowType<LabeledProductType<SimpleTypes>>,
+): ServiceImpl[string] => {
   return async (...args) => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const jsonArgs = args.slice(0, args.length - 1) as JSONValue[];
@@ -154,13 +135,24 @@ export const wrapServiceFunction = (
     const context = args[args.length - 1] as ParticleContext;
 
     const schemaArgs =
-      schema.codomain.tag === "nil" ? [] : schema.codomain.items;
+      schema.domain.tag === "nil"
+        ? []
+        : schema.domain.tag === "unlabeledProduct"
+        ? schema.domain.items
+        : Object.values(schema.domain.fields);
 
     const tsArgs = jsonArgs.map((arg, i) => {
       return aqua2ts(arg, schemaArgs[i]);
     });
 
     const result = await value(...tsArgs, context);
-    return ts2aqua(result, schema.codomain);
+
+    const valueSchema =
+      schema.codomain.tag === "unlabeledProduct" &&
+      schema.codomain.items.length === 1
+        ? schema.codomain.items[0]
+        : schema.codomain;
+
+    return ts2aqua(result, valueSchema);
   };
 };
