@@ -47,6 +47,12 @@ describe("FluenceClient usage test suite", () => {
               return peer.getRelayPeerId();
             },
           },
+          callbackSrv: {
+            response: () => {
+              resolve({});
+              return "";
+            },
+          },
         });
 
         peer.internals.initiateParticle(particle, resolve, reject);

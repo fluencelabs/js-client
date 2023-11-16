@@ -247,18 +247,12 @@ importers:
       '@multiformats/multiaddr':
         specifier: 11.3.0
         version: 11.3.0
-      async:
-        specifier: 3.2.4
-        version: 3.2.4
       bs58:
         specifier: 5.0.0
         version: 5.0.0
       buffer:
         specifier: 6.0.3
         version: 6.0.3
-      class-transformer:
-        specifier: 0.5.1
-        version: 0.5.1
       debug:
         specifier: 4.3.4
         version: 4.3.4
@@ -296,9 +290,6 @@ importers:
       '@fluencelabs/aqua-api':
         specifier: 0.9.3
         version: 0.9.3
-      '@fluencelabs/marine-js':
-        specifier: 0.8.0
-        version: 0.8.0
       '@rollup/plugin-inject':
         specifier: 5.0.3
         version: 5.0.3
@@ -3723,6 +3714,7 @@ packages:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
       default-import: 1.1.5
+    dev: false
 
   /@fluencelabs/registry@0.8.7:
     resolution: {integrity: sha512-43bmb1v4p5ORvaiLBrUAl+hRPo3luxxBVrJgqTvipJa2OEg2wCRA/Wo9s4M7Lchnv3NoYLOyNTzNyFopQRKILA==}
@@ -5462,6 +5454,7 @@ packages:
       buffer-es6: 4.9.3
       path-browserify: 1.0.1
       randomfill: 1.0.4
+    dev: false
 
   /@wasmer/wasmfs@0.12.0:
     resolution: {integrity: sha512-m1ftchyQ1DfSenm5XbbdGIpb6KJHH5z0gODo3IZr6lATkj4WXfX/UeBTZ0aG9YVShBp+kHLdUHvOkqjy6p/GWw==}
@@ -5469,6 +5462,7 @@ packages:
       memfs: 3.0.4
       pako: 1.0.11
       tar-stream: 2.2.0
+    dev: false
 
   /@webassemblyjs/ast@1.11.6:
     resolution: {integrity: sha512-IN1xI7PwOvLPgjcf180gC1bqn3q/QaOCwYUahIOhbYUu8KA/3tw2RT/T0Gidi1l7Hhj5D/INhJxiICObqpMu4Q==}
@@ -6348,6 +6342,7 @@ packages:
 
   /browser-process-hrtime@1.0.0:
     resolution: {integrity: sha512-9o5UecI3GhkpM6DrXr69PblIuWxPKk9Y0jHBRhdocZ2y7YECBFCsHm79Pr3OyR2AvjhDkabFJaDJMYRazHgsow==}
+    dev: false
 
   /browser-resolve@2.0.0:
     resolution: {integrity: sha512-7sWsQlYL2rGLy2IWm8WL8DCTJvYLc/qlOnsakDac87SOoCd16WLsaAMdCiAqsTNHIe+SXfaqyxyo6THoWqs8WQ==}
@@ -6450,6 +6445,7 @@ packages:
 
   /buffer-es6@4.9.3:
     resolution: {integrity: sha512-Ibt+oXxhmeYJSsCkODPqNpPmyegefiD8rfutH1NYGhMZQhSp95Rz7haemgnJ6dxa6LT+JLLbtgOMORRluwKktw==}
+    dev: false
 
   /buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -6666,10 +6662,6 @@ packages:
 
   /cjs-module-lexer@1.2.3:
     resolution: {integrity: sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==}
-    dev: false
-
-  /class-transformer@0.5.1:
-    resolution: {integrity: sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==}
     dev: false
 
   /clean-css@5.3.2:
@@ -7322,6 +7314,7 @@ packages:
   /default-import@1.1.5:
     resolution: {integrity: sha512-aaJ6uzZlmaEcN1U8yvtiyV7MG3/zZQf1XtGSW5dTfAVvfk0VZuriJelXxVL9a0ni42vMkhjWcztFfpIhwFcfOQ==}
     engines: {node: '>=14'}
+    dev: false
 
   /define-data-property@1.1.0:
     resolution: {integrity: sha512-UzGwzcjyv3OtAvolTj1GoyNYzfFR+iqbGjcnBEENZVCpM4/Ng1yhGNvS3lR/xDS74Tb2wGG9WzNSNIOS9UVb2g==}
@@ -8445,6 +8438,7 @@ packages:
 
   /fast-extend@1.0.2:
     resolution: {integrity: sha512-XXA9RmlPatkFKUzqVZAFth18R4Wo+Xug/S+C7YlYA3xrXwfPlW3dqNwOb4hvQo7wZJ2cNDYhrYuPzVOfHy5/uQ==}
+    dev: false
 
   /fast-glob@3.2.12:
     resolution: {integrity: sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w==}
@@ -8680,6 +8674,7 @@ packages:
 
   /fs-monkey@0.3.3:
     resolution: {integrity: sha512-FNUvuTAJ3CqCQb5ELn+qCbGR/Zllhf2HtwsdAtBi59s1WeCjKMT81fHcSu7dwIskqGVK+MmOrb7VOBlq3/SItw==}
+    dev: false
 
   /fs-monkey@1.0.4:
     resolution: {integrity: sha512-INM/fWAxMICjttnD0DX1rBvinKskj5G1w+oy/pnm9u/tSlnBrzFonJMcalKJ30P8RRsPzKcCG7Q8l0jx5Fh9YQ==}
@@ -10741,6 +10736,7 @@ packages:
     dependencies:
       fast-extend: 1.0.2
       fs-monkey: 0.3.3
+    dev: false
 
   /memfs@3.5.3:
     resolution: {integrity: sha512-UERzLsxzllchadvbPs5aolHh65ISpKpM+ccLbOJ8/vvpBKmAWf+la7dXFy7Mr0ySHbdHrFv5kGFCUHHe6GFEmw==}

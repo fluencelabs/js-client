@@ -17,7 +17,7 @@
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { PeerIdB58 } from "@fluencelabs/interfaces";
-import { Stream } from "@libp2p/interface/connection";
+import type { Stream } from "@libp2p/interface/connection";
 import type { PeerId } from "@libp2p/interface/peer-id";
 import { peerIdFromString } from "@libp2p/peer-id";
 import { webSockets } from "@libp2p/websockets";

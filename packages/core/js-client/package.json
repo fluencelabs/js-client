@@ -43,10 +43,8 @@
     "@libp2p/peer-id-factory": "3.0.3",
     "@libp2p/websockets": "7.0.4",
     "@multiformats/multiaddr": "11.3.0",
-    "async": "3.2.4",
     "bs58": "5.0.0",
     "buffer": "6.0.3",
-    "class-transformer": "0.5.1",
     "debug": "4.3.4",
     "it-length-prefixed": "8.0.4",
     "it-map": "2.0.0",
@@ -61,7 +59,6 @@
   },
   "devDependencies": {
     "@fluencelabs/aqua-api": "0.9.3",
-    "@fluencelabs/marine-js": "0.8.0",
     "@rollup/plugin-inject": "5.0.3",
     "@types/bs58": "4.0.1",
     "@types/debug": "4.1.7",

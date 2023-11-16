@@ -15,16 +15,14 @@
  */
 
 import { PeerIdB58 } from "@fluencelabs/interfaces";
+import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
+import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 import { Subject } from "rxjs";
 
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { fromBase64Sk, KeyPair } from "../keypair/index.js";
-import {
-  WorkerLoaderFromFs,
-  WasmLoaderFromNpm,
-} from "../marine/deps-loader/node.js";
 import { IMarineHost } from "../marine/interfaces.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
 import { Particle } from "../particle/Particle.js";
@@ -224,25 +222,7 @@ class EphemeralPeer extends FluencePeer {
 export class EphemeralNetwork {
   private peers: Map<PeerIdB58, EphemeralPeer> = new Map();
 
-  workerLoader: WorkerLoaderFromFs;
-  controlModuleLoader: WasmLoaderFromNpm;
-  avmModuleLoader: WasmLoaderFromNpm;
-
-  constructor(readonly config: EphemeralConfig) {
-    // shared worker for all the peers
-    this.workerLoader = new WorkerLoaderFromFs("../../marine/worker-script");
-
-    // TODO: use js-client-isomorphic
-    this.controlModuleLoader = new WasmLoaderFromNpm(
-      "@fluencelabs/marine-js",
-      "marine-js.wasm",
-    );
-
-    this.avmModuleLoader = new WasmLoaderFromNpm(
-      "@fluencelabs/avm",
-      "avm.wasm",
-    );
-  }
+  constructor(readonly config: EphemeralConfig) {}
 
   /**
    * Starts the Ephemeral network up
@@ -253,10 +233,54 @@ export class EphemeralNetwork {
     const promises = this.config.peers.map(async (x) => {
       const kp = await fromBase64Sk(x.sk);
 
+      const [marineJsWasm, avmWasm] = await Promise.all([
+        fetchResource(
+          "@fluencelabs/marine-js",
+          "/dist/marine-js.wasm",
+          "/",
+        ).then((res) => {
+          return res.arrayBuffer();
+        }),
+        fetchResource("@fluencelabs/avm", "/dist/avm.wasm", "/").then((res) => {
+          return res.arrayBuffer();
+        }),
+      ]);
+
       const marine = new MarineBackgroundRunner(
-        this.workerLoader,
-        this.controlModuleLoader,
-        this.avmModuleLoader,
+        {
+          async getValue() {
+            // TODO: load worker with avm and marine, test that it works
+            return getWorker("@fluencelabs/marine-worker", "/");
+          },
+          start() {
+            return Promise.resolve(undefined);
+          },
+          stop() {
+            return Promise.resolve(undefined);
+          },
+        },
+        {
+          getValue() {
+            return marineJsWasm;
+          },
+          start(): Promise<void> {
+            return Promise.resolve(undefined);
+          },
+          stop(): Promise<void> {
+            return Promise.resolve(undefined);
+          },
+        },
+        {
+          getValue() {
+            return avmWasm;
+          },
+          start(): Promise<void> {
+            return Promise.resolve(undefined);
+          },
+          stop(): Promise<void> {
+            return Promise.resolve(undefined);
+          },
+        },
       );
 
       const peerId = kp.getPeerId();

@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-import {
-  CallResultsArray,
-  InterpreterResult,
-  RunParameters,
-} from "@fluencelabs/avm";
 import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
 import { CallParameters } from "@fluencelabs/marine-worker";
 import type { Worker as WorkerImplementation } from "@fluencelabs/threads/master";
@@ -59,22 +54,6 @@ export interface IMarineHost extends IStartable {
 }
 
 /**
- * Interface for different implementations of AVM runner
- */
-export interface IAvmRunner extends IStartable {
-  /**
-   * Run AVM interpreter with the specified parameters
-   */
-  run(
-    runParams: RunParameters,
-    air: string,
-    prevData: Uint8Array,
-    data: Uint8Array,
-    callResults: CallResultsArray,
-  ): Promise<InterpreterResult | Error>;
-}
-
-/**
  * Interface for something which can hold a value
  */
 export interface IValueLoader<T> {
@@ -94,32 +73,3 @@ export interface IWasmLoader
 export interface IWorkerLoader
   extends IValueLoader<WorkerImplementation | Promise<WorkerImplementation>>,
     IStartable {}
-
-/**
- * Lazy loader for some value. Value is loaded only when `start` method is called
- */
-export class LazyLoader<T> implements IStartable, IValueLoader<T> {
-  private value: T | null = null;
-
-  constructor(private loadValue: () => Promise<T> | T) {}
-
-  getValue(): T {
-    if (this.value == null) {
-      throw new Error(
-        "Value has not been loaded. Call `start` method to load the value.",
-      );
-    }
-
-    return this.value;
-  }
-
-  async start() {
-    if (this.value !== null) {
-      return;
-    }
-
-    this.value = await this.loadValue();
-  }
-
-  async stop() {}
-}

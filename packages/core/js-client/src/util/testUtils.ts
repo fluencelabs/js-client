@@ -23,6 +23,8 @@ import {
   JSONValue,
   ServiceDef,
 } from "@fluencelabs/interfaces";
+import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
+import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 import { Subject, Subscribable } from "rxjs";
 
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
@@ -35,9 +37,7 @@ import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
-import { WasmLoaderFromNpm } from "../marine/deps-loader/node.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
-import { WorkerLoader } from "../marine/worker-script/workerLoader.js";
 import { Particle } from "../particle/Particle.js";
 
 export const registerHandlersHelper = (
@@ -146,26 +146,60 @@ class NoopConnection implements IConnection {
 
 export class TestPeer extends FluencePeer {
   constructor(keyPair: KeyPair, connection: IConnection) {
-    const workerLoader = new WorkerLoader();
+    const jsHost = new JsServiceHost();
 
-    // TODO: use js-client-isomorphic
-    const controlModuleLoader = new WasmLoaderFromNpm(
-      "@fluencelabs/marine-js",
-      "marine-js.wasm",
-    );
-
-    const avmModuleLoader = new WasmLoaderFromNpm(
-      "@fluencelabs/avm",
-      "avm.wasm",
-    );
+    let marineJsWasm: ArrayBuffer;
+    let avmWasm: ArrayBuffer;
 
     const marine = new MarineBackgroundRunner(
-      workerLoader,
-      controlModuleLoader,
-      avmModuleLoader,
+      {
+        async getValue() {
+          // TODO: load worker with avm and marine, test that it works
+          return getWorker("@fluencelabs/marine-worker", "/");
+        },
+        start() {
+          return Promise.resolve(undefined);
+        },
+        stop() {
+          return Promise.resolve(undefined);
+        },
+      },
+      {
+        getValue() {
+          return marineJsWasm;
+        },
+        async start(): Promise<void> {
+          marineJsWasm = await fetchResource(
+            "@fluencelabs/marine-js",
+            "/dist/marine-js.wasm",
+            "/",
+          ).then((res) => {
+            return res.arrayBuffer();
+          });
+        },
+        stop(): Promise<void> {
+          return Promise.resolve(undefined);
+        },
+      },
+      {
+        getValue() {
+          return avmWasm;
+        },
+        async start(): Promise<void> {
+          avmWasm = await fetchResource(
+            "@fluencelabs/avm",
+            "/dist/avm.wasm",
+            "/",
+          ).then((res) => {
+            return res.arrayBuffer();
+          });
+        },
+        stop(): Promise<void> {
+          return Promise.resolve(undefined);
+        },
+      },
     );
 
-    const jsHost = new JsServiceHost();
     super(DEFAULT_CONFIG, keyPair, marine, jsHost, connection);
   }
 }
@@ -192,25 +226,61 @@ export const withClient = async (
   config: ClientConfig,
   action: (client: ClientPeer) => Promise<void>,
 ) => {
-  const workerLoader = new WorkerLoader();
-
-  // TODO: use js-client-isomorphic
-  const controlModuleLoader = new WasmLoaderFromNpm(
-    "@fluencelabs/marine-js",
-    "marine-js.wasm",
-  );
-
-  const avmModuleLoader = new WasmLoaderFromNpm("@fluencelabs/avm", "avm.wasm");
-
-  const marine = new MarineBackgroundRunner(
-    workerLoader,
-    controlModuleLoader,
-    avmModuleLoader,
-  );
-
   const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(
     relay,
     config,
+  );
+
+  let marineJsWasm: ArrayBuffer;
+  let avmWasm: ArrayBuffer;
+
+  const marine = new MarineBackgroundRunner(
+    {
+      async getValue() {
+        // TODO: load worker with avm and marine, test that it works
+        return getWorker("@fluencelabs/marine-worker", "/");
+      },
+      start() {
+        return Promise.resolve(undefined);
+      },
+      stop() {
+        return Promise.resolve(undefined);
+      },
+    },
+    {
+      getValue() {
+        return marineJsWasm;
+      },
+      async start(): Promise<void> {
+        marineJsWasm = await fetchResource(
+          "@fluencelabs/marine-js",
+          "/dist/marine-js.wasm",
+          "/",
+        ).then((res) => {
+          return res.arrayBuffer();
+        });
+      },
+      stop(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+    },
+    {
+      getValue() {
+        return avmWasm;
+      },
+      async start(): Promise<void> {
+        avmWasm = await fetchResource(
+          "@fluencelabs/avm",
+          "/dist/avm.wasm",
+          "/",
+        ).then((res) => {
+          return res.arrayBuffer();
+        });
+      },
+      stop(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+    },
   );
 
   const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);

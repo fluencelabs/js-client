@@ -100,7 +100,10 @@ export const v5_callFunction = async (
         throw new Error("Argument and schema don't match");
       }
 
-      return [argNames[i], ts2aqua(arg, argSchema)];
+      return [
+        argNames[i],
+        ts2aqua(arg, argSchema, { path: [def.functionName] }),
+      ];
     }),
   );
 
