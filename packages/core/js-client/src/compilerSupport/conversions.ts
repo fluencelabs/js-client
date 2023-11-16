@@ -214,6 +214,12 @@ export const wrapFunction = (
         ? schema.domain.items
         : Object.values(schema.domain.fields);
 
+    if (schemaArgs.length !== jsonArgs.length) {
+      throw new Error(
+        `Schema and generated air doesn't match. Air have been called with ${jsonArgs.length} args and schema contains ${schemaArgs.length} args`,
+      );
+    }
+
     const tsArgs = jsonArgs.map((arg, i) => {
       return aqua2ts(arg, schemaArgs[i]);
     });
