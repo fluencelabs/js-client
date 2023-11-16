@@ -169,14 +169,16 @@ export const v5_registerService = (
     );
 
     return;
-  } else if (args.length === 2) {
+  }
+
+  if (args.length === 2) {
     if (args[0] instanceof FluencePeer) {
       v5_registerService([args[0], getDefaultServiceId(def), args[1]], def);
       return;
-    } else {
-      v5_registerService([getDefaultPeer(), args[0], args[1]], def);
-      return;
     }
+
+    v5_registerService([getDefaultPeer(), args[0], args[1]], def);
+    return;
   }
 
   const [peer, serviceId, serviceImpl] = args;

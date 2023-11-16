@@ -20,12 +20,78 @@ import {
   JSONValue,
   LabeledProductType,
   NonArrowSimpleType,
+  ScalarType,
   SimpleTypes,
 } from "@fluencelabs/interfaces";
 
 import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
 import { ServiceImpl } from "./types.js";
+
+class SchemaValidationError extends Error {
+  constructor(
+    public path: string[],
+    schema: NonArrowSimpleType,
+    expected: string,
+    provided: JSONValue,
+  ) {
+    const given =
+      provided === null
+        ? "null"
+        : Array.isArray(provided)
+        ? "array"
+        : typeof provided;
+
+    const message = `Type mismatch. Path: ${path.join(
+      ".",
+    )}; Expected: ${expected}; Given: ${given};\n\nschema: ${JSON.stringify(
+      schema,
+    )}`;
+
+    super(message);
+  }
+}
+
+interface ValidationContext {
+  path: string[];
+}
+
+const numberTypes = [
+  "u8",
+  "u16",
+  "u32",
+  "u64",
+  "i8",
+  "i16",
+  "i32",
+  "i64",
+  "f32",
+  "f64",
+] as const;
+
+function isScalar(
+  schema: ScalarType,
+  arg: JSONValue,
+  { path }: ValidationContext,
+) {
+  if (numberTypes.includes(schema.name)) {
+    if (typeof arg !== "number") {
+      throw new SchemaValidationError(path, schema, "number", arg);
+    }
+  } else if (schema.name === "bool") {
+    if (typeof arg !== "boolean") {
+      throw new SchemaValidationError(path, schema, "boolean", arg);
+    }
+  } else if (schema.name === "string") {
+    if (typeof arg !== "string") {
+      throw new SchemaValidationError(path, schema, "string", arg);
+    }
+  } else {
+    throw new SchemaValidationError(path, schema, "never", arg);
+  }
+
+  return arg;
+}
 
 export function aqua2ts(
   value: JSONValue,
@@ -82,45 +148,52 @@ export function aqua2ts(
 export function ts2aqua(
   value: JSONValue,
   schema: NonArrowSimpleType,
+  { path }: ValidationContext,
 ): JSONValue {
   if (schema.tag === "nil") {
-    return null;
-  } else if (schema.tag === "option") {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return value == null ? [] : ([ts2aqua(value, schema.type)] as [JSONValue]);
-  } else if (
-    schema.tag === "scalar" ||
-    schema.tag === "bottomType" ||
-    schema.tag === "topType"
-  ) {
-    return value;
-  } else if (schema.tag === "array") {
-    if (!Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+    if (value !== null) {
+      throw new SchemaValidationError(path, schema, "null", value);
     }
 
-    return value.map((y) => {
-      return ts2aqua(y, schema.type);
-    });
-  } else if (schema.tag === "unlabeledProduct") {
+    return value;
+  } else if (schema.tag === "option") {
+    // option means 'type | null'
+    return value == null ? [] : [ts2aqua(value, schema.type, { path })];
+  } else if (schema.tag === "topType") {
+    // topType equals to 'any'
+    return value;
+  } else if (schema.tag === "bottomType") {
+    // bottomType equals to 'never'
+    throw new SchemaValidationError(path, schema, "never", value);
+  } else if (schema.tag === "scalar") {
+    return isScalar(schema, value, { path });
+  } else if (schema.tag === "array") {
     if (!Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+      throw new SchemaValidationError(path, schema, "array", value);
     }
 
     return value.map((y, i) => {
-      return ts2aqua(y, schema.items[i]);
+      return ts2aqua(y, schema.type, { path: [...path, `[${i}]`] });
+    });
+  } else if (schema.tag === "unlabeledProduct") {
+    if (!Array.isArray(value)) {
+      throw new SchemaValidationError(path, schema, "array", value);
+    }
+
+    return value.map((y, i) => {
+      return ts2aqua(y, schema.items[i], { path: [...path, `[${i}]`] });
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
-    if (typeof value !== "object" || value == null || Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      throw new SchemaValidationError(path, schema, "object", value);
     }
 
     return Object.entries(schema.fields).reduce((agg, [key, type]) => {
-      const val = ts2aqua(value[key], type);
+      const val = ts2aqua(value[key], type, { path: [...path, key] });
       return { ...agg, [key]: val };
     }, {});
   } else {
-    throw new Error("Unexpected tag: " + JSON.stringify(schema));
+    throw new SchemaValidationError(path, schema, "never", value);
   }
 }
 
@@ -153,6 +226,6 @@ export const wrapFunction = (
         ? schema.codomain.items[0]
         : schema.codomain;
 
-    return ts2aqua(result, resultSchema);
+    return ts2aqua(result, resultSchema, { path: [] });
   };
 };
