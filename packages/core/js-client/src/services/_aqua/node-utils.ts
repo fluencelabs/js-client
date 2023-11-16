@@ -23,11 +23,11 @@ export function registerNodeUtils(
   serviceId: string,
   service: NodeUtils,
 ) {
-  const anyService: Record<never, unknown> = service;
+  const nodeUtilsService: Record<never, unknown> = service;
 
   registerService({
     peer,
-    service: anyService,
+    service: nodeUtilsService,
     serviceId,
   });
 }

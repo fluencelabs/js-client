@@ -56,7 +56,7 @@ export class TSTypeGenerator implements TypeGenerator {
     args.push([undefined, `config?: {ttl?: number}`]);
 
     const argsDefs = args.map(([, def]) => {
-      return "    " + def;
+      return def;
     });
 
     const argsDesc = args
@@ -68,28 +68,28 @@ export class TSTypeGenerator implements TypeGenerator {
       });
 
     const functionOverloads = [
-      argsDefs.join(",\n"),
-      [`    peer: ${CLIENT}`, ...argsDefs].join(",\n"),
+      argsDefs.join(", "),
+      [`peer: ${CLIENT}`, ...argsDefs].join(", "),
     ];
 
     const [resTypeDesc, resType] = genTypeName(
       funcDef.arrow.codomain,
-      capitalize(funcDef.functionName) + "Result",
+      capitalize(funcDef.functionName) + "ResultType",
     );
+
+    const functionOverloadArgsType = functionOverloads
+      .map((overload) => {
+        return `[${overload}]`;
+      })
+      .join(" | ");
 
     return [
       argsDesc.join("\n"),
       resTypeDesc ?? "",
-      functionOverloads
-        .flatMap((fo) => {
-          return [
-            `export function ${funcDef.functionName}(`,
-            fo,
-            `): Promise<${resType}>;`,
-            "",
-          ];
-        })
-        .join("\n"),
+      `export type ${funcDef.functionName}Params = ${functionOverloadArgsType};`,
+      `export type ${capitalize(
+        funcDef.functionName,
+      )}Result = Promise<${resType}>;\n`,
     ]
       .filter((s) => {
         return s !== "";

@@ -334,6 +334,7 @@ export abstract class FluencePeer {
     registerTracing(this, "tracingSrv", this._classServices.tracing);
   }
 
+  // TODO: too long, refactor
   private _startParticleProcessing() {
     this._particleSourceSubscription = this.connection.particleSource.subscribe(
       {

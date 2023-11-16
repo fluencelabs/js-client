@@ -23,6 +23,8 @@
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client": "workspace:^",
     "@fluencelabs/registry": "0.8.7",
+    "@fluencelabs/spell": "0.5.20",
+    "@fluencelabs/trust-graph": "0.4.7",
     "vitest": "0.34.6",
     "zod": "3.22.4"
   }

@@ -11,6 +11,7 @@
  */
 import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';
 
+// Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,
@@ -47,47 +48,21 @@ export function registerHelloWorld(peer: IFluenceClient$$, service: HelloWorldDe
 export function registerHelloWorld(peer: IFluenceClient$$, serviceId: string, service: HelloWorldDef): void;
 
 // Functions
-export type ResourceTestResult = [string | null, string[]]
+export type ResourceTestResultType = [string | null, string[]]
 
-export function resourceTest(
-    label: string,
-    config?: {ttl?: number}
-): Promise<ResourceTestResult>;
+export type resourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
 
-export function resourceTest(
-    peer: IFluenceClient$$,
-    label: string,
-    config?: {ttl?: number}
-): Promise<ResourceTestResult>;
+export type ResourceTestResult = Promise<ResourceTestResultType>;
 
-export function helloTest(
-    config?: {ttl?: number}
-): Promise<string>;
+export type helloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
-export function helloTest(
-    peer: IFluenceClient$$,
-    config?: {ttl?: number}
-): Promise<string>;
+export type HelloTestResult = Promise<string>;
 
-export function demo_calculation(
-    service_id: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
 
-export function demo_calculation(
-    peer: IFluenceClient$$,
-    service_id: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type Demo_calculationResult = Promise<number>;
 
-export function marineTest(
-    wasm64: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type marineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
 
-export function marineTest(
-    peer: IFluenceClient$$,
-    wasm64: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type MarineTestResult = Promise<number>;
 

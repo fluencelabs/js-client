@@ -45,7 +45,7 @@ export class Srv {
     if (!this.securityGuard_create(callParams)) {
       return {
         success: false,
-        error: ["Security guard validation failed"],
+        error: ["Marine services could be registered on %init_peer_id% only"],
         service_id: null,
       };
     }
@@ -80,7 +80,7 @@ export class Srv {
     if (!this.securityGuard_remove(callParams)) {
       return {
         success: false,
-        error: ["Security guard validation failed"],
+        error: ["Marine services could be remove on %init_peer_id% only"],
         service_id: null,
       };
     }

@@ -82,6 +82,9 @@ export const callAquaFunction = async ({
       registerParticleScopeService(peer, particle, service);
     }
 
+    // If fireAndForget is enabled, then function call completed when one of the two conditions is met:
+    //  1. The particle is sent to the network
+    //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed
     if (!fireAndForget) {
       registerParticleScopeService(peer, particle, responseService(resolve));
     }
@@ -89,9 +92,6 @@ export const callAquaFunction = async ({
     registerParticleScopeService(peer, particle, injectRelayService(peer));
 
     registerParticleScopeService(peer, particle, errorHandlingService(reject));
-    // If function is void, then it's completed when one of the two conditions is met:
-    //  1. The particle is sent to the network (state 'sent')
-    //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
 
     peer.internals.initiateParticle(particle, resolve, reject);
   });

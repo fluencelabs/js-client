@@ -45,11 +45,11 @@ export function registerSig(
   serviceId: string,
   service: Sig,
 ) {
-  const anyService: Record<never, unknown> = service;
+  const sigService: Record<never, unknown> = service;
 
   registerService({
     peer,
-    service: anyService,
+    service: sigService,
     serviceId,
   });
 }

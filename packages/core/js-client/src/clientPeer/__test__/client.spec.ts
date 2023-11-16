@@ -17,7 +17,7 @@
 import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect } from "vitest";
 
-import { ExpirationError, SendError } from "../../jsPeer/errors.js";
+import { ExpirationError } from "../../jsPeer/errors.js";
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withClient } from "../../util/testUtils.js";

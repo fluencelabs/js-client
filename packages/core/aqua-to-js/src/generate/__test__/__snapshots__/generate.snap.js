@@ -11,6 +11,7 @@
  */
 
 
+// Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,

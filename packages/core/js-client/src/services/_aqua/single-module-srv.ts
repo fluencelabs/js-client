@@ -23,12 +23,12 @@ export function registerSrv(
   serviceId: string,
   service: Srv,
 ) {
-  const anyService: Record<never, unknown> = service;
+  const singleModuleService: Record<never, unknown> = service;
 
   registerService({
     peer,
     serviceId,
-    service: anyService,
+    service: singleModuleService,
   });
 }
 

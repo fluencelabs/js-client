@@ -41,7 +41,6 @@ export class NodeUtils {
     }
 
     try {
-      // Strange enough, but Buffer type works here, while reading with encoding 'utf-8' doesn't
       const data = await readFile(path, "base64");
 
       return {

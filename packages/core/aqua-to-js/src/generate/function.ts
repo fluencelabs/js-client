@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { recursiveRenameLaquaProps } from "../utils.js";
+import { capitalize, recursiveRenameLaquaProps } from "../utils.js";
 
 import { AquaFunction, TypeGenerator } from "./interfaces.js";
 
@@ -40,8 +40,11 @@ ${func.script}\`;
 ${typeGenerator.funcType(func)}
 export function ${func.funcDef.functionName}(${typeGenerator.type(
     "...args",
-    "any[]",
-  )}) {
+    `${func.funcDef.functionName}Params`,
+  )})${typeGenerator.type(
+    "",
+    `${capitalize(func.funcDef.functionName)}Result`,
+  )} {
     return callFunction$$(
         args,
         ${JSON.stringify(recursiveRenameLaquaProps(funcDef), null, 4)},

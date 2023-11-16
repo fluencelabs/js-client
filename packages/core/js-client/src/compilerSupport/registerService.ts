@@ -28,7 +28,9 @@ interface RegisterServiceArgs {
   service: ServiceImpl;
 }
 
-const findAllPossibleServiceMethods = (service: ServiceImpl): Set<string> => {
+const findAllPossibleRegisteredServiceFunctions = (
+  service: ServiceImpl,
+): Set<string> => {
   let prototype: Record<string, unknown> = service;
   const serviceMethods = new Set<string>();
 
@@ -60,17 +62,17 @@ export const registerService = ({
     throw new Error("Service ID must be specified");
   }
 
-  const serviceMethods = findAllPossibleServiceMethods(service);
+  const serviceFunctions = findAllPossibleRegisteredServiceFunctions(service);
 
-  for (const method of serviceMethods) {
+  for (const serviceFunction of serviceFunctions) {
     // The function has type of (arg1, arg2, arg3, ... , ParticleContext) => CallServiceResultType | void
     // Account for the fact that user service might be defined as a class - .bind(...)
-    const handler = service[method];
+    const handler = service[serviceFunction];
     const userDefinedHandler = handler.bind(service);
 
     const serviceDescription = userHandlerService(
       serviceId,
-      method,
+      serviceFunction,
       userDefinedHandler,
     );
 

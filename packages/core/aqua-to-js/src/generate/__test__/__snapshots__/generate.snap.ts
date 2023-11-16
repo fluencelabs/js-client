@@ -11,6 +11,7 @@
  */
 import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';
 
+// Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
     v5_registerService as registerService$$,
@@ -539,20 +540,13 @@ export const resourceTest_script = `
 )
 `;
 
-export type ResourceTestResult = [string | null, string[]]
+export type ResourceTestResultType = [string | null, string[]]
 
-export function resourceTest(
-    label: string,
-    config?: {ttl?: number}
-): Promise<ResourceTestResult>;
+export type resourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
 
-export function resourceTest(
-    peer: IFluenceClient$$,
-    label: string,
-    config?: {ttl?: number}
-): Promise<ResourceTestResult>;
+export type ResourceTestResult = Promise<ResourceTestResultType>;
 
-export function resourceTest(...args: any[]) {
+export function resourceTest(...args: resourceTestParams): ResourceTestResult {
     return callFunction$$(
         args,
         {
@@ -615,16 +609,11 @@ export const helloTest_script = `
 )
 `;
 
-export function helloTest(
-    config?: {ttl?: number}
-): Promise<string>;
+export type helloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
-export function helloTest(
-    peer: IFluenceClient$$,
-    config?: {ttl?: number}
-): Promise<string>;
+export type HelloTestResult = Promise<string>;
 
-export function helloTest(...args: any[]) {
+export function helloTest(...args: helloTestParams): HelloTestResult {
     return callFunction$$(
         args,
         {
@@ -690,18 +679,11 @@ export const demo_calculation_script = `
 )
 `;
 
-export function demo_calculation(
-    service_id: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
 
-export function demo_calculation(
-    peer: IFluenceClient$$,
-    service_id: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type Demo_calculationResult = Promise<number>;
 
-export function demo_calculation(...args: any[]) {
+export function demo_calculation(...args: demo_calculationParams): Demo_calculationResult {
     return callFunction$$(
         args,
         {
@@ -775,18 +757,11 @@ export const marineTest_script = `
 )
 `;
 
-export function marineTest(
-    wasm64: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type marineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
 
-export function marineTest(
-    peer: IFluenceClient$$,
-    wasm64: string,
-    config?: {ttl?: number}
-): Promise<number>;
+export type MarineTestResult = Promise<number>;
 
-export function marineTest(...args: any[]) {
+export function marineTest(...args: marineTestParams): MarineTestResult {
     return callFunction$$(
         args,
         {
