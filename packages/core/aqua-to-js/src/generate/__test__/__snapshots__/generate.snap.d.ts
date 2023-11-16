@@ -50,19 +50,19 @@ export function registerHelloWorld(peer: IFluenceClient$$, serviceId: string, se
 // Functions
 export type ResourceTestResultType = [string | null, string[]]
 
-export type resourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
+export type ResourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
 
 export type ResourceTestResult = Promise<ResourceTestResultType>;
 
-export type helloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
+export type HelloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
 export type HelloTestResult = Promise<string>;
 
-export type demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
+export type Demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
 
 export type Demo_calculationResult = Promise<number>;
 
-export type marineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
+export type MarineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
 
 export type MarineTestResult = Promise<number>;
 

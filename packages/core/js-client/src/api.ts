@@ -25,6 +25,7 @@ import type {
 import { CallAquaFunctionConfig } from "./compilerSupport/callFunction.js";
 import {
   aqua2ts,
+  SchemaValidationError,
   ts2aqua,
   wrapFunction,
 } from "./compilerSupport/conversions.js";
@@ -37,10 +38,11 @@ const isAquaConfig = (
   config: JSONValue | ServiceImpl[string] | undefined,
 ): config is CallAquaFunctionConfig => {
   return (
-    typeof config === "object" &&
-    config !== null &&
-    !Array.isArray(config) &&
-    ["undefined", "number"].includes(typeof config["ttl"])
+    config === undefined ||
+    (typeof config === "object" &&
+      config !== null &&
+      !Array.isArray(config) &&
+      ["undefined", "number"].includes(typeof config["ttl"]))
   );
 };
 
@@ -60,14 +62,17 @@ export const v5_callFunction = async (
   def: FunctionCallDef,
   script: string,
 ): Promise<unknown> => {
-  const [peer, ...rest] = args;
+  const [peerOrArg, ...rest] = args;
 
-  if (!(peer instanceof FluencePeer)) {
-    await v5_callFunction([getDefaultPeer(), ...rest], def, script);
+  if (!(peerOrArg instanceof FluencePeer)) {
+    await v5_callFunction([getDefaultPeer(), peerOrArg, ...rest], def, script);
     return;
   }
 
-  const argNames = Object.keys(def.arrow);
+  const argNames = Object.keys(
+    def.arrow.domain.tag === "nil" ? [] : def.arrow.domain.fields,
+  );
+
   const schemaArgCount = argNames.length;
 
   type FunctionArg = SimpleTypes | ArrowWithoutCallbacks;
@@ -88,7 +93,12 @@ export const v5_callFunction = async (
 
       if (argSchema.tag === "arrow") {
         if (typeof arg !== "function") {
-          throw new Error("Argument and schema don't match");
+          throw new SchemaValidationError(
+            [argNames[i]],
+            argSchema,
+            "function",
+            arg,
+          );
         }
 
         const wrappedFunction = wrapFunction(arg, argSchema);
@@ -97,7 +107,12 @@ export const v5_callFunction = async (
       }
 
       if (typeof arg === "function") {
-        throw new Error("Argument and schema don't match");
+        throw new SchemaValidationError(
+          [argNames[i]],
+          argSchema,
+          "non-function value",
+          arg,
+        );
       }
 
       return [
@@ -111,7 +126,7 @@ export const v5_callFunction = async (
     def.arrow.codomain.tag === "nil" || def.arrow.codomain.items.length === 0;
 
   const params = {
-    peer,
+    peer: peerOrArg,
     args: callArgs,
     config,
   };

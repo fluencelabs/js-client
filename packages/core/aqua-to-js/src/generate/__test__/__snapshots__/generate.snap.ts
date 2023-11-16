@@ -542,7 +542,7 @@ export const resourceTest_script = `
 
 export type ResourceTestResultType = [string | null, string[]]
 
-export type resourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
+export type ResourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
 
 export type ResourceTestResult = Promise<ResourceTestResultType>;
 
@@ -609,7 +609,7 @@ export const helloTest_script = `
 )
 `;
 
-export type helloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
+export type HelloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
 export type HelloTestResult = Promise<string>;
 
@@ -679,7 +679,7 @@ export const demo_calculation_script = `
 )
 `;
 
-export type demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
+export type Demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
 
 export type Demo_calculationResult = Promise<number>;
 
@@ -757,7 +757,7 @@ export const marineTest_script = `
 )
 `;
 
-export type marineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
+export type MarineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
 
 export type MarineTestResult = Promise<number>;
 

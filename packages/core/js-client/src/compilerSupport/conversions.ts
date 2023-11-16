@@ -28,12 +28,12 @@ import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
 import { ServiceImpl } from "./types.js";
 
-class SchemaValidationError extends Error {
+export class SchemaValidationError extends Error {
   constructor(
     public path: string[],
-    schema: NonArrowSimpleType,
+    schema: NonArrowSimpleType | ArrowWithoutCallbacks,
     expected: string,
-    provided: JSONValue,
+    provided: JSONValue | ServiceImpl[string],
   ) {
     const given =
       provided === null

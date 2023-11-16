@@ -86,7 +86,9 @@ export class TSTypeGenerator implements TypeGenerator {
     return [
       argsDesc.join("\n"),
       resTypeDesc ?? "",
-      `export type ${funcDef.functionName}Params = ${functionOverloadArgsType};`,
+      `export type ${capitalize(
+        funcDef.functionName,
+      )}Params = ${functionOverloadArgsType};`,
       `export type ${capitalize(
         funcDef.functionName,
       )}Result = Promise<${resType}>;\n`,
