@@ -216,7 +216,7 @@ export const wrapFunction = (
 
     if (schemaArgs.length !== jsonArgs.length) {
       throw new Error(
-        `Schema and generated air doesn't match. Air have been called with ${jsonArgs.length} args and schema contains ${schemaArgs.length} args`,
+        `Schema and generated air doesn't match. Air has been called with ${jsonArgs.length} args and schema contains ${schemaArgs.length} args`,
       );
     }
 
