@@ -93,9 +93,9 @@ importers:
 
   packages/@tests/smoke/web:
     dependencies:
-      '@fluencelabs/js-client':
+      '@fluencelabs/js-client-isomorphic':
         specifier: workspace:*
-        version: link:../../../core/js-client
+        version: link:../../../core/js-client-isomorphic
       '@test/test-utils':
         specifier: workspace:*
         version: link:../../test-utils

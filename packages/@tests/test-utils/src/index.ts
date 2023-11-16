@@ -63,12 +63,14 @@ export const startContentServer = (
         },
         {
           source: "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:asset",
-          destination: "/node_modules/@fluencelabs/:name/dist/:asset",
+          destination:
+            "/node_modules/@fluencelabs/js-client-isomorphic/node_modules/@fluencelabs/:name/dist/:asset",
         },
         {
           source:
             "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:prefix/:asset",
-          destination: "/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
+          destination:
+            "/node_modules/@fluencelabs/js-client-isomorphic/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
         },
       ],
       headers: [
