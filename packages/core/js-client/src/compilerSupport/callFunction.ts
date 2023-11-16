@@ -69,6 +69,7 @@ export const callAquaFunction = async ({
   const particle = await peer.internals.createNewParticle(script, config.ttl);
 
   return new Promise<JSONValue>((resolve, reject) => {
+    // Registering function args as a services
     for (const [name, argVal] of Object.entries(args)) {
       let service: ServiceDescription;
 

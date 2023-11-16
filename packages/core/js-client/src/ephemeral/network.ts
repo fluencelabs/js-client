@@ -232,6 +232,7 @@ export class EphemeralNetwork {
     // shared worker for all the peers
     this.workerLoader = new WorkerLoaderFromFs("../../marine/worker-script");
 
+    // TODO: use js-client-isomorphic
     this.controlModuleLoader = new WasmLoaderFromNpm(
       "@fluencelabs/marine-js",
       "marine-js.wasm",

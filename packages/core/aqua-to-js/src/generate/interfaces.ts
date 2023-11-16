@@ -119,19 +119,24 @@ export class TSTypeGenerator implements TypeGenerator {
     const serviceDecl = `service: ${srvName}Def`;
     const serviceIdDecl = `serviceId: string`;
 
+    const functionOverloadsWithDefaultServiceId = [
+      [serviceDecl],
+      [serviceIdDecl, serviceDecl],
+      [peerDecl, serviceDecl],
+      [peerDecl, serviceIdDecl, serviceDecl],
+    ];
+
+    const functionOverloadsWithoutDefaultServiceId = [
+      [serviceIdDecl, serviceDecl],
+      [peerDecl, serviceIdDecl, serviceDecl],
+    ];
+
     const registerServiceArgs =
+      // This wrong type comes from aqua team. We need to discuss fix with them
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       (srvDef.defaultServiceId as DefaultServiceId).s_Some__f_value != null
-        ? [
-            [serviceDecl],
-            [serviceIdDecl, serviceDecl],
-            [peerDecl, serviceDecl],
-            [peerDecl, serviceIdDecl, serviceDecl],
-          ]
-        : [
-            [serviceIdDecl, serviceDecl],
-            [peerDecl, serviceIdDecl, serviceDecl],
-          ];
+        ? functionOverloadsWithDefaultServiceId
+        : functionOverloadsWithoutDefaultServiceId;
 
     return [
       interfaces,

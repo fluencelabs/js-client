@@ -148,6 +148,7 @@ export class TestPeer extends FluencePeer {
   constructor(keyPair: KeyPair, connection: IConnection) {
     const workerLoader = new WorkerLoader();
 
+    // TODO: use js-client-isomorphic
     const controlModuleLoader = new WasmLoaderFromNpm(
       "@fluencelabs/marine-js",
       "marine-js.wasm",
@@ -193,6 +194,7 @@ export const withClient = async (
 ) => {
   const workerLoader = new WorkerLoader();
 
+  // TODO: use js-client-isomorphic
   const controlModuleLoader = new WasmLoaderFromNpm(
     "@fluencelabs/marine-js",
     "marine-js.wasm",

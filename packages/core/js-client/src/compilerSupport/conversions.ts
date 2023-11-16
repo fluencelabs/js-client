@@ -147,12 +147,12 @@ export const wrapFunction = (
 
     const result = await value(...tsArgs, context);
 
-    const valueSchema =
+    const resultSchema =
       schema.codomain.tag === "unlabeledProduct" &&
       schema.codomain.items.length === 1
         ? schema.codomain.items[0]
         : schema.codomain;
 
-    return ts2aqua(result, valueSchema);
+    return ts2aqua(result, resultSchema);
   };
 };

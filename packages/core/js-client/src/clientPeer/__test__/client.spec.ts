@@ -25,8 +25,10 @@ import { checkConnection } from "../checkConnection.js";
 
 import { nodes, RELAY } from "./connection.js";
 
+const ONE_SECOND = 1000;
+
 describe("FluenceClient usage test suite", () => {
-  it("Should resolve at TTL when fire and forget behavior is used", async () => {
+  it("Should stop particle processing after TTL is reached", async () => {
     await withClient(RELAY, { defaultTtlMs: 600 }, async (peer) => {
       const script = `
     (seq
@@ -36,7 +38,7 @@ describe("FluenceClient usage test suite", () => {
 
       const particle = await peer.internals.createNewParticle(script);
 
-      const now = Date.now();
+      const start = Date.now();
 
       const promise = new Promise<JSONValue>((resolve, reject) => {
         registerHandlersHelper(peer, particle, {
@@ -51,7 +53,11 @@ describe("FluenceClient usage test suite", () => {
       });
 
       await expect(promise).rejects.toThrow(ExpirationError);
-      expect(Date.now() - 500).toBeGreaterThanOrEqual(now);
+
+      expect(
+        Date.now() - 500,
+        "Particle processing didn't stop after TTL is reached",
+      ).toBeGreaterThanOrEqual(start);
     });
   });
 
@@ -209,13 +215,17 @@ describe("FluenceClient usage test suite", () => {
       );
     });
 
-    it("With connection options: defaultTTL", async () => {
-      await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
-        const isConnected = await checkConnection(peer);
+    it(
+      "With connection options: defaultTTL",
+      async () => {
+        await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
+          const isConnected = await checkConnection(peer);
 
-        expect(isConnected).toBeFalsy();
-      });
-    }, 1000);
+          expect(isConnected).toBeFalsy();
+        });
+      },
+      ONE_SECOND,
+    );
   });
 
   it.skip("Should throw correct error when the client tries to send a particle not to the relay", async () => {
@@ -247,14 +257,10 @@ describe("FluenceClient usage test suite", () => {
           particle,
           () => {},
           (error: Error) => {
-            if (error instanceof SendError) {
-              reject(error.message);
-            }
+            reject(error);
           },
         );
       });
-
-      await promise;
 
       await expect(promise).rejects.toMatch(
         "Particle is expected to be sent to only the single peer (relay which client is connected to)",

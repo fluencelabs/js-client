@@ -33,6 +33,17 @@ import { FluencePeer } from "./jsPeer/FluencePeer.js";
 
 import { callAquaFunction, Fluence, registerService } from "./index.js";
 
+const isAquaConfig = (
+  config: JSONValue | ServiceImpl[string] | undefined,
+): config is CallAquaFunctionConfig => {
+  return (
+    typeof config === "object" &&
+    config !== null &&
+    !Array.isArray(config) &&
+    ["undefined", "number"].includes(typeof config["ttl"])
+  );
+};
+
 /**
  * Convenience function to support Aqua `func` generation backend
  * The compiler only need to generate a call the function and provide the corresponding definitions and the air script
@@ -47,9 +58,11 @@ export const v5_callFunction = async (
   script: string,
 ): Promise<unknown> => {
   const argNames = Object.keys(def.arrow);
-  const argCount = argNames.length;
+  const schemaArgCount = argNames.length;
 
-  const functionArgs: Record<string, SimpleTypes | ArrowWithoutCallbacks> =
+  type FunctionArg = SimpleTypes | ArrowWithoutCallbacks;
+
+  const schemaFunctionArgs: Record<string, FunctionArg> =
     def.arrow.domain.tag === "nil" ? {} : def.arrow.domain.fields;
 
   let peer: FluencePeer | undefined;
@@ -61,26 +74,26 @@ export const v5_callFunction = async (
     peer = Fluence.defaultClient;
   }
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const config =
-    argCount < args.length
-      ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (args.pop() as CallAquaFunctionConfig | undefined)
-      : undefined;
-
   if (peer == null) {
     throw new Error(
       "Could not register Aqua service because the client is not initialized. Did you forget to call Fluence.connect()?",
     );
   }
 
+  // if args more than expected in schema (schemaArgCount) then last arg is config
+  const config = schemaArgCount < args.length ? args.pop() : undefined;
+
+  if (!isAquaConfig(config)) {
+    throw new Error("Config should be object type");
+  }
+
   const callArgs = Object.fromEntries<JSONValue | ServiceImpl[string]>(
-    args.slice(0, argCount).map((arg, i) => {
-      const argSchema = functionArgs[argNames[i]];
+    args.slice(0, schemaArgCount).map((arg, i) => {
+      const argSchema = schemaFunctionArgs[argNames[i]];
 
       if (argSchema.tag === "arrow") {
         if (typeof arg !== "function") {
-          throw new Error("Argument and schema doesn't match");
+          throw new Error("Argument and schema don't match");
         }
 
         const wrappedFunction = wrapFunction(arg, argSchema);
@@ -89,7 +102,7 @@ export const v5_callFunction = async (
       }
 
       if (typeof arg === "function") {
-        throw new Error("Argument and schema doesn't match");
+        throw new Error("Argument and schema don't match");
       }
 
       return [argNames[i], ts2aqua(arg, argSchema)];
@@ -111,13 +124,13 @@ export const v5_callFunction = async (
     fireAndForget: returnTypeVoid,
   });
 
-  const valueSchema =
+  const returnSchema =
     def.arrow.codomain.tag === "unlabeledProduct" &&
     def.arrow.codomain.items.length === 1
       ? def.arrow.codomain.items[0]
       : def.arrow.codomain;
 
-  return aqua2ts(result, valueSchema);
+  return aqua2ts(result, returnSchema);
 };
 
 /**
@@ -145,7 +158,13 @@ export const v5_registerService = (args: unknown[], def: ServiceDef): void => {
     );
   }
 
-  if (typeof args[0] === "string") {
+  if (args.length === 2) {
+    if (typeof args[0] !== "string") {
+      throw new Error(
+        `Service ID should be of type string. ${typeof args[0]} provided.`,
+      );
+    }
+
     serviceId = args[0];
   }
 
@@ -153,8 +172,10 @@ export const v5_registerService = (args: unknown[], def: ServiceDef): void => {
     throw new Error("Service ID is not provided");
   }
 
+  // Schema for every function in service
   const serviceSchema = def.functions.tag === "nil" ? {} : def.functions.fields;
 
+  // Wrapping service impl to convert their args ts -> aqua and backwards
   const wrappedServiceImpl = Object.fromEntries(
     Object.entries(serviceImpl).map(([name, func]) => {
       return [name, wrapFunction(func, serviceSchema[name])];

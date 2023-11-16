@@ -33,6 +33,7 @@ const packageJsonSchema = z.object({
   name: z.string(),
   version: z.string(),
   devDependencies: z.object({
+    // This version used in header file
     ["@fluencelabs/aqua-api"]: z.string(),
   }),
 });

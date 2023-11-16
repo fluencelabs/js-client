@@ -18,11 +18,38 @@ import {
   ArrowWithoutCallbacks,
   FunctionCallDef,
   JSONValue,
+  ScalarType,
   SimpleTypes,
   UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 
 import { typeToTs } from "../common.js";
+
+const numberTypes = [
+  "u8",
+  "u16",
+  "u32",
+  "u64",
+  "i8",
+  "i16",
+  "i32",
+  "i64",
+  "f32",
+  "f64",
+];
+
+function isScalar(schema: ScalarType, arg: JSONValue) {
+  if (numberTypes.includes(schema.name)) {
+    return typeof arg === "number";
+  } else if (schema.name === "bool") {
+    return typeof arg === "boolean";
+  } else if (schema.name === "string") {
+    return typeof arg === "string";
+  } else {
+    // Should not be possible
+    return false;
+  }
+}
 
 export function validateFunctionCall(
   schema: FunctionCallDef,
@@ -47,12 +74,12 @@ export function validateFunctionCall(
 export function validateFunctionCallArg(
   schema: SimpleTypes | UnlabeledProductType | ArrowWithoutCallbacks,
   arg: JSONValue,
-  argIndex: number,
+  argPosition: number,
 ) {
   if (!isTypeMatchesSchema(schema, arg)) {
     const expectedType = typeToTs(schema);
     throw new Error(
-      `Argument ${argIndex} doesn't match schema. Expected type: ${expectedType}`,
+      `Argument ${argPosition} doesn't match schema. Expected type: ${expectedType}`,
     );
   }
 }
@@ -66,29 +93,7 @@ export function isTypeMatchesSchema(
   } else if (schema.tag === "option") {
     return arg === null || isTypeMatchesSchema(schema.type, arg);
   } else if (schema.tag === "scalar") {
-    if (
-      [
-        "u8",
-        "u16",
-        "u32",
-        "u64",
-        "i8",
-        "i16",
-        "i32",
-        "i64",
-        "f32",
-        "f64",
-      ].includes(schema.name)
-    ) {
-      return typeof arg === "number";
-    } else if (schema.name === "bool") {
-      return typeof arg === "boolean";
-    } else if (schema.name === "string") {
-      return typeof arg === "string";
-    } else {
-      // Should not be possible
-      return false;
-    }
+    return isScalar(schema, arg);
   } else if (schema.tag === "array") {
     return (
       Array.isArray(arg) &&

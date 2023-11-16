@@ -37,6 +37,7 @@ export class EphemeralNetworkClient extends FluencePeer {
   ) {
     const workerLoader = new WorkerLoader();
 
+    // TODO: use js-client-isomorphic
     const controlModuleLoader = new WasmLoaderFromNpm(
       "@fluencelabs/marine-js",
       "marine-js.wasm",

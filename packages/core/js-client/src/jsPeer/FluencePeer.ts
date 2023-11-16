@@ -538,6 +538,17 @@ export abstract class FluencePeer {
                       "id %s. send successful",
                       newParticle.id,
                     );
+
+                    if (
+                      this.jsServiceHost.getHandler(
+                        "callbackSrv",
+                        "response",
+                        item.particle.id,
+                      ) == null
+                    ) {
+                      // try to finish script if fire-and-forget enabled
+                      item.onSuccess({});
+                    }
                   })
                   .catch((e: unknown) => {
                     log_particle.error(
@@ -623,10 +634,9 @@ export abstract class FluencePeer {
                     "callbackSrv",
                     "response",
                     item.particle.id,
-                  ) == null &&
-                  item.result.nextPeerPks.length === 0
+                  ) == null
                 ) {
-                  // try to finish script
+                  // try to finish script if fire-and-forget enabled
                   item.onSuccess({});
                 }
               }

@@ -45,7 +45,7 @@ describe("Aqua to js/ts compiler", () => {
     };
   });
 
-  it("matches js snapshot", async () => {
+  it("matches js snapshots", async () => {
     const jsResult = generateSources(res, "js", pkg);
     const jsTypes = generateTypes(res, pkg);
 
@@ -58,7 +58,7 @@ describe("Aqua to js/ts compiler", () => {
     );
   });
 
-  it("matches ts snapshot", async () => {
+  it("matches ts snapshots", async () => {
     const tsResult = generateSources(res, "ts", pkg);
 
     await expect(tsResult).toMatchFileSnapshot(
