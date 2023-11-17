@@ -61,12 +61,15 @@ export const v5_callFunction = async (
   ],
   def: FunctionCallDef,
   script: string,
-): Promise<unknown> => {
+): Promise<JSONValue> => {
   const [peerOrArg, ...rest] = args;
 
   if (!(peerOrArg instanceof FluencePeer)) {
-    await v5_callFunction([getDefaultPeer(), peerOrArg, ...rest], def, script);
-    return;
+    return await v5_callFunction(
+      [getDefaultPeer(), peerOrArg, ...rest],
+      def,
+      script,
+    );
   }
 
   const argNames = Object.keys(
