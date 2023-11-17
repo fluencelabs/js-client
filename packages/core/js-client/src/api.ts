@@ -119,7 +119,13 @@ export const v5_callFunction = async (
   const returnTypeVoid =
     def.arrow.codomain.tag === "nil" || def.arrow.codomain.items.length === 0;
 
-  const result = await callAquaFunction({
+  const returnSchema =
+    def.arrow.codomain.tag === "unlabeledProduct" &&
+    def.arrow.codomain.items.length === 1
+      ? def.arrow.codomain.items[0]
+      : def.arrow.codomain;
+
+  let result = await callAquaFunction({
     script,
     peer: peerOrArg,
     args: callArgs,
@@ -127,11 +133,9 @@ export const v5_callFunction = async (
     fireAndForget: returnTypeVoid,
   });
 
-  const returnSchema =
-    def.arrow.codomain.tag === "unlabeledProduct" &&
-    def.arrow.codomain.items.length === 1
-      ? def.arrow.codomain.items[0]
-      : def.arrow.codomain;
+  if (returnTypeVoid) {
+    result = null;
+  }
 
   return aqua2js(result, returnSchema);
 };

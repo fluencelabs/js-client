@@ -228,13 +228,20 @@ export const wrapFunction = (
       return aqua2js(arg, schemaArgs[i]);
     });
 
-    const result = await func(...tsArgs, context);
+    const returnTypeVoid =
+      schema.codomain.tag === "nil" || schema.codomain.items.length === 0;
 
     const resultSchema =
       schema.codomain.tag === "unlabeledProduct" &&
       schema.codomain.items.length === 1
         ? schema.codomain.items[0]
         : schema.codomain;
+
+    let result = await func(...tsArgs, context);
+
+    if (returnTypeVoid) {
+      result = null;
+    }
 
     return js2aqua(result, resultSchema, { path: [] });
   };
