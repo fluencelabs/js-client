@@ -43,7 +43,7 @@ jobs:
     uses: fluencelabs/aqua/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      nox-image: "fluencelabs/nox:unstable_minimal"
+      nox-image: "fluencelabs/nox:0.4.2"
   flox:
     needs:
       - js-client
