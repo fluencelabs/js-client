@@ -31,6 +31,7 @@ export const defaultGuard = (peer: FluencePeer) => {
   return allowOnlyParticleOriginatedAt(peer.keyPair.getPeerId());
 };
 
+// Service for registering marine modules in js-client's marine runtime
 export class Srv {
   private services: Set<string> = new Set();
 
