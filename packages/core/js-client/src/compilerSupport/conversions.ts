@@ -209,6 +209,7 @@ export const wrapFunction = (
     | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
 ): ServiceImpl[string] => {
   return async (...args) => {
+    // These assertions used to correctly destructure tuple. It's impossible to do without asserts due to ts limitations.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const jsonArgs = args.slice(0, args.length - 1) as JSONValue[];
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

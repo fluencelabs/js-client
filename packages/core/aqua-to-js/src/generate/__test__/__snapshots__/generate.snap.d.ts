@@ -14,8 +14,7 @@ import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleCon
 // Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
-    FluencePeer as FluencePeer$$
+    v5_registerService as registerService$$
 } from '@fluencelabs/js-client';
 
 // Services
