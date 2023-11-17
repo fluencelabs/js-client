@@ -19,6 +19,8 @@ import { PeerIdB58 } from "@fluencelabs/interfaces";
 
 import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
+// Helpers for validating service function
+
 /**
  * A predicate of call params for sig service's sign method which determines whether signing operation is allowed or not
  */

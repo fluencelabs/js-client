@@ -68,13 +68,15 @@ const parseWithSchema = <T extends z.ZodTypeAny>(
 ): [z.infer<T>, null] | [null, string] => {
   const result = schema.safeParse(req.args, {
     errorMap: (issue, ctx) => {
-      if (issue.code === z.ZodIssueCode.invalid_type) {
-        if (issue.path.length === 1 && typeof issue.path[0] === "number") {
-          const [arg] = issue.path;
-          return {
-            message: `Argument ${arg} expected to be of type ${issue.expected}, Got ${issue.received}`,
-          };
-        }
+      if (
+        issue.code === z.ZodIssueCode.invalid_type &&
+        issue.path.length === 1 &&
+        typeof issue.path[0] === "number"
+      ) {
+        const [arg] = issue.path;
+        return {
+          message: `Argument ${arg} expected to be of type ${issue.expected}, Got ${issue.received}`,
+        };
       }
 
       if (issue.code === z.ZodIssueCode.too_big) {
@@ -340,8 +342,7 @@ export const builtInServices: Record<
     }),
 
     concat_strings: withSchema(z.array(z.string()))((args) => {
-      const res = "".concat(...args);
-      return success(res);
+      return success(args.join(""));
     }),
   },
 

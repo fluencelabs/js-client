@@ -202,7 +202,9 @@ export function js2aqua(
   }
 }
 
-export const wrapFunction = (
+// Wrapping function, converting its arguments to aqua before call and back to js after call.
+// It makes callbacks and service functions defined by user operate on js types seamlessly
+export const wrapJsFunction = (
   func: ServiceImpl[string],
   schema:
     | ArrowWithoutCallbacks

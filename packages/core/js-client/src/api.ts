@@ -28,7 +28,7 @@ import {
   aqua2js,
   SchemaValidationError,
   js2aqua,
-  wrapFunction,
+  wrapJsFunction,
 } from "./compilerSupport/conversions.js";
 import { ServiceImpl } from "./compilerSupport/types.js";
 import { FluencePeer } from "./jsPeer/FluencePeer.js";
@@ -103,7 +103,7 @@ export const v5_callFunction = async (
           );
         }
 
-        return [argName, wrapFunction(arg, argSchema)];
+        return [argName, wrapJsFunction(arg, argSchema)];
       }
 
       if (typeof arg === "function") {
@@ -204,7 +204,7 @@ export const v5_registerService = (
   // Wrapping service impl to convert their args ts -> aqua and backwards
   const wrappedServiceImpl = Object.fromEntries(
     Object.entries(serviceImpl).map(([name, func]) => {
-      return [name, wrapFunction(func, serviceSchema[name])];
+      return [name, wrapJsFunction(func, serviceSchema[name])];
     }),
   );
 
