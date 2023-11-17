@@ -47,7 +47,7 @@ export class SchemaValidationError extends Error {
       ".",
     )}; Expected: ${expected}; Given: ${given}; \nSchema: ${JSON.stringify(
       schema,
-    )}; \nTry to recompile rust services and aqua. Make sure you are using up-to-date versions of aqua libraries`;
+    )}; \nTry recompiling rust services and aqua. Make sure you are using up-to-date versions of aqua libraries`;
 
     super(message);
   }
