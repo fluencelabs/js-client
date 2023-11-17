@@ -43,11 +43,11 @@ export class SchemaValidationError extends Error {
         ? "array"
         : typeof provided;
 
-    const message = `Aqua and schema type mismatch. Path: ${path.join(
+    const message = `Aqua type mismatch. Path: ${path.join(
       ".",
-    )}; Expected: ${expected}; Given: ${given};\n\nschema: ${JSON.stringify(
+    )}; Expected: ${expected}; Given: ${given}; \nSchema: ${JSON.stringify(
       schema,
-    )}; Try to recompile rust services and aqua and make sure that you are using up-to-date versions of aqua libraries`;
+    )}; \nTry to recompile rust services and aqua. Make sure you are using up-to-date versions of aqua libraries`;
 
     super(message);
   }
