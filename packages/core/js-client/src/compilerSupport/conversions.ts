@@ -43,11 +43,11 @@ export class SchemaValidationError extends Error {
         ? "array"
         : typeof provided;
 
-    const message = `Type mismatch. Path: ${path.join(
+    const message = `Aqua and schema type mismatch. Path: ${path.join(
       ".",
     )}; Expected: ${expected}; Given: ${given};\n\nschema: ${JSON.stringify(
       schema,
-    )}`;
+    )}; Try to recompile rust services and aqua and make sure that you are using up-to-date versions of aqua libraries`;
 
     super(message);
   }
@@ -102,7 +102,7 @@ export function aqua2js(
     return null;
   } else if (schema.tag === "option") {
     if (!Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+      throw new SchemaValidationError([], schema, "array", value);
     }
 
     if (value.length === 0) {
@@ -118,7 +118,7 @@ export function aqua2js(
     return value;
   } else if (schema.tag === "array") {
     if (!Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+      throw new SchemaValidationError([], schema, "array", value);
     }
 
     return value.map((y) => {
@@ -126,7 +126,7 @@ export function aqua2js(
     });
   } else if (schema.tag === "unlabeledProduct") {
     if (!Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+      throw new SchemaValidationError([], schema, "array", value);
     }
 
     return value.map((y, i) => {
@@ -134,7 +134,7 @@ export function aqua2js(
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
     if (typeof value !== "object" || value == null || Array.isArray(value)) {
-      throw new Error("Value and schema doesn't match");
+      throw new SchemaValidationError([], schema, "object", value);
     }
 
     return Object.fromEntries(
@@ -144,7 +144,7 @@ export function aqua2js(
       }),
     );
   } else {
-    throw new Error("Unexpected tag: " + JSON.stringify(schema));
+    throw new SchemaValidationError([], schema, "never", value);
   }
 }
 
