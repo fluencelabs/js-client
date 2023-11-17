@@ -24,7 +24,7 @@ const log = logger("aqua");
 
 interface RegisterServiceArgs {
   peer: FluencePeer;
-  serviceId: string | undefined;
+  serviceId: string;
   service: ServiceImpl;
 }
 
@@ -43,7 +43,7 @@ const findAllPossibleRegisteredServiceFunctions = (
         return serviceMethods.add(prop);
       });
 
-    // Satisfying typescript here
+    // coercing 'any' type to 'Record' bcs object prototype is actually an object
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     prototype = Object.getPrototypeOf(prototype) as Record<string, unknown>;
   } while (prototype.constructor !== Object);
@@ -58,15 +58,9 @@ export const registerService = ({
 }: RegisterServiceArgs) => {
   log.trace("registering aqua service %o", { serviceId, service });
 
-  if (serviceId == null) {
-    throw new Error("Service ID must be specified");
-  }
-
   const serviceFunctions = findAllPossibleRegisteredServiceFunctions(service);
 
   for (const serviceFunction of serviceFunctions) {
-    // The function has type of (arg1, arg2, arg3, ... , ParticleContext) => CallServiceResultType | void
-    // Account for the fact that user service might be defined as a class - .bind(...)
     const handler = service[serviceFunction];
     const userDefinedHandler = handler.bind(service);
 

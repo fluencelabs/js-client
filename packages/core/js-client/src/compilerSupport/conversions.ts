@@ -93,7 +93,7 @@ function isScalar(
   return arg;
 }
 
-export function aqua2ts(
+export function aqua2js(
   value: JSONValue,
   schema: NonArrowSimpleType,
 ): JSONValue {
@@ -107,7 +107,7 @@ export function aqua2ts(
     if (value.length === 0) {
       return null;
     } else {
-      return aqua2ts(value[0], schema.type);
+      return aqua2js(value[0], schema.type);
     }
   } else if (
     schema.tag === "scalar" ||
@@ -121,7 +121,7 @@ export function aqua2ts(
     }
 
     return value.map((y) => {
-      return aqua2ts(y, schema.type);
+      return aqua2js(y, schema.type);
     });
   } else if (schema.tag === "unlabeledProduct") {
     if (!Array.isArray(value)) {
@@ -129,23 +129,25 @@ export function aqua2ts(
     }
 
     return value.map((y, i) => {
-      return aqua2ts(y, schema.items[i]);
+      return aqua2js(y, schema.items[i]);
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
     if (typeof value !== "object" || value == null || Array.isArray(value)) {
       throw new Error("Value and schema doesn't match");
     }
 
-    return Object.entries(schema.fields).reduce((agg, [key, type]) => {
-      const val = aqua2ts(value[key], type);
-      return { ...agg, [key]: val };
-    }, {});
+    return Object.fromEntries(
+      Object.entries(schema.fields).map(([key, type]) => {
+        const val = aqua2js(value[key], type);
+        return [key, val];
+      }),
+    );
   } else {
     throw new Error("Unexpected tag: " + JSON.stringify(schema));
   }
 }
 
-export function ts2aqua(
+export function js2aqua(
   value: JSONValue,
   schema: NonArrowSimpleType,
   { path }: ValidationContext,
@@ -158,7 +160,7 @@ export function ts2aqua(
     return value;
   } else if (schema.tag === "option") {
     // option means 'type | null'
-    return value == null ? [] : [ts2aqua(value, schema.type, { path })];
+    return value == null ? [] : [js2aqua(value, schema.type, { path })];
   } else if (schema.tag === "topType") {
     // topType equals to 'any'
     return value;
@@ -173,7 +175,7 @@ export function ts2aqua(
     }
 
     return value.map((y, i) => {
-      return ts2aqua(y, schema.type, { path: [...path, `[${i}]`] });
+      return js2aqua(y, schema.type, { path: [...path, `[${i}]`] });
     });
   } else if (schema.tag === "unlabeledProduct") {
     if (!Array.isArray(value)) {
@@ -181,24 +183,26 @@ export function ts2aqua(
     }
 
     return value.map((y, i) => {
-      return ts2aqua(y, schema.items[i], { path: [...path, `[${i}]`] });
+      return js2aqua(y, schema.items[i], { path: [...path, `[${i}]`] });
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
       throw new SchemaValidationError(path, schema, "object", value);
     }
 
-    return Object.entries(schema.fields).reduce((agg, [key, type]) => {
-      const val = ts2aqua(value[key], type, { path: [...path, key] });
-      return { ...agg, [key]: val };
-    }, {});
+    return Object.fromEntries(
+      Object.entries(schema.fields).map(([key, type]) => {
+        const val = js2aqua(value[key], type, { path: [...path, key] });
+        return [key, val];
+      }),
+    );
   } else {
     throw new SchemaValidationError(path, schema, "never", value);
   }
 }
 
 export const wrapFunction = (
-  value: ServiceImpl[string],
+  func: ServiceImpl[string],
   schema: ArrowWithoutCallbacks | ArrowType<LabeledProductType<SimpleTypes>>,
 ): ServiceImpl[string] => {
   return async (...args) => {
@@ -221,10 +225,10 @@ export const wrapFunction = (
     }
 
     const tsArgs = jsonArgs.map((arg, i) => {
-      return aqua2ts(arg, schemaArgs[i]);
+      return aqua2js(arg, schemaArgs[i]);
     });
 
-    const result = await value(...tsArgs, context);
+    const result = await func(...tsArgs, context);
 
     const resultSchema =
       schema.codomain.tag === "unlabeledProduct" &&
@@ -232,6 +236,6 @@ export const wrapFunction = (
         ? schema.codomain.items[0]
         : schema.codomain;
 
-    return ts2aqua(result, resultSchema, { path: [] });
+    return js2aqua(result, resultSchema, { path: [] });
   };
 };

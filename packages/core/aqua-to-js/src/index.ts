@@ -15,7 +15,7 @@
  */
 
 import { generateSources, generateTypes } from "./generate/index.js";
-import { CompilationResult, OutputType } from "./generate/interfaces.js";
+import { CompilationResult } from "./generate/interfaces.js";
 import { getPackageJsonContent } from "./utils.js";
 
 interface JsOutput {
@@ -27,14 +27,18 @@ interface TsOutput {
   sources: string;
 }
 
-type LanguageOutput = JsOutput | TsOutput;
+type LanguageOutput = {
+  js: JsOutput;
+  ts: TsOutput;
+};
 
 type NothingToGenerate = null;
+type OutputType = "js" | "ts";
 
-export default async function aquaToJs(
+export default async function aquaToJs<T extends OutputType>(
   res: CompilationResult,
-  outputType: OutputType,
-): Promise<LanguageOutput | NothingToGenerate> {
+  outputType: T,
+): Promise<LanguageOutput[T] | NothingToGenerate> {
   if (
     Object.keys(res.services).length === 0 &&
     Object.keys(res.functions).length === 0
@@ -46,10 +50,11 @@ export default async function aquaToJs(
 
   return outputType === "js"
     ? {
-        sources: generateSources(res, outputType, packageJson),
+        sources: generateSources(res, "js", packageJson),
         types: generateTypes(res, packageJson),
       }
-    : {
-        sources: generateSources(res, outputType, packageJson),
-      };
+    : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      ({
+        sources: generateSources(res, "ts", packageJson),
+      } as LanguageOutput[T]);
 }

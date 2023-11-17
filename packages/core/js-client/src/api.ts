@@ -15,18 +15,19 @@
  */
 
 import type {
+  ArrowWithoutCallbacks,
   FunctionCallDef,
   JSONValue,
-  SimpleTypes,
-  ArrowWithoutCallbacks,
   ServiceDef,
+  SimpleTypes,
 } from "@fluencelabs/interfaces";
+import { z } from "zod";
 
 import { CallAquaFunctionConfig } from "./compilerSupport/callFunction.js";
 import {
-  aqua2ts,
+  aqua2js,
   SchemaValidationError,
-  ts2aqua,
+  js2aqua,
   wrapFunction,
 } from "./compilerSupport/conversions.js";
 import { ServiceImpl } from "./compilerSupport/types.js";
@@ -34,17 +35,16 @@ import { FluencePeer } from "./jsPeer/FluencePeer.js";
 
 import { callAquaFunction, Fluence, registerService } from "./index.js";
 
-const isAquaConfig = (
-  config: JSONValue | ServiceImpl[string] | undefined,
-): config is CallAquaFunctionConfig => {
-  return (
-    config === undefined ||
-    (typeof config === "object" &&
-      config !== null &&
-      !Array.isArray(config) &&
-      ["undefined", "number"].includes(typeof config["ttl"]))
-  );
-};
+function validateAquaConfig(
+  config: unknown,
+): asserts config is CallAquaFunctionConfig | undefined {
+  z.union([
+    z.object({
+      ttl: z.number().optional(),
+    }),
+    z.undefined(),
+  ]).parse(config);
+}
 
 /**
  * Convenience function to support Aqua `func` generation backend
@@ -80,60 +80,50 @@ export const v5_callFunction = async (
   const schemaFunctionArgs: Record<string, FunctionArg> =
     def.arrow.domain.tag === "nil" ? {} : def.arrow.domain.fields;
 
-  // if args more than expected in schema (schemaArgCount) then last arg is config
+  // if there are more args than expected in schema (schemaArgCount) then last arg is config
   const config = schemaArgCount < rest.length ? rest.pop() : undefined;
 
-  if (!isAquaConfig(config)) {
-    throw new Error("Config should be object type");
-  }
+  validateAquaConfig(config);
 
   const callArgs = Object.fromEntries<JSONValue | ServiceImpl[string]>(
     rest.slice(0, schemaArgCount).map((arg, i) => {
-      const argSchema = schemaFunctionArgs[argNames[i]];
+      const argName = argNames[i];
+      const argSchema = schemaFunctionArgs[argName];
 
       if (argSchema.tag === "arrow") {
         if (typeof arg !== "function") {
           throw new SchemaValidationError(
-            [argNames[i]],
+            [argName],
             argSchema,
             "function",
             arg,
           );
         }
 
-        const wrappedFunction = wrapFunction(arg, argSchema);
-
-        return [argNames[i], wrappedFunction];
+        return [argName, wrapFunction(arg, argSchema)];
       }
 
       if (typeof arg === "function") {
         throw new SchemaValidationError(
-          [argNames[i]],
+          [argName],
           argSchema,
           "non-function value",
           arg,
         );
       }
 
-      return [
-        argNames[i],
-        ts2aqua(arg, argSchema, { path: [def.functionName] }),
-      ];
+      return [argName, js2aqua(arg, argSchema, { path: [def.functionName] })];
     }),
   );
 
   const returnTypeVoid =
     def.arrow.codomain.tag === "nil" || def.arrow.codomain.items.length === 0;
 
-  const params = {
+  const result = await callAquaFunction({
+    script,
     peer: peerOrArg,
     args: callArgs,
     config,
-  };
-
-  const result = await callAquaFunction({
-    script,
-    ...params,
     fireAndForget: returnTypeVoid,
   });
 
@@ -143,7 +133,7 @@ export const v5_callFunction = async (
       ? def.arrow.codomain.items[0]
       : def.arrow.codomain;
 
-  return aqua2ts(result, returnSchema);
+  return aqua2js(result, returnSchema);
 };
 
 const getDefaultPeer = (): FluencePeer => {
