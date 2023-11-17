@@ -88,7 +88,7 @@ function isScalar(
       throw new SchemaValidationError(path, schema, "string", arg);
     }
   } else {
-    throw new SchemaValidationError(path, schema, "never", arg);
+    throw new SchemaValidationError(path, schema, schema.name, arg);
   }
 
   return arg;
