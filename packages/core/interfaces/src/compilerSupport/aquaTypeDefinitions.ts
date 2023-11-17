@@ -264,6 +264,8 @@ export interface ServiceDef {
    * List of functions which the service consists of
    */
   functions:
-    | LabeledProductType<ArrowType<LabeledProductType<SimpleTypes>>>
+    | LabeledProductType<
+        ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>
+      >
     | NilType;
 }

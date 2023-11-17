@@ -22,6 +22,7 @@ import {
   NonArrowSimpleType,
   ScalarType,
   SimpleTypes,
+  UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 
 import { ParticleContext } from "../jsServiceHost/interfaces.js";
@@ -203,7 +204,9 @@ export function js2aqua(
 
 export const wrapFunction = (
   func: ServiceImpl[string],
-  schema: ArrowWithoutCallbacks | ArrowType<LabeledProductType<SimpleTypes>>,
+  schema:
+    | ArrowWithoutCallbacks
+    | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
 ): ServiceImpl[string] => {
   return async (...args) => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

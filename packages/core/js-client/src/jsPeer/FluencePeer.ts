@@ -548,7 +548,7 @@ export abstract class FluencePeer {
                       ) == null
                     ) {
                       // try to finish script if fire-and-forget enabled
-                      item.onSuccess({});
+                      item.onSuccess(null);
                     }
                   })
                   .catch((e: unknown) => {
@@ -638,7 +638,9 @@ export abstract class FluencePeer {
                   ) == null
                 ) {
                   // try to finish script if fire-and-forget enabled
-                  item.onSuccess({});
+                  setTimeout(() => {
+                    item.onSuccess(null);
+                  }, 0);
                 }
               }
 
