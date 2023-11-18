@@ -61,8 +61,8 @@ importers:
         version: 1.5.1
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.12.2
-        version: 0.12.2
+        specifier: 0.12.4-main-cee4448-2196-1
+        version: 0.12.4-main-cee4448-2196-1
       '@fluencelabs/aqua-lib':
         specifier: 0.6.0
         version: 0.6.0
@@ -73,8 +73,8 @@ importers:
         specifier: workspace:*
         version: link:../../core/js-client
       '@fluencelabs/registry':
-        specifier: 0.8.7
-        version: 0.8.7
+        specifier: 0.8.8-1
+        version: 0.8.8-1
       '@fluencelabs/trust-graph':
         specifier: 3.1.2
         version: 3.1.2
@@ -167,8 +167,8 @@ importers:
         version: 5.0.5
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.12.0
-        version: 0.12.0
+        specifier: 0.12.4-main-cee4448-2196-1
+        version: 0.12.4-main-cee4448-2196-1
       '@fluencelabs/aqua-lib':
         specifier: 0.7.3
         version: 0.7.3
@@ -3677,12 +3677,8 @@ packages:
     resolution: {integrity: sha512-NCC3zz2+nvYd+Ckfh87rA47zfu2QsQpvc6k1yzTk+b9KzRj0wkGa8LSoGOXN6Zv4lRf/EIoZ80biDh9HOI+RNQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  /@fluencelabs/aqua-api@0.12.0:
-    resolution: {integrity: sha512-8D1SfmBDm0mmg3tuYrlpU8L6+bRlCSVRkhlU4CXMJFSMiVMrSF2WV+KFTP4GcOB3N4pNOONEwHMQo4xNWwzGhg==}
-    dev: true
-
-  /@fluencelabs/aqua-api@0.12.2:
-    resolution: {integrity: sha512-B0Op0h5IxpaXuReKAmu0vql9n7/r8exmDednJo65NI41bX3gY0ZQxuOq7eyhKTtvevK28hs8asQtx1gPnfevzA==}
+  /@fluencelabs/aqua-api@0.12.4-main-cee4448-2196-1:
+    resolution: {registry: https://registry.npmjs.org/, tarball: https://npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-main-cee4448-2196-1.tgz}
     dev: true
 
   /@fluencelabs/aqua-api@0.9.3:
@@ -3718,6 +3714,13 @@ packages:
 
   /@fluencelabs/registry@0.8.7:
     resolution: {integrity: sha512-43bmb1v4p5ORvaiLBrUAl+hRPo3luxxBVrJgqTvipJa2OEg2wCRA/Wo9s4M7Lchnv3NoYLOyNTzNyFopQRKILA==}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.7.0
+      '@fluencelabs/trust-graph': 0.4.1
+    dev: true
+
+  /@fluencelabs/registry@0.8.8-1:
+    resolution: {integrity: sha512-zdkn/JiMXAozn43/nrF+Cvq6/heSIUS1e3tOb8AFRMoI2Czd3o8p6fEwdJwa7QE8IkD1NOln/C/bWUVwfEDi9w==}
     dependencies:
       '@fluencelabs/aqua-lib': 0.7.0
       '@fluencelabs/trust-graph': 0.4.1

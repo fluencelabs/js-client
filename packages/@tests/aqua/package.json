@@ -20,11 +20,11 @@
     "base64-js": "1.5.1"
   },
   "devDependencies": {
-    "@fluencelabs/aqua-api": "0.12.2",
+    "@fluencelabs/aqua-api": "0.12.4-main-cee4448-2196-1",
     "@fluencelabs/aqua-lib": "0.6.0",
     "@fluencelabs/aqua-to-js": "workspace:*",
     "@fluencelabs/js-client": "workspace:*",
-    "@fluencelabs/registry": "0.8.7",
+    "@fluencelabs/registry": "0.8.8-1",
     "@fluencelabs/trust-graph": "3.1.2",
     "ts-node": "10.9.1"
   }

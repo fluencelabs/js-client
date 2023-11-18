@@ -3,7 +3,7 @@
 /**
  *
  * This file is generated using:
- * @fluencelabs/aqua-api version: 0.12.0
+ * @fluencelabs/aqua-api version: 0.12.4-main-cee4448-2196-1
  * @fluencelabs/aqua-to-js version: 0.2.0
  * If you find any bugs in generated AIR, please write an issue on GitHub: https://github.com/fluencelabs/aqua/issues
  * If you find any bugs in generated JS/TS, please write an issue on GitHub: https://github.com/fluencelabs/js-client/issues
@@ -14,8 +14,7 @@ import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleCon
 // Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
-    FluencePeer as FluencePeer$$
+    v5_registerService as registerService$$
 } from '@fluencelabs/js-client';
 
 // Services
@@ -321,14 +320,14 @@ export function registerHelloWorld(...args: any[]) {
 
 // Functions
 export const resourceTest_script = `
-(seq
+(xor
  (seq
   (seq
    (seq
-    (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-    (call %init_peer_id% ("getDataSrv" "label") [] -label-arg-)
-   )
-   (xor
+    (seq
+     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+     (call %init_peer_id% ("getDataSrv" "label") [] -label-arg-)
+    )
     (new $resource_id
      (seq
       (seq
@@ -340,193 +339,327 @@ export const resourceTest_script = `
            (call -relay- ("registry" "get_key_bytes") [-label-arg- [] ret [] ""] ret-0)
            (xor
             (call %init_peer_id% ("sig" "sign") [ret-0] ret-1)
-            (fail %last_error%)
+            (fail :error:)
            )
           )
-          (xor
-           (match ret-1.$.success false
-            (ap ret-1.$.error.[0] $error)
-           )
-           (new $successful
-            (seq
-             (seq
-              (seq
-               (seq
-                (seq
-                 (seq
-                  (ap ret-1.$.signature ret-1_flat)
-                  (call -relay- ("registry" "get_key_id") [-label-arg- %init_peer_id%] ret-2)
-                 )
-                 (call -relay- ("op" "string_to_b58") [ret-2] ret-3)
-                )
-                (call -relay- ("kad" "neighborhood") [ret-3 [] []] ret-4)
-               )
-               (par
-                (fold ret-4 n-0
-                 (par
-                  (xor
-                   (xor
-                    (seq
-                     (seq
-                      (seq
-                       (call n-0 ("peer" "timestamp_sec") [] ret-5)
-                       (call n-0 ("trust-graph" "get_weight") [%init_peer_id% ret-5] ret-6)
-                      )
-                      (call n-0 ("registry" "register_key") [-label-arg- [] ret [] "" ret-1_flat.$.[0] ret-6 ret-5] ret-7)
-                     )
-                     (xor
-                      (seq
-                       (match ret-7.$.success true
-                        (ap true $successful)
-                       )
-                       (new $-ephemeral-stream-
-                        (new #-ephemeral-canon-
-                         (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                        )
-                       )
-                      )
-                      (seq
-                       (ap ret-7.$.error $error)
-                       (new $-ephemeral-stream-
-                        (new #-ephemeral-canon-
-                         (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
-                        )
-                       )
-                      )
-                     )
-                    )
-                    (null)
-                   )
-                   (fail %last_error%)
-                  )
-                  (next n-0)
-                 )
-                 (never)
-                )
-                (null)
-               )
+          (new -if-else-error-
+           (new -else-error-
+            (new -if-error-
+             (xor
+              (match ret-1.$.success false
+               (ap ret-1.$.error.[0] $error)
               )
-              (new $status
-               (new $result-1
-                (seq
-                 (seq
-                  (seq
-                   (par
-                    (seq
-                     (seq
-                      (seq
-                       (call -relay- ("math" "sub") [1 1] sub)
-                       (new $successful_test
-                        (seq
-                         (seq
-                          (seq
-                           (call -relay- ("math" "add") [sub 1] successful_incr)
-                           (fold $successful successful_fold_var
-                            (seq
-                             (seq
-                              (ap successful_fold_var $successful_test)
-                              (canon -relay- $successful_test  #successful_iter_canon)
-                             )
-                             (xor
-                              (match #successful_iter_canon.length successful_incr
-                               (null)
-                              )
-                              (next successful_fold_var)
-                             )
-                            )
-                            (never)
-                           )
-                          )
-                          (canon -relay- $successful_test  #successful_result_canon)
-                         )
-                         (ap #successful_result_canon successful_gate)
-                        )
-                       )
-                      )
-                      (call -relay- ("math" "sub") [1 1] sub-0)
-                     )
-                     (ap "ok" $status)
-                    )
-                    (seq
-                     (call -relay- ("peer" "timeout") [6000 "timeout"] ret-8)
-                     (ap ret-8 $status)
-                    )
-                   )
-                   (new $status_test
-                    (seq
-                     (seq
-                      (seq
-                       (call -relay- ("math" "add") [0 1] status_incr)
-                       (fold $status status_fold_var
-                        (seq
-                         (seq
-                          (ap status_fold_var $status_test)
-                          (canon -relay- $status_test  #status_iter_canon)
-                         )
-                         (xor
-                          (match #status_iter_canon.length status_incr
-                           (null)
-                          )
-                          (next status_fold_var)
-                         )
-                        )
-                        (never)
-                       )
-                      )
-                      (canon -relay- $status_test  #status_result_canon)
-                     )
-                     (ap #status_result_canon status_gate)
-                    )
-                   )
-                  )
-                  (xor
-                   (match status_gate.$.[0] "ok"
-                    (ap true $result-1)
-                   )
-                   (ap false $result-1)
-                  )
-                 )
-                 (new $result-1_test
+              (seq
+               (ap :error: -if-error-)
+               (xor
+                (match :error:.$.error_code 10001
+                 (new $successful
                   (seq
                    (seq
                     (seq
-                     (call -relay- ("math" "add") [0 1] result-1_incr)
-                     (fold $result-1 result-1_fold_var
+                     (seq
                       (seq
                        (seq
-                        (ap result-1_fold_var $result-1_test)
-                        (canon -relay- $result-1_test  #result-1_iter_canon)
+                        (ap ret-1.$.signature ret-1_flat)
+                        (call -relay- ("registry" "get_key_id") [-label-arg- %init_peer_id%] ret-2)
                        )
-                       (xor
-                        (match #result-1_iter_canon.length result-1_incr
-                         (null)
-                        )
-                        (next result-1_fold_var)
-                       )
+                       (call -relay- ("op" "string_to_b58") [ret-2] ret-3)
                       )
-                      (never)
+                      (call -relay- ("kad" "neighborhood") [ret-3 [] []] ret-4)
+                     )
+                     (par
+                      (fold ret-4 n-0
+                       (par
+                        (xor
+                         (xor
+                          (seq
+                           (seq
+                            (seq
+                             (call n-0 ("peer" "timestamp_sec") [] ret-5)
+                             (call n-0 ("trust-graph" "get_weight") [%init_peer_id% ret-5] ret-6)
+                            )
+                            (call n-0 ("registry" "register_key") [-label-arg- [] ret [] "" ret-1_flat.$.[0] ret-6 ret-5] ret-7)
+                           )
+                           (new -if-else-error-
+                            (new -else-error-
+                             (new -if-error-
+                              (xor
+                               (seq
+                                (match ret-7.$.success true
+                                 (ap true $successful)
+                                )
+                                (new $-ephemeral-stream-
+                                 (new #-ephemeral-canon-
+                                  (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                 )
+                                )
+                               )
+                               (seq
+                                (ap :error: -if-error-)
+                                (xor
+                                 (seq
+                                  (match :error:.$.error_code 10001
+                                   (ap ret-7.$.error $error)
+                                  )
+                                  (new $-ephemeral-stream-
+                                   (new #-ephemeral-canon-
+                                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                   )
+                                  )
+                                 )
+                                 (seq
+                                  (seq
+                                   (seq
+                                    (ap :error: -else-error-)
+                                    (xor
+                                     (seq
+                                      (match :error:.$.error_code 10001
+                                       (ap -if-error- -if-else-error-)
+                                      )
+                                      (new $-ephemeral-stream-
+                                       (new #-ephemeral-canon-
+                                        (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                       )
+                                      )
+                                     )
+                                     (seq
+                                      (ap -else-error- -if-else-error-)
+                                      (new $-ephemeral-stream-
+                                       (new #-ephemeral-canon-
+                                        (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                       )
+                                      )
+                                     )
+                                    )
+                                   )
+                                   (fail -if-else-error-)
+                                  )
+                                  (new $-ephemeral-stream-
+                                   (new #-ephemeral-canon-
+                                    (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                                   )
+                                  )
+                                 )
+                                )
+                               )
+                              )
+                             )
+                            )
+                           )
+                          )
+                          (null)
+                         )
+                         (fail :error:)
+                        )
+                        (next n-0)
+                       )
+                       (never)
+                      )
+                      (null)
                      )
                     )
-                    (canon -relay- $result-1_test  #result-1_result_canon)
+                    (new $status
+                     (new $result-1
+                      (seq
+                       (seq
+                        (seq
+                         (par
+                          (seq
+                           (new $successful_test
+                            (seq
+                             (seq
+                              (fold $successful successful_fold_var
+                               (seq
+                                (seq
+                                 (ap successful_fold_var $successful_test)
+                                 (canon -relay- $successful_test  #successful_iter_canon)
+                                )
+                                (xor
+                                 (match #successful_iter_canon.length 1
+                                  (null)
+                                 )
+                                 (next successful_fold_var)
+                                )
+                               )
+                               (never)
+                              )
+                              (canon -relay- $successful_test  #successful_result_canon)
+                             )
+                             (ap #successful_result_canon successful_gate)
+                            )
+                           )
+                           (ap "ok" $status)
+                          )
+                          (seq
+                           (call -relay- ("peer" "timeout") [6000 "timeout"] ret-8)
+                           (ap ret-8 $status)
+                          )
+                         )
+                         (new $status_test
+                          (seq
+                           (seq
+                            (fold $status status_fold_var
+                             (seq
+                              (seq
+                               (ap status_fold_var $status_test)
+                               (canon -relay- $status_test  #status_iter_canon)
+                              )
+                              (xor
+                               (match #status_iter_canon.length 1
+                                (null)
+                               )
+                               (next status_fold_var)
+                              )
+                             )
+                             (never)
+                            )
+                            (canon -relay- $status_test  #status_result_canon)
+                           )
+                           (ap #status_result_canon status_gate)
+                          )
+                         )
+                        )
+                        (new -if-else-error-
+                         (new -else-error-
+                          (new -if-error-
+                           (xor
+                            (match status_gate.$.[0] "ok"
+                             (ap true $result-1)
+                            )
+                            (seq
+                             (ap :error: -if-error-)
+                             (xor
+                              (match :error:.$.error_code 10001
+                               (ap false $result-1)
+                              )
+                              (seq
+                               (seq
+                                (ap :error: -else-error-)
+                                (xor
+                                 (match :error:.$.error_code 10001
+                                  (ap -if-error- -if-else-error-)
+                                 )
+                                 (ap -else-error- -if-else-error-)
+                                )
+                               )
+                               (fail -if-else-error-)
+                              )
+                             )
+                            )
+                           )
+                          )
+                         )
+                        )
+                       )
+                       (new $result-1_test
+                        (seq
+                         (seq
+                          (fold $result-1 result-1_fold_var
+                           (seq
+                            (seq
+                             (ap result-1_fold_var $result-1_test)
+                             (canon -relay- $result-1_test  #result-1_iter_canon)
+                            )
+                            (xor
+                             (match #result-1_iter_canon.length 1
+                              (null)
+                             )
+                             (next result-1_fold_var)
+                            )
+                           )
+                           (never)
+                          )
+                          (canon -relay- $result-1_test  #result-1_result_canon)
+                         )
+                         (ap #result-1_result_canon result-1_gate)
+                        )
+                       )
+                      )
+                     )
+                    )
                    )
-                   (ap #result-1_result_canon result-1_gate)
+                   (new -if-else-error-
+                    (new -else-error-
+                     (new -if-error-
+                      (xor
+                       (match result-1_gate.$.[0] false
+                        (ap "resource wasn't created: timeout exceeded" $error)
+                       )
+                       (seq
+                        (ap :error: -if-error-)
+                        (xor
+                         (match :error:.$.error_code 10001
+                          (ap ret-2 $resource_id)
+                         )
+                         (seq
+                          (seq
+                           (ap :error: -else-error-)
+                           (xor
+                            (seq
+                             (match :error:.$.error_code 10001
+                              (ap -if-error- -if-else-error-)
+                             )
+                             (new $-ephemeral-stream-
+                              (new #-ephemeral-canon-
+                               (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                              )
+                             )
+                            )
+                            (seq
+                             (ap -else-error- -if-else-error-)
+                             (new $-ephemeral-stream-
+                              (new #-ephemeral-canon-
+                               (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                              )
+                             )
+                            )
+                           )
+                          )
+                          (fail -if-else-error-)
+                         )
+                        )
+                       )
+                      )
+                     )
+                    )
+                   )
                   )
                  )
                 )
+                (seq
+                 (seq
+                  (ap :error: -else-error-)
+                  (xor
+                   (seq
+                    (match :error:.$.error_code 10001
+                     (ap -if-error- -if-else-error-)
+                    )
+                    (new $-ephemeral-stream-
+                     (new #-ephemeral-canon-
+                      (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                     )
+                    )
+                   )
+                   (seq
+                    (ap -else-error- -if-else-error-)
+                    (new $-ephemeral-stream-
+                     (new #-ephemeral-canon-
+                      (canon -relay- $-ephemeral-stream-  #-ephemeral-canon-)
+                     )
+                    )
+                   )
+                  )
+                 )
+                 (fail -if-else-error-)
+                )
                )
               )
-             )
-             (xor
-              (match result-1_gate.$.[0] false
-               (ap "resource wasn't created: timeout exceeded" $error)
-              )
-              (ap ret-2 $resource_id)
              )
             )
            )
           )
          )
-         (fail %last_error%)
+         (fail :error:)
         )
        )
        (canon %init_peer_id% $resource_id  #-resource_id-fix-0)
@@ -534,22 +667,22 @@ export const resourceTest_script = `
       (ap #-resource_id-fix-0 -resource_id-flat-0)
      )
     )
-    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 0])
    )
+   (canon %init_peer_id% $error  #error_canon)
   )
-  (canon %init_peer_id% $error  #error_canon)
+  (call %init_peer_id% ("callbackSrv" "response") [-resource_id-flat-0 #error_canon])
  )
- (call %init_peer_id% ("callbackSrv" "response") [-resource_id-flat-0 #error_canon])
+ (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
 )
 `;
 
 export type ResourceTestResultType = [string | null, string[]]
 
-export type resourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
+export type ResourceTestParams = [label: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, label: string, config?: {ttl?: number}];
 
 export type ResourceTestResult = Promise<ResourceTestResultType>;
 
-export function resourceTest(...args: resourceTestParams): ResourceTestResult {
+export function resourceTest(...args: ResourceTestParams): ResourceTestResult {
     return callFunction$$(
         args,
         {
@@ -600,23 +733,23 @@ export function resourceTest(...args: resourceTestParams): ResourceTestResult {
 }
 
 export const helloTest_script = `
-(seq
+(xor
  (seq
-  (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-  (xor
+  (seq
+   (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
    (call %init_peer_id% ("hello-world" "hello") ["Fluence user"] ret)
-   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 0])
   )
+  (call %init_peer_id% ("callbackSrv" "response") [ret])
  )
- (call %init_peer_id% ("callbackSrv" "response") [ret])
+ (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
 )
 `;
 
-export type helloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
+export type HelloTestParams = [config?: {ttl?: number}] | [peer: IFluenceClient$$, config?: {ttl?: number}];
 
 export type HelloTestResult = Promise<string>;
 
-export function helloTest(...args: helloTestParams): HelloTestResult {
+export function helloTest(...args: HelloTestParams): HelloTestResult {
     return callFunction$$(
         args,
         {
@@ -652,35 +785,35 @@ export function helloTest(...args: helloTestParams): HelloTestResult {
 }
 
 export const callHappy_script = `
-(seq
+(xor
  (seq
   (seq
    (seq
     (seq
-     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-     (call %init_peer_id% ("getDataSrv" "a") [] -a-arg-)
+     (seq
+      (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+      (call %init_peer_id% ("getDataSrv" "a") [] -a-arg-)
+     )
+     (call %init_peer_id% ("getDataSrv" "b") [] -b-arg-)
     )
-    (call %init_peer_id% ("getDataSrv" "b") [] -b-arg-)
+    (call %init_peer_id% ("getDataSrv" "c") [] -c-arg-)
    )
-   (call %init_peer_id% ("getDataSrv" "c") [] -c-arg-)
-  )
-  (xor
    (xor
     (call %init_peer_id% ("callbackSrv" "d") ["abc"] init_call_res0)
-    (fail %last_error%)
+    (fail :error:)
    )
-   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 0])
   )
+  (call %init_peer_id% ("callbackSrv" "response") [init_call_res0])
  )
- (call %init_peer_id% ("callbackSrv" "response") [init_call_res0])
+ (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
 )
 `;
 
-export type callHappyParams = [a: string, b: number, c: number, d: (arg0: string, callParams: ParticleContext$$) => number | Promise<number>, config?: {ttl?: number}] | [peer: IFluenceClient$$, a: string, b: number, c: number, d: (arg0: string, callParams: ParticleContext$$) => number | Promise<number>, config?: {ttl?: number}];
+export type CallHappyParams = [a: string, b: number, c: number, d: (arg0: string, callParams: ParticleContext$$) => number | Promise<number>, config?: {ttl?: number}] | [peer: IFluenceClient$$, a: string, b: number, c: number, d: (arg0: string, callParams: ParticleContext$$) => number | Promise<number>, config?: {ttl?: number}];
 
 export type CallHappyResult = Promise<number>;
 
-export function callHappy(...args: callHappyParams): CallHappyResult {
+export function callHappy(...args: CallHappyParams): CallHappyResult {
     return callFunction$$(
         args,
         {
@@ -750,41 +883,41 @@ export function callHappy(...args: callHappyParams): CallHappyResult {
 }
 
 export const demo_calculation_script = `
-(seq
+(xor
  (seq
   (seq
-   (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-   (call %init_peer_id% ("getDataSrv" "service_id") [] -service_id-arg-)
-  )
-  (xor
    (seq
     (seq
      (seq
       (seq
        (seq
+        (seq
+         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+         (call %init_peer_id% ("getDataSrv" "service_id") [] -service_id-arg-)
+        )
         (call %init_peer_id% (-service_id-arg- "test_logs") [])
-        (call %init_peer_id% (-service_id-arg- "add") [10] ret)
        )
-       (call %init_peer_id% (-service_id-arg- "multiply") [5] ret-0)
+       (call %init_peer_id% (-service_id-arg- "add") [10] ret)
       )
-      (call %init_peer_id% (-service_id-arg- "subtract") [8] ret-1)
+      (call %init_peer_id% (-service_id-arg- "multiply") [5] ret-0)
      )
-     (call %init_peer_id% (-service_id-arg- "divide") [6] ret-2)
+     (call %init_peer_id% (-service_id-arg- "subtract") [8] ret-1)
     )
-    (call %init_peer_id% (-service_id-arg- "state") [] ret-3)
+    (call %init_peer_id% (-service_id-arg- "divide") [6] ret-2)
    )
-   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 0])
+   (call %init_peer_id% (-service_id-arg- "state") [] ret-3)
   )
+  (call %init_peer_id% ("callbackSrv" "response") [ret-3])
  )
- (call %init_peer_id% ("callbackSrv" "response") [ret-3])
+ (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
 )
 `;
 
-export type demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
+export type Demo_calculationParams = [service_id: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, service_id: string, config?: {ttl?: number}];
 
 export type Demo_calculationResult = Promise<number>;
 
-export function demo_calculation(...args: demo_calculationParams): Demo_calculationResult {
+export function demo_calculation(...args: Demo_calculationParams): Demo_calculationResult {
     return callFunction$$(
         args,
         {
@@ -825,44 +958,44 @@ export function demo_calculation(...args: demo_calculationParams): Demo_calculat
 }
 
 export const marineTest_script = `
-(seq
+(xor
  (seq
   (seq
-   (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-   (call %init_peer_id% ("getDataSrv" "wasm64") [] -wasm64-arg-)
-  )
-  (xor
    (seq
     (seq
      (seq
       (seq
        (seq
         (seq
+         (seq
+          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+          (call %init_peer_id% ("getDataSrv" "wasm64") [] -wasm64-arg-)
+         )
          (call %init_peer_id% ("single_module_srv" "create") [-wasm64-arg-] ret)
-         (call %init_peer_id% (ret.$.service_id.[0] "test_logs") [])
         )
-        (call %init_peer_id% (ret.$.service_id.[0] "add") [10] ret-0)
+        (call %init_peer_id% (ret.$.service_id.[0] "test_logs") [])
        )
-       (call %init_peer_id% (ret.$.service_id.[0] "multiply") [5] ret-1)
+       (call %init_peer_id% (ret.$.service_id.[0] "add") [10] ret-0)
       )
-      (call %init_peer_id% (ret.$.service_id.[0] "subtract") [8] ret-2)
+      (call %init_peer_id% (ret.$.service_id.[0] "multiply") [5] ret-1)
      )
-     (call %init_peer_id% (ret.$.service_id.[0] "divide") [6] ret-3)
+     (call %init_peer_id% (ret.$.service_id.[0] "subtract") [8] ret-2)
     )
-    (call %init_peer_id% (ret.$.service_id.[0] "state") [] ret-4)
+    (call %init_peer_id% (ret.$.service_id.[0] "divide") [6] ret-3)
    )
-   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 0])
+   (call %init_peer_id% (ret.$.service_id.[0] "state") [] ret-4)
   )
+  (call %init_peer_id% ("callbackSrv" "response") [ret-4])
  )
- (call %init_peer_id% ("callbackSrv" "response") [ret-4])
+ (call %init_peer_id% ("errorHandlingSrv" "error") [:error: 0])
 )
 `;
 
-export type marineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
+export type MarineTestParams = [wasm64: string, config?: {ttl?: number}] | [peer: IFluenceClient$$, wasm64: string, config?: {ttl?: number}];
 
 export type MarineTestResult = Promise<number>;
 
-export function marineTest(...args: marineTestParams): MarineTestResult {
+export function marineTest(...args: MarineTestParams): MarineTestResult {
     return callFunction$$(
         args,
         {

@@ -40,7 +40,7 @@ ${func.script}\`;
 ${typeGenerator.funcType(func)}
 export function ${func.funcDef.functionName}(${typeGenerator.type(
     "...args",
-    `${func.funcDef.functionName}Params`,
+    `${capitalize(func.funcDef.functionName)}Params`,
   )})${typeGenerator.type(
     "",
     `${capitalize(func.funcDef.functionName)}Result`,
