@@ -539,17 +539,6 @@ export abstract class FluencePeer {
                       "id %s. send successful",
                       newParticle.id,
                     );
-
-                    if (
-                      this.jsServiceHost.getHandler(
-                        "callbackSrv",
-                        "response",
-                        item.particle.id,
-                      ) == null
-                    ) {
-                      // try to finish script if fire-and-forget enabled
-                      item.onSuccess(null);
-                    }
                   })
                   .catch((e: unknown) => {
                     log_particle.error(
@@ -626,21 +615,6 @@ export abstract class FluencePeer {
                         callResults: [[key, serviceResult]],
                       });
                     });
-                }
-              } else {
-                // TODO: remove after LNG-286 is done
-                // eslint-disable-next-line eqeqeq
-                if (
-                  this.jsServiceHost.getHandler(
-                    "callbackSrv",
-                    "response",
-                    item.particle.id,
-                  ) == null
-                ) {
-                  // try to finish script if fire-and-forget enabled
-                  setTimeout(() => {
-                    item.onSuccess(null);
-                  }, 0);
                 }
               }
 

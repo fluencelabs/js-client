@@ -312,10 +312,11 @@ export const builtInServices: Record<
     }),
 
     concat: withSchema(z.array(z.array(z.unknown())))((args) => {
-      // concat accepts only 'never' type
+      // Schema is used with unknown type to prevent useless runtime check
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const arr = args as never[][];
-      return success([].concat(...arr));
+
+      return success(arr.flat());
     }),
 
     string_to_b58: withSchema(z.tuple([z.string()]))(([input]) => {

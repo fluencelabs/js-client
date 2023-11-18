@@ -61,8 +61,6 @@ export const callAquaFunction = async ({
   config = {},
   peer,
   args,
-  // TODO: remove after LNG-286 is done
-  fireAndForget = false,
 }: CallAquaFunctionArgs) => {
   log.trace("calling aqua function %j", { script, config, args });
 
@@ -82,12 +80,7 @@ export const callAquaFunction = async ({
       registerParticleScopeService(peer, particle, service);
     }
 
-    // If fireAndForget is enabled, then function call completed when one of the two conditions is met:
-    //  1. The particle is sent to the network
-    //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed
-    if (!fireAndForget) {
-      registerParticleScopeService(peer, particle, responseService(resolve));
-    }
+    registerParticleScopeService(peer, particle, responseService(resolve));
 
     registerParticleScopeService(peer, particle, injectRelayService(peer));
 
