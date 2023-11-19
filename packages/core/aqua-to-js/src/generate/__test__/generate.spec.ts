@@ -14,46 +14,55 @@
  * limitations under the License.
  */
 
-import url from "url";
+import { fileURLToPath } from "url";
 
 import { compileFromPath } from "@fluencelabs/aqua-api";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 
 import { getPackageJsonContent, PackageJson } from "../../utils.js";
 import { generateTypes, generateSources } from "../index.js";
+import { CompilationResult } from "../interfaces.js";
+
+let res: Omit<CompilationResult, "funcCall">;
+let pkg: PackageJson;
 
 describe("Aqua to js/ts compiler", () => {
-  it("compiles smoke tests successfully", async () => {
-    const res = await compileFromPath({
-      filePath: url.fileURLToPath(
+  beforeAll(async () => {
+    res = await compileFromPath({
+      filePath: fileURLToPath(
         new URL("./sources/smoke_test.aqua", import.meta.url),
       ),
       imports: ["./node_modules"],
       targetType: "air",
     });
 
-    const pkg: PackageJson = {
+    pkg = {
       ...(await getPackageJsonContent()),
       version: "0.0.0",
       devDependencies: {
         "@fluencelabs/aqua-api": "0.0.0",
       },
     };
+  });
 
-    // TODO: see https://github.com/fluencelabs/js-client/pull/366#discussion_r1370567711
-    // @ts-expect-error don't use compileFromPath directly here
+  it("matches js snapshots", async () => {
     const jsResult = generateSources(res, "js", pkg);
-    // TODO: see https://github.com/fluencelabs/js-client/pull/366#discussion_r1370567711
-    // @ts-expect-error don't use compileFromPath directly here
     const jsTypes = generateTypes(res, pkg);
 
-    expect(jsResult).toMatchSnapshot();
-    expect(jsTypes).toMatchSnapshot();
+    await expect(jsResult).toMatchFileSnapshot(
+      "./__snapshots__/generate.snap.js",
+    );
 
-    // TODO: see https://github.com/fluencelabs/js-client/pull/366#discussion_r1370567711
-    // @ts-expect-error don't use compileFromPath directly here
+    await expect(jsTypes).toMatchFileSnapshot(
+      "./__snapshots__/generate.snap.d.ts",
+    );
+  });
+
+  it("matches ts snapshots", async () => {
     const tsResult = generateSources(res, "ts", pkg);
 
-    expect(tsResult).toMatchSnapshot();
+    await expect(tsResult).toMatchFileSnapshot(
+      "./__snapshots__/generate.snap.ts",
+    );
   });
 });

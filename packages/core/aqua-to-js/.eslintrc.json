@@ -1,3 +1,3 @@
 {
-  "ignorePatterns": ["src/**/__snapshots__/**/*"]
+  "ignorePatterns": ["src/**/__snapshots__/**/*", "src/**/*.js"]
 }

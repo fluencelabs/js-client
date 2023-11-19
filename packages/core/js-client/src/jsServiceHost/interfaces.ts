@@ -79,7 +79,7 @@ export enum ResultCodes {
 /**
  * Particle context. Contains additional information about particle which triggered `call` air instruction from AVM
  */
-export interface ParticleContext {
+export type ParticleContext = {
   /**
    * The identifier of particle which triggered the call
    */
@@ -104,7 +104,12 @@ export interface ParticleContext {
    * Particle's signature
    */
   signature: Uint8Array;
-}
+
+  /**
+   * Security Tetraplets received from AVM and copied here
+   */
+  tetraplets: SecurityTetraplet[][];
+};
 
 /**
  * Represents the information passed from AVM when a `call` air instruction is executed on the local peer

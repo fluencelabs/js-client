@@ -77,7 +77,6 @@ const getRelayTime = () => {
 
   return callAquaFunction({
     args,
-    def,
     script,
     config,
     peer: Fluence.defaultClient,

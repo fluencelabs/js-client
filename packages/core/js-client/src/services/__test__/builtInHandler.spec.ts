@@ -16,11 +16,14 @@
 
 import assert from "assert";
 
-import { CallParams, JSONArray } from "@fluencelabs/interfaces";
+import { JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
 import { it, describe, expect, test } from "vitest";
 
-import { CallServiceData } from "../../jsServiceHost/interfaces.js";
+import {
+  CallServiceData,
+  ParticleContext,
+} from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
 import { builtInServices } from "../builtins.js";
 import { allowServiceFn } from "../securityGuard.js";
@@ -51,32 +54,32 @@ describe("Tests for default handler", () => {
     serviceId  | fnName               | args                                       | retCode | result
     ${"op"}    | ${"identity"}        | ${[]}                                      | ${0}    | ${{}}
     ${"op"}    | ${"identity"}        | ${[1]}                                     | ${0}    | ${1}
-    ${"op"}    | ${"identity"}        | ${[1, 2]}                                  | ${1}    | ${"identity accepts up to 1 arguments, received 2 arguments"}
+    ${"op"}    | ${"identity"}        | ${[1, 2]}                                  | ${1}    | ${"Expected 1 argument(s). Got 2"}
     ${"op"}    | ${"noop"}            | ${[1, 2]}                                  | ${0}    | ${{}}
     ${"op"}    | ${"array"}           | ${[1, 2, 3]}                               | ${0}    | ${[1, 2, 3]}
     ${"op"}    | ${"array_length"}    | ${[[1, 2, 3]]}                             | ${0}    | ${3}
-    ${"op"}    | ${"array_length"}    | ${[]}                                      | ${1}    | ${"array_length accepts exactly one argument, found: 0"}
+    ${"op"}    | ${"array_length"}    | ${[]}                                      | ${1}    | ${"Expected 1 argument(s). Got 0"}
     ${"op"}    | ${"concat"}          | ${[[1, 2], [3, 4], [5, 6]]}                | ${0}    | ${[1, 2, 3, 4, 5, 6]}
     ${"op"}    | ${"concat"}          | ${[[1, 2]]}                                | ${0}    | ${[1, 2]}
     ${"op"}    | ${"concat"}          | ${[]}                                      | ${0}    | ${[]}
-    ${"op"}    | ${"concat"}          | ${[1, [1, 2], 1]}                          | ${1}    | ${"All arguments of 'concat' must be arrays: arguments 0, 2 are not"}
+    ${"op"}    | ${"concat"}          | ${[1, [1, 2], 1]}                          | ${1}    | ${"Argument 0 expected to be of type array, Got number"}
     ${"op"}    | ${"string_to_b58"}   | ${["test"]}                                | ${0}    | ${"3yZe7d"}
-    ${"op"}    | ${"string_to_b58"}   | ${["test", 1]}                             | ${1}    | ${"string_to_b58 accepts only one string argument"}
+    ${"op"}    | ${"string_to_b58"}   | ${["test", 1]}                             | ${1}    | ${"Expected 1 argument(s). Got 2"}
     ${"op"}    | ${"string_from_b58"} | ${["3yZe7d"]}                              | ${0}    | ${"test"}
-    ${"op"}    | ${"string_from_b58"} | ${["3yZe7d", 1]}                           | ${1}    | ${"string_from_b58 accepts only one string argument"}
+    ${"op"}    | ${"string_from_b58"} | ${["3yZe7d", 1]}                           | ${1}    | ${"Expected 1 argument(s). Got 2"}
     ${"op"}    | ${"bytes_to_b58"}    | ${[[116, 101, 115, 116]]}                  | ${0}    | ${"3yZe7d"}
-    ${"op"}    | ${"bytes_to_b58"}    | ${[[116, 101, 115, 116], 1]}               | ${1}    | ${"bytes_to_b58 accepts only single argument: array of numbers"}
+    ${"op"}    | ${"bytes_to_b58"}    | ${[[116, 101, 115, 116], 1]}               | ${1}    | ${"Expected 1 argument(s). Got 2"}
     ${"op"}    | ${"bytes_from_b58"}  | ${["3yZe7d"]}                              | ${0}    | ${[116, 101, 115, 116]}
-    ${"op"}    | ${"bytes_from_b58"}  | ${["3yZe7d", 1]}                           | ${1}    | ${"bytes_from_b58 accepts only one string argument"}
+    ${"op"}    | ${"bytes_from_b58"}  | ${["3yZe7d", 1]}                           | ${1}    | ${"Expected 1 argument(s). Got 2"}
     ${"op"}    | ${"sha256_string"}   | ${["hello, world!"]}                       | ${0}    | ${"QmVQ8pg6L1tpoWYeq6dpoWqnzZoSLCh7E96fCFXKvfKD3u"}
-    ${"op"}    | ${"sha256_string"}   | ${["hello, world!", true]}                 | ${1}    | ${"sha256_string accepts 1 argument, found: 2"}
-    ${"op"}    | ${"sha256_string"}   | ${[]}                                      | ${1}    | ${"sha256_string accepts 1 argument, found: 0"}
+    ${"op"}    | ${"sha256_string"}   | ${["hello, world!", true]}                 | ${1}    | ${"Expected 1 argument(s). Got 2"}
+    ${"op"}    | ${"sha256_string"}   | ${[]}                                      | ${1}    | ${"Expected 1 argument(s). Got 0"}
     ${"op"}    | ${"concat_strings"}  | ${[]}                                      | ${0}    | ${""}
     ${"op"}    | ${"concat_strings"}  | ${["a", "b", "c"]}                         | ${0}    | ${"abc"}
-    ${"peer"}  | ${"timeout"}         | ${[200, []]}                               | ${1}    | ${"timeout accepts exactly two arguments: timeout duration in ms and a message string"}
+    ${"peer"}  | ${"timeout"}         | ${[200, []]}                               | ${1}    | ${"Argument 1 expected to be of type string, Got array"}
     ${"peer"}  | ${"timeout"}         | ${[200, "test"]}                           | ${0}    | ${"test"}
-    ${"peer"}  | ${"timeout"}         | ${[]}                                      | ${1}    | ${"timeout accepts exactly two arguments: timeout duration in ms and a message string"}
-    ${"peer"}  | ${"timeout"}         | ${[200, "test", 1]}                        | ${1}    | ${"timeout accepts exactly two arguments: timeout duration in ms and a message string"}
+    ${"peer"}  | ${"timeout"}         | ${[]}                                      | ${1}    | ${"Expected 2 argument(s). Got 0"}
+    ${"peer"}  | ${"timeout"}         | ${[200, "test", 1]}                        | ${1}    | ${"Expected 2 argument(s). Got 3"}
     ${"debug"} | ${"stringify"}       | ${[]}                                      | ${0}    | ${'"<empty argument list>"'}
     ${"debug"} | ${"stringify"}       | ${[{ a: 10, b: 20 }]}                      | ${0}    | ${a10b20}
     ${"debug"} | ${"stringify"}       | ${[1, 2, 3, 4]}                            | ${0}    | ${oneTwoThreeFour}
@@ -149,6 +152,7 @@ describe("Tests for default handler", () => {
           timestamp: 595951200,
           ttl: 595961200,
           signature: new Uint8Array([]),
+          tetraplets: [],
         },
       };
 
@@ -185,6 +189,7 @@ describe("Tests for default handler", () => {
         timestamp: 595951200,
         ttl: 595961200,
         signature: new Uint8Array([]),
+        tetraplets: [],
       },
     };
 
@@ -243,14 +248,15 @@ const makeTestTetraplet = (
   initPeerId: string,
   serviceId: string,
   fnName: string,
-): CallParams<"data"> => {
+): ParticleContext => {
   return {
     particleId: "",
     timestamp: 0,
     ttl: 0,
     initPeerId: initPeerId,
-    tetraplets: {
-      data: [
+    signature: new Uint8Array([]),
+    tetraplets: [
+      [
         {
           peer_pk: initPeerId,
           function_name: fnName,
@@ -258,7 +264,7 @@ const makeTestTetraplet = (
           json_path: "",
         },
       ],
-    },
+    ],
   };
 };
 
@@ -273,7 +279,7 @@ describe("Sig service tests", () => {
     );
 
     expect(res.success).toBe(true);
-    expect(res.signature).toStrictEqual(testDataSig);
+    expect(res.signature).toStrictEqual([testDataSig]);
   });
 
   it("sig.verify should return true for the correct signature", async () => {
@@ -305,7 +311,7 @@ describe("Sig service tests", () => {
 
     expect(signature.success).toBe(true);
     assert(signature.success);
-    const res = await sig.verify(signature.signature, testData);
+    const res = await sig.verify(signature.signature[0], testData);
 
     expect(res).toBe(true);
   });
@@ -334,7 +340,7 @@ describe("Sig service tests", () => {
     );
 
     expect(res.success).toBe(false);
-    expect(res.error).toBe("Security guard validation failed");
+    expect(res.error).toStrictEqual(["Security guard validation failed"]);
   });
 
   it("sig.sign with defaultSigGuard should not allow particles initiated from other peers", async () => {
@@ -352,7 +358,7 @@ describe("Sig service tests", () => {
     );
 
     expect(res.success).toBe(false);
-    expect(res.error).toBe("Security guard validation failed");
+    expect(res.error).toStrictEqual(["Security guard validation failed"]);
   });
 
   it("changing securityGuard should work", async () => {

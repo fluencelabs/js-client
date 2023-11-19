@@ -14,66 +14,59 @@
  * limitations under the License.
  */
 
-import type { ServiceDef, ServiceImpl } from "@fluencelabs/interfaces";
-
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
 
 import { registerGlobalService, userHandlerService } from "./services.js";
+import { ServiceImpl } from "./types.js";
 
 const log = logger("aqua");
 
 interface RegisterServiceArgs {
   peer: FluencePeer;
-  def: ServiceDef;
-  serviceId: string | undefined;
+  serviceId: string;
   service: ServiceImpl;
 }
 
+const findAllPossibleRegisteredServiceFunctions = (
+  service: ServiceImpl,
+): Set<string> => {
+  let prototype: Record<string, unknown> = service;
+  const serviceMethods = new Set<string>();
+
+  do {
+    Object.getOwnPropertyNames(prototype)
+      .filter((prop) => {
+        return typeof prototype[prop] === "function" && prop !== "constructor";
+      })
+      .forEach((prop) => {
+        return serviceMethods.add(prop);
+      });
+
+    // coercing 'any' type to 'Record' bcs object prototype is actually an object
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    prototype = Object.getPrototypeOf(prototype) as Record<string, unknown>;
+  } while (prototype.constructor !== Object);
+
+  return serviceMethods;
+};
+
 export const registerService = ({
   peer,
-  def,
-  serviceId = def.defaultServiceId,
+  serviceId,
   service,
 }: RegisterServiceArgs) => {
-  // TODO: Need to refactor this. We can compute function types from service implementation, making func more type safe
-  log.trace("registering aqua service %o", { def, serviceId, service });
+  log.trace("registering aqua service %o", { serviceId, service });
 
-  // Checking for missing keys
-  const requiredKeys =
-    def.functions.tag === "nil" ? [] : Object.keys(def.functions.fields);
+  const serviceFunctions = findAllPossibleRegisteredServiceFunctions(service);
 
-  const incorrectServiceDefinitions = requiredKeys.filter((f) => {
-    return !(f in service);
-  });
-
-  if (serviceId == null) {
-    throw new Error("Service ID must be specified");
-  }
-
-  if (incorrectServiceDefinitions.length > 0) {
-    throw new Error(
-      `Error registering service ${serviceId}: missing functions: ` +
-        incorrectServiceDefinitions
-          .map((d) => {
-            return "'" + d + "'";
-          })
-          .join(", "),
-    );
-  }
-
-  const singleFunctions =
-    def.functions.tag === "nil" ? [] : Object.entries(def.functions.fields);
-
-  for (const singleFunction of singleFunctions) {
-    const [name] = singleFunction;
-    // The function has type of (arg1, arg2, arg3, ... , callParams) => CallServiceResultType | void
-    // Account for the fact that user service might be defined as a class - .bind(...)
-    const userDefinedHandler = service[name].bind(service);
+  for (const serviceFunction of serviceFunctions) {
+    const handler = service[serviceFunction];
+    const userDefinedHandler = handler.bind(service);
 
     const serviceDescription = userHandlerService(
       serviceId,
-      singleFunction,
+      serviceFunction,
       userDefinedHandler,
     );
 

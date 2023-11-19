@@ -14,222 +14,241 @@
  * limitations under the License.
  */
 
-// TODO: This file is a mess. Need to refactor it later
-/* eslint-disable */
-// @ts-nocheck
-
-import assert from "assert";
-
-import type {
+import {
   ArrowType,
   ArrowWithoutCallbacks,
-  JSONArray,
   JSONValue,
-  NonArrowType,
+  LabeledProductType,
+  NonArrowSimpleType,
+  ScalarType,
+  SimpleTypes,
+  UnlabeledProductType,
 } from "@fluencelabs/interfaces";
-import { match } from "ts-pattern";
 
-import { CallServiceData } from "../jsServiceHost/interfaces.js";
-import { jsonify } from "../util/utils.js";
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 
-/**
- * Convert value from its representation in aqua language to representation in typescript
- * @param value - value as represented in aqua
- * @param type - definition of the aqua type
- * @returns value represented in typescript
- */
-export const aqua2ts = (value: JSONValue, type: NonArrowType): JSONValue => {
-  const res = match(type)
-    .with({ tag: "nil" }, () => {
+import { ServiceImpl } from "./types.js";
+
+export class SchemaValidationError extends Error {
+  constructor(
+    public path: string[],
+    schema: NonArrowSimpleType | ArrowWithoutCallbacks,
+    expected: string,
+    provided: JSONValue | ServiceImpl[string],
+  ) {
+    const given =
+      provided === null
+        ? "null"
+        : Array.isArray(provided)
+        ? "array"
+        : typeof provided;
+
+    const message = `Aqua type mismatch. Path: ${path.join(
+      ".",
+    )}; Expected: ${expected}; Given: ${given}; \nSchema: ${JSON.stringify(
+      schema,
+    )}; \nTry recompiling rust services and aqua. Make sure you are using up-to-date versions of aqua libraries`;
+
+    super(message);
+  }
+}
+
+interface ValidationContext {
+  path: string[];
+}
+
+const numberTypes = [
+  "u8",
+  "u16",
+  "u32",
+  "u64",
+  "i8",
+  "i16",
+  "i32",
+  "i64",
+  "f32",
+  "f64",
+] as const;
+
+function isScalar(
+  schema: ScalarType,
+  arg: JSONValue,
+  { path }: ValidationContext,
+) {
+  if (numberTypes.includes(schema.name)) {
+    if (typeof arg !== "number") {
+      throw new SchemaValidationError(path, schema, "number", arg);
+    }
+  } else if (schema.name === "bool") {
+    if (typeof arg !== "boolean") {
+      throw new SchemaValidationError(path, schema, "boolean", arg);
+    }
+  } else if (schema.name === "string") {
+    if (typeof arg !== "string") {
+      throw new SchemaValidationError(path, schema, "string", arg);
+    }
+  } else {
+    throw new SchemaValidationError(path, schema, schema.name, arg);
+  }
+
+  return arg;
+}
+
+export function aqua2js(
+  value: JSONValue,
+  schema: NonArrowSimpleType,
+): JSONValue {
+  if (schema.tag === "nil") {
+    return null;
+  } else if (schema.tag === "option") {
+    if (!Array.isArray(value)) {
+      throw new SchemaValidationError([], schema, "array", value);
+    }
+
+    if (value.length === 0) {
       return null;
-    })
-    .with({ tag: "option" }, (opt) => {
-      assert(Array.isArray(value), "Should not be possible, bad types");
+    } else {
+      return aqua2js(value[0], schema.type);
+    }
+  } else if (
+    schema.tag === "scalar" ||
+    schema.tag === "bottomType" ||
+    schema.tag === "topType"
+  ) {
+    return value;
+  } else if (schema.tag === "array") {
+    if (!Array.isArray(value)) {
+      throw new SchemaValidationError([], schema, "array", value);
+    }
 
-      if (value.length === 0) {
-        return null;
-      } else {
-        return aqua2ts(value[0], opt.type);
-      }
-    })
-    .with({ tag: "scalar" }, { tag: "bottomType" }, { tag: "topType" }, () => {
-      return value;
-    })
-    .with({ tag: "array" }, (arr) => {
-      assert(Array.isArray(value), "Should not be possible, bad types");
-      return value.map((y) => {
-        return aqua2ts(y, arr.type);
-      });
-    })
-    .with({ tag: "struct" }, (x) => {
-      return Object.entries(x.fields).reduce((agg, [key, type]) => {
-        const val = aqua2ts(value[key], type);
-        return { ...agg, [key]: val };
-      }, {});
-    })
-    .with({ tag: "labeledProduct" }, (x) => {
-      return Object.entries(x.fields).reduce((agg, [key, type]) => {
-        const val = aqua2ts(value[key], type);
-        return { ...agg, [key]: val };
-      }, {});
-    })
-    .with({ tag: "unlabeledProduct" }, (x) => {
-      return x.items.map((type, index) => {
-        return aqua2ts(value[index], type);
-      });
-    })
-    // uncomment to check that every pattern in matched
-    // .exhaustive();
-    .otherwise(() => {
-      throw new Error("Unexpected tag: " + jsonify(type));
+    return value.map((y) => {
+      return aqua2js(y, schema.type);
     });
+  } else if (schema.tag === "unlabeledProduct") {
+    if (!Array.isArray(value)) {
+      throw new SchemaValidationError([], schema, "array", value);
+    }
 
-  return res;
-};
-
-/**
- * Convert call service arguments list from their aqua representation to representation in typescript
- * @param req - call service data
- * @param arrow - aqua type definition
- * @returns arguments in typescript representation
- */
-export const aquaArgs2Ts = (
-  req: CallServiceData,
-  arrow: ArrowWithoutCallbacks,
-): JSONArray => {
-  const argTypes = match(arrow.domain)
-    .with({ tag: "labeledProduct" }, (x) => {
-      return Object.values(x.fields);
-    })
-    .with({ tag: "unlabeledProduct" }, (x) => {
-      return x.items;
-    })
-    .with({ tag: "nil" }, (x) => {
-      return [];
-    })
-    // uncomment to check that every pattern in matched
-    // .exhaustive()
-    .otherwise(() => {
-      throw new Error("Unexpected tag: " + jsonify(arrow.domain));
+    return value.map((y, i) => {
+      return aqua2js(y, schema.items[i]);
     });
+  } else if (["labeledProduct", "struct"].includes(schema.tag)) {
+    if (typeof value !== "object" || value == null || Array.isArray(value)) {
+      throw new SchemaValidationError([], schema, "object", value);
+    }
 
-  if (req.args.length !== argTypes.length) {
-    throw new Error(
-      `incorrect number of arguments, expected: ${argTypes.length}, got: ${req.args.length}`,
+    return Object.fromEntries(
+      Object.entries(schema.fields).map(([key, type]) => {
+        const val = aqua2js(value[key], type);
+        return [key, val];
+      }),
     );
+  } else {
+    throw new SchemaValidationError([], schema, "never", value);
   }
+}
 
-  return req.args.map((arg, index) => {
-    return aqua2ts(arg, argTypes[index]);
-  });
-};
+export function js2aqua(
+  value: JSONValue,
+  schema: NonArrowSimpleType,
+  { path }: ValidationContext,
+): JSONValue {
+  if (schema.tag === "nil") {
+    if (value !== null) {
+      throw new SchemaValidationError(path, schema, "null", value);
+    }
 
-/**
- * Convert value from its typescript representation to representation in aqua
- * @param value - the value as represented in typescript
- * @param type - definition of the aqua type
- * @returns value represented in aqua
- */
-export const ts2aqua = (value: JSONValue, type: NonArrowType): JSONValue => {
-  const res = match(type)
-    .with({ tag: "nil" }, () => {
-      return null;
-    })
-    .with({ tag: "option" }, (opt) => {
-      if (value === null || value === undefined) {
-        return [];
-      } else {
-        return [ts2aqua(value, opt.type)];
-      }
-    })
-    .with({ tag: "scalar" }, { tag: "bottomType" }, { tag: "topType" }, () => {
-      return value;
-    })
-    .with({ tag: "array" }, (arr) => {
-      assert(Array.isArray(value), "Should not be possible, bad types");
-      return value.map((y) => {
-        return ts2aqua(y, arr.type);
-      });
-    })
-    .with({ tag: "struct" }, (x) => {
-      return Object.entries(x.fields).reduce((agg, [key, type]) => {
-        const val = ts2aqua(value[key], type);
-        return { ...agg, [key]: val };
-      }, {});
-    })
-    .with({ tag: "labeledProduct" }, (x) => {
-      return Object.entries(x.fields).reduce((agg, [key, type]) => {
-        const val = ts2aqua(value[key], type);
-        return { ...agg, [key]: val };
-      }, {});
-    })
-    .with({ tag: "unlabeledProduct" }, (x) => {
-      return x.items.map((type, index) => {
-        return ts2aqua(value[index], type);
-      });
-    })
-    // uncomment to check that every pattern in matched
-    // .exhaustive()
-    .otherwise(() => {
-      throw new Error("Unexpected tag: " + jsonify(type));
+    return value;
+  } else if (schema.tag === "option") {
+    // option means 'type | null'
+    return value == null ? [] : [js2aqua(value, schema.type, { path })];
+  } else if (schema.tag === "topType") {
+    // topType equals to 'any'
+    return value;
+  } else if (schema.tag === "bottomType") {
+    // bottomType equals to 'never'
+    throw new SchemaValidationError(path, schema, "never", value);
+  } else if (schema.tag === "scalar") {
+    return isScalar(schema, value, { path });
+  } else if (schema.tag === "array") {
+    if (!Array.isArray(value)) {
+      throw new SchemaValidationError(path, schema, "array", value);
+    }
+
+    return value.map((y, i) => {
+      return js2aqua(y, schema.type, { path: [...path, `[${i}]`] });
+    });
+  } else if (schema.tag === "unlabeledProduct") {
+    if (!Array.isArray(value)) {
+      throw new SchemaValidationError(path, schema, "array", value);
+    }
+
+    return value.map((y, i) => {
+      return js2aqua(y, schema.items[i], { path: [...path, `[${i}]`] });
+    });
+  } else if (["labeledProduct", "struct"].includes(schema.tag)) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      throw new SchemaValidationError(path, schema, "object", value);
+    }
+
+    return Object.fromEntries(
+      Object.entries(schema.fields).map(([key, type]) => {
+        const val = js2aqua(value[key], type, { path: [...path, key] });
+        return [key, val];
+      }),
+    );
+  } else {
+    throw new SchemaValidationError(path, schema, "never", value);
+  }
+}
+
+// Wrapping function, converting its arguments to aqua before call and back to js after call.
+// It makes callbacks and service functions defined by user operate on js types seamlessly
+export const wrapJsFunction = (
+  func: ServiceImpl[string],
+  schema:
+    | ArrowWithoutCallbacks
+    | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
+): ServiceImpl[string] => {
+  return async (...args) => {
+    // These assertions used to correctly destructure tuple. It's impossible to do without asserts due to ts limitations.
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const jsonArgs = args.slice(0, args.length - 1) as JSONValue[];
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const context = args[args.length - 1] as ParticleContext;
+
+    const schemaArgs =
+      schema.domain.tag === "nil"
+        ? []
+        : schema.domain.tag === "unlabeledProduct"
+        ? schema.domain.items
+        : Object.values(schema.domain.fields);
+
+    if (schemaArgs.length !== jsonArgs.length) {
+      throw new Error(
+        `Schema and generated air doesn't match. Air has been called with ${jsonArgs.length} args and schema contains ${schemaArgs.length} args`,
+      );
+    }
+
+    const tsArgs = jsonArgs.map((arg, i) => {
+      return aqua2js(arg, schemaArgs[i]);
     });
 
-  return res;
-};
+    const returnTypeVoid =
+      schema.codomain.tag === "nil" || schema.codomain.items.length === 0;
 
-/**
- * Convert return type of the service from it's typescript representation to representation in aqua
- * @param returnValue - the value as represented in typescript
- * @param arrowType - the arrow type which describes the service
- * @returns - value represented in aqua
- */
-export const returnType2Aqua = (
-  returnValue: any,
-  arrowType: ArrowType<NonArrowType>,
-) => {
-  if (arrowType.codomain.tag === "nil") {
-    return {};
-  }
+    const resultSchema =
+      schema.codomain.tag === "unlabeledProduct" &&
+      schema.codomain.items.length === 1
+        ? schema.codomain.items[0]
+        : schema.codomain;
 
-  if (arrowType.codomain.items.length === 0) {
-    return {};
-  }
+    let result = await func(...tsArgs, context);
 
-  if (arrowType.codomain.items.length === 1) {
-    return ts2aqua(returnValue, arrowType.codomain.items[0]);
-  }
+    if (returnTypeVoid) {
+      result = null;
+    }
 
-  return arrowType.codomain.items.map((type, index) => {
-    return ts2aqua(returnValue[index], type);
-  });
-};
-
-/**
- * Converts response value from aqua its representation to representation in typescript
- * @param req - call service data
- * @param arrow - aqua type definition
- * @returns response value in typescript representation
- */
-export const responseServiceValue2ts = (
-  req: CallServiceData,
-  arrow: ArrowType<any>,
-) => {
-  return match(arrow.codomain)
-    .with({ tag: "nil" }, () => {
-      return null;
-    })
-    .with({ tag: "unlabeledProduct" }, (x) => {
-      if (x.items.length === 0) {
-        return null;
-      }
-
-      if (x.items.length === 1) {
-        return aqua2ts(req.args[0], x.items[0]);
-      }
-
-      return req.args.map((y, index) => {
-        return aqua2ts(y, x.items[index]);
-      });
-    })
-    .exhaustive();
+    return js2aqua(result, resultSchema, { path: [] });
+  };
 };

@@ -90,11 +90,11 @@ export const runTest = async (): Promise<TestResult> => {
 
     console.log("running marine test...");
     const marine = await marineTest(wasm);
+    console.log("marine test finished, result: ", marine);
 
     console.log("running particle test...");
-    await particleTest();
 
-    console.log("marine test finished, result: ", marine);
+    await particleTest();
 
     const returnVal = {
       hello,

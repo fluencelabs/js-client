@@ -15,7 +15,7 @@
  */
 
 import { generateSources, generateTypes } from "./generate/index.js";
-import { CompilationResult, OutputType } from "./generate/interfaces.js";
+import { CompilationResult } from "./generate/interfaces.js";
 import { getPackageJsonContent } from "./utils.js";
 
 interface JsOutput {
@@ -33,6 +33,7 @@ type LanguageOutput = {
 };
 
 type NothingToGenerate = null;
+type OutputType = "js" | "ts";
 
 export default async function aquaToJs<T extends OutputType>(
   res: CompilationResult,
@@ -52,8 +53,7 @@ export default async function aquaToJs<T extends OutputType>(
         sources: generateSources(res, "js", packageJson),
         types: generateTypes(res, packageJson),
       }
-    : // TODO: probably there is a way to remove this type assert
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ({
         sources: generateSources(res, "ts", packageJson),
       } as LanguageOutput[T]);

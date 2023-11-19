@@ -17,10 +17,10 @@
 /**
  * This compiled aqua file was modified to make it work in monorepo
  */
-import { CallParams, ServiceImpl } from "@fluencelabs/interfaces";
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
+import { ParticleContext } from "../../jsServiceHost/interfaces.js";
 import { Tracing } from "../Tracing.js";
 
 // Services
@@ -29,7 +29,7 @@ export interface TracingDef {
   tracingEvent: (
     arrowName: string,
     event: string,
-    callParams: CallParams<"arrowName" | "event">,
+    callParams: ParticleContext,
   ) => void | Promise<void>;
 }
 
@@ -38,40 +38,11 @@ export function registerTracing(
   serviceId: string,
   service: Tracing,
 ) {
+  const tracingService: Record<never, unknown> = service;
+
   registerService({
     peer,
     serviceId,
-    // TODO: fix this after changing registerService signature
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    service: service as unknown as ServiceImpl,
-    def: {
-      defaultServiceId: "tracingSrv",
-      functions: {
-        tag: "labeledProduct",
-        fields: {
-          tracingEvent: {
-            tag: "arrow",
-            domain: {
-              tag: "labeledProduct",
-              fields: {
-                arrowName: {
-                  tag: "scalar",
-                  name: "string",
-                },
-                event: {
-                  tag: "scalar",
-                  name: "string",
-                },
-              },
-            },
-            codomain: {
-              tag: "nil",
-            },
-          },
-        },
-      },
-    },
+    service: tracingService,
   });
 }
-
-// Functions

@@ -22,6 +22,7 @@ import {
   KeyPairFormat,
   serializeAvmArgs,
 } from "@fluencelabs/avm";
+import { JSONValue } from "@fluencelabs/interfaces";
 import { fromUint8Array } from "js-base64";
 import {
   concatMap,
@@ -55,7 +56,6 @@ import {
   getActualTTL,
   hasExpired,
   Particle,
-  ParticleExecutionStage,
   ParticleQueueItem,
 } from "../particle/Particle.js";
 import { registerSig } from "../services/_aqua/services.js";
@@ -66,6 +66,8 @@ import { Srv } from "../services/SingleModuleSrv.js";
 import { Tracing } from "../services/Tracing.js";
 import { logger } from "../util/logger.js";
 import { jsonify, isString, getErrorMessage } from "../util/utils.js";
+
+import { ExpirationError, InterpreterError, SendError } from "./errors.js";
 
 const log_particle = logger("particle");
 const log_peer = logger("peer");
@@ -247,11 +249,13 @@ export abstract class FluencePeer {
       /**
        * Initiates a new particle execution starting from local peer
        * @param particle - particle to start execution of
-       * @param onStageChange - callback for reacting on particle state changes
+       * @param onSuccess - callback which is called when particle execution succeed
+       * @param onError - callback which is called when particle execution fails
        */
       initiateParticle: (
         particle: IParticle,
-        onStageChange: (stage: ParticleExecutionStage) => void,
+        onSuccess: (result: JSONValue) => void,
+        onError: (error: Error) => void,
       ): void => {
         if (!this.isInitialized) {
           throw new Error(
@@ -268,7 +272,8 @@ export abstract class FluencePeer {
         this._incomingParticles.next({
           particle: particle,
           callResults: [],
-          onStageChange: onStageChange,
+          onSuccess,
+          onError,
         });
       },
 
@@ -329,6 +334,7 @@ export abstract class FluencePeer {
     registerTracing(this, "tracingSrv", this._classServices.tracing);
   }
 
+  // TODO: too long, refactor
   private _startParticleProcessing() {
     this._particleSourceSubscription = this.connection.particleSource.subscribe(
       {
@@ -336,7 +342,8 @@ export abstract class FluencePeer {
           this._incomingParticles.next({
             particle: p,
             callResults: [],
-            onStageChange: () => {},
+            onSuccess: () => {},
+            onError: () => {},
           });
         },
       },
@@ -471,10 +478,11 @@ export abstract class FluencePeer {
                   item.result.message,
                 );
 
-                item.onStageChange({
-                  stage: "interpreterError",
-                  errorMessage: item.result.message,
-                });
+                item.onError(
+                  new InterpreterError(
+                    `Script interpretation failed: ${item.result.message}  (particle id: ${item.particle.id})`,
+                  ),
+                );
 
                 return;
               }
@@ -493,10 +501,11 @@ export abstract class FluencePeer {
                   this.decodeAvmData(item.result.data),
                 );
 
-                item.onStageChange({
-                  stage: "interpreterError",
-                  errorMessage: item.result.errorMessage,
-                });
+                item.onError(
+                  new InterpreterError(
+                    `Script interpretation failed: ${item.result.errorMessage}  (particle id: ${item.particle.id})`,
+                  ),
+                );
 
                 return;
               }
@@ -507,10 +516,6 @@ export abstract class FluencePeer {
                 item.result.retCode,
                 this.decodeAvmData(item.result.data),
               );
-
-              setTimeout(() => {
-                item.onStageChange({ stage: "interpreted" });
-              }, 0);
 
               let connectionPromise: Promise<void> = Promise.resolve();
 
@@ -534,8 +539,6 @@ export abstract class FluencePeer {
                       "id %s. send successful",
                       newParticle.id,
                     );
-
-                    item.onStageChange({ stage: "sent" });
                   })
                   .catch((e: unknown) => {
                     log_particle.error(
@@ -544,10 +547,13 @@ export abstract class FluencePeer {
                       e,
                     );
 
-                    item.onStageChange({
-                      stage: "sendingError",
-                      errorMessage: getErrorMessage(e),
-                    });
+                    const message = getErrorMessage(e);
+
+                    item.onError(
+                      new SendError(
+                        `Could not send particle: (particle id: ${item.particle.id}, message: ${message})`,
+                      ),
+                    );
                   });
               }
 
@@ -560,7 +566,10 @@ export abstract class FluencePeer {
                     args: cr.arguments,
                     serviceId: cr.serviceId,
                     tetraplets: cr.tetraplets,
-                    particleContext: getParticleContext(item.particle),
+                    particleContext: getParticleContext(
+                      item.particle,
+                      cr.tetraplets,
+                    ),
                   };
 
                   void this._execSingleCallRequest(req)
@@ -582,6 +591,14 @@ export abstract class FluencePeer {
                       };
                     })
                     .then((res) => {
+                      if (
+                        req.serviceId === "callbackSrv" &&
+                        req.fnName === "response"
+                      ) {
+                        // Particle already processed
+                        return;
+                      }
+
                       const serviceResult = {
                         result: jsonify(res.result),
                         retCode: res.retCode,
@@ -599,8 +616,6 @@ export abstract class FluencePeer {
                       });
                     });
                 }
-              } else {
-                item.onStageChange({ stage: "localWorkDone" });
               }
 
               return connectionPromise;
@@ -623,7 +638,11 @@ export abstract class FluencePeer {
 
     this.jsServiceHost.removeParticleScopeHandlers(particleId);
 
-    item.onStageChange({ stage: "expired" });
+    item.onError(
+      new ExpirationError(
+        `Particle expired after ttl of ${item.particle.ttl}ms (particle id: ${item.particle.id})`,
+      ),
+    );
   }
 
   private decodeAvmData(data: Uint8Array) {

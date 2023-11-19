@@ -17,7 +17,6 @@
 import * as path from "path";
 import * as url from "url";
 
-import { ServiceDef, ServiceImpl } from "@fluencelabs/interfaces";
 import { it, describe, expect, beforeAll } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";
@@ -29,8 +28,6 @@ import { Sig } from "../Sig.js";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 let aqua: Record<string, CompiledFnCall>;
-let sigDef: ServiceDef;
-let dataProviderDef: ServiceDef;
 
 describe("Sig service test suite", () => {
   beforeAll(async () => {
@@ -39,11 +36,9 @@ describe("Sig service test suite", () => {
       "../../../aqua_test/sigService.aqua",
     );
 
-    const { services, functions } = await compileAqua(pathToAquaFiles);
+    const { functions } = await compileAqua(pathToAquaFiles);
 
     aqua = functions;
-    sigDef = services["Sig"];
-    dataProviderDef = services["DataProvider"];
   });
 
   it("Use custom sig service, success path", async () => {
@@ -52,18 +47,16 @@ describe("Sig service test suite", () => {
       const customSig = new Sig(customKeyPair);
       const data = [1, 2, 3, 4, 5];
 
+      const anyService: Record<never, unknown> = customSig;
+
       registerService({
         peer,
-        def: sigDef,
         serviceId: "CustomSig",
-        // TODO: fix this after changing registerService signature
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: customSig as unknown as ServiceImpl,
+        service: anyService,
       });
 
       registerService({
         peer,
-        def: dataProviderDef,
         serviceId: "data",
         service: {
           provide_data: () => {
@@ -81,7 +74,7 @@ describe("Sig service test suite", () => {
       const isSigCorrect = await customSig.verify(
         // TODO: Use compiled ts wrappers
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (result as { signature: number[] }).signature,
+        (result as { signature: [number[]] }).signature[0],
         data,
       );
 
@@ -95,18 +88,16 @@ describe("Sig service test suite", () => {
       const customSig = new Sig(customKeyPair);
       const data = [1, 2, 3, 4, 5];
 
+      const anyService: Record<never, unknown> = customSig;
+
       registerService({
         peer,
-        def: sigDef,
         serviceId: "CustomSig",
-        // TODO: fix this after changing registerService signature
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        service: customSig as unknown as ServiceImpl,
+        service: anyService,
       });
 
       registerService({
         peer,
-        def: dataProviderDef,
         serviceId: "data",
         service: {
           provide_data: () => {
@@ -130,7 +121,6 @@ describe("Sig service test suite", () => {
 
       registerService({
         peer: peer,
-        def: dataProviderDef,
         serviceId: "data",
         service: {
           provide_data: () => {
@@ -146,6 +136,11 @@ describe("Sig service test suite", () => {
       });
 
       expect(callAsSigRes).toHaveProperty("success", false);
+
+      expect(callAsPeerIdRes).toHaveProperty("error", [
+        "Security guard validation failed",
+      ]);
+
       expect(callAsPeerIdRes).toHaveProperty("success", false);
 
       sig.securityGuard = () => {
@@ -167,7 +162,8 @@ describe("Sig service test suite", () => {
       const isValid = await sig.verify(
         // TODO: Use compiled ts wrappers
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (callAsSigResAfterGuardChange as { signature: number[] }).signature,
+        (callAsSigResAfterGuardChange as { signature: [number[]] })
+          .signature[0],
         data,
       );
 

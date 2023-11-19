@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { CallParams, PeerIdB58 } from "@fluencelabs/interfaces";
+import { PeerIdB58 } from "@fluencelabs/interfaces";
 
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { KeyPair } from "../keypair/index.js";
 
-import { SigDef } from "./_aqua/services.js";
 import {
   allowOnlyParticleOriginatedAt,
   allowServiceFn,
@@ -28,7 +28,7 @@ import {
 } from "./securityGuard.js";
 
 export const defaultSigGuard = (peerId: PeerIdB58) => {
-  return and<"data">(
+  return and(
     allowOnlyParticleOriginatedAt(peerId),
     or(
       allowServiceFn("trust-graph", "get_trust_bytes"),
@@ -43,23 +43,23 @@ export const defaultSigGuard = (peerId: PeerIdB58) => {
 
 type SignReturnType =
   | {
-      error: null;
-      signature: number[];
+      error: [];
+      signature: [number[]];
       success: true;
     }
   | {
-      error: string;
-      signature: null;
+      error: [string];
+      signature: [];
       success: false;
     };
 
-export class Sig implements SigDef {
+export class Sig {
   constructor(private keyPair: KeyPair) {}
 
   /**
    * Configurable security guard for sign method
    */
-  securityGuard: SecurityGuard<"data"> = () => {
+  securityGuard: SecurityGuard = () => {
     return true;
   };
 
@@ -75,13 +75,13 @@ export class Sig implements SigDef {
    */
   async sign(
     data: number[],
-    callParams: CallParams<"data">,
+    context: ParticleContext,
   ): Promise<SignReturnType> {
-    if (!this.securityGuard(callParams)) {
+    if (!this.securityGuard(context)) {
       return {
         success: false,
-        error: "Security guard validation failed",
-        signature: null,
+        error: ["Security guard validation failed"],
+        signature: [],
       };
     }
 
@@ -89,8 +89,8 @@ export class Sig implements SigDef {
 
     return {
       success: true,
-      error: null,
-      signature: Array.from(signedData),
+      error: [],
+      signature: [Array.from(signedData)],
     };
   }
 

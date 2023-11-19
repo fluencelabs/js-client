@@ -20,7 +20,7 @@ import versions from "./versions.js";
 
 export type FetchedPackages = keyof typeof versions;
 type VersionedPackage = { name: string; version: string };
-export type GetWorker = (
+export type GetWorkerFn = (
   pkg: FetchedPackages,
   CDNUrl: string,
 ) => Promise<Worker>;
@@ -31,3 +31,9 @@ export const getVersionedPackage = (pkg: FetchedPackages): VersionedPackage => {
     version: versions[pkg],
   };
 };
+
+export type FetchResourceFn = (
+  pkg: FetchedPackages,
+  assetPath: string,
+  root: string,
+) => Promise<Response>;

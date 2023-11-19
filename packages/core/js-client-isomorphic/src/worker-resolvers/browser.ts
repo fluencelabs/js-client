@@ -17,9 +17,9 @@
 import { BlobWorker } from "@fluencelabs/threads/master";
 
 import { fetchResource } from "../fetchers/browser.js";
-import type { FetchedPackages, GetWorker } from "../types.js";
+import type { FetchedPackages, GetWorkerFn } from "../types.js";
 
-export const getWorker: GetWorker = async (
+export const getWorker: GetWorkerFn = async (
   pkg: FetchedPackages,
   CDNUrl: string,
 ) => {

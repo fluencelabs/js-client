@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { JSONValue, NonArrowType } from "@fluencelabs/interfaces";
+import { JSONValue, NonArrowSimpleType } from "@fluencelabs/interfaces";
 import { it, describe, expect, test } from "vitest";
 
-import { aqua2ts, ts2aqua } from "../conversions.js";
+import { aqua2js, js2aqua } from "../conversions.js";
 
 const i32 = { tag: "scalar", name: "i32" } as const;
 
@@ -172,7 +172,7 @@ const nestedStructs = [
 interface ConversionTestArgs {
   aqua: JSONValue;
   ts: JSONValue;
-  type: NonArrowType;
+  type: NonArrowSimpleType;
 }
 
 describe("Conversion from aqua to typescript", () => {
@@ -200,8 +200,8 @@ describe("Conversion from aqua to typescript", () => {
       // arrange
 
       // act
-      const tsFromAqua = aqua2ts(aqua, type);
-      const aquaFromTs = ts2aqua(ts, type);
+      const tsFromAqua = aqua2js(aqua, type);
+      const aquaFromTs = js2aqua(ts, type, { path: [] });
 
       // assert
       expect(tsFromAqua).toStrictEqual(ts);
@@ -231,8 +231,8 @@ describe("Conversion corner cases", () => {
     };
 
     // act
-    const aqua = ts2aqua(valueInTs, type);
-    const ts = aqua2ts(valueInAqua, type);
+    const aqua = js2aqua(valueInTs, type, { path: [] });
+    const ts = aqua2js(valueInAqua, type);
 
     // assert
     expect(aqua).toStrictEqual({

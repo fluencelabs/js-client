@@ -11,7 +11,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "compile-aqua": "fluence aqua -i ./_aqua -o ./src/_aqua"
+    "compile-aqua": "node --loader ts-node/esm compile-aqua.ts"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
   "author": "Fluence Labs",
@@ -20,10 +20,12 @@
     "base64-js": "1.5.1"
   },
   "devDependencies": {
+    "@fluencelabs/aqua-api": "0.12.4-main-cee4448-2196-1",
     "@fluencelabs/aqua-lib": "0.6.0",
-    "@fluencelabs/cli": "0.7.2",
-    "@fluencelabs/js-client": "workspace:^",
-    "@fluencelabs/registry": "0.8.2",
-    "@fluencelabs/trust-graph": "3.1.2"
+    "@fluencelabs/aqua-to-js": "workspace:*",
+    "@fluencelabs/js-client": "workspace:*",
+    "@fluencelabs/registry": "0.8.8-1",
+    "@fluencelabs/trust-graph": "3.1.2",
+    "ts-node": "10.9.1"
   }
 }

@@ -17,15 +17,56 @@
 import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect } from "vitest";
 
+import { ExpirationError } from "../../jsPeer/errors.js";
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
-import { doNothing } from "../../jsServiceHost/serviceUtils.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withClient } from "../../util/testUtils.js";
 import { checkConnection } from "../checkConnection.js";
 
 import { nodes, RELAY } from "./connection.js";
 
+const ONE_SECOND = 1000;
+
 describe("FluenceClient usage test suite", () => {
+  it("Should stop particle processing after TTL is reached", async () => {
+    await withClient(RELAY, { defaultTtlMs: 600 }, async (peer) => {
+      const script = `
+    (seq
+        (call %init_peer_id% ("load" "relay") [] init_relay)
+        (call init_relay ("peer" "timeout") [60000 "Do you really want to wait for so long?"])
+    )`;
+
+      const particle = await peer.internals.createNewParticle(script);
+
+      const start = Date.now();
+
+      const promise = new Promise<JSONValue>((resolve, reject) => {
+        registerHandlersHelper(peer, particle, {
+          load: {
+            relay: () => {
+              return peer.getRelayPeerId();
+            },
+          },
+          callbackSrv: {
+            response: () => {
+              resolve({});
+              return "";
+            },
+          },
+        });
+
+        peer.internals.initiateParticle(particle, resolve, reject);
+      });
+
+      await expect(promise).rejects.toThrow(ExpirationError);
+
+      expect(
+        Date.now() - 500,
+        "Particle processing didn't stop after TTL is reached",
+      ).toBeGreaterThanOrEqual(start);
+    });
+  });
+
   it("should make a call through network", async () => {
     await withClient(RELAY, {}, async (peer) => {
       // arrange
@@ -71,7 +112,11 @@ describe("FluenceClient usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(result).toBe("hello world!");
@@ -124,7 +169,11 @@ describe("FluenceClient usage test suite", () => {
           throw particle;
         }
 
-        peer1.internals.initiateParticle(particle, doNothing);
+        peer1.internals.initiateParticle(
+          particle,
+          () => {},
+          () => {},
+        );
 
         expect(await res).toEqual("test");
       });
@@ -172,13 +221,17 @@ describe("FluenceClient usage test suite", () => {
       );
     });
 
-    it("With connection options: defaultTTL", async () => {
-      await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
-        const isConnected = await checkConnection(peer);
+    it(
+      "With connection options: defaultTTL",
+      async () => {
+        await withClient(RELAY, { defaultTtlMs: 1 }, async (peer) => {
+          const isConnected = await checkConnection(peer);
 
-        expect(isConnected).toBeFalsy();
-      });
-    });
+          expect(isConnected).toBeFalsy();
+        });
+      },
+      ONE_SECOND,
+    );
   });
 
   it.skip("Should throw correct error when the client tries to send a particle not to the relay", async () => {
@@ -206,14 +259,14 @@ describe("FluenceClient usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, (stage) => {
-          if (stage.stage === "sendingError") {
-            reject(stage.errorMessage);
-          }
-        });
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          (error: Error) => {
+            reject(error);
+          },
+        );
       });
-
-      await promise;
 
       await expect(promise).rejects.toMatch(
         "Particle is expected to be sent to only the single peer (relay which client is connected to)",

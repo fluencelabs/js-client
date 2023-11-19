@@ -35,12 +35,13 @@ export default function generateHeader(
  */
 ${
   outputType === "ts"
-    ? "import type { IFluenceClient as IFluenceClient$$, CallParams as CallParams$$ } from '@fluencelabs/js-client';"
+    ? "import type { IFluenceClient as IFluenceClient$$, ParticleContext as ParticleContext$$ } from '@fluencelabs/js-client';"
     : ""
 }
 
+// Making aliases to reduce chance of accidental name collision
 import {
     v5_callFunction as callFunction$$,
-    v5_registerService as registerService$$,
+    v5_registerService as registerService$$
 } from '@fluencelabs/js-client';`;
 }

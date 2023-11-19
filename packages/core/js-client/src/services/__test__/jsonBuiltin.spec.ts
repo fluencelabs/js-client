@@ -17,7 +17,6 @@
 import { it, describe, expect, beforeEach, afterEach } from "vitest";
 
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
-import { doNothing } from "../../jsServiceHost/serviceUtils.js";
 import { mkTestPeer } from "../../util/testUtils.js";
 
 let peer: FluencePeer;
@@ -72,7 +71,12 @@ describe("Sig service test suite", () => {
     });
 
     const p = await peer.internals.createNewParticle(script);
-    peer.internals.initiateParticle(p, doNothing);
+
+    peer.internals.initiateParticle(
+      p,
+      () => {},
+      () => {},
+    );
 
     const [
       nestedFirst,

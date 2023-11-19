@@ -20,23 +20,24 @@ import { Path, Aqua } from "@fluencelabs/aqua-api/aqua-api.js";
 import {
   FunctionCallDef,
   JSONArray,
-  PassedArgs,
+  JSONValue,
   ServiceDef,
 } from "@fluencelabs/interfaces";
+import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
+import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 import { Subject, Subscribable } from "rxjs";
 
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
 import { ClientConfig, RelayOptions } from "../clientPeer/types.js";
 import { callAquaFunction } from "../compilerSupport/callFunction.js";
+import { ServiceImpl } from "../compilerSupport/types.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
 import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
-import { WasmLoaderFromNpm } from "../marine/deps-loader/node.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
-import { WorkerLoader } from "../marine/worker-script/workerLoader.js";
 import { Particle } from "../particle/Particle.js";
 
 export const registerHandlersHelper = (
@@ -73,6 +74,16 @@ interface FunctionInfo {
   funcDef: FunctionCallDef;
 }
 
+/**
+ * Type for callback passed as aqua function argument
+ */
+export type ArgCallbackFunction = ServiceImpl[string];
+
+/**
+ * Arguments passed to Aqua function
+ */
+export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
+
 export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
   await fs.access(aquaFile);
 
@@ -92,7 +103,6 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
     .map(([name, fnInfo]: [string, FunctionInfo]) => {
       const callFn = (peer: FluencePeer, args: PassedArgs) => {
         return callAquaFunction({
-          def: fnInfo.funcDef,
           script: fnInfo.script,
           config: {},
           peer: peer,
@@ -136,25 +146,60 @@ class NoopConnection implements IConnection {
 
 export class TestPeer extends FluencePeer {
   constructor(keyPair: KeyPair, connection: IConnection) {
-    const workerLoader = new WorkerLoader();
+    const jsHost = new JsServiceHost();
 
-    const controlModuleLoader = new WasmLoaderFromNpm(
-      "@fluencelabs/marine-js",
-      "marine-js.wasm",
-    );
-
-    const avmModuleLoader = new WasmLoaderFromNpm(
-      "@fluencelabs/avm",
-      "avm.wasm",
-    );
+    let marineJsWasm: ArrayBuffer;
+    let avmWasm: ArrayBuffer;
 
     const marine = new MarineBackgroundRunner(
-      workerLoader,
-      controlModuleLoader,
-      avmModuleLoader,
+      {
+        async getValue() {
+          // TODO: load worker with avm and marine, test that it works
+          return getWorker("@fluencelabs/marine-worker", "/");
+        },
+        start() {
+          return Promise.resolve(undefined);
+        },
+        stop() {
+          return Promise.resolve(undefined);
+        },
+      },
+      {
+        getValue() {
+          return marineJsWasm;
+        },
+        async start(): Promise<void> {
+          marineJsWasm = await fetchResource(
+            "@fluencelabs/marine-js",
+            "/dist/marine-js.wasm",
+            "/",
+          ).then((res) => {
+            return res.arrayBuffer();
+          });
+        },
+        stop(): Promise<void> {
+          return Promise.resolve(undefined);
+        },
+      },
+      {
+        getValue() {
+          return avmWasm;
+        },
+        async start(): Promise<void> {
+          avmWasm = await fetchResource(
+            "@fluencelabs/avm",
+            "/dist/avm.wasm",
+            "/",
+          ).then((res) => {
+            return res.arrayBuffer();
+          });
+        },
+        stop(): Promise<void> {
+          return Promise.resolve(undefined);
+        },
+      },
     );
 
-    const jsHost = new JsServiceHost();
     super(DEFAULT_CONFIG, keyPair, marine, jsHost, connection);
   }
 }
@@ -181,24 +226,61 @@ export const withClient = async (
   config: ClientConfig,
   action: (client: ClientPeer) => Promise<void>,
 ) => {
-  const workerLoader = new WorkerLoader();
-
-  const controlModuleLoader = new WasmLoaderFromNpm(
-    "@fluencelabs/marine-js",
-    "marine-js.wasm",
-  );
-
-  const avmModuleLoader = new WasmLoaderFromNpm("@fluencelabs/avm", "avm.wasm");
-
-  const marine = new MarineBackgroundRunner(
-    workerLoader,
-    controlModuleLoader,
-    avmModuleLoader,
-  );
-
   const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(
     relay,
     config,
+  );
+
+  let marineJsWasm: ArrayBuffer;
+  let avmWasm: ArrayBuffer;
+
+  const marine = new MarineBackgroundRunner(
+    {
+      async getValue() {
+        // TODO: load worker with avm and marine, test that it works
+        return getWorker("@fluencelabs/marine-worker", "/");
+      },
+      start() {
+        return Promise.resolve(undefined);
+      },
+      stop() {
+        return Promise.resolve(undefined);
+      },
+    },
+    {
+      getValue() {
+        return marineJsWasm;
+      },
+      async start(): Promise<void> {
+        marineJsWasm = await fetchResource(
+          "@fluencelabs/marine-js",
+          "/dist/marine-js.wasm",
+          "/",
+        ).then((res) => {
+          return res.arrayBuffer();
+        });
+      },
+      stop(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+    },
+    {
+      getValue() {
+        return avmWasm;
+      },
+      async start(): Promise<void> {
+        avmWasm = await fetchResource(
+          "@fluencelabs/avm",
+          "/dist/avm.wasm",
+          "/",
+        ).then((res) => {
+          return res.arrayBuffer();
+        });
+      },
+      stop(): Promise<void> {
+        return Promise.resolve(undefined);
+      },
+    },
   );
 
   const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);

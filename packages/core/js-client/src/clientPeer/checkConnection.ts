@@ -110,6 +110,7 @@ export const checkConnection = async (
 
     peer.internals.initiateParticle(
       particle,
+      () => {},
       handleTimeout(() => {
         reject("particle timed out");
       }),

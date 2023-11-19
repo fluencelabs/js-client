@@ -25,6 +25,11 @@ export type SimpleTypes =
 
 export type NonArrowType = SimpleTypes | ProductType;
 
+export type NonArrowSimpleType =
+  | SimpleTypes
+  | UnlabeledProductType
+  | LabeledProductType<SimpleTypes>;
+
 export type TopType = {
   /**
    * Type descriptor. Used for pattern-matching
@@ -154,7 +159,13 @@ export type ProductType = UnlabeledProductType | LabeledProductType;
  * ArrowType is a profunctor pointing its domain to codomain.
  * Profunctor means variance: Arrow is contravariant on domain, and variant on codomain.
  */
-export type ArrowType<T extends LabeledProductType | UnlabeledProductType> = {
+export type ArrowType<
+  T extends
+    | LabeledProductType<SimpleTypes | ArrowType<UnlabeledProductType>>
+    | UnlabeledProductType =
+    | LabeledProductType<SimpleTypes | ArrowType<UnlabeledProductType>>
+    | UnlabeledProductType,
+> = {
   /**
    * Type descriptor. Used for pattern-matching
    */
@@ -174,14 +185,14 @@ export type ArrowType<T extends LabeledProductType | UnlabeledProductType> = {
 /**
  * Arrow which domain contains only non-arrow types
  */
-export type ArrowWithoutCallbacks = ArrowType<
-  UnlabeledProductType | LabeledProductType<SimpleTypes>
->;
+export type ArrowWithoutCallbacks = ArrowType<UnlabeledProductType>;
 
 /**
  * Arrow which domain does can contain both non-arrow types and arrows (which themselves cannot contain arrows)
  */
-export type ArrowWithCallbacks = ArrowType<LabeledProductType>;
+export type ArrowWithCallbacks = ArrowType<
+  LabeledProductType<SimpleTypes | ArrowWithoutCallbacks>
+>;
 
 export interface FunctionCallConstants {
   /**
@@ -232,9 +243,7 @@ export interface FunctionCallDef {
   /**
    * Underlying arrow which represents function in aqua
    */
-  arrow: ArrowType<
-    LabeledProductType<SimpleTypes | ArrowType<UnlabeledProductType>>
-  >;
+  arrow: ArrowWithCallbacks;
 
   /**
    * Names of the different entities used in generated air script
@@ -255,37 +264,8 @@ export interface ServiceDef {
    * List of functions which the service consists of
    */
   functions:
-    | LabeledProductType<ArrowType<LabeledProductType<SimpleTypes>>>
+    | LabeledProductType<
+        ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>
+      >
     | NilType;
 }
-
-/**
- * Options to configure Aqua function execution
- */
-export interface FnConfig {
-  /**
-   * Sets the TTL (time to live) for particle responsible for the function execution
-   * If the option is not set the default TTL from FluencePeer config is used
-   */
-  ttl?: number;
-}
-
-export const getArgumentTypes = (
-  def: FunctionCallDef,
-): {
-  [key: string]: NonArrowType | ArrowWithoutCallbacks;
-} => {
-  if (def.arrow.domain.tag !== "labeledProduct") {
-    throw new Error("Should be impossible");
-  }
-
-  return def.arrow.domain.fields;
-};
-
-export const isReturnTypeVoid = (def: FunctionCallDef): boolean => {
-  if (def.arrow.codomain.tag === "nil") {
-    return true;
-  }
-
-  return def.arrow.codomain.items.length === 0;
-};

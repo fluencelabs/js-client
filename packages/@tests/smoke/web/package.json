@@ -19,7 +19,7 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@fluencelabs/js-client": "workspace:*",
+    "@fluencelabs/js-client-isomorphic": "workspace:*",
     "@test/test-utils": "workspace:*"
   },
   "devDependencies": {

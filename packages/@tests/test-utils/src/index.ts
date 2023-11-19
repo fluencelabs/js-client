@@ -61,21 +61,16 @@ export const startContentServer = (
           source: "/js-client.min.js",
           destination: "/source/index.min.js",
         },
-        // TODO:
-        // something like this
-        // {
-        //   source: "/@fluencelabs/:name(\\w+)@:version([\\d.]+)/:path*",
-        //   destination: "/deps/@fluencelabs/:name/:path",
-        // }
-        // not supported for some reason. Need to manually iterate over all possible paths
         {
           source: "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:asset",
-          destination: "/node_modules/@fluencelabs/:name/dist/:asset",
+          destination:
+            "/node_modules/@fluencelabs/js-client-isomorphic/node_modules/@fluencelabs/:name/dist/:asset",
         },
         {
           source:
             "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:prefix/:asset",
-          destination: "/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
+          destination:
+            "/node_modules/@fluencelabs/js-client-isomorphic/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
         },
       ],
       headers: [

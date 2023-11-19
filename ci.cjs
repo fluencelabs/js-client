@@ -95,7 +95,7 @@ async function checkConsistency(file, versionsMap) {
 
   for (const [name, versionInDep] of versionsMap) {
     const check = (x, version) => {
-      if (version.includes("*")) {
+      if (version.includes("*") || version.includes("^")) {
         return;
       }
 

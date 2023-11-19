@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-import assert from "assert";
-
-import {
-  FnConfig,
-  FunctionCallDef,
-  getArgumentTypes,
-  isReturnTypeVoid,
-  PassedArgs,
-} from "@fluencelabs/interfaces";
+import { JSONValue } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
+import { ArgCallbackFunction } from "../util/testUtils.js";
 
 import {
   errorHandlingService,
@@ -51,95 +44,48 @@ const log = logger("aqua");
  * @returns
  */
 
-type CallAquaFunctionArgs = {
-  def: FunctionCallDef;
+export type CallAquaFunctionArgs = {
   script: string;
-  config: FnConfig;
+  config: CallAquaFunctionConfig | undefined;
   peer: FluencePeer;
-  args: PassedArgs;
+  args: { [key: string]: JSONValue | ArgCallbackFunction };
+  fireAndForget?: boolean | undefined;
+};
+
+export type CallAquaFunctionConfig = {
+  ttl?: number;
 };
 
 export const callAquaFunction = async ({
-  def,
   script,
-  config,
+  config = {},
   peer,
   args,
 }: CallAquaFunctionArgs) => {
-  // TODO: this function should be rewritten. We can remove asserts if we wont check definition there
-  log.trace("calling aqua function %j", { def, script, config, args });
-  const argumentTypes = getArgumentTypes(def);
+  log.trace("calling aqua function %j", { script, config, args });
 
   const particle = await peer.internals.createNewParticle(script, config.ttl);
 
-  return new Promise((resolve, reject) => {
+  return new Promise<JSONValue>((resolve, reject) => {
+    // Registering function args as a services
     for (const [name, argVal] of Object.entries(args)) {
-      const type = argumentTypes[name];
       let service: ServiceDescription;
 
-      if (type.tag === "arrow") {
-        // TODO: Add validation here
-        assert(
-          typeof argVal === "function",
-          "Should not be possible, bad types",
-        );
-
-        service = userHandlerService(
-          def.names.callbackSrv,
-          [name, type],
-          argVal,
-        );
+      if (typeof argVal === "function") {
+        service = userHandlerService("callbackSrv", name, argVal);
       } else {
-        // TODO: Add validation here
-        assert(
-          typeof argVal !== "function",
-          "Should not be possible, bad types",
-        );
-
-        service = injectValueService(def.names.getDataSrv, name, type, argVal);
+        service = injectValueService("getDataSrv", name, argVal);
       }
 
       registerParticleScopeService(peer, particle, service);
     }
 
-    registerParticleScopeService(peer, particle, responseService(def, resolve));
+    registerParticleScopeService(peer, particle, responseService(resolve));
 
-    registerParticleScopeService(peer, particle, injectRelayService(def, peer));
+    registerParticleScopeService(peer, particle, injectRelayService(peer));
 
-    registerParticleScopeService(
-      peer,
-      particle,
-      errorHandlingService(def, reject),
-    );
+    registerParticleScopeService(peer, particle, errorHandlingService(reject));
 
-    peer.internals.initiateParticle(particle, (stage) => {
-      // If function is void, then it's completed when one of the two conditions is met:
-      //  1. The particle is sent to the network (state 'sent')
-      //  2. All CallRequests are executed, e.g., all variable loading and local function calls are completed (state 'localWorkDone')
-      if (
-        isReturnTypeVoid(def) &&
-        (stage.stage === "sent" || stage.stage === "localWorkDone")
-      ) {
-        resolve(undefined);
-      }
-
-      if (stage.stage === "sendingError") {
-        reject(
-          `Could not send particle for ${def.functionName}: not connected  (particle id: ${particle.id})`,
-        );
-      }
-
-      if (stage.stage === "expired") {
-        reject(
-          `Particle expired after ttl of ${particle.ttl}ms for function ${def.functionName} (particle id: ${particle.id})`,
-        );
-      }
-
-      if (stage.stage === "interpreterError") {
-        reject(
-          `Script interpretation failed for ${def.functionName}: ${stage.errorMessage}  (particle id: ${particle.id})`,
-        );
-      }
-    });
+    peer.internals.initiateParticle(particle, resolve, reject);
   });
 };

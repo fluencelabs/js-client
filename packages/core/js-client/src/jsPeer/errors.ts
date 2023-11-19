@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  Worker,
-  type Worker as WorkerImplementation,
-} from "@fluencelabs/threads/master";
+export class ExpirationError extends Error {}
 
-import { LazyLoader } from "../interfaces.js";
+export class InterpreterError extends Error {}
 
-export class WorkerLoader extends LazyLoader<WorkerImplementation> {
-  constructor() {
-    super(() => {
-      return new Worker(
-        "../../../node_modules/@fluencelabs/marine-worker/dist/index.js",
-      );
-    });
-  }
-}
+export class SendError extends Error {}

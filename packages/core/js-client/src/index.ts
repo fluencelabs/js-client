@@ -16,12 +16,15 @@
 
 import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
 import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
+import { ZodError } from "zod";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import {
   ClientConfig,
+  configSchema,
   ConnectionState,
   RelayOptions,
+  relaySchema,
 } from "./clientPeer/types.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
@@ -33,34 +36,34 @@ const createClient = async (
   relay: RelayOptions,
   config: ClientConfig = {},
 ): Promise<ClientPeer> => {
+  try {
+    relay = relaySchema.parse(relay);
+    config = configSchema.parse(config);
+  } catch (e) {
+    if (e instanceof ZodError) {
+      throw new Error(JSON.stringify(e.format()));
+    }
+  }
+
   const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
 
-  const fetchMarineJsWasm = async () => {
-    const resource = await fetchResource(
+  const [marineJsWasm, avmWasm] = await Promise.all([
+    fetchResource(
       "@fluencelabs/marine-js",
       "/dist/marine-js.wasm",
       CDNUrl,
-    );
-
-    return resource.arrayBuffer();
-  };
-
-  const fetchAvmWasm = async () => {
-    const resource = await fetchResource(
-      "@fluencelabs/avm",
-      "/dist/avm.wasm",
-      CDNUrl,
-    );
-
-    return resource.arrayBuffer();
-  };
-
-  const marineJsWasm = await fetchMarineJsWasm();
-  const avmWasm = await fetchAvmWasm();
+    ).then((res) => {
+      return res.arrayBuffer();
+    }),
+    fetchResource("@fluencelabs/avm", "/dist/avm.wasm", CDNUrl).then((res) => {
+      return res.arrayBuffer();
+    }),
+  ]);
 
   const marine = new MarineBackgroundRunner(
     {
       async getValue() {
+        // TODO: load worker with avm and marine, test that it works
         return getWorker("@fluencelabs/marine-worker", CDNUrl);
       },
       start() {
@@ -174,9 +177,13 @@ export type {
   KeyPairOptions,
 } from "./clientPeer/types.js";
 
+export type { ParticleContext } from "./jsServiceHost/interfaces.js";
+
 export { v5_callFunction, v5_registerService } from "./api.js";
 
 export { createClient, callAquaFunction, registerService };
+
+export { ClientPeer } from "./clientPeer/ClientPeer.js";
 
 // Deprecated exports. Later they will be exposed only under js-client/keypair path
 export {

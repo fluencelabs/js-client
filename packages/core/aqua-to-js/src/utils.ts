@@ -16,7 +16,7 @@
 
 import assert from "assert";
 import { readFile } from "fs/promises";
-import path from "path";
+import { join } from "path";
 
 import {
   ArrowType,
@@ -27,24 +27,26 @@ import {
   SimpleTypes,
   UnlabeledProductType,
 } from "@fluencelabs/interfaces";
+import { z } from "zod";
 
-export interface PackageJson {
-  name: string;
-  version: string;
-  devDependencies: {
-    ["@fluencelabs/aqua-api"]: string;
-  };
-}
+const packageJsonSchema = z.object({
+  name: z.string(),
+  version: z.string(),
+  devDependencies: z.object({
+    // @fluencelabs/aqua-api version is included as part of the comment at the top of each js and ts file
+    ["@fluencelabs/aqua-api"]: z.string(),
+  }),
+});
+
+export type PackageJson = z.infer<typeof packageJsonSchema>;
 
 export async function getPackageJsonContent(): Promise<PackageJson> {
   const content = await readFile(
-    new URL(path.join("..", "package.json"), import.meta.url),
+    new URL(join("..", "package.json"), import.meta.url),
     "utf-8",
   );
 
-  // TODO: Add validation here
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return JSON.parse(content) as PackageJson;
+  return packageJsonSchema.parse(JSON.parse(content));
 }
 
 export function getFuncArgs(

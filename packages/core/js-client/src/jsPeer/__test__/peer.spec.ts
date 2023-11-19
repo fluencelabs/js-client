@@ -16,36 +16,11 @@
 
 import { it, describe, expect } from "vitest";
 
-import { isFluencePeer } from "../../api.js";
 import { handleTimeout } from "../../particle/Particle.js";
-import {
-  mkTestPeer,
-  registerHandlersHelper,
-  withPeer,
-} from "../../util/testUtils.js";
+import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
 import { FluencePeer } from "../FluencePeer.js";
 
 describe("FluencePeer usage test suite", () => {
-  it("should perform test for FluencePeer class correctly", async () => {
-    // arrange
-    const peer = await mkTestPeer();
-    const number = 1;
-    const object = { str: "Hello!" };
-    const undefinedVal = undefined;
-
-    // act
-    const isPeerPeer = isFluencePeer(peer);
-    const isNumberPeer = isFluencePeer(number);
-    const isObjectPeer = isFluencePeer(object);
-    const isUndefinedPeer = isFluencePeer(undefinedVal);
-
-    // act
-    expect(isPeerPeer).toBe(true);
-    expect(isNumberPeer).toBe(false);
-    expect(isObjectPeer).toBe(false);
-    expect(isUndefinedPeer).toBe(false);
-  });
-
   it("Should successfully call identity on local peer", async function () {
     await withPeer(async (peer) => {
       const script = `
@@ -72,7 +47,11 @@ describe("FluencePeer usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe("test");
@@ -130,7 +109,11 @@ describe("FluencePeer usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       expect(res).toBe(null);
@@ -167,7 +150,11 @@ describe("FluencePeer usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, handleTimeout(reject));
+        peer.internals.initiateParticle(
+          particle,
+          () => {},
+          handleTimeout(reject),
+        );
       });
 
       await expect(promise).rejects.toMatchObject({
@@ -205,6 +192,6 @@ async function callIncorrectService(peer: FluencePeer) {
       },
     });
 
-    peer.internals.initiateParticle(particle, handleTimeout(reject));
+    peer.internals.initiateParticle(particle, () => {}, handleTimeout(reject));
   });
 }

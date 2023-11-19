@@ -20,6 +20,8 @@ import { genTypeName, typeToTs } from "../common.js";
 import { CLIENT } from "../constants.js";
 import { capitalize, getFuncArgs } from "../utils.js";
 
+import { DefaultServiceId } from "./service.js";
+
 export interface TypeGenerator {
   type(field: string, type: string): string;
   generic(field: string, type: string): string;
@@ -54,7 +56,7 @@ export class TSTypeGenerator implements TypeGenerator {
     args.push([undefined, `config?: {ttl?: number}`]);
 
     const argsDefs = args.map(([, def]) => {
-      return "    " + def;
+      return def;
     });
 
     const argsDesc = args
@@ -66,28 +68,30 @@ export class TSTypeGenerator implements TypeGenerator {
       });
 
     const functionOverloads = [
-      argsDefs.join(",\n"),
-      [`    peer: ${CLIENT}`, ...argsDefs].join(",\n"),
+      argsDefs.join(", "),
+      [`peer: ${CLIENT}`, ...argsDefs].join(", "),
     ];
 
     const [resTypeDesc, resType] = genTypeName(
       funcDef.arrow.codomain,
-      capitalize(funcDef.functionName) + "Result",
+      capitalize(funcDef.functionName) + "ResultType",
     );
+
+    const functionOverloadArgsType = functionOverloads
+      .map((overload) => {
+        return `[${overload}]`;
+      })
+      .join(" | ");
 
     return [
       argsDesc.join("\n"),
       resTypeDesc ?? "",
-      functionOverloads
-        .flatMap((fo) => {
-          return [
-            `export function ${funcDef.functionName}(`,
-            fo,
-            `): Promise<${resType}>;`,
-            "",
-          ];
-        })
-        .join("\n"),
+      `export type ${capitalize(
+        funcDef.functionName,
+      )}Params = ${functionOverloadArgsType};`,
+      `export type ${capitalize(
+        funcDef.functionName,
+      )}Result = Promise<${resType}>;\n`,
     ]
       .filter((s) => {
         return s !== "";
@@ -117,12 +121,24 @@ export class TSTypeGenerator implements TypeGenerator {
     const serviceDecl = `service: ${srvName}Def`;
     const serviceIdDecl = `serviceId: string`;
 
-    const registerServiceArgs = [
+    const functionOverloadsWithDefaultServiceId = [
       [serviceDecl],
       [serviceIdDecl, serviceDecl],
       [peerDecl, serviceDecl],
       [peerDecl, serviceIdDecl, serviceDecl],
     ];
+
+    const functionOverloadsWithoutDefaultServiceId = [
+      [serviceIdDecl, serviceDecl],
+      [peerDecl, serviceIdDecl, serviceDecl],
+    ];
+
+    const registerServiceArgs =
+      // This wrong type comes from aqua team. We need to discuss fix with them
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      (srvDef.defaultServiceId as DefaultServiceId).s_Some__f_value != null
+        ? functionOverloadsWithDefaultServiceId
+        : functionOverloadsWithoutDefaultServiceId;
 
     return [
       interfaces,

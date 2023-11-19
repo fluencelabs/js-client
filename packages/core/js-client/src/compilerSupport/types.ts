@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-/**
- * Peer ID's id as a base58 string (multihash/CIDv0).
- */
-export type PeerIdB58 = string;
+import { JSONArray, JSONValue } from "@fluencelabs/interfaces";
 
-export type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | { [x: string]: JSONValue }
-  | Array<JSONValue>;
-export type JSONArray = Array<JSONValue>;
-export type JSONObject = { [x: string]: JSONValue };
+import { ParticleContext } from "../jsServiceHost/interfaces.js";
+
+export type MaybePromise<T> = T | Promise<T>;
+
+export type ServiceImpl = Record<
+  string,
+  (...args: [...JSONArray, ParticleContext]) => MaybePromise<JSONValue>
+>;
