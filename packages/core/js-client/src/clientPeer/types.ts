@@ -29,12 +29,6 @@ export type Node = {
   multiaddr: string;
 };
 
-/**
- * A node in Fluence network a client can connect to.
- * Can be in the form of:
- * - string: multiaddr in string format
- * - Node: node structure, @see Node
- */
 export const relaySchema = z.union([
   z.string(),
   z.object({
@@ -43,6 +37,12 @@ export const relaySchema = z.union([
   }),
 ]);
 
+/**
+ * A node in Fluence network a client can connect to.
+ * Can be in the form of:
+ * - string: multiaddr in string format
+ * - Node: node structure, @see Node
+ */
 export type RelayOptions = z.infer<typeof relaySchema>;
 
 /**
@@ -51,7 +51,13 @@ export type RelayOptions = z.infer<typeof relaySchema>;
 export type KeyTypes = "RSA" | "Ed25519" | "secp256k1";
 
 const keyPairOptionsSchema = z.object({
+  /**
+   * Key pair type. Only Ed25519 is supported for now.
+   */
   type: z.literal("Ed25519"),
+  /**
+   * Key pair source. Could be byte array or generated randomly.
+   */
   source: z.union([z.literal("random"), z.instanceof(Uint8Array)]),
 });
 

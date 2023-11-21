@@ -118,3 +118,5 @@ export const runMain = () => {
       console.error("error: ", err);
     });
 };
+
+// TODO: fix @fluencelabs/registry version when it v.0.8.9 will be released

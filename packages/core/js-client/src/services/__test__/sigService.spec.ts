@@ -132,7 +132,7 @@ describe("Sig service test suite", () => {
       const callAsSigRes = await aqua["callSig"](peer, { sigId: "sig" });
 
       const callAsPeerIdRes = await aqua["callSig"](peer, {
-        sigId: peer.keyPair.getPeerId(),
+        sigId: peer.getPeerId(),
       });
 
       expect(callAsSigRes).toHaveProperty("success", false);
@@ -152,7 +152,7 @@ describe("Sig service test suite", () => {
       });
 
       const callAsPeerIdResAfterGuardChange = await aqua["callSig"](peer, {
-        sigId: peer.keyPair.getPeerId(),
+        sigId: peer.getPeerId(),
       });
 
       expect(callAsSigResAfterGuardChange).toHaveProperty("success", true);

@@ -106,12 +106,16 @@ export const DEFAULT_CONFIG: PeerConfig = {
 export abstract class FluencePeer {
   constructor(
     protected readonly config: PeerConfig,
-    readonly keyPair: KeyPair,
+    protected readonly keyPair: KeyPair,
     protected readonly marineHost: IMarineHost,
     protected readonly jsServiceHost: IJsServiceHost,
     protected readonly connection: IConnection,
   ) {
     this._initServices();
+  }
+
+  getPeerId(): string {
+    return this.keyPair.getPeerId();
   }
 
   async start(): Promise<void> {
@@ -447,6 +451,8 @@ export abstract class FluencePeer {
                 !(avmCallResult instanceof Error) &&
                 avmCallResult.retCode === 0
               ) {
+                console.log(avmCallResult.callRequests, "call requiest");
+                console.log(avmCallResult.nextPeerPks, "call requiest");
                 const newData = Buffer.from(avmCallResult.data);
                 prevData = newData;
               }

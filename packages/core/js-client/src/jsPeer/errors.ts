@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
+/**
+ * Throw when particle times out, e.g. haven't been resolved after TTL is expired
+ */
 export class ExpirationError extends Error {}
 
+/**
+ * Throws when AquaVM interpreter returns am error. It could be badly written air or internal bug.
+ */
 export class InterpreterError extends Error {}
 
+/**
+ * Throws when network error occurs while sending particle to relay peer.
+ */
 export class SendError extends Error {}

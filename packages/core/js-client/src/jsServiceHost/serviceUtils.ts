@@ -65,7 +65,23 @@ export const getParticleContext = (
 export function registerDefaultServices(peer: FluencePeer) {
   Object.entries(builtInServices).forEach(([serviceId, service]) => {
     Object.entries(service).forEach(([fnName, fn]) => {
-      peer.internals.regHandler.common(serviceId, fnName, fn);
+      const wrapped = async (req: CallServiceData) => {
+        const res = await fn(req);
+
+        if (
+          res.retCode === ResultCodes.error &&
+          typeof res.result === "string"
+        ) {
+          return {
+            retCode: ResultCodes.error,
+            result: `Service: ${serviceId}; Function: ${fnName}; ${res.result}`,
+          };
+        }
+
+        return res;
+      };
+
+      peer.internals.regHandler.common(serviceId, fnName, wrapped);
     });
   });
 }

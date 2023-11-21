@@ -315,7 +315,7 @@ export class EphemeralNetwork {
     await Promise.all(startPromises);
 
     for (const p of peers) {
-      this.peers.set(p.keyPair.getPeerId(), p);
+      this.peers.set(p.getPeerId(), p);
     }
   }
 
