@@ -16,7 +16,7 @@
 
 import { PeerIdB58 } from "@fluencelabs/interfaces";
 
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
+import { MethodArgs } from "../compilerSupport/types.js";
 import { KeyPair } from "../keypair/index.js";
 
 import {
@@ -73,10 +73,10 @@ export class Sig {
   /**
    * Signs the data using key pair's private key. Required by aqua
    */
-  async sign(
-    data: number[],
-    context: ParticleContext,
-  ): Promise<SignReturnType> {
+  async sign({
+    args: [data],
+    context,
+  }: MethodArgs<[number[]]>): Promise<SignReturnType> {
     if (!this.securityGuard(context)) {
       return {
         success: false,
@@ -97,7 +97,9 @@ export class Sig {
   /**
    * Verifies the signature. Required by aqua
    */
-  verify(signature: number[], data: number[]): Promise<boolean> {
+  verify({
+    args: [signature, data],
+  }: MethodArgs<[number[], number[]]>): Promise<boolean> {
     return this.keyPair.verify(
       Uint8Array.from(data),
       Uint8Array.from(signature),

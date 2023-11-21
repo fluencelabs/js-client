@@ -18,8 +18,8 @@ import { Buffer } from "buffer";
 
 import { v4 as uuidv4 } from "uuid";
 
+import { MethodArgs } from "../compilerSupport/types.js";
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { getErrorMessage } from "../util/utils.js";
 
 import {
@@ -42,8 +42,8 @@ export class Srv {
 
   securityGuard_create: SecurityGuard;
 
-  async create(wasm_b64_content: string, callParams: ParticleContext) {
-    if (!this.securityGuard_create(callParams)) {
+  async create({ args: [wasmContent], context }: MethodArgs<[string]>) {
+    if (!this.securityGuard_create(context)) {
       return {
         success: false,
         error: ["Marine services could be registered on %init_peer_id% only"],
@@ -53,7 +53,7 @@ export class Srv {
 
     try {
       const newServiceId = uuidv4();
-      const buffer = Buffer.from(wasm_b64_content, "base64");
+      const buffer = Buffer.from(wasmContent, "base64");
       // TODO:: figure out why SharedArrayBuffer is not working here
       // const sab = new SharedArrayBuffer(buffer.length);
       // const tmp = new Uint8Array(sab);
@@ -77,8 +77,8 @@ export class Srv {
 
   securityGuard_remove: SecurityGuard;
 
-  async remove(service_id: string, callParams: ParticleContext) {
-    if (!this.securityGuard_remove(callParams)) {
+  async remove({ args: [serviceId], context }: MethodArgs<[string]>) {
+    if (!this.securityGuard_remove(context)) {
       return {
         success: false,
         error: ["Marine services could be remove on %init_peer_id% only"],
@@ -86,15 +86,15 @@ export class Srv {
       };
     }
 
-    if (!this.services.has(service_id)) {
+    if (!this.services.has(serviceId)) {
       return {
         success: false,
-        error: [`Service with id ${service_id} not found`],
+        error: [`Service with id ${serviceId} not found`],
       };
     }
 
-    await this.peer.removeMarineService(service_id);
-    this.services.delete(service_id);
+    await this.peer.removeMarineService(serviceId);
+    this.services.delete(serviceId);
 
     return {
       success: true,

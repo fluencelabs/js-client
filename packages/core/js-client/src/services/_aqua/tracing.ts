@@ -20,18 +20,9 @@
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { FluencePeer } from "../../jsPeer/FluencePeer.js";
-import { ParticleContext } from "../../jsServiceHost/interfaces.js";
 import { Tracing } from "../Tracing.js";
 
 // Services
-
-export interface TracingDef {
-  tracingEvent: (
-    arrowName: string,
-    event: string,
-    callParams: ParticleContext,
-  ) => void | Promise<void>;
-}
 
 export function registerTracing(
   peer: FluencePeer,

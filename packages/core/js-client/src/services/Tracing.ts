@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
+import { MethodArgs } from "../compilerSupport/types.js";
 
-import { TracingDef } from "./_aqua/tracing.js";
-
-export class Tracing implements TracingDef {
-  tracingEvent(
-    arrowName: string,
-    event: string,
-    callParams: ParticleContext,
-  ): void {
+export class Tracing {
+  tracingEvent({
+    args: [arrowName, event],
+    context,
+  }: MethodArgs<[string, string]>): void {
     // This console log is intentional
     // eslint-disable-next-line no-console
-    console.log("[%s] (%s) %s", callParams.particleId, arrowName, event);
+    console.log("[%s] (%s) %s", context.particleId, arrowName, event);
   }
 }

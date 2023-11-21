@@ -21,7 +21,12 @@ import { it, describe, expect, beforeAll } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { KeyPair } from "../../keypair/index.js";
-import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
+import {
+  compileAqua,
+  CompiledFnCall,
+  makeTestTetraplet,
+  withPeer,
+} from "../../util/testUtils.js";
 import { allowServiceFn } from "../securityGuard.js";
 import { Sig } from "../Sig.js";
 
@@ -71,12 +76,15 @@ describe("Sig service test suite", () => {
 
       expect(result).toHaveProperty("success", true);
 
-      const isSigCorrect = await customSig.verify(
-        // TODO: Use compiled ts wrappers
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (result as { signature: [number[]] }).signature[0],
-        data,
-      );
+      const isSigCorrect = await customSig.verify({
+        args: [
+          // TODO: Use compiled ts wrappers
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          (result as { signature: [number[]] }).signature[0],
+          data,
+        ],
+        context: makeTestTetraplet(peer.getPeerId(), "any_service", "any_func"),
+      });
 
       expect(isSigCorrect).toBe(true);
     });
@@ -159,13 +167,16 @@ describe("Sig service test suite", () => {
 
       expect(callAsPeerIdResAfterGuardChange).toHaveProperty("success", true);
 
-      const isValid = await sig.verify(
-        // TODO: Use compiled ts wrappers
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        (callAsSigResAfterGuardChange as { signature: [number[]] })
-          .signature[0],
-        data,
-      );
+      const isValid = await sig.verify({
+        args: [
+          // TODO: Use compiled ts wrappers
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          (callAsSigResAfterGuardChange as { signature: [number[]] })
+            .signature[0],
+          data,
+        ],
+        context: makeTestTetraplet(peer.getPeerId(), "any_service", "any_func"),
+      });
 
       expect(isValid).toBe(true);
     });

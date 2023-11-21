@@ -16,8 +16,8 @@
 
 import { readFile } from "fs/promises";
 
+import { MethodArgs } from "../compilerSupport/types.js";
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
 import { getErrorMessage } from "../util/utils.js";
 
 import { registerNodeUtils } from "./_aqua/node-utils.js";
@@ -31,8 +31,8 @@ export class NodeUtils {
 
   securityGuard_readFile: SecurityGuard;
 
-  async read_file(path: string, callParams: ParticleContext) {
-    if (!this.securityGuard_readFile(callParams)) {
+  async read_file({ args: [path], context }: MethodArgs<[string]>) {
+    if (!this.securityGuard_readFile(context)) {
       return {
         success: false,
         error: ["Security guard validation failed"],

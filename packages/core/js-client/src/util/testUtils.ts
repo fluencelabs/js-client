@@ -16,7 +16,7 @@
 
 import { promises as fs } from "fs";
 
-import { Path, Aqua } from "@fluencelabs/aqua-api/aqua-api.js";
+import { Aqua, Path } from "@fluencelabs/aqua-api/aqua-api.js";
 import {
   FunctionCallDef,
   JSONArray,
@@ -33,7 +33,10 @@ import { callAquaFunction } from "../compilerSupport/callFunction.js";
 import { ServiceImpl } from "../compilerSupport/types.js";
 import { IConnection } from "../connection/interfaces.js";
 import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
-import { CallServiceResultType } from "../jsServiceHost/interfaces.js";
+import {
+  CallServiceResultType,
+  ParticleContext,
+} from "../jsServiceHost/interfaces.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
@@ -291,4 +294,28 @@ export const withClient = async (
   } finally {
     await client.disconnect();
   }
+};
+
+export const makeTestTetraplet = (
+  initPeerId: string,
+  serviceId: string,
+  fnName: string,
+): ParticleContext => {
+  return {
+    particleId: "",
+    timestamp: 0,
+    ttl: 0,
+    initPeerId: initPeerId,
+    signature: new Uint8Array([]),
+    tetraplets: [
+      [
+        {
+          peer_pk: initPeerId,
+          function_name: fnName,
+          service_id: serviceId,
+          json_path: "",
+        },
+      ],
+    ],
+  };
 };

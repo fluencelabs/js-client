@@ -20,7 +20,6 @@ import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import {
   CallServiceData,
   GenericCallServiceHandler,
-  ParticleContext,
   ResultCodes,
 } from "../jsServiceHost/interfaces.js";
 import { Particle } from "../particle/Particle.js";
@@ -132,12 +131,12 @@ export const userHandlerService = (
     serviceId,
     fnName,
     handler: async (req: CallServiceData) => {
-      const args: [...JSONValue[], ParticleContext] = [
-        ...req.args,
-        req.particleContext,
-      ];
+      const { args, particleContext: context } = req;
 
-      const result = await userHandler.bind(null)(...args);
+      const result = await userHandler.bind(null)({
+        args,
+        context,
+      });
 
       return {
         retCode: ResultCodes.success,

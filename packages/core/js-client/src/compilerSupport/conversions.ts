@@ -25,16 +25,14 @@ import {
   UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
-
-import { ServiceImpl } from "./types.js";
+import { ServiceImpl, UserServiceImpl } from "./types.js";
 
 export class SchemaValidationError extends Error {
   constructor(
     public path: string[],
     schema: NonArrowSimpleType | ArrowWithoutCallbacks,
     expected: string,
-    provided: JSONValue | ServiceImpl[string],
+    provided: JSONValue | UserServiceImpl[string],
   ) {
     const given =
       provided === null
@@ -205,18 +203,12 @@ export function js2aqua(
 // Wrapping function, converting its arguments to aqua before call and back to js after call.
 // It makes callbacks and service functions defined by user operate on js types seamlessly
 export const wrapJsFunction = (
-  func: ServiceImpl[string],
+  func: UserServiceImpl[string],
   schema:
     | ArrowWithoutCallbacks
     | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
 ): ServiceImpl[string] => {
-  return async (...args) => {
-    // These assertions used to correctly destructure tuple. It's impossible to do without asserts due to ts limitations.
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const jsonArgs = args.slice(0, args.length - 1) as JSONValue[];
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const context = args[args.length - 1] as ParticleContext;
-
+  return async ({ args, context }) => {
     const schemaArgs =
       schema.domain.tag === "nil"
         ? []
@@ -224,13 +216,13 @@ export const wrapJsFunction = (
         ? schema.domain.items
         : Object.values(schema.domain.fields);
 
-    if (schemaArgs.length !== jsonArgs.length) {
+    if (schemaArgs.length !== args.length) {
       throw new Error(
-        `Schema and generated air doesn't match. Air has been called with ${jsonArgs.length} args and schema contains ${schemaArgs.length} args`,
+        `Schema and generated air doesn't match. Air has been called with ${args.length} args and schema contains ${schemaArgs.length} args`,
       );
     }
 
-    const tsArgs = jsonArgs.map((arg, i) => {
+    const jsArgs = args.map((arg, i) => {
       return aqua2js(arg, schemaArgs[i]);
     });
 
@@ -243,7 +235,7 @@ export const wrapJsFunction = (
         ? schema.codomain.items[0]
         : schema.codomain;
 
-    let result = await func(...tsArgs, context);
+    let result = await func(...jsArgs, context);
 
     if (returnTypeVoid) {
       result = null;

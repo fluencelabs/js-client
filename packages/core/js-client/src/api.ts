@@ -30,7 +30,7 @@ import {
   js2aqua,
   wrapJsFunction,
 } from "./compilerSupport/conversions.js";
-import { ServiceImpl } from "./compilerSupport/types.js";
+import { ServiceImpl, UserServiceImpl } from "./compilerSupport/types.js";
 import { FluencePeer } from "./jsPeer/FluencePeer.js";
 
 import { callAquaFunction, Fluence, registerService } from "./index.js";
@@ -58,8 +58,8 @@ function validateAquaConfig(
  */
 export const v5_callFunction = async (
   args: [
-    client: FluencePeer | (JSONValue | ServiceImpl[string]),
-    ...args: (JSONValue | ServiceImpl[string])[],
+    client: FluencePeer | (JSONValue | UserServiceImpl[string]),
+    ...args: (JSONValue | UserServiceImpl[string])[],
   ],
   def: FunctionCallDef,
   script: string,
@@ -163,10 +163,10 @@ const getDefaultServiceId = (def: ServiceDef) => {
 };
 
 type RegisterServiceType =
-  | [ServiceImpl]
-  | [string, ServiceImpl]
-  | [FluencePeer, ServiceImpl]
-  | [FluencePeer, string, ServiceImpl];
+  | [UserServiceImpl]
+  | [string, UserServiceImpl]
+  | [FluencePeer, UserServiceImpl]
+  | [FluencePeer, string, UserServiceImpl];
 
 /**
  * Convenience function to support Aqua `service` generation backend
