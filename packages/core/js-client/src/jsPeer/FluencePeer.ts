@@ -451,8 +451,6 @@ export abstract class FluencePeer {
                 !(avmCallResult instanceof Error) &&
                 avmCallResult.retCode === 0
               ) {
-                console.log(avmCallResult.callRequests, "call requiest");
-                console.log(avmCallResult.nextPeerPks, "call requiest");
                 const newData = Buffer.from(avmCallResult.data);
                 prevData = newData;
               }
