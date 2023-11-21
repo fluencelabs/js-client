@@ -74,7 +74,7 @@ export function registerDefaultServices(peer: FluencePeer) {
         ) {
           return {
             retCode: ResultCodes.error,
-            result: `Service: ${serviceId}; Function: ${fnName}; ${res.result}`,
+            result: `("${serviceId}" "${fnName}") ${res.result}`,
           };
         }
 

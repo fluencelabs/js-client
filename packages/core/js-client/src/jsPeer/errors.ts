@@ -20,7 +20,7 @@
 export class ExpirationError extends Error {}
 
 /**
- * Throws when AquaVM interpreter returns am error. It could be badly written air or internal bug.
+ * Throws when AquaVM interpreter returns an error while executing air script. It could be badly written air or internal bug.
  */
 export class InterpreterError extends Error {}
 
