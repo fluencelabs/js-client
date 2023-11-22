@@ -22,7 +22,6 @@ import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
 import {
   ClientConfig,
   configSchema,
-  ConnectionState,
   RelayOptions,
   relaySchema,
 } from "./clientPeer/types.js";
@@ -120,9 +119,6 @@ interface FluencePublicApi {
   defaultClient: ClientPeer | undefined;
   connect: (relay: RelayOptions, config?: ClientConfig) => Promise<void>;
   disconnect: () => Promise<void>;
-  onConnectionStateChange: (
-    handler: (state: ConnectionState) => void,
-  ) => ConnectionState;
   getClient: () => ClientPeer;
 }
 
@@ -146,15 +142,6 @@ export const Fluence: FluencePublicApi = {
   },
 
   /**
-   * Handle connection state changes. Immediately returns the current connection state
-   */
-  onConnectionStateChange(handler) {
-    return (
-      this.defaultClient?.onConnectionStateChange(handler) ?? "disconnected"
-    );
-  },
-
-  /**
    * Low level API. Get the underlying client instance which holds the connection to the network
    * @returns IFluenceClient instance
    */
@@ -172,7 +159,6 @@ export const Fluence: FluencePublicApi = {
 export type {
   ClientConfig,
   IFluenceClient,
-  ConnectionState,
   RelayOptions,
   KeyPairOptions,
 } from "./clientPeer/types.js";

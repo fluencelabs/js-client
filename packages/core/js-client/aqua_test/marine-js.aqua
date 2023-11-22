@@ -1,10 +1,10 @@
-data GreetingRecord:
+data GreetingRecordData:
     str: string
     num: i32
 
 service Greeting("greeting"):
     greeting(name: string) -> string
-    greeting_record() -> GreetingRecord
+    greeting_record() -> GreetingRecordData
 
 func call(arg: string) -> string:
     res1 <- Greeting.greeting(arg)
@@ -13,7 +13,7 @@ func call(arg: string) -> string:
     <- res3
 
 service GreetingRecord:
-    greeting_record() -> GreetingRecord
+    greeting_record() -> GreetingRecordData
     log_debug()
     log_error()
     log_info()
