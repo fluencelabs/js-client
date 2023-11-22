@@ -20,7 +20,7 @@
     "base64-js": "1.5.1"
   },
   "devDependencies": {
-    "@fluencelabs/aqua-api": "0.12.4",
+    "@fluencelabs/aqua-api": "0.13.0",
     "@fluencelabs/aqua-lib": "0.6.0",
     "@fluencelabs/aqua-to-js": "workspace:*",
     "@fluencelabs/js-client": "workspace:*",
