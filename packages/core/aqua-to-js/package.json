@@ -18,7 +18,7 @@
     "ts-pattern": "5.0.5"
   },
   "devDependencies": {
-    "@fluencelabs/aqua-api": "https://npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz",
+    "@fluencelabs/aqua-api": "0.12.4",
     "@fluencelabs/aqua-lib": "0.7.3",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client": "workspace:^",
