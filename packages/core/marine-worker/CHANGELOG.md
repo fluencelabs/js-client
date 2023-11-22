@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.4.2...marine-worker-v0.5.0) (2023-11-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Segregation of responsibility between js-client packages [fixes DXJ-525] ([#378](https://github.com/fluencelabs/js-client/issues/378))
+
+### Features
+
+* **js-client:** Segregation of responsibility between js-client packages [fixes DXJ-525] ([#378](https://github.com/fluencelabs/js-client/issues/378)) ([f4a550d](https://github.com/fluencelabs/js-client/commit/f4a550dd226846dfc2ade1ccc35a286dc3be2fed))
+
 ## [0.4.2](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.4.1...marine-worker-v0.4.2) (2023-11-06)
 
 

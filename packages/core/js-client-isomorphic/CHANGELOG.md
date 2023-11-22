@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.0](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.2.2...js-client-isomorphic-v0.3.0) (2023-11-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Segregation of responsibility between js-client packages [fixes DXJ-525] ([#378](https://github.com/fluencelabs/js-client/issues/378))
+
+### Features
+
+* **js-client:** Segregation of responsibility between js-client packages [fixes DXJ-525] ([#378](https://github.com/fluencelabs/js-client/issues/378)) ([f4a550d](https://github.com/fluencelabs/js-client/commit/f4a550dd226846dfc2ade1ccc35a286dc3be2fed))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/marine-worker bumped from 0.4.2 to 0.5.0
+
 ## [0.2.2](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.2.1...js-client-isomorphic-v0.2.2) (2023-11-06)
 
 
