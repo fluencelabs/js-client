@@ -132,9 +132,9 @@ export class TSTypeGenerator implements TypeGenerator {
     ];
 
     const registerServiceArgs =
-      srvDef.defaultServiceId != null
-        ? functionOverloadsWithDefaultServiceId
-        : functionOverloadsWithoutDefaultServiceId;
+      srvDef.defaultServiceId == null
+        ? functionOverloadsWithoutDefaultServiceId
+        : functionOverloadsWithDefaultServiceId;
 
     return [
       interfaces,

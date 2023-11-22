@@ -16,7 +16,7 @@
 
 import { PeerIdB58 } from "@fluencelabs/interfaces";
 
-import { MethodArgs } from "../compilerSupport/types.js";
+import { ServiceFnArgs } from "../compilerSupport/types.js";
 import { KeyPair } from "../keypair/index.js";
 
 import {
@@ -76,7 +76,7 @@ export class Sig {
   async sign({
     args: [data],
     context,
-  }: MethodArgs<[number[]]>): Promise<SignReturnType> {
+  }: ServiceFnArgs<[number[]]>): Promise<SignReturnType> {
     if (!this.securityGuard(context)) {
       return {
         success: false,
@@ -99,7 +99,7 @@ export class Sig {
    */
   verify({
     args: [signature, data],
-  }: MethodArgs<[number[], number[]]>): Promise<boolean> {
+  }: ServiceFnArgs<[number[], number[]]>): Promise<boolean> {
     return this.keyPair.verify(
       Uint8Array.from(data),
       Uint8Array.from(signature),

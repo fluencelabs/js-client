@@ -33,4 +33,4 @@ export type UserServiceImpl = Record<
   (...args: [...JSONArray, ParticleContext]) => MaybePromise<JSONValue>
 >;
 
-export type MethodArgs<T> = { args: T; context: ParticleContext };
+export type ServiceFnArgs<T> = { args: T; context: ParticleContext };

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { MethodArgs } from "../compilerSupport/types.js";
+import { ServiceFnArgs } from "../compilerSupport/types.js";
 
 export class Tracing {
   tracingEvent({
     args: [arrowName, event],
     context,
-  }: MethodArgs<[string, string]>): void {
+  }: ServiceFnArgs<[string, string]>): void {
     // This console log is intentional
     // eslint-disable-next-line no-console
     console.log("[%s] (%s) %s", context.particleId, arrowName, event);

@@ -18,7 +18,7 @@ import { Buffer } from "buffer";
 
 import { v4 as uuidv4 } from "uuid";
 
-import { MethodArgs } from "../compilerSupport/types.js";
+import { ServiceFnArgs } from "../compilerSupport/types.js";
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { getErrorMessage } from "../util/utils.js";
 
@@ -42,7 +42,7 @@ export class Srv {
 
   securityGuard_create: SecurityGuard;
 
-  async create({ args: [wasmContent], context }: MethodArgs<[string]>) {
+  async create({ args: [wasmContent], context }: ServiceFnArgs<[string]>) {
     if (!this.securityGuard_create(context)) {
       return {
         success: false,
@@ -77,7 +77,7 @@ export class Srv {
 
   securityGuard_remove: SecurityGuard;
 
-  async remove({ args: [serviceId], context }: MethodArgs<[string]>) {
+  async remove({ args: [serviceId], context }: ServiceFnArgs<[string]>) {
     if (!this.securityGuard_remove(context)) {
       return {
         success: false,

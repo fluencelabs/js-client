@@ -16,7 +16,7 @@
 
 import { readFile } from "fs/promises";
 
-import { MethodArgs } from "../compilerSupport/types.js";
+import { ServiceFnArgs } from "../compilerSupport/types.js";
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { getErrorMessage } from "../util/utils.js";
 
@@ -31,7 +31,7 @@ export class NodeUtils {
 
   securityGuard_readFile: SecurityGuard;
 
-  async read_file({ args: [path], context }: MethodArgs<[string]>) {
+  async read_file({ args: [path], context }: ServiceFnArgs<[string]>) {
     if (!this.securityGuard_readFile(context)) {
       return {
         success: false,
