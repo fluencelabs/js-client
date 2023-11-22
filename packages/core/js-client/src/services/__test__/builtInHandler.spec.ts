@@ -18,16 +18,14 @@ import assert from "assert";
 
 import { JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
-import { it, describe, expect, test } from "vitest";
+import { describe, expect, it, test } from "vitest";
 
-import {
-  CallServiceData,
-  ParticleContext,
-} from "../../jsServiceHost/interfaces.js";
+import { CallServiceData } from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
+import { makeTestTetraplet } from "../../util/testUtils.js";
 import { builtInServices } from "../builtins.js";
 import { allowServiceFn } from "../securityGuard.js";
-import { Sig, defaultSigGuard } from "../Sig.js";
+import { defaultSigGuard, Sig } from "../Sig.js";
 
 const a10b20 = `{
     "a": 10,
@@ -244,39 +242,15 @@ const testDataWrongSig = [
   159, 25, 109, 95, 160, 181, 65, 254, 238, 47, 156, 240, 151, 58, 14,
 ];
 
-const makeTestTetraplet = (
-  initPeerId: string,
-  serviceId: string,
-  fnName: string,
-): ParticleContext => {
-  return {
-    particleId: "",
-    timestamp: 0,
-    ttl: 0,
-    initPeerId: initPeerId,
-    signature: new Uint8Array([]),
-    tetraplets: [
-      [
-        {
-          peer_pk: initPeerId,
-          function_name: fnName,
-          service_id: serviceId,
-          json_path: "",
-        },
-      ],
-    ],
-  };
-};
-
 describe("Sig service tests", () => {
   it("sig.sign should create the correct signature", async () => {
     const ctx = await context;
     const sig = new Sig(ctx.peerKeyPair);
 
-    const res = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
-    );
+    const res = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+    });
 
     expect(res.success).toBe(true);
     expect(res.signature).toStrictEqual([testDataSig]);
@@ -286,7 +260,10 @@ describe("Sig service tests", () => {
     const ctx = await context;
     const sig = new Sig(ctx.peerKeyPair);
 
-    const res = await sig.verify(testDataSig, testData);
+    const res = await sig.verify({
+      args: [testDataSig, testData],
+      context: makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+    });
 
     expect(res).toBe(true);
   });
@@ -295,7 +272,10 @@ describe("Sig service tests", () => {
     const ctx = await context;
     const sig = new Sig(ctx.peerKeyPair);
 
-    const res = await sig.verify(testDataWrongSig, testData);
+    const res = await sig.verify({
+      args: [testDataWrongSig, testData],
+      context: makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+    });
 
     expect(res).toBe(false);
   });
@@ -304,14 +284,18 @@ describe("Sig service tests", () => {
     const ctx = await context;
     const sig = new Sig(ctx.peerKeyPair);
 
-    const signature = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
-    );
+    const signature = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+    });
 
     expect(signature.success).toBe(true);
     assert(signature.success);
-    const res = await sig.verify(signature.signature[0], testData);
+
+    const res = await sig.verify({
+      args: [signature.signature[0], testData],
+      context: makeTestTetraplet(ctx.peerId, "any_service", "any_func"),
+    });
 
     expect(res).toBe(true);
   });
@@ -321,10 +305,10 @@ describe("Sig service tests", () => {
     const sig = new Sig(ctx.peerKeyPair);
     sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-    const signature = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "registry", "get_route_bytes"),
-    );
+    const signature = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "registry", "get_route_bytes"),
+    });
 
     expect(signature).toBeDefined();
   });
@@ -334,10 +318,10 @@ describe("Sig service tests", () => {
     const sig = new Sig(ctx.peerKeyPair);
     sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-    const res = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "other_service", "other_fn"),
-    );
+    const res = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "other_service", "other_fn"),
+    });
 
     expect(res.success).toBe(false);
     expect(res.error).toStrictEqual(["Security guard validation failed"]);
@@ -348,14 +332,14 @@ describe("Sig service tests", () => {
     const sig = new Sig(ctx.peerKeyPair);
     sig.securityGuard = defaultSigGuard(ctx.peerId);
 
-    const res = await sig.sign(
-      testData,
-      makeTestTetraplet(
+    const res = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(
         (await KeyPair.randomEd25519()).getPeerId(),
         "registry",
         "get_key_bytes",
       ),
-    );
+    });
 
     expect(res.success).toBe(false);
     expect(res.error).toStrictEqual(["Security guard validation failed"]);
@@ -366,27 +350,27 @@ describe("Sig service tests", () => {
     const sig = new Sig(ctx.peerKeyPair);
     sig.securityGuard = allowServiceFn("test", "test");
 
-    const successful1 = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "test", "test"),
-    );
+    const successful1 = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "test", "test"),
+    });
 
-    const unSuccessful1 = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "wrong", "wrong"),
-    );
+    const unSuccessful1 = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "wrong", "wrong"),
+    });
 
     sig.securityGuard = allowServiceFn("wrong", "wrong");
 
-    const successful2 = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "wrong", "wrong"),
-    );
+    const successful2 = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "wrong", "wrong"),
+    });
 
-    const unSuccessful2 = await sig.sign(
-      testData,
-      makeTestTetraplet(ctx.peerId, "test", "test"),
-    );
+    const unSuccessful2 = await sig.sign({
+      args: [testData],
+      context: makeTestTetraplet(ctx.peerId, "test", "test"),
+    });
 
     expect(successful1.success).toBe(true);
     expect(successful2.success).toBe(true);

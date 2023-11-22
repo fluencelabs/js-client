@@ -20,8 +20,6 @@ import { genTypeName, typeToTs } from "../common.js";
 import { CLIENT } from "../constants.js";
 import { capitalize, getFuncArgs } from "../utils.js";
 
-import { DefaultServiceId } from "./service.js";
-
 export interface TypeGenerator {
   type(field: string, type: string): string;
   generic(field: string, type: string): string;
@@ -134,11 +132,9 @@ export class TSTypeGenerator implements TypeGenerator {
     ];
 
     const registerServiceArgs =
-      // This wrong type comes from aqua team. We need to discuss fix with them
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      (srvDef.defaultServiceId as DefaultServiceId).s_Some__f_value != null
-        ? functionOverloadsWithDefaultServiceId
-        : functionOverloadsWithoutDefaultServiceId;
+      srvDef.defaultServiceId == null
+        ? functionOverloadsWithoutDefaultServiceId
+        : functionOverloadsWithDefaultServiceId;
 
     return [
       interfaces,

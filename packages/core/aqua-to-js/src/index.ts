@@ -27,18 +27,22 @@ interface TsOutput {
   sources: string;
 }
 
-type LanguageOutput = {
-  js: JsOutput;
-  ts: TsOutput;
-};
-
 type NothingToGenerate = null;
-type OutputType = "js" | "ts";
 
-export default async function aquaToJs<T extends OutputType>(
+export default async function aquaToJs(
   res: CompilationResult,
-  outputType: T,
-): Promise<LanguageOutput[T] | NothingToGenerate> {
+  outputType: "js",
+): Promise<JsOutput | NothingToGenerate>;
+
+export default async function aquaToJs(
+  res: CompilationResult,
+  outputType: "ts",
+): Promise<TsOutput | NothingToGenerate>;
+
+export default async function aquaToJs(
+  res: CompilationResult,
+  outputType: "js" | "ts",
+): Promise<JsOutput | TsOutput | NothingToGenerate> {
   if (
     Object.keys(res.services).length === 0 &&
     Object.keys(res.functions).length === 0
@@ -48,13 +52,14 @@ export default async function aquaToJs<T extends OutputType>(
 
   const packageJson = await getPackageJsonContent();
 
-  return outputType === "js"
-    ? {
-        sources: generateSources(res, "js", packageJson),
-        types: generateTypes(res, packageJson),
-      }
-    : // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ({
-        sources: generateSources(res, "ts", packageJson),
-      } as LanguageOutput[T]);
+  if (outputType === "js") {
+    return {
+      sources: generateSources(res, "js", packageJson),
+      types: generateTypes(res, packageJson),
+    };
+  }
+
+  return {
+    sources: generateSources(res, "ts", packageJson),
+  };
 }

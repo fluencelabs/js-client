@@ -22,5 +22,15 @@ export type MaybePromise<T> = T | Promise<T>;
 
 export type ServiceImpl = Record<
   string,
+  (args: {
+    args: JSONArray;
+    context: ParticleContext;
+  }) => MaybePromise<JSONValue>
+>;
+
+export type UserServiceImpl = Record<
+  string,
   (...args: [...JSONArray, ParticleContext]) => MaybePromise<JSONValue>
 >;
+
+export type ServiceFnArgs<T> = { args: T; context: ParticleContext };

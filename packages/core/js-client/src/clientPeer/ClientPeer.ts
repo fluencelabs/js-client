@@ -90,10 +90,6 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     );
   }
 
-  getPeerId(): string {
-    return this.keyPair.getPeerId();
-  }
-
   getPeerSecretKey(): Uint8Array {
     return this.keyPair.toEd25519PrivateKey();
   }

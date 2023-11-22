@@ -15,7 +15,6 @@
  */
 
 import { Fluence, type ClientConfig } from "@fluencelabs/js-client";
-import { fromByteArray } from "base64-js";
 
 import { test as particleTest } from "./_aqua/finalize_particle.js";
 import {
@@ -56,10 +55,6 @@ export type TestResult =
 
 export const runTest = async (): Promise<TestResult> => {
   try {
-    Fluence.onConnectionStateChange((state) => {
-      console.info("connection state changed: ", state);
-    });
-
     console.log("connecting to Fluence Network...");
     console.log("multiaddr: ", relay.multiaddr);
 
@@ -82,7 +77,6 @@ export const runTest = async (): Promise<TestResult> => {
     const client = Fluence.getClient();
 
     console.log("my peer id: ", client.getPeerId());
-    console.log("my sk id: ", fromByteArray(client.getPeerSecretKey()));
 
     console.log("running hello test...");
     const hello = await helloTest();

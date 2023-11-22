@@ -63,7 +63,7 @@ const createClient = async (
   const marine = new MarineBackgroundRunner(
     {
       async getValue() {
-        // TODO: load worker with avm and marine, test that it works
+        // TODO: load worker in parallel with avm and marine, test that it works
         return getWorker("@fluencelabs/marine-worker", CDNUrl);
       },
       start() {

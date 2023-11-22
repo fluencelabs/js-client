@@ -249,7 +249,7 @@ export class EphemeralNetwork {
       const marine = new MarineBackgroundRunner(
         {
           async getValue() {
-            // TODO: load worker with avm and marine, test that it works
+            // TODO: load worker in parallel with avm and marine, test that it works
             return getWorker("@fluencelabs/marine-worker", "/");
           },
           start() {
@@ -315,7 +315,7 @@ export class EphemeralNetwork {
     await Promise.all(startPromises);
 
     for (const p of peers) {
-      this.peers.set(p.keyPair.getPeerId(), p);
+      this.peers.set(p.getPeerId(), p);
     }
   }
 

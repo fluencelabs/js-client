@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-import { ServiceDef } from "@fluencelabs/interfaces";
+import { JSONValue, ServiceDef } from "@fluencelabs/interfaces";
 
 import { recursiveRenameLaquaProps } from "../utils.js";
 
 import { TypeGenerator } from "./interfaces.js";
-
-// Actual value of defaultServiceId which comes from aqua-api
-export interface DefaultServiceId {
-  s_Some__f_value?: string;
-}
 
 export function generateServices(
   typeGenerator: TypeGenerator,
@@ -68,21 +63,6 @@ function generateRegisterServiceOverload(
 }
 
 function serviceToJson(service: ServiceDef): string {
-  return JSON.stringify(
-    {
-      // This assertion is required because aqua-api gives bad types
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ...((service.defaultServiceId as DefaultServiceId).s_Some__f_value != null
-        ? {
-            defaultServiceId:
-              // This assertion is required because aqua-api gives bad types
-              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              (service.defaultServiceId as DefaultServiceId).s_Some__f_value,
-          }
-        : {}),
-      functions: recursiveRenameLaquaProps(service.functions),
-    },
-    null,
-    4,
-  );
+  const record: Record<never, JSONValue> = service;
+  return JSON.stringify(recursiveRenameLaquaProps(record), null, 4);
 }
