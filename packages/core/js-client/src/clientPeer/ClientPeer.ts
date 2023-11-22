@@ -25,7 +25,12 @@ import { IMarineHost } from "../marine/interfaces.js";
 import { relayOptionToMultiaddr } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
 
-import { ClientConfig, IFluenceClient, RelayOptions } from "./types.js";
+import {
+  ClientConfig,
+  IFluenceClient,
+  ConnectionState,
+  RelayOptions,
+} from "./types.js";
 
 const log = logger("client");
 
@@ -85,8 +90,28 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     );
   }
 
+  getPeerSecretKey(): Uint8Array {
+    return this.keyPair.toEd25519PrivateKey();
+  }
+
+  connectionState: ConnectionState = "disconnected";
+  connectionStateChangeHandler: (state: ConnectionState) => void = () => {};
+
   getRelayPeerId(): string {
     return this.internals.getRelayPeerId();
+  }
+
+  onConnectionStateChange(
+    handler: (state: ConnectionState) => void,
+  ): ConnectionState {
+    this.connectionStateChangeHandler = handler;
+
+    return this.connectionState;
+  }
+
+  private changeConnectionState(state: ConnectionState) {
+    this.connectionState = state;
+    this.connectionStateChangeHandler(state);
   }
 
   /**
@@ -105,14 +130,18 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
 
   override async start(): Promise<void> {
     log.trace("connecting to Fluence network");
+    this.changeConnectionState("connecting");
     await super.start();
     // TODO: check connection (`checkConnection` function) here
+    this.changeConnectionState("connected");
     log.trace("connected");
   }
 
   override async stop(): Promise<void> {
     log.trace("disconnecting from Fluence network");
+    this.changeConnectionState("disconnecting");
     await super.stop();
+    this.changeConnectionState("disconnected");
     log.trace("disconnected");
   }
 }

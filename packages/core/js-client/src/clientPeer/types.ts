@@ -67,6 +67,21 @@ const keyPairOptionsSchema = z.object({
 export type KeyPairOptions = z.infer<typeof keyPairOptionsSchema>;
 
 /**
+ * Fluence JS Client connection states as string literals
+ */
+export const ConnectionStates = [
+  "disconnected",
+  "connecting",
+  "connected",
+  "disconnecting",
+] as const;
+
+/**
+ * Fluence JS Client connection states
+ */
+export type ConnectionState = (typeof ConnectionStates)[number];
+
+/**
  * Public API of Fluence JS Client
  */
 export interface IFluenceClient {
@@ -79,6 +94,18 @@ export interface IFluenceClient {
    * Disconnect from the Fluence network
    */
   disconnect(): Promise<void>;
+
+  /**
+   * Handle connection state changes. Immediately returns current connection state
+   */
+  onConnectionStateChange(
+    handler: (state: ConnectionState) => void,
+  ): ConnectionState;
+
+  /**
+   * Return peer's secret key as byte array.
+   */
+  getPeerSecretKey(): Uint8Array;
 
   /**
    * Return peer's public key as a base58 string (multihash/CIDv0).
