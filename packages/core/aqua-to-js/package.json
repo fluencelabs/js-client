@@ -18,7 +18,7 @@
     "ts-pattern": "5.0.5"
   },
   "devDependencies": {
-    "@fluencelabs/aqua-api": "0.12.4-main-cee4448-2196-1",
+    "@fluencelabs/aqua-api": "0.13.0",
     "@fluencelabs/aqua-lib": "0.7.3",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client": "workspace:^",
