@@ -16,7 +16,7 @@
 
 import { promises as fs } from "fs";
 
-import { Aqua, Path } from "@fluencelabs/aqua-api/aqua-api.js";
+import { compileFromPath } from "@fluencelabs/aqua-api";
 import {
   FunctionCallDef,
   JSONArray,
@@ -90,11 +90,9 @@ export type PassedArgs = { [key: string]: JSONValue | ArgCallbackFunction };
 export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
   await fs.access(aquaFile);
 
-  const compilationResult = await Aqua.compile(
-    new Path(aquaFile),
-    [],
-    undefined,
-  );
+  const compilationResult = await compileFromPath({
+    filePath: aquaFile,
+  });
 
   if (compilationResult.errors.length > 0) {
     throw new Error(
