@@ -61,8 +61,8 @@ importers:
         version: 1.5.1
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1
-        version: 0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1
+        specifier: https://npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz
+        version: '@npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz'
       '@fluencelabs/aqua-lib':
         specifier: 0.6.0
         version: 0.6.0
@@ -167,8 +167,8 @@ importers:
         version: 5.0.5
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1
-        version: 0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1
+        specifier: https://npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz
+        version: '@npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz'
       '@fluencelabs/aqua-lib':
         specifier: 0.7.3
         version: 0.7.3
@@ -3676,10 +3676,6 @@ packages:
   /@eslint/js@8.50.0:
     resolution: {integrity: sha512-NCC3zz2+nvYd+Ckfh87rA47zfu2QsQpvc6k1yzTk+b9KzRj0wkGa8LSoGOXN6Zv4lRf/EIoZ80biDh9HOI+RNQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  /@fluencelabs/aqua-api@0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1:
-    resolution: {registry: https://registry.npmjs.org/, tarball: https://npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz}
-    dev: true
 
   /@fluencelabs/aqua-api@0.9.3:
     resolution: {integrity: sha512-ieM2e7qMXgm9BPSSd2fxVbqLlYkR/a/aVTAQXO8gdx2rKKFqnTgFX4gpSOTxrrCMshi8OnXfd2OZi1hsJHTnKA==}
@@ -15212,3 +15208,9 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+
+  '@npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz':
+    resolution: {tarball: https://npm.fluence.dev/@fluencelabs/aqua-api/-/aqua-api-0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1.tgz}
+    name: '@fluencelabs/aqua-api'
+    version: 0.12.4-feat-default-srv-id-undef-or-1f3c39b-2201-1
+    dev: true
