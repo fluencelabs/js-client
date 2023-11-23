@@ -194,3 +194,6 @@ export {
 } from "./keypair/index.js";
 
 export * from "./network.js";
+
+// TODO: Remove this export after DXJ-535 is done
+export { js2aqua } from "./compilerSupport/conversions.js";
