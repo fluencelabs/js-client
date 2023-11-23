@@ -242,8 +242,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       '@libp2p/websockets':
-        specifier: 7.0.4
-        version: 7.0.4
+        specifier: 7.0.13
+        version: 7.0.13
       '@multiformats/multiaddr':
         specifier: 11.3.0
         version: 11.3.0
@@ -4096,6 +4096,21 @@ packages:
       - supports-color
     dev: false
 
+  /@libp2p/interface@0.1.6:
+    resolution: {integrity: sha512-Lzc5cS/hXuoXhuAbVIxJIHLCYmfPcbU0vVgrpMoiP1Qb2Q3ETU4A46GB8s8mWXgSU6tr9RcqerUqzFYD6+OAag==}
+    dependencies:
+      '@multiformats/multiaddr': 12.1.7
+      abortable-iterator: 5.0.1
+      it-pushable: 3.2.1
+      it-stream-types: 2.0.1
+      multiformats: 12.0.1
+      p-defer: 4.0.0
+      race-signal: 1.0.2
+      uint8arraylist: 2.4.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@libp2p/keychain@3.0.3:
     resolution: {integrity: sha512-mt3Pq8pPUDchoYlTXyNFMSIZ2/gbGZUJIr1qDQGphLZKxZ3Ejsqps2Dgo0t6yBxvJQ0581tXfptAXzw75Y2LIA==}
     dependencies:
@@ -4128,6 +4143,18 @@ packages:
     resolution: {integrity: sha512-2JtRGBXiGfm1t5XneUIXQ2JusW7QwyYmxsW7hSAYS5J73RQJUicpt5le5obVRt7+OM39ei+nWEuC6Xvm1ugHkw==}
     dependencies:
       '@libp2p/interface': 0.1.2
+      '@multiformats/multiaddr': 12.1.7
+      debug: 4.3.4
+      interface-datastore: 8.2.3
+      multiformats: 12.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@libp2p/logger@3.1.0:
+    resolution: {integrity: sha512-qJbJBAhxHVsRBtQSOIkSLi0lskUSFjzE+zm0QvoyxzZKSz+mX41mZLbnofPIVOVauoDQ40dXpe7WDUOq8AbiQQ==}
+    dependencies:
+      '@libp2p/interface': 0.1.6
       '@multiformats/multiaddr': 12.1.7
       debug: 4.3.4
       interface-datastore: 8.2.3
@@ -4237,12 +4264,28 @@ packages:
       - supports-color
     dev: false
 
-  /@libp2p/websockets@7.0.4:
-    resolution: {integrity: sha512-DtwsZhYH//3bIMtzBpzi7ZWPeHtfEgbDOCaoVORcb4152ZvC68C7u+c3k7S2TyXY1ceqLTAt9LI9hDMM0WNfcQ==}
+  /@libp2p/utils@4.0.7:
+    resolution: {integrity: sha512-xA6mS4II14870/DmmI3GFRWdNwHeOd2QV3ltatpdVmeEQpdn82jjtCzqn45AChjCugFOskOthXnQiWp+FvdKZg==}
     dependencies:
-      '@libp2p/interface': 0.1.2
-      '@libp2p/logger': 3.0.2
-      '@libp2p/utils': 4.0.2
+      '@chainsafe/is-ip': 2.0.2
+      '@libp2p/interface': 0.1.6
+      '@libp2p/logger': 3.1.0
+      '@multiformats/multiaddr': 12.1.7
+      '@multiformats/multiaddr-matcher': 1.0.1
+      is-loopback-addr: 2.0.1
+      it-stream-types: 2.0.1
+      private-ip: 3.0.0
+      uint8arraylist: 2.4.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@libp2p/websockets@7.0.13:
+    resolution: {integrity: sha512-frRvTtk7++bJ/JLEX8iulpHAMMkEfroWDn2RhiY24SMPwkHWs3CZwm0P6nQ6p0YHft3OQfwPZaqBu0KItxnVHQ==}
+    dependencies:
+      '@libp2p/interface': 0.1.6
+      '@libp2p/logger': 3.1.0
+      '@libp2p/utils': 4.0.7
       '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.1.7
       '@multiformats/multiaddr-to-uri': 9.0.7
@@ -12473,6 +12516,10 @@ packages:
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  /race-signal@1.0.2:
+    resolution: {integrity: sha512-o3xNv0iTcIDQCXFlF6fPAMEBRjFxssgGoRqLbg06m+AdzEXXLUmoNOoUHTVz2NoBI8hHwKFKoC6IqyNtWr2bww==}
+    dev: false
 
   /raf@3.4.1:
     resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}

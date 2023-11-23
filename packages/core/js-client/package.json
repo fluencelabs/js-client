@@ -41,7 +41,7 @@
     "@libp2p/interface": "0.1.2",
     "@libp2p/peer-id": "3.0.2",
     "@libp2p/peer-id-factory": "3.0.3",
-    "@libp2p/websockets": "7.0.4",
+    "@libp2p/websockets": "7.0.13",
     "@multiformats/multiaddr": "11.3.0",
     "bs58": "5.0.0",
     "buffer": "6.0.3",
