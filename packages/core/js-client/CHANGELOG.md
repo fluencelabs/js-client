@@ -12,6 +12,13 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.5.3](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.2...js-client-v0.5.3) (2023-11-23)
+
+
+### Features
+
+* Additional export from js-client ([fdd0ca0](https://github.com/fluencelabs/js-client/commit/fdd0ca0ea26407dbfd94d43e2a5ec1bbea7b96ff))
+
 ## [0.5.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.0...js-client-v0.5.1) (2023-11-23)
 
 
