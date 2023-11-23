@@ -6,6 +6,12 @@
   * dependencies
     * @fluencelabs/js-client-isomorphic bumped to 0.2.0
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped to 0.9.0
+
 ## [0.5.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.0...js-client-v0.5.1) (2023-11-23)
 
 
