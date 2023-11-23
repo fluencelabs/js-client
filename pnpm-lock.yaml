@@ -260,8 +260,8 @@ importers:
         specifier: 8.0.4
         version: 8.0.4
       it-map:
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 2.0.1
+        version: 2.0.1
       it-pipe:
         specifier: 2.0.5
         version: 2.0.5
@@ -9590,8 +9590,8 @@ packages:
       uint8arrays: 4.0.3
     dev: false
 
-  /it-map@2.0.0:
-    resolution: {integrity: sha512-mLgtk/NZaN7NZ06iLrMXCA6jjhtZO0vZT5Ocsp31H+nsGI18RSPVmUbFyA1sWx7q+g92J22Sixya7T2QSSAwfA==}
+  /it-map@2.0.1:
+    resolution: {integrity: sha512-a2GcYDHiAh/eSU628xlvB56LA98luXZnniH2GlD0IdBzf15shEq9rBeb0Rg3o1SWtNILUAwqmQxEXcewGCdvmQ==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dev: false
 

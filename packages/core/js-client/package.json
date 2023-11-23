@@ -47,7 +47,7 @@
     "buffer": "6.0.3",
     "debug": "4.3.4",
     "it-length-prefixed": "8.0.4",
-    "it-map": "2.0.0",
+    "it-map": "2.0.1",
     "it-pipe": "2.0.5",
     "js-base64": "3.7.5",
     "libp2p": "0.46.6",
