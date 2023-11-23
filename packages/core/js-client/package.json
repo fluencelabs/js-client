@@ -37,7 +37,7 @@
     "@fluencelabs/js-client-isomorphic": "workspace:*",
     "@fluencelabs/marine-worker": "0.5.0",
     "@fluencelabs/threads": "^2.0.0",
-    "@libp2p/crypto": "2.0.3",
+    "@libp2p/crypto": "2.0.8",
     "@libp2p/interface": "0.1.2",
     "@libp2p/peer-id": "3.0.2",
     "@libp2p/peer-id-factory": "3.0.3",

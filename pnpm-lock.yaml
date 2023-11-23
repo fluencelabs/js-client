@@ -230,8 +230,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@libp2p/crypto':
-        specifier: 2.0.3
-        version: 2.0.3
+        specifier: 2.0.8
+        version: 2.0.8
       '@libp2p/interface':
         specifier: 0.1.2
         version: 0.1.2
@@ -3006,7 +3006,7 @@ packages:
     resolution: {integrity: sha512-+kRW5GSTGYB42WjFa1f7Wc/1+VWLffOhwChi+CbPceidMHM5pbOQNb+xQM2/aqLre+A+WnBOKEopME7dnoqLNQ==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@libp2p/crypto': 2.0.3
+      '@libp2p/crypto': 2.0.8
       '@libp2p/interface': 0.1.2
       '@libp2p/logger': 3.0.2
       '@libp2p/peer-id': 3.0.2
@@ -4049,10 +4049,10 @@ packages:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
     dev: false
 
-  /@libp2p/crypto@2.0.3:
-    resolution: {integrity: sha512-VLhjdkJe8b/vedHp7SosDs62Yxq1i05Ej/YdVaEdWQdJsBRHCwbRlS4hPg3vm21U5hLF0g958r/927Vd/wamZw==}
+  /@libp2p/crypto@2.0.8:
+    resolution: {integrity: sha512-8e5fh6bsJNpSjhrggtlm8QF+BERjelJswIjRS69aKgxp24R4z2kDM4pRYPkfQjXJDLNDtqWtKNmePgX23+QJsA==}
     dependencies:
-      '@libp2p/interface': 0.1.2
+      '@libp2p/interface': 0.1.6
       '@noble/curves': 1.1.0
       '@noble/hashes': 1.3.1
       multiformats: 12.0.1
@@ -4096,10 +4096,25 @@ packages:
       - supports-color
     dev: false
 
+  /@libp2p/interface@0.1.6:
+    resolution: {integrity: sha512-Lzc5cS/hXuoXhuAbVIxJIHLCYmfPcbU0vVgrpMoiP1Qb2Q3ETU4A46GB8s8mWXgSU6tr9RcqerUqzFYD6+OAag==}
+    dependencies:
+      '@multiformats/multiaddr': 12.1.7
+      abortable-iterator: 5.0.1
+      it-pushable: 3.2.1
+      it-stream-types: 2.0.1
+      multiformats: 12.0.1
+      p-defer: 4.0.0
+      race-signal: 1.0.2
+      uint8arraylist: 2.4.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@libp2p/keychain@3.0.3:
     resolution: {integrity: sha512-mt3Pq8pPUDchoYlTXyNFMSIZ2/gbGZUJIr1qDQGphLZKxZ3Ejsqps2Dgo0t6yBxvJQ0581tXfptAXzw75Y2LIA==}
     dependencies:
-      '@libp2p/crypto': 2.0.3
+      '@libp2p/crypto': 2.0.8
       '@libp2p/interface': 0.1.2
       '@libp2p/logger': 3.0.2
       '@libp2p/peer-id': 3.0.2
@@ -4161,12 +4176,14 @@ packages:
     dependencies:
       '@libp2p/interface': 0.1.2
       '@libp2p/peer-id': 3.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/peer-id-factory@3.0.3:
     resolution: {integrity: sha512-RsE1GbK0w4LxiGr9sU2fm23IHOGzCtCfmUD8LC9V8LwLgt+z62oNKbWzwbko+CeromngURDimdv3JpH9jw5OUA==}
     dependencies:
-      '@libp2p/crypto': 2.0.3
+      '@libp2p/crypto': 2.0.8
       '@libp2p/interface': 0.1.2
       '@libp2p/peer-id': 3.0.2
       multiformats: 12.0.1
@@ -4183,12 +4200,14 @@ packages:
       '@libp2p/interface': 0.1.2
       multiformats: 12.0.1
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/peer-record@6.0.3:
     resolution: {integrity: sha512-S5C4Df2uyX1vNsnduZ6RVjB7T+dUEhqnaSNhiv82VCoqMoniHQBf2ftvXlv/UqqssW9or1x4UwgFU+sL7kObkw==}
     dependencies:
-      '@libp2p/crypto': 2.0.3
+      '@libp2p/crypto': 2.0.8
       '@libp2p/interface': 0.1.2
       '@libp2p/peer-id': 3.0.2
       '@libp2p/utils': 4.0.2
@@ -10453,7 +10472,7 @@ packages:
     resolution: {integrity: sha512-5zDUpi4Foj30s+I/f6UC+wrO2u1CMLVFXby+AnCl1cEt4r+z92rLlN1Td0gUQjiAw1I3EL9yI+ASt3/Pts5IPw==}
     dependencies:
       '@achingbrain/nat-port-mapper': 1.0.9
-      '@libp2p/crypto': 2.0.3
+      '@libp2p/crypto': 2.0.8
       '@libp2p/interface': 0.1.2
       '@libp2p/interface-internal': 0.1.4
       '@libp2p/keychain': 3.0.3
@@ -12473,6 +12492,10 @@ packages:
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  /race-signal@1.0.2:
+    resolution: {integrity: sha512-o3xNv0iTcIDQCXFlF6fPAMEBRjFxssgGoRqLbg06m+AdzEXXLUmoNOoUHTVz2NoBI8hHwKFKoC6IqyNtWr2bww==}
+    dev: false
 
   /raf@3.4.1:
     resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
