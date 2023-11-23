@@ -11,6 +11,7 @@
     "packages/core/js-client": {},
     "packages/core/js-client-isomorphic": {},
     "packages/core/marine-worker": {},
-    "packages/core/aqua-to-js": {}
+    "packages/core/aqua-to-js": {},
+    "packages/core/interfaces": {}
   }
 }
