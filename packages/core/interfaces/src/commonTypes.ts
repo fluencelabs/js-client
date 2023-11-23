@@ -26,5 +26,5 @@ export type JSONValue =
   | null
   | { [x: string]: JSONValue }
   | Array<JSONValue>;
-export type JSONArray = Array<JSONValue>;
 export type JSONObject = { [x: string]: JSONValue };
+export type JSONArray = Array<JSONValue>;
