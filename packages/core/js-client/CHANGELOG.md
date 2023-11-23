@@ -6,6 +6,13 @@
   * dependencies
     * @fluencelabs/js-client-isomorphic bumped to 0.2.0
 
+## [0.5.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.0...js-client-v0.5.1) (2023-11-23)
+
+
+### Features
+
+* Temporarily expose internal js client API ([#386](https://github.com/fluencelabs/js-client/issues/386)) ([b5a6296](https://github.com/fluencelabs/js-client/commit/b5a6296225563dc6039b3f7c83e11075d9893045))
+
 ## [0.5.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.4.4...js-client-v0.5.0) (2023-11-22)
 
 
