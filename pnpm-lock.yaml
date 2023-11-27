@@ -209,8 +209,8 @@ importers:
   packages/core/js-client:
     dependencies:
       '@chainsafe/libp2p-noise':
-        specifier: 13.0.0
-        version: 13.0.0
+        specifier: 13.0.5
+        version: 13.0.5
       '@chainsafe/libp2p-yamux':
         specifier: 5.0.0
         version: 5.0.0
@@ -2999,18 +2999,28 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: false
 
+  /@chainsafe/as-chacha20poly1305@0.1.0:
+    resolution: {integrity: sha512-BpNcL8/lji/GM3+vZ/bgRWqJ1q5kwvTFmGPk7pxm/QQZDbaMI98waOHjEymTjq2JmdD/INdNBFOVSyJofXg7ew==}
+    dev: false
+
+  /@chainsafe/as-sha256@0.4.1:
+    resolution: {integrity: sha512-IqeeGwQihK6Y2EYLFofqs2eY2ep1I2MvQXHzOAI+5iQN51OZlUkrLgyAugu2x86xZewDk5xas7lNczkzFzF62w==}
+    dev: false
+
   /@chainsafe/is-ip@2.0.2:
     resolution: {integrity: sha512-ndGqEMG1W5WkGagaqOZHpPU172AGdxr+LD15sv3WIUvT5oCFUrG1Y0CW/v2Egwj4JXEvSibaIIIqImsm98y1nA==}
 
-  /@chainsafe/libp2p-noise@13.0.0:
-    resolution: {integrity: sha512-+kRW5GSTGYB42WjFa1f7Wc/1+VWLffOhwChi+CbPceidMHM5pbOQNb+xQM2/aqLre+A+WnBOKEopME7dnoqLNQ==}
+  /@chainsafe/libp2p-noise@13.0.5:
+    resolution: {integrity: sha512-xXqwrkH4nXlv3cYENHtqOgmIT2M4irPDwi548UvpmxzeC9hqa0kmiqbtAFYMV3v+gJ9pqVBVWFRk2hjs83GNrw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dependencies:
+      '@chainsafe/as-chacha20poly1305': 0.1.0
+      '@chainsafe/as-sha256': 0.4.1
       '@libp2p/crypto': 2.0.3
       '@libp2p/interface': 0.1.2
       '@libp2p/logger': 3.0.2
       '@libp2p/peer-id': 3.0.2
-      '@noble/ciphers': 0.1.4
+      '@noble/ciphers': 0.4.0
       '@noble/curves': 1.1.0
       '@noble/hashes': 1.3.1
       it-byte-stream: 1.0.1
@@ -3022,6 +3032,7 @@ packages:
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.6
+      wherearewe: 2.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -4319,8 +4330,8 @@ packages:
       eslint-scope: 5.1.1
     dev: false
 
-  /@noble/ciphers@0.1.4:
-    resolution: {integrity: sha512-d3ZR8vGSpy3v/nllS+bD/OMN5UZqusWiQqkyj7AwzTnhXFH72pF5oB4Ach6DQ50g5kXxC28LdaYBEpsyv9KOUQ==}
+  /@noble/ciphers@0.4.0:
+    resolution: {integrity: sha512-xaUaUUDWbHIFSxaQ/pIe+33VG2mfJp6N/KxKLmZr5biWdNznCAmfu24QRhX10BbVAuqOahAoyp0S4M9md6GPDw==}
     dev: false
 
   /@noble/curves@1.1.0:
