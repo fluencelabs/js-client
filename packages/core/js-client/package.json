@@ -31,7 +31,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@chainsafe/libp2p-noise": "13.0.0",
-    "@chainsafe/libp2p-yamux": "5.0.0",
+    "@chainsafe/libp2p-yamux": "5.0.4",
     "@fluencelabs/avm": "0.54.0",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client-isomorphic": "workspace:*",

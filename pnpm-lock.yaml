@@ -212,8 +212,8 @@ importers:
         specifier: 13.0.0
         version: 13.0.0
       '@chainsafe/libp2p-yamux':
-        specifier: 5.0.0
-        version: 5.0.0
+        specifier: 5.0.4
+        version: 5.0.4
       '@fluencelabs/avm':
         specifier: 0.54.0
         version: 0.54.0
@@ -3026,13 +3026,12 @@ packages:
       - supports-color
     dev: false
 
-  /@chainsafe/libp2p-yamux@5.0.0:
-    resolution: {integrity: sha512-aWTnBPR2hJt0A2y579sMtZVB6IqgSSHlZ6Eg+WDxNZQ0zcexafuruZQDj+z3FUTNPz+E8IeuyCi7tjI4IEehjw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+  /@chainsafe/libp2p-yamux@5.0.4:
+    resolution: {integrity: sha512-3cfOjomFde7+6sscoM0gK7cgA5aEm20oYeVXSSonVzaas/UZzNsGP+FnF/bjLATjdyTB+YqhBHJs/KKk1PAy/Q==}
     dependencies:
       '@libp2p/interface': 0.1.2
       '@libp2p/logger': 3.0.2
-      abortable-iterator: 5.0.1
+      get-iterator: 2.0.1
       it-foreach: 2.0.4
       it-pipe: 3.0.1
       it-pushable: 3.2.1
