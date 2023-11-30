@@ -46,7 +46,7 @@ const log = logger("aqua");
 
 export type CallAquaFunctionArgs = {
   script: string;
-  config: CallAquaFunctionConfig | undefined;
+  config?: CallAquaFunctionConfig | undefined;
   peer: FluencePeer;
   args: { [key: string]: JSONValue | ArgCallbackFunction };
 };
