@@ -202,11 +202,11 @@ export const v5_registerService = (
   // Schema for every function in service
   const serviceSchema = def.functions.tag === "nil" ? {} : def.functions.fields;
 
-  // This is done in case user plain object or class instance comes with some state and/or additional methods.
-  // Therefore, there is a need to take that object as-is and wrap only methods stated in aqua code.
+  // These conversions signify that user plain object or class instance could come with some state and/or additional methods.
   const anyAdditionalPropsAndMethod: Record<never, unknown> = serviceImpl;
   const wrappedServiceImpl: ServiceImpl = anyAdditionalPropsAndMethod;
 
+  // Wrapping service functions, selecting only those listed in schema, to convert their args js -> aqua and backwards
   Object.keys(serviceSchema).forEach((schemaKey) => {
     wrappedServiceImpl[schemaKey] = wrapJsFunction(
       serviceImpl[schemaKey].bind(serviceImpl),
