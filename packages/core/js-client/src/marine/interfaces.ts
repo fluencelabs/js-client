@@ -16,7 +16,6 @@
 
 import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
 import { CallParameters } from "@fluencelabs/marine-worker";
-import type { Worker as WorkerImplementation } from "@fluencelabs/threads/master";
 
 import { IStartable } from "../util/commonTypes.js";
 
@@ -52,24 +51,3 @@ export interface IMarineHost extends IStartable {
     callParams?: CallParameters,
   ): Promise<JSONValue>;
 }
-
-/**
- * Interface for something which can hold a value
- */
-export interface IValueLoader<T> {
-  getValue(): T;
-}
-
-/**
- * Interface for something which can load wasm files
- */
-export interface IWasmLoader
-  extends IValueLoader<ArrayBuffer | SharedArrayBuffer>,
-    IStartable {}
-
-/**
- * Interface for something which can thread.js based worker
- */
-export interface IWorkerLoader
-  extends IValueLoader<WorkerImplementation | Promise<WorkerImplementation>>,
-    IStartable {}

@@ -15,8 +15,6 @@
  */
 
 import { PeerIdB58 } from "@fluencelabs/interfaces";
-import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
-import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 import { Subject } from "rxjs";
 
 import { IConnection } from "../connection/interfaces.js";
@@ -24,6 +22,7 @@ import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { fromBase64Sk, KeyPair } from "../keypair/index.js";
 import { IMarineHost } from "../marine/interfaces.js";
+import { parallelLoadStrategy } from "../marine/load-strategies.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
 import { Particle } from "../particle/Particle.js";
 import { logger } from "../util/logger.js";
@@ -233,55 +232,8 @@ export class EphemeralNetwork {
     const promises = this.config.peers.map(async (x) => {
       const kp = await fromBase64Sk(x.sk);
 
-      const [marineJsWasm, avmWasm] = await Promise.all([
-        fetchResource(
-          "@fluencelabs/marine-js",
-          "/dist/marine-js.wasm",
-          "/",
-        ).then((res) => {
-          return res.arrayBuffer();
-        }),
-        fetchResource("@fluencelabs/avm", "/dist/avm.wasm", "/").then((res) => {
-          return res.arrayBuffer();
-        }),
-      ]);
-
-      const marine = new MarineBackgroundRunner(
-        {
-          async getValue() {
-            // TODO: load worker in parallel with avm and marine, test that it works
-            return getWorker("@fluencelabs/marine-worker", "/");
-          },
-          start() {
-            return Promise.resolve(undefined);
-          },
-          stop() {
-            return Promise.resolve(undefined);
-          },
-        },
-        {
-          getValue() {
-            return marineJsWasm;
-          },
-          start(): Promise<void> {
-            return Promise.resolve(undefined);
-          },
-          stop(): Promise<void> {
-            return Promise.resolve(undefined);
-          },
-        },
-        {
-          getValue() {
-            return avmWasm;
-          },
-          start(): Promise<void> {
-            return Promise.resolve(undefined);
-          },
-          stop(): Promise<void> {
-            return Promise.resolve(undefined);
-          },
-        },
-      );
+      const marineDeps = await parallelLoadStrategy("/");
+      const marine = new MarineBackgroundRunner(...marineDeps);
 
       const peerId = kp.getPeerId();
 
