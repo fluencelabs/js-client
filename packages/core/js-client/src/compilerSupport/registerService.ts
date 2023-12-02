@@ -28,27 +28,22 @@ interface RegisterServiceArgs {
   service: ServiceImpl;
 }
 
+// This function iterates on plain object or class instance functions ignoring inherited functions and prototype chain.
 const findAllPossibleRegisteredServiceFunctions = (
   service: ServiceImpl,
-): Set<string> => {
-  let prototype: Record<string, unknown> = service;
-  const serviceMethods = new Set<string>();
+): Array<string> => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const prototype = Object.getPrototypeOf(service) as ServiceImpl;
 
-  do {
-    Object.getOwnPropertyNames(prototype)
-      .filter((prop) => {
-        return typeof prototype[prop] === "function" && prop !== "constructor";
-      })
-      .forEach((prop) => {
-        return serviceMethods.add(prop);
-      });
+  const isClassInstance = prototype.constructor !== Object;
 
-    // coercing 'any' type to 'Record' bcs object prototype is actually an object
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    prototype = Object.getPrototypeOf(prototype) as Record<string, unknown>;
-  } while (prototype.constructor !== Object);
+  if (isClassInstance) {
+    service = prototype;
+  }
 
-  return serviceMethods;
+  return Object.getOwnPropertyNames(service).filter((prop) => {
+    return typeof service[prop] === "function" && prop !== "constructor";
+  });
 };
 
 export const registerService = ({
