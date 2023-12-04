@@ -172,9 +172,9 @@ It could be handy in advanced scenarios when a user fetches Air dynamically or g
 `callAquaFunction` Allows to call aqua function without schema.
 
 `registerService` Gives an ability to register service without schema. Passed `service` could be
-- Plain object. In this case all function properties will be registered as Air service functions. 
-- Class instance. All class functions without inherited ones will be registered as Air service functions.
 
+- Plain object. In this case all function properties will be registered as Air service functions.
+- Class instance. All class functions without inherited ones will be registered as Air service functions.
 
 ## Development
 
