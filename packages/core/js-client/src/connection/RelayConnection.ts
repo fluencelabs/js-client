@@ -17,9 +17,10 @@
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { PeerIdB58 } from "@fluencelabs/interfaces";
-import type { Stream } from "@libp2p/interface/connection";
-import type { PeerId } from "@libp2p/interface/peer-id";
+import { identify } from "@libp2p/identify";
+import type { PeerId, Stream } from "@libp2p/interface";
 import { peerIdFromString } from "@libp2p/peer-id";
+import { ping } from "@libp2p/ping";
 import { webSockets } from "@libp2p/websockets";
 import { all } from "@libp2p/websockets/filters";
 import { multiaddr, type Multiaddr } from "@multiformats/multiaddr";
@@ -27,8 +28,6 @@ import { decode, encode } from "it-length-prefixed";
 import map from "it-map";
 import { pipe } from "it-pipe";
 import { createLibp2p, Libp2p } from "libp2p";
-import { identifyService } from "libp2p/identify";
-import { pingService } from "libp2p/ping";
 import { Subject } from "rxjs";
 import { fromString } from "uint8arrays/from-string";
 import { toString } from "uint8arrays/to-string";
@@ -139,8 +138,8 @@ export class RelayConnection implements IConnection {
         },
       },
       services: {
-        identify: identifyService(),
-        ping: pingService(),
+        identify: identify(),
+        ping: ping(),
       },
     });
 

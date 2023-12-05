@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import inject from "@rollup/plugin-inject";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { createRequire } from "module";
-import { PluginOption, UserConfig } from "vite";
+
+import inject from "@rollup/plugin-inject";
 import { transform } from "esbuild";
+import { PluginOption, UserConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const require = createRequire(import.meta.url);
 const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
@@ -35,6 +36,7 @@ function minifyEs(): PluginOption {
         ) {
           return await transform(code, { minify: true });
         }
+
         return code;
       },
     },
@@ -48,14 +50,16 @@ const config: UserConfig = {
     lib: {
       entry: "./src/index.ts",
       name: "js-client",
-      fileName: () => "index.min.js",
+      fileName: () => {
+        return "index.min.js";
+      },
       formats: ["es"],
     },
     outDir: "./dist/browser",
     rollupOptions: {
       plugins: [
         {
-          // @ts-ignore
+          // @ts-expect-error Types doesn't work here. Hack
           ...inject({
             global: [esbuildShim, "global"],
             process: [esbuildShim, "process"],
