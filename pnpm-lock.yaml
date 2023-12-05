@@ -260,14 +260,14 @@ importers:
         specifier: 4.3.4
         version: 4.3.4
       it-length-prefixed:
-        specifier: 8.0.4
-        version: 8.0.4
+        specifier: 9.0.3
+        version: 9.0.3
       it-map:
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 3.0.5
+        version: 3.0.5
       it-pipe:
-        specifier: 2.0.5
-        version: 2.0.5
+        specifier: 3.0.1
+        version: 3.0.1
       js-base64:
         specifier: 3.7.5
         version: 3.7.5
@@ -6467,13 +6467,6 @@ packages:
     dependencies:
       streamsearch: 1.1.0
 
-  /byte-access@1.0.1:
-    resolution: {integrity: sha512-GKYa+lvxnzhgHWj9X+LCsQ4s2/C5uvib573eAOiQKywXMkzFFErY2+yQdzmdE5iWVpmqecsRx3bOtOY4/1eINw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      uint8arraylist: 2.4.3
-    dev: false
-
   /bytes@3.0.0:
     resolution: {integrity: sha512-pMhOfFDPiv9t5jjIXkHosWmkSyQbvsgEVNkz0ERHbuLh2T/7j4Mqqpz523Fe8MVY89KC6Sh/QfS2sM+SjgFDcw==}
     engines: {node: '>= 0.8'}
@@ -7199,7 +7192,7 @@ packages:
       it-all: 3.0.3
       it-drain: 3.0.3
       it-filter: 3.0.3
-      it-map: 3.0.4
+      it-map: 3.0.5
       it-merge: 3.0.2
       it-pipe: 3.0.1
       it-pushable: 3.2.3
@@ -9589,17 +9582,6 @@ packages:
       uint8arraylist: 2.4.3
     dev: false
 
-  /it-length-prefixed@8.0.4:
-    resolution: {integrity: sha512-5OJ1lxH+IaqJB7lxe8IAIwt9UfSfsmjKJoAI/RO9djYoBDt1Jfy9PeVHUmOfqhqyu/4kJvWBFAJUaG1HhLQ12A==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      err-code: 3.0.1
-      it-stream-types: 1.0.5
-      uint8-varint: 1.0.6
-      uint8arraylist: 2.4.3
-      uint8arrays: 4.0.3
-    dev: false
-
   /it-length-prefixed@9.0.3:
     resolution: {integrity: sha512-YAu424ceYpXctxtjcLOqn7vJq082CaoP8J646ZusYISfQc3bpzQErgTUqMFj81V262KG2W9/YMBHsy6A/4yvmg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -9607,27 +9589,15 @@ packages:
       err-code: 3.0.1
       it-reader: 6.0.4
       it-stream-types: 2.0.1
-      uint8-varint: 2.0.1
+      uint8-varint: 2.0.2
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.3
     dev: false
 
-  /it-map@2.0.0:
-    resolution: {integrity: sha512-mLgtk/NZaN7NZ06iLrMXCA6jjhtZO0vZT5Ocsp31H+nsGI18RSPVmUbFyA1sWx7q+g92J22Sixya7T2QSSAwfA==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dev: false
-
-  /it-map@3.0.4:
-    resolution: {integrity: sha512-h5zCxovJQ+mzJT75xP4GkJuFrJQ5l7IIdhZ6AOWaE02g5F7T1k1j4CB/uKSRR05LLLOi1LqG+7CrH9bi8GIXYA==}
+  /it-map@3.0.5:
+    resolution: {integrity: sha512-hB0TDXo/h4KSJJDSRLgAPmDroiXP6Fx1ck4Bzl3US9hHfZweTKsuiP0y4gXuTMcJlS6vj0bb+f70rhkD47ZA3w==}
     dependencies:
       it-peekable: 3.0.2
-    dev: false
-
-  /it-merge@2.0.1:
-    resolution: {integrity: sha512-ItoBy3dPlNKnhjHR8e7nfabfZzH4Jy2OMPvayYH3XHy4YNqSVKmWTIxhz7KX4UMBsLChlIJZ+5j6csJgrYGQtw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      it-pushable: 3.1.3
     dev: false
 
   /it-merge@3.0.2:
@@ -9648,15 +9618,6 @@ packages:
     resolution: {integrity: sha512-nWwUdhNQ1CfAuoJmsaUotNMYUrfNIlY9gBA1jwWfWSu1I0mLY2brwreKHGOUptXLJUiG5pR04He0xYZMWBRiGA==}
     dev: false
 
-  /it-pipe@2.0.5:
-    resolution: {integrity: sha512-y85nW1N6zoiTnkidr2EAyC+ZVzc7Mwt2p+xt2a2ooG1ThFakSpNw1Kxm+7F13Aivru96brJhjQVRQNU+w0yozw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      it-merge: 2.0.1
-      it-pushable: 3.2.1
-      it-stream-types: 1.0.5
-    dev: false
-
   /it-pipe@3.0.1:
     resolution: {integrity: sha512-sIoNrQl1qSRg2seYSBH/3QxWhJFn9PKYvOf/bHdtCBF0bnghey44VyASsWzn5dAx0DCDDABq1hZIuzKmtBZmKA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -9673,18 +9634,6 @@ packages:
       it-stream-types: 2.0.1
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
-    dev: false
-
-  /it-pushable@3.1.3:
-    resolution: {integrity: sha512-f50iQ85HISS6DaWCyrqf9QJ6G/kQtKIMf9xZkgZgyOvxEQDfn8OfYcLXXquCqgoLboxQtAW1ZFZyFIAsLHDtJw==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dev: false
-
-  /it-pushable@3.2.1:
-    resolution: {integrity: sha512-sLFz2Q0oyDCJpTciZog7ipP4vSftfPy3e6JnH6YyztRa1XqkpGQaafK3Jw/JlfEBtCXfnX9uVfcpu3xpSAqCVQ==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      p-defer: 4.0.0
     dev: false
 
   /it-pushable@3.2.3:
@@ -9705,11 +9654,6 @@ packages:
     resolution: {integrity: sha512-9BuQc5Y2fmBUNhevQBUDHfItrQmzWoZcnzydJl91V6na6M+RkbNj71UtCPPNIpOt/SQG+va0pe1wMQJ9lP2Oew==}
     dependencies:
       it-all: 3.0.3
-    dev: false
-
-  /it-stream-types@1.0.5:
-    resolution: {integrity: sha512-I88Ka1nHgfX62e5mi5LLL+oueqz7Ltg0bUdtsUKDe9SoUqbQPf2Mp5kxDTe9pNhHQGs4pvYPAINwuZ1HAt42TA==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
     dev: false
 
   /it-stream-types@2.0.1:
@@ -10495,7 +10439,7 @@ packages:
       it-drain: 3.0.3
       it-filter: 3.0.3
       it-first: 3.0.4
-      it-map: 3.0.4
+      it-map: 3.0.5
       it-merge: 3.0.2
       it-pipe: 3.0.1
       it-stream-types: 2.0.1
@@ -10588,14 +10532,6 @@ packages:
 
   /long@5.2.3:
     resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
-    dev: false
-
-  /longbits@1.1.0:
-    resolution: {integrity: sha512-22U2exkkYy7sr7nuQJYx2NEZ2kEMsC69+BxM5h8auLvkVIJa+LwAB5mFIExnuW2dFuYXFOWsFMKXjaWiq/htYQ==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      byte-access: 1.0.1
-      uint8arraylist: 2.4.3
     dev: false
 
   /loose-envify@1.4.0:
@@ -14128,16 +14064,6 @@ packages:
   /ufo@1.3.1:
     resolution: {integrity: sha512-uY/99gMLIOlJPwATcMVYfqDSxUR9//AUcgZMzwfSTJPDKzA1S8mX4VLqa+fiAtveraQUBCz4FFcwVZBGbwBXIw==}
     dev: true
-
-  /uint8-varint@1.0.6:
-    resolution: {integrity: sha512-Z0ujO4rxPwxTdLsSI5ke+bdl9hjJ1xiOakBPZeWUI/u6YBGCEGTW6b90SMlhxSGButKVPkL9fMFUDnqThQYTGg==}
-    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
-    dependencies:
-      byte-access: 1.0.1
-      longbits: 1.1.0
-      uint8arraylist: 2.4.3
-      uint8arrays: 4.0.3
-    dev: false
 
   /uint8-varint@2.0.1:
     resolution: {integrity: sha512-euvmpuulJstK5+xNuI4S1KfnxJnbI5QP52RXIR3GZ3/ZMkOsEK2AgCtFpNvEQLXMxMx2o0qcyevK1fJwOZJagQ==}

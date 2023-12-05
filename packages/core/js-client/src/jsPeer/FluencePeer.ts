@@ -513,6 +513,8 @@ export abstract class FluencePeer {
           const res = await this.marineHost.callService("avm", "invoke", args);
 
           avmCallResult = deserializeAvmResult(res);
+          // TODO: This is bug in @fluencelabs/avm package. 'avmCallResult.data' actually number array, not Uint8Array as stated in type.
+          avmCallResult.data = Uint8Array.from(avmCallResult.data);
         } catch (e) {
           avmCallResult = e instanceof Error ? e : new Error(String(e));
         }

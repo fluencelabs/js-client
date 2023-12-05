@@ -191,7 +191,7 @@ export class RelayConnection implements IConnection {
     log.trace("created stream with id ", stream.id);
     const sink = stream.sink;
 
-    await pipe([fromString(serializeToString(particle))], encode(), sink);
+    await pipe([fromString(serializeToString(particle))], encode, sink);
     log.trace("data written to sink");
   }
 
@@ -259,7 +259,7 @@ export class RelayConnection implements IConnection {
       ({ stream }) => {
         void pipe(
           stream.source,
-          decode(),
+          decode,
           (source) => {
             return map(source, (buf) => {
               return toString(buf.subarray());
