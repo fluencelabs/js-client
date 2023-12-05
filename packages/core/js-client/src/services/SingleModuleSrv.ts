@@ -53,6 +53,7 @@ export class Srv {
       const newServiceId = uuidv4();
 
       const buffer = Uint8Array.from(atob(wasmContent), (m) => {
+        // codePointAt cannot return `undefined` value here as callback is called on every symbol
         return m.codePointAt(0) ?? 0;
       });
 
