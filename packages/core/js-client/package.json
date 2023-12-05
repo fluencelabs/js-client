@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@fluencelabs/aqua-api": "0.13.0",
-    "@rollup/plugin-inject": "5.0.3",
+    "@rollup/plugin-inject": "5.0.5",
     "@types/bs58": "4.0.1",
     "@types/debug": "4.1.7",
     "@types/node": "20.7.0",

@@ -58,15 +58,11 @@ const config: UserConfig = {
     outDir: "./dist/browser",
     rollupOptions: {
       plugins: [
-        {
-          // @ts-expect-error Types doesn't work here. Hack
-          ...inject({
-            global: [esbuildShim, "global"],
-            process: [esbuildShim, "process"],
-            Buffer: [esbuildShim, "Buffer"],
-          }),
-          enforce: "post",
-        },
+        inject({
+          global: [esbuildShim, "global"],
+          process: [esbuildShim, "process"],
+          Buffer: [esbuildShim, "Buffer"],
+        }),
       ],
     },
   },
