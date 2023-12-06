@@ -12,6 +12,14 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.5.4](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.3...js-client-v0.5.4) (2023-12-06)
+
+
+### Features
+
+* **js-client:** Update libp2p ecosystem [fixes DXJ-551] ([#393](https://github.com/fluencelabs/js-client/issues/393)) ([44eb149](https://github.com/fluencelabs/js-client/commit/44eb1493b3a40fea56cfe726f7e18cd646ca6f92))
+* Support instance context [fixes DXJ-541] ([#392](https://github.com/fluencelabs/js-client/issues/392)) ([1578b79](https://github.com/fluencelabs/js-client/commit/1578b791ac4ff483dc73aa3fd5083b1eeef79be8))
+
 ## [0.5.3](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.2...js-client-v0.5.3) (2023-11-23)
 
 
