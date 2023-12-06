@@ -19,8 +19,7 @@ import {
   generateKeyPair,
   unmarshalPublicKey,
 } from "@libp2p/crypto/keys";
-import type { PrivateKey, PublicKey } from "@libp2p/interface/keys";
-import type { PeerId } from "@libp2p/interface/peer-id";
+import type { PrivateKey, PublicKey, PeerId } from "@libp2p/interface";
 import { createFromPrivKey } from "@libp2p/peer-id-factory";
 import bs58 from "bs58";
 import { toUint8Array } from "js-base64";
@@ -91,11 +90,11 @@ export class KeyPair {
     return this.privateKey.marshal().subarray(0, 32);
   }
 
-  signBytes(data: Uint8Array): Promise<Uint8Array> {
+  async signBytes(data: Uint8Array): Promise<Uint8Array> {
     return this.privateKey.sign(data);
   }
 
-  verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
+  async verify(data: Uint8Array, signature: Uint8Array): Promise<boolean> {
     return this.publicKey.verify(data, signature);
   }
 }
