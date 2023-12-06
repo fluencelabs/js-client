@@ -15,13 +15,11 @@
  */
 
 import { PeerIdB58 } from "@fluencelabs/interfaces";
-import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
-import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 
 import { FluencePeer, PeerConfig } from "../jsPeer/FluencePeer.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { KeyPair } from "../keypair/index.js";
-import { MarineBackgroundRunner } from "../marine/worker/index.js";
+import { IMarineHost } from "../marine/interfaces.js";
 
 import { EphemeralNetwork } from "./network.js";
 
@@ -32,62 +30,11 @@ export class EphemeralNetworkClient extends FluencePeer {
   constructor(
     config: PeerConfig,
     keyPair: KeyPair,
+    marine: IMarineHost,
     network: EphemeralNetwork,
     relay: PeerIdB58,
   ) {
     const conn = network.getRelayConnection(keyPair.getPeerId(), relay);
-
-    let marineJsWasm: ArrayBuffer;
-    let avmWasm: ArrayBuffer;
-
-    const marine = new MarineBackgroundRunner(
-      {
-        async getValue() {
-          // TODO: load worker in parallel with avm and marine, test that it works
-          return getWorker("@fluencelabs/marine-worker", "/");
-        },
-        start() {
-          return Promise.resolve(undefined);
-        },
-        stop() {
-          return Promise.resolve(undefined);
-        },
-      },
-      {
-        getValue() {
-          return marineJsWasm;
-        },
-        async start(): Promise<void> {
-          marineJsWasm = await fetchResource(
-            "@fluencelabs/marine-js",
-            "/dist/marine-js.wasm",
-            "/",
-          ).then((res) => {
-            return res.arrayBuffer();
-          });
-        },
-        stop(): Promise<void> {
-          return Promise.resolve(undefined);
-        },
-      },
-      {
-        getValue() {
-          return avmWasm;
-        },
-        async start(): Promise<void> {
-          avmWasm = await fetchResource(
-            "@fluencelabs/avm",
-            "/dist/avm.wasm",
-            "/",
-          ).then((res) => {
-            return res.arrayBuffer();
-          });
-        },
-        stop(): Promise<void> {
-          return Promise.resolve(undefined);
-        },
-      },
-    );
 
     super(config, keyPair, marine, new JsServiceHost(), conn);
   }

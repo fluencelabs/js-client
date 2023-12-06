@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { it, describe, expect, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { DEFAULT_CONFIG, FluencePeer } from "../../jsPeer/FluencePeer.js";
 import { ResultCodes } from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
+import { loadMarineDeps } from "../../marine/loader.js";
+import { MarineBackgroundRunner } from "../../marine/worker/index.js";
 import { EphemeralNetworkClient } from "../client.js";
-import { EphemeralNetwork, defaultConfig } from "../network.js";
+import { defaultConfig, EphemeralNetwork } from "../network.js";
 
 let en: EphemeralNetwork;
 let client: FluencePeer;
@@ -33,7 +35,11 @@ describe.skip("Ephemeral networks tests", () => {
     await en.up();
 
     const kp = await KeyPair.randomEd25519();
-    client = new EphemeralNetworkClient(DEFAULT_CONFIG, kp, en, relay);
+
+    const marineDeps = await loadMarineDeps("/");
+    const marine = new MarineBackgroundRunner(...marineDeps);
+
+    client = new EphemeralNetworkClient(DEFAULT_CONFIG, kp, marine, en, relay);
     await client.start();
   });
 

@@ -202,10 +202,16 @@ export const v5_registerService = (
   // Schema for every function in service
   const serviceSchema = def.functions.tag === "nil" ? {} : def.functions.fields;
 
-  // Wrapping service impl to convert their args ts -> aqua and backwards
+  // Wrapping service functions, selecting only those listed in schema, to convert their args js -> aqua and backwards
   const wrappedServiceImpl = Object.fromEntries(
-    Object.entries(serviceImpl).map(([name, func]) => {
-      return [name, wrapJsFunction(func, serviceSchema[name])];
+    Object.keys(serviceSchema).map((schemaKey) => {
+      return [
+        schemaKey,
+        wrapJsFunction(
+          serviceImpl[schemaKey].bind(serviceImpl),
+          serviceSchema[schemaKey],
+        ),
+      ] as const;
     }),
   );
 

@@ -21,10 +21,15 @@ import type {
   JSONValueNonNullable,
   CallParameters,
 } from "@fluencelabs/marine-worker";
-import { ModuleThread, Thread, spawn } from "@fluencelabs/threads/master";
+import {
+  ModuleThread,
+  Thread,
+  spawn,
+  Worker,
+} from "@fluencelabs/threads/master";
 
 import { MarineLogger, marineLogger } from "../../util/logger.js";
-import { IMarineHost, IWasmLoader, IWorkerLoader } from "../interfaces.js";
+import { IMarineHost } from "../interfaces.js";
 
 export class MarineBackgroundRunner implements IMarineHost {
   private workerThread?: ModuleThread<MarineBackgroundInterface>;
@@ -32,9 +37,9 @@ export class MarineBackgroundRunner implements IMarineHost {
   private loggers = new Map<string, MarineLogger>();
 
   constructor(
-    private workerLoader: IWorkerLoader,
-    private controlModuleLoader: IWasmLoader,
-    private avmWasmLoader: IWasmLoader,
+    private marineJsWasm: ArrayBuffer,
+    private avmWasm: ArrayBuffer,
+    private worker: Worker,
   ) {}
 
   async hasService(serviceId: string) {
@@ -58,16 +63,8 @@ export class MarineBackgroundRunner implements IMarineHost {
       throw new Error("Worker thread already initialized");
     }
 
-    await this.controlModuleLoader.start();
-    const wasm = this.controlModuleLoader.getValue();
-
-    await this.avmWasmLoader.start();
-
-    await this.workerLoader.start();
-    const worker = await this.workerLoader.getValue();
-
     const workerThread: ModuleThread<MarineBackgroundInterface> =
-      await spawn<MarineBackgroundInterface>(worker);
+      await spawn<MarineBackgroundInterface>(this.worker);
 
     const logfn: LogFunction = (message) => {
       const serviceLogger = this.loggers.get(message.service);
@@ -80,9 +77,9 @@ export class MarineBackgroundRunner implements IMarineHost {
     };
 
     workerThread.onLogMessage().subscribe(logfn);
-    await workerThread.init(wasm);
+    await workerThread.init(this.marineJsWasm);
     this.workerThread = workerThread;
-    await this.createService(this.avmWasmLoader.getValue(), "avm");
+    await this.createService(this.avmWasm, "avm");
   }
 
   async createService(

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
-import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
 import { ZodError } from "zod";
 
 import { ClientPeer, makeClientPeerConfig } from "./clientPeer/ClientPeer.js";
@@ -28,6 +26,7 @@ import {
 } from "./clientPeer/types.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
+import { loadMarineDeps } from "./marine/loader.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
 
 const DEFAULT_CDN_URL = "https://unpkg.com";
@@ -47,55 +46,8 @@ const createClient = async (
 
   const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
 
-  const [marineJsWasm, avmWasm] = await Promise.all([
-    fetchResource(
-      "@fluencelabs/marine-js",
-      "/dist/marine-js.wasm",
-      CDNUrl,
-    ).then((res) => {
-      return res.arrayBuffer();
-    }),
-    fetchResource("@fluencelabs/avm", "/dist/avm.wasm", CDNUrl).then((res) => {
-      return res.arrayBuffer();
-    }),
-  ]);
-
-  const marine = new MarineBackgroundRunner(
-    {
-      async getValue() {
-        // TODO: load worker in parallel with avm and marine, test that it works
-        return getWorker("@fluencelabs/marine-worker", CDNUrl);
-      },
-      start() {
-        return Promise.resolve(undefined);
-      },
-      stop() {
-        return Promise.resolve(undefined);
-      },
-    },
-    {
-      getValue() {
-        return marineJsWasm;
-      },
-      start(): Promise<void> {
-        return Promise.resolve(undefined);
-      },
-      stop(): Promise<void> {
-        return Promise.resolve(undefined);
-      },
-    },
-    {
-      getValue() {
-        return avmWasm;
-      },
-      start(): Promise<void> {
-        return Promise.resolve(undefined);
-      },
-      stop(): Promise<void> {
-        return Promise.resolve(undefined);
-      },
-    },
-  );
+  const marineDeps = await loadMarineDeps(CDNUrl);
+  const marine = new MarineBackgroundRunner(...marineDeps);
 
   const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(
     relay,
