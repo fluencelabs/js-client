@@ -52,7 +52,7 @@ export class Srv {
     try {
       const newServiceId = uuidv4();
 
-      const buffer = Uint8Array.from(atob(wasmContent), (m) => {
+      const wasmContentBinary = Uint8Array.from(atob(wasmContent), (m) => {
         // codePointAt cannot return `undefined` value here as callback is called on every symbol
         return m.codePointAt(0) ?? 0;
       });
@@ -61,7 +61,7 @@ export class Srv {
       // const sab = new SharedArrayBuffer(buffer.length);
       // const tmp = new Uint8Array(sab);
       // tmp.set(buffer, 0);
-      await this.peer.registerMarineService(buffer, newServiceId);
+      await this.peer.registerMarineService(wasmContentBinary, newServiceId);
       this.services.add(newServiceId);
 
       return {
