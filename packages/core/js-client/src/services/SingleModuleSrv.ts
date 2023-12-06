@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Buffer } from "buffer";
-
 import { v4 as uuidv4 } from "uuid";
 
 import { ServiceFnArgs } from "../compilerSupport/types.js";
@@ -53,12 +51,17 @@ export class Srv {
 
     try {
       const newServiceId = uuidv4();
-      const buffer = Buffer.from(wasmContent, "base64");
+
+      const wasmContentBinary = Uint8Array.from(atob(wasmContent), (m) => {
+        // codePointAt cannot return `undefined` value here as callback is called on every symbol
+        return m.codePointAt(0) ?? 0;
+      });
+
       // TODO:: figure out why SharedArrayBuffer is not working here
       // const sab = new SharedArrayBuffer(buffer.length);
       // const tmp = new Uint8Array(sab);
       // tmp.set(buffer, 0);
-      await this.peer.registerMarineService(buffer, newServiceId);
+      await this.peer.registerMarineService(wasmContentBinary, newServiceId);
       this.services.add(newServiceId);
 
       return {

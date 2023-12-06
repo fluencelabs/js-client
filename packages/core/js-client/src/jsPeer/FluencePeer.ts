@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Buffer } from "buffer";
-
 import {
   deserializeAvmResult,
   InterpreterResult,
@@ -165,7 +163,7 @@ export abstract class FluencePeer {
    * @param serviceId - the service id by which the service can be accessed in aqua
    */
   async registerMarineService(
-    wasm: SharedArrayBuffer | Buffer,
+    wasm: ArrayBuffer | SharedArrayBuffer,
     serviceId: string,
   ): Promise<void> {
     if (this.jsServiceHost.hasService(serviceId)) {
@@ -342,10 +340,7 @@ export abstract class FluencePeer {
   private async sendParticleToRelay(
     item: ParticleQueueItem & { result: InterpreterResult },
   ) {
-    const newParticle = cloneWithNewData(
-      item.particle,
-      Buffer.from(item.result.data),
-    );
+    const newParticle = cloneWithNewData(item.particle, item.result.data);
 
     log_particle.debug(
       "id %s. sending particle into network. Next peer ids: %s",
@@ -407,7 +402,10 @@ export abstract class FluencePeer {
           retCode: res.retCode,
         };
 
-        const newParticle = cloneWithNewData(item.particle, Buffer.from([]));
+        const newParticle = cloneWithNewData(
+          item.particle,
+          Uint8Array.from([]),
+        );
 
         this._incomingParticles.next({
           ...item,
@@ -467,7 +465,7 @@ export abstract class FluencePeer {
   private mapParticleGroup(
     group$: GroupedObservable<string, ParticleQueueItem>,
   ) {
-    let prevData: Uint8Array = Buffer.from([]);
+    let prevData = Uint8Array.from([]);
 
     return group$.pipe(
       concatMap(async (item) => {
@@ -515,13 +513,14 @@ export abstract class FluencePeer {
           const res = await this.marineHost.callService("avm", "invoke", args);
 
           avmCallResult = deserializeAvmResult(res);
+          // TODO: This is bug in @fluencelabs/avm package. 'avmCallResult.data' actually number array, not Uint8Array as stated in type.
+          avmCallResult.data = Uint8Array.from(avmCallResult.data);
         } catch (e) {
           avmCallResult = e instanceof Error ? e : new Error(String(e));
         }
 
         if (!(avmCallResult instanceof Error) && avmCallResult.retCode === 0) {
-          const newData = Buffer.from(avmCallResult.data);
-          prevData = newData;
+          prevData = avmCallResult.data;
         }
 
         return {

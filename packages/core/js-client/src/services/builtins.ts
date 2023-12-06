@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Buffer } from "buffer";
-
 import { JSONValue } from "@fluencelabs/interfaces";
 import bs58 from "bs58";
 import { sha256 } from "multiformats/hashes/sha2";
@@ -332,7 +330,7 @@ export const builtInServices: Record<
     }),
 
     sha256_string: withSchema(z.tuple([z.string()]))(async ([input]) => {
-      const inBuffer = Buffer.from(input);
+      const inBuffer = new TextEncoder().encode(input);
       const multihash = await sha256.digest(inBuffer);
 
       return success(bs58.encode(multihash.bytes));
