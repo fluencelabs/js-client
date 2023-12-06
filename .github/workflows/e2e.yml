@@ -52,3 +52,5 @@ jobs:
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
       nox-image: "fluencelabs/nox:unstable_minimal"
+    env:
+      DEBUG: "*"
