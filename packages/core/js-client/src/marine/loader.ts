@@ -24,7 +24,7 @@ type StrategyReturnType = [
   worker: Worker,
 ];
 
-export const parallelLoadStrategy = async (
+export const loadMarineDeps = async (
   CDNUrl: string,
 ): Promise<StrategyReturnType> => {
   const [marineJsWasm, avmWasm] = await Promise.all([

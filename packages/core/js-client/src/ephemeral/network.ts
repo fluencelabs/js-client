@@ -22,7 +22,7 @@ import { DEFAULT_CONFIG, FluencePeer } from "../jsPeer/FluencePeer.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { fromBase64Sk, KeyPair } from "../keypair/index.js";
 import { IMarineHost } from "../marine/interfaces.js";
-import { parallelLoadStrategy } from "../marine/load-strategies.js";
+import { loadMarineDeps } from "../marine/loader.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
 import { Particle } from "../particle/Particle.js";
 import { logger } from "../util/logger.js";
@@ -232,7 +232,7 @@ export class EphemeralNetwork {
     const promises = this.config.peers.map(async (x) => {
       const kp = await fromBase64Sk(x.sk);
 
-      const marineDeps = await parallelLoadStrategy("/");
+      const marineDeps = await loadMarineDeps("/");
       const marine = new MarineBackgroundRunner(...marineDeps);
 
       const peerId = kp.getPeerId();

@@ -19,7 +19,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_CONFIG, FluencePeer } from "../../jsPeer/FluencePeer.js";
 import { ResultCodes } from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
-import { parallelLoadStrategy } from "../../marine/load-strategies.js";
+import { loadMarineDeps } from "../../marine/loader.js";
 import { MarineBackgroundRunner } from "../../marine/worker/index.js";
 import { EphemeralNetworkClient } from "../client.js";
 import { defaultConfig, EphemeralNetwork } from "../network.js";
@@ -36,7 +36,7 @@ describe.skip("Ephemeral networks tests", () => {
 
     const kp = await KeyPair.randomEd25519();
 
-    const marineDeps = await parallelLoadStrategy("/");
+    const marineDeps = await loadMarineDeps("/");
     const marine = new MarineBackgroundRunner(...marineDeps);
 
     client = new EphemeralNetworkClient(DEFAULT_CONFIG, kp, marine, en, relay);

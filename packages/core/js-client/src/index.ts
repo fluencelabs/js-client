@@ -26,7 +26,7 @@ import {
 } from "./clientPeer/types.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
-import { parallelLoadStrategy } from "./marine/load-strategies.js";
+import { loadMarineDeps } from "./marine/loader.js";
 import { MarineBackgroundRunner } from "./marine/worker/index.js";
 
 const DEFAULT_CDN_URL = "https://unpkg.com";
@@ -46,7 +46,7 @@ const createClient = async (
 
   const CDNUrl = config.CDNUrl ?? DEFAULT_CDN_URL;
 
-  const marineDeps = await parallelLoadStrategy(CDNUrl);
+  const marineDeps = await loadMarineDeps(CDNUrl);
   const marine = new MarineBackgroundRunner(...marineDeps);
 
   const { keyPair, peerConfig, relayConfig } = await makeClientPeerConfig(

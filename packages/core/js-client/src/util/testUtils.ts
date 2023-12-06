@@ -39,7 +39,7 @@ import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { KeyPair } from "../keypair/index.js";
 import { IMarineHost } from "../marine/interfaces.js";
-import { parallelLoadStrategy } from "../marine/load-strategies.js";
+import { loadMarineDeps } from "../marine/loader.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
 import { Particle } from "../particle/Particle.js";
 
@@ -157,7 +157,7 @@ export const mkTestPeer = async () => {
   const kp = await KeyPair.randomEd25519();
   const conn = new NoopConnection();
 
-  const marineDeps = await parallelLoadStrategy("/");
+  const marineDeps = await loadMarineDeps("/");
   const marine = new MarineBackgroundRunner(...marineDeps);
 
   return new TestPeer(kp, conn, marine);
@@ -184,7 +184,7 @@ export const withClient = async (
     config,
   );
 
-  const marineDeps = await parallelLoadStrategy("/");
+  const marineDeps = await loadMarineDeps("/");
   const marine = new MarineBackgroundRunner(...marineDeps);
 
   const client = new ClientPeer(peerConfig, relayConfig, keyPair, marine);

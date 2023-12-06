@@ -24,8 +24,8 @@ import { v5_registerService } from "./api.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { withPeer } from "./util/testUtils.js";
 
-class Calc {
-  private _state: number = 0;
+class CalcParent {
+  protected _state: number = 0;
 
   add(n: number) {
     this._state += n;
@@ -34,7 +34,9 @@ class Calc {
   subtract(n: number) {
     this._state -= n;
   }
+}
 
+class Calc extends CalcParent {
   multiply(n: number) {
     this._state *= n;
   }
@@ -53,7 +55,7 @@ class Calc {
 }
 
 describe("User API methods", () => {
-  it("registers user class service correctly", async () => {
+  it("registers user class service and calls own and inherited methods correctly", async () => {
     await withPeer(async (peer) => {
       const calcService: Record<never, unknown> = new Calc();
 

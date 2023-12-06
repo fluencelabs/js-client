@@ -167,14 +167,14 @@ messages logged by debug if the "Verbose" log level is enabled.
 ## Low level usage
 
 JS client also has an API for low level interaction with AVM and Marine JS.
-It could be handy in advanced scenarios when a user fetches Air dynamically or generates Air without default Aqua compiler.
+It could be handy in advanced scenarios when a user fetches AIR dynamically or generates AIR without default Aqua compiler.
 
 `callAquaFunction` Allows to call aqua function without schema.
 
 `registerService` Gives an ability to register service without schema. Passed `service` could be
 
-- Plain object. In this case all function properties will be registered as Air service functions.
-- Class instance. All class functions without inherited ones will be registered as Air service functions.
+- Plain object. In this case all function properties will be registered as AIR service functions.
+- Class instance. All class methods without inherited ones will be registered as AIR service functions.
 
 ## Development
 
