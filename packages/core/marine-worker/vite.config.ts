@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2023 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-import { PluginOption } from "vite";
 import { dirname, resolve } from "path";
-import { createRequire } from "module";
-import inject from "@rollup/plugin-inject";
 import { fileURLToPath } from "url";
 
-const require = createRequire(import.meta.url);
-const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
+import { UserConfig } from "vite";
 
 export default {
   build: {
@@ -31,15 +27,4 @@ export default {
     },
     outDir: "dist/browser",
   },
-  plugins: [
-    {
-      // @ts-ignore
-      ...inject({
-        global: [esbuildShim, "global"],
-        process: [esbuildShim, "process"],
-        Buffer: [esbuildShim, "Buffer"],
-      }),
-      enforce: "post",
-    } as PluginOption,
-  ],
-};
+} satisfies UserConfig;
