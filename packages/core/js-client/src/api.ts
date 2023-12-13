@@ -135,6 +135,7 @@ export const v5_callFunction = async (
     peer: peerOrArg,
     args: callArgs,
     config,
+    fireAndForget: returnTypeVoid,
   });
 
   if (returnTypeVoid) {

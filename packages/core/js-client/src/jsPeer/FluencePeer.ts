@@ -319,6 +319,13 @@ export abstract class FluencePeer {
   private isInitialized = false;
   private printParticleId = false;
 
+  private isFireAndForget(particleId: string) {
+    return (
+      this.jsServiceHost.getHandler("callbackSrv", "response", particleId) ===
+      null
+    );
+  }
+
   private _initServices() {
     this._classServices = {
       sig: new Sig(this.keyPair),
@@ -601,6 +608,9 @@ export abstract class FluencePeer {
         if (item.result.callRequests.length > 0) {
           // TS doesn't allow to pass just 'item'
           void this.execCallRequests({ ...item, result: item.result });
+        } else if (this.isFireAndForget(item.particle.id)) {
+          // Local work done.
+          item.onSuccess(null);
         }
 
         return connectionPromise;

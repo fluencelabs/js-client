@@ -49,6 +49,7 @@ export type CallAquaFunctionArgs = {
   config?: CallAquaFunctionConfig | undefined;
   peer: FluencePeer;
   args: { [key: string]: JSONValue | ArgCallbackFunction };
+  fireAndForget: boolean;
 };
 
 export type CallAquaFunctionConfig = {
@@ -60,6 +61,7 @@ export const callAquaFunction = async ({
   config = {},
   peer,
   args,
+  fireAndForget,
 }: CallAquaFunctionArgs) => {
   log.trace("calling aqua function %j", { script, config, args });
 
@@ -79,7 +81,10 @@ export const callAquaFunction = async ({
       registerParticleScopeService(peer, particle, service);
     }
 
-    registerParticleScopeService(peer, particle, responseService(resolve));
+    // If fire and forget not enabled, then JS client will wait for responseService call
+    if (!fireAndForget) {
+      registerParticleScopeService(peer, particle, responseService(resolve));
+    }
 
     registerParticleScopeService(peer, particle, injectRelayService(peer));
 
