@@ -103,11 +103,18 @@ export const compileAqua = async (aquaFile: string): Promise<CompiledFile> => {
   const functions = Object.entries(compilationResult.functions)
     .map(([name, fnInfo]: [string, FunctionInfo]) => {
       const callFn = (peer: FluencePeer, args: PassedArgs) => {
+        const def = fnInfo.funcDef;
+
+        const isReturnTypeVoid =
+          def.arrow.codomain.tag === "nil" ||
+          def.arrow.codomain.items.length === 0;
+
         return callAquaFunction({
           script: fnInfo.script,
           config: {},
           peer: peer,
           args,
+          fireAndForget: isReturnTypeVoid,
         });
       };
 

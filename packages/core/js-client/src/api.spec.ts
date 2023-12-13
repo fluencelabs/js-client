@@ -76,6 +76,7 @@ describe("User API methods", () => {
         args: {},
         peer,
         script,
+        fireAndForget: false,
       });
 
       expect(res).toBe(7);
