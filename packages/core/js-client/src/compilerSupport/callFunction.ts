@@ -81,15 +81,12 @@ export const callAquaFunction = async ({
       registerParticleScopeService(peer, particle, service);
     }
 
-    // If fire and forget not enabled, then JS client will wait for responseService call
-    if (!fireAndForget) {
-      registerParticleScopeService(peer, particle, responseService(resolve));
-    }
+    registerParticleScopeService(peer, particle, responseService(resolve));
 
     registerParticleScopeService(peer, particle, injectRelayService(peer));
 
     registerParticleScopeService(peer, particle, errorHandlingService(reject));
 
-    peer.internals.initiateParticle(particle, resolve, reject);
+    peer.internals.initiateParticle(particle, resolve, reject, fireAndForget);
   });
 };

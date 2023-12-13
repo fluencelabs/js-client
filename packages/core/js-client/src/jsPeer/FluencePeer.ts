@@ -254,11 +254,13 @@ export abstract class FluencePeer {
        * @param particle - particle to start execution of
        * @param onSuccess - callback which is called when particle execution succeed
        * @param onError - callback which is called when particle execution fails
+       * @param fireAndForget - determines whether particle has fire-and-forget behavior
        */
       initiateParticle: (
         particle: IParticle,
         onSuccess: (result: JSONValue) => void,
         onError: (error: Error) => void,
+        fireAndForget: boolean,
       ): void => {
         if (!this.isInitialized) {
           throw new Error(
@@ -277,6 +279,7 @@ export abstract class FluencePeer {
           callResults: [],
           onSuccess,
           onError,
+          fireAndForget,
         });
       },
 
@@ -318,13 +321,6 @@ export abstract class FluencePeer {
 
   private isInitialized = false;
   private printParticleId = false;
-
-  private isFireAndForget(particleId: string) {
-    return (
-      this.jsServiceHost.getHandler("callbackSrv", "response", particleId) ===
-      null
-    );
-  }
 
   private _initServices() {
     this._classServices = {
@@ -608,7 +604,7 @@ export abstract class FluencePeer {
         if (item.result.callRequests.length > 0) {
           // TS doesn't allow to pass just 'item'
           void this.execCallRequests({ ...item, result: item.result });
-        } else if (this.isFireAndForget(item.particle.id)) {
+        } else if (item.fireAndForget === true) {
           // Local work done.
           item.onSuccess(null);
         }
