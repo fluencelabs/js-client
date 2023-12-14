@@ -77,7 +77,11 @@ export const responseService = (resolveCallback: (val: JSONValue) => void) => {
     fnName: "response",
     handler: (req: CallServiceData) => {
       const userFunctionReturn =
-        req.args.length === 0 ? null : "0" in req.args ? req.args[0] : req.args;
+        req.args.length === 0
+          ? null
+          : req.args.length === 1 && "0" in req.args
+          ? req.args[0]
+          : req.args;
 
       setTimeout(() => {
         resolveCallback(userFunctionReturn);

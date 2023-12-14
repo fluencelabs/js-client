@@ -124,6 +124,7 @@ export const v5_callFunction = async (
 
   const returnSchema =
     def.arrow.codomain.tag === "unlabeledProduct" &&
+    def.arrow.codomain.items.length === 1 &&
     "0" in def.arrow.codomain.items
       ? def.arrow.codomain.items[0]
       : def.arrow.codomain;

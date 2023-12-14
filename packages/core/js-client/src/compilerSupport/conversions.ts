@@ -244,7 +244,9 @@ export const wrapJsFunction = (
       schema.codomain.tag === "nil" || schema.codomain.items.length === 0;
 
     const resultSchema =
-      schema.codomain.tag === "unlabeledProduct" && "0" in schema.codomain.items
+      schema.codomain.tag === "unlabeledProduct" &&
+      schema.codomain.items.length === 1 &&
+      "0" in schema.codomain.items
         ? schema.codomain.items[0]
         : schema.codomain;
 
