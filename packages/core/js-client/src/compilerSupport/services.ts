@@ -77,11 +77,7 @@ export const responseService = (resolveCallback: (val: JSONValue) => void) => {
     fnName: "response",
     handler: (req: CallServiceData) => {
       const userFunctionReturn =
-        req.args.length === 0
-          ? null
-          : req.args.length === 1
-          ? req.args[0]
-          : req.args;
+        req.args.length === 0 ? null : "0" in req.args ? req.args[0] : req.args;
 
       setTimeout(() => {
         resolveCallback(userFunctionReturn);
@@ -108,7 +104,7 @@ export const errorHandlingService = (
       const [err] = req.args;
 
       setTimeout(() => {
-        rejectCallback(err);
+        rejectCallback(err ?? "Error hasn't been provided");
       }, 0);
 
       return {

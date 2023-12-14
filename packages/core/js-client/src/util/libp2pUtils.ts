@@ -26,7 +26,7 @@ export function relayOptionToMultiaddr(relay: RelayOptions): Multiaddr {
 
   const peerId = ma.getPeerId();
 
-  if (peerId == null) {
+  if (peerId === null) {
     throwHasNoPeerId(ma);
   }
 

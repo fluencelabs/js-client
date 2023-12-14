@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { describe, expect, it } from "vitest";
-
-import { gatherImportsFromNpm } from "./imports.js";
 import { join } from "path";
 import { fileURLToPath } from "url";
+
+import { assert, describe, expect, it } from "vitest";
+
+import { gatherImportsFromNpm } from "./imports.js";
 
 describe("imports", () => {
   /**
@@ -42,8 +43,13 @@ describe("imports", () => {
       "project",
     );
 
-    const buildResolutionKey = (str: string) =>
-      str.slice(prefix.length).split("/node_modules/").filter(Boolean).join("");
+    const buildResolutionKey = (str: string) => {
+      return str
+        .slice(prefix.length)
+        .split("/node_modules/")
+        .filter(Boolean)
+        .join("");
+    };
 
     const imports = await gatherImportsFromNpm(
       "./test/transitive-deps/project",
@@ -53,18 +59,21 @@ describe("imports", () => {
       Object.keys(expectedResolution).length,
     );
 
-    for (const key in imports) {
+    Object.entries(imports).forEach(([key, value]) => {
       const resolutionKey = buildResolutionKey(key);
 
-      expect(imports[key].length).toBe(
-        expectedResolution[resolutionKey].length,
-      );
+      const resolutionValues = expectedResolution[resolutionKey];
 
-      for (const location of imports[key]) {
+      expect(resolutionValues).toBeDefined();
+      assert(resolutionValues);
+
+      expect(value.length).toBe(resolutionValues.length);
+
+      for (const location of value) {
         expect(expectedResolution[resolutionKey]).toContain(
           buildResolutionKey(location),
         );
       }
-    }
+    });
   });
 });

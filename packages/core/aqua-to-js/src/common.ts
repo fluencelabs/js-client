@@ -35,7 +35,7 @@ export function genTypeName(
       const args =
         item.tag === "labeledProduct" ? Object.values(item.fields) : item.items;
 
-      if (args.length === 1) {
+      if ("0" in args) {
         return genTypeName(args[0], name);
       }
 
@@ -112,7 +112,7 @@ export function typeToTs(t: NonArrowType | ArrowType): string {
       const retType =
         codomain.tag === "nil"
           ? "void"
-          : codomain.items.length === 1
+          : "0" in codomain.items
           ? typeToTs(codomain.items[0])
           : typeToTs(codomain);
 

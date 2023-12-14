@@ -33,3 +33,19 @@ export const getErrorMessage = (error: unknown) => {
 
   return String(error);
 };
+
+export function zip<A, B>(arr1: Array<A>, arr2: Array<B>): Array<[A, B]> {
+  if (arr1.length !== arr2.length) {
+    throw new Error(`Array length doesn't match`);
+  }
+
+  const arr = new Array<[A, B]>(arr1.length);
+
+  for (let i = 0; i < arr1.length; i++) {
+    // Length has been checked above
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    arr[i] = [arr1[i]!, arr2[i]!];
+  }
+
+  return arr;
+}

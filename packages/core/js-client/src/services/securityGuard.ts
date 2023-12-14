@@ -33,8 +33,8 @@ export const allowTetraplet = (
   pred: (tetraplet: SecurityTetraplet) => boolean,
 ): SecurityGuard => {
   return (params) => {
-    const t = params.tetraplets[0][0];
-    return pred(t);
+    const t = params.tetraplets[0]?.[0];
+    return t !== undefined && pred(t);
   };
 };
 

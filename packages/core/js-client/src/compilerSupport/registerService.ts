@@ -28,10 +28,12 @@ interface RegisterServiceArgs {
   service: ServiceImpl;
 }
 
+type ServiceFunctionPair = [key: string, value: ServiceImpl[string]];
+
 // This function iterates on plain object or class instance functions ignoring inherited functions and prototype chain.
 const findAllPossibleRegisteredServiceFunctions = (
   service: ServiceImpl,
-): Array<string> => {
+): Array<ServiceFunctionPair> => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const prototype = Object.getPrototypeOf(service) as ServiceImpl;
 
@@ -41,9 +43,14 @@ const findAllPossibleRegisteredServiceFunctions = (
     service = prototype;
   }
 
-  return Object.getOwnPropertyNames(service).filter((prop) => {
-    return typeof service[prop] === "function" && prop !== "constructor";
-  });
+  return Object.getOwnPropertyNames(service)
+    .map((prop) => {
+      return [prop, service[prop]];
+    })
+    .filter((entry): entry is ServiceFunctionPair => {
+      const [prop, value] = entry;
+      return typeof value === "function" && prop !== "constructor";
+    });
 };
 
 export const registerService = ({
@@ -55,8 +62,7 @@ export const registerService = ({
 
   const serviceFunctions = findAllPossibleRegisteredServiceFunctions(service);
 
-  for (const serviceFunction of serviceFunctions) {
-    const handler = service[serviceFunction];
+  for (const [serviceFunction, handler] of serviceFunctions) {
     const userDefinedHandler = handler.bind(service);
 
     const serviceDescription = userHandlerService(

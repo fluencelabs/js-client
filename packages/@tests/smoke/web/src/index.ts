@@ -77,7 +77,7 @@ const test = async () => {
   await browser.close();
   await stopServer(localServer);
 
-  if (content == null) {
+  if (content === null || content === undefined) {
     throw new Error("smoke test failed!");
   }
 };

@@ -20,32 +20,23 @@ import { breadth } from "treeverse";
 export async function gatherImportsFromNpm(
   path: string,
 ): Promise<Record<string, string[]>> {
-  const arb = new Arborist({ path });
-
-  return await gatherImportsFromArborist(arb);
-}
-
-export async function gatherImportsFromArborist(
-  arborist: Arborist,
-): Promise<Record<string, string[]>> {
+  const arborist = new Arborist({ path });
   const tree = await arborist.loadActual();
 
   /**
    * Traverse dependency tree to construct map
    * (real path of a package) -> (real paths of its immediate dependencies)
    */
-  const result = new Map<string, string[]>();
+  const result: {
+    [key: string]: string[];
+  } = {};
 
   breadth({
     tree,
-    getChildren(node, _) {
+    getChildren(node) {
       const deps: Arborist.Node[] = [];
 
       for (const edge of node.edgesOut.values()) {
-        // Skip dependencies that are not installed.
-        if (edge.to === null) {
-          continue;
-        }
         // NOTE: Any errors in edge are ignored.
         const dep = edge.to;
 
@@ -53,16 +44,15 @@ export async function gatherImportsFromArborist(
         deps.push(dep);
 
         // Gather dependencies real paths.
-        result.set(node.realpath, [
-          ...(result.get(node.realpath) || []),
+        result[node.realpath] = [
+          ...(result[node.realpath] ?? []),
           dep.realpath,
-        ]);
+        ];
       }
 
       return deps;
     },
   });
 
-  // Convert a map to object.
-  return Object.fromEntries(result);
+  return result;
 }

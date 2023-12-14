@@ -1,5 +1,5 @@
 {
-  "name": "Project",
+  "name": "project",
   "version": "0.1.0",
   "dependencies": {
     "A": "file:../A-0.1.0.tgz",

@@ -86,7 +86,7 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
       // Last part of the property separated by "_" is a correct name
       const refinedProperty = prop.split("_").pop();
 
-      if (refinedProperty == null) {
+      if (refinedProperty === undefined) {
         throw new Error(`Bad property name: ${prop}.`);
       }
 
@@ -95,11 +95,12 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
       }
     }
 
-    assert(accessProp in obj);
+    const laquaProp = obj[accessProp];
+    assert(laquaProp);
 
     return {
       ...acc,
-      [accessProp]: recursiveRenameLaquaProps(obj[accessProp]),
+      [accessProp]: recursiveRenameLaquaProps(laquaProp),
     };
   }, {});
 }

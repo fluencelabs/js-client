@@ -36,7 +36,7 @@ export const fetchResource: FetchResourceFn = async (pkg, assetPath) => {
 
   const packagePath = matches?.[0];
 
-  if (packagePath == null) {
+  if (packagePath === undefined) {
     throw new Error(`Cannot find dependency ${name} in path ${posixPath}`);
   }
 

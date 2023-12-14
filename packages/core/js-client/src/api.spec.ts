@@ -65,7 +65,15 @@ describe("User API methods", () => {
 
       const typedServices: Record<string, ServiceDef> = services;
 
+      if (!("demoCalc" in functions)) {
+        throw new Error("Aqua code must contain demoCalc function");
+      }
+
       const { script } = functions["demoCalc"];
+
+      if (!("Calc" in typedServices)) {
+        throw new Error("Aqua code must contain Calc service");
+      }
 
       v5_registerService([peer, "calc", calcService], {
         defaultServiceId: "calc",
