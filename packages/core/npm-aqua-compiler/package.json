@@ -5,7 +5,7 @@
   "description": "Tool for converting npm imports to aqua compiler input",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run",
+    "test": "npm i --prefix ./test/transitive-deps/project && vitest run",
     "build": "tsc"
   },
   "files": [
