@@ -108,7 +108,10 @@ export const errorHandlingService = (
       const [err] = req.args;
 
       setTimeout(() => {
-        rejectCallback(err ?? "Error hasn't been provided");
+        rejectCallback(
+          err ??
+            "Error message hasn't been provided in errorHandlingSrv.error function",
+        );
       }, 0);
 
       return {
