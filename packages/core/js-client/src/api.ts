@@ -208,7 +208,7 @@ export const v5_registerService = (
 
       if (serviceImplValue === undefined) {
         throw new Error(
-          `Expected to have ${schemaKey} in service implementation according to schema`,
+          `Service function ${schemaKey} listed in Aqua schema but wasn't provided in schema implementation object or class instance. Check that your Aqua service definition matches passed service implementation`,
         );
       }
 

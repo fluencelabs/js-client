@@ -110,7 +110,7 @@ export const errorHandlingService = (
       setTimeout(() => {
         rejectCallback(
           err ??
-            "Error message hasn't been provided in errorHandlingSrv.error function",
+            "'errorHandlingSrv.error' function accepts single string argument but given none. Try recompiling rust services and aqua.",
         );
       }, 0);
 
