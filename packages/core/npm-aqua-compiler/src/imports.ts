@@ -64,10 +64,15 @@ export async function gatherImportsFromNpm({
 
         // Root node should have top-level property pointed to aqua dependency folder
         if (node.isRoot) {
-          result[aquaToCompileDirPath ?? npmProjectDirPath] = {
-            ...(result[aquaToCompileDirPath ?? npmProjectDirPath] ?? {
-              "": globalImports,
-            }),
+          const aquaDepPath = aquaToCompileDirPath ?? npmProjectDirPath;
+
+          result[aquaDepPath] = {
+            ...(result[aquaDepPath] ??
+              (globalImports.length > 0
+                ? {
+                    "": globalImports,
+                  }
+                : {})),
             [dep.name]: dep.realpath,
           };
         } else {
