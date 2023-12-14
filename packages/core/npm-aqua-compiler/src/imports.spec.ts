@@ -27,12 +27,33 @@ describe("imports", () => {
    * inside `./__test__/data/transitive-deps/project` folder
    */
   it("should resolve transitive dependencies", async () => {
-    const expectedResolution: Record<string, string[]> = {
-      "": ["A", "B"],
-      A: ["C", "D"],
-      B: ["BC", "BD"],
-      C: ["CD"],
-      BC: ["BCD"],
+    const npmProjectDirPath = "./test/transitive-deps/project";
+    const aquaToCompileDirPath = "./test/transitive-deps/aqua-project";
+    const globalImports = ["./.fluence/aqua"];
+
+    const expectedResolution: Record<
+      string,
+      Record<string, string[] | string>
+    > = {
+      [aquaToCompileDirPath]: {
+        "": globalImports,
+        A: "./A",
+        B: "./B",
+      },
+      "./A": {
+        C: "./C",
+        D: "./D",
+      },
+      "./B": {
+        C: "./B/C",
+        D: "./B/D",
+      },
+      "./C": {
+        D: "./C/D",
+      },
+      "./B/C": {
+        D: "./B/C/D",
+      },
     };
 
     const prefix = join(
@@ -44,34 +65,46 @@ describe("imports", () => {
     );
 
     const buildResolutionKey = (str: string) => {
-      return str
-        .slice(prefix.length)
-        .split("/node_modules/")
-        .filter(Boolean)
-        .join("");
+      return (
+        "./" +
+        str
+          .slice(prefix.length)
+          .split("/node_modules/")
+          .filter(Boolean)
+          .join("/")
+      );
     };
 
-    const imports = await gatherImportsFromNpm(
-      "./test/transitive-deps/project",
-    );
+    const imports = await gatherImportsFromNpm({
+      npmProjectDirPath,
+      aquaToCompileDirPath,
+      globalImports,
+    });
 
     expect(Object.keys(imports).length).toBe(
       Object.keys(expectedResolution).length,
     );
 
     Object.entries(imports).forEach(([key, value]) => {
-      const resolutionKey = buildResolutionKey(key);
+      const resolutionKey =
+        key === aquaToCompileDirPath ? key : buildResolutionKey(key);
 
       const resolutionValues = expectedResolution[resolutionKey];
 
-      expect(resolutionValues).toBeDefined();
       assert(resolutionValues);
 
-      expect(value.length).toBe(resolutionValues.length);
+      expect(Object.keys(value).length).toBe(
+        Object.keys(resolutionValues).length,
+      );
 
-      for (const location of value) {
-        expect(expectedResolution[resolutionKey]).toContain(
-          buildResolutionKey(location),
+      for (const [dep, path] of Object.entries(value)) {
+        if (Array.isArray(path)) {
+          continue;
+        }
+
+        expect(expectedResolution[resolutionKey]).toHaveProperty(
+          dep,
+          buildResolutionKey(path),
         );
       }
     });

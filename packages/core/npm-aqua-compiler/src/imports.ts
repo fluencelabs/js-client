@@ -17,19 +17,30 @@
 import Arborist from "@npmcli/arborist";
 import { breadth } from "treeverse";
 
-export async function gatherImportsFromNpm(
-  path: string,
-): Promise<Record<string, string[]>> {
-  const arborist = new Arborist({ path });
+export interface GatherImportsArg {
+  npmProjectDirPath: string;
+  aquaToCompileDirPath?: string; // Default: npmProjectDirPath
+  globalImports?: string[];
+}
+
+export type GatherImportsResult = Record<
+  string,
+  Record<string, string[] | string>
+>;
+
+export async function gatherImportsFromNpm({
+  npmProjectDirPath,
+  aquaToCompileDirPath,
+  globalImports = [],
+}: GatherImportsArg): Promise<GatherImportsResult> {
+  const arborist = new Arborist({ path: npmProjectDirPath });
   const tree = await arborist.loadActual();
 
   /**
    * Traverse dependency tree to construct map
    * (real path of a package) -> (real paths of its immediate dependencies)
    */
-  const result: {
-    [key: string]: string[];
-  } = {};
+  const result: GatherImportsResult = {};
 
   breadth({
     tree,
@@ -37,17 +48,35 @@ export async function gatherImportsFromNpm(
       const deps: Arborist.Node[] = [];
 
       for (const edge of node.edgesOut.values()) {
+        // Skip dependencies that are not installed.
+
+        // Looks like Arborist type is incorrect here, so it's possible to have null here
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (edge.to === null) {
+          continue;
+        }
+
         // NOTE: Any errors in edge are ignored.
         const dep = edge.to;
 
         // Gather dependencies to traverse them.
         deps.push(dep);
 
-        // Gather dependencies real paths.
-        result[node.realpath] = [
-          ...(result[node.realpath] ?? []),
-          dep.realpath,
-        ];
+        // Root node should have top-level property pointed to aqua dependency folder
+        if (node.isRoot) {
+          result[aquaToCompileDirPath ?? npmProjectDirPath] = {
+            ...(result[aquaToCompileDirPath ?? npmProjectDirPath] ?? {
+              "": globalImports,
+            }),
+            [dep.name]: dep.realpath,
+          };
+        } else {
+          // Gather dependencies real paths.
+          result[node.realpath] = {
+            ...(result[node.realpath] ?? {}),
+            [dep.name]: dep.realpath,
+          };
+        }
       }
 
       return deps;
