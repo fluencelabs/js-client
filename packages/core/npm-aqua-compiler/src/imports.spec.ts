@@ -99,6 +99,9 @@ describe("imports", () => {
 
       for (const [dep, path] of Object.entries(value)) {
         if (Array.isArray(path)) {
+          expect(dep).toBe("");
+          expect(expectedResolution[resolutionKey]).toHaveProperty(dep, path);
+
           continue;
         }
 
