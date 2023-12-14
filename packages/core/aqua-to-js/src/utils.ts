@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import assert from "assert";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
@@ -96,7 +95,10 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
     }
 
     const laquaProp = obj[accessProp];
-    assert(laquaProp);
+
+    if (laquaProp === undefined) {
+      return acc;
+    }
 
     return {
       ...acc,
