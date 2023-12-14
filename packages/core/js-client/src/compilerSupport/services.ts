@@ -110,7 +110,7 @@ export const errorHandlingService = (
       setTimeout(() => {
         rejectCallback(
           err ??
-            "'errorHandlingSrv.error' function accepts single string argument but given none. Try recompiling rust services and aqua.",
+            "Unknown error happened when executing aqua code. No error text was passed to 'errorHandlingSrv.error' function, probably because AIR code was modified or aqua compiler didn't produce the correct call",
         );
       }, 0);
 
