@@ -49,6 +49,7 @@ export type CallAquaFunctionArgs = {
   config?: CallAquaFunctionConfig | undefined;
   peer: FluencePeer;
   args: { [key: string]: JSONValue | ArgCallbackFunction };
+  fireAndForget: boolean;
 };
 
 export type CallAquaFunctionConfig = {
@@ -60,6 +61,7 @@ export const callAquaFunction = async ({
   config = {},
   peer,
   args,
+  fireAndForget,
 }: CallAquaFunctionArgs) => {
   log.trace("calling aqua function %j", { script, config, args });
 
@@ -85,6 +87,6 @@ export const callAquaFunction = async ({
 
     registerParticleScopeService(peer, particle, errorHandlingService(reject));
 
-    peer.internals.initiateParticle(particle, resolve, reject);
+    peer.internals.initiateParticle(particle, resolve, reject, fireAndForget);
   });
 };

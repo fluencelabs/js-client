@@ -55,7 +55,7 @@ describe("FluenceClient usage test suite", () => {
           },
         });
 
-        peer.internals.initiateParticle(particle, resolve, reject);
+        peer.internals.initiateParticle(particle, resolve, reject, false);
       });
 
       await expect(promise).rejects.toThrow(ExpirationError);

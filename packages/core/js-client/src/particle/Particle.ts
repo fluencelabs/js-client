@@ -187,6 +187,7 @@ export interface ParticleQueueItem {
   callResults: CallResultsArray;
   onSuccess: (result: JSONValue) => void;
   onError: (error: Error) => void;
+  fireAndForget?: boolean;
 }
 
 /**
