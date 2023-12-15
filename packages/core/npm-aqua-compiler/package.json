@@ -3,7 +3,10 @@
   "name": "@fluencelabs/npm-aqua-compiler",
   "version": "0.0.0",
   "description": "Tool for converting npm imports to aqua compiler input",
-  "main": "index.js",
+  "types": "./dist/imports.d.ts",
+  "exports": {
+    ".": "./dist/imports.js"
+  },
   "scripts": {
     "test": "npm i --prefix ./test/transitive-deps/project && vitest run",
     "build": "tsc"
