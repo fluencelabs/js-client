@@ -260,7 +260,7 @@ export abstract class FluencePeer {
         particle: IParticle,
         onSuccess: (result: JSONValue) => void,
         onError: (error: Error) => void,
-        fireAndForget: boolean,
+        fireAndForget: boolean = true,
       ): void => {
         if (!this.isInitialized) {
           throw new Error(
