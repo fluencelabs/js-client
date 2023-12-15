@@ -27,21 +27,29 @@ type StrategyReturnType = [
 export const loadMarineDeps = async (
   CDNUrl: string,
 ): Promise<StrategyReturnType> => {
-  const [marineJsWasm, avmWasm] = await Promise.all([
-    fetchResource(
-      "@fluencelabs/marine-js",
-      "/dist/marine-js.wasm",
-      CDNUrl,
-    ).then((res) => {
-      return res.arrayBuffer();
-    }),
-    fetchResource("@fluencelabs/avm", "/dist/avm.wasm", CDNUrl).then((res) => {
-      return res.arrayBuffer();
-    }),
-  ]);
+  const timeout = new Promise((resolve) => {
+    setTimeout(resolve, 500);
+  });
 
-  // TODO: load worker in parallel with avm and marine, test that it works
-  const worker = await getWorker("@fluencelabs/marine-worker", CDNUrl);
+  const [marineJsWasm, avmWasm, worker] = await Promise.all([
+    timeout.then(() => {
+      return fetchResource(
+        "@fluencelabs/marine-js",
+        "/dist/marine-js.wasm",
+        CDNUrl,
+      ).then((res) => {
+        return res.arrayBuffer();
+      });
+    }),
+    timeout.then(() => {
+      return fetchResource("@fluencelabs/avm", "/dist/avm.wasm", CDNUrl).then(
+        (res) => {
+          return res.arrayBuffer();
+        },
+      );
+    }),
+    getWorker("@fluencelabs/marine-worker", CDNUrl),
+  ]);
 
   return [marineJsWasm, avmWasm, worker];
 };

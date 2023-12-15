@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-import { createRequire } from "module";
-
-import inject from "@rollup/plugin-inject";
 import { transform } from "esbuild";
 import { PluginOption, UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-
-const require = createRequire(import.meta.url);
-const esbuildShim = require.resolve("node-stdlib-browser/helpers/esbuild/shim");
 
 function minifyEs(): PluginOption {
   return {
@@ -56,15 +50,6 @@ const config: UserConfig = {
       formats: ["es"],
     },
     outDir: "./dist/browser",
-    rollupOptions: {
-      plugins: [
-        inject({
-          global: [esbuildShim, "global"],
-          process: [esbuildShim, "process"],
-          Buffer: [esbuildShim, "Buffer"],
-        }),
-      ],
-    },
   },
   plugins: [tsconfigPaths(), minifyEs()],
   optimizeDeps: {
