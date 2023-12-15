@@ -15,7 +15,7 @@
  */
 
 import { JSONValue } from "@fluencelabs/interfaces";
-import { it, describe, expect } from "vitest";
+import { it, describe, expect, assert } from "vitest";
 
 import { ExpirationError } from "../../jsPeer/errors.js";
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
@@ -103,6 +103,7 @@ describe("FluenceClient usage test suite", () => {
           callback: {
             callback: (args): undefined => {
               const [val] = args;
+              assert(val);
               resolve(val);
             },
             error: (args): undefined => {

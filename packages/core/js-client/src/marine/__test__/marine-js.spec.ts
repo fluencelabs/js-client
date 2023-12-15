@@ -18,7 +18,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
 
-import { it, describe, expect, beforeAll } from "vitest";
+import { it, describe, expect, beforeAll, assert } from "vitest";
 
 import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 
@@ -46,6 +46,7 @@ describe("Marine js tests", () => {
       await peer.registerMarineService(wasm, "greeting");
 
       // act
+      assert(aqua["call"]);
       const res = await aqua["call"](peer, { arg: "test" });
 
       // assert

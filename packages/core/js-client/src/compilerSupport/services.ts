@@ -79,7 +79,7 @@ export const responseService = (resolveCallback: (val: JSONValue) => void) => {
       const userFunctionReturn =
         req.args.length === 0
           ? null
-          : req.args.length === 1
+          : req.args.length === 1 && "0" in req.args
           ? req.args[0]
           : req.args;
 
@@ -108,7 +108,10 @@ export const errorHandlingService = (
       const [err] = req.args;
 
       setTimeout(() => {
-        rejectCallback(err);
+        rejectCallback(
+          err ??
+            "Unknown error happened when executing aqua code. No error text was passed to 'errorHandlingSrv.error' function, probably because AIR code was modified or aqua compiler didn't produce the correct call",
+        );
       }, 0);
 
       return {

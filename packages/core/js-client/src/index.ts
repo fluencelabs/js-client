@@ -111,7 +111,7 @@ export const Fluence: FluencePublicApi = {
    * @returns IFluenceClient instance
    */
   getClient: function () {
-    if (this.defaultClient == null) {
+    if (this.defaultClient === undefined) {
       throw new Error(
         "Fluence client is not initialized. Call Fluence.connect() first",
       );

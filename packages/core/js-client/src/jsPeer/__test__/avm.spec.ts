@@ -15,7 +15,7 @@
  */
 
 import { JSONValue } from "@fluencelabs/interfaces";
-import { it, describe, expect } from "vitest";
+import { it, describe, expect, assert } from "vitest";
 
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
@@ -39,6 +39,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
           print: {
             print: (args): undefined => {
               const [res] = args;
+              assert(res);
               resolve(res);
             },
           },
@@ -80,6 +81,7 @@ describe("Basic AVM functionality in Fluence Peer tests", () => {
         registerHandlersHelper(peer, particle, {
           print: {
             print: (args): undefined => {
+              assert(args[0]);
               res.push(args[0]);
 
               if (res.length === 2) {

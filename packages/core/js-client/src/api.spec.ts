@@ -18,7 +18,7 @@ import { fileURLToPath } from "url";
 
 import { compileFromPath } from "@fluencelabs/aqua-api";
 import { ServiceDef } from "@fluencelabs/interfaces";
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it } from "vitest";
 
 import { v5_registerService } from "./api.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
@@ -65,7 +65,11 @@ describe("User API methods", () => {
 
       const typedServices: Record<string, ServiceDef> = services;
 
+      assert("demoCalc" in functions);
+
       const { script } = functions["demoCalc"];
+
+      assert("Calc" in typedServices);
 
       v5_registerService([peer, "calc", calcService], {
         defaultServiceId: "calc",

@@ -25,6 +25,8 @@ import {
   UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 
+import { zip } from "../util/utils.js";
+
 import { ServiceImpl, UserServiceImpl } from "./types.js";
 
 export class SchemaValidationError extends Error {
@@ -103,10 +105,10 @@ export function aqua2js(
       throw new SchemaValidationError([], schema, "array", value);
     }
 
-    if (value.length === 0) {
-      return null;
-    } else {
+    if ("0" in value) {
       return aqua2js(value[0], schema.type);
+    } else {
+      return null;
     }
   } else if (
     schema.tag === "scalar" ||
@@ -127,17 +129,23 @@ export function aqua2js(
       throw new SchemaValidationError([], schema, "array", value);
     }
 
-    return value.map((y, i) => {
-      return aqua2js(y, schema.items[i]);
+    return zip(value, schema.items).map(([v, s]) => {
+      return aqua2js(v, s);
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
-    if (typeof value !== "object" || value == null || Array.isArray(value)) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
       throw new SchemaValidationError([], schema, "object", value);
     }
 
     return Object.fromEntries(
       Object.entries(schema.fields).map(([key, type]) => {
-        const val = aqua2js(value[key], type);
+        let v = value[key];
+
+        if (v === undefined) {
+          v = null;
+        }
+
+        const val = aqua2js(v, type);
         return [key, val];
       }),
     );
@@ -159,7 +167,7 @@ export function js2aqua(
     return value;
   } else if (schema.tag === "option") {
     // option means 'type | null'
-    return value == null ? [] : [js2aqua(value, schema.type, { path })];
+    return value === null ? [] : [js2aqua(value, schema.type, { path })];
   } else if (schema.tag === "topType") {
     // topType equals to 'any'
     return value;
@@ -181,8 +189,8 @@ export function js2aqua(
       throw new SchemaValidationError(path, schema, "array", value);
     }
 
-    return value.map((y, i) => {
-      return js2aqua(y, schema.items[i], { path: [...path, `[${i}]`] });
+    return zip(value, schema.items).map(([v, s], i) => {
+      return js2aqua(v, s, { path: [...path, `[${i}]`] });
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
@@ -191,7 +199,13 @@ export function js2aqua(
 
     return Object.fromEntries(
       Object.entries(schema.fields).map(([key, type]) => {
-        const val = js2aqua(value[key], type, { path: [...path, key] });
+        let v = value[key];
+
+        if (v === undefined) {
+          v = null;
+        }
+
+        const val = js2aqua(v, type, { path: [...path, key] });
         return [key, val];
       }),
     );
@@ -222,8 +236,8 @@ export const wrapJsFunction = (
       );
     }
 
-    const jsArgs = args.map((arg, i) => {
-      return aqua2js(arg, schemaArgs[i]);
+    const jsArgs = zip(args, schemaArgs).map(([arg, schemaArg]) => {
+      return aqua2js(arg, schemaArg);
     });
 
     const returnTypeVoid =
@@ -231,7 +245,8 @@ export const wrapJsFunction = (
 
     const resultSchema =
       schema.codomain.tag === "unlabeledProduct" &&
-      schema.codomain.items.length === 1
+      schema.codomain.items.length === 1 &&
+      "0" in schema.codomain.items
         ? schema.codomain.items[0]
         : schema.codomain;
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import assert from "node:assert";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -44,6 +45,8 @@ const test = async () => {
   console.log("starting puppeteer...");
   const browser = await puppeteer.launch();
   const page = (await browser.pages())[0];
+
+  assert(page);
 
   page.on("console", (message) => {
     console.log(`${message.type().toUpperCase()}: ${message.text()}`);
@@ -77,7 +80,7 @@ const test = async () => {
   await browser.close();
   await stopServer(localServer);
 
-  if (content == null) {
+  if (content === null || content === undefined) {
     throw new Error("smoke test failed!");
   }
 };

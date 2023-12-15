@@ -60,7 +60,7 @@ export const makeClientPeerConfig = async (
     relayConfig: {
       peerId: keyPair.getLibp2pPeerId(),
       relayAddress: relayAddress,
-      ...(config.connectionOptions?.dialTimeoutMs != null
+      ...(config.connectionOptions?.dialTimeoutMs !== undefined
         ? {
             dialTimeout: config.connectionOptions.dialTimeoutMs,
           }
