@@ -43,6 +43,20 @@
   * devDependencies
     * @fluencelabs/js-client bumped to 0.5.4
 
+## [0.3.5](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.3.4...aqua-to-js-v0.3.5) (2023-12-15)
+
+
+### Features
+
+* **npm-aqua-compiler:** create package  ([#401](https://github.com/fluencelabs/js-client/issues/401)) ([d600811](https://github.com/fluencelabs/js-client/commit/d6008110cf0ecaf23a63cfef0bb3f786a6eb0937))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/js-client bumped to 0.5.5
+
 ## [0.3.0](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.2.0...aqua-to-js-v0.3.0) (2023-11-22)
 
 

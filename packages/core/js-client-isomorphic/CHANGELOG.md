@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.1](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.3.0...js-client-isomorphic-v0.3.1) (2023-12-15)
+
+
+### Features
+
+* **npm-aqua-compiler:** create package  ([#401](https://github.com/fluencelabs/js-client/issues/401)) ([d600811](https://github.com/fluencelabs/js-client/commit/d6008110cf0ecaf23a63cfef0bb3f786a6eb0937))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/marine-worker bumped from 0.5.0 to 0.5.1
+
 ## [0.3.0](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.2.2...js-client-isomorphic-v0.3.0) (2023-11-22)
 
 
