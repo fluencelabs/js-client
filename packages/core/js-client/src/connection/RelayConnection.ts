@@ -92,7 +92,7 @@ export class RelayConnection implements IConnection {
     this.relayAddress = multiaddr(this.config.relayAddress);
     const peerId = this.relayAddress.getPeerId();
 
-    if (peerId == null) {
+    if (peerId === null) {
       throwHasNoPeerId(this.relayAddress);
     }
 
@@ -125,7 +125,7 @@ export class RelayConnection implements IConnection {
       streamMuxers: [yamux()],
       connectionEncryption: [noise()],
       connectionManager: {
-        ...(this.config.dialTimeoutMs != null
+        ...(this.config.dialTimeoutMs !== undefined
           ? {
               dialTimeout: this.config.dialTimeoutMs,
             }

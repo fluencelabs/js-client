@@ -7,8 +7,7 @@
     "module": "ESNext",
     "esModuleInterop": true,
     "declaration": true,
-    "moduleResolution": "nodenext",
-    "noUncheckedIndexedAccess": false
+    "moduleResolution": "nodenext"
   },
   "files": ["reset.d.ts"]
 }

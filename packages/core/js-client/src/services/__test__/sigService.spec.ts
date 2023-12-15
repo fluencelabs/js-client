@@ -17,7 +17,7 @@
 import * as path from "path";
 import * as url from "url";
 
-import { it, describe, expect, beforeAll } from "vitest";
+import { it, describe, expect, beforeAll, assert } from "vitest";
 
 import { registerService } from "../../compilerSupport/registerService.js";
 import { KeyPair } from "../../keypair/index.js";
@@ -72,6 +72,7 @@ describe("Sig service test suite", () => {
 
       customSig.securityGuard = allowServiceFn("data", "provide_data");
 
+      assert(aqua["callSig"]);
       const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
 
       expect(result).toHaveProperty("success", true);
@@ -116,6 +117,7 @@ describe("Sig service test suite", () => {
 
       customSig.securityGuard = allowServiceFn("wrong", "wrong");
 
+      assert(aqua["callSig"]);
       const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
       expect(result).toHaveProperty("success", false);
     });
@@ -137,6 +139,7 @@ describe("Sig service test suite", () => {
         },
       });
 
+      assert(aqua["callSig"]);
       const callAsSigRes = await aqua["callSig"](peer, { sigId: "sig" });
 
       const callAsPeerIdRes = await aqua["callSig"](peer, {

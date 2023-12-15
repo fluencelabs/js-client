@@ -76,7 +76,7 @@ const structs = [
       c: [null, 2],
     },
   },
-];
+] as const;
 
 const labeledProduct2 = {
   tag: "labeledProduct",
@@ -167,7 +167,7 @@ const nestedStructs = [
       c: [],
     },
   },
-];
+] as const;
 
 interface ConversionTestArgs {
   aqua: JSONValue;

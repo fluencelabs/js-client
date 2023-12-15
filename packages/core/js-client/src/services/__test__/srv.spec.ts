@@ -17,7 +17,7 @@
 import * as path from "path";
 import * as url from "url";
 
-import { it, describe, expect, beforeAll } from "vitest";
+import { it, describe, expect, beforeAll, assert } from "vitest";
 
 import { compileAqua, CompiledFnCall, withPeer } from "../../util/testUtils.js";
 import { registerNodeUtils } from "../_aqua/node-utils.js";
@@ -42,6 +42,7 @@ describe("Srv service test suite", () => {
       const wasm = path.join(__dirname, "../../../data_for_test/greeting.wasm");
 
       // act
+      assert(aqua["happy_path"]);
       const res = await aqua["happy_path"](peer, { file_path: wasm });
 
       // assert
@@ -57,6 +58,7 @@ describe("Srv service test suite", () => {
       const wasm = path.join(__dirname, "../../../data_for_test/greeting.wasm");
 
       // act
+      assert(aqua["list_services"]);
       const res = await aqua["list_services"](peer, { file_path: wasm });
 
       // assert
@@ -72,6 +74,8 @@ describe("Srv service test suite", () => {
       const wasm = path.join(__dirname, "../../../data_for_test/greeting.wasm");
 
       // act
+      assert(aqua["service_removed"]);
+
       const res = await aqua["service_removed"](peer, {
         file_path: wasm,
       });
@@ -87,6 +91,7 @@ describe("Srv service test suite", () => {
       registerNodeUtils(peer, "node_utils", new NodeUtils(peer));
 
       // act
+      assert(aqua["file_not_found"]);
       const res = await aqua["file_not_found"](peer, {});
 
       // assert
@@ -102,6 +107,7 @@ describe("Srv service test suite", () => {
       registerNodeUtils(peer, "node_utils", new NodeUtils(peer));
 
       // act
+      assert(aqua["removing_non_exiting"]);
       const res = await aqua["removing_non_exiting"](peer, {});
 
       // assert

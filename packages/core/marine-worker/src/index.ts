@@ -74,7 +74,7 @@ const toExpose = {
     serviceId: string,
     envs?: Env,
   ): Promise<void> => {
-    if (controlModule == null) {
+    if (controlModule === undefined) {
       throw new Error(
         "MarineJS is not initialized. To initialize call `init` function",
       );
@@ -135,7 +135,7 @@ const toExpose = {
   ) => {
     const srv = marineServices.get(serviceId);
 
-    if (srv == null) {
+    if (srv === undefined) {
       throw new Error(`service with id=${serviceId} not found`);
     }
 

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import assert from "assert";
-
 import { JSONValue } from "@fluencelabs/interfaces";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, assert } from "vitest";
 
 import {
   CallServiceData,
@@ -52,6 +50,7 @@ describe("FluencePeer flow tests", () => {
           (req: CallServiceData) => {
             const [timeout, message] = req.args;
             assert(typeof timeout === "number");
+            assert(message);
 
             return new Promise((resolve) => {
               setTimeout(() => {
@@ -77,6 +76,7 @@ describe("FluencePeer flow tests", () => {
           callback: {
             callback1: (args): undefined => {
               const [val] = args;
+              assert(val);
               values.push(val);
 
               if (values.length === 2) {
@@ -85,6 +85,7 @@ describe("FluencePeer flow tests", () => {
             },
             callback2: (args): undefined => {
               const [val] = args;
+              assert(val);
               values.push(val);
 
               if (values.length === 2) {
