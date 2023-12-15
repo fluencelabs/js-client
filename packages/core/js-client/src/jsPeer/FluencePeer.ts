@@ -69,6 +69,7 @@ import { getErrorMessage, isString, jsonify } from "../util/utils.js";
 import { ExpirationError, InterpreterError, SendError } from "./errors.js";
 
 const log_particle = logger("particle");
+const log_particle_data = logger("particle:data");
 const log_peer = logger("peer");
 
 export type PeerConfig = {
@@ -488,10 +489,10 @@ export abstract class FluencePeer {
           item.particle.id,
         );
 
-        log_particle.trace(
+        log_particle_data.trace(
           "id %s. prevData: %s",
           item.particle.id,
-          this.decodeAvmData(prevData).slice(0, 50),
+          this.decodeAvmData(prevData),
         );
 
         const args = serializeAvmArgs(
@@ -566,7 +567,7 @@ export abstract class FluencePeer {
             item.result.errorMessage,
           );
 
-          log_particle.trace(
+          log_particle_data.trace(
             "id %s. avm data: %s",
             item.particle.id,
             this.decodeAvmData(item.result.data),
@@ -582,9 +583,14 @@ export abstract class FluencePeer {
         }
 
         log_particle.trace(
-          "id %s. interpreter result: retCode: %d, avm data: %s",
+          "id %s. interpreter result: retCode: %d",
           item.particle.id,
           item.result.retCode,
+        );
+
+        log_particle_data.trace(
+          "id %s. avm data: %s",
+          item.particle.id,
           this.decodeAvmData(item.result.data),
         );
 
