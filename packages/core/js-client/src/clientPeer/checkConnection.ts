@@ -86,7 +86,7 @@ export const checkConnection = async (
         const [val] = args;
 
         setTimeout(() => {
-          resolve(val);
+          resolve(val ?? null);
         }, 0);
 
         return {};

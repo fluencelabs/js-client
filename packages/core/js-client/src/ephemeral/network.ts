@@ -30,10 +30,12 @@ import { logger } from "../util/logger.js";
 const log = logger("ephemeral");
 
 interface EphemeralConfig {
-  peers: Array<{
-    peerId: PeerIdB58;
-    sk: string;
-  }>;
+  peers: Readonly<
+    Array<{
+      peerId: PeerIdB58;
+      sk: string;
+    }>
+  >;
 }
 
 export const defaultConfig = {
@@ -119,7 +121,7 @@ export const defaultConfig = {
       sk: "RbgKmG6soWW9uOi7yRedm+0Qck3f3rw6MSnDP7AcBQs=",
     },
   ],
-};
+} as const;
 
 export interface IEphemeralConnection extends IConnection {
   readonly selfPeerId: PeerIdB58;
@@ -248,17 +250,17 @@ export class EphemeralNetwork {
 
     const peers = await Promise.all(promises);
 
-    for (let i = 0; i < peers.length; i++) {
-      for (let j = 0; j < i; j++) {
+    peers.forEach((peer, i) => {
+      const otherPeers = peers.slice(0, i);
+
+      otherPeers.forEach((otherPeer, j) => {
         if (i === j) {
-          continue;
+          return;
         }
 
-        peers[i].ephemeralConnection.connectToOther(
-          peers[j].ephemeralConnection,
-        );
-      }
-    }
+        peer.ephemeralConnection.connectToOther(otherPeer.ephemeralConnection);
+      });
+    });
 
     const startPromises = peers.map((x) => {
       return x.start();

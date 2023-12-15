@@ -109,7 +109,7 @@ const parseWithSchema = <T extends z.ZodTypeAny>(
   if (result.success) {
     return [result.data, null];
   } else {
-    return [null, result.error.errors[0].message];
+    return [null, result.error.errors[0]?.message ?? "Unknown error"];
   }
 };
 
@@ -141,7 +141,7 @@ const withSchema: withSchema = <T extends z.ZodTypeAny>(schema: T) => {
     return (req) => {
       const [value, message] = parseWithSchema(schema, req);
 
-      if (message != null) {
+      if (message !== null) {
         return error(message);
       }
 
@@ -306,7 +306,7 @@ export const builtInServices: Record<
     }),
 
     identity: withSchema(z.array(jsonSchema).max(1))((args) => {
-      return success(args.length === 0 ? {} : args[0]);
+      return success("0" in args ? args[0] : {});
     }),
 
     concat: withSchema(z.array(z.array(z.any())))((args) => {

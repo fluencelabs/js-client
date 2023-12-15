@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import assert from "assert";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
@@ -86,7 +85,7 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
       // Last part of the property separated by "_" is a correct name
       const refinedProperty = prop.split("_").pop();
 
-      if (refinedProperty == null) {
+      if (refinedProperty === undefined) {
         throw new Error(`Bad property name: ${prop}.`);
       }
 
@@ -95,11 +94,15 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
       }
     }
 
-    assert(accessProp in obj);
+    const laquaProp = obj[accessProp];
+
+    if (laquaProp === undefined) {
+      return acc;
+    }
 
     return {
       ...acc,
-      [accessProp]: recursiveRenameLaquaProps(obj[accessProp]),
+      [accessProp]: recursiveRenameLaquaProps(laquaProp),
     };
   }, {});
 }

@@ -20,13 +20,7 @@
   ],
   "ignorePatterns": ["**/node_modules/", "**/dist/", "**/build/", "**/public/"],
   "rules": {
-    "eqeqeq": [
-      "error",
-      "always",
-      {
-        "null": "ignore"
-      }
-    ],
+    "eqeqeq": ["error", "always"],
     "no-console": ["error"],
     "arrow-body-style": ["error", "always"],
     "no-empty": [

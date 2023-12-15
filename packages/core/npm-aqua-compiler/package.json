@@ -1,0 +1,29 @@
+{
+  "type": "module",
+  "name": "@fluencelabs/npm-aqua-compiler",
+  "version": "0.0.0",
+  "description": "Tool for converting npm imports to aqua compiler input",
+  "types": "./dist/imports.d.ts",
+  "exports": {
+    ".": "./dist/imports.js"
+  },
+  "scripts": {
+    "test": "npm i --prefix ./test/transitive-deps/project && vitest run",
+    "build": "tsc"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@npmcli/arborist": "^7.2.1",
+    "treeverse": "3.0.0"
+  },
+  "devDependencies": {
+    "@types/npmcli__arborist": "5.6.5",
+    "@types/treeverse": "3.0.4",
+    "vitest": "0.34.6"
+  }
+}

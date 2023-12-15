@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import assert from "assert";
-
 import { JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it, test, assert } from "vitest";
 
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
@@ -155,7 +153,8 @@ describe("Tests for default handler", () => {
       };
 
       // act
-      const fn = builtInServices[req.serviceId][req.fnName];
+      const fn = builtInServices[req.serviceId]?.[req.fnName];
+      assert(fn);
       const res = await fn(req);
 
       // Our test cases above depend on node error message. In node 20 error message for JSON.parse has changed.
@@ -192,7 +191,8 @@ describe("Tests for default handler", () => {
     };
 
     // act
-    const fn = builtInServices[req.serviceId][req.fnName];
+    const fn = builtInServices[req.serviceId]?.[req.fnName];
+    assert(fn);
     const res = await fn(req);
 
     // assert

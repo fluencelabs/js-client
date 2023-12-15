@@ -1,0 +1,8 @@
+use "B.aqua"
+
+func versionAC() -> string:
+    <- A.versionC()
+
+func versionBC() -> string:
+    <- B.versionC()
+

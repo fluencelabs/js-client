@@ -26,12 +26,13 @@ import { z } from "zod";
 import { CallAquaFunctionConfig } from "./compilerSupport/callFunction.js";
 import {
   aqua2js,
-  SchemaValidationError,
   js2aqua,
+  SchemaValidationError,
   wrapJsFunction,
 } from "./compilerSupport/conversions.js";
 import { ServiceImpl, UserServiceImpl } from "./compilerSupport/types.js";
 import { FluencePeer } from "./jsPeer/FluencePeer.js";
+import { zip } from "./util/utils.js";
 
 import { callAquaFunction, Fluence, registerService } from "./index.js";
 
@@ -74,16 +75,14 @@ export const v5_callFunction = async (
     );
   }
 
-  const argNames = Object.keys(
-    def.arrow.domain.tag === "nil" ? [] : def.arrow.domain.fields,
-  );
-
-  const schemaArgCount = argNames.length;
-
-  type FunctionArg = SimpleTypes | ArrowWithoutCallbacks;
-
   const schemaFunctionArgs: Record<string, FunctionArg> =
     def.arrow.domain.tag === "nil" ? {} : def.arrow.domain.fields;
+
+  const schemaFunctionArgEntries = Object.entries(schemaFunctionArgs);
+
+  const schemaArgCount = schemaFunctionArgEntries.length;
+
+  type FunctionArg = SimpleTypes | ArrowWithoutCallbacks;
 
   // if there are more args than expected in schema (schemaArgCount) then last arg is config
   const config = schemaArgCount < rest.length ? rest.pop() : undefined;
@@ -91,34 +90,33 @@ export const v5_callFunction = async (
   validateAquaConfig(config);
 
   const callArgs = Object.fromEntries<JSONValue | ServiceImpl[string]>(
-    rest.slice(0, schemaArgCount).map((arg, i) => {
-      const argName = argNames[i];
-      const argSchema = schemaFunctionArgs[argName];
+    zip(rest.slice(0, schemaArgCount), schemaFunctionArgEntries).map(
+      ([arg, [argName, argType]]) => {
+        if (argType.tag === "arrow") {
+          if (typeof arg !== "function") {
+            throw new SchemaValidationError(
+              [argName],
+              argType,
+              "function",
+              arg,
+            );
+          }
 
-      if (argSchema.tag === "arrow") {
-        if (typeof arg !== "function") {
+          return [argName, wrapJsFunction(arg, argType)];
+        }
+
+        if (typeof arg === "function") {
           throw new SchemaValidationError(
             [argName],
-            argSchema,
-            "function",
+            argType,
+            "non-function value",
             arg,
           );
         }
 
-        return [argName, wrapJsFunction(arg, argSchema)];
-      }
-
-      if (typeof arg === "function") {
-        throw new SchemaValidationError(
-          [argName],
-          argSchema,
-          "non-function value",
-          arg,
-        );
-      }
-
-      return [argName, js2aqua(arg, argSchema, { path: [def.functionName] })];
-    }),
+        return [argName, js2aqua(arg, argType, { path: [def.functionName] })];
+      },
+    ),
   );
 
   const returnTypeVoid =
@@ -126,7 +124,8 @@ export const v5_callFunction = async (
 
   const returnSchema =
     def.arrow.codomain.tag === "unlabeledProduct" &&
-    def.arrow.codomain.items.length === 1
+    def.arrow.codomain.items.length === 1 &&
+    "0" in def.arrow.codomain.items
       ? def.arrow.codomain.items[0]
       : def.arrow.codomain;
 
@@ -145,7 +144,7 @@ export const v5_callFunction = async (
 };
 
 const getDefaultPeer = (): FluencePeer => {
-  if (Fluence.defaultClient == null) {
+  if (Fluence.defaultClient === undefined) {
     throw new Error(
       "Could not register Aqua service because the client is not initialized. Did you forget to call Fluence.connect()?",
     );
@@ -155,7 +154,7 @@ const getDefaultPeer = (): FluencePeer => {
 };
 
 const getDefaultServiceId = (def: ServiceDef) => {
-  if (def.defaultServiceId == null) {
+  if (def.defaultServiceId === undefined) {
     throw new Error("Service ID is not provided");
   }
 
@@ -204,13 +203,18 @@ export const v5_registerService = (
 
   // Wrapping service functions, selecting only those listed in schema, to convert their args js -> aqua and backwards
   const wrappedServiceImpl = Object.fromEntries(
-    Object.keys(serviceSchema).map((schemaKey) => {
+    Object.entries(serviceSchema).map(([schemaKey, schemaValue]) => {
+      const serviceImplValue = serviceImpl[schemaKey];
+
+      if (serviceImplValue === undefined) {
+        throw new Error(
+          `Service function ${schemaKey} listed in Aqua schema but wasn't provided in schema implementation object or class instance. Check that your Aqua service definition matches passed service implementation`,
+        );
+      }
+
       return [
         schemaKey,
-        wrapJsFunction(
-          serviceImpl[schemaKey].bind(serviceImpl),
-          serviceSchema[schemaKey],
-        ),
+        wrapJsFunction(serviceImplValue.bind(serviceImpl), schemaValue),
       ] as const;
     }),
   );

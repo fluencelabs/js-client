@@ -43,7 +43,7 @@ export class MarineBackgroundRunner implements IMarineHost {
   ) {}
 
   async hasService(serviceId: string) {
-    if (this.workerThread == null) {
+    if (this.workerThread === undefined) {
       throw new Error("Worker is not initialized");
     }
 
@@ -51,7 +51,7 @@ export class MarineBackgroundRunner implements IMarineHost {
   }
 
   async removeService(serviceId: string) {
-    if (this.workerThread == null) {
+    if (this.workerThread === undefined) {
       throw new Error("Worker is not initialized");
     }
 
@@ -59,7 +59,7 @@ export class MarineBackgroundRunner implements IMarineHost {
   }
 
   async start(): Promise<void> {
-    if (this.workerThread != null) {
+    if (this.workerThread !== undefined) {
       throw new Error("Worker thread already initialized");
     }
 
@@ -69,7 +69,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     const logfn: LogFunction = (message) => {
       const serviceLogger = this.loggers.get(message.service);
 
-      if (serviceLogger == null) {
+      if (serviceLogger === undefined) {
         return;
       }
 
@@ -86,7 +86,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     serviceModule: ArrayBuffer | SharedArrayBuffer,
     serviceId: string,
   ): Promise<void> {
-    if (this.workerThread == null) {
+    if (this.workerThread === undefined) {
       throw new Error("Worker is not initialized");
     }
 
@@ -100,7 +100,7 @@ export class MarineBackgroundRunner implements IMarineHost {
     args: Array<JSONValueNonNullable> | Record<string, JSONValueNonNullable>,
     callParams?: CallParameters,
   ): Promise<JSONValue> {
-    if (this.workerThread == null) {
+    if (this.workerThread === undefined) {
       throw new Error("Worker is not initialized");
     }
 
@@ -113,7 +113,7 @@ export class MarineBackgroundRunner implements IMarineHost {
   }
 
   async stop(): Promise<void> {
-    if (this.workerThread == null) {
+    if (this.workerThread === undefined) {
       return;
     }
 
