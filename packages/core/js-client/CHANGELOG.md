@@ -12,6 +12,27 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.5.5](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.4...js-client-v0.5.5) (2023-12-15)
+
+
+### Features
+
+* **js-client:** Add fire-and-forget flag [DXJ-562] ([#400](https://github.com/fluencelabs/js-client/issues/400)) ([86a7302](https://github.com/fluencelabs/js-client/commit/86a73027e523cf3db4fc9cf58fc7625e44638d0a))
+* **npm-aqua-compiler:** create package  ([#401](https://github.com/fluencelabs/js-client/issues/401)) ([d600811](https://github.com/fluencelabs/js-client/commit/d6008110cf0ecaf23a63cfef0bb3f786a6eb0937))
+
+
+### Bug Fixes
+
+* **js-client:** Remove log truncation. ([#403](https://github.com/fluencelabs/js-client/issues/403)) ([9b629ee](https://github.com/fluencelabs/js-client/commit/9b629eef2e188331cfb338efe775f20dac9bc2fb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/js-client-isomorphic bumped to 0.3.1
+    * @fluencelabs/marine-worker bumped from 0.5.0 to 0.5.1
+
 ## [0.5.4](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.3...js-client-v0.5.4) (2023-12-06)
 
 

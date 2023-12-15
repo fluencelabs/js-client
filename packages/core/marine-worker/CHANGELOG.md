@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.5.0...marine-worker-v0.5.1) (2023-12-15)
+
+
+### Features
+
+* **npm-aqua-compiler:** create package  ([#401](https://github.com/fluencelabs/js-client/issues/401)) ([d600811](https://github.com/fluencelabs/js-client/commit/d6008110cf0ecaf23a63cfef0bb3f786a6eb0937))
+
 ## [0.5.0](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.4.2...marine-worker-v0.5.0) (2023-11-22)
 
 
