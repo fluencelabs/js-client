@@ -6,6 +6,13 @@ networks:
         - subnet: 10.50.10.0/24
 
 services:
+  aurora:
+    image: docker.fluence.dev/aurora:0.2.11
+    ports:
+      - 8545:8545
+    networks:
+      nox:
+
   ipfs:
     image: ipfs/go-ipfs
     ports:
