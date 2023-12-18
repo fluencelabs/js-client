@@ -12,7 +12,16 @@ function App() {
         setResult(res);
       })
       .catch((err) => {
-        console.log(err);
+        if (err instanceof Error) {
+          console.log({
+            name: err.name,
+            message: err.message,
+            stack: err.stack,
+          });
+        } else {
+          console.log(err);
+        }
+
         setResult({ type: "failure", error: err.toString() });
       });
   };

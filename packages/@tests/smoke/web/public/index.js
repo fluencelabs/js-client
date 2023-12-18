@@ -110,5 +110,11 @@ btn.addEventListener("click", () => {
     inner.id = "res";
     inner.innerText = res;
     document.getElementById("res-placeholder").appendChild(inner);
-  }).catch(console.log);
+  }).catch(err => {
+    if (err instanceof Error) {
+      console.log({ name: err.name, message: err.message, stack: err.stack });
+      return;
+    }
+    console.log(err);
+  });
 });
