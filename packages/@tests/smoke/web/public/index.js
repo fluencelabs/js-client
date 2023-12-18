@@ -80,6 +80,7 @@ const getRelayTime = () => {
     script,
     config,
     peer: Fluence.defaultClient,
+    fireAndForget: false
   });
 };
 
@@ -109,5 +110,5 @@ btn.addEventListener("click", () => {
     inner.id = "res";
     inner.innerText = res;
     document.getElementById("res-placeholder").appendChild(inner);
-  });
+  }).catch(console.log);
 });

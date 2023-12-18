@@ -12,6 +12,7 @@ function App() {
         setResult(res);
       })
       .catch((err) => {
+        console.log(err);
         setResult({ type: "failure", error: err.toString() });
       });
   };
