@@ -112,9 +112,9 @@ btn.addEventListener("click", () => {
     document.getElementById("res-placeholder").appendChild(inner);
   }).catch(err => {
     if (err instanceof Error) {
-      console.log({ name: err.name, message: err.message, stack: err.stack });
+      console.log(JSON.stringify({ name: err.name, message: err.message, stack: err.stack }));
       return;
     }
-    console.log(err);
+    console.log(JSON.stringify(err));
   });
 });
