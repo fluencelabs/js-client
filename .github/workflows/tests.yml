@@ -91,12 +91,6 @@ jobs:
           registry-url: "https://npm.fluence.dev"
           cache: "pnpm"
 
-      - run: pnpm -r i
-      - run: pnpm -r build
-
-      - name: Lint code
-        run: pnpm lint-check
-
       - name: Override dependencies
         uses: fluencelabs/github-actions/pnpm-set-dependency@main
         with:
@@ -107,6 +101,11 @@ jobs:
             }
 
       - run: pnpm -r --no-frozen-lockfile i
+      - run: pnpm -r build
+
+      - name: Lint code
+        run: pnpm lint-check
+
       - run: pnpm -r test
 
       - name: Dump container logs
