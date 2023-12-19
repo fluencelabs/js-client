@@ -8,6 +8,8 @@ build
 public
 
 **/CHANGELOG.md
+# TODO: remove after pnpm-set-deps will add \n symbol at the end of these files
+**/package.json
 
 packages/core/js-client-isomorphic/src/versions.ts
 __snapshots__
