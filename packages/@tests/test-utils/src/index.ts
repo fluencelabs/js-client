@@ -62,13 +62,13 @@ export const startContentServer = (
           destination: "/source/index.min.js",
         },
         {
-          source: "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:asset",
+          source: "/@fluencelabs/:name([\\w-]+)@:version([\\w-.]+)/dist/:asset",
           destination:
             "/node_modules/@fluencelabs/js-client-isomorphic/node_modules/@fluencelabs/:name/dist/:asset",
         },
         {
           source:
-            "/@fluencelabs/:name([\\w-]+)@:version([\\d.]+)/dist/:prefix/:asset",
+            "/@fluencelabs/:name([\\w-]+)@:version([\\w-.]+)/dist/:prefix/:asset",
           destination:
             "/node_modules/@fluencelabs/js-client-isomorphic/node_modules/@fluencelabs/:name/dist/:prefix/:asset",
         },
