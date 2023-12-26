@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { Worker } from "@fluencelabs/threads/master";
+import { ModuleThread } from "@fluencelabs/threads/master";
 
 import versions from "./versions.js";
+import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
 export type FetchedPackages = keyof typeof versions;
 type VersionedPackage = { name: string; version: string };
 export type GetWorkerFn = (
   pkg: FetchedPackages,
   CDNUrl: string,
-) => Promise<Worker>;
+) => Promise<ModuleThread<MarineBackgroundInterface>>;
 
 export const getVersionedPackage = (pkg: FetchedPackages): VersionedPackage => {
   return {

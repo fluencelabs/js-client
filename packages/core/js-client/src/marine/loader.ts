@@ -16,18 +16,19 @@
 
 import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
 import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
-import { Worker } from "@fluencelabs/threads/master";
+import type { ModuleThread } from "@fluencelabs/threads/master";
+import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
 type StrategyReturnType = [
   marineJsWasm: ArrayBuffer,
   avmWasm: ArrayBuffer,
-  worker: Worker,
+  worker: ModuleThread<MarineBackgroundInterface>,
 ];
 
 export const loadMarineDeps = async (
   CDNUrl: string,
 ): Promise<StrategyReturnType> => {
-  const [marineJsWasm, avmWasm] = await Promise.all([
+  const [marineJsWasm, avmWasm, worker] = await Promise.all([
     fetchResource(
       "@fluencelabs/marine-js",
       "/dist/marine-js.wasm",
@@ -38,10 +39,8 @@ export const loadMarineDeps = async (
     fetchResource("@fluencelabs/avm", "/dist/avm.wasm", CDNUrl).then((res) => {
       return res.arrayBuffer();
     }),
+    getWorker("@fluencelabs/marine-worker", CDNUrl),
   ]);
-
-  // TODO: load worker in parallel with avm and marine, test that it works
-  const worker = await getWorker("@fluencelabs/marine-worker", CDNUrl);
 
   return [marineJsWasm, avmWasm, worker];
 };

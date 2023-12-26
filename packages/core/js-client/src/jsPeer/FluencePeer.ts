@@ -356,9 +356,8 @@ export abstract class FluencePeer {
       await this.connection.sendParticle(item.result.nextPeerPks, newParticle);
       log_particle.trace("id %s. send successful", newParticle.id);
     } catch (e) {
-      log_particle.error("id %s. send failed %j", newParticle.id, e);
-
       const message = getErrorMessage(e);
+      log_particle.error("id %s. send failed %s", newParticle.id, message);
 
       item.onError(
         new SendError(
