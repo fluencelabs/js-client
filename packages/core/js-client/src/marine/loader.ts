@@ -16,8 +16,8 @@
 
 import { fetchResource } from "@fluencelabs/js-client-isomorphic/fetcher";
 import { getWorker } from "@fluencelabs/js-client-isomorphic/worker-resolver";
-import type { ModuleThread } from "@fluencelabs/threads/master";
 import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
+import type { ModuleThread } from "@fluencelabs/threads/master";
 
 type StrategyReturnType = [
   marineJsWasm: ArrayBuffer,

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 import { BlobWorker, ModuleThread, spawn } from "@fluencelabs/threads/master";
 
 import { fetchResource } from "../fetchers/browser.js";
 import type { FetchedPackages, GetWorkerFn } from "../types.js";
-import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
 export const getWorker: GetWorkerFn = async (
   pkg: FetchedPackages,

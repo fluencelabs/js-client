@@ -18,11 +18,11 @@ import { createRequire } from "module";
 import { dirname, relative } from "path";
 import { fileURLToPath } from "url";
 
+import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 import { ModuleThread, spawn, Worker } from "@fluencelabs/threads/master";
 
 import type { FetchedPackages, GetWorkerFn } from "../types.js";
 import { getVersionedPackage } from "../types.js";
-import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
 export const getWorker: GetWorkerFn = async (pkg: FetchedPackages) => {
   const require = createRequire(import.meta.url);

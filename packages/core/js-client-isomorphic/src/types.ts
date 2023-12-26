@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 import { ModuleThread } from "@fluencelabs/threads/master";
 
 import versions from "./versions.js";
-import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
 
 export type FetchedPackages = keyof typeof versions;
 type VersionedPackage = { name: string; version: string };
