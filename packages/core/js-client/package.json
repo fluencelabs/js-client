@@ -42,7 +42,7 @@
     "@libp2p/interface": "1.0.1",
     "@libp2p/peer-id": "4.0.1",
     "@libp2p/peer-id-factory": "4.0.0",
-    "@libp2p/ping": "1.0.4",
+    "@libp2p/ping": "1.0.6",
     "@libp2p/websockets": "8.0.5",
     "@multiformats/multiaddr": "11.3.0",
     "bs58": "5.0.0",
