@@ -131,10 +131,10 @@ importers:
         specifier: 18.0.10
         version: 18.0.10
       react:
-        specifier: ^18.2.0
+        specifier: 18.2.0
         version: 18.2.0
       react-dom:
-        specifier: ^18.2.0
+        specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       react-scripts:
         specifier: 5.0.1
@@ -227,7 +227,7 @@ importers:
         specifier: 0.5.1
         version: link:../marine-worker
       '@fluencelabs/threads':
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0
       '@libp2p/crypto':
         specifier: 3.0.1
@@ -336,7 +336,7 @@ importers:
         specifier: 0.5.1
         version: link:../marine-worker
       '@fluencelabs/threads':
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0
 
   packages/core/marine-worker:
@@ -345,7 +345,7 @@ importers:
         specifier: 0.8.0
         version: 0.8.0
       '@fluencelabs/threads':
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0
       observable-fns:
         specifier: 0.6.1
@@ -370,7 +370,7 @@ importers:
   packages/core/npm-aqua-compiler:
     dependencies:
       '@npmcli/arborist':
-        specifier: ^7.2.1
+        specifier: 7.2.2
         version: 7.2.2
       treeverse:
         specifier: 3.0.0
