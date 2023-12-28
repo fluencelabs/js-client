@@ -18,12 +18,13 @@ import { createRequire } from "module";
 import { dirname, relative } from "path";
 import { fileURLToPath } from "url";
 
-import { Worker } from "@fluencelabs/threads/master";
+import type { MarineBackgroundInterface } from "@fluencelabs/marine-worker";
+import { ModuleThread, spawn, Worker } from "@fluencelabs/threads/master";
 
 import type { FetchedPackages, GetWorkerFn } from "../types.js";
 import { getVersionedPackage } from "../types.js";
 
-export const getWorker: GetWorkerFn = (pkg: FetchedPackages) => {
+export const getWorker: GetWorkerFn = async (pkg: FetchedPackages) => {
   const require = createRequire(import.meta.url);
 
   const pathToThisFile = dirname(fileURLToPath(import.meta.url));
@@ -33,5 +34,8 @@ export const getWorker: GetWorkerFn = (pkg: FetchedPackages) => {
 
   const relativePathToWorker = relative(pathToThisFile, pathToWorker);
 
-  return Promise.resolve(new Worker(relativePathToWorker));
+  const workerThread: ModuleThread<MarineBackgroundInterface> =
+    await spawn<MarineBackgroundInterface>(new Worker(relativePathToWorker));
+
+  return workerThread;
 };
