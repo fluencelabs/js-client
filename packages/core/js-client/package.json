@@ -3,8 +3,8 @@
   "version": "0.5.5",
   "description": "Client for interacting with Fluence network",
   "engines": {
-    "node": ">=10",
-    "pnpm": ">=8"
+    "node": "21.5.0",
+    "pnpm": "8.13.1"
   },
   "files": [
     "dist"
@@ -36,7 +36,7 @@
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client-isomorphic": "workspace:*",
     "@fluencelabs/marine-worker": "0.5.1",
-    "@fluencelabs/threads": "^2.0.0",
+    "@fluencelabs/threads": "2.0.0",
     "@libp2p/crypto": "3.0.1",
     "@libp2p/identify": "1.0.4",
     "@libp2p/interface": "1.0.1",

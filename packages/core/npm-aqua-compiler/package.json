@@ -18,7 +18,7 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@npmcli/arborist": "^7.2.1",
+    "@npmcli/arborist": "7.2.2",
     "treeverse": "3.0.0"
   },
   "devDependencies": {
