@@ -122,8 +122,8 @@ importers:
         specifier: 27.5.2
         version: 27.5.2
       '@types/node':
-        specifier: 16.18.12
-        version: 16.18.12
+        specifier: 16.18.68
+        version: 16.18.68
       '@types/react':
         specifier: 18.0.27
         version: 18.0.27
@@ -5225,8 +5225,8 @@ packages:
       form-data: 4.0.0
     dev: true
 
-  /@types/node@16.18.12:
-    resolution: {integrity: sha512-vzLe5NaNMjIE3mcddFVGlAXN1LEWueUsMsOJWaT6wWMJGyljHAWHznqfnKUQWGzu7TLPrGvWdNAsvQYW+C0xtw==}
+  /@types/node@16.18.68:
+    resolution: {integrity: sha512-sG3hPIQwJLoewrN7cr0dwEy+yF5nD4D/4FxtQpFciRD/xwUzgD+G05uxZHv5mhfXo4F9Jkp13jjn0CC2q325sg==}
     dev: false
 
   /@types/node@18.13.0:
@@ -5346,7 +5346,7 @@ packages:
   /@types/serve-handler@6.1.1:
     resolution: {integrity: sha512-bIwSmD+OV8w0t2e7EWsuQYlGoS1o5aEdVktgkXaa43Zm0qVWi21xaSRb3DQA1UXD+DJ5bRq1Rgu14ZczB+CjIQ==}
     dependencies:
-      '@types/node': 20.4.5
+      '@types/node': 20.7.0
     dev: true
 
   /@types/serve-index@1.9.1:
