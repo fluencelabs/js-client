@@ -197,8 +197,8 @@ importers:
   packages/core/interfaces:
     devDependencies:
       '@fluencelabs/avm':
-        specifier: 0.54.0
-        version: 0.54.0
+        specifier: 0.55.0
+        version: 0.55.0
       '@multiformats/multiaddr':
         specifier: 11.3.0
         version: 11.3.0
@@ -215,8 +215,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       '@fluencelabs/avm':
-        specifier: 0.54.0
-        version: 0.54.0
+        specifier: 0.55.0
+        version: 0.55.0
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
@@ -327,8 +327,8 @@ importers:
   packages/core/js-client-isomorphic:
     dependencies:
       '@fluencelabs/avm':
-        specifier: 0.54.0
-        version: 0.54.0
+        specifier: 0.55.0
+        version: 0.55.0
       '@fluencelabs/marine-js':
         specifier: 0.8.0
         version: 0.8.0
@@ -3668,8 +3668,8 @@ packages:
     resolution: {integrity: sha512-+JVbWmHeGB+X/BSqmk6/B0gwWJ4bEAxkepVTN8l0mVrJ5zRRmYaCKVplWy6Z3W012m3VVK3A1o3rm/fgfVrQkw==}
     dev: true
 
-  /@fluencelabs/avm@0.54.0:
-    resolution: {integrity: sha512-5GgROVly/vC7gasltr6/3TIY8vfV6b+SPfWUAGWnyXdbWt4jJANLO2YtXdaUsdNk9PiwOep7TMjLnypljdyMjQ==}
+  /@fluencelabs/avm@0.55.0:
+    resolution: {integrity: sha512-4KaVnSCkWtoyXSX1UezKX5KRKkBdR+VmXdZwAGqgcqsDKuzTFstfsMO6SCp/njbCOK1Wm/t5Fb1HFDob/6vIog==}
 
   /@fluencelabs/marine-js@0.8.0:
     resolution: {integrity: sha512-exxp0T0Dk69dxnbpAiVc/qp66s8Jq/P71TRB9aeQZLZy3EQtVAMCBJvwQY8LzVVlYEyVjmqQkFG/N0rAeYU1vg==}
