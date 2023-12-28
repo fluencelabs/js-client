@@ -38,7 +38,7 @@
     "@fluencelabs/marine-worker": "0.5.1",
     "@fluencelabs/threads": "^2.0.0",
     "@libp2p/crypto": "3.0.1",
-    "@libp2p/identify": "1.0.4",
+    "@libp2p/identify": "1.0.7",
     "@libp2p/interface": "1.0.1",
     "@libp2p/peer-id": "4.0.1",
     "@libp2p/peer-id-factory": "4.0.0",
