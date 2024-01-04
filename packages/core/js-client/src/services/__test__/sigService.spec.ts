@@ -73,7 +73,7 @@ describe("Sig service test suite", () => {
       customSig.securityGuard = allowServiceFn("data", "provide_data");
 
       assert(aqua["callSig"]);
-      const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
+      const result: any = await aqua["callSig"](peer, { sigId: "CustomSig" });
 
       expect.soft(typeof result).toBeTypeOf("boolean"); // KLUDGE to see result value.
       expect.soft(result.keys()).toBeTypeOf("boolean"); // KLUDGE to see result value.
