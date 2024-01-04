@@ -75,7 +75,8 @@ describe("Sig service test suite", () => {
       assert(aqua["callSig"]);
       const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
 
-      expect(result).toBeTypeOf("boolean"); // KLUDGE to see result value.
+      expect(typeof result).soft().toBeTypeOf("boolean"); // KLUDGE to see result value.
+      expect(result.keys()).soft().toBeTypeOf("boolean"); // KLUDGE to see result value.
       expect(result).toHaveProperty("success", true);
 
       const isSigCorrect = await customSig.verify({
