@@ -74,6 +74,12 @@ describe("Sig service test suite", () => {
 
       assert(aqua["callSig"]);
       const result = await aqua["callSig"](peer, { sigId: "CustomSig" });
+      // eslint-disable-next-line no-console
+      console.log(result);
+      // eslint-disable-next-line no-console
+      console.log(JSON.stringify(result, null, 2));
+      // eslint-disable-next-line no-console, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
+      console.log(JSON.stringify(Object.entries(result as any), null, 2));
 
       expect.soft(typeof result).toBeTypeOf("boolean"); // KLUDGE to see result value.
       expect(result).toHaveProperty("success", true);
