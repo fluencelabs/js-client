@@ -33,10 +33,6 @@ Here is an example using the JSDELIVR CDN:
 ```html
 <head>
   <title>Cool App</title>
-  <script
-    type="module"
-    src="https://cdn.jsdelivr.net/npm/@fluencelabs/js-client/dist/browser/index.min.js"
-  ></script>
   <script type="module">
     import {
       Fluence,
