@@ -27,14 +27,14 @@ const relaySchema = z.object({
 });
 
 /**
- * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
+ * Relay of the Fluence network specified as a pair of node's multiaddr and it's peer id
  */
 export type Relay = z.infer<typeof relaySchema>;
 
 export const relayOptionsSchema = z.union([z.string(), relaySchema]);
 
 /**
- * A node in Fluence network a client can connect to.
+ * A relay in Fluence network a client can connect to.
  * Can be in the form of:
  * - string: multiaddr in string format
  * - Relay: relay structure, @see Relay
