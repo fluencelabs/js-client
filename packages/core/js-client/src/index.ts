@@ -22,7 +22,7 @@ import {
   configSchema,
   ConnectionState,
   RelayOptions,
-  relaySchema,
+  relayOptionsSchema,
 } from "./clientPeer/types.js";
 import { callAquaFunction } from "./compilerSupport/callFunction.js";
 import { registerService } from "./compilerSupport/registerService.js";
@@ -36,7 +36,7 @@ const createClient = async (
   config: ClientConfig = {},
 ): Promise<ClientPeer> => {
   try {
-    relay = relaySchema.parse(relay);
+    relay = relayOptionsSchema.parse(relay);
     config = configSchema.parse(config);
   } catch (e) {
     if (e instanceof ZodError) {
@@ -125,6 +125,7 @@ export type {
   ClientConfig,
   IFluenceClient,
   ConnectionState,
+  Relay,
   RelayOptions,
   KeyPairOptions,
 } from "./clientPeer/types.js";

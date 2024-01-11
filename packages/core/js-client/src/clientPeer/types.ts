@@ -21,29 +21,25 @@ import { z } from "zod";
  */
 export type PeerIdB58 = string;
 
+const relaySchema = z.object({
+  peerId: z.string(),
+  multiaddr: z.string(),
+});
+
 /**
  * Node of the Fluence network specified as a pair of node's multiaddr and it's peer id
  */
-export type Node = {
-  peerId: PeerIdB58;
-  multiaddr: string;
-};
+export type Relay = z.infer<typeof relaySchema>;
 
-export const relaySchema = z.union([
-  z.string(),
-  z.object({
-    peerId: z.string(),
-    multiaddr: z.string(),
-  }),
-]);
+export const relayOptionsSchema = z.union([z.string(), relaySchema]);
 
 /**
  * A node in Fluence network a client can connect to.
  * Can be in the form of:
  * - string: multiaddr in string format
- * - Node: node structure, @see Node
+ * - Relay: relay structure, @see Relay
  */
-export type RelayOptions = z.infer<typeof relaySchema>;
+export type RelayOptions = z.infer<typeof relayOptionsSchema>;
 
 /**
  * Fluence Peer's key pair types
@@ -101,11 +97,6 @@ export interface IFluenceClient {
   onConnectionStateChange(
     handler: (state: ConnectionState) => void,
   ): ConnectionState;
-
-  /**
-   * Return peer's secret key as byte array.
-   */
-  getPeerSecretKey(): Uint8Array;
 
   /**
    * Return peer's public key as a base58 string (multihash/CIDv0).
