@@ -90,10 +90,6 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     );
   }
 
-  getPeerSecretKey(): Uint8Array {
-    return this.keyPair.toEd25519PrivateKey();
-  }
-
   connectionState: ConnectionState = "disconnected";
   connectionStateChangeHandler: (state: ConnectionState) => void = () => {};
 
