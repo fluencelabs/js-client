@@ -50,15 +50,3 @@ export function marineLogger(serviceId: string): MarineLogger {
     info: debug(`${name}:info`),
   };
 }
-
-export function disable() {
-  debug.disable();
-}
-
-export function enable(namespaces: string) {
-  debug.enable(namespaces);
-}
-
-export function enabled(namespaces: string) {
-  return debug.enabled(namespaces);
-}

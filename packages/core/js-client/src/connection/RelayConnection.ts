@@ -180,19 +180,27 @@ export class RelayConnection implements IConnection {
       );
     }
 
-    log.trace("sending particle...");
-
     // Reusing active connection here
     const stream = await this.lib2p2Peer.dialProtocol(
       this.relayAddress,
       PROTOCOL_NAME,
     );
 
-    log.trace("created stream with id ", stream.id);
+    log.trace(
+      "sending the particle %s to the created stream %s",
+      particle.id,
+      stream.id,
+    );
+
     const sink = stream.sink;
 
     await pipe([fromString(serializeToString(particle))], encode, sink);
-    log.trace("data written to sink");
+
+    log.trace(
+      "the particle %s have been written to the stream %s",
+      particle.id,
+      stream.id,
+    );
   }
 
   // Await will appear after uncommenting lines in func body

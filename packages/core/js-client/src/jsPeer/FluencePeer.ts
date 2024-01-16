@@ -424,7 +424,7 @@ export abstract class FluencePeer {
   ): Promise<CallServiceResult> {
     const particleId = req.particleContext.particleId;
 
-    log_particle.trace(
+    log_particle.debug(
       "id %s. executing call service handler %j",
       particleId,
       req,
