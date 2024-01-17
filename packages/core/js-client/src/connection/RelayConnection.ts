@@ -18,7 +18,7 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
 import { PeerIdB58 } from "@fluencelabs/interfaces";
 import { identify } from "@libp2p/identify";
-import type { PeerId, Stream } from "@libp2p/interface";
+import type { PeerId } from "@libp2p/interface";
 import { peerIdFromString } from "@libp2p/peer-id";
 import { ping } from "@libp2p/ping";
 import { webSockets } from "@libp2p/websockets";
@@ -180,33 +180,39 @@ export class RelayConnection implements IConnection {
       );
     }
 
-    log.trace("sending particle...");
-
     // Reusing active connection here
     const stream = await this.lib2p2Peer.dialProtocol(
       this.relayAddress,
       PROTOCOL_NAME,
     );
 
-    log.trace("created stream with id ", stream.id);
+    log.trace(
+      "sending particle %s to %s",
+      particle.id,
+      this.relayAddress.toString(),
+    );
+
     const sink = stream.sink;
 
     await pipe([fromString(serializeToString(particle))], encode, sink);
-    log.trace("data written to sink");
+
+    log.trace(
+      "particle %s sent to %s",
+      particle.id,
+      this.relayAddress.toString(),
+    );
   }
 
-  // Await will appear after uncommenting lines in func body
-  // eslint-disable-next-line @typescript-eslint/require-await
-  private async processIncomingMessage(msg: string, stream: Stream) {
+  private async processIncomingMessage(msg: string) {
     let particle: Particle | undefined;
 
     try {
       particle = Particle.fromString(msg);
 
       log.trace(
-        "got particle from stream with id %s and particle id %s",
-        stream.id,
+        "received particle %s from %s",
         particle.id,
+        this.relayAddress.toString(),
       );
 
       const initPeerId = peerIdFromString(particle.initPeerId);
@@ -268,7 +274,7 @@ export class RelayConnection implements IConnection {
           async (source) => {
             try {
               for await (const msg of source) {
-                await this.processIncomingMessage(msg, stream);
+                await this.processIncomingMessage(msg);
               }
             } catch (e) {
               log.error("connection closed: %j", e);
