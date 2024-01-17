@@ -230,8 +230,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@libp2p/crypto':
-        specifier: 3.0.1
-        version: 3.0.1
+        specifier: 3.0.4
+        version: 3.0.4
       '@libp2p/identify':
         specifier: 1.0.4
         version: 1.0.4
@@ -3012,7 +3012,7 @@ packages:
     dependencies:
       '@chainsafe/as-chacha20poly1305': 0.1.0
       '@chainsafe/as-sha256': 0.4.1
-      '@libp2p/crypto': 3.0.1
+      '@libp2p/crypto': 3.0.4
       '@libp2p/interface': 1.0.1
       '@libp2p/peer-id': 4.0.1
       '@noble/ciphers': 0.4.0
@@ -4070,17 +4070,17 @@ packages:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
     dev: false
 
-  /@libp2p/crypto@3.0.1:
-    resolution: {integrity: sha512-CvqzsWvAYaga/Du3gDRChN9d8PUnOoCQg3VlugKf6tfw5+1pd7sMDhyMLajXqFsWqQUY6FojgB1TS4izpODMpw==}
+  /@libp2p/crypto@3.0.4:
+    resolution: {integrity: sha512-FzSwBo+RJOUzdzEwug5ZL4dAGKwEBWTLzj+EmUTHHY6c87+oLh571DQk/w0oYObSD9hYbcKePgSBaZeBx0JaZg==}
     dependencies:
-      '@libp2p/interface': 1.0.1
+      '@libp2p/interface': 1.1.2
       '@noble/curves': 1.1.0
       '@noble/hashes': 1.3.1
-      multiformats: 12.1.3
+      multiformats: 13.0.1
       node-forge: 1.3.1
       protons-runtime: 5.0.2(uint8arraylist@2.4.3)
       uint8arraylist: 2.4.3
-      uint8arrays: 4.0.6
+      uint8arrays: 5.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -4141,6 +4141,19 @@ packages:
       - supports-color
     dev: false
 
+  /@libp2p/interface@1.1.2:
+    resolution: {integrity: sha512-uC4hxtEJuWiDiZfokkSNEEbCzdyZrqb5kp67Wc5PjZsySZ2IoImdIfie003yQXlB1xBp/XUJzdC6kVu4M7LUmg==}
+    dependencies:
+      '@multiformats/multiaddr': 12.1.11
+      it-pushable: 3.2.3
+      it-stream-types: 2.0.1
+      multiformats: 13.0.1
+      progress-events: 1.0.0
+      uint8arraylist: 2.4.8
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@libp2p/logger@3.0.2:
     resolution: {integrity: sha512-2JtRGBXiGfm1t5XneUIXQ2JusW7QwyYmxsW7hSAYS5J73RQJUicpt5le5obVRt7+OM39ei+nWEuC6Xvm1ugHkw==}
     dependencies:
@@ -4177,6 +4190,8 @@ packages:
       uint8-varint: 2.0.2
       uint8arraylist: 2.4.3
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/peer-collections@5.0.0:
@@ -4184,12 +4199,14 @@ packages:
     dependencies:
       '@libp2p/interface': 1.0.1
       '@libp2p/peer-id': 4.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/peer-id-factory@4.0.0:
     resolution: {integrity: sha512-dFbQOpxqEw4CqV+ZalMc5UABqts+hskMoaqytjmR55pXgL4KDamOyg7hBT/HrHRp2sStf8E2vwQ5wnjv1W9uFQ==}
     dependencies:
-      '@libp2p/crypto': 3.0.1
+      '@libp2p/crypto': 3.0.4
       '@libp2p/interface': 1.0.1
       '@libp2p/peer-id': 4.0.1
       multiformats: 12.1.3
@@ -4206,12 +4223,14 @@ packages:
       '@libp2p/interface': 1.0.1
       multiformats: 12.1.3
       uint8arrays: 4.0.6
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/peer-record@7.0.0:
     resolution: {integrity: sha512-Kr5XgyRzqJjK4rBu+QA2e2zGT59rp2OKD8kviwpE4NwKWyDs85JaRduorso9KujJG/F0uZI8tOhPjadO1Lwatw==}
     dependencies:
-      '@libp2p/crypto': 3.0.1
+      '@libp2p/crypto': 3.0.4
       '@libp2p/interface': 1.0.1
       '@libp2p/peer-id': 4.0.1
       '@libp2p/utils': 5.0.2
@@ -4247,7 +4266,7 @@ packages:
   /@libp2p/ping@1.0.4:
     resolution: {integrity: sha512-LD8FNs5UbC4Y/0piW1ue1YFMPaWU9+fguFgOKroKVjsy3Hwq4ckgp9tKlp0LZGaWTvKfJCX1m6/GcXJ7Rk0fFg==}
     dependencies:
-      '@libp2p/crypto': 3.0.1
+      '@libp2p/crypto': 3.0.4
       '@libp2p/interface': 1.0.1
       '@libp2p/interface-internal': 1.0.1
       '@libp2p/peer-id-factory': 4.0.0
@@ -11002,7 +11021,7 @@ packages:
   /libp2p@1.0.7:
     resolution: {integrity: sha512-Wo/Ht01QwcnKKZlS759/72jrWIl1Zbf6lz4/qsgK26+DNXLuxeGn+lPDFwttNP3LdYR+s3OS26S11o8yZMcshQ==}
     dependencies:
-      '@libp2p/crypto': 3.0.1
+      '@libp2p/crypto': 3.0.4
       '@libp2p/interface': 1.0.1
       '@libp2p/interface-internal': 1.0.1
       '@libp2p/logger': 4.0.1
@@ -11506,6 +11525,10 @@ packages:
   /multiformats@12.1.3:
     resolution: {integrity: sha512-eajQ/ZH7qXZQR2AgtfpmSMizQzmyYVmCql7pdhldPuYQi4atACekbJaQplk6dWyIi10jCaFnd6pqvcEFXjbaJw==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dev: false
+
+  /multiformats@13.0.1:
+    resolution: {integrity: sha512-bt3R5iXe2O8xpp3wkmQhC73b/lC4S2ihU8Dndwcsysqbydqb8N+bpP116qMcClZ17g58iSIwtXUTcg2zT4sniA==}
     dev: false
 
   /mz@2.7.0:
@@ -13086,6 +13109,11 @@ packages:
   /process@0.11.10:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
+
+  /progress-events@1.0.0:
+    resolution: {integrity: sha512-zIB6QDrSbPfRg+33FZalluFIowkbV5Xh1xSuetjG+rlC5he6u2dc6VQJ0TbMdlN3R1RHdpOqxEFMKTnQ+itUwA==}
+    engines: {node: '>=16.0.0', npm: '>=7.0.0'}
+    dev: false
 
   /progress@2.0.3:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
@@ -15115,6 +15143,12 @@ packages:
       uint8arrays: 4.0.3
     dev: false
 
+  /uint8arraylist@2.4.8:
+    resolution: {integrity: sha512-vc1PlGOzglLF0eae1M8mLRTBivsvrGsdmJ5RbK3e+QRvRLOZfZhQROTwH/OfyF3+ZVUg9/8hE8bmKP2CvP9quQ==}
+    dependencies:
+      uint8arrays: 5.0.1
+    dev: false
+
   /uint8arrays@4.0.3:
     resolution: {integrity: sha512-b+aKlI2oTnxnfeSQWV1sMacqSNxqhtXySaH6bflvONGxF8V/fT3ZlYH7z2qgGfydsvpVo4JUgM/Ylyfl2YouCg==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
@@ -15125,6 +15159,12 @@ packages:
     resolution: {integrity: sha512-4ZesjQhqOU2Ip6GPReIwN60wRxIupavL8T0Iy36BBHr2qyMrNxsPJvr7vpS4eFt8F8kSguWUPad6ZM9izs/vyw==}
     dependencies:
       multiformats: 12.1.3
+    dev: false
+
+  /uint8arrays@5.0.1:
+    resolution: {integrity: sha512-ND5RpJAnPgHmZT7hWD/2T4BwRp04j8NLKvMKC/7bhiEwEjUMkQ4kvBKiH6hOqbljd6qJ2xS8reL3vl1e33grOQ==}
+    dependencies:
+      multiformats: 13.0.1
     dev: false
 
   /unbox-primitive@1.0.2:
