@@ -52,7 +52,7 @@
     "it-map": "3.0.5",
     "it-pipe": "3.0.1",
     "js-base64": "3.7.5",
-    "libp2p": "1.1.0",
+    "libp2p": "1.1.2",
     "multiformats": "11.0.1",
     "rxjs": "7.5.5",
     "uint8arrays": "4.0.3",

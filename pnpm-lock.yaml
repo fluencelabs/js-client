@@ -278,8 +278,8 @@ importers:
         specifier: 3.7.5
         version: 3.7.5
       libp2p:
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.2
+        version: 1.1.2
       multiformats:
         specifier: 11.0.1
         version: 11.0.1
@@ -3144,19 +3144,6 @@ packages:
       protons-runtime: 5.2.2
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
-    dev: false
-
-  /@libp2p/crypto@3.0.4:
-    resolution: {integrity: sha512-FzSwBo+RJOUzdzEwug5ZL4dAGKwEBWTLzj+EmUTHHY6c87+oLh571DQk/w0oYObSD9hYbcKePgSBaZeBx0JaZg==}
-    dependencies:
-      '@libp2p/interface': 1.1.2
-      '@noble/curves': 1.3.0
-      '@noble/hashes': 1.3.3
-      multiformats: 13.0.1
-      node-forge: 1.3.1
-      protons-runtime: 5.2.2
-      uint8arraylist: 2.4.8
-      uint8arrays: 5.0.1
     dev: false
 
   /@libp2p/crypto@4.0.1:
@@ -6750,11 +6737,6 @@ packages:
       has-property-descriptors: 1.0.1
       object-keys: 1.1.1
 
-  /delay@6.0.0:
-    resolution: {integrity: sha512-2NJozoOHQ4NuZuVIr5CWd0iiLVIRSDepakaovIN+9eIDHEhdCAEvSy2cuf1DCrPPQLvHmbqTHODlhHg8UCy4zw==}
-    engines: {node: '>=16'}
-    dev: false
-
   /delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
@@ -10064,10 +10046,10 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  /libp2p@1.1.0:
-    resolution: {integrity: sha512-qPN+ug+awnbvQr1o4/19gkNvjVVdy1ZYCyJAkJtJArWLhWTwPfS1EVS185NojhIYjm5/JJtsFw6c9epjYz+Ijw==}
+  /libp2p@1.1.2:
+    resolution: {integrity: sha512-5AyeIkwpQ7saViTGd87ezbi/0nsQhE/7Mr33h3f5aKVO6h3J4Sy2KFP2RHrXW13BAwrTWg/Amci99Bp82bceOg==}
     dependencies:
-      '@libp2p/crypto': 3.0.4
+      '@libp2p/crypto': 4.0.1
       '@libp2p/interface': 1.1.2
       '@libp2p/interface-internal': 1.0.7
       '@libp2p/logger': 4.0.5
@@ -10077,27 +10059,15 @@ packages:
       '@libp2p/peer-id-factory': 4.0.5
       '@libp2p/peer-store': 10.0.7
       '@libp2p/utils': 5.1.1
-      '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.1.12
-      '@multiformats/multiaddr-matcher': 1.1.2
       any-signal: 4.1.1
       datastore-core: 9.2.7
-      delay: 6.0.0
       interface-datastore: 8.2.10
-      it-all: 3.0.4
-      it-drain: 3.0.5
-      it-map: 3.0.5
       it-merge: 3.0.3
       it-parallel: 3.0.6
-      it-pipe: 3.0.1
-      it-stream-types: 2.0.1
       merge-options: 3.0.4
       multiformats: 13.0.1
-      p-defer: 4.0.0
-      p-queue: 8.0.1
       private-ip: 3.0.1
-      rate-limiter-flexible: 4.0.0
-      uint8arraylist: 2.4.8
       uint8arrays: 5.0.1
     transitivePeerDependencies:
       - supports-color
@@ -12374,10 +12344,6 @@ packages:
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
-    dev: false
-
-  /rate-limiter-flexible@4.0.0:
-    resolution: {integrity: sha512-SkA18LEPqJJKHixi6E7tzBKTXbj9gu5wPyfTykPVRZR5JGSw0dMCjtZsjlfuabVY940pu28Wu87NZN4FhztnyQ==}
     dev: false
 
   /raw-body@2.5.1:
