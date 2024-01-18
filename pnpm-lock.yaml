@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@libp2p/utils': 5.2.2
+
 importers:
 
   .:
@@ -1903,7 +1906,7 @@ packages:
     resolution: {integrity: sha512-8ar6jph9ZuUUxQ8t8W1MaZqH7f7KvGK2wR7TDGnN0r4QtZc07ICNgVjnolnI9/8bclrI5Um4uMa8QCYKTrdvDQ==}
     dependencies:
       '@libp2p/interface': 1.1.2
-      '@libp2p/utils': 5.1.1
+      '@libp2p/utils': 5.2.2
       get-iterator: 2.0.1
       it-foreach: 2.0.6
       it-pipe: 3.0.1
@@ -3309,26 +3312,6 @@ packages:
       it-first: 3.0.4
       it-pipe: 3.0.1
       uint8arrays: 5.0.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /@libp2p/utils@5.1.1:
-    resolution: {integrity: sha512-SwStuBwaJJrKGt18ebJYkeJ2hn+XQC8Hm53xeVPJyycgM3vwD1y28yjW0HW1g/vdwRDp9kOFsWiveM0MAYtI/A==}
-    dependencies:
-      '@chainsafe/is-ip': 2.0.2
-      '@libp2p/interface': 1.1.2
-      '@libp2p/peer-collections': 5.1.5
-      '@multiformats/multiaddr': 12.1.12
-      '@multiformats/multiaddr-matcher': 1.1.2
-      get-iterator: 2.0.1
-      is-loopback-addr: 2.0.2
-      it-pushable: 3.2.3
-      it-stream-types: 2.0.1
-      p-queue: 8.0.1
-      private-ip: 3.0.1
-      race-signal: 1.0.2
-      uint8arraylist: 2.4.8
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -10096,7 +10079,7 @@ packages:
       '@libp2p/peer-id': 4.0.5
       '@libp2p/peer-id-factory': 4.0.5
       '@libp2p/peer-store': 10.0.7
-      '@libp2p/utils': 5.1.1
+      '@libp2p/utils': 5.2.2
       '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.1.12
       '@multiformats/multiaddr-matcher': 1.1.2

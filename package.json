@@ -32,5 +32,8 @@
     "puppeteer": "19.7.2",
     "ts-node": "10.9.1",
     "typescript": "5.1.6"
+  },
+  "resolutions": {
+    "@libp2p/utils": "5.2.2"
   }
 }
