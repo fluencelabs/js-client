@@ -272,8 +272,8 @@ importers:
         specifier: 3.7.5
         version: 3.7.5
       libp2p:
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 1.0.7
+        version: 1.0.7
       multiformats:
         specifier: 11.0.1
         version: 11.0.1
@@ -9197,12 +9197,6 @@ packages:
       p-defer: 4.0.0
     dev: false
 
-  /it-parallel@3.0.6:
-    resolution: {integrity: sha512-i7UM7I9LTkDJw3YIqXHFAPZX6CWYzGc+X3irdNrVExI4vPazrJdI7t5OqrSVN8CONXLAunCiqaSV/zZRbQR56A==}
-    dependencies:
-      p-defer: 4.0.0
-    dev: false
-
   /it-peekable@3.0.3:
     resolution: {integrity: sha512-Wx21JX/rMzTEl9flx3DGHuPV1KQFGOl8uoKfQtmZHgPQtGb89eQ6RyVd82h3HuP9Ghpt0WgBDlmmdWeHXqyx7w==}
     dev: false
@@ -10071,10 +10065,10 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  /libp2p@1.2.0:
-    resolution: {integrity: sha512-ATtldazSGZqkSLPFD4t00Cizvbex4N0XilFHEIp5IRu0r6klOVLwD9s6/XtZswQqXQmkv71UW6nnNa30EAHsvA==}
+  /libp2p@1.0.7:
+    resolution: {integrity: sha512-Wo/Ht01QwcnKKZlS759/72jrWIl1Zbf6lz4/qsgK26+DNXLuxeGn+lPDFwttNP3LdYR+s3OS26S11o8yZMcshQ==}
     dependencies:
-      '@libp2p/crypto': 4.0.1
+      '@libp2p/crypto': 3.0.1
       '@libp2p/interface': 1.1.2
       '@libp2p/interface-internal': 1.0.7
       '@libp2p/logger': 4.0.5
@@ -10084,16 +10078,29 @@ packages:
       '@libp2p/peer-id-factory': 4.0.5
       '@libp2p/peer-store': 10.0.7
       '@libp2p/utils': 5.2.2
+      '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.1.12
+      '@multiformats/multiaddr-matcher': 1.1.2
       any-signal: 4.1.1
       datastore-core: 9.2.7
+      delay: 6.0.0
       interface-datastore: 8.2.10
+      it-all: 3.0.4
+      it-drain: 3.0.5
+      it-filter: 3.0.4
+      it-first: 3.0.4
+      it-map: 3.0.5
       it-merge: 3.0.3
-      it-parallel: 3.0.6
+      it-pipe: 3.0.1
+      it-stream-types: 2.0.1
       merge-options: 3.0.4
-      multiformats: 13.0.1
+      multiformats: 12.1.3
+      p-defer: 4.0.0
+      p-queue: 7.4.1
       private-ip: 3.0.1
-      uint8arrays: 5.0.1
+      rate-limiter-flexible: 3.0.6
+      uint8arraylist: 2.4.8
+      uint8arrays: 4.0.10
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -11042,6 +11049,14 @@ packages:
       aggregate-error: 3.1.0
     dev: false
 
+  /p-queue@7.4.1:
+    resolution: {integrity: sha512-vRpMXmIkYF2/1hLBKisKeVYJZ8S2tZ0zEAmIJgdVKP2nq0nh4qCdf8bgw+ZgKrkh71AOCaqzwbJJk1WtdcF3VA==}
+    engines: {node: '>=12'}
+    dependencies:
+      eventemitter3: 5.0.1
+      p-timeout: 5.1.0
+    dev: false
+
   /p-queue@8.0.1:
     resolution: {integrity: sha512-NXzu9aQJTAzbBqOt2hwsR63ea7yvxJc0PwN/zobNAudYfb1B7R08SzB4TsLeSbUCuG467NhnoT0oO6w1qRO+BA==}
     engines: {node: '>=18'}
@@ -11056,6 +11071,11 @@ packages:
     dependencies:
       '@types/retry': 0.12.0
       retry: 0.13.1
+    dev: false
+
+  /p-timeout@5.1.0:
+    resolution: {integrity: sha512-auFDyzzzGZZZdHz3BtET9VEz0SE/uMEAx7uWfGPucfzEwwe/xH0iVeZibQmANYE/hp9T2+UUZT5m+BKyrDp3Ew==}
+    engines: {node: '>=12'}
     dev: false
 
   /p-timeout@6.1.2:
@@ -12373,6 +12393,10 @@ packages:
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /rate-limiter-flexible@3.0.6:
+    resolution: {integrity: sha512-tlvbee6lyse/XTWmsuBDS4MT8N65FyM151bPmQlFyfhv9+RIHs7d3rSTXoz0j35H910dM01mH0yTIeWYo8+aAw==}
     dev: false
 
   /raw-body@2.5.1:
