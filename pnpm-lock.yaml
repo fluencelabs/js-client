@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@libp2p/utils': 5.1.1
-
 importers:
 
   .:
@@ -251,8 +248,8 @@ importers:
         specifier: 1.0.10
         version: 1.0.10
       '@libp2p/utils':
-        specifier: 5.1.1
-        version: 5.1.1
+        specifier: 5.2.2
+        version: 5.2.2
       '@libp2p/websockets':
         specifier: 8.0.12
         version: 8.0.12
@@ -1907,7 +1904,7 @@ packages:
     resolution: {integrity: sha512-8ar6jph9ZuUUxQ8t8W1MaZqH7f7KvGK2wR7TDGnN0r4QtZc07ICNgVjnolnI9/8bclrI5Um4uMa8QCYKTrdvDQ==}
     dependencies:
       '@libp2p/interface': 1.1.2
-      '@libp2p/utils': 5.1.1
+      '@libp2p/utils': 5.2.2
       get-iterator: 2.0.1
       it-foreach: 2.0.6
       it-pipe: 3.0.1
@@ -3259,7 +3256,7 @@ packages:
       '@libp2p/crypto': 4.0.1
       '@libp2p/interface': 1.1.2
       '@libp2p/peer-id': 4.0.5
-      '@libp2p/utils': 5.1.1
+      '@libp2p/utils': 5.2.2
       '@multiformats/multiaddr': 12.1.12
       protons-runtime: 5.2.2
       uint8-varint: 2.0.3
@@ -3302,20 +3299,22 @@ packages:
       - supports-color
     dev: false
 
-  /@libp2p/utils@5.1.1:
-    resolution: {integrity: sha512-SwStuBwaJJrKGt18ebJYkeJ2hn+XQC8Hm53xeVPJyycgM3vwD1y28yjW0HW1g/vdwRDp9kOFsWiveM0MAYtI/A==}
+  /@libp2p/utils@5.2.2:
+    resolution: {integrity: sha512-h7pNWv8Kyn7Mji8oNE/H6boon66Qu/GCsjjC3zIrHscRqeLPK0zR2EZlhWhfffObF//s0v0++okQNH5HsFQIPQ==}
     dependencies:
       '@chainsafe/is-ip': 2.0.2
       '@libp2p/interface': 1.1.2
-      '@libp2p/peer-collections': 5.1.5
+      '@libp2p/logger': 4.0.5
       '@multiformats/multiaddr': 12.1.12
       '@multiformats/multiaddr-matcher': 1.1.2
+      delay: 6.0.0
       get-iterator: 2.0.1
       is-loopback-addr: 2.0.2
       it-pushable: 3.2.3
       it-stream-types: 2.0.1
-      p-queue: 8.0.1
+      p-defer: 4.0.0
       private-ip: 3.0.1
+      race-event: 1.1.0
       race-signal: 1.0.2
       uint8arraylist: 2.4.8
     transitivePeerDependencies:
@@ -3326,7 +3325,7 @@ packages:
     resolution: {integrity: sha512-xJ1g6vrMvuEOwzABwCl1LIOdoKL7pwn6wdWlJs0RUYeFNaepYcDEd/gTipNNci+yoXICvx4/cBzMR3Kksj2ZFQ==}
     dependencies:
       '@libp2p/interface': 1.1.2
-      '@libp2p/utils': 5.1.1
+      '@libp2p/utils': 5.2.2
       '@multiformats/mafmt': 12.1.6
       '@multiformats/multiaddr': 12.1.12
       '@multiformats/multiaddr-to-uri': 9.0.7
@@ -6737,6 +6736,11 @@ packages:
       has-property-descriptors: 1.0.1
       object-keys: 1.1.1
 
+  /delay@6.0.0:
+    resolution: {integrity: sha512-2NJozoOHQ4NuZuVIr5CWd0iiLVIRSDepakaovIN+9eIDHEhdCAEvSy2cuf1DCrPPQLvHmbqTHODlhHg8UCy4zw==}
+    engines: {node: '>=16'}
+    dev: false
+
   /delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
@@ -10058,7 +10062,7 @@ packages:
       '@libp2p/peer-id': 4.0.5
       '@libp2p/peer-id-factory': 4.0.5
       '@libp2p/peer-store': 10.0.7
-      '@libp2p/utils': 5.1.1
+      '@libp2p/utils': 5.2.2
       '@multiformats/multiaddr': 12.1.12
       any-signal: 4.1.1
       datastore-core: 9.2.7
@@ -12314,6 +12318,10 @@ packages:
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  /race-event@1.1.0:
+    resolution: {integrity: sha512-8BTiN6IAbov8mqkVEc3LiYbtUzanLfzFhwPF7kZV74ztYeQXdFPIgMCd/sy8xie6ZMtf2JPeMBedx78/RRNO3g==}
+    dev: false
 
   /race-signal@1.0.2:
     resolution: {integrity: sha512-o3xNv0iTcIDQCXFlF6fPAMEBRjFxssgGoRqLbg06m+AdzEXXLUmoNOoUHTVz2NoBI8hHwKFKoC6IqyNtWr2bww==}

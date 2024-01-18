@@ -30,7 +30,7 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@libp2p/utils": "5.1.1",
+    "@libp2p/utils": "5.2.2",
     "@chainsafe/libp2p-noise": "14.0.0",
     "@chainsafe/libp2p-yamux": "6.0.1",
     "@fluencelabs/avm": "0.55.0",
