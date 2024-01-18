@@ -80,6 +80,17 @@ export interface RelayConnectionConfig {
   maxOutboundStreams: number;
 }
 
+type DenyCondition = (ma: Multiaddr) => boolean;
+
+const DOCKER_NOX_DENY_CONDITION: DenyCondition = (ma) => {
+  const [routingProtocol] = ma.stringTuples();
+  const host = routingProtocol?.[1];
+
+  return (host?.startsWith("nox-") || host?.startsWith("10.50.10")) ?? true;
+};
+
+const DENY_CONDITIONS = [DOCKER_NOX_DENY_CONDITION];
+
 /**
  * Implementation for JS peers which connects to Fluence through relay node
  */
@@ -133,8 +144,8 @@ export class RelayConnection implements IConnection {
       },
       connectionGater: {
         // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
-        denyDialMultiaddr: () => {
-          return Promise.resolve(false);
+        denyDialMultiaddr: (ma: Multiaddr) => {
+          return Promise.resolve(DENY_CONDITIONS.some((dc) => dc(ma)));
         },
       },
       services: {

@@ -275,8 +275,8 @@ importers:
         specifier: 3.7.5
         version: 3.7.5
       libp2p:
-        specifier: 1.1.1
-        version: 1.1.1
+        specifier: 1.2.0
+        version: 1.2.0
       multiformats:
         specifier: 11.0.1
         version: 11.0.1
@@ -3141,19 +3141,6 @@ packages:
       protons-runtime: 5.2.2
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
-    dev: false
-
-  /@libp2p/crypto@3.0.4:
-    resolution: {integrity: sha512-FzSwBo+RJOUzdzEwug5ZL4dAGKwEBWTLzj+EmUTHHY6c87+oLh571DQk/w0oYObSD9hYbcKePgSBaZeBx0JaZg==}
-    dependencies:
-      '@libp2p/interface': 1.1.2
-      '@noble/curves': 1.3.0
-      '@noble/hashes': 1.3.3
-      multiformats: 13.0.1
-      node-forge: 1.3.1
-      protons-runtime: 5.2.2
-      uint8arraylist: 2.4.8
-      uint8arrays: 5.0.1
     dev: false
 
   /@libp2p/crypto@4.0.1:
@@ -10063,10 +10050,10 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  /libp2p@1.1.1:
-    resolution: {integrity: sha512-577X5MPRH5vhJzWPLNbXg5EdWNuTzZG90HHTaCFGdrzYLyrGcQWb4RK4Ji3dZALYmx6NmuwTkZv5oojnu2ayng==}
+  /libp2p@1.2.0:
+    resolution: {integrity: sha512-ATtldazSGZqkSLPFD4t00Cizvbex4N0XilFHEIp5IRu0r6klOVLwD9s6/XtZswQqXQmkv71UW6nnNa30EAHsvA==}
     dependencies:
-      '@libp2p/crypto': 3.0.4
+      '@libp2p/crypto': 4.0.1
       '@libp2p/interface': 1.1.2
       '@libp2p/interface-internal': 1.0.7
       '@libp2p/logger': 4.0.5
@@ -10085,7 +10072,6 @@ packages:
       merge-options: 3.0.4
       multiformats: 13.0.1
       private-ip: 3.0.1
-      rate-limiter-flexible: 4.0.0
       uint8arrays: 5.0.1
     transitivePeerDependencies:
       - supports-color
@@ -12366,10 +12352,6 @@ packages:
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
-    dev: false
-
-  /rate-limiter-flexible@4.0.0:
-    resolution: {integrity: sha512-SkA18LEPqJJKHixi6E7tzBKTXbj9gu5wPyfTykPVRZR5JGSw0dMCjtZsjlfuabVY940pu28Wu87NZN4FhztnyQ==}
     dev: false
 
   /raw-body@2.5.1:
