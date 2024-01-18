@@ -250,6 +250,9 @@ importers:
       '@libp2p/ping':
         specifier: 1.0.10
         version: 1.0.10
+      '@libp2p/utils':
+        specifier: 5.1.1
+        version: 5.1.1
       '@libp2p/websockets':
         specifier: 8.0.12
         version: 8.0.12
@@ -1898,8 +1901,6 @@ packages:
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
       wherearewe: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /@chainsafe/libp2p-yamux@6.0.1:
@@ -3143,8 +3144,6 @@ packages:
       protons-runtime: 5.2.2
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /@libp2p/crypto@3.0.4:
