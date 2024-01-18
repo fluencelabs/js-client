@@ -86,7 +86,9 @@ const DOCKER_NOX_DENY_CONDITION: DenyCondition = (ma) => {
   const [routingProtocol] = ma.stringTuples();
   const host = routingProtocol?.[1];
 
-  return (host?.startsWith("nox-") || host?.startsWith("10.50.10")) ?? true;
+  return (
+    host === undefined || host.startsWith("nox-") || host.startsWith("10.50.10")
+  );
 };
 
 const DENY_CONDITIONS = [DOCKER_NOX_DENY_CONDITION];
@@ -143,9 +145,13 @@ export class RelayConnection implements IConnection {
           : {}),
       },
       connectionGater: {
-        // By default, this function forbids connections to private peers. For example multiaddr with ip 127.0.0.1 isn't allowed
+        // By default, this function forbids connections to private peers. For example, multiaddr with ip 127.0.0.1 isn't allowed
         denyDialMultiaddr: (ma: Multiaddr) => {
-          return Promise.resolve(DENY_CONDITIONS.some((dc) => dc(ma)));
+          return Promise.resolve(
+            DENY_CONDITIONS.some((dc) => {
+              return dc(ma);
+            }),
+          );
         },
       },
       services: {
