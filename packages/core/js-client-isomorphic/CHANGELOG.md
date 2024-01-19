@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.3.1...js-client-isomorphic-v0.4.0) (2024-01-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** update dependency @fluencelabs/avm to v0.55.0 ([#407](https://github.com/fluencelabs/js-client/issues/407))
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.55.0 ([5d7ae85](https://github.com/fluencelabs/js-client/commit/5d7ae85e585b8ce1d89f347a0a31d2212fc5a792))
+* **deps:** update dependency @fluencelabs/avm to v0.55.0 ([#407](https://github.com/fluencelabs/js-client/issues/407)) ([5d7ae85](https://github.com/fluencelabs/js-client/commit/5d7ae85e585b8ce1d89f347a0a31d2212fc5a792))
+* Enable async loading of all dependency resources ([#408](https://github.com/fluencelabs/js-client/issues/408)) ([f5425b4](https://github.com/fluencelabs/js-client/commit/f5425b4746f436f84a41bae6584adb8b200ba33d))
+
 ## [0.3.1](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.3.0...js-client-isomorphic-v0.3.1) (2023-12-15)
 
 
