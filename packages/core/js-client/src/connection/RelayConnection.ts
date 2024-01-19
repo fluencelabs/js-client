@@ -82,16 +82,20 @@ export interface RelayConnectionConfig {
 
 type DenyCondition = (ma: Multiaddr) => boolean;
 
-const DOCKER_NOX_DENY_CONDITION: DenyCondition = (ma) => {
+const dockerNoxDenyCondition: DenyCondition = (ma) => {
   const [routingProtocol] = ma.stringTuples();
   const host = routingProtocol?.[1];
 
+  // Nox proposes 3 multiaddr to discover when used inside docker network,
+  // e.g.: [/dns/nox-1, /ip4/10.50.10.10, /ip4/127.0.0.1]
+  // First 2 of them are unreachable outside the docker network
+  // Libp2p cannot handle these scenarios correctly, creating interruptions which affect e2e tests execution.
   return (
     host === undefined || host.startsWith("nox-") || host.startsWith("10.50.10")
   );
 };
 
-const DENY_CONDITIONS = [DOCKER_NOX_DENY_CONDITION];
+const denyConditions = [dockerNoxDenyCondition];
 
 /**
  * Implementation for JS peers which connects to Fluence through relay node
@@ -141,6 +145,7 @@ export class RelayConnection implements IConnection {
         ...(this.config.dialTimeoutMs !== undefined
           ? {
               dialTimeout: this.config.dialTimeoutMs,
+              autoDialInterval: 0,
             }
           : {}),
       },
@@ -148,7 +153,7 @@ export class RelayConnection implements IConnection {
         // By default, this function forbids connections to private peers. For example, multiaddr with ip 127.0.0.1 isn't allowed
         denyDialMultiaddr: (ma: Multiaddr) => {
           return Promise.resolve(
-            DENY_CONDITIONS.some((dc) => {
+            denyConditions.some((dc) => {
               return dc(ma);
             }),
           );
