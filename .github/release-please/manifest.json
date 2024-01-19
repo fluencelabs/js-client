@@ -1,8 +1,8 @@
 {
-  "packages/core/js-client": "0.5.5",
+  "packages/core/js-client": "0.6.0",
   "packages/core/marine-worker": "0.5.1",
-  "packages/core/aqua-to-js": "0.3.5",
-  "packages/core/js-client-isomorphic": "0.3.1",
-  "packages/core/interfaces": "0.9.0",
+  "packages/core/aqua-to-js": "0.3.6",
+  "packages/core/js-client-isomorphic": "0.4.0",
+  "packages/core/interfaces": "0.10.0",
   "packages/core/npm-aqua-compiler": "0.0.2"
 }

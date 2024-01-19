@@ -12,6 +12,36 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.6.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.5...js-client-v0.6.0) (2024-01-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Remove getter for secret key ([#416](https://github.com/fluencelabs/js-client/issues/416))
+* **deps:** update dependency @fluencelabs/avm to v0.55.0 ([#407](https://github.com/fluencelabs/js-client/issues/407))
+
+### Features
+
+* **js-client:** Remove getter for secret key ([#416](https://github.com/fluencelabs/js-client/issues/416)) ([15f96dc](https://github.com/fluencelabs/js-client/commit/15f96dc5f78693ac9bb86f21b79ed035ffd97977))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.55.0 ([5d7ae85](https://github.com/fluencelabs/js-client/commit/5d7ae85e585b8ce1d89f347a0a31d2212fc5a792))
+* **deps:** update dependency @fluencelabs/avm to v0.55.0 ([#407](https://github.com/fluencelabs/js-client/issues/407)) ([5d7ae85](https://github.com/fluencelabs/js-client/commit/5d7ae85e585b8ce1d89f347a0a31d2212fc5a792))
+* Enable async loading of all dependency resources ([#408](https://github.com/fluencelabs/js-client/issues/408)) ([f5425b4](https://github.com/fluencelabs/js-client/commit/f5425b4746f436f84a41bae6584adb8b200ba33d))
+* **js-client:** Improve logging ([#418](https://github.com/fluencelabs/js-client/issues/418)) ([5696e3b](https://github.com/fluencelabs/js-client/commit/5696e3beba9453e5981a599bab2662d87dc1ddd2))
+* **js-client:** Remove union with undefined of methods for getting random peer ([#417](https://github.com/fluencelabs/js-client/issues/417)) ([4d90414](https://github.com/fluencelabs/js-client/commit/4d90414190feb6772c7afe0869dee7636616f4c4))
+* Update libp2p deps ([#419](https://github.com/fluencelabs/js-client/issues/419)) ([a8a1473](https://github.com/fluencelabs/js-client/commit/a8a14735b34495d2426b1f59f53c75d69c7faf66))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped to 0.10.0
+    * @fluencelabs/js-client-isomorphic bumped to 0.4.0
+
 ## [0.5.5](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.4...js-client-v0.5.5) (2023-12-15)
 
 
