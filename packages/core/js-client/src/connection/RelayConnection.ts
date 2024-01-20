@@ -145,7 +145,6 @@ export class RelayConnection implements IConnection {
         ...(this.config.dialTimeoutMs !== undefined
           ? {
               dialTimeout: this.config.dialTimeoutMs,
-              autoDialInterval: 0,
             }
           : {}),
       },
