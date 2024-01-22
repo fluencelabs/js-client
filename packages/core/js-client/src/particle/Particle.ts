@@ -16,7 +16,7 @@
 
 import { CallResultsArray } from "@fluencelabs/avm";
 import { JSONValue } from "@fluencelabs/interfaces";
-import { fromUint8Array, toUint8Array } from "js-base64";
+import { MulticodecRepr, MsgPackRepr } from "@fluencelabs/avm"
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -27,11 +27,13 @@ import { numberToLittleEndianBytes } from "../util/bytes.js";
 
 import { IParticle } from "./interfaces.js";
 
+const particleRepr = new MulticodecRepr(new MsgPackRepr());
+
 const particleSchema = z.object({
   id: z.string(),
   timestamp: z.number().positive(),
   script: z.string(),
-  data: z.string(),
+  data: z.array(z.number()),
   ttl: z.number().positive(),
   init_peer_id: z.string(),
   signature: z.array(z.number()),
@@ -73,10 +75,10 @@ export class Particle implements IParticle {
     );
   }
 
-  static fromString(str: string): Particle {
-    const json = JSON.parse(str);
+  static deserialize(bytes: Uint8Array): Particle {
+    const obj = particleRepr.fromBinary(bytes);
 
-    const res = particleSchema.safeParse(json);
+    const res = particleSchema.safeParse(obj);
 
     if (!res.success) {
       throw new Error(
@@ -92,7 +94,7 @@ export class Particle implements IParticle {
       data.id,
       data.timestamp,
       data.script,
-      toUint8Array(data.data),
+      new Uint8Array(data.data),
       data.ttl,
       data.init_peer_id,
       new Uint8Array(data.signature),
@@ -154,16 +156,16 @@ export const cloneWithNewData = (
 /**
  * Serializes particle into string suitable for sending through network
  */
-export const serializeToString = (particle: IParticle): string => {
-  return JSON.stringify({
+export const serializeParticle = (particle: IParticle): Uint8Array => {
+  return particleRepr.serialize({
     action: "Particle",
     id: particle.id,
     init_peer_id: particle.initPeerId,
     timestamp: particle.timestamp,
     ttl: particle.ttl,
     script: particle.script,
-    signature: Array.from(particle.signature),
-    data: fromUint8Array(particle.data),
+    signature: particle.signature,
+    data: particle.data,
   });
 };
 

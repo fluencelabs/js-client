@@ -37,7 +37,7 @@ import { IParticle } from "../particle/interfaces.js";
 import {
   buildParticleMessage,
   Particle,
-  serializeToString,
+  serializeParticle,
 } from "../particle/Particle.js";
 import { throwHasNoPeerId } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
@@ -216,7 +216,7 @@ export class RelayConnection implements IConnection {
 
     const sink = stream.sink;
 
-    await pipe([fromString(serializeToString(particle))], encode, sink);
+    await pipe([serializeParticle(particle)], encode, sink);
 
     log.trace(
       "particle %s sent to %s",
@@ -225,11 +225,11 @@ export class RelayConnection implements IConnection {
     );
   }
 
-  private async processIncomingMessage(msg: string) {
+  private async processIncomingMessage(msg: Uint8array) {
     let particle: Particle | undefined;
 
     try {
-      particle = Particle.fromString(msg);
+      particle = Particle.deserialize(msg);
 
       log.trace(
         "received particle %s from %s",
@@ -290,7 +290,8 @@ export class RelayConnection implements IConnection {
           decode,
           (source) => {
             return map(source, (buf) => {
-              return toString(buf.subarray());
+              // TODO is subarray really needed now?
+              return buf.subarray();
             });
           },
           async (source) => {
