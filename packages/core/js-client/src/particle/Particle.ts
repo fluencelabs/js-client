@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import { CallResultsArray } from "@fluencelabs/avm";
+import {
+  CallResultsArray,
+  MulticodecRepr,
+  MsgPackRepr,
+} from "@fluencelabs/avm";
 import { JSONValue } from "@fluencelabs/interfaces";
-import { MulticodecRepr, MsgPackRepr } from "@fluencelabs/avm"
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -33,10 +36,10 @@ const particleSchema = z.object({
   id: z.string(),
   timestamp: z.number().positive(),
   script: z.string(),
-  data: z.array(z.number()),
+  data: z.instanceof(Uint8Array),
   ttl: z.number().positive(),
   init_peer_id: z.string(),
-  signature: z.array(z.number()),
+  signature: z.instanceof(Uint8Array),
 });
 
 export class Particle implements IParticle {
@@ -94,10 +97,10 @@ export class Particle implements IParticle {
       data.id,
       data.timestamp,
       data.script,
-      new Uint8Array(data.data),
+      data.data,
       data.ttl,
       data.init_peer_id,
-      new Uint8Array(data.signature),
+      data.signature,
     );
   }
 }
@@ -157,7 +160,7 @@ export const cloneWithNewData = (
  * Serializes particle into string suitable for sending through network
  */
 export const serializeParticle = (particle: IParticle): Uint8Array => {
-  return particleRepr.serialize({
+  return particleRepr.toBinary({
     action: "Particle",
     id: particle.id,
     init_peer_id: particle.initPeerId,

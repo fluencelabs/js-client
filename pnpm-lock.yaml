@@ -215,8 +215,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       '@fluencelabs/avm':
-        specifier: 0.55.0
-        version: 0.55.0
+        specifier: 0.58.0
+        version: 0.58.0
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
@@ -2746,6 +2746,13 @@ packages:
 
   /@fluencelabs/avm@0.55.0:
     resolution: {integrity: sha512-4KaVnSCkWtoyXSX1UezKX5KRKkBdR+VmXdZwAGqgcqsDKuzTFstfsMO6SCp/njbCOK1Wm/t5Fb1HFDob/6vIog==}
+
+  /@fluencelabs/avm@0.58.0:
+    resolution: {integrity: sha512-ZDRgh4dPxWXTXCe0YJGzYhigz0ZYs7FbXroru0YMsytVEUcK0Yorn0Zvh/1gj5Mq5m++qG7NWF8u7sSqmoN3nQ==}
+    dependencies:
+      msgpack-lite: 0.1.26
+      multicodec: 3.2.1
+    dev: false
 
   /@fluencelabs/marine-js@0.8.0:
     resolution: {integrity: sha512-exxp0T0Dk69dxnbpAiVc/qp66s8Jq/P71TRB9aeQZLZy3EQtVAMCBJvwQY8LzVVlYEyVjmqQkFG/N0rAeYU1vg==}
@@ -7781,6 +7788,10 @@ packages:
     resolution: {integrity: sha512-KGft0ldl31BZVV//jj+IAIGCxkvvUkkON+ScH6zfoX+l+omX6001ggyRSpI0Io2Hlro0ThXotswCtfzS8UkIiQ==}
     dev: false
 
+  /event-lite@0.1.3:
+    resolution: {integrity: sha512-8qz9nOz5VeD2z96elrEKD2U433+L3DWdUdDkOINLGOJvx1GsMBbMn0aCeu28y8/e85A6mCigBiFlYMnTBEGlSw==}
+    dev: false
+
   /eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
 
@@ -8754,6 +8765,10 @@ packages:
 
   /ini@1.3.8:
     resolution: {integrity: sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==}
+    dev: false
+
+  /int64-buffer@0.1.10:
+    resolution: {integrity: sha512-v7cSY1J8ydZ0GyjUHqF+1bshJ6cnEVLo9EnjB8p+4HDRPZc9N5jjmvUV7NvEsqQOKyH0pmIBFWXVQbiS0+OBbA==}
     dev: false
 
   /interface-datastore@8.2.10:
@@ -10528,12 +10543,30 @@ packages:
   /ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  /msgpack-lite@0.1.26:
+    resolution: {integrity: sha512-SZ2IxeqZ1oRFGo0xFGbvBJWMp3yLIY9rlIJyxy8CGrwZn1f0ZK4r6jV/AM1r0FZMDUkWkglOk/eeKIL9g77Nxw==}
+    hasBin: true
+    dependencies:
+      event-lite: 0.1.3
+      ieee754: 1.2.1
+      int64-buffer: 0.1.10
+      isarray: 1.0.0
+    dev: false
+
   /multicast-dns@7.2.5:
     resolution: {integrity: sha512-2eznPJP8z2BFLX50tf0LuODrpINqP1RVIm/CObbTcBRITQgmC/TjcREF1NeTBzIcR5XO/ukWo+YHOjBbFwIupg==}
     hasBin: true
     dependencies:
       dns-packet: 5.6.1
       thunky: 1.1.0
+    dev: false
+
+  /multicodec@3.2.1:
+    resolution: {integrity: sha512-+expTPftro8VAW8kfvcuNNNBgb9gPeNYV9dn+z1kJRWF2vih+/S79f2RVeIwmrJBUJ6NT9IUPWnZDQvegEh5pw==}
+    deprecated: This module has been superseded by the multiformats module
+    dependencies:
+      uint8arrays: 3.1.1
+      varint: 6.0.0
     dev: false
 
   /multiformats@11.0.1:
@@ -10552,6 +10585,10 @@ packages:
 
   /multiformats@13.0.1:
     resolution: {integrity: sha512-bt3R5iXe2O8xpp3wkmQhC73b/lC4S2ihU8Dndwcsysqbydqb8N+bpP116qMcClZ17g58iSIwtXUTcg2zT4sniA==}
+    dev: false
+
+  /multiformats@9.9.0:
+    resolution: {integrity: sha512-HoMUjhH9T8DDBNT+6xzkrd9ga/XiBI4xLr58LJACwK6G3HTOPeMz4nB4KJs33L2BelrIJa7P0VuNaVF3hMYfjg==}
     dev: false
 
   /mz@2.7.0:
@@ -14127,6 +14164,12 @@ packages:
       uint8arrays: 5.0.1
     dev: false
 
+  /uint8arrays@3.1.1:
+    resolution: {integrity: sha512-+QJa8QRnbdXVpHYjLoTpJIdCTiw9Ir62nocClWuXIq2JIh4Uta0cQsTSpFL678p2CN8B+XSApwcU+pQEqVpKWg==}
+    dependencies:
+      multiformats: 9.9.0
+    dev: false
+
   /uint8arrays@4.0.10:
     resolution: {integrity: sha512-AnJNUGGDJAgFw/eWu/Xb9zrVKEGlwJJCaeInlf3BkecE/zcTobk5YXYIPNQJO1q5Hh1QZrQQHf0JvcHqz2hqoA==}
     dependencies:
@@ -14348,7 +14391,6 @@ packages:
 
   /varint@6.0.0:
     resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
-    dev: true
 
   /vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}

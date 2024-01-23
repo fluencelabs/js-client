@@ -29,8 +29,6 @@ import map from "it-map";
 import { pipe } from "it-pipe";
 import { createLibp2p, Libp2p } from "libp2p";
 import { Subject } from "rxjs";
-import { fromString } from "uint8arrays/from-string";
-import { toString } from "uint8arrays/to-string";
 
 import { KeyPair } from "../keypair/index.js";
 import { IParticle } from "../particle/interfaces.js";
@@ -225,7 +223,7 @@ export class RelayConnection implements IConnection {
     );
   }
 
-  private async processIncomingMessage(msg: Uint8array) {
+  private async processIncomingMessage(msg: Uint8Array) {
     let particle: Particle | undefined;
 
     try {
@@ -290,7 +288,6 @@ export class RelayConnection implements IConnection {
           decode,
           (source) => {
             return map(source, (buf) => {
-              // TODO is subarray really needed now?
               return buf.subarray();
             });
           },
