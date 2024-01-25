@@ -168,8 +168,8 @@ export const serializeParticle = (particle: IParticle): Uint8Array => {
     timestamp: new Uint64BE(particle.timestamp),
     ttl: particle.ttl,
     script: particle.script,
-    signature: particle.signature,
-    data: particle.data,
+    signature: Array.from(particle.signature),
+    data: Array.from(particle.data),
   });
 };
 
