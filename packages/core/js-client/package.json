@@ -48,6 +48,7 @@
     "@multiformats/multiaddr": "12.1.12",
     "bs58": "5.0.0",
     "debug": "4.3.4",
+    "int64-buffer": "1.0.1",
     "it-length-prefixed": "9.0.3",
     "it-map": "3.0.5",
     "it-pipe": "3.0.1",

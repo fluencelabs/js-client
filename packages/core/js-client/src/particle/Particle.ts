@@ -20,6 +20,7 @@ import {
   MsgPackRepr,
 } from "@fluencelabs/avm";
 import { JSONValue } from "@fluencelabs/interfaces";
+import { Uint64BE } from "int64-buffer";
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -164,7 +165,7 @@ export const serializeParticle = (particle: IParticle): Uint8Array => {
     action: "Particle",
     id: particle.id,
     init_peer_id: particle.initPeerId,
-    timestamp: particle.timestamp,
+    timestamp: new Uint64BE(particle.timestamp),
     ttl: particle.ttl,
     script: particle.script,
     signature: particle.signature,
