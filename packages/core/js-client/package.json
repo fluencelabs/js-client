@@ -33,7 +33,7 @@
     "@libp2p/utils": "5.2.2",
     "@chainsafe/libp2p-noise": "14.0.0",
     "@chainsafe/libp2p-yamux": "6.0.1",
-    "@fluencelabs/avm": "0.55.0",
+    "@fluencelabs/avm": "0.59.0",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client-isomorphic": "workspace:*",
     "@fluencelabs/marine-worker": "0.5.1",
