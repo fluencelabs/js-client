@@ -37,7 +37,7 @@ services:
       FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0xea6777e8c011E7968605fd012A9Dd49401ec386C"
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: "/ip4/10.50.10.100/tcp/5001"
-      RUST_LOG: "debug,execution=trace,expired=info,effectors=info,dispatcher=info,aquamarine::plumber=info,aquamarine::partice_functions=debug,aquamarine::log=debug,aquamarine=info,aquamarine::aqua_runtime=warn,aquamarine::particle_executor=warn,ipfs_effector=off,ipfs_pure=off,system_services=debug,marine_core::module::marine_module=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=trace,wasmtime_cranelift=off,wasmtime_jit=off,libp2p_tcp=off,libp2p_swarm=off,particle_protocol::libp2p_protocol::upgrade=info,libp2p_mplex=off,particle_reap=debug"
+      RUST_LOG: "info,aquamarine=warn,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=debug"
     command:
       - --aqua-pool-size=2
       - -t=7771
@@ -68,7 +68,7 @@ services:
       FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0xea6777e8c011E7968605fd012A9Dd49401ec386C"
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: "/ip4/10.50.10.100/tcp/5001"
-      RUST_LOG: "debug,execution=trace,expired=info,effectors=info,dispatcher=info,aquamarine::plumber=info,aquamarine::partice_functions=debug,aquamarine::log=debug,aquamarine=info,aquamarine::aqua_runtime=warn,aquamarine::particle_executor=warn,ipfs_effector=off,ipfs_pure=off,system_services=debug,marine_core::module::marine_module=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=trace,wasmtime_cranelift=off,wasmtime_jit=off,libp2p_tcp=off,libp2p_swarm=off,particle_protocol::libp2p_protocol::upgrade=info,libp2p_mplex=off,particle_reap=debug"
+      RUST_LOG: "info,aquamarine=warn,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=debug"
     command:
       - --aqua-pool-size=2
       - -t=7772
@@ -98,7 +98,7 @@ services:
       FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0xea6777e8c011E7968605fd012A9Dd49401ec386C"
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: "/ip4/10.50.10.100/tcp/5001"
-      RUST_LOG: "debug,execution=trace,expired=info,effectors=info,dispatcher=info,aquamarine::plumber=info,aquamarine::partice_functions=debug,aquamarine::log=debug,aquamarine=info,aquamarine::aqua_runtime=warn,aquamarine::particle_executor=warn,ipfs_effector=off,ipfs_pure=off,system_services=debug,marine_core::module::marine_module=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=trace,wasmtime_cranelift=off,wasmtime_jit=off,libp2p_tcp=off,libp2p_swarm=off,particle_protocol::libp2p_protocol::upgrade=info,libp2p_mplex=off,particle_reap=debug"
+      RUST_LOG: "info,aquamarine=warn,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=debug"
     command:
       - --aqua-pool-size=2
       - -t=7773
@@ -128,7 +128,7 @@ services:
       FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0xea6777e8c011E7968605fd012A9Dd49401ec386C"
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: "/ip4/10.50.10.100/tcp/5001"
-      RUST_LOG: "debug,execution=trace,expired=info,effectors=info,dispatcher=info,aquamarine::plumber=info,aquamarine::partice_functions=debug,aquamarine::log=debug,aquamarine=info,aquamarine::aqua_runtime=warn,aquamarine::particle_executor=warn,ipfs_effector=off,ipfs_pure=off,system_services=debug,marine_core::module::marine_module=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=trace,wasmtime_cranelift=off,wasmtime_jit=off,libp2p_tcp=off,libp2p_swarm=off,particle_protocol::libp2p_protocol::upgrade=info,libp2p_mplex=off,particle_reap=debug"
+      RUST_LOG: "info,aquamarine=warn,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=debug"
     command:
       - --aqua-pool-size=2
       - -t=7774
@@ -158,7 +158,7 @@ services:
       FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0xea6777e8c011E7968605fd012A9Dd49401ec386C"
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: "/ip4/10.50.10.100/tcp/5001"
-      RUST_LOG: "debug,execution=trace,expired=info,effectors=info,dispatcher=info,aquamarine::plumber=info,aquamarine::partice_functions=debug,aquamarine::log=debug,aquamarine=info,aquamarine::aqua_runtime=warn,aquamarine::particle_executor=warn,ipfs_effector=off,ipfs_pure=off,system_services=debug,marine_core::module::marine_module=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=trace,wasmtime_cranelift=off,wasmtime_jit=off,libp2p_tcp=off,libp2p_swarm=off,particle_protocol::libp2p_protocol::upgrade=info,libp2p_mplex=off,particle_reap=debug"
+      RUST_LOG: "info,aquamarine=warn,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=debug"
     command:
       - --aqua-pool-size=2
       - -t=7775
@@ -188,7 +188,7 @@ services:
       FLUENCE_ENV_CONNECTOR_CONTRACT_ADDRESS: "0xea6777e8c011E7968605fd012A9Dd49401ec386C"
       FLUENCE_ENV_CONNECTOR_FROM_BLOCK: earliest
       FLUENCE_ENV_AQUA_IPFS_LOCAL_API_MULTIADDR: "/ip4/10.50.10.100/tcp/5001"
-      RUST_LOG: "debug,execution=trace,expired=info,effectors=info,dispatcher=info,aquamarine::plumber=info,aquamarine::partice_functions=debug,aquamarine::log=debug,aquamarine=info,aquamarine::aqua_runtime=warn,aquamarine::particle_executor=warn,ipfs_effector=off,ipfs_pure=off,system_services=debug,marine_core::module::marine_module=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=trace,wasmtime_cranelift=off,wasmtime_jit=off,libp2p_tcp=off,libp2p_swarm=off,particle_protocol::libp2p_protocol::upgrade=info,libp2p_mplex=off,particle_reap=debug"
+      RUST_LOG: "info,aquamarine=warn,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,cranelift_codegen=info,wasmer_wasi=info,run-console=debug"
     command:
       - --aqua-pool-size=2
       - -t=7776
