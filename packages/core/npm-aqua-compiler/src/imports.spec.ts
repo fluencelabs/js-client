@@ -14,12 +14,67 @@
  * limitations under the License.
  */
 
-import { join } from "path";
+import { join, resolve } from "path";
 import { fileURLToPath } from "url";
 
 import { assert, describe, expect, it } from "vitest";
 
-import { gatherImportsFromNpm } from "./imports.js";
+import { gatherImportsFromNpm, GatherImportsResult } from "./imports.js";
+
+const prefix = join(
+  fileURLToPath(new URL("./", import.meta.url)),
+  "..",
+  "test",
+  "transitive-deps",
+  "project",
+);
+
+function buildResolutionKey(str: string) {
+  return str
+    .slice(prefix.length)
+    .split("/node_modules/")
+    .filter(Boolean)
+    .join("/");
+}
+
+function matchTree(
+  expected: GatherImportsResult,
+  actual: GatherImportsResult,
+  aquaToCompileDirPath: string | undefined,
+) {
+  if (aquaToCompileDirPath !== undefined) {
+    aquaToCompileDirPath = resolve(aquaToCompileDirPath);
+  }
+
+  expect(Object.keys(actual).length).toBe(Object.keys(expected).length);
+
+  Object.entries(actual).forEach(([key, value]) => {
+    const resolutionKey =
+      key === aquaToCompileDirPath ? key : buildResolutionKey(key);
+
+    const resolutionValues = expected[resolutionKey];
+
+    assert(resolutionValues);
+
+    expect(Object.keys(value).length).toBe(
+      Object.keys(resolutionValues).length,
+    );
+
+    for (const [dep, path] of Object.entries(value)) {
+      if (Array.isArray(path)) {
+        expect(dep).toBe("");
+        expect(expected[resolutionKey]).toHaveProperty(dep, path);
+
+        continue;
+      }
+
+      expect(expected[resolutionKey]).toHaveProperty(
+        dep,
+        buildResolutionKey(path),
+      );
+    }
+  });
+}
 
 describe("imports", () => {
   /**
@@ -35,44 +90,25 @@ describe("imports", () => {
       string,
       Record<string, string[] | string>
     > = {
-      [aquaToCompileDirPath]: {
+      [resolve(aquaToCompileDirPath)]: {
         "": globalImports,
-        A: "./A",
-        B: "./B",
+        A: "A",
+        B: "B",
       },
-      "./A": {
-        C: "./C",
-        D: "./D",
+      A: {
+        C: "C",
+        D: "D",
       },
-      "./B": {
-        C: "./B/C",
-        D: "./B/D",
+      B: {
+        C: "B/C",
+        D: "B/D",
       },
-      "./C": {
-        D: "./C/D",
+      C: {
+        D: "C/D",
       },
-      "./B/C": {
-        D: "./B/C/D",
+      "B/C": {
+        D: "B/C/D",
       },
-    };
-
-    const prefix = join(
-      fileURLToPath(new URL("./", import.meta.url)),
-      "..",
-      "test",
-      "transitive-deps",
-      "project",
-    );
-
-    const buildResolutionKey = (str: string) => {
-      return (
-        "./" +
-        str
-          .slice(prefix.length)
-          .split("/node_modules/")
-          .filter(Boolean)
-          .join("/")
-      );
     };
 
     const imports = await gatherImportsFromNpm({
@@ -81,35 +117,63 @@ describe("imports", () => {
       globalImports,
     });
 
-    expect(Object.keys(imports).length).toBe(
-      Object.keys(expectedResolution).length,
-    );
+    matchTree(expectedResolution, imports, aquaToCompileDirPath);
+  });
 
-    Object.entries(imports).forEach(([key, value]) => {
-      const resolutionKey =
-        key === aquaToCompileDirPath ? key : buildResolutionKey(key);
+  it("should resolve transitive dependencies and return a subtree when 'aquaToCompileDirPath' inside project 'node_modules' folder", async () => {
+    const npmProjectDirPath = "./test/transitive-deps/project";
 
-      const resolutionValues = expectedResolution[resolutionKey];
+    const aquaToCompileDirPath =
+      "./test/transitive-deps/project/node_modules/A";
 
-      assert(resolutionValues);
+    const globalImports = ["./.fluence/aqua"];
 
-      expect(Object.keys(value).length).toBe(
-        Object.keys(resolutionValues).length,
-      );
+    const expectedResolution: Record<
+      string,
+      Record<string, string[] | string>
+    > = {
+      [resolve(aquaToCompileDirPath)]: {
+        "": globalImports,
+        C: "C",
+        D: "D",
+      },
+      C: {
+        D: "C/D",
+      },
+    };
 
-      for (const [dep, path] of Object.entries(value)) {
-        if (Array.isArray(path)) {
-          expect(dep).toBe("");
-          expect(expectedResolution[resolutionKey]).toHaveProperty(dep, path);
-
-          continue;
-        }
-
-        expect(expectedResolution[resolutionKey]).toHaveProperty(
-          dep,
-          buildResolutionKey(path),
-        );
-      }
+    const imports = await gatherImportsFromNpm({
+      npmProjectDirPath,
+      aquaToCompileDirPath,
+      globalImports,
     });
+
+    matchTree(expectedResolution, imports, aquaToCompileDirPath);
+  });
+
+  it("should resolve transitive dependencies when project is empty", async () => {
+    const npmProjectDirPath = "./test/transitive-deps/empty-project";
+
+    const aquaToCompileDirPath =
+      "./test/transitive-deps/empty-project/node_modules/A";
+
+    const globalImports = ["./.fluence/aqua"];
+
+    const expectedResolution: Record<
+      string,
+      Record<string, string[] | string>
+    > = {
+      [resolve(aquaToCompileDirPath)]: {
+        "": globalImports,
+      },
+    };
+
+    const imports = await gatherImportsFromNpm({
+      npmProjectDirPath,
+      aquaToCompileDirPath,
+      globalImports,
+    });
+
+    matchTree(expectedResolution, imports, aquaToCompileDirPath);
   });
 });
