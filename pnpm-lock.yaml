@@ -262,6 +262,9 @@ importers:
       debug:
         specifier: 4.3.4
         version: 4.3.4
+      int64-buffer:
+        specifier: 1.0.1
+        version: 1.0.1
       it-length-prefixed:
         specifier: 9.0.3
         version: 9.0.3
@@ -1898,6 +1901,8 @@ packages:
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
       wherearewe: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@chainsafe/libp2p-yamux@6.0.1:
@@ -3144,6 +3149,8 @@ packages:
       protons-runtime: 5.2.2
       uint8arraylist: 2.4.8
       uint8arrays: 4.0.10
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@libp2p/crypto@4.0.1:
@@ -8765,6 +8772,11 @@ packages:
   /int64-buffer@0.1.10:
     resolution: {integrity: sha512-v7cSY1J8ydZ0GyjUHqF+1bshJ6cnEVLo9EnjB8p+4HDRPZc9N5jjmvUV7NvEsqQOKyH0pmIBFWXVQbiS0+OBbA==}
 
+  /int64-buffer@1.0.1:
+    resolution: {integrity: sha512-+3azY4pXrjAupJHU1V9uGERWlhoqNswJNji6aD/02xac7oxol508AsMC5lxKhEqyZeDFy3enq5OGWXF4u75hiw==}
+    engines: {node: '>= 4.5.0'}
+    dev: false
+    
   /interface-datastore@8.2.10:
     resolution: {integrity: sha512-D8RuxMdjOPB+j6WMDJ+I2aXTDzUT6DIVjgzo1E+ODL7w8WrSFl9FXD2SYmgj6vVzdb7Kb5qmAI9pEnDZJz7ifg==}
     dependencies:
