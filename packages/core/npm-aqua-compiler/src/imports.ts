@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { resolve } from "path";
+
 import Arborist from "@npmcli/arborist";
 import { breadth } from "treeverse";
 
@@ -40,7 +42,9 @@ export async function gatherImportsFromNpm({
    * Traverse dependency tree to construct map
    * (real path of a package) -> (real paths of its immediate dependencies)
    */
-  const result: GatherImportsResult = {};
+  let result: Record<string, Record<string, string>> = {};
+  const rootDepsKey = "";
+  const aquaDepPath = resolve(aquaToCompileDirPath ?? npmProjectDirPath);
 
   breadth({
     tree,
@@ -64,15 +68,8 @@ export async function gatherImportsFromNpm({
 
         // Root node should have top-level property pointed to aqua dependency folder
         if (node.isRoot) {
-          const aquaDepPath = aquaToCompileDirPath ?? npmProjectDirPath;
-
-          result[aquaDepPath] = {
-            ...(result[aquaDepPath] ??
-              (globalImports.length > 0
-                ? {
-                    "": globalImports,
-                  }
-                : {})),
+          result[rootDepsKey] = {
+            ...result[rootDepsKey],
             [dep.name]: dep.realpath,
           };
         } else {
@@ -88,5 +85,38 @@ export async function gatherImportsFromNpm({
     },
   });
 
-  return result;
+  // In case 'aquaToCompileDirPath' points to any dependency inside current project
+  // Only the subtree with 'aquaToCompileDirPath' as root node is returned
+  if (aquaToCompileDirPath !== undefined && aquaDepPath in result) {
+    // Other nodes which are not included in the subtree simply dropped
+    const newResult: Record<string, Record<string, string>> = {};
+
+    breadth({
+      tree: aquaDepPath,
+      getChildren: (node) => {
+        const deps = result[node];
+
+        if (deps === undefined) {
+          return [];
+        }
+
+        const isRootNode = node === aquaDepPath;
+        newResult[isRootNode ? rootDepsKey : node] = deps;
+        return Object.values(deps);
+      },
+    });
+
+    result = newResult;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { [rootDepsKey]: _, ...rest } = result;
+
+  return {
+    ...rest,
+    [aquaDepPath]: {
+      ...result[rootDepsKey],
+      "": globalImports,
+    },
+  };
 }
