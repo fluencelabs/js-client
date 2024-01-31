@@ -12,6 +12,17 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.8.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.7.0...js-client-v0.8.0) (2024-01-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **js-client:** Multiformat MsgPack for particle data ([#422](https://github.com/fluencelabs/js-client/issues/422))
+
+### Features
+
+* **js-client:** Multiformat MsgPack for particle data ([#422](https://github.com/fluencelabs/js-client/issues/422)) ([8ac029b](https://github.com/fluencelabs/js-client/commit/8ac029b6d336114a90559fb3fee18f7493beb1e0))
+
 ## [0.7.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.6.0...js-client-v0.7.0) (2024-01-26)
 
 
