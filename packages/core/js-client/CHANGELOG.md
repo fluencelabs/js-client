@@ -12,6 +12,13 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.8.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.0...js-client-v0.8.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* Dial interval ([#421](https://github.com/fluencelabs/js-client/issues/421)) ([fa38328](https://github.com/fluencelabs/js-client/commit/fa38328fddac076831ecd0a352d802a0281c4ab4))
+
 ## [0.8.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.7.0...js-client-v0.8.0) (2024-01-29)
 
 
