@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.0](https://github.com/fluencelabs/js-client/compare/interfaces-v0.10.0...interfaces-v0.11.0) (2024-01-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** update dependency @fluencelabs/avm to v0.59.0 #423
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.59.0 [#423](https://github.com/fluencelabs/js-client/issues/423) ([e21ecc1](https://github.com/fluencelabs/js-client/commit/e21ecc1edec5f34f2a56726eb62833774f814fef))
+
 ## [0.10.0](https://github.com/fluencelabs/js-client/compare/interfaces-v0.9.0...interfaces-v0.10.0) (2024-01-19)
 
 

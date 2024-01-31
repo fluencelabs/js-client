@@ -29,15 +29,13 @@ import map from "it-map";
 import { pipe } from "it-pipe";
 import { createLibp2p, Libp2p } from "libp2p";
 import { Subject } from "rxjs";
-import { fromString } from "uint8arrays/from-string";
-import { toString } from "uint8arrays/to-string";
 
 import { KeyPair } from "../keypair/index.js";
 import { IParticle } from "../particle/interfaces.js";
 import {
   buildParticleMessage,
   Particle,
-  serializeToString,
+  serializeParticle,
 } from "../particle/Particle.js";
 import { throwHasNoPeerId } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
@@ -215,7 +213,7 @@ export class RelayConnection implements IConnection {
 
     const sink = stream.sink;
 
-    await pipe([fromString(serializeToString(particle))], encode, sink);
+    await pipe([serializeParticle(particle)], encode, sink);
 
     log.trace(
       "particle %s sent to %s",
@@ -224,11 +222,11 @@ export class RelayConnection implements IConnection {
     );
   }
 
-  private async processIncomingMessage(msg: string) {
+  private async processIncomingMessage(msg: Uint8Array) {
     let particle: Particle | undefined;
 
     try {
-      particle = Particle.fromString(msg);
+      particle = Particle.deserialize(msg);
 
       log.trace(
         "received particle %s from %s",
@@ -289,7 +287,7 @@ export class RelayConnection implements IConnection {
           decode,
           (source) => {
             return map(source, (buf) => {
-              return toString(buf.subarray());
+              return buf.subarray();
             });
           },
           async (source) => {

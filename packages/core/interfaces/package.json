@@ -1,7 +1,7 @@
 {
   "name": "@fluencelabs/interfaces",
   "type": "module",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Interfaces",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
@@ -50,7 +50,7 @@
   "dependencies": {},
   "devDependencies": {
     "@multiformats/multiaddr": "11.3.0",
-    "@fluencelabs/avm": "0.55.0",
+    "@fluencelabs/avm": "0.59.0",
     "hotscript": "1.0.13"
   }
 }

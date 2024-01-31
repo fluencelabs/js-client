@@ -12,6 +12,25 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.7.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.6.0...js-client-v0.7.0) (2024-01-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** update dependency @fluencelabs/avm to v0.59.0 #423
+
+### Bug Fixes
+
+* **deps:** update dependency @fluencelabs/avm to v0.59.0 [#423](https://github.com/fluencelabs/js-client/issues/423) ([e21ecc1](https://github.com/fluencelabs/js-client/commit/e21ecc1edec5f34f2a56726eb62833774f814fef))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped to 0.11.0
+    * @fluencelabs/js-client-isomorphic bumped to 0.5.0
+
 ## [0.6.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.5.5...js-client-v0.6.0) (2024-01-19)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/js-client",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Client for interacting with Fluence network",
   "engines": {
     "node": ">=10",
@@ -30,10 +30,9 @@
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@libp2p/utils": "5.2.2",
     "@chainsafe/libp2p-noise": "14.0.0",
     "@chainsafe/libp2p-yamux": "6.0.1",
-    "@fluencelabs/avm": "0.55.0",
+    "@fluencelabs/avm": "0.59.0",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client-isomorphic": "workspace:*",
     "@fluencelabs/marine-worker": "0.5.1",
@@ -44,10 +43,12 @@
     "@libp2p/peer-id": "4.0.5",
     "@libp2p/peer-id-factory": "4.0.5",
     "@libp2p/ping": "1.0.10",
+    "@libp2p/utils": "5.2.2",
     "@libp2p/websockets": "8.0.12",
     "@multiformats/multiaddr": "12.1.12",
     "bs58": "5.0.0",
     "debug": "4.3.4",
+    "int64-buffer": "1.0.1",
     "it-length-prefixed": "9.0.3",
     "it-map": "3.0.5",
     "it-pipe": "3.0.1",
