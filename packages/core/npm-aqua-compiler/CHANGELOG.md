@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/fluencelabs/js-client/compare/npm-aqua-compiler-v0.0.2...npm-aqua-compiler-v0.0.3) (2024-01-31)
+
+
+### Bug Fixes
+
+* **npm-aqua-compiler:** Support aquaDir inside the project's node_nodules ([#427](https://github.com/fluencelabs/js-client/issues/427)) ([514663a](https://github.com/fluencelabs/js-client/commit/514663a4fde716e216f3112277d4bef6370dfdae))
+
 ## [0.0.2](https://github.com/fluencelabs/js-client/compare/npm-aqua-compiler-v0.0.1...npm-aqua-compiler-v0.0.2) (2023-12-15)
 
 
