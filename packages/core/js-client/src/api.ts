@@ -102,7 +102,7 @@ export const v5_callFunction = async (
             );
           }
 
-          return [argName, wrapJsFunction(arg, argType)];
+          return [argName, wrapJsFunction(arg, argType, argName)];
         }
 
         if (typeof arg === "function") {
@@ -141,7 +141,9 @@ export const v5_callFunction = async (
     result = null;
   }
 
-  return aqua2js(result, returnSchema);
+  return aqua2js(result, returnSchema, {
+    path: [`${def.functionName}ReturnValue`],
+  });
 };
 
 const getDefaultPeer = (): FluencePeer => {
@@ -215,7 +217,11 @@ export const v5_registerService = (
 
       return [
         schemaKey,
-        wrapJsFunction(serviceImplValue.bind(serviceImpl), schemaValue),
+        wrapJsFunction(
+          serviceImplValue.bind(serviceImpl),
+          schemaValue,
+          schemaKey,
+        ),
       ] as const;
     }),
   );
