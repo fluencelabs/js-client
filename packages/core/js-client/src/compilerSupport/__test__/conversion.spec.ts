@@ -200,7 +200,7 @@ describe("Conversion from aqua to typescript", () => {
       // arrange
 
       // act
-      const tsFromAqua = aqua2js(aqua, type);
+      const tsFromAqua = aqua2js(aqua, type, { path: [] });
       const aquaFromTs = js2aqua(ts, type, { path: [] });
 
       // assert
@@ -232,7 +232,7 @@ describe("Conversion corner cases", () => {
 
     // act
     const aqua = js2aqua(valueInTs, type, { path: [] });
-    const ts = aqua2js(valueInAqua, type);
+    const ts = aqua2js(valueInAqua, type, { path: [] });
 
     // assert
     expect(aqua).toStrictEqual({

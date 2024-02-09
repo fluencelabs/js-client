@@ -97,16 +97,17 @@ function isScalar(
 export function aqua2js(
   value: JSONValue,
   schema: NonArrowSimpleType,
+  { path }: ValidationContext,
 ): JSONValue {
   if (schema.tag === "nil") {
     return null;
   } else if (schema.tag === "option") {
     if (!Array.isArray(value)) {
-      throw new SchemaValidationError([], schema, "array", value);
+      throw new SchemaValidationError(path, schema, "array", value);
     }
 
     if ("0" in value) {
-      return aqua2js(value[0], schema.type);
+      return aqua2js(value[0], schema.type, { path: [...path, "?"] });
     } else {
       return null;
     }
@@ -121,16 +122,16 @@ export function aqua2js(
       throw new SchemaValidationError([], schema, "array", value);
     }
 
-    return value.map((y) => {
-      return aqua2js(y, schema.type);
+    return value.map((y, i) => {
+      return aqua2js(y, schema.type, { path: [...path, `[${i}]`] });
     });
   } else if (schema.tag === "unlabeledProduct") {
     if (!Array.isArray(value)) {
       throw new SchemaValidationError([], schema, "array", value);
     }
 
-    return zip(value, schema.items).map(([v, s]) => {
-      return aqua2js(v, s);
+    return zip(value, schema.items).map(([v, s], i) => {
+      return aqua2js(v, s, { path: [...path, `[${i}]`] });
     });
   } else if (["labeledProduct", "struct"].includes(schema.tag)) {
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
@@ -145,7 +146,7 @@ export function aqua2js(
           v = null;
         }
 
-        const val = aqua2js(v, type);
+        const val = aqua2js(v, type, { path: [...path, key] });
         return [key, val];
       }),
     );
@@ -167,7 +168,9 @@ export function js2aqua(
     return value;
   } else if (schema.tag === "option") {
     // option means 'type | null'
-    return value === null ? [] : [js2aqua(value, schema.type, { path })];
+    return value === null
+      ? []
+      : [js2aqua(value, schema.type, { path: [...path, "?"] })];
   } else if (schema.tag === "topType") {
     // topType equals to 'any'
     return value;
@@ -221,6 +224,7 @@ export const wrapJsFunction = (
   schema:
     | ArrowWithoutCallbacks
     | ArrowType<LabeledProductType<SimpleTypes> | UnlabeledProductType>,
+  funcName: string,
 ): ServiceImpl[string] => {
   return async ({ args, context }) => {
     const schemaArgs =
@@ -236,8 +240,8 @@ export const wrapJsFunction = (
       );
     }
 
-    const jsArgs = zip(args, schemaArgs).map(([arg, schemaArg]) => {
-      return aqua2js(arg, schemaArg);
+    const jsArgs = zip(args, schemaArgs).map(([arg, schemaArg], i) => {
+      return aqua2js(arg, schemaArg, { path: [`${funcName}Args`, `[${i}]`] });
     });
 
     const returnTypeVoid =
@@ -256,6 +260,6 @@ export const wrapJsFunction = (
       result = null;
     }
 
-    return js2aqua(result, resultSchema, { path: [] });
+    return js2aqua(result, resultSchema, { path: [`${funcName}ReturnValue`] });
   };
 };
