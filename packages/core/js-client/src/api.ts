@@ -114,7 +114,7 @@ export const v5_callFunction = async (
           );
         }
 
-        return [argName, js2aqua(arg, argType, { path: [def.functionName] })];
+        return [argName, js2aqua(arg, argType, { path: [argName] })];
       },
     ),
   );
