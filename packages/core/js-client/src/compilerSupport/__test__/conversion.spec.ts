@@ -179,6 +179,7 @@ describe("Conversion from aqua to typescript", () => {
   test.each`
     aqua                     | ts                     | type
     ${1}                     | ${1}                   | ${i32}
+    ${null}                  | ${null}                | ${opt_i32}
     ${[]}                    | ${null}                | ${opt_i32}
     ${[1]}                   | ${1}                   | ${opt_i32}
     ${[1, 2, 3]}             | ${[1, 2, 3]}           | ${array_i32}
@@ -205,7 +206,11 @@ describe("Conversion from aqua to typescript", () => {
 
       // assert
       expect(tsFromAqua).toStrictEqual(ts);
-      expect(aquaFromTs).toStrictEqual(aqua);
+
+      // 'null' -> 'null' -> [] ; 'null' not equal []
+      if (aqua !== null || ts !== null) {
+        expect(aquaFromTs).toStrictEqual(aqua);
+      }
     },
   );
 });

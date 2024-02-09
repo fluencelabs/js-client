@@ -102,11 +102,11 @@ export function aqua2js(
   if (schema.tag === "nil") {
     return null;
   } else if (schema.tag === "option") {
-    if (!Array.isArray(value)) {
-      throw new SchemaValidationError(path, schema, "array", value);
+    if (!Array.isArray(value) && value !== null) {
+      throw new SchemaValidationError(path, schema, "array or null", value);
     }
 
-    if ("0" in value) {
+    if (value !== null && "0" in value) {
       return aqua2js(value[0], schema.type, { path: [...path, "?"] });
     } else {
       return null;
