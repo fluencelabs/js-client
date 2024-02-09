@@ -69,6 +69,12 @@
   * devDependencies
     * @fluencelabs/js-client bumped to 0.8.1
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/js-client bumped to 0.8.2
+
 ## [0.3.5](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.3.4...aqua-to-js-v0.3.5) (2023-12-15)
 
 

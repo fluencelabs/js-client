@@ -12,6 +12,13 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.8.2](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.1...js-client-v0.8.2) (2024-02-09)
+
+
+### Bug Fixes
+
+* **js-client:** Improve logging of conversion API ([#429](https://github.com/fluencelabs/js-client/issues/429)) ([2b1d0f7](https://github.com/fluencelabs/js-client/commit/2b1d0f7f05de237733ad6f6c5aeb1ba787313dd7))
+
 ## [0.8.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.0...js-client-v0.8.1) (2024-01-31)
 
 
