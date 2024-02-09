@@ -12,6 +12,13 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.8.3](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.2...js-client-v0.8.3) (2024-02-09)
+
+
+### Bug Fixes
+
+* **js-client:** Handle null as user input value ([#431](https://github.com/fluencelabs/js-client/issues/431)) ([d7070fd](https://github.com/fluencelabs/js-client/commit/d7070fd71ef8524bdc47c0c84afe0a62ae80dca6))
+
 ## [0.8.2](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.1...js-client-v0.8.2) (2024-02-09)
 
 
