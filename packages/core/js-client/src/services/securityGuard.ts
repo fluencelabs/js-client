@@ -55,7 +55,7 @@ export const allowServiceFn = (
  */
 export const allowExactJsonPath = (jsonPath: string): SecurityGuard => {
   return allowTetraplet((t) => {
-    return t.json_path === jsonPath;
+    return t.lens === jsonPath;
   });
 };
 

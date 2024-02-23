@@ -25,7 +25,7 @@ import {
   StructType,
   TopType,
   UnlabeledProductType,
-} from "@fluencelabs/interfaces";
+} from "./compilerSupport/aquaTypeDefinitions.js";
 import { Call, Pipe, Objects, Tuples, Unions, Fn } from "hotscript";
 
 // Type definitions for inferring ts types from air json definition
