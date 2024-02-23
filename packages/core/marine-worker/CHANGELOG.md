@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.5.1...marine-worker-v0.6.0) (2024-02-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Update avm to 0.62 ([#438](https://github.com/fluencelabs/js-client/issues/438))
+
+### Bug Fixes
+
+* **deps:** Update avm to 0.62 ([#438](https://github.com/fluencelabs/js-client/issues/438)) ([702ad60](https://github.com/fluencelabs/js-client/commit/702ad605a8e9217f66d3992f31ae8461283ff0b1))
+
 ## [0.5.1](https://github.com/fluencelabs/js-client/compare/marine-worker-v0.5.0...marine-worker-v0.5.1) (2023-12-15)
 
 

@@ -218,7 +218,7 @@ importers:
         specifier: workspace:*
         version: link:../js-client-isomorphic
       '@fluencelabs/marine-worker':
-        specifier: 0.5.1
+        specifier: 0.6.0
         version: link:../marine-worker
       '@fluencelabs/threads':
         specifier: ^2.0.0
@@ -333,7 +333,7 @@ importers:
         specifier: 0.13.0
         version: 0.13.0
       '@fluencelabs/marine-worker':
-        specifier: 0.5.1
+        specifier: 0.6.0
         version: link:../marine-worker
       '@fluencelabs/threads':
         specifier: ^2.0.0
