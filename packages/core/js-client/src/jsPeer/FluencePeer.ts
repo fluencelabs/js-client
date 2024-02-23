@@ -516,6 +516,7 @@ export abstract class FluencePeer {
         );
 
         const [, , , forthParam] = args;
+
         if (
           typeof forthParam === "object" &&
           "hard_limit_enabled" in forthParam
