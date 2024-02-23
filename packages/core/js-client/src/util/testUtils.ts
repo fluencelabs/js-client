@@ -221,7 +221,7 @@ export const makeTestTetraplet = (
           peer_pk: initPeerId,
           function_name: fnName,
           service_id: serviceId,
-          json_path: "",
+          lens: "",
         },
       ],
     ],

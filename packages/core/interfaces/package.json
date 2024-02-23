@@ -49,8 +49,6 @@
   "license": "Apache-2.0",
   "dependencies": {},
   "devDependencies": {
-    "@multiformats/multiaddr": "11.3.0",
-    "@fluencelabs/avm": "0.59.0",
     "hotscript": "1.0.13"
   }
 }

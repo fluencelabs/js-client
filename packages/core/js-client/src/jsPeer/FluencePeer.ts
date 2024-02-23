@@ -515,6 +515,15 @@ export abstract class FluencePeer {
           item.callResults,
         );
 
+        const [, , , forthParam] = args;
+
+        if (
+          typeof forthParam === "object" &&
+          "hard_limit_enabled" in forthParam
+        ) {
+          forthParam["hard_limit_enabled"] = false;
+        }
+
         let avmCallResult: InterpreterResult | Error;
 
         try {

@@ -22,8 +22,8 @@
     }
   },
   "dependencies": {
-    "@fluencelabs/avm": "0.59.0",
-    "@fluencelabs/marine-js": "0.8.0",
+    "@fluencelabs/avm": "0.62.0",
+    "@fluencelabs/marine-js": "0.13.0",
     "@fluencelabs/marine-worker": "0.5.1",
     "@fluencelabs/threads": "^2.0.0"
   },
