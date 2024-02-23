@@ -43,7 +43,7 @@ jobs:
     uses: fluencelabs/aqua/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      nox-image: "docker.fluence.dev/nox:feat-VM-407-msgpack-particle"
+      nox-image: "docker.fluence.dev/nox:renovate-avm_4905_1"
   flox:
     needs:
       - js-client
@@ -51,4 +51,4 @@ jobs:
     uses: fluencelabs/flox/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
-      nox-image: "docker.fluence.dev/nox:feat-VM-407-msgpack-particle"
+      nox-image: "docker.fluence.dev/nox:renovate-avm_4905_1"
