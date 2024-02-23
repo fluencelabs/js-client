@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Call, Pipe, Objects, Tuples, Unions, Fn } from "hotscript";
+
 import {
   ArrayType,
   ArrowType,
@@ -26,7 +28,6 @@ import {
   TopType,
   UnlabeledProductType,
 } from "./compilerSupport/aquaTypeDefinitions.js";
-import { Call, Pipe, Objects, Tuples, Unions, Fn } from "hotscript";
 
 // Type definitions for inferring ts types from air json definition
 // In the future we may remove string type declaration and move to type inference.
