@@ -12,6 +12,13 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.8.4](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.3...js-client-v0.8.4) (2024-02-23)
+
+
+### Bug Fixes
+
+* Rename testnet to dar ([#433](https://github.com/fluencelabs/js-client/issues/433)) ([e8417d0](https://github.com/fluencelabs/js-client/commit/e8417d069a8cc2244f392b028e7464c9917ec063))
+
 ## [0.8.3](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.2...js-client-v0.8.3) (2024-02-09)
 
 
