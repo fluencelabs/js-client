@@ -6,7 +6,6 @@
   "files": [
     "dist"
   ],
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "prepare": "node createVersionFile.js"

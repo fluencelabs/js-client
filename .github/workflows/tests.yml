@@ -18,7 +18,7 @@ on:
       ref:
         description: "git ref to checkout to"
         type: string
-        default: "master"
+        default: "main"
 
 env:
   NOX_IMAGE: "${{ inputs.nox-image }}"
