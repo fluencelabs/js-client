@@ -7,6 +7,8 @@ dist
 build
 public
 
+.fluence
+
 **/CHANGELOG.md
 # TODO: remove after pnpm-set-deps will add \n symbol at the end of these files
 **/package.json
