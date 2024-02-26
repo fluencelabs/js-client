@@ -70,9 +70,6 @@ jobs:
           repository: fluencelabs/fluence-js
           ref: ${{ inputs.ref }}
 
-      - name: Setup Rust toolchain
-        uses: dsherret/rust-toolchain-file@v1
-
       - name: Setup fcli
         uses: fluencelabs/setup-fluence@v1
         with:
