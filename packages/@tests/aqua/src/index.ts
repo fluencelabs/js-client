@@ -26,8 +26,8 @@ import { wasm } from "./wasmb64.js";
 
 const relay = {
   multiaddr:
-    "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
-  peerId: "12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR",
+    "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWLiaYCYNugcH6vgP3scM2EeKK37WyPLyfSCcdbCtioWXM",
+  peerId: "12D3KooWLiaYCYNugcH6vgP3scM2EeKK37WyPLyfSCcdbCtioWXM",
 };
 
 function generateRandomUint8Array() {
