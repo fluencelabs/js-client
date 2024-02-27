@@ -6,7 +6,7 @@ on:
       nox-image:
         description: "nox image tag"
         type: string
-        default: "fluencelabs/nox:0.4.2"
+        default: "fluencelabs/nox:unstable"
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
@@ -21,9 +21,9 @@ on:
         default: "main"
 
 env:
-  NOX_IMAGE: "${{ inputs.nox-image }}"
   FORCE_COLOR: true
   CI: true
+  FCLI_V_NOX: "${{ inputs.nox-image }}"
 
 jobs:
   js-client:
@@ -78,9 +78,6 @@ jobs:
 
       - name: Init local env with fcli
         run: fluence local init --no-input
-
-      - name: Pull nox image
-        run: docker pull $NOX_IMAGE
 
       - name: Run nox network
         run: fluence local up
