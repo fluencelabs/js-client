@@ -6,7 +6,7 @@ on:
       nox-image:
         description: "nox image tag"
         type: string
-        default: "fluencelabs/nox:0.4.2"
+        default: "fluencelabs/nox:unstable"
       avm-version:
         description: "@fluencelabs/avm version"
         type: string
@@ -21,9 +21,9 @@ on:
         default: "main"
 
 env:
-  NOX_IMAGE: "${{ inputs.nox-image }}"
   FORCE_COLOR: true
   CI: true
+  FCLI_V_NOX: "${{ inputs.nox-image }}"
 
 jobs:
   js-client:
@@ -70,14 +70,17 @@ jobs:
           repository: fluencelabs/fluence-js
           ref: ${{ inputs.ref }}
 
-      - name: Pull nox image
-        run: docker pull $NOX_IMAGE
+      - name: Setup fcli
+        uses: fluencelabs/setup-fluence@v1
+        with:
+          artifact: fcli
+          version: unstable
+
+      - name: Init local env with fcli
+        run: fluence local init --no-input
 
       - name: Run nox network
-        uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: ".github/e2e/docker-compose.yml"
-          down-flags: "--volumes"
+        run: fluence local up
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.4
