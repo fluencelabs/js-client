@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect, assert } from "vitest";
 
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
+import type { JSONValue } from "../../util/types.js";
 
 describe("Basic AVM functionality in Fluence Peer tests", () => {
   it("Simple call", async () => {

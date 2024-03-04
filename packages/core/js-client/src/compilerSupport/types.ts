@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { JSONArray, JSONValue } from "@fluencelabs/interfaces";
-
 import { ParticleContext } from "../jsServiceHost/interfaces.js";
+import type { JSONArray, JSONValue } from "../util/types.js";
 
 export type MaybePromise<T> = T | Promise<T>;
 

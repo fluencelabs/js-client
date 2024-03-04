@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { JSONObject, JSONValue, JSONArray } from "@fluencelabs/interfaces";
 import { CallParameters } from "@fluencelabs/marine-worker";
 
 import { IStartable } from "../util/commonTypes.js";
+import type { JSONObject, JSONValue, JSONArray } from "../util/types.js";
 
 /**
  * Contract for marine host implementations. Marine host is responsible for creating calling and removing marine services

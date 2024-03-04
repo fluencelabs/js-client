@@ -15,8 +15,8 @@
  */
 
 import type { SecurityTetraplet } from "@fluencelabs/avm";
-import type { PeerIdB58 } from "@fluencelabs/interfaces";
-import { JSONArray, JSONValue } from "@fluencelabs/interfaces";
+
+import type { JSONArray, JSONValue, PeerIdB58 } from "../util/types.js";
 
 /**
  * JS Service host a low level interface for managing pure javascript services.

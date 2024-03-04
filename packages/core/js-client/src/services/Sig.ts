@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { PeerIdB58 } from "@fluencelabs/interfaces";
-
 import { ServiceFnArgs } from "../compilerSupport/types.js";
 import { KeyPair } from "../keypair/index.js";
+import type { PeerIdB58 } from "../util/types.js";
 
 import {
   allowOnlyParticleOriginatedAt,

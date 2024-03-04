@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
-
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import {
   CallServiceData,
@@ -23,6 +21,7 @@ import {
   ResultCodes,
 } from "../jsServiceHost/interfaces.js";
 import { Particle } from "../particle/Particle.js";
+import type { JSONValue } from "../util/types.js";
 
 import { ServiceImpl } from "./types.js";
 

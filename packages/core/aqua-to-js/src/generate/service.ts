@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { JSONValue, ServiceDef } from "@fluencelabs/interfaces";
+import { ServiceDef } from "@fluencelabs/interfaces";
 
 import { recursiveRenameLaquaProps } from "../utils.js";
 
@@ -63,6 +63,6 @@ function generateRegisterServiceOverload(
 }
 
 function serviceToJson(service: ServiceDef): string {
-  const record: Record<never, JSONValue> = service;
+  const record: Record<never, unknown> = service;
   return JSON.stringify(recursiveRenameLaquaProps(record), null, 4);
 }

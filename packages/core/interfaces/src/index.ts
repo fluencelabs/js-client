@@ -15,5 +15,4 @@
  */
 
 export * from "./compilerSupport/aquaTypeDefinitions.js";
-export * from "./commonTypes.js";
 export * from "./future.js";

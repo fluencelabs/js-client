@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { JSONArray } from "@fluencelabs/interfaces";
 import { toUint8Array } from "js-base64";
 import { describe, expect, it, test, assert } from "vitest";
 
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
 import { KeyPair } from "../../keypair/index.js";
 import { makeTestTetraplet } from "../../util/testUtils.js";
+import type { JSONArray } from "../../util/types.js";
 import { builtInServices } from "../builtins.js";
 import { allowServiceFn } from "../securityGuard.js";
 import { defaultSigGuard, Sig } from "../Sig.js";

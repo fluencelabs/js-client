@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { PeerIdB58 } from "@fluencelabs/interfaces";
 import { Subject } from "rxjs";
 
 import { IConnection } from "../connection/interfaces.js";
@@ -26,6 +25,7 @@ import { loadMarineDeps } from "../marine/loader.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
 import { Particle } from "../particle/Particle.js";
 import { logger } from "../util/logger.js";
+import { PeerIdB58 } from "../util/types.js";
 
 const log = logger("ephemeral");
 

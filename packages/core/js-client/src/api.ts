@@ -17,7 +17,6 @@
 import type {
   ArrowWithoutCallbacks,
   FunctionCallDef,
-  JSONValue,
   ServiceDef,
   SimpleTypes,
 } from "@fluencelabs/interfaces";
@@ -32,6 +31,7 @@ import {
 } from "./compilerSupport/conversions.js";
 import { ServiceImpl, UserServiceImpl } from "./compilerSupport/types.js";
 import { FluencePeer } from "./jsPeer/FluencePeer.js";
+import type { JSONValue } from "./util/types.js";
 import { zip } from "./util/utils.js";
 
 import { callAquaFunction, Fluence, registerService } from "./index.js";

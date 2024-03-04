@@ -19,7 +19,6 @@ import {
   MulticodecRepr,
   MsgPackRepr,
 } from "@fluencelabs/avm";
-import { JSONValue } from "@fluencelabs/interfaces";
 import int64Buffer from "int64-buffer";
 import { concat } from "uint8arrays/concat";
 import { v4 as uuidv4 } from "uuid";
@@ -28,6 +27,7 @@ import { z } from "zod";
 import { ExpirationError } from "../jsPeer/errors.js";
 import { KeyPair } from "../keypair/index.js";
 import { numberToLittleEndianBytes } from "../util/bytes.js";
+import type { JSONValue } from "../util/types.js";
 
 import { IParticle } from "./interfaces.js";
 

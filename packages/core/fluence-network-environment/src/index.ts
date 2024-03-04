@@ -165,23 +165,24 @@ export const kras: Relay[] = [
   },
 ];
 
-export const randomKras = (): Relay => {
+// for backward compatibility
+export const krasnodar = kras;
+
+export const randomKras = () => {
   return randomItem(kras);
 };
 
-export const randomTestNet = (): Relay => {
+export const randomTestNet = () => {
   return randomItem(testNet);
 };
 
-export const randomStage = (): Relay => {
+export const randomStage = () => {
   return randomItem(stage);
 };
 
-function randomItem(arr: Relay[]): Relay {
+function randomItem(arr: Relay[]) {
   const index = randomInt(0, arr.length);
-  // This array access always defined
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return arr[index] as Relay;
+  return arr[index];
 }
 
 function randomInt(min: number, max: number) {

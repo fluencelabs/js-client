@@ -16,7 +16,6 @@
 
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from "@chainsafe/libp2p-yamux";
-import { PeerIdB58 } from "@fluencelabs/interfaces";
 import { identify } from "@libp2p/identify";
 import type { PeerId } from "@libp2p/interface";
 import { peerIdFromString } from "@libp2p/peer-id";
@@ -39,6 +38,7 @@ import {
 } from "../particle/Particle.js";
 import { throwHasNoPeerId } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
+import type { PeerIdB58 } from "../util/types.js";
 
 import { IConnection } from "./interfaces.js";
 

@@ -17,12 +17,7 @@
 import { promises as fs } from "fs";
 
 import { compileFromPath } from "@fluencelabs/aqua-api";
-import {
-  FunctionCallDef,
-  JSONArray,
-  JSONValue,
-  ServiceDef,
-} from "@fluencelabs/interfaces";
+import { FunctionCallDef, ServiceDef } from "@fluencelabs/interfaces";
 import { Subject, Subscribable } from "rxjs";
 
 import { ClientPeer, makeClientPeerConfig } from "../clientPeer/ClientPeer.js";
@@ -42,6 +37,8 @@ import { IMarineHost } from "../marine/interfaces.js";
 import { loadMarineDeps } from "../marine/loader.js";
 import { MarineBackgroundRunner } from "../marine/worker/index.js";
 import { Particle } from "../particle/Particle.js";
+
+import type { JSONArray, JSONValue } from "./types.js";
 
 export const registerHandlersHelper = (
   peer: FluencePeer,

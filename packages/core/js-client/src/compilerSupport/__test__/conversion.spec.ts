@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { JSONValue, NonArrowSimpleType } from "@fluencelabs/interfaces";
+import { NonArrowSimpleType } from "@fluencelabs/interfaces";
 import { it, describe, expect, test } from "vitest";
 
+import type { JSONValue } from "../../util/types.js";
 import { aqua2js, js2aqua } from "../conversions.js";
 
 const i32 = { tag: "scalar", name: "i32" } as const;

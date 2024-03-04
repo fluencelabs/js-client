@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
-
 import { WrapFnIntoServiceCall } from "../jsServiceHost/serviceUtils.js";
 import { handleTimeout } from "../particle/Particle.js";
 import { logger } from "../util/logger.js";
+import type { JSONValue } from "../util/types.js";
 
 import { ClientPeer } from "./ClientPeer.js";
 

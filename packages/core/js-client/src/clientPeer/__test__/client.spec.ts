@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
 import { it, describe, expect, assert } from "vitest";
 
 import { ExpirationError } from "../../jsPeer/errors.js";
 import { CallServiceData } from "../../jsServiceHost/interfaces.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withClient } from "../../util/testUtils.js";
+import type { JSONValue } from "../../util/types.js";
 import { checkConnection } from "../checkConnection.js";
 
 import { nodes, RELAY } from "./connection.js";
