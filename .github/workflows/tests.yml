@@ -80,7 +80,9 @@ jobs:
         run: fluence local init --no-input
 
       - name: Run nox network
-        run: docker compose -f .github/docker-compose.yaml up -d
+        run: fluence local up
+        env:
+          FCLI_V_NOX: docker.fluence.dev/nox:feat-vm-425-aquavm-mem-limits-from-config-2_5056_1
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.2.4
