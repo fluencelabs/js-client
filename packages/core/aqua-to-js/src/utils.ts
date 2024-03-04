@@ -20,7 +20,6 @@ import { join } from "path";
 import {
   ArrowType,
   ArrowWithoutCallbacks,
-  JSONValue,
   LabeledProductType,
   NilType,
   SimpleTypes,
@@ -67,7 +66,7 @@ export function getFuncArgs(
   }
 }
 
-export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
+export function recursiveRenameLaquaProps(obj: unknown): unknown {
   if (typeof obj !== "object" || obj === null) {
     return obj;
   }
@@ -78,7 +77,9 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
     });
   }
 
-  return Object.getOwnPropertyNames(obj).reduce((acc, prop) => {
+  const objType: {} = obj;
+
+  return Object.getOwnPropertyNames(objType).reduce((acc, prop) => {
     let accessProp = prop;
 
     if (prop.includes("Laqua_js")) {
@@ -89,12 +90,14 @@ export function recursiveRenameLaquaProps(obj: JSONValue): unknown {
         throw new Error(`Bad property name: ${prop}.`);
       }
 
-      if (refinedProperty in obj) {
+      if (refinedProperty in objType) {
         accessProp = refinedProperty;
       }
     }
 
-    const laquaProp = obj[accessProp];
+    const accessObj: Record<string, unknown> = objType;
+
+    const laquaProp = accessObj[accessProp];
 
     if (laquaProp === undefined) {
       return acc;
