@@ -43,6 +43,7 @@ jobs:
     uses: fluencelabs/aqua/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
+      nox-image: "docker.fluence.dev/nox:feat-vm-425-aquavm-mem-limits-from-config-2_5056_1"
   flox:
     needs:
       - js-client
@@ -50,3 +51,4 @@ jobs:
     uses: fluencelabs/flox/.github/workflows/tests.yml@main
     with:
       js-client-snapshots: "${{ needs.js-client.outputs.js-client-snapshots }}"
+      nox-image: "docker.fluence.dev/nox:feat-vm-425-aquavm-mem-limits-from-config-2_5056_1"
