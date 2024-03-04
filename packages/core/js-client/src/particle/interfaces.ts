@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PeerIdB58 } from "@fluencelabs/interfaces";
+import type { PeerIdB58 } from "../util/types.js";
 
 /**
  * Immutable part of the particle.

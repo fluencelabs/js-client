@@ -164,26 +164,3 @@ export const kras: Relay[] = [
     peerId: "12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm",
   },
 ];
-
-export const randomKras = (): Relay => {
-  return randomItem(kras);
-};
-
-export const randomTestNet = (): Relay => {
-  return randomItem(testNet);
-};
-
-export const randomStage = (): Relay => {
-  return randomItem(stage);
-};
-
-function randomItem(arr: Relay[]): Relay {
-  const index = randomInt(0, arr.length);
-  // This array access always defined
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return arr[index] as Relay;
-}
-
-function randomInt(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}

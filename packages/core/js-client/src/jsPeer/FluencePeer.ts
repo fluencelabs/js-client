@@ -20,7 +20,6 @@ import {
   KeyPairFormat,
   serializeAvmArgs,
 } from "@fluencelabs/avm";
-import { JSONValue } from "@fluencelabs/interfaces";
 import { fromUint8Array } from "js-base64";
 import {
   concatMap,
@@ -64,6 +63,7 @@ import { defaultSigGuard, Sig } from "../services/Sig.js";
 import { Srv } from "../services/SingleModuleSrv.js";
 import { Tracing } from "../services/Tracing.js";
 import { logger } from "../util/logger.js";
+import type { JSONValue } from "../util/types.js";
 import { getErrorMessage, isString, jsonify } from "../util/utils.js";
 
 import { ExpirationError, InterpreterError, SendError } from "./errors.js";

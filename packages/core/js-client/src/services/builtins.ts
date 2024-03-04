@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
 import bs58 from "bs58";
 import { sha256 } from "multiformats/hashes/sha2";
 import { z } from "zod";
@@ -26,6 +25,7 @@ import {
   GenericCallServiceHandler,
   ResultCodes,
 } from "../jsServiceHost/interfaces.js";
+import type { JSONValue } from "../util/types.js";
 import { getErrorMessage, jsonify } from "../util/utils.js";
 
 const success = (result: CallServiceResultType): CallServiceResult => {

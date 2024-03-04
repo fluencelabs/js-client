@@ -17,7 +17,6 @@
 import {
   ArrowType,
   ArrowWithoutCallbacks,
-  JSONValue,
   LabeledProductType,
   NonArrowSimpleType,
   ScalarType,
@@ -25,6 +24,7 @@ import {
   UnlabeledProductType,
 } from "@fluencelabs/interfaces";
 
+import { JSONValue } from "../util/types.js";
 import { zip } from "../util/utils.js";
 
 import { ServiceImpl, UserServiceImpl } from "./types.js";

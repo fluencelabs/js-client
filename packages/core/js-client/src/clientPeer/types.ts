@@ -16,11 +16,6 @@
 
 import { z } from "zod";
 
-/**
- * Peer ID's id as a base58 string (multihash/CIDv0).
- */
-export type PeerIdB58 = string;
-
 const relaySchema = z.object({
   peerId: z.string(),
   multiaddr: z.string(),

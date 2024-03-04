@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
 import { describe, expect, it, assert } from "vitest";
 
 import {
@@ -23,6 +22,7 @@ import {
 } from "../../jsServiceHost/interfaces.js";
 import { handleTimeout } from "../../particle/Particle.js";
 import { registerHandlersHelper, withPeer } from "../../util/testUtils.js";
+import type { JSONValue } from "../../util/types.js";
 
 describe("FluencePeer flow tests", () => {
   it("should execute par instruction in parallel", async function () {

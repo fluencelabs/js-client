@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { PeerIdB58 } from "@fluencelabs/interfaces";
-
 import { FluencePeer, PeerConfig } from "../jsPeer/FluencePeer.js";
 import { JsServiceHost } from "../jsServiceHost/JsServiceHost.js";
 import { KeyPair } from "../keypair/index.js";
 import { IMarineHost } from "../marine/interfaces.js";
+import { PeerIdB58 } from "../util/types.js";
 
 import { EphemeralNetwork } from "./network.js";
 

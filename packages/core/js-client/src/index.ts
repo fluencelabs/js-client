@@ -146,7 +146,7 @@ export {
   fromOpts,
 } from "./keypair/index.js";
 
-export * from "./network.js";
+export * from "@fluencelabs/fluence-network-environment";
 
 // TODO: Remove this export after DXJ-535 is done!
 export { js2aqua, aqua2js } from "./compilerSupport/conversions.js";

@@ -15,11 +15,11 @@
  */
 
 import { SecurityTetraplet } from "@fluencelabs/avm";
-import { JSONArray } from "@fluencelabs/interfaces";
 
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { IParticle } from "../particle/interfaces.js";
 import { builtInServices } from "../services/builtins.js";
+import type { JSONArray } from "../util/types.js";
 
 import {
   CallServiceData,

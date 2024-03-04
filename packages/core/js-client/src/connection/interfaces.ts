@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import type { PeerIdB58 } from "@fluencelabs/interfaces";
 import type { Subscribable } from "rxjs";
 
 import { IParticle } from "../particle/interfaces.js";
 import { IStartable } from "../util/commonTypes.js";
+import { PeerIdB58 } from "../util/types.js";
 
 /**
  * Interface for connection used in Fluence Peer.

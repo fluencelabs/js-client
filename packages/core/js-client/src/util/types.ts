@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-import { ParticleContext } from "../jsServiceHost/interfaces.js";
-import type { JSONArray, JSONValue } from "../util/types.js";
+/**
+ * Peer ID's id as a base58 string (multihash/CIDv0).
+ */
+export type PeerIdB58 = string;
 
-export type MaybePromise<T> = T | Promise<T>;
-
-export type ServiceImpl = Record<
-  string,
-  (args: {
-    args: JSONArray;
-    context: ParticleContext;
-  }) => MaybePromise<JSONValue>
->;
-
-export type UserServiceImpl = Record<
-  string,
-  (...args: [...JSONArray, ParticleContext]) => MaybePromise<JSONValue>
->;
-
-export type ServiceFnArgs<T> = { args: T; context: ParticleContext };
+export type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;
+export type JSONObject = { [x: string]: JSONValue };
+export type JSONArray = Array<JSONValue>;

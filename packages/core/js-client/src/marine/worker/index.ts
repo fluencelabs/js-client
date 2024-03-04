@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
 import type {
   MarineBackgroundInterface,
   LogFunction,
@@ -24,6 +23,7 @@ import type {
 import { ModuleThread, Thread } from "@fluencelabs/threads/master";
 
 import { MarineLogger, marineLogger } from "../../util/logger.js";
+import type { JSONValue } from "../../util/types.js";
 import { IMarineHost } from "../interfaces.js";
 
 export class MarineBackgroundRunner implements IMarineHost {

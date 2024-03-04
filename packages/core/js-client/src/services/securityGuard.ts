@@ -15,9 +15,9 @@
  */
 
 import { SecurityTetraplet } from "@fluencelabs/avm";
-import { PeerIdB58 } from "@fluencelabs/interfaces";
 
 import { ParticleContext } from "../jsServiceHost/interfaces.js";
+import type { PeerIdB58 } from "../util/types.js";
 
 // Helpers for validating service function
 

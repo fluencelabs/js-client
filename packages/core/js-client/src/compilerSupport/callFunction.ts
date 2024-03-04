@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { JSONValue } from "@fluencelabs/interfaces";
-
 import { FluencePeer } from "../jsPeer/FluencePeer.js";
 import { logger } from "../util/logger.js";
 import { ArgCallbackFunction } from "../util/testUtils.js";
+import type { JSONValue } from "../util/types.js";
 
 import {
   errorHandlingService,

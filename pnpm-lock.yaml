@@ -194,6 +194,8 @@ importers:
         specifier: 3.22.4
         version: 3.22.4
 
+  packages/core/fluence-network-environment: {}
+
   packages/core/interfaces:
     devDependencies:
       hotscript:
@@ -211,6 +213,9 @@ importers:
       '@fluencelabs/avm':
         specifier: 0.62.0
         version: 0.62.0
+      '@fluencelabs/fluence-network-environment':
+        specifier: workspace:*
+        version: link:../fluence-network-environment
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
