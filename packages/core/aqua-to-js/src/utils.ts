@@ -77,7 +77,7 @@ export function recursiveRenameLaquaProps(obj: unknown): unknown {
     });
   }
 
-  const objType: {} = obj;
+  const objType: Record<never, unknown> = obj;
 
   return Object.getOwnPropertyNames(objType).reduce((acc, prop) => {
     let accessProp = prop;
