@@ -164,3 +164,27 @@ export const kras: Relay[] = [
     peerId: "12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm",
   },
 ];
+
+// for backward compatibility
+export const krasnodar = kras;
+
+export const randomKras = () => {
+  return randomItem(kras);
+};
+
+export const randomTestNet = () => {
+  return randomItem(testNet);
+};
+
+export const randomStage = () => {
+  return randomItem(stage);
+};
+
+function randomItem(arr: Relay[]) {
+  const index = randomInt(0, arr.length);
+  return arr[index];
+}
+
+function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
