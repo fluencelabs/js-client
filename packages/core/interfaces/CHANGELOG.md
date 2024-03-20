@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/fluencelabs/js-client/compare/interfaces-v0.12.0...interfaces-v0.12.1) (2024-03-20)
+
+
+### Features
+
+* **fluence-network-environment:** Introduce fluence-network-environment package ([#442](https://github.com/fluencelabs/js-client/issues/442)) ([9eeeb0f](https://github.com/fluencelabs/js-client/commit/9eeeb0fae0c73c0f576f839f4a0affa4ddf61b77))
+
 ## [0.12.0](https://github.com/fluencelabs/js-client/compare/interfaces-v0.11.0...interfaces-v0.12.0) (2024-02-23)
 
 

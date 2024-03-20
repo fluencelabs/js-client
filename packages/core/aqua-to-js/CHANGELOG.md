@@ -94,6 +94,21 @@
     * @fluencelabs/interfaces bumped to 0.12.0
     * @fluencelabs/js-client bumped to 0.9.0
 
+## [0.3.14](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.3.13...aqua-to-js-v0.3.14) (2024-03-20)
+
+
+### Features
+
+* **fluence-network-environment:** Introduce fluence-network-environment package ([#442](https://github.com/fluencelabs/js-client/issues/442)) ([9eeeb0f](https://github.com/fluencelabs/js-client/commit/9eeeb0fae0c73c0f576f839f4a0affa4ddf61b77))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/interfaces bumped to 0.12.1
+    * @fluencelabs/js-client bumped to 0.9.1
+
 ## [0.3.5](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.3.4...aqua-to-js-v0.3.5) (2023-12-15)
 
 

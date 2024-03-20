@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@fluencelabs/fluence-network-environment",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Fluence network environments addresses",
   "files": [
     "dist"
