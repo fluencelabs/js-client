@@ -185,8 +185,8 @@ importers:
         specifier: 0.5.20
         version: 0.5.20
       '@fluencelabs/trust-graph':
-        specifier: 0.4.7
-        version: 0.4.7
+        specifier: 3.1.2
+        version: 3.1.2
       vitest:
         specifier: 0.34.6
         version: 0.34.6
@@ -2787,12 +2787,6 @@ packages:
     resolution: {integrity: sha512-V/6ts4q/Y0uKMS6orVpPyxfdd99YFMkm9wN9U2IFtlBUWNsQZG369FK9qEizwsSRCqTchMHYs8Vh4wgZ2uRfuQ==}
     dependencies:
       '@fluencelabs/aqua-lib': 0.7.0
-    dev: true
-
-  /@fluencelabs/trust-graph@0.4.7:
-    resolution: {integrity: sha512-e4TxWimUh9GBWjqSO8WGsSqjZfyIs6f39/8Pzfo6PCcNoSf8FPaaO817Pw4FmAXYEKR1IalIUX3CDdym3NlHWw==}
-    dependencies:
-      '@fluencelabs/aqua-lib': 0.7.3
     dev: true
 
   /@fluencelabs/trust-graph@3.1.2:
