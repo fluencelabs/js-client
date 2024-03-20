@@ -182,8 +182,8 @@ importers:
         specifier: 0.9.0
         version: 0.9.0
       '@fluencelabs/spell':
-        specifier: 0.5.20
-        version: 0.5.20
+        specifier: 0.7.6
+        version: 0.7.6
       '@fluencelabs/trust-graph':
         specifier: 0.4.7
         version: 0.4.7
@@ -2728,6 +2728,10 @@ packages:
     resolution: {integrity: sha512-AY6pXoK6xsFfgQHxhv6Lj+uPZKqiL3qPc2EVIZcl1RFX0Q+S0o1SmFlAVX2PrdA+31gbk9aAOtTXt+40GadooA==}
     dev: true
 
+  /@fluencelabs/aqua-lib@0.10.1:
+    resolution: {integrity: sha512-zwg7faVsmUmfiV5EScVs0p+BArzJzFRfgjcigKzoxB5DvQRb64+OSs7Pmt8flSfV4iprPf1RQT9vhsDvdOsK0g==}
+    dev: true
+
   /@fluencelabs/aqua-lib@0.5.2:
     resolution: {integrity: sha512-fmoFFE8myhLH9d+YR0+0ZPL2YIQyR6M1woAGu5d1xXI02Sjzn4id6dE4PpxHb8cSBPRie8AwsKobHCNqGxI8oA==}
     dev: true
@@ -2766,8 +2770,11 @@ packages:
       '@fluencelabs/trust-graph': 0.4.1
     dev: true
 
-  /@fluencelabs/spell@0.5.20:
-    resolution: {integrity: sha512-QFbknWwALLUWMzpWkFt34McuwTz9xwQuiPP1zXqhPqVZ1J6g8F3gwHHtzgHFW5Z7WrRmwsL+IQtFJy8YZubhDw==}
+  /@fluencelabs/spell@0.7.6:
+    resolution: {integrity: sha512-xGhB5BxOmel3MNiBJvRPmsHuvXhH0Uaje8WmnCRIskmH1fqQ/Ed7TFTtB3WruDvmBlaQTUqkkzI4JS9h5EZo7A==}
+    engines: {node: '>=18', pnpm: '>=8'}
+    dependencies:
+      '@fluencelabs/aqua-lib': 0.10.1
     dev: true
 
   /@fluencelabs/threads@2.0.0:
