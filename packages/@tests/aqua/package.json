@@ -24,7 +24,7 @@
     "@fluencelabs/aqua-lib": "0.6.0",
     "@fluencelabs/aqua-to-js": "workspace:*",
     "@fluencelabs/js-client": "workspace:*",
-    "@fluencelabs/registry": "0.9.0",
+    "@fluencelabs/registry": "0.9.4",
     "@fluencelabs/trust-graph": "3.1.2",
     "ts-node": "10.9.1"
   }
