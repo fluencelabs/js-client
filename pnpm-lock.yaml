@@ -64,8 +64,8 @@ importers:
         specifier: 0.13.0
         version: 0.13.0
       '@fluencelabs/aqua-lib':
-        specifier: 0.6.0
-        version: 0.6.0
+        specifier: 0.10.2
+        version: 0.10.2
       '@fluencelabs/aqua-to-js':
         specifier: workspace:*
         version: link:../../core/aqua-to-js
@@ -170,8 +170,8 @@ importers:
         specifier: 0.13.0
         version: 0.13.0
       '@fluencelabs/aqua-lib':
-        specifier: 0.7.3
-        version: 0.7.3
+        specifier: 0.10.2
+        version: 0.10.2
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
@@ -2728,12 +2728,12 @@ packages:
     resolution: {integrity: sha512-AY6pXoK6xsFfgQHxhv6Lj+uPZKqiL3qPc2EVIZcl1RFX0Q+S0o1SmFlAVX2PrdA+31gbk9aAOtTXt+40GadooA==}
     dev: true
 
-  /@fluencelabs/aqua-lib@0.5.2:
-    resolution: {integrity: sha512-fmoFFE8myhLH9d+YR0+0ZPL2YIQyR6M1woAGu5d1xXI02Sjzn4id6dE4PpxHb8cSBPRie8AwsKobHCNqGxI8oA==}
+  /@fluencelabs/aqua-lib@0.10.2:
+    resolution: {integrity: sha512-f3jL1kqHcP+tLpvD+QlVV51ZIptbStXfPSiDO+3SPurmcNWix8JZbQNQ+3t/BjCkHL8aw5r8vuuadPzftuVX/g==}
     dev: true
 
-  /@fluencelabs/aqua-lib@0.6.0:
-    resolution: {integrity: sha512-ifjtCM93KO3LhzPkMxqmXhwLmrg/scjOiyTihEVg7ns5N+BVzaK1eWzdOdqGdl9ZVoah43pdlQUepEo7VdRmsw==}
+  /@fluencelabs/aqua-lib@0.5.2:
+    resolution: {integrity: sha512-fmoFFE8myhLH9d+YR0+0ZPL2YIQyR6M1woAGu5d1xXI02Sjzn4id6dE4PpxHb8cSBPRie8AwsKobHCNqGxI8oA==}
     dev: true
 
   /@fluencelabs/aqua-lib@0.7.0:
@@ -2786,7 +2786,7 @@ packages:
   /@fluencelabs/trust-graph@0.4.1:
     resolution: {integrity: sha512-V/6ts4q/Y0uKMS6orVpPyxfdd99YFMkm9wN9U2IFtlBUWNsQZG369FK9qEizwsSRCqTchMHYs8Vh4wgZ2uRfuQ==}
     dependencies:
-      '@fluencelabs/aqua-lib': 0.7.0
+      '@fluencelabs/aqua-lib': 0.7.3
     dev: true
 
   /@fluencelabs/trust-graph@0.4.7:
