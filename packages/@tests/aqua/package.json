@@ -5,8 +5,8 @@
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "engines": {
-    "node": ">=10",
-    "pnpm": ">=3"
+    "node": "21.7.1",
+    "pnpm": "8.15.5"
   },
   "type": "module",
   "scripts": {
