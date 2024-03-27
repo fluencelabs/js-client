@@ -335,8 +335,8 @@ importers:
         specifier: 0.62.0
         version: 0.62.0
       '@fluencelabs/marine-js':
-        specifier: 0.13.0
-        version: 0.13.0
+        specifier: 0.13.2
+        version: 0.13.2
       '@fluencelabs/marine-worker':
         specifier: 0.6.0
         version: link:../marine-worker
@@ -347,8 +347,8 @@ importers:
   packages/core/marine-worker:
     dependencies:
       '@fluencelabs/marine-js':
-        specifier: 0.13.0
-        version: 0.13.0
+        specifier: 0.13.2
+        version: 0.13.2
       '@fluencelabs/threads':
         specifier: ^2.0.0
         version: 2.0.0
@@ -2751,8 +2751,8 @@ packages:
       multicodec: 3.2.1
     dev: false
 
-  /@fluencelabs/marine-js@0.13.0:
-    resolution: {integrity: sha512-/qGc6FkLAwgf4U1P8eSb3ECY6cNm77FjfGokva+Pme4VB9EAKDdWxpY/F+AcdUyJ7XUgl/I4eMebTDGpMto5bQ==}
+  /@fluencelabs/marine-js@0.13.2:
+    resolution: {integrity: sha512-lhfR2C1I2Iv6ZVKQVnp4v8iGNsJGJSGeCv2JI5oQ5uX7ypQHcgzHPx96XSoiYA/lacvnYo1p/PT1U+eCbvhOZQ==}
     dependencies:
       '@wasmer/wasi': 0.12.0
       '@wasmer/wasmfs': 0.12.0
