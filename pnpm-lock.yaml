@@ -61,8 +61,8 @@ importers:
         version: 1.5.1
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.13.0
-        version: 0.13.0
+        specifier: 0.14.5
+        version: 0.14.5
       '@fluencelabs/aqua-lib':
         specifier: 0.6.0
         version: 0.6.0
@@ -167,8 +167,8 @@ importers:
         version: 5.0.5
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.13.0
-        version: 0.13.0
+        specifier: 0.14.5
+        version: 0.14.5
       '@fluencelabs/aqua-lib':
         specifier: 0.7.3
         version: 0.7.3
@@ -296,8 +296,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@fluencelabs/aqua-api':
-        specifier: 0.13.0
-        version: 0.13.0
+        specifier: 0.14.5
+        version: 0.14.5
       '@rollup/plugin-inject':
         specifier: 5.0.5
         version: 5.0.5
@@ -2724,8 +2724,8 @@ packages:
     resolution: {integrity: sha512-NCC3zz2+nvYd+Ckfh87rA47zfu2QsQpvc6k1yzTk+b9KzRj0wkGa8LSoGOXN6Zv4lRf/EIoZ80biDh9HOI+RNQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  /@fluencelabs/aqua-api@0.13.0:
-    resolution: {integrity: sha512-AY6pXoK6xsFfgQHxhv6Lj+uPZKqiL3qPc2EVIZcl1RFX0Q+S0o1SmFlAVX2PrdA+31gbk9aAOtTXt+40GadooA==}
+  /@fluencelabs/aqua-api@0.14.5:
+    resolution: {integrity: sha512-fBIfKKr0Mnv89AoBY5ciV0vDUj+8J7tB3sCNhvGmMZcx7AZHXhbhEbUIfVIYGA0fCZ/crwd5+oTzyOA65db7xg==}
     dev: true
 
   /@fluencelabs/aqua-lib@0.5.2:
