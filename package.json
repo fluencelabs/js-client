@@ -11,7 +11,7 @@
   "scripts": {
     "lint-check": "pnpm run prettier --check && pnpm run eslint",
     "lint-fix": "pnpm run prettier --write && pnpm run eslint --fix",
-    "prettier": "prettier .",
+    "prettier": "prettier . --cache",
     "eslint": "eslint --cache \"**/src/**/*.{js,ts}\""
   },
   "author": "Fluence Labs",
