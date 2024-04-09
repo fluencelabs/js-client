@@ -76,6 +76,9 @@ jobs:
           artifact: fcli
           version: unstable
 
+      - name: Initialize FCLI
+        run: fluence provider init --env=local --no-input
+
       - name: Run nox network
         run: fluence local up
 
