@@ -27,7 +27,7 @@
     "test": "vitest --threads false run"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
     "@chainsafe/libp2p-noise": "14.0.0",

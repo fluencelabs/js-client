@@ -15,7 +15,7 @@
     "dist"
   ],
   "keywords": [],
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
     "@npmcli/arborist": "^7.2.1",

@@ -16,7 +16,7 @@
     "serve": "http-server public"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
     "@fluencelabs/js-client-isomorphic": "workspace:*",

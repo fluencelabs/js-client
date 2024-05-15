@@ -12,7 +12,7 @@
     "build": "tsc"
   },
   "keywords": [],
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
     "ts-pattern": "5.0.5"

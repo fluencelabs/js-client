@@ -14,7 +14,7 @@
     "compile-aqua": "node --loader ts-node/esm compile-aqua.ts"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
     "base64-js": "1.5.1"
