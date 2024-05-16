@@ -12,6 +12,6 @@
     "build": "tsc"
   },
   "repository": "https://github.com/fluencelabs/fluence-network-environment",
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0"
 }

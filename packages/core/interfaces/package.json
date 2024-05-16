@@ -45,7 +45,7 @@
     "build": "tsc"
   },
   "repository": "https://github.com/fluencelabs/fluence-js",
-  "author": "Fluence Labs",
+  "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {},
   "devDependencies": {
