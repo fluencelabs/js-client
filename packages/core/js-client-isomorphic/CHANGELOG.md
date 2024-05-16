@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.1](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.6.0...js-client-isomorphic-v0.6.1) (2024-05-16)
+
+
+### Features
+
+* update copyright ([#449](https://github.com/fluencelabs/js-client/issues/449)) ([3ca9713](https://github.com/fluencelabs/js-client/commit/3ca9713e45a49b24aa5cec773e2953debfeb4f4d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/marine-worker bumped from 0.6.0 to 0.6.1
+
 ## [0.6.0](https://github.com/fluencelabs/js-client/compare/js-client-isomorphic-v0.5.0...js-client-isomorphic-v0.6.0) (2024-02-23)
 
 

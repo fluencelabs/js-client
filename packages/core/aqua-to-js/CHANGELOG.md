@@ -94,6 +94,27 @@
     * @fluencelabs/interfaces bumped to 0.12.0
     * @fluencelabs/js-client bumped to 0.9.0
 
+## [0.3.14](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.3.13...aqua-to-js-v0.3.14) (2024-05-16)
+
+
+### Features
+
+* **fluence-network-environment:** Introduce fluence-network-environment package ([#442](https://github.com/fluencelabs/js-client/issues/442)) ([9eeeb0f](https://github.com/fluencelabs/js-client/commit/9eeeb0fae0c73c0f576f839f4a0affa4ddf61b77))
+* update copyright ([#449](https://github.com/fluencelabs/js-client/issues/449)) ([3ca9713](https://github.com/fluencelabs/js-client/commit/3ca9713e45a49b24aa5cec773e2953debfeb4f4d))
+
+
+### Bug Fixes
+
+* move zod from devDependencies to dependencies ([#450](https://github.com/fluencelabs/js-client/issues/450)) ([5c346f6](https://github.com/fluencelabs/js-client/commit/5c346f6566a280a3c88967d417b12056cb10a734))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @fluencelabs/interfaces bumped to 0.12.1
+    * @fluencelabs/js-client bumped to 0.9.1
+
 ## [0.3.5](https://github.com/fluencelabs/js-client/compare/aqua-to-js-v0.3.4...aqua-to-js-v0.3.5) (2023-12-15)
 
 

@@ -12,6 +12,24 @@
   * dependencies
     * @fluencelabs/interfaces bumped to 0.9.0
 
+## [0.9.1](https://github.com/fluencelabs/js-client/compare/js-client-v0.9.0...js-client-v0.9.1) (2024-05-16)
+
+
+### Features
+
+* **fluence-network-environment:** Introduce fluence-network-environment package ([#442](https://github.com/fluencelabs/js-client/issues/442)) ([9eeeb0f](https://github.com/fluencelabs/js-client/commit/9eeeb0fae0c73c0f576f839f4a0affa4ddf61b77))
+* update copyright ([#449](https://github.com/fluencelabs/js-client/issues/449)) ([3ca9713](https://github.com/fluencelabs/js-client/commit/3ca9713e45a49b24aa5cec773e2953debfeb4f4d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @fluencelabs/interfaces bumped to 0.12.1
+    * @fluencelabs/js-client-isomorphic bumped to 0.6.1
+    * @fluencelabs/fluence-network-environment bumped to 1.2.0
+    * @fluencelabs/marine-worker bumped from 0.6.0 to 0.6.1
+
 ## [0.9.0](https://github.com/fluencelabs/js-client/compare/js-client-v0.8.4...js-client-v0.9.0) (2024-02-23)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/js-client",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Client for interacting with Fluence network",
   "engines": {
     "node": ">=10",
@@ -36,7 +36,7 @@
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client-isomorphic": "workspace:*",
     "@fluencelabs/fluence-network-environment": "workspace:*",
-    "@fluencelabs/marine-worker": "0.6.0",
+    "@fluencelabs/marine-worker": "0.6.1",
     "@fluencelabs/threads": "^2.0.0",
     "@libp2p/crypto": "4.0.1",
     "@libp2p/identify": "1.0.11",

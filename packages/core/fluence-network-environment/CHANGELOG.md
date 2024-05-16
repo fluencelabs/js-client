@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/fluencelabs/js-client/compare/fluence-network-environment-v1.1.2...fluence-network-environment-v1.2.0) (2024-05-16)
+
+
+### Features
+
+* **fluence-network-environment:** Introduce fluence-network-environment package ([#442](https://github.com/fluencelabs/js-client/issues/442)) ([9eeeb0f](https://github.com/fluencelabs/js-client/commit/9eeeb0fae0c73c0f576f839f4a0affa4ddf61b77))
+* update copyright ([#449](https://github.com/fluencelabs/js-client/issues/449)) ([3ca9713](https://github.com/fluencelabs/js-client/commit/3ca9713e45a49b24aa5cec773e2953debfeb4f4d))
+
 ## [1.1.2](https://github.com/fluencelabs/fluence-network-environment/compare/fluence-network-environment-v1.1.1...fluence-network-environment-v1.1.2) (2023-07-05)
 
 
