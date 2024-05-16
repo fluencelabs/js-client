@@ -165,6 +165,9 @@ importers:
       ts-pattern:
         specifier: 5.0.5
         version: 5.0.5
+      zod:
+        specifier: 3.22.4
+        version: 3.22.4
     devDependencies:
       '@fluencelabs/aqua-api':
         specifier: 0.13.0
@@ -190,9 +193,6 @@ importers:
       vitest:
         specifier: 0.34.6
         version: 0.34.6
-      zod:
-        specifier: 3.22.4
-        version: 3.22.4
 
   packages/core/fluence-network-environment: {}
 
@@ -15240,3 +15240,4 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: false
