@@ -15,7 +15,8 @@
   "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
-    "ts-pattern": "5.0.5"
+    "ts-pattern": "5.0.5",
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@fluencelabs/aqua-api": "0.13.0",
@@ -25,7 +26,6 @@
     "@fluencelabs/registry": "0.9.0",
     "@fluencelabs/spell": "0.5.20",
     "@fluencelabs/trust-graph": "0.4.7",
-    "vitest": "0.34.6",
-    "zod": "3.22.4"
+    "vitest": "0.34.6"
   }
 }
