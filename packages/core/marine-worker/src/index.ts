@@ -127,7 +127,7 @@ const toExpose = {
     onLogMessage.complete();
   },
 
-  callService: (
+  callService: async (
     serviceId: string,
     functionName: string,
     args: JSONArray | JSONObject,
@@ -139,7 +139,7 @@ const toExpose = {
       throw new Error(`service with id=${serviceId} not found`);
     }
 
-    return srv.call(functionName, args, callParams);
+    return await srv.call(functionName, args, callParams);
   },
 
   onLogMessage() {
