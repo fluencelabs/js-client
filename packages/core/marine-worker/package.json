@@ -26,6 +26,6 @@
   "dependencies": {
     "@fluencelabs/marine-js": "0.13.0",
     "observable-fns": "0.6.1",
-    "@fluencelabs/threads": "^2.0.0"
+    "@fluencelabs/threads": "2.0.0"
   }
 }
