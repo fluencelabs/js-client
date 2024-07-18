@@ -83,7 +83,7 @@ jobs:
         run: fluence local up
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v2.4.1
         with:
           version: 8
 
