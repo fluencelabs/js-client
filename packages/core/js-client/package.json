@@ -35,7 +35,7 @@
     "@fluencelabs/avm": "0.62.0",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client-isomorphic": "workspace:*",
-    "@fluencelabs/fluence-network-environment": "workspace:*",
+    "@fluencelabs/fluence-network-environment": "1.2.2",
     "@fluencelabs/marine-worker": "0.6.0",
     "@fluencelabs/threads": "^2.0.0",
     "@libp2p/crypto": "4.0.1",

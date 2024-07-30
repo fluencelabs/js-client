@@ -194,8 +194,6 @@ importers:
         specifier: 0.34.6
         version: 0.34.6
 
-  packages/core/fluence-network-environment: {}
-
   packages/core/interfaces:
     devDependencies:
       hotscript:
@@ -214,8 +212,8 @@ importers:
         specifier: 0.62.0
         version: 0.62.0
       '@fluencelabs/fluence-network-environment':
-        specifier: workspace:*
-        version: link:../fluence-network-environment
+        specifier: 1.2.2
+        version: 1.2.2
       '@fluencelabs/interfaces':
         specifier: workspace:*
         version: link:../interfaces
@@ -2749,6 +2747,10 @@ packages:
     dependencies:
       msgpack-lite: 0.1.26
       multicodec: 3.2.1
+    dev: false
+
+  /@fluencelabs/fluence-network-environment@1.2.2:
+    resolution: {integrity: sha512-cshtU9W5bQLJ4W2Plr2yEfG/8wDmF0HcRHm05YYFRI94nT4hXXA8X8WjzEKEfVa1ulvW9J1usyEFIY3QWw1yWQ==}
     dev: false
 
   /@fluencelabs/marine-js@0.13.0:
