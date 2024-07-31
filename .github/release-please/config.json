@@ -13,7 +13,6 @@
     "packages/core/marine-worker": {},
     "packages/core/aqua-to-js": {},
     "packages/core/interfaces": {},
-    "packages/core/npm-aqua-compiler": {},
-    "packages/core/fluence-network-environment": {}
+    "packages/core/npm-aqua-compiler": {}
   }
 }
