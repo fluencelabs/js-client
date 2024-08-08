@@ -28,4 +28,3 @@ jobs:
     uses: ./.github/workflows/tests.yml
     with:
       ref: ${{ github.ref }}
-      nox-image: "docker.fluence.dev/nox:feat-vm-425-aquavm-mem-limits-from-config-2_5056_1"
