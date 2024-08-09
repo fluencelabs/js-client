@@ -19,7 +19,7 @@
     "zod": "3.22.4"
   },
   "devDependencies": {
-    "@fluencelabs/aqua-api": "0.13.0",
+    "@fluencelabs/aqua-api": "0.14.11",
     "@fluencelabs/aqua-lib": "0.7.3",
     "@fluencelabs/interfaces": "workspace:*",
     "@fluencelabs/js-client": "workspace:^",
