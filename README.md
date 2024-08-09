@@ -1,6 +1,6 @@
 # Fluence JS Client
 
-[![npm](https://img.shields.io/npm/v/@fluencelabs/js-client?label=@fluencelabs/js-client)](https://www.npmjs.com/package/@fluencelabs/js-client)
+[![js-client @ npm](https://img.shields.io/npm/v/@fluencelabs/js-client?label=@fluencelabs/js-client)](https://www.npmjs.com/package/@fluencelabs/js-client)
 
 This is the Javascript client for the [Fluence](https://fluence.network) network. The main role of the JS client is to connect to the Fluence Network and allow you to integrate Aqua code into your application.
 
