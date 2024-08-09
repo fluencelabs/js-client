@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@fluencelabs/marine-worker",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Marine worker",
   "files": [
     "dist"

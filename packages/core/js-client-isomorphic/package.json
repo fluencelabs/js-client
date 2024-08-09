@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@fluencelabs/js-client-isomorphic",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Isomorphic entities for js-client",
   "files": [
     "dist"
@@ -24,7 +24,7 @@
   "dependencies": {
     "@fluencelabs/avm": "0.62.0",
     "@fluencelabs/marine-js": "0.13.0",
-    "@fluencelabs/marine-worker": "0.6.0",
+    "@fluencelabs/marine-worker": "0.6.1",
     "@fluencelabs/threads": "^2.0.0"
   },
   "keywords": [],
