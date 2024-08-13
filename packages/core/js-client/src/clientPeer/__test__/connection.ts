@@ -16,8 +16,8 @@
 
 export const nodes = [
   {
-    multiaddr: 
-        "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWHQs4WtPDwsgJdQpbXUakdZk8THyBHSTbdnJEyPPFvd3H",
+    multiaddr:
+      "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWHQs4WtPDwsgJdQpbXUakdZk8THyBHSTbdnJEyPPFvd3H",
     peerId: "12D3KooWHQs4WtPDwsgJdQpbXUakdZk8THyBHSTbdnJEyPPFvd3H",
   },
 ] as const;
