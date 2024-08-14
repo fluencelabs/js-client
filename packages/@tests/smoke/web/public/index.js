@@ -1,4 +1,4 @@
-import { Fluence, callAquaFunction, randomStage } from "./js-client.min.js";
+import { Fluence, callAquaFunction } from "./js-client.min.js";
 
 const relay = {
   multiaddr:
