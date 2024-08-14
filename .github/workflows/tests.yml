@@ -75,6 +75,7 @@ jobs:
         with:
           artifact: fcli
           version: unstable
+        continue-on-error: true
 
       - name: Initialize FCLI
         run: fluence provider init --env=local --no-input
