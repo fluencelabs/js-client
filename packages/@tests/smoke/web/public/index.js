@@ -2,8 +2,8 @@ import { Fluence, callAquaFunction } from "./js-client.min.js";
 
 const relay = {
   multiaddr:
-    "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWHQs4WtPDwsgJdQpbXUakdZk8THyBHSTbdnJEyPPFvd3H",
-  peerId: "12D3KooWHQs4WtPDwsgJdQpbXUakdZk8THyBHSTbdnJEyPPFvd3H",
+    "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWBbMuqJJZT7FTFN4fWg3k3ipUKx6KEy7pDy8mdorK5g5o",
+  peerId: "12D3KooWBbMuqJJZT7FTFN4fWg3k3ipUKx6KEy7pDy8mdorK5g5o",
 };
 
 const getRelayTime = () => {
