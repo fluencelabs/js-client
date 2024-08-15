@@ -25,6 +25,7 @@ import { IMarineHost } from "../marine/interfaces.js";
 import { relayOptionToMultiaddr } from "../util/libp2pUtils.js";
 import { logger } from "../util/logger.js";
 
+import { checkConnection } from './checkConnection.js'
 import {
   ClientConfig,
   IFluenceClient,
@@ -128,7 +129,14 @@ export class ClientPeer extends FluencePeer implements IFluenceClient {
     log.trace("connecting to Fluence network");
     this.changeConnectionState("connecting");
     await super.start();
-    // TODO: check connection (`checkConnection` function) here
+
+    const connected = await checkConnection(this);
+    if (!connected) {
+      this.changeConnectionState("disconnected");
+      log.trace("Disconnected");
+      throw new Error(`Failed to establish a connection with ClientPeer ID '${this.getPeerId()}'`);
+    }
+
     this.changeConnectionState("connected");
     log.trace("connected");
   }
