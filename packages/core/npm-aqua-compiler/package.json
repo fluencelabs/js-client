@@ -18,7 +18,7 @@
   "author": "Fluence DAO",
   "license": "Apache-2.0",
   "dependencies": {
-    "@npmcli/arborist": "^7.2.1",
+    "@npmcli/arborist": "7.3.0",
     "treeverse": "3.0.0"
   },
   "devDependencies": {

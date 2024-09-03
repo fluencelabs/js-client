@@ -25,7 +25,7 @@
     "@fluencelabs/avm": "0.62.0",
     "@fluencelabs/marine-js": "0.13.0",
     "@fluencelabs/marine-worker": "0.6.0",
-    "@fluencelabs/threads": "^2.0.0"
+    "@fluencelabs/threads": "2.0.0"
   },
   "keywords": [],
   "author": "Fluence DAO",
