@@ -1,37 +1,7 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
-    ":semanticCommitTypeAll(chore)"
+    "github>fluencelabs/renovate",
+    "github>fluencelabs/renovate:npm"
   ],
-  "prBodyTemplate": "{{{header}}}{{{table}}}{{{warnings}}}{{{notes}}}{{{configDescription}}}{{{controls}}}{{{footer}}}",
-  "enabledManagers": ["npm", "github-actions"],
-  "rangeStrategy": "pin",
-  "schedule": "every weekend",
-  "respectLatest": false,
-  "packageRules": [
-    {
-      "matchManagers": ["npm"],
-      "matchPackagePatterns": [
-        "@fluencelabs/.*"
-      ],
-      "semanticCommitType": "fix",
-      "semanticCommitScope": "deps",
-      "schedule": "at any time"
-    },
-    {
-      "matchDepTypes": ["devDependencies"],
-      "prPriority": -1,
-      "semanticCommitType": "chore",
-      "semanticCommitScope": "deps"
-    },
-    {
-      "matchUpdateTypes": ["major"],
-      "prConcurrentLimit": 1
-    },
-    {
-      "matchManagers": ["github-actions"],
-      "groupName": "all github-actions"
-    }
-  ]
+  "enabledManagers": ["npm"]
 }
