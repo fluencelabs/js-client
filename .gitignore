@@ -9,3 +9,8 @@ node_modules/
 dist/
 public/
 .DS_Store
+
+.fluence/
+# so we have stable peer ids for tests
+!.fluence/provider-secrets.yaml
+provider.yaml
