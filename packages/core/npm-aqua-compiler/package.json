@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@fluencelabs/npm-aqua-compiler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Tool for converting npm imports to aqua compiler input",
   "types": "./dist/imports.d.ts",
   "exports": {

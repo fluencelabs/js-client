@@ -1,7 +1,7 @@
 {
   "name": "@fluencelabs/aqua-to-js",
   "type": "module",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "description": "Tool for generating aqua wrapper",
   "main": "dist/index.js",
   "files": [
